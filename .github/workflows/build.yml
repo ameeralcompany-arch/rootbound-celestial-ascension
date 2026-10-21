@@ -1,0 +1,35 @@
+name: Build and test
+on: [push, workflow_dispatch]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - run: python3 tools/build.py
+      - name: Install Playwright
+        run: npm i playwright@1.49.0 && npx playwright install --with-deps chromium
+      - name: Tests
+        run: |
+          export CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")
+          node tests/run.js && node tests/objects.js && node tests/social.js
+        env: {NODE_PATH: ./node_modules}
+      - uses: actions/upload-artifact@v4
+        with: {name: rootbound-html, path: index.html}
+  windows:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - run: |
+          copy index.html desktop\index.html
+          cd desktop
+          npm install
+          npx electron-packager . Rootbound --platform=win32 --arch=x64 --out=dist --overwrite
+          Compress-Archive -Path dist\Rootbound-win32-x64 -DestinationPath ..\Rootbound-Windows.zip
+        shell: pwsh
+      - uses: actions/upload-artifact@v4
+        with: {name: Rootbound-Windows, path: Rootbound-Windows.zip}

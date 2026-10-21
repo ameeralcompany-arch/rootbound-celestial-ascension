@@ -1,0 +1,7 @@
+<div id="login"><canvas id="lbg"></canvas><div id="lcard"><h1>ROOT<span>BOUND</span></h1><div class="sub">CELESTIAL ASCENSION</div>
+<div class="tabs"><button id="ltIn" class="on">Sign in</button><button id="ltUp">Create account</button><button id="ltRec">Recover</button></div>
+<div id="lfName"><label for="lu">Account name</label><input id="lu" maxlength="16" autocomplete="username" placeholder="3-16 letters, numbers, _ -"></div>
+<div id="lfPass"><label for="lp">Password</label><input id="lp" type="password" maxlength="64" autocomplete="current-password" placeholder="at least 8 characters"></div>
+<div id="lfRec" style="display:none"><label for="lr">Recovery code</label><input id="lr" maxlength="24" placeholder="XXXX-XXXX-XXXX"><label for="lp2">New password</label><input id="lp2" type="password" maxlength="64" autocomplete="new-password"></div>
+<button id="lgo">Sign in</button><div id="lrec"></div><div id="lmsg"></div><button id="lguest" class="alt">Play as guest (no account)</button>
+<div id="lnote">Local prototype: accounts live in this browser only. Passwords are never stored in plain text (PBKDF2-SHA256, per-account salt), but a browser-only login is <b>not real security</b> - anyone with this device can read its storage. The auth layer is isolated so a server login can replace it later.</div></div></div>
