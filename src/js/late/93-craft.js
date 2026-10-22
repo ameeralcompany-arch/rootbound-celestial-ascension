@@ -1,10 +1,10 @@
 // ===== V6 crafting (data-driven, discovery, timed, validated) + extra persistent state X6 (key rbc2, account-namespaced) =====
-const X6={disc:{},q:null,friends:[],mute:[],emotes:1,sfx:1,seen:{},log:[]};
+const X6={disc:{},q:null,friends:[],mute:[],emotes:1,sfx:1,seen:{},log:[],sc:{act:0,looks:[],fav:{},gal:'chars'}};
 function x6Load(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc2')||'null')}catch(_){}if(!o||typeof o!='object')return;
  if(o.disc&&typeof o.disc=='object')for(const k of Object.keys(o.disc).slice(0,100))if(o.disc[k]===1)X6.disc[k.slice(0,24)]=1;
  const q=o.q;if(q&&typeof q=='object'&&typeof q.r=='string'&&Number.isFinite(+q.end)&&Number.isFinite(+q.n))X6.q={r:q.r.slice(0,24),end:+q.end,n:Math.max(1,Math.min(99,q.n|0))};
- const sl=(a,n,m)=>Array.isArray(a)?a.filter(x=>typeof x=='string').map(x=>x.slice(0,m)).slice(0,n):[];X6.friends=sl(o.friends,100,40);X6.mute=sl(o.mute,200,40);X6.emotes=o.emotes==0?0:1;X6.sfx=o.sfx==0?0:1}
-function x6Save(){try{localStorage.setItem('rbc2',JSON.stringify({disc:X6.disc,q:X6.q,friends:X6.friends,mute:X6.mute,emotes:X6.emotes,sfx:X6.sfx}))}catch(_){}}
+ const sl=(a,n,m)=>Array.isArray(a)?a.filter(x=>typeof x=='string').map(x=>x.slice(0,m)).slice(0,n):[];X6.friends=sl(o.friends,100,40);X6.mute=sl(o.mute,200,40);X6.emotes=o.emotes==0?0:1;X6.sfx=o.sfx==0?0:1;try{const c=o.sc||{};X6.sc.act=Math.max(0,Math.min(5,c.act|0));X6.sc.looks=Array.isArray(c.looks)?c.looks.slice(0,6).map(l=>l&&typeof l=='object'?sanAp(l):null):[];X6.sc.fav={};if(c.fav&&typeof c.fav=='object')for(const k of Object.keys(c.fav).slice(0,6))if(/^[0-5]$/.test(k)&&c.fav[k])X6.sc.fav[k]=1;X6.sc.gal=c.gal=='wings'?'wings':'chars'}catch(_){}}
+function x6Save(){try{localStorage.setItem('rbc2',JSON.stringify({disc:X6.disc,q:X6.q,friends:X6.friends,mute:X6.mute,emotes:X6.emotes,sfx:X6.sfx,sc:X6.sc}))}catch(_){}}
 x6Load();
 const RECIPES=[
  {id:'glass',n:'Glass',out:[6,2],in:[[8,2]],secs:4,lv:1},

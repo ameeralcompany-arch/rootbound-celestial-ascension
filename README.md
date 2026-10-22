@@ -74,3 +74,17 @@ Source: `src/` (modular) -> `python3 tools/build.py` -> `index.html`. Tests: `no
 ## Test report (what actually ran)
 Ran headless Chromium in the sandbox: `tests/run.js` 58/58, `tests/objects.js` (objects, door permissions, keys/levels, config sanitising, chest conservation, host validation, crafting, farming, save/reload persistence) all pass, `tests/social.js` (two real page instances joined by an in-memory fake room: trade conservation/decline/forgery/escrow refund, host op validation, rate limits, mute, whispers, console gating, host-only teleport) all pass.
 NOT run: real PeerJS networking, >2 clients, real devices/GPU frame rates (headless timings are not representative), long-session soak, the Windows build.
+
+## V7 – Editorial showcase, simpler inventory, chests
+
+- **Showcase home screen** (`src/js/late/98-showcase.js`): pearl/ivory editorial page with a large procedurally drawn character (`89-showart.js`), index `01/06` with prev/next + ←/→ keys, rank/stars, name, lore, XP, favorite, Play/Select/Customize, and a "My Gallery" (Characters / Wings) 2x2 grid. Nav items only link to things that exist (Inventory, Store, Worlds, Collection, Profile, Settings). Opens after login; the ⌂ HUD button reopens it.
+- **Characters**: slot 1 is your own look; 5 original presets unlock by level (locked ones are greyed and cannot be played). Choices persist per account.
+- **Inventory**: filter chips, 3-slot hotbar (2 blocks + 1 weapon), friendly chest window, brown backing under terrain removed.
+- **UI sounds** (`87-uisfx.js`): quiet synthesized cues, rate limited, mutable.
+- **Tests**: `tests/showcase.js` (3 viewport sizes), plus objects/social/run suites all pass in headless Chromium.
+
+### Not yet done / unverified
+- Real-device FPS and real PeerJS multiplayer remain untested.
+- Store dialog, hub, menu, HUD and skills row are still the older dark theme; no friendly trade window yet (use `/trade`).
+- Art polish (eyes, shoulders), extra weapons, new lofi music and new block art are not done.
+- Showcase portraits are procedural vector art, not hand-drawn character art.

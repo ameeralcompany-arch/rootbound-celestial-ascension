@@ -86,7 +86,7 @@ img{image-rendering:pixelated}
 <!--@@HTML@@-->
 <script>
 let g;const $=id=>document.getElementById(id),cv=$('c'),g0=cv.getContext('2d',{alpha:false}),lc=document.createElement('canvas'),lg=lc.getContext('2d');g=g0;
-let RSC=1;function rs(){const a=Math.min(1,Math.sqrt(2073600/(innerWidth*innerHeight))),k=a*RSC;cv.width=Math.round(innerWidth*k);cv.height=Math.round(innerHeight*k);lc.width=cv.width>>1;lc.height=cv.height>>1}addEventListener('resize',rs);rs();
+let RSC=1;function rs(){const a=Math.min(1,Math.sqrt(2073600/(innerWidth*innerHeight))),k=a*RSC*(window.zlow6?.85:1);cv.width=Math.round(innerWidth*k);cv.height=Math.round(innerHeight*k);lc.width=cv.width>>1;lc.height=cv.height>>1}addEventListener('resize',rs);rs();
 const T=48,W=100,H=64,DAY=240,FONT="'Pixelify Sans','Fredoka',system-ui,sans-serif",DX=W>>1,REACH=4.6*T;
 const rr=(x,y,w,h,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,w,h,r):g.rect(x,y,w,h)},rnd=(a,b)=>a+Math.random()*(b-a);
 const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),mixc=(c,k)=>'rgb('+hx(c).map(v=>Math.max(0,Math.min(255,v*k|0)))+')',blend=(a,b,t)=>'rgb('+hx(a).map((v,i)=>v*(1-t)+hx(b)[i]*t|0)+')';
@@ -118,7 +118,7 @@ power:{s:'glove',n:'Power Gloves',c:'#c0c6d4',cost:110,cd:25,d:'+1 break power.'
 const MK={slime:{c:'#7ef2c2',hp:22,w:38,h:30,gem:4,surf:1,min:-99,max:16},moth:{c:'#d9c7ff',hp:14,w:30,h:26,gem:5,fly:1,surf:1,min:-99,max:12},crab:{c:'#ff9a6a',hp:28,w:42,h:28,gem:6,surf:1,min:-99,max:16},cloud:{c:'#ffc2e0',hp:18,w:46,h:30,gem:5,fly:1,surf:1,min:-99,max:4},
 bat:{c:'#9a7bd6',hp:16,w:30,h:24,gem:6,fly:1,dmg:5,min:7,max:99},golem:{c:'#9aa3b5',hp:64,w:46,h:54,gem:14,dmg:12,spm:.6,min:12,max:99},wraith:{c:'#8fe0ff',hp:38,w:34,h:46,gem:16,fly:1,ph:1,dmg:9,min:22,max:99},magma:{c:'#ff6a3a',hp:52,w:42,h:34,gem:18,dmg:11,jp:640,sx:200,cd:.7,min:28,max:99},shade:{c:'#8a5cff',hp:95,w:46,h:52,gem:30,fly:1,ph:1,dmg:15,spm:1.5,min:34,max:99}};
 const QUEST_OLD=[['Get moving','Run with A / D, jump with W','move'],['Break a block','Left-click a block','break'],['Place a block','Right-click with a block selected','place'],['Plant a seed','Select a seed, right-click the ground','plant'],['Harvest a tree','Wait until it ripens, hit it once','harvest'],['Forge a tool','Inventory, Tools tab','forge'],['Get dressed','Inventory, Wear tab','wear'],['Use a skill','Press Q, E, Shift or F','skill'],['Meet the town','Press E next to an NPC','npc'],['Visit a world','Pick another world by name','world']];
-const OPT={q:1,sh:1,mv:.5,sv:1,name:''};let ZM=1,entered=0;const setZoom=z=>{ZM=Math.max(.5,Math.min(2.2,Math.round(z*100)/100));OPT.zm=ZM;say('Zoom '+Math.round(ZM*100)+'%')};
+const OPT={q:1,sh:1,mv:.5,sv:1,name:''};let ZM=1,entered=0;const setZoom=z=>{const oz=ZM;ZM=Math.max(.5,Math.min(2.2,Math.round(z*100)/100));window.zlow6=ZM<.7;if((oz<.7)!=(ZM<.7)&&entered)setTimeout(rs,0);OPT.zm=ZM;say('Zoom '+Math.round(ZM*100)+'%')};
 // ---------- state
 const P={x:0,y:0,vx:0,vy:0,w:26,h:54,g:false,f:1,hp:100,jumps:0};
 let tiles=new Uint8Array(W*H),hp=new Uint8Array(W*H),wl=new Uint8Array(W*H);const trees=new Map(),pop=new Map(),hitAt=new Map(),parts=[],floats=[],slashes=[],projs=[],splashes=[],mobs=[],rings=[],bub={},rp={},K={},done={},ICON={},SPR={},CR=[];
@@ -298,7 +298,7 @@ function drawMobV(m,now,px,py){const c=MK[m.k].c,k=m.k,fl=m.fl>0;g.save();g.tran
   g.fillStyle=fl?'#fff':'#d9d9e2';g.beginPath();g.moveTo(-11,cy-4);g.lineTo(-9,cy-18);g.lineTo(-4,cy-12);g.lineTo(0,cy-21);g.lineTo(4,cy-12);g.lineTo(9,cy-17);g.lineTo(11,cy-4);g.closePath();g.fill();g.stroke();g.fillStyle='#5a4650';g.fillRect(-8,cy-9,16,10);g.strokeRect(-8,cy-9,16,10);g.fillStyle='#ff2a3a';g.fillRect(-6,cy-6,4,3);g.fillRect(2,cy-6,4,3);g.globalCompositeOperation='lighter';const ag=g.createRadialGradient(0,cy,4,0,cy,40);ag.addColorStop(0,'rgba(140,90,255,.4)');ag.addColorStop(1,'rgba(140,90,255,0)');g.fillStyle=ag;g.fillRect(-40,cy-40,80,80);g.globalCompositeOperation='source-over'}
  else{g.translate(0,Math.sin(now/500+m.ph)*3);bd(22,30);for(const[ox,oy,r]of[[-14,-12,12],[0,-20,15],[14,-12,12],[0,-9,14]]){g.beginPath();g.arc(ox,oy,r,0,6.3);g.fill();g.stroke()}g.fillStyle=bd?g.fillStyle:c;for(const[ox,oy,r]of[[-14,-12,12],[0,-20,15],[14,-12,12],[0,-9,14]]){g.beginPath();g.arc(ox,oy,r-1,0,6.3);g.fill()}g.beginPath();g.arc(-7,-16,3.5,.1,3);g.stroke();g.beginPath();g.arc(7,-16,3.5,.1,3);g.stroke();g.fillStyle='rgba(255,120,150,.5)';g.beginPath();g.arc(-12,-11,3,0,6.3);g.arc(12,-11,3,0,6.3);g.fill()}
  g.restore()}
-function drawMob(m,now){const px=m.x-cam.x,py=m.y-cam.y;pixelize(px,py+m.h/2,70,70,()=>drawMobV(m,now,px,py));drawMobBar(m,px,py)}
+function drawMob(m,now){const px=m.x-cam.x,py=m.y-cam.y;pixelize(px,py+m.h/2,70,70,()=>drawMobV(m,now,px,py),m);drawMobBar(m,px,py)}
 function drawMobBar(m,px,py){const hpR=m.hp/MK[m.k].hp;if(hpR<1){g.fillStyle='rgba(0,0,0,.55)';rr(px-16,py-12,32,5,2);g.fill();g.fillStyle='#ff7a7a';rr(px-16,py-12,32*Math.max(0,hpR),5,2);g.fill()}}
 // ---------- time + weather
 function clock(){const d=(Date.now()/1000%DAY)/DAY;return d}
@@ -325,11 +325,11 @@ function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=h
  cam.x+=(Math.max(0,Math.min(W*T-vw,P.x-vw/2))-cam.x)*.18;cam.y+=(Math.max(-200,Math.min(H*T-vh,P.y+P.h/2-vh/2))-cam.y)*.18;
  const sx=shake?(Math.random()-.5)*shake*34*OPT.sh:0,sy=shake?(Math.random()-.5)*shake*34*OPT.sh:0;drawSky(w,hh,now);
  g.save();g.scale(ZM,ZM);g.translate(sx,sy);const x0=Math.max(0,cam.x/T|0),x1=Math.min(W-1,(cam.x+vw)/T|0),y0=Math.max(0,cam.y/T|0),y1=Math.min(H-1,(cam.y+vh)/T|0);
- const cg=g.createLinearGradient(0,18*T-cam.y,0,H*T-cam.y);cg.addColorStop(0,'#2a1d16');cg.addColorStop(1,'#120c0b');g.fillStyle=cg;for(let x=x0;x<=x1;x++){const s=sh(x)*T-cam.y;g.fillRect(x*T-cam.x,s,T,H*T)}
+ 
  lampL.length=0;const dX=DX*T-cam.x,dY=sh(DX)*T-cam.y;g.fillStyle='#000';rr(dX+2,dY-T-16,T-4,T+16,10);g.fill();g.fillStyle='#6b4a2a';rr(dX+5,dY-T-13,T-10,T+13,8);g.fill();g.fillStyle='#fff6b0';g.beginPath();g.arc(dX+T-14,dY-T/2,3,0,6.3);g.fill();g.fillStyle='rgba(255,255,255,.18)';g.fillRect(dX+9,dY-T-9,6,T+6);
  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])continue;if(b==13)lampL.push(x*T+T/2-cam.x,y*T+T/2-cam.y);const px=x*T-cam.x,py=y*T-cam.y,pp=pop.get(k);let sc=1;if(pp){const a=(now-pp)/180;if(a>=1)pop.delete(k);else sc=1+.22*Math.sin(Math.min(1,a)*3.14)}
   if(sc!=1){g.save();g.translate(px+T/2,py+T/2);g.scale(sc,sc);g.drawImage(spr(b,x,y),-T/2,-T/2,T,T);g.restore()}else g.drawImage(spr(b,x,y),px,py,T,T);
-  if(!tiles[k-W]&&y>0){g.fillStyle='rgba(255,255,255,.2)';g.fillRect(px,py,T,3)}if(!tiles[k+W]){g.fillStyle='rgba(0,0,0,.28)';g.fillRect(px,py+T-4,T,4)}
+  if(ZM>=.8){if(!tiles[k-W]&&y>0){g.fillStyle='rgba(255,255,255,.2)';g.fillRect(px,py,T,3)}if(!tiles[k+W]){g.fillStyle='rgba(0,0,0,.28)';g.fillRect(px,py+T-4,T,4)}}
   const mh=BLK[b][2];if(hp[k]<mh&&hp[k]>0){const r=1-hp[k]/mh;g.drawImage(CR[Math.min(3,1+(r*3|0))],px,py,T,T)}}
  for(const[k,t]of trees){const x=k%W,y=k/W|0;if(x>=x0-2&&x<=x1+2&&y>=y0-3&&y<=y1+1)drawTree(k,t,now)}
  const wr=wear;for(const m of mobs)drawMob(m,now);drawNPCs(now);drawDrops(now);
@@ -398,7 +398,7 @@ function renderInv(){gridEl.innerHTML='';for(const b of tabsEl.children)b.classL
 function setInv(v){showInv=v;invEl.classList.toggle('open',v);if(v){renderInv();G('bag')}}
 function cycleW(){const l=Object.keys(WPN).filter(k=>own[k]);wp=l[(l.indexOf(wp)+1)%l.length];renderW();say('Tool: '+WPN[wp].n);snd(500,.1,'triangle')}
 function toggleMute(){mute=!mute;if(bgm)bgm.m.gain.value=mute?0:OPT.mv;say(mute?'Music off':'Music on')}
-tabsEl.onclick=e=>{if(e.target.dataset.t){invTab=e.target.dataset.t;renderInv()}};
+
 let dragY=null,dragMoved=0;function dragStart(e){dragY=e.clientY;dragMoved=0;invEl.style.transition='none'}
 addEventListener('pointermove',e=>{if(dragY==null)return;const dy=e.clientY-dragY;dragMoved=Math.max(dragMoved,Math.abs(dy));const h2=invEl.offsetHeight*1.05;invEl.style.setProperty('--ty',Math.max(0,Math.min(h2,(showInv?0:h2)+dy))+'px')});
 addEventListener('pointerup',e=>{if(dragY==null)return;const dy=e.clientY-dragY;dragY=null;invEl.style.transition='';invEl.style.removeProperty('--ty');if(dragMoved<6)setInv(!showInv);else if(dy<-40)setInv(true);else if(dy>60)setInv(false);else setInv(showInv)});
@@ -625,7 +625,7 @@ function drawNPCs(now){drawDoor(now);drawLampGlow();for(const n of NPCS){const p
  if(n.k=='shop'){g.fillStyle='#8a5a30';g.fillRect(-44,-26,32,26);g.strokeRect(-44,-26,32,26);g.fillStyle='#d05a4a';g.beginPath();g.moveTo(-48,-26);g.lineTo(-8,-26);g.lineTo(-12,-46);g.lineTo(-44,-46);g.closePath();g.fill();g.stroke();for(let i=0;i<3;i++){g.fillStyle=['#ffcf3a','#6fd6ff','#7ee06a'][i];g.fillRect(-40+i*10,-32,7,6)}}
  else if(n.k=='smith'){g.fillStyle='#4a4f5a';g.fillRect(16,-16,28,8);g.fillRect(22,-8,16,8);g.strokeRect(16,-16,28,8);g.fillStyle='#ff9a3a';g.globalCompositeOperation='lighter';g.beginPath();g.arc(48,-6,6+Math.sin(now/90)*1.5,0,6.3);g.fill();g.globalCompositeOperation='source-over'}
  else{g.fillStyle='#8a5a30';g.fillRect(18,-46,4,46);g.fillStyle='#c9a46a';g.fillRect(8,-62,36,26);g.strokeRect(8,-62,36,26);g.fillStyle='#3a2a1a';for(let i=0;i<3;i++)g.fillRect(13,-56+i*7,24-i*4,2)}
- chibiBody(0,-54,1,now/1000+n.x,0,false,'fist',0,false,{},false,{skin:'#f3d3b4',hair:n.hat,style:(Math.abs(n.x)%5)|0,shirt:n.c,pants:'#3a2f4f',eye:['#35c9c0','#6aa8ff','#c06aff'][(Math.abs(n.x)%3)|0],dress:1,ears:n.k=='quest'},'fist');g.restore()});
+ chibiBody(0,-54,1,now/1000+n.x,0,false,'fist',0,false,{},false,{skin:'#f3d3b4',hair:n.hat,style:(Math.abs(n.x)%5)|0,shirt:n.c,pants:'#3a2f4f',eye:['#35c9c0','#6aa8ff','#c06aff'][(Math.abs(n.x)%3)|0],dress:1,ears:n.k=='quest'},'fist');g.restore()},n);
  nameTag(px,gy-84+bob,n.n,n.k=='shop'?35:n.k=='quest'?120:210);
  g.save();g.font='700 22px '+FONT;g.textAlign='center';g.fillStyle='#ffd24a';g.strokeStyle='#000';g.lineWidth=4;const my2=gy-104+Math.sin(now/300)*3,mk=n.k=='quest'?(qs.some(q=>q.p>=q.need)?'?':'!'):n.k=='shop'?'$':'+';g.strokeText(mk,px,my2);g.fillText(mk,px,my2);g.restore()}}
 // ---------- inventory + hud + skills overrides
@@ -642,7 +642,7 @@ function hud(){if(barDirty){barDirty=0;renderBar();if(showInv)renderInv()}const 
  checkAch();$('pname').textContent='Lv '+lvl+'  '+myName;$('hpf').style.width=Math.max(0,P.hp/maxHP()*100)+'%';$('xpf').style.width=Math.min(100,xp/xpNeed(lvl)*100)+'%';$('gv').textContent=gems;$('wname').textContent=cur.toUpperCase();
  $('wchip').textContent=nm+'  -  '+(()=>{try{return WX_NAMES[WX6.cur]}catch(_){return wxN}})()+'  -  '+(rm?n+' online'+(roomCode?' | room '+roomCode:''):'offline');
  for(const s in cdT){const u=document.querySelector('#sk_'+s+' u');if(u)u.style.height=(wear[s]?cdT[s]/WEAR[wear[s]].cd*100:0)+'%'}
- const nn=nearNPC(),nd=!nn&&nearDoor(),ob=!nn&&!nd&&OBJ6.promptText(),pr=$('prompt');pr.style.display=(nn||nd||ob)&&!dlgOpen&&!creatorOn&&menuEl.style.display=='none'?'block':'none';if(nn)pr.textContent='Press E to talk to '+nn.n;else if(nd)pr.textContent='Press E to use the door and travel to another world';else if(ob)pr.textContent=ob}
+ const nn0=nearNPC(),ob=(()=>{try{return OBJ6.promptText(nn0)}catch(_){return''}})(),nn=ob?null:nn0,nd=!nn&&!ob&&nearDoor(),pr=$('prompt');pr.style.display=(nn||nd||ob)&&!dlgOpen&&!creatorOn&&menuEl.style.display=='none'?'block':'none';if(nn)pr.textContent='Press E to talk to '+nn.n;else if(nd)pr.textContent='Press E to use the door and travel to another world';else if(ob)pr.textContent=ob}
 // ---------- PeerJS room (star topology: host relays)
 function rinfo(h){$('rinfo').innerHTML=h}
 // ---- PeerJS room: star topology, the host relays and validates everything
@@ -941,12 +941,12 @@ document.addEventListener('pointerdown',()=>startBGM());
 gen();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;renderBar();renderSkills();renderW();renderQuest();hud();
 if(!made){enterWorld('plaza');showCreator()}try{const q=new URLSearchParams(location.search).get('room');if(q){$('rc').value=q.toUpperCase().slice(0,5);scr('mworlds');setTimeout(()=>joinRoom(q),500)}}catch(_){}// ---------- pixel-art pipeline (chibi sprites with black pixel outline)
 const PXS=2,pxC=document.createElement('canvas'),pxG=pxC.getContext('2d',{willReadFrequently:true});
-function pixelize(cx,cy,hw,hh,fn){const ps=PXS,sx=Math.round(cx/ps)*ps,sy=Math.round(cy/ps)*ps,w=Math.ceil(hw/ps)*2,h=Math.ceil(hh/ps)*2;if(pxC.width!=w||pxC.height!=h){pxC.width=w;pxC.height=h}
+const PXCACHE=new WeakMap();function pixelize(cx,cy,hw,hh,fn,key){const ps=PXS,sx=Math.round(cx/ps)*ps,sy=Math.round(cy/ps)*ps,w=Math.ceil(hw/ps)*2,h=Math.ceil(hh/ps)*2;if(key){const c=PXCACHE.get(key);if(c&&c.hw==hw&&c.hh==hh&&c.ps==ps&&performance.now()-c.t<(window.pxTtl6||55)){g.save();g.imageSmoothingEnabled=false;g.drawImage(c.cv,sx-c.w/2*ps,sy-c.h/2*ps,c.w*ps,c.h*ps);g.restore();return}}if(pxC.width!=w||pxC.height!=h){pxC.width=w;pxC.height=h}
  pxG.setTransform(1,0,0,1,0,0);pxG.globalAlpha=1;pxG.globalCompositeOperation='source-over';pxG.clearRect(0,0,w,h);pxG.setTransform(1/ps,0,0,1/ps,w/2-sx/ps,h/2-sy/ps);
  const og=g;g=pxG;try{fn()}finally{g=og}pxG.setTransform(1,0,0,1,0,0);
  const im=pxG.getImageData(0,0,w,h),d=im.data,op=new Uint8Array(w*h);for(let i=0;i<w*h;i++)if(d[i*4+3]>=80){op[i]=1;d[i*4+3]=255}else d[i*4+3]=0;
  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=y*w+x;if(op[i])continue;if((x>0&&op[i-1])||(x<w-1&&op[i+1])||(y>0&&op[i-w])||(y<h-1&&op[i+w])){d[i*4]=14;d[i*4+1]=10;d[i*4+2]=22;d[i*4+3]=255}}
- pxG.putImageData(im,0,0);g.save();g.imageSmoothingEnabled=false;g.drawImage(pxC,sx-w/2*ps,sy-h/2*ps,w*ps,h*ps);g.restore()}
+ pxG.putImageData(im,0,0);g.save();g.imageSmoothingEnabled=false;g.drawImage(pxC,sx-w/2*ps,sy-h/2*ps,w*ps,h*ps);g.restore();if(key){let c=PXCACHE.get(key);if(!c){c={cv:document.createElement('canvas')};PXCACHE.set(key,c)}c.cv.width=w;c.cv.height=h;c.cv.getContext('2d').drawImage(pxC,0,0);c.w=w;c.h=h;c.hw=hw;c.hh=hh;c.ps=ps;c.t=performance.now()}}
 function chibiBody(cx,cy,f,t,vx,air,wpn,sw,fm,wr,dsh,lk,Wk){
  const run=Math.abs(vx)>10,ph=t*(run?15:2.6),ls=run?Math.sin(ph)*4.5:0,as=run?Math.sin(ph+3.14)*5:Math.sin(t*2)*1,bob=(run?Math.abs(Math.sin(ph))*-1.6:Math.sin(t*2)*.8)+(air?1:0),
  open=wr.wo!=null?wr.wo:wingOpen,flap=wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,skin=lk.skin||'#f1c9a0',hair=lk.hair||'#3a2a1a',OL='#1b1220',body=wr.body,

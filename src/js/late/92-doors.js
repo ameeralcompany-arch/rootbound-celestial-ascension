@@ -30,7 +30,7 @@ const DOORS6=(()=>{
   if(d.cat=='tele'){if(busy)return;if(!OBJ6.canUse(o,myId)){say('Access: '+roleName[OBJ6.need(o)]);return}const t=find(o.c.lb,k);if(t<0){say('No other pad labelled "'+o.c.lb+'"');OBJ6.sfx('bad');return}OBJ6.feedback(o,k,true);transit(()=>tpTo(t),d);return}
   if(d.k=='sign'){say('Sign: '+(o.c.tx||'(blank)'));return}
   if(d.k=='lamp'||d.k=='switch'){if(!OBJ6.canUse(o,myId)){say('Only trusted visitors and up can do that');return}OBJ6.setState(k,{on:o.s.on?0:1});OBJ6.feedback(o,k,true);return}
-  if(d.cat=='cont'){if(!OBJ6.canUse(o,myId)&&!(meta&&OBJ6.roleOf(myId)>=(o.c.dp|0))){say('Access: '+roleName[o.c.ac|0]);OBJ6.sfx('lock');return}o._open=1;OBJ6.sfx('open');config(k,true);return}
+  if(d.cat=='cont'){if(!OBJ6.canUse(o,myId)&&!(meta&&OBJ6.roleOf(myId)>=(o.c.dp|0))){say('Access: '+roleName[o.c.ac|0]);OBJ6.sfx('lock');return}OBJ6.sfx('open');CHEST6.open(k);return}
   if(d.k=='waystone'){if(!meta||!OBJ6.canConfig(myId)){say('The waystone hums. (Only builders can bind it)');return}const x=k%W,y=k/W|0;setMeta(Object.assign({},meta,{sp:{x,y}}));say('World spawn bound to this waystone');VFX.wave(x*T+T/2,y*T,'#9fd8ff',80,.6,.5);OBJ6.sfx('star');return}
   if(d.k=='seat'){say('You rest a moment');try{P.hp=Math.min(maxHP(),P.hp+5)}catch(_){}return}
   if(d.cat=='station'){if(typeof CRAFT6!='undefined')CRAFT6.open(k);else say('Crafting table');return}
@@ -57,5 +57,5 @@ const DOORS6=(()=>{
  UI6.chestRefresh=()=>{if(uiK>=0&&OBJ[uiK]&&ui.style.display=='block'&&ODEF[OBJ[uiK].t].cat=='cont')config(uiK,true)};
  addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;const k=e.key.toLowerCase();if(k=='escape'&&ui&&ui.style.display=='block'){close();return}if(k=='g'&&entered&&!e.repeat){const n=OBJ6.near();if(n)config(n.k,false)}});
  return{use,config,cancel,close,check,find,go,get busy(){return busy}}})();
-const _int6=interact;interact=function(){if(dlgOpen)return _int6();if(creatorOn||showInv||menuEl.style.display!='none')return;if(nearNPC())return _int6();const n=OBJ6.near();if(n&&!nearDoor()){DOORS6.use(n.k);return}_int6()};
+const _int6=interact;interact=function(){if(dlgOpen)return _int6();if(creatorOn||showInv||menuEl.style.display!='none')return;const npc=nearNPC(),n=OBJ6.near();if(n&&OBJ6.beatsNpc(n,npc)){DOORS6.use(n.k);return}if(npc)return _int6();_int6()};
 

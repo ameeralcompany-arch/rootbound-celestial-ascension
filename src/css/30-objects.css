@@ -13,3 +13,14 @@
 .objpanel h3{margin:0 0 8px;color:#ffd36a}.objpanel .rc{padding:6px 0;border-bottom:1px solid #2a2048}.objpanel .rc.unk{color:#8a7aaa}
 .objpanel button{background:#3a2a66;color:#fff;border:1px solid #a46bff;border-radius:6px;padding:4px 10px;cursor:pointer;margin:3px 3px 0 0}.objpanel button:disabled{opacity:.4;cursor:default}
 .objpanel .ok{color:#7aff9a}.objpanel .no{color:#ff8a8a}.objpanel .cq{background:#2a2048;padding:6px;border-radius:6px;margin-bottom:6px}.objpanel .row{margin-top:10px}
+#chestui{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);z-index:56;width:620px;max-width:96vw;background:linear-gradient(#241a3e,#150e28);border:2px solid #ffd36a;border-radius:14px;padding:12px 14px;color:#eee;font:13px system-ui,sans-serif;display:none;box-shadow:0 10px 40px #000a,0 0 24px #ffd36a33}
+#chestui .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:15px}#chestui .ch small{color:#bcb0d8;font-size:12px;margin-left:6px}
+#chestui .x{background:#3a2a66;border:1px solid #a46bff;color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer}
+#chestui .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}#chestui h5{margin:0 0 6px;color:#ffd36a;font-size:12px;letter-spacing:.05em;text-transform:uppercase}
+#chestui .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;align-content:start;min-height:150px;max-height:230px;overflow:auto;padding:6px;background:#0c0818;border-radius:10px;border:1px solid #3a2a66}
+#chestui .cs{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;background:#2a2048;border:1px solid #5a4a8a;border-radius:8px;color:#fff;cursor:pointer;padding:2px;min-width:0}
+#chestui .cs:hover{background:#4a3a80;border-color:#ffd36a}#chestui .cs.e{background:#150f26;border:1px dashed #3a2a66;cursor:default}
+#chestui .cs b{position:absolute;right:4px;bottom:2px;font-size:11px;text-shadow:0 0 3px #000}#chestui .cs small{font-size:9px;color:#bcb0d8;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#chestui .hint2{color:#9a8cc0;font-size:12px;margin:8px 0;grid-column:1/-1}
+#chestui .bt{display:flex;gap:8px;flex-wrap:wrap}#chestui .bt button{background:#3a2a66;color:#fff;border:1px solid #a46bff;border-radius:8px;padding:7px 12px;cursor:pointer}#chestui .bt button:hover:not(:disabled){background:#5a3aa0}#chestui .bt button:disabled{opacity:.4;cursor:default}
+@media(max-width:560px){#chestui .cols{grid-template-columns:1fr}}
