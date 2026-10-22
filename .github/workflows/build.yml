@@ -13,35 +13,28 @@ jobs:
           node -e "const s=require('fs').readFileSync('index.html','utf8');const re=/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/g;let m,i=0;while((m=re.exec(s))){i++;try{new Function(m[1])}catch(e){console.error('script',i,e.message);process.exit(1)}}console.log('syntax ok',i,'inline scripts')"
       - name: Install Playwright
         run: npm i playwright@1.49.0 && npx playwright install --with-deps chromium
+      - name: Test server (accounts, owner-only admin, worlds, weather, persistence)
+        timeout-minutes: 5
+        run: bash tools/ci-test.sh tests/server.js
       - name: Test startup
         timeout-minutes: 8
-        run: |
-          export CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          node tests/boot.js
+        run: bash tools/ci-test.sh tests/boot.js
         env: {NODE_PATH: ./node_modules}
       - name: Test main UI/render
         timeout-minutes: 8
-        run: |
-          export CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          node tests/run.js
+        run: bash tools/ci-test.sh tests/run.js
         env: {NODE_PATH: ./node_modules}
       - name: Test objects
         timeout-minutes: 8
-        run: |
-          export CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          node tests/objects.js
+        run: bash tools/ci-test.sh tests/objects.js
         env: {NODE_PATH: ./node_modules}
       - name: Test social
         timeout-minutes: 8
-        run: |
-          export CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          node tests/social.js
+        run: bash tools/ci-test.sh tests/social.js
         env: {NODE_PATH: ./node_modules}
       - name: Test showcase
         timeout-minutes: 8
-        run: |
-          export CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          node tests/showcase.js
+        run: bash tools/ci-test.sh tests/showcase.js
         env: {NODE_PATH: ./node_modules}
       - uses: actions/upload-artifact@v4
         with: {name: rootbound-html, path: index.html}
