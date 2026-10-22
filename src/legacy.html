@@ -1,5 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Rootbound</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600;700&display=swap">
+<!--@@BOOT@@-->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600;700&family=Montserrat:wght@500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="window.RBDIAG&&RBDIAG.assets.push('fonts (optional, using system fonts)')">
 <meta name="description" content="Rootbound: a multiplayer block-building sandbox you can play with a room code.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E">
 <script id="rb-config">
@@ -8,7 +9,6 @@
    peer: your own PeerJS server, e.g. {host:'my-peer.example.com',port:443,path:'/',secure:true,key:'peerjs'} */
 window.RB_CONFIG={ice:null,peer:null};
 </script>
-<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#0a0d1c;--pn:rgba(16,21,46,.82);--bd:rgba(255,255,255,.13);--ac:#ffb545;--ac2:#6c5cff;--tx:#f4f6ff;--mu:#9aa3c7;font-family:'Pixelify Sans','Fredoka',system-ui,-apple-system,'Segoe UI',sans-serif}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);overflow:hidden;font-size:15px;user-select:none;-webkit-user-select:none}
@@ -351,7 +351,7 @@ function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=h
  hole(P.x-cam.x+sx,P.y-cam.y+30+sy,210+bonus().light+(flare>0?260:0),.95);for(const m of mobs)if(m.k=='moth'||m.k=='cloud')hole(m.x-cam.x,m.y-cam.y+m.h/2,90,.6);for(let i=0;i<lampL.length&&i<36;i+=2)hole(lampL[i],lampL[i+1],150,.9);
  g.drawImage(lc,0,0,w,hh);if(flash>0){g.fillStyle='rgba(235,240,255,'+Math.min(.22,flash*.7)+')';g.fillRect(0,0,w,hh)}
  if(hurtF>0){const vg=g.createRadialGradient(w/2,hh/2,hh*.3,w/2,hh/2,hh*.8);vg.addColorStop(0,'rgba(255,40,60,0)');vg.addColorStop(1,'rgba(255,40,60,'+hurtF*1.2+')');g.fillStyle=vg;g.fillRect(0,0,w,hh)}
- if(mt>0){g.save();g.font='600 18px '+FONT;g.textAlign='center';const tw=g.measureText(msg).width+34;g.globalAlpha=Math.min(1,mt*2);rr(w/2-tw/2,hh-170,tw,38,19);g.fillStyle='rgba(16,21,46,.85)';g.fill();g.strokeStyle='rgba(255,255,255,.18)';g.lineWidth=1;g.stroke();g.fillStyle='#ffd88a';g.fillText(msg,w/2,hh-145);g.restore()}}
+ if(mt>0){g.save();g.font='600 18px '+FONT;g.textAlign='center';const tw=g.measureText(msg).width+34;g.globalAlpha=Math.min(1,mt*2);rr(w/2-tw/2,hh-170,tw,38,19);const TK=window.TK6||{};g.fillStyle=TK.bg||'rgba(251,250,247,.94)';g.fill();g.strokeStyle=TK.bd||'rgba(122,102,194,.35)';g.lineWidth=1;g.stroke();g.fillStyle=TK.tx||'#2b2140';g.fillText(msg,w/2,hh-145);g.restore()}}
 // ---------- update
 function update(dt){tm+=dt;mt-=dt;wcd-=dt;rcd-=dt;swing-=dt;iT-=dt;shake=Math.max(0,shake-dt*1.2);hurtF=Math.max(0,hurtF-dt);flare-=dt;lucky-=dt;midas-=dt;over-=dt;for(const s in cdT)cdT[s]=Math.max(0,cdT[s]-dt);
  updWeather(dt);const busy=showInv||dlgOpen||creatorOn||menuEl.style.display!='none'||document.activeElement==chatEl;

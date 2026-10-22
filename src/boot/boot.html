@@ -1,0 +1,44 @@
+<style id="rb-boot-css">
+html,body{margin:0;background:#ece8f5}
+#rbboot{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:linear-gradient(135deg,#faf8f4,#ece8f5 55%,#e1ebf7);color:#1d1b26;font:600 13px system-ui,'Segoe UI',Arial,sans-serif;transition:opacity .4s}
+#rbboot.off{opacity:0;pointer-events:none}
+#rbboot b{font:italic 900 34px system-ui,'Segoe UI',Arial,sans-serif;letter-spacing:-.02em}
+#rbboot i{font:700 9px system-ui;letter-spacing:.34em;color:#6d6a80;font-style:normal}
+#rbboot .sp{width:22px;height:22px;border-radius:50%;border:2px solid #d9d4e4;border-top-color:#7a66c2;animation:rbb 1s linear infinite}@keyframes rbb{to{transform:rotate(360deg)}}
+#rbdiag{display:none;max-width:min(640px,92vw);background:#fff;border:1px solid #d9d4e4;border-radius:14px;padding:18px 20px;box-shadow:0 20px 50px -20px rgba(40,30,70,.5);text-align:left}
+#rbdiag h2{margin:0 0 6px;font-size:16px}#rbdiag p{margin:0 0 10px;font-weight:500;color:#3a3748;line-height:1.5}
+#rbdiag pre{max-height:200px;overflow:auto;background:#f4f1f8;border-radius:8px;padding:10px;font:11px/1.45 Consolas,monospace;white-space:pre-wrap;user-select:text;margin:0 0 10px}
+#rbdiag button{font:700 12px system-ui;border:1px solid #b9b2cc;background:#fff;border-radius:8px;padding:8px 14px;margin-right:8px;cursor:pointer}#rbdiag button.p{background:#8f1d2c;color:#fff;border-color:#8f1d2c}
+</style>
+<script id="rb-boot">
+/* Boot guard: runs before everything else. Shows a loading screen at once, records startup stages and errors,
+   survives blocked localStorage, and turns a stalled start into a readable diagnostic instead of a black screen. */
+(function(){
+var D=window.RBDIAG={t0:Date.now(),stages:[],errors:[],assets:[],ready:false,
+ stage:function(n,info){this.stages.push({n:n,ms:Date.now()-this.t0,i:info||''});},
+ err:function(k,m){if(this.errors.length<40)this.errors.push({k:k,ms:Date.now()-this.t0,m:String(m).slice(0,400)});if(!this.ready)showDiag();},
+ report:function(){
+  var n=navigator,c=(function(){try{var cv=document.createElement('canvas');return{c2d:!!cv.getContext('2d'),webgl:!!(cv.getContext('webgl')||cv.getContext('experimental-webgl'))}}catch(e){return{err:String(e)}}})(),st='ok';
+  try{localStorage.setItem('rbt','1');localStorage.removeItem('rbt')}catch(e){st='BLOCKED: '+e.name}
+  return ['Rootbound diagnostic report','build: '+(window.RB_BUILD||'dev'),'time: '+new Date().toISOString(),'url scheme: '+location.protocol,
+   'userAgent: '+n.userAgent,'viewport: '+innerWidth+'x'+innerHeight+' dpr '+(devicePixelRatio||1),'online: '+n.onLine,'localStorage: '+st,'canvas: '+JSON.stringify(c),
+   'ready: '+this.ready+' elapsed: '+(Date.now()-this.t0)+'ms','--- stages ---'].concat(this.stages.map(function(s){return s.ms+'ms '+s.n+(s.i?' ('+s.i+')':'')}),['--- errors ---'],this.errors.length?this.errors.map(function(e){return e.ms+'ms ['+e.k+'] '+e.m}):['none'],['--- optional assets ---'],this.assets.length?this.assets:['none failed']).join('\n')}};
+D.stage('boot-script');
+/* storage that may throw (blocked site data / policy): fall back to memory so the game still starts */
+try{window.localStorage.getItem('rbt')}catch(e){D.err('storage','localStorage unavailable: '+e.name+' - using in-memory fallback');var m={};try{Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:function(k){return Object.prototype.hasOwnProperty.call(m,k)?m[k]:null},setItem:function(k,v){m[k]=String(v)},removeItem:function(k){delete m[k]},clear:function(){m={}},key:function(i){return Object.keys(m)[i]||null},get length(){return Object.keys(m).length}}})}catch(_){}}
+window.addEventListener('error',function(e){if(e.target&&e.target!==window&&(e.target.src||e.target.href)){D.assets.push((e.target.tagName||'')+' '+(e.target.src||e.target.href));return}D.err('error',(e.message||'')+' @'+(e.filename||'').split('/').pop()+':'+e.lineno+':'+e.colno)},true);
+window.addEventListener('unhandledrejection',function(e){D.err('promise',e.reason&&e.reason.stack||e.reason)});
+function box(){var b=document.getElementById('rbboot');if(b||!document.body)return b;b=document.createElement('div');b.id='rbboot';b.innerHTML='<b>ROOTBOUND</b><i>CELESTIAL ASCENSION</i><div class="sp" id="rbsp"></div><div id="rbmsg">Loading…</div><div id="rbdiag"><h2>Rootbound could not finish starting</h2><p id="rbdp">Something stopped the game while it was loading. Copy the report below and send it to the developer.</p><pre id="rbpre"></pre><button class="p" id="rbretry">Retry</button><button id="rbcopy">Copy report</button><button id="rbcont">Keep waiting</button></div>';document.body.appendChild(b);
+ document.getElementById('rbretry').onclick=function(){location.reload()};
+ document.getElementById('rbcopy').onclick=function(){var t=D.report(),pre=document.getElementById('rbpre');try{navigator.clipboard.writeText(t).then(function(){this.textContent='Copied'}.bind(this),function(){sel()}.bind(this))}catch(e){sel()}function sel(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r)}};
+ document.getElementById('rbcont').onclick=function(){document.getElementById('rbdiag').style.display='none';document.getElementById('rbsp').style.display='';wd=setTimeout(function(){showDiag()},15000)};return b}
+function showDiag(){var b=box();if(!b)return;document.getElementById('rbsp').style.display='none';document.getElementById('rbmsg').style.display='none';var d=document.getElementById('rbdiag');d.style.display='block';document.getElementById('rbpre').textContent=D.report();b.classList.remove('off')}
+var wd;
+D.done=function(){D.ready=true;D.stage('ready');clearTimeout(wd);var b=document.getElementById('rbboot');if(b){b.classList.add('off');setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},500)}};
+D.show=showDiag;
+function start(){box();wd=setTimeout(function(){if(!D.ready){D.err('watchdog','game did not report ready within 12s');}},12000)}
+if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+/* the parser itself may be stalled by a slow network: show something as soon as a body exists */
+var mo=new MutationObserver(function(){if(document.body){mo.disconnect();start()}});mo.observe(document.documentElement,{childList:true});
+})();
+</script>

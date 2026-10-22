@@ -88,3 +88,6 @@ NOT run: real PeerJS networking, >2 clients, real devices/GPU frame rates (headl
 - Store dialog, hub, menu, HUD and skills row are still the older dark theme; no friendly trade window yet (use `/trade`).
 - Art polish (eyes, shoulders), extra weapons, new lofi music and new block art are not done.
 - Showcase portraits are procedural vector art, not hand-drawn character art.
+
+## Black-screen fix (V7.1)
+Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **render-blocking** resources. If those hosts are slow or blocked on a network, the browser never creates the page body, so you see a blank/black window. Now: nothing external blocks startup; a loading screen appears immediately; `RBDIAG` records stages/errors; if the game does not reach its first frame within 12 s a diagnostic panel with a **Copy report** button appears. Blocked `localStorage` falls back to memory. The Windows build also ships `Rootbound-Safe-Mode.bat` (hardware acceleration off) in case a GPU driver is the cause on your PC. This was reproduced and fixed in headless Chromium; it has **not** been observed on your physical PC.

@@ -7,13 +7,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: 20}
-      - run: python3 tools/build.py
+      - run: python3 tools/build.py && git diff --exit-code index.html || echo "::warning::index.html was not up to date with src/ (rebuilt in CI)"
+      - name: JavaScript syntax check
+        run: |
+          node -e "const s=require('fs').readFileSync('index.html','utf8');const re=/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/g;let m,i=0;while((m=re.exec(s))){i++;try{new Function(m[1])}catch(e){console.error('script',i,e.message);process.exit(1)}}console.log('syntax ok',i,'inline scripts')"
       - name: Install Playwright
         run: npm i playwright@1.49.0 && npx playwright install --with-deps chromium
-      - name: Tests
+      - name: Tests (startup first)
         run: |
           export CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          node tests/run.js && node tests/objects.js && node tests/social.js
+          node tests/boot.js && node tests/run.js && node tests/objects.js && node tests/social.js && node tests/showcase.js
         env: {NODE_PATH: ./node_modules}
       - uses: actions/upload-artifact@v4
         with: {name: rootbound-html, path: index.html}
@@ -24,12 +27,24 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: 20}
-      - run: |
+      - name: Package
+        run: |
           copy index.html desktop\index.html
           cd desktop
           npm install
           npx electron-packager . Rootbound --platform=win32 --arch=x64 --out=dist --overwrite
-          Compress-Archive -Path dist\Rootbound-win32-x64 -DestinationPath ..\Rootbound-Windows.zip
+          copy Rootbound-Safe-Mode.bat dist\Rootbound-win32-x64\
+        shell: pwsh
+      - name: Launch the packaged app and verify the game reaches its first frame
+        run: |
+          $exe="desktop\dist\Rootbound-win32-x64\Rootbound.exe"
+          if(-not (Test-Path $exe)){throw "exe missing"}
+          $p=Start-Process $exe -ArgumentList "--smoke" -RedirectStandardOutput smoke.txt -RedirectStandardError smoke-err.txt -PassThru
+          if(-not $p.WaitForExit(60000)){$p.Kill();Get-Content smoke.txt,smoke-err.txt;throw "packaged app did not finish smoke test"}
+          Get-Content smoke.txt
+          if((Get-Content smoke.txt -Raw) -notmatch "SMOKE-OK"){throw "packaged app did not reach ready state"}
+        shell: pwsh
+      - run: Compress-Archive -Path desktop\dist\Rootbound-win32-x64 -DestinationPath Rootbound-Windows.zip
         shell: pwsh
       - uses: actions/upload-artifact@v4
         with: {name: Rootbound-Windows, path: Rootbound-Windows.zip}
