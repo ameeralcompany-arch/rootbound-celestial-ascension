@@ -84,10 +84,10 @@ const UI6=(()=>{
   '<div class="hrow"><label>Bloom / glow</label><span class="hchip'+(o.bloom?' on':'')+'" id="sb">'+(o.bloom?'ON':'OFF')+'</span></div>'+
   '<div class="hrow"><label>Weather</label><span class="hchip'+(o.wxOn?' on':'')+'" id="sw">'+(o.wxOn?'ON':'OFF')+'</span></div>'+
   '<div class="hrow"><label>FPS counter</label><span class="hchip'+(o.fpsShow?' on':'')+'" id="sf">'+(o.fpsShow?'ON':'OFF')+'</span></div>'+
-  '<div class="hrow"><label>Audio</label><button class="hbtn" id="sa">Music & effects volume</button></div>';
+  (EXT.sx?EXT.sx(o):'')+'<div class="hrow"><label>Audio</label><button class="hbtn" id="sa">Music & effects volume</button></div>';
   const q=()=>{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);el('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% - particles '+p.cap+' - parallax layers '+p.par};q();
   el('sq').onchange=e=>{QM.setting(e.target.value);q()};el('sv').oninput=e=>{o.vfx=e.target.value/100;el('svn').textContent=e.target.value+'%';QM.apply(QM.cur.id,true);celSave()};el('su').oninput=e=>{o.ui=e.target.value/100;el('sun').textContent=e.target.value+'%';applyUi();celSave()};
-  const tg=(id,k)=>{el(id).onclick=()=>{o[k]=o[k]?0:1;celSave();QM.apply(QM.cur.id,true);applyUi();render()}};tg('sr','reduce');tg('sb','bloom');tg('sw','wxOn');tg('sf','fpsShow');
+  const tg=(id,k)=>{el(id).onclick=()=>{o[k]=o[k]?0:1;celSave();QM.apply(QM.cur.id,true);applyUi();render()}};tg('sr','reduce');tg('sb','bloom');tg('sw','wxOn');tg('sf','fpsShow');try{EXT.sxBind&&EXT.sxBind(body,o)}catch(_){}
   el('sa').onclick=()=>{close();menuEl.style.display='flex';try{showMenuPane&&0}catch(_){}document.getElementById('bo').click()}}
  function applyUi(){const s=cel.opt.ui;for(const id of['hudL','bar','skills','quest','hudR'])el(id)&&(el(id).style.zoom=s);$('fps').style.display=cel.opt.fpsShow?'block':'none'}
  // ---- account / save export & import

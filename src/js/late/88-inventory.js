@@ -5,7 +5,7 @@ const INV7=(()=>{
  let el=null,filter='all',selK=null,assign=-1,hold=0;
  const RARS=[['Common','#9aa0ab'],['Uncommon','#3f9b5a'],['Rare','#3a78c2'],['Epic','#8a4cc4'],['Legendary','#c27a1a']];
  const rarByCost=c=>c<30?0:c<110?1:c<320?2:c<800?3:4;
- const kind=k=>typeof k=='string'?(k[0]=='a'?'wear':'weapons'):k>=200?'mats':k>=100?'seeds':(k>=20&&k<=38&&typeof ODEF!='undefined'&&ODEF[k])?'objects':'blocks';
+ const kind=k=>typeof k=='string'?(k[0]=='a'?'wear':'weapons'):k>=200?'mats':k>=100?'seeds':(k>=20&&k<=41&&typeof ODEF!='undefined'&&ODEF[k])?'objects':'blocks';
  const costOf=k=>typeof k=='string'?(k[0]=='a'?WEAR[k.slice(2)].cost+(WEAR[k.slice(2)].lv|0)*40:WPN[k.slice(2)].cost):MAT[k]?MAT[k].p*3:(PRICE[k%100]||10)*(k>=100?5:1);
  const nameOf=k=>typeof k=='string'?(k[0]=='a'?WEAR[k.slice(2)].n:WPN[k.slice(2)].n):iname(k);
  const iconOf=k=>{try{return iconURL(k)}catch(_){return ''}};

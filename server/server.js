@@ -126,7 +126,7 @@ function createServer(opts={}){
   const wid=s.world;if(!wid)return;const w=wid=='plaza'?null:worlds.get(wid);
   if(t=='_p'){if(!bucket(s,'p',40,1000))return;s.pres=R.cleanPres(m.d);s.pres.uid=s.uid;s.pres.n=s.name.slice(0,14);relay(wid,{t:'_p',d:s.pres,f:s.sid},s.sid);return}
   if(t=='chat'){if(!bucket(s,'chat',6,8000))return;if(isMuted(s.uid))return send(s,{t:'notice',d:{text:'You are muted',by:'Server'}});const d=m.d;if(!d||typeof d.t!='string')return;const out={n:s.name.slice(0,14),t:d.t.slice(0,80).replace(/[<>]/g,'')};if(!out.t.trim())return;if(Number.isInteger(d.e)&&d.e>=0&&d.e<64)out.e=d.e;relay(wid,{t:'chat',d:out,f:s.sid},s.sid);return}
-  if(t=='x'){if(!bucket(s,'x',10,8000))return;if(isMuted(s.uid))return;const v=R.checkX(m.d,s.sid,sid=>members(wid).has(sid));if(!v)return;const o=sessions.get(v.to);if(o)send(o,{t:'x',d:v,f:s.sid});return}
+  if(t=='x'){if(!bucket(s,'x',10,8000))return;if(isMuted(s.uid))return;const v=R.checkX(m.d,s.sid,sid=>members(wid).has(sid));if(!v)return;v.n=s.name.slice(0,14);const o=sessions.get(v.to);if(o)send(o,{t:'x',d:v,f:s.sid});return}
   if(!w)return;// plaza: no persistent edits
   if(w.meta&&w.meta.b&&w.meta.b.includes(s.uid))return;
   if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);return}

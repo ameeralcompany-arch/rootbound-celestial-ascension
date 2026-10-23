@@ -48,8 +48,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  const ch2=await E(i=>{const k=i.ks[2];OBJ6.chestOp(k,'take',5,50);return{n:cnt(5),left:OBJ[k].c.it[0][1]}},info);ok('chest over-take refused',ch2.n==9&&ch2.left==1,JSON.stringify(ch2));
  const ch3=await E(i=>{const k=i.ks[2];const b4=cnt(5);OBJ6.chestOp(k,'put',5,9999);return cnt(5)==b4},info);ok('cannot put more than you own',ch3);
  // host validation of remote requests
- const hv=await E(i=>{const k=i.ks[2];rm={isHost:true,emit(){},peers(){return[]}};meta={x:1,y:1,o:'own',on:'O',f:[],t:[],b:[],pub:0};OBJ[k].c.ac=2;const r1=OBJ6.hostCheck({op:'take',k,i:5,n:1,rid:'a'},'stranger');const r2=OBJ6.hostCheck({op:'bogus',k},'stranger');const r3=OBJ6.hostCheck({op:'cfg',k,v:{t:27,c:{nm:'pwn'}}},'stranger');const r4=OBJ6.hostCheck({op:'cfg',k:999999999,v:{}},'own');const r5=OBJ6.hostCheck({op:'cfg',k,v:{t:27,c:{nm:'ok',ac:2}}},'own');const left=OBJ[k].c.it.length;rm=null;meta=null;return{r1,r2,r3,r4,r5:!!r5,left,nm:OBJ[k].c.nm}},info);
- ok('host rejects take by unauthorised stranger',hv.r1===false&&hv.left==1,JSON.stringify(hv));ok('host rejects unknown op / bad key',hv.r2===false&&hv.r4===false);ok('host rejects config by non-builder',hv.r3===false&&hv.nm!='pwn');ok('host accepts config by owner',hv.r5&&hv.nm=='ok');
+ // permission enforcement for shared worlds now lives on the server (rules.js) and is covered by tests/server.js + tests/e2e.js
  // banned user
  ok('banned uid has role -1',await E(()=>{meta={x:1,y:1,o:'own',on:'O',f:[],t:[],b:['bad'],pub:0};const r=OBJ6.roleOf('bad');meta=null;return r===-1}));
 

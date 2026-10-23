@@ -11,18 +11,6 @@ const SOC6=(()=>{
  const peers=()=>rm?rm.peers().filter(p=>!p.isMe&&p.presence&&p.presence.n):[];
  const byName=n=>{n=String(n||'').toLowerCase();return peers().find(p=>p.presence.n.toLowerCase()==n)||peers().find(p=>p.presence.n.toLowerCase().startsWith(n))};
  const myPeer=()=>rm&&rm.id;
- // host-side limiter + moderation (wraps the existing host allow function)
- function hostOK(peer,t,d){const now=Date.now(),k=peer+t,a=(rate[k]=(rate[k]||[]).filter(x=>now-x<8000));const cap=t=='chat'?8:t=='x'?10:t=='o'?40:t=='e'?60:30;if(a.length>=cap)return false;a.push(now);
-  const uid=(rm&&rm.ps&&rm.ps[peer]&&rm.ps[peer].uid)||'';if((t=='chat'||t=='x')&&(MUTE[uid||peer]||0)>now)return false;return true}
- const OPS=['wh','tr_offer','tr_acc','tr_done','tr_fail','tr_no','tp','kick','notice'];
- function hostCheckX(d,peer){if(!d||typeof d!='object'||!OPS.includes(d.op))return false;const r={op:d.op};const id=v=>String(v||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);
-  if(['tp','kick','notice'].includes(d.op))return false;// admin ops are emitted by the host itself, never accepted from guests
-  r.to=id(d.to);if(!r.to||r.to==peer)return false;if(!rm.ps[r.to]&&r.to!=rm.id)return false;
-  if(d.op=='wh'){r.t=String(d.t||'').slice(0,80);r.n=String(d.n||'').slice(0,14);return r.t?r:false}
-  r.id=id(d.id);if(!r.id)return false;
-  if(d.op=='tr_offer'){const it=v=>Array.isArray(v)&&v.length==2&&Number.isInteger(v[0])&&v[0]>=0&&v[0]<=999&&Number.isInteger(v[1])&&v[1]>=1&&v[1]<=9999;if(!it(d.give)||!it(d.want))return false;r.give=d.give;r.want=d.want;r.n=String(d.n||'').slice(0,14)}
-  return r}
- const _ha=hostAllow;hostAllow=function(peer,t,d){if(!hostOK(peer,t,d))return false;if(t=='x')return hostCheckX(d,peer);const v=_ha(peer,t,d);if(t=='chat'&&v&&d&&Number.isInteger(d.e)&&d.e>=0&&d.e<EMOTES.length)v.e=d.e;return v};
  // ---- trading state
  const T6={out:null,inn:null,esc:null};const nameOf=i=>i==0?'gems':OBJ6.itemName(i);const have=(i,n)=>i==0?gems>=n:cnt(i)>=n;const take=(i,n)=>{if(i==0)gems-=n;else addI(i,-n)};const give=(i,n)=>{if(i==0)gems+=n;else addI(i,n)};
  const send=(o)=>{if(rm)rm.emit('x',o)};
@@ -60,8 +48,8 @@ const SOC6=(()=>{
   if(c=='/trade'){if(!rm){say('Trading needs a room with another player');return true}const n=a.slice(2).map(Number);if(n.length<4||n.some(v=>!Number.isInteger(v)||v<0)||n[1]<1||n[3]<1){say('Usage: /trade name giveId n wantId n  (id 0 = gems)');return true}offer(a[1],n[0],n[1],n[2],n[3]);return true}
   return false}
  let emoCd=0;function emote(i){const t=performance.now();if(t-emoCd<1200)return;emoCd=t;const em=EMOTES[i];bub.me={t:em[1],e:t+2500};if(rm)rm.emit('chat',{n:myName,t:em[1],e:i});try{VFX.burst(P.x,P.y+10,['#ffd36a','#fff'],8,100,1,.6,8)}catch(_){}if(i==1||i==2)P.vy=Math.min(P.vy,-120)}
- return{cmd,emote,remote,offer,accept,decline,tick,T6,EMOTES,mute:MUTE,hostOK,hostCheckX,byName,peers,HELP}})();
-const _sc6=sendChat;sendChat=function(){const v=chatEl.value;const t=v.trim();if(t.startsWith('/')&&!t.startsWith('/name ')){let h=false;try{h=SOC6.cmd(t)||(typeof ADMIN6!='undefined'&&ADMIN6.cmd(t))}catch(e){console.error(e)}if(h){chatEl.value='';chatEl.style.display='none';chatEl.blur();return}}
+ return{cmd,emote,remote,offer,accept,decline,tick,T6,EMOTES,mute:MUTE,byName,peers,HELP}})();
+const _sc6=sendChat;sendChat=function(){const v=chatEl.value;const t=v.trim();if(t.startsWith('/')&&!t.startsWith('/name ')){let h=false;try{h=SOC6.cmd(t)}catch(e){console.error(e)}if(h){chatEl.value='';chatEl.style.display='none';chatEl.blur();return}}
  const n=performance.now();sendChat.h=(sendChat.h||[]).filter(x=>n-x<5000);if(t&&sendChat.h.length>=4){say('Slow down a little');chatEl.value='';return}sendChat.h.push(n);_sc6()};
 const _t94=OBJ6.tick;OBJ6.tick=function(dt){_t94(dt);try{SOC6.tick(dt)}catch(_){}};
 addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||menuEl.style.display!='none')return;const k=e.key.toLowerCase();if(k=='b'&&!e.repeat&&entered)SOC6.emote(((SOC6.__e=((SOC6.__e|0)+1)%SOC6.EMOTES.length)))});

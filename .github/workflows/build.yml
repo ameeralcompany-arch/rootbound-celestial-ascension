@@ -36,6 +36,14 @@ jobs:
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/showcase.js
         env: {NODE_PATH: ./node_modules}
+      - name: Test theme + settings + icons
+        timeout-minutes: 8
+        run: bash tools/ci-test.sh tests/theme.js
+        env: {NODE_PATH: ./node_modules}
+      - name: End-to-end (real server + 3 real browser clients, weather, persistence, restart)
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/e2e.js
+        env: {NODE_PATH: ./node_modules}
       - uses: actions/upload-artifact@v4
         with: {name: rootbound-html, path: index.html}
   windows:

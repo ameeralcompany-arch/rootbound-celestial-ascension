@@ -28,6 +28,7 @@ const DOORS6=(()=>{
    if(o.c.kr&&o.c.kc){addI(230,-1);say('Used a Gate Key')}
    OBJ6.setState(k,{open:1});OBJ6.feedback(o,k,true);go(k,o);return}
   if(d.cat=='tele'){if(busy)return;if(!OBJ6.canUse(o,myId)){say('Access: '+roleName[OBJ6.need(o)]);return}const t=find(o.c.lb,k);if(t<0){say('No other pad labelled "'+o.c.lb+'"');OBJ6.sfx('bad');return}OBJ6.feedback(o,k,true);transit(()=>tpTo(t),d);return}
+  if(d.cat=='wx'){WXM7.use(k);return}
   if(d.k=='sign'){say('Sign: '+(o.c.tx||'(blank)'));return}
   if(d.k=='lamp'||d.k=='switch'){if(!OBJ6.canUse(o,myId)){say('Only trusted visitors and up can do that');return}OBJ6.setState(k,{on:o.s.on?0:1});OBJ6.feedback(o,k,true);return}
   if(d.cat=='cont'){if(!OBJ6.canUse(o,myId)&&!(meta&&OBJ6.roleOf(myId)>=(o.c.dp|0))){say('Access: '+roleName[o.c.ac|0]);OBJ6.sfx('lock');return}OBJ6.sfx('open');CHEST6.open(k);return}
@@ -46,11 +47,12 @@ const DOORS6=(()=>{
    else if(d.k=='sign')h+='<label>Text (80 chars)</label><input type=text id="f_tx" maxlength=80 value="'+esc(c.tx)+'">';
    else if(d.k=='tele')h+='<label>Pad label (pads with the same label link)</label><input type=text id="f_lb" maxlength=12 value="'+esc(c.lb)+'"><label>Who may use it</label><select id="f_ac">'+roleName.map((r,i)=>'<option value='+i+'>'+r+'</option>').join('')+'</select>';
    else if(d.cat=='cont')h+='<label>Name</label><input type=text id="f_nm" maxlength=16 value="'+esc(c.nm)+'"><label>Who may take</label><select id="f_ac">'+roleName.map((r,i)=>'<option value='+i+'>'+r+'</option>').join('')+'</select>';
+   else if(d.cat=='wx')h+='<label>Who may use it</label><select id="f_ac">'+roleName.map((r,i)=>'<option value='+i+'>'+r+'</option>').join('')+'</select><label>Weather</label><button id="op_wxreset">Restore default skies</button>';
    else if(d.k=='waystone')h+='<label>Name</label><input type=text id="f_nm" maxlength=16 value="'+esc(c.nm)+'">';}
-  h+='<div class="row">'+(can&&['door','tele','cont'].includes(d.cat)||can&&['sign','waystone'].includes(d.k)?'<button id="op_save">Save</button>':'')+'<button id="op_close">Close</button></div>';
+  h+='<div class="row">'+(can&&['door','tele','cont','wx'].includes(d.cat)||can&&['sign','waystone'].includes(d.k)?'<button id="op_save">Save</button>':'')+'<button id="op_close">Close</button></div>';
   ui.innerHTML=h;ui.style.display='block';
   const set=(id,v)=>{const e=ui.querySelector('#'+id);if(e)e.value=v};set('f_dt',c.dt);set('f_ac',c.ac);
-  ui.querySelector('#op_close').onclick=close;
+  ui.querySelector('#op_close').onclick=close;const wr=ui.querySelector('#op_wxreset');if(wr)wr.onclick=()=>{WXM7.reset(k);close()};
   const sv=ui.querySelector('#op_save');if(sv)sv.onclick=()=>{const g2=id=>{const e=ui.querySelector('#'+id);return e?e.type=='checkbox'?e.checked?1:0:e.value:undefined},v=Object.assign({},c);for(const f of['nm','dt','d','lb','ac','lv','kr','kc','sw','tx']){const x=g2('f_'+f);if(x!==undefined)v[f]=x}if(OBJ6.configure(k,v)){say('Saved');OBJ6.sfx('ok');close()}};
   ui.querySelectorAll('.it button').forEach(b=>b.onclick=()=>OBJ6.chestOp(k,'take',+b.dataset.t,+b.dataset.n));
   const p1=ui.querySelector('#op_put1'),pa=ui.querySelector('#op_putall'),sel=()=>bar[sel];if(p1)p1.onclick=()=>{const it=sel();if(it)OBJ6.chestOp(k,'put',it,1);else say('Select an item on the hotbar')};if(pa)pa.onclick=()=>{const it=sel();if(it&&cnt(it))OBJ6.chestOp(k,'put',it,cnt(it));else say('Select an item on the hotbar')}}

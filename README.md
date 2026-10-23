@@ -91,3 +91,27 @@ NOT run: real PeerJS networking, >2 clients, real devices/GPU frame rates (headl
 
 ## Black-screen fix (V7.1)
 Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **render-blocking** resources. If those hosts are slow or blocked on a network, the browser never creates the page body, so you see a blank/black window. Now: nothing external blocks startup; a loading screen appears immediately; `RBDIAG` records stages/errors; if the game does not reach its first frame within 12 s a diagnostic panel with a **Copy report** button appears. Blocked `localStorage` falls back to memory. The Windows build also ships `Rootbound-Safe-Mode.bat` (hardware acceleration off) in case a GPU driver is the cause on your PC. This was reproduced and fixed in headless Chromium; it has **not** been observed on your physical PC.
+
+
+## V8 – Persistent worlds, owner-only admin, weather, themes (current)
+
+**What changed**
+- Startup: external fonts/PeerJS no longer block rendering; loading screen, diagnostics report, safe mode (see `tests/boot.js`).
+- Multiplayer: host rooms are gone. `server/` is a dependency-free Node server (accounts, worlds, weather, admin, saved to disk). The client (`75-net.js`) connects to it, shows a public world directory, auto-reconnects, and stays playable offline.
+- Admin: exactly one owner account, set with `node server/cli.js set-owner <Name>` (password stored as a scrypt hash). Every privileged action is authorised on the server; the **TOOLS** button only appears for the verified owner.
+- Weather: every world has weather saved with it. Three distinct machines (Blossom, Space, Galaxy) change it for everyone in the world; persists across leaving and server restarts. Backgrounds are procedural (no image files to go missing).
+- NPCs: distinct accessories per NPC, weather-themed styling, greeting sparkles (they do not walk; shops and quests depend on their position).
+- Design system: `src/css/50-system.css` holds all tokens (colour, surfaces, rarity, radii, shadows, motion). Pearl light theme by default, plum night dark theme, "match system"; chosen in Hub → Settings, with UI-sound volume/mute and reduced motion.
+
+**Run it**
+- Offline: open `index.html`.
+- Shared worlds: `node server/cli.js set-owner YourName`, then `node server/server.js`, open `http://localhost:PORT/` (the server also serves the game). See `server/server.js` header for env vars (PORT, DATA_DIR).
+
+**Tests (all run in CI):** `server`, `boot`, `run` (58 UI/render), `objects`, `social`, `showcase`, `theme`, `e2e` (real server + real browsers: join, presence, block sync, weather machine, restart persistence, owner-only Tools).
+
+**Not verified / limits**
+- I cannot run the game on your PC; the black-screen cause I could reproduce (blocking CDN loads) is fixed and covered by tests, but if your screen is still black, open the game, wait ~10 s, and use the diagnostic panel's copy button.
+- Player inventories, gems and levels are still stored on each device (the server is authoritative for worlds, roles, weather and admin only). Trades are peer-to-peer relays.
+- The server has no TLS of its own: put it behind HTTPS (Caddy/nginx/Cloudflare) for public play.
+- Real-device FPS, real internet latency and a production deployment are untested.
+- The full-game reskin is partial: HUD, hub, menus, dialogs, login, inventory, showcase, chest/object panels and icons use the new tokens; the store dialog, crafting/farming panels and trade UI still use older markup with token-mapped colours, and block art is unchanged.
