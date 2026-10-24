@@ -19,7 +19,7 @@ if(vp[0]==1280){
  await p.click('#show nav a[data-n=inv]');await p.waitForTimeout(700);ok('Inventory nav opens inventory + closes showcase',await p.evaluate(()=>!SHOW7.isOpen&&!!document.querySelector('#inv7')&&getComputedStyle(document.querySelector('#inv7')).display!='none'));
  await p.keyboard.press('Escape');await p.waitForTimeout(300);
  await p.evaluate(()=>SHOW7.open());await p.waitForTimeout(400);
- await p.click('#show nav a[data-n=store]');await p.waitForTimeout(500);ok('Store nav opens shop dialog',await p.evaluate(()=>dlgOpen&&dlg.style.display=='block'));
+ await p.click('#show nav a[data-n=store]');await p.waitForTimeout(500);ok('Store nav opens the full store',await p.evaluate(()=>STORE7.isOpen));await p.evaluate(()=>STORE7.close());await p.waitForTimeout(300);
  ok('UIS volume/mute state exists',await p.evaluate(()=>typeof UIS.play=='function'));
 }
 ok('no page errors'+tag,e.length==0,e.join('|'));await p.close()}
