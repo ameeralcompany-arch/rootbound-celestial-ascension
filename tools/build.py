@@ -18,5 +18,8 @@ s=open(os.path.join(R,'src/legacy.html'),encoding='utf-8').read()
 for k,v in (('<!--@@BOOT@@-->',open(os.path.join(R,'src/boot/boot.html'),encoding='utf-8').read()),('/*@@CSS@@*/',cat('src/css/*.css','CSS')),('<!--@@HTML@@-->',cat('src/html/*.html','HTML')),('/*@@EARLY@@*/',cat('src/js/early/*.js','EARLY')),('/*@@LATE@@*/',cat('src/js/late/*.js','LATE'))):
     assert s.count(k)==1,k
     s=s.replace(k,v)
+cat_json=open(os.path.join(R,'server/catalog.json'),encoding='utf-8').read().replace('</','<\\/')
+assert s.count('/*@@CATALOG@@*/{items:[]}')==1,'catalog marker'
+s=s.replace('/*@@CATALOG@@*/{items:[]}',cat_json)
 open(os.path.join(R,'index.html'),'w',encoding='utf-8').write(s)
 print('built index.html',len(s),'bytes')

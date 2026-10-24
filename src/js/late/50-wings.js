@@ -16,6 +16,7 @@ const WingArt=(()=>{
    x.fillStyle='rgba(255,255,255,.2)';x.beginPath();x.moveTo(L*.2,-w*.2);x.lineTo(L*.62,-w*.7);x.lineTo(L*.48,-w*.05);x.closePath();x.fill();
    x.fillStyle='rgba(120,200,255,.18)';x.beginPath();x.moveTo(L*.4,w*.1);x.lineTo(L*.9,-w*.1);x.lineTo(L*.55,w*.5);x.closePath();x.fill()}
   x.restore()}
+ const STY={}; // extra feather silhouettes (shop wings); filled in by 51-wings2.js
  function build(tier,hd){
   const W=WINGS[tier],ds=hd?2:1.25,CW=Math.round(250*ds*W.span*.9),CH=Math.round(260*ds*W.span*.9),ox=Math.round(CW*.1),oy=Math.round(CH*.72),pal=W.pal,rand=sr(tier*977+13),layers=[];
   const Lmax=Math.min(CW*.86,128*ds*W.span);
@@ -25,7 +26,7 @@ const WingArt=(()=>{
    const jf=j/(rows-1||1),n=W.fe-(j>>1),aMin=-60+j*2,aMax=26-j*4;
    const col0=j<rows/2?pal[0]:pal[1],col1=j<rows/2?pal[1]:pal[2],col2=j==rows-1?pal[2]:pal[2];
    for(let i=0;i<n;i++){const u=i/(n-1||1),a=(aMin+(aMax-aMin)*u+(rand()-.5)*3)*RAD,L=Lmax/ds*(.5+.5*Math.pow(1-u,.7))*(1-jf*.4)*(.94+rand()*.12),w=L*(.2+.06*(1-jf));
-    x.save();x.rotate(a);x.globalAlpha=.78+.22*(j/rows);feather(x,L,w,col0,col1,col2,W.corona||W.cosmic?pal[3]:null,W.corona?pal[3]:null,W.crys>3,rand);x.restore()}
+    x.save();x.rotate(a);x.globalAlpha=.78+.22*(j/rows);(STY[W.style]||feather)(x,L,w,col0,col1,col2,W.corona||W.cosmic?pal[3]:null,W.corona?pal[3]:null,W.crys>3,rand);x.restore()}
    if(W.nebula&&j==rows-1){ // sparkle-star dust across the front row
     x.globalCompositeOperation='source-atop';for(let i=0;i<46;i++){const a=(aMin+rand()*(aMax-aMin))*RAD,r=10+rand()*Lmax/ds*.8;x.fillStyle=['#fff','#7ff0ff','#ff9be8','#c05cff'][i%4];x.globalAlpha=.4+rand()*.5;x.fillRect(Math.cos(a)*r,Math.sin(a)*r,1.6,1.6)}}
    layers.push(c)}
@@ -59,7 +60,7 @@ const WingArt=(()=>{
    g.restore()}
   g.restore()}
  // extras that sit with the wings: halo above the head, storm arcs
- function extras(g,tier,cx,cy,t){const W=WINGS[tier],ph=QM.cur.wfx;if(!ph)return;
+ function extras(g,tier,cx,cy,t){const W=WINGS[tier],ph=QM.cur.wfx;if(!ph)return;if(W.fxk&&window.FX7)FX7.wingFx(W,cx,cy,t);
   if(W.halo){g.save();g.globalCompositeOperation='lighter';g.translate(cx,cy-50);g.scale(1,.28);g.lineWidth=3;g.strokeStyle=W.pal[3];g.shadowColor=W.pal[3];g.shadowBlur=10;g.globalAlpha=.85;g.beginPath();g.arc(0,0,19,0,6.3);g.stroke();g.lineWidth=1;g.globalAlpha=.6;g.setLineDash([3,5]);g.lineDashOffset=-t*20;g.beginPath();g.arc(0,0,24,0,6.3);g.stroke();g.restore()}
   if(W.arc&&ph>=2&&((t*8)|0)%5==0){g.save();g.globalCompositeOperation='lighter';g.strokeStyle='#bfe8ff';g.lineWidth=1.4;g.shadowColor='#78c8ff';g.shadowBlur=8;for(let s=-1;s<=1;s+=2){g.beginPath();let x=cx+s*8,y=cy-4;g.moveTo(x,y);for(let i=0;i<5;i++){x+=s*(10+((t*97+i*13)%7));y+=-6+((t*57+i*31)%12);g.lineTo(x,y)}g.stroke()}g.restore()}}
- return{get,draw,extras,tiers:WINGS.length}})();
+ return{get,draw,extras,STY,tiers:WINGS.length}})();

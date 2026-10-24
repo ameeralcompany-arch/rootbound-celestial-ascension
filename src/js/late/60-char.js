@@ -121,10 +121,13 @@ const AC6=(()=>{
   if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,(cx*.01)%6);WingArt.extras(g,wingIdx,cx,cy+24,t)}
   else if(hasLegacy){g.save();g.translate(cx,feet);g.scale(1.1*f,1.1);try{drawWings(wr.wing,wr.wo!=null?wr.wo:wingOpen,wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,t)}catch(_){}g.restore()}
   g.save();g.translate(cx,feet);g.scale(1.12*f,1.12);g.lineJoin='round';g.lineCap='round';
-  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr})}finally{g.restore()}
+  FX7.ld=local;
+  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.06)VFX.feather(cx+cam.x+(Math.random()<.5?-1:1)*30,cy+cam.y+10+Math.random()*30,WINGS[wingIdx].pal[2],f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}
+  // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
+  try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
   // nameplate + bubble
   const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50,tier,nm,lvv);
   if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-96,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-79);g.restore()}
@@ -134,4 +137,4 @@ const AC6=(()=>{
 drawChar=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){AC6.draw(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q)};
 nameTag=function(){};
 // compact, validated cosmetic block for multiplayer presence
-function celPres(){const w=curWing(lvl),a=curAura(lvl);return{w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
+function celPres(){const w=curWing(lvl),a=curAura(lvl);return{fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}

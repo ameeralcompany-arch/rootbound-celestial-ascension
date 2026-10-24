@@ -1,0 +1,802 @@
+{
+ "blocks": [
+  {
+   "k": 1,
+   "n": "Dirt",
+   "price": 2,
+   "lv": 1,
+   "hard": 3
+  },
+  {
+   "k": 101,
+   "n": "Dirt Seed",
+   "price": 10,
+   "lv": 1,
+   "hard": 3
+  },
+  {
+   "k": 8,
+   "n": "Sand",
+   "price": 3,
+   "lv": 1,
+   "hard": 2
+  },
+  {
+   "k": 108,
+   "n": "Sand Seed",
+   "price": 15,
+   "lv": 1,
+   "hard": 2
+  },
+  {
+   "k": 3,
+   "n": "Stone",
+   "price": 4,
+   "lv": 1,
+   "hard": 6
+  },
+  {
+   "k": 103,
+   "n": "Stone Seed",
+   "price": 20,
+   "lv": 1,
+   "hard": 6
+  },
+  {
+   "k": 5,
+   "n": "Wood",
+   "price": 7,
+   "lv": 1,
+   "hard": 4
+  },
+  {
+   "k": 105,
+   "n": "Wood Seed",
+   "price": 35,
+   "lv": 1,
+   "hard": 4
+  },
+  {
+   "k": 6,
+   "n": "Glass",
+   "price": 9,
+   "lv": 1,
+   "hard": 2
+  },
+  {
+   "k": 106,
+   "n": "Glass Seed",
+   "price": 45,
+   "lv": 1,
+   "hard": 2
+  },
+  {
+   "k": 7,
+   "n": "Brick",
+   "price": 12,
+   "lv": 1,
+   "hard": 6
+  },
+  {
+   "k": 107,
+   "n": "Brick Seed",
+   "price": 60,
+   "lv": 1,
+   "hard": 6
+  },
+  {
+   "k": 11,
+   "n": "Cobblestone",
+   "price": 5,
+   "lv": 1,
+   "hard": 6
+  },
+  {
+   "k": 111,
+   "n": "Cobblestone Seed",
+   "price": 25,
+   "lv": 1,
+   "hard": 6
+  },
+  {
+   "k": 15,
+   "n": "Hedge",
+   "price": 6,
+   "lv": 1,
+   "hard": 3
+  },
+  {
+   "k": 115,
+   "n": "Hedge Seed",
+   "price": 30,
+   "lv": 1,
+   "hard": 3
+  },
+  {
+   "k": 14,
+   "n": "Roof Tile",
+   "price": 10,
+   "lv": 1,
+   "hard": 5
+  },
+  {
+   "k": 114,
+   "n": "Roof Tile Seed",
+   "price": 50,
+   "lv": 1,
+   "hard": 5
+  },
+  {
+   "k": 12,
+   "n": "Marble",
+   "price": 12,
+   "lv": 3,
+   "hard": 6
+  },
+  {
+   "k": 112,
+   "n": "Marble Seed",
+   "price": 60,
+   "lv": 3,
+   "hard": 6
+  },
+  {
+   "k": 13,
+   "n": "Street Lamp",
+   "price": 20,
+   "lv": 3,
+   "hard": 3
+  },
+  {
+   "k": 113,
+   "n": "Street Lamp Seed",
+   "price": 100,
+   "lv": 3,
+   "hard": 3
+  },
+  {
+   "k": 17,
+   "n": "World Lock",
+   "price": 500,
+   "lv": 2,
+   "hard": 99
+  },
+  {
+   "k": 9,
+   "n": "Crystal",
+   "price": 40,
+   "lv": 5,
+   "hard": 5
+  },
+  {
+   "k": 109,
+   "n": "Crystal Seed",
+   "price": 200,
+   "lv": 5,
+   "hard": 5
+  },
+  {
+   "k": 10,
+   "n": "Gold",
+   "price": 80,
+   "lv": 9,
+   "hard": 7
+  },
+  {
+   "k": 110,
+   "n": "Gold Seed",
+   "price": 400,
+   "lv": 9,
+   "hard": 7
+  },
+  {
+   "k": 20,
+   "n": "Oak Door",
+   "price": 30,
+   "lv": 2,
+   "hard": 4
+  },
+  {
+   "k": 21,
+   "n": "Stone Gate",
+   "price": 60,
+   "lv": 6,
+   "hard": 6
+  },
+  {
+   "k": 22,
+   "n": "Steel Hatch",
+   "price": 120,
+   "lv": 10,
+   "hard": 7
+  },
+  {
+   "k": 27,
+   "n": "Treasure Chest",
+   "price": 80,
+   "lv": 3,
+   "hard": 4
+  },
+  {
+   "k": 28,
+   "n": "Signpost",
+   "price": 12,
+   "lv": 1,
+   "hard": 2
+  },
+  {
+   "k": 29,
+   "n": "Lantern",
+   "price": 40,
+   "lv": 2,
+   "hard": 2
+  },
+  {
+   "k": 30,
+   "n": "Lever",
+   "price": 50,
+   "lv": 4,
+   "hard": 3
+  },
+  {
+   "k": 31,
+   "n": "Pressure Plate",
+   "price": 40,
+   "lv": 4,
+   "hard": 3
+  },
+  {
+   "k": 33,
+   "n": "Crafting Table",
+   "price": 90,
+   "lv": 3,
+   "hard": 5
+  },
+  {
+   "k": 34,
+   "n": "Storage Crate",
+   "price": 40,
+   "lv": 1,
+   "hard": 4
+  },
+  {
+   "k": 35,
+   "n": "Training Dummy",
+   "price": 60,
+   "lv": 3,
+   "hard": 5
+  },
+  {
+   "k": 36,
+   "n": "Waystone",
+   "price": 200,
+   "lv": 5,
+   "hard": 6
+  },
+  {
+   "k": 37,
+   "n": "Bench",
+   "price": 25,
+   "lv": 1,
+   "hard": 3
+  },
+  {
+   "k": 38,
+   "n": "Banner",
+   "price": 20,
+   "lv": 1,
+   "hard": 2
+  },
+  {
+   "k": 32,
+   "n": "Teleport Pad",
+   "price": 250,
+   "lv": 9,
+   "hard": 4
+  },
+  {
+   "k": 23,
+   "n": "Magic Portal",
+   "price": 300,
+   "lv": 8,
+   "hard": 5
+  },
+  {
+   "k": 24,
+   "n": "Neon Gate",
+   "price": 220,
+   "lv": 12,
+   "hard": 6
+  },
+  {
+   "k": 25,
+   "n": "Starlit Gate",
+   "price": 900,
+   "lv": 25,
+   "hard": 8
+  },
+  {
+   "k": 26,
+   "n": "Sealed Gate",
+   "price": 600,
+   "lv": 15,
+   "hard": 9
+  },
+  {
+   "k": 39,
+   "n": "Blossom Weather Machine",
+   "price": 900,
+   "lv": 8,
+   "hard": 6
+  },
+  {
+   "k": 40,
+   "n": "Space Weather Machine",
+   "price": 1600,
+   "lv": 16,
+   "hard": 7
+  },
+  {
+   "k": 41,
+   "n": "Galaxy Weather Machine",
+   "price": 3200,
+   "lv": 28,
+   "hard": 8
+  }
+ ],
+ "weapons": [
+  {
+   "id": "fist",
+   "n": "Fists",
+   "cost": 0,
+   "k": "fist",
+   "hid": false,
+   "ev": false,
+   "d": "Your trusty fists."
+  },
+  {
+   "id": "ember",
+   "n": "Emberbrand",
+   "cost": 80,
+   "k": "sword",
+   "hid": false,
+   "ev": false,
+   "d": "Flames sear monsters. Breaks fast."
+  },
+  {
+   "id": "frost",
+   "n": "Glacial Edge",
+   "cost": 140,
+   "k": "sword",
+   "hid": false,
+   "ev": false,
+   "d": "Chills monsters, steady breaker."
+  },
+  {
+   "id": "venom",
+   "n": "Viper Reed",
+   "cost": 200,
+   "k": "sword",
+   "hid": false,
+   "ev": false,
+   "d": "Heals you on every hit."
+  },
+  {
+   "id": "blood",
+   "n": "Crimson Fang",
+   "cost": 300,
+   "k": "sword",
+   "hid": false,
+   "ev": false,
+   "d": "Heavy hits that steal life."
+  },
+  {
+   "id": "arcane",
+   "n": "Arcane Lash",
+   "cost": 380,
+   "k": "sword",
+   "hid": false,
+   "ev": false,
+   "d": "Piercing wave breaks 3 blocks in a line."
+  },
+  {
+   "id": "void",
+   "n": "Void Reaper",
+   "cost": 520,
+   "k": "scythe",
+   "hid": false,
+   "ev": false,
+   "d": "Sweeps a wide area, pulls monsters in."
+  },
+  {
+   "id": "glaive",
+   "n": "Twin Glaives",
+   "cost": 700,
+   "k": "glaive",
+   "hid": false,
+   "ev": false,
+   "d": "Returning blades chew through blocks."
+  },
+  {
+   "id": "hammer",
+   "n": "Thunder Hammer",
+   "cost": 600,
+   "k": "hammer",
+   "hid": false,
+   "ev": false,
+   "d": "Smashes a wide area and stuns monsters."
+  },
+  {
+   "id": "pan",
+   "n": "Frying Pan",
+   "cost": 60,
+   "k": "pan",
+   "hid": false,
+   "ev": false,
+   "d": "Fast bonks that stun monsters."
+  },
+  {
+   "id": "sickle",
+   "n": "Harvest Sickle",
+   "cost": 250,
+   "k": "sickle",
+   "hid": false,
+   "ev": false,
+   "d": "Doubles what you get from harvesting trees."
+  },
+  {
+   "id": "cinder",
+   "n": "Cinder Brand",
+   "cost": 150,
+   "k": "sword",
+   "hid": false,
+   "ev": true,
+   "d": "A spark of living flame. Evolves as you slay."
+  },
+  {
+   "id": "cinder1",
+   "n": "Blazefang",
+   "cost": 0,
+   "k": "sword",
+   "hid": true,
+   "ev": true,
+   "d": "Fire that spreads. Evolves again."
+  },
+  {
+   "id": "cinder2",
+   "n": "Infernal Edge",
+   "cost": 0,
+   "k": "sword",
+   "hid": true,
+   "ev": true,
+   "d": "Waves of flame cut through blocks."
+  },
+  {
+   "id": "cinder3",
+   "n": "Sunfall Solaris",
+   "cost": 0,
+   "k": "sword",
+   "hid": true,
+   "ev": false,
+   "d": "A fallen sun. The final form."
+  },
+  {
+   "id": "rime",
+   "n": "Rime Needle",
+   "cost": 180,
+   "k": "sword",
+   "hid": false,
+   "ev": true,
+   "d": "Chills what it touches. Evolves as you slay."
+  },
+  {
+   "id": "rime1",
+   "n": "Glacier Fang",
+   "cost": 0,
+   "k": "sword",
+   "hid": true,
+   "ev": true,
+   "d": "Heavy ice, slower enemies."
+  },
+  {
+   "id": "rime2",
+   "n": "Blizzard Reaper",
+   "cost": 0,
+   "k": "scythe",
+   "hid": true,
+   "ev": true,
+   "d": "A wide icy sweep."
+  },
+  {
+   "id": "rime3",
+   "n": "Absolute Zero",
+   "cost": 0,
+   "k": "scythe",
+   "hid": true,
+   "ev": false,
+   "d": "Freezes the world. The final form."
+  },
+  {
+   "id": "spark",
+   "n": "Spark Mallet",
+   "cost": 350,
+   "k": "hammer",
+   "hid": false,
+   "ev": true,
+   "d": "Stuns on impact. Evolves as you slay."
+  },
+  {
+   "id": "spark1",
+   "n": "Stormcaller",
+   "cost": 0,
+   "k": "hammer",
+   "hid": true,
+   "ev": true,
+   "d": "Thunder in your hands."
+  },
+  {
+   "id": "spark2",
+   "n": "Tempest Maul",
+   "cost": 0,
+   "k": "hammer",
+   "hid": true,
+   "ev": true,
+   "d": "Shockwaves break wide areas."
+  },
+  {
+   "id": "spark3",
+   "n": "Skybreaker",
+   "cost": 0,
+   "k": "hammer",
+   "hid": true,
+   "ev": false,
+   "d": "Splits the sky. The final form."
+  },
+  {
+   "id": "umbra",
+   "n": "Umbral Twins",
+   "cost": 450,
+   "k": "glaive",
+   "hid": false,
+   "ev": true,
+   "d": "Blades that drink life. Evolves as you slay."
+  },
+  {
+   "id": "umbra1",
+   "n": "Gloom Edge",
+   "cost": 0,
+   "k": "glaive",
+   "hid": true,
+   "ev": true,
+   "d": "Returning blades, hungrier."
+  },
+  {
+   "id": "umbra2",
+   "n": "Night Harvester",
+   "cost": 0,
+   "k": "glaive",
+   "hid": true,
+   "ev": true,
+   "d": "Nightfall in motion."
+  },
+  {
+   "id": "umbra3",
+   "n": "Eclipse Reaver",
+   "cost": 0,
+   "k": "glaive",
+   "hid": true,
+   "ev": false,
+   "d": "Swallows the light. The final form."
+  }
+ ],
+ "wear": [
+  {
+   "id": "helmet",
+   "n": "Miner Helmet",
+   "s": "hat",
+   "cost": 60,
+   "d": "Light +90",
+   "lv": 1
+  },
+  {
+   "id": "clover",
+   "n": "Lucky Clover",
+   "s": "hat",
+   "cost": 120,
+   "d": "Gems +20%",
+   "lv": 2
+  },
+  {
+   "id": "sage",
+   "n": "Sage Hood",
+   "s": "hat",
+   "cost": 220,
+   "d": "XP +15%",
+   "lv": 4
+  },
+  {
+   "id": "crown",
+   "n": "Gold Crown",
+   "s": "hat",
+   "cost": 480,
+   "d": "+1 gem per break",
+   "lv": 7
+  },
+  {
+   "id": "vest",
+   "n": "Miner Vest",
+   "s": "body",
+   "cost": 90,
+   "d": "Damage taken -12%",
+   "lv": 1
+  },
+  {
+   "id": "robe",
+   "n": "Mage Robe",
+   "s": "body",
+   "cost": 260,
+   "d": "XP +10%, light +40",
+   "lv": 4
+  },
+  {
+   "id": "plate",
+   "n": "Knight Plate",
+   "s": "body",
+   "cost": 520,
+   "d": "Damage -30%, speed -5%",
+   "lv": 8
+  },
+  {
+   "id": "angel",
+   "n": "Angel Wings",
+   "s": "wing",
+   "cost": 150,
+   "d": "Double jump",
+   "lv": 2
+  },
+  {
+   "id": "fairy",
+   "n": "Fairy Wings",
+   "s": "wing",
+   "cost": 240,
+   "d": "Slow fall, sparkle trail",
+   "lv": 4
+  },
+  {
+   "id": "bat",
+   "n": "Bat Wings",
+   "s": "wing",
+   "cost": 330,
+   "d": "Glide, more light at night",
+   "lv": 6
+  },
+  {
+   "id": "phoenix",
+   "n": "Phoenix Wings",
+   "s": "wing",
+   "cost": 520,
+   "d": "Glide, fire trail",
+   "lv": 8
+  },
+  {
+   "id": "crystal",
+   "n": "Crystal Wings",
+   "s": "wing",
+   "cost": 900,
+   "d": "Triple jump",
+   "lv": 11
+  },
+  {
+   "id": "spring",
+   "n": "Spring Boots",
+   "s": "boot",
+   "cost": 90,
+   "d": "Jump +25%",
+   "lv": 1
+  },
+  {
+   "id": "sandal",
+   "n": "Swift Sandals",
+   "s": "boot",
+   "cost": 160,
+   "d": "Speed +12%",
+   "lv": 3
+  },
+  {
+   "id": "rocket",
+   "n": "Rocket Boots",
+   "s": "boot",
+   "cost": 380,
+   "d": "Speed +25%",
+   "lv": 6
+  },
+  {
+   "id": "power",
+   "n": "Power Gloves",
+   "s": "glove",
+   "cost": 110,
+   "d": "Break power +1",
+   "lv": 2
+  },
+  {
+   "id": "garden",
+   "n": "Gardener Gloves",
+   "s": "glove",
+   "cost": 240,
+   "d": "Farm XP +25%, more seeds",
+   "lv": 4
+  },
+  {
+   "id": "midas",
+   "n": "Midas Gloves",
+   "s": "glove",
+   "cost": 600,
+   "d": "Gems +50%",
+   "lv": 9
+  },
+  {
+   "id": "nightcap",
+   "n": "Starry Nightcap",
+   "s": "hat",
+   "cost": 150,
+   "d": "Slowly regenerates health",
+   "lv": 2
+  },
+  {
+   "id": "cap",
+   "n": "Runner Cap",
+   "s": "hat",
+   "cost": 110,
+   "d": "Speed +6%",
+   "lv": 1
+  },
+  {
+   "id": "pajamas",
+   "n": "Starry Pajamas",
+   "s": "body",
+   "cost": 200,
+   "d": "Regenerate, damage -5%",
+   "lv": 2
+  },
+  {
+   "id": "hoodie",
+   "n": "Comfy Hoodie",
+   "s": "body",
+   "cost": 240,
+   "d": "XP +8%, jump +4%",
+   "lv": 3
+  },
+  {
+   "id": "jacket",
+   "n": "Denim Jacket",
+   "s": "body",
+   "cost": 320,
+   "d": "Damage taken -15%",
+   "lv": 5
+  },
+  {
+   "id": "sneakers",
+   "n": "Cloud Runner Sneakers",
+   "s": "boot",
+   "cost": 300,
+   "d": "Speed +20%, jump +10%",
+   "lv": 4
+  },
+  {
+   "id": "slippers",
+   "n": "Fuzzy Slippers",
+   "s": "boot",
+   "cost": 130,
+   "d": "Slowly regenerate",
+   "lv": 1
+  },
+  {
+   "id": "cowboy",
+   "n": "Trail Boots",
+   "s": "boot",
+   "cost": 280,
+   "d": "Damage -10%, speed +5%",
+   "lv": 5
+  }
+ ]
+}

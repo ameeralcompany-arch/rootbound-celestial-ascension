@@ -115,3 +115,24 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - The server has no TLS of its own: put it behind HTTPS (Caddy/nginx/Cloudflare) for public play.
 - Real-device FPS, real internet latency and a production deployment are untested.
 - The full-game reskin is partial: HUD, hub, menus, dialogs, login, inventory, showcase, chest/object panels and icons use the new tokens; the store dialog, crafting/farming panels and trade UI still use older markup with token-mapped colours, and block art is unchanged.
+
+
+## V9 – Item Store, new weapons/wings/effects, music (current)
+
+**What changed**
+- **STORE** button (top right, always visible) opens a full store: Featured + collections, Weapons, Wings, Effects, Charms, Weather machines, Gear, Blocks, Seeds, Objects. Search, rarity filter, sort, "Owned only", animated preview, rarity/price/level/owned/equipped badges, purchase confirmation for bigger buys. All old shop items are in it; Mira's shop still works.
+- **Catalog** is one file (`server/catalog.json`, built by `tools/gen-catalog.py`, inlined into the game by `tools/build.py`). 124 items. The server and the game read the same prices and rarities.
+- **Purchases**: signed-in players buy through the server (`server/shop.js`): the server checks the item id, ignores any price the client sends, checks ownership and funds, never double-charges (request ids), and saves wallet + ownership to disk. Guests and offline play buy locally on the device.
+- **New weapons** (each has its own model, swing trail, hit effect, sound, stats): Void Reaper (upgraded), Solar Fang, Frostbite Edge, Astral Katana, Crimson Rift, Verdant Breaker.
+- **New wings** (own silhouette, colours and particles): Dove, Blossom, Crystal, Mechanical, Umbral Eclipse, Galaxy, Dragon, Omen Moth. Owned wings are chosen in the Character menu or the Store; they are separate from level-unlocked wings.
+- **Effects**: 5 auras, 3 dash trails, 2 spawn effects, victory nova (boss defeat), 3 weapon trails, 3 weapon skins, 5 charms (Raven Companion flies beside you). Auras, charms and wings are visible to other players; they all share the game's capped particle pool.
+- **Music**: calm generated music (no files) for Plaza, Blossom, Space, Galaxy and Combat, following the weather and nearby fights. New Ambience slider next to Music and Sound effects.
+- **NPCs** exist only in the Plaza.
+
+**Tests added**: `tests/store.js` (catalog/previews, 6 weapon models distinct, 8 wings distinct, purchase rules, persistence after reload, store UI, all cosmetics together, plaza-only NPCs, music moods); store block in `tests/server.js`; purchase + restart persistence in `tests/e2e.js`.
+
+**Not verified / limits (honest)**
+- Gems, levels and inventories are still earned on the device; the server limits how fast a signed-in wallet can grow but cannot prove gems were earned fairly. Level requirements for items are checked by the game, not the server.
+- Weapon trails/impacts/sounds are visible/audible to the player using the weapon; other players see the weapon model. Weapon skins and weapon-trail colours are local-only.
+- I could not listen to the music or watch frame rates on a real PC. Art is procedural (drawn by code), not hand-painted.
+- The reference-inspired world art and full UI redesign of crafting/trade panels are only partly done.

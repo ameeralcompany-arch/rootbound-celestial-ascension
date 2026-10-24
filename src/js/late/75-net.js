@@ -39,6 +39,7 @@ const NET7=(()=>{
   if(t=='worlds'){list=m.list||[];try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}return}
   if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it and become its owner.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Creator mode','Tools are available in the top bar',2600);return}
+  if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}
   if(!room)return;
   if(t=='_p'){if(m.f&&m.f!==room.id)room.ps[m.f]=cleanPres(m.d);return}

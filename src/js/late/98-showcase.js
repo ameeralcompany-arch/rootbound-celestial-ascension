@@ -43,12 +43,12 @@ const SHOW7=(()=>{
    +'<div class="galhead"><div class="gsel"><button data-a="gmenu" aria-haspopup="true">MY GALLERY ▾</button><div class="gmenu" hidden><button data-g="chars" class="'+(X6.sc.gal=='chars'?'on':'')+'">Characters</button><button data-g="wings" class="'+(X6.sc.gal=='wings'?'on':'')+'">Wings</button></div></div><div class="gpg"><button data-p="-1" aria-label="Previous page">‹</button><span>'+(gpage+1)+'/'+pages()+'</span><button data-p="1" aria-label="Next page">›</button></div></div>'
    +'<div class="gal">'+galTiles()+'</div>';
   return h}
- const gItems=()=>X6.sc.gal=='wings'?WINGS.map((w,i)=>({k:'w'+i,n:w.n,lock:lvl<w.lvl,sub:lvl<w.lvl?'Lv '+w.lvl:(cel.wing==w.id||(cel.wing=='auto'&&bestWing(lvl)==w)?'Equipped':'Unlocked')})):CHARS.map((c,i)=>({k:'c'+i,n:i?c.first:String(myName).slice(0,10),lock:!unlocked(i),sub:unlocked(i)?(X6.sc.act==i?'Active':X6.sc.fav[i]?'Favorite':'Owned'):'Lv '+c.lv,cur:i==cur}));
+ const gItems=()=>X6.sc.gal=='wings'?WINGS.map((w,i)=>({k:'w'+i,n:w.n,lock:!wingOwned(w),sub:!wingOwned(w)?(w.shop?'Store':'Lv '+w.lvl):(cel.wing==w.id||(cel.wing=='auto'&&bestWing(lvl)==w)?'Equipped':'Unlocked')})):CHARS.map((c,i)=>({k:'c'+i,n:i?c.first:String(myName).slice(0,10),lock:!unlocked(i),sub:unlocked(i)?(X6.sc.act==i?'Active':X6.sc.fav[i]?'Favorite':'Owned'):'Lv '+c.lv,cur:i==cur}));
  const pages=()=>Math.max(1,Math.ceil(gItems().length/4));
  function galTiles(){const it=gItems().slice(gpage*4,gpage*4+4);return it.map(x=>'<button class="gt'+(x.cur?' sel':'')+(x.lock?' lock':'')+'" data-t="'+x.k+'" aria-label="'+esc(x.n)+' '+esc(x.sub)+'"><canvas width="160" height="100" data-tk="'+x.k+'"></canvas><span>'+esc(x.n)+'</span><small>'+esc(x.sub)+'</small></button>').join('')}
  function paintTiles(){el.querySelectorAll('canvas[data-tk]').forEach(c=>{const k=c.dataset.tk,g=c.getContext('2d');g.clearRect(0,0,160,100);g.fillStyle='#e7e4dc';g.fillRect(0,0,160,100);
   if(k[0]=='c'){const i=+k.slice(1),L=SHOWART.info(apOf(i));g.save();g.beginPath();g.rect(0,0,160,100);g.clip();try{SHOWART.draw(g,160,230,{look:unlocked(i)?L:grey(L),t:0,wpn:'fist',wings:false,zoom:1.5,ox:80,dy:92})}catch(e){}g.restore()}
-  else{const i=+k.slice(1);g.save();g.translate(80,60);g.scale(.62,.62);if(lvl<WINGS[i].lvl)g.globalAlpha=.35;try{WingArt.draw(g,i,0,0,1,1,0,0,0,1)}catch(e){}g.restore()}})}
+  else{const i=+k.slice(1);g.save();g.translate(80,60);g.scale(.62,.62);if(!wingOwned(WINGS[i]))g.globalAlpha=.35;try{WingArt.draw(g,i,0,0,1,1,0,0,0,1)}catch(e){}g.restore()}})}
  function render(){const box=el.querySelector('#sInfo');box.innerHTML=info();paintTiles();el.querySelector('#sIdx').textContent=String(cur+1).padStart(2,'0');el.querySelector('#sTot').textContent='/'+String(CHARS.length).padStart(2,'0');
   el.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.n=='home'))}
  // ---- drawing
@@ -73,7 +73,7 @@ const SHOW7=(()=>{
   if(a.dataset.d){swap(+a.dataset.d);return}
   if(a.dataset.p){const n=pages();gpage=(gpage+ +a.dataset.p+n)%n;el.querySelector('.gal').innerHTML=galTiles();el.querySelector('.gpg span').textContent=(gpage+1)+'/'+n;paintTiles();UIS.play('tab');return}
   if(a.dataset.g){X6.sc.gal=a.dataset.g;gpage=0;x6Save();render();UIS.play('tab');return}
-  if(a.dataset.t){const k=a.dataset.t,i=+k.slice(1);if(k[0]=='c'){if(i!=cur){const d=i-cur;busy=0;cur=cur;swapTo(i)}}else{const w=WINGS[i];if(lvl<w.lvl){say(w.n+' unlocks at level '+w.lvl);UIS.play('error');return}cel.wing=w.id;try{celSave()}catch(_){}render();UIS.play('select')}return}
+  if(a.dataset.t){const k=a.dataset.t,i=+k.slice(1);if(k[0]=='c'){if(i!=cur){const d=i-cur;busy=0;cur=cur;swapTo(i)}}else{const w=WINGS[i];if(!wingOwned(w)){say(w.shop?w.n+' is sold in the Store':w.n+' unlocks at level '+w.lvl);UIS.play('error');return}cel.wing=w.id;try{celSave()}catch(_){}render();UIS.play('select')}return}
   const act=a.dataset.a;
   if(act=='gmenu'){const m=el.querySelector('.gmenu');m.hidden=!m.hidden;UIS.play('tab');e.stopPropagation();return}
   if(act=='fav'){X6.sc.fav[cur]=X6.sc.fav[cur]?0:1;if(!X6.sc.fav[cur])delete X6.sc.fav[cur];x6Save();render();UIS.play('select');return}

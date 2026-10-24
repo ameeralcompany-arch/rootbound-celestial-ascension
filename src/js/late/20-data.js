@@ -49,18 +49,20 @@ const cel={v:CEL_VER,wing:'auto',wingsOn:1,aura:'auto',auraOn:1,plate:'auto',ap:
 function celSave(){try{localStorage.setItem('rbc',JSON.stringify(cel))}catch(_){}}
 function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'null')}catch(_){}if(!o||typeof o!='object')return;
  const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;
- cel.wing=WINGS.some(w=>w.id==o.wing)||o.wing=='auto'?o.wing:'auto';cel.wingsOn=o.wingsOn?1:0;cel.aura=AURAS.some(a=>a.id==o.aura)||o.aura=='auto'?o.aura:'auto';cel.auraOn=o.auraOn==0?0:1;
+ cel.wing=WINGS.some(w=>w.id==o.wing)||o.wing=='auto'||/^(dove|blossom|crystal|mech|umbral|galaxy|dragon|moth)$/.test(o.wing)?o.wing:'auto';cel.wingsOn=o.wingsOn?1:0;cel.aura=AURAS.some(a=>a.id==o.aura)||o.aura=='auto'?o.aura:'auto';cel.auraOn=o.auraOn==0?0:1;
  cel.plate=o.plate=='auto'?'auto':n(o.plate,'auto',0,99);cel.seenW=n(o.seenW,0,0,99);cel.seenNp=n(o.seenNp,0,0,999);cel.tut=n(o.tut,0,0,9);
  const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);
  A.hairCol=col(a.hairCol,A.hairCol);A.skinCol=col(a.skinCol,A.skinCol);A.outCol=col(a.outCol,A.outCol);A.trimCol=col(a.trimCol,A.trimCol);
  const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['light','dark','auto'].includes(p.theme)?p.theme:'light'}
 // ---- derived progression (single source of truth: character level)
-const wingUnlocked=(l)=>WINGS.filter(w=>l>=w.lvl);
+const wingOwned=(w,l)=>{if(!w.shop)return (l==null?lvl:l)>=w.lvl;try{return SHOP7.has('wing_'+w.id)}catch(_){return false}};
+const wingUnlocked=(l)=>WINGS.filter(w=>!w.shop&&l>=w.lvl);
 const bestWing=l=>{const u=wingUnlocked(l);return u.length?u[u.length-1]:null};
-function curWing(l){if(!cel.wingsOn)return null;if(cel.wing!='auto'){const w=WINGS.find(x=>x.id==cel.wing);if(w&&l>=w.lvl)return w}return bestWing(l)}
+function curWing(l){if(!cel.wingsOn)return null;if(cel.wing!='auto'){const w=WINGS.find(x=>x.id==cel.wing);if(w&&wingOwned(w,l))return w}return bestWing(l)}
 function curAura(l){if(!cel.auraOn)return AURAS[0];if(cel.aura!='auto'){const a=AURAS.find(x=>x.id==cel.aura);if(a&&l>=a.lvl)return a}const u=AURAS.filter(a=>l>=a.lvl);return u[u.length-1]}
 const curPlateTier=l=>{const t=npTier(l);return cel.plate=='auto'?t:Math.min(t,cel.plate|0)};
 celLoad();
 // validation for cosmetic data received from other players (host and clients both run this)
 function cleanCx(c){if(!c||typeof c!='object')return null;const n=(v,lo,hi,d)=>{v=+v;return Number.isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>typeof v=='string'&&/^#[0-9a-f]{6}$/i.test(v)?v:d,a=c.ap||{},A=cel.ap;
- return{w:n(c.w,-1,WINGS.length-1,-1),a:n(c.a,0,AURAS.length-1,0),t:n(c.t,0,999,0),ap:{hair:n(a.hair,0,AP.hair.length-1,0),eyes:n(a.eyes,0,AP.eyes.length-1,0),outfit:n(a.outfit,0,AP.outfit.length-1,0),acc:n(a.acc,0,AP.acc.length-1,0),cape:n(a.cape,0,AP.cape.length-1,1),eyeCol:n(a.eyeCol,0,AP.eyeCol.length-1,0),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}}
+ const wl=(v,l)=>typeof v=='string'&&l.indexOf(v)>=0?v:'';
+ return{fx:{au:wl(c.fx&&c.fx.au,['aura_void','aura_solar','aura_blossom','aura_frost','aura_astral']),ch:wl(c.fx&&c.fx.ch,['star','moon','leaf','chain','raven']),ws:wl(c.fx&&c.fx.ws,['skin_obsidian','skin_pearl','skin_sakura'])},w:n(c.w,-1,WINGS.length-1,-1),a:n(c.a,0,AURAS.length-1,0),t:n(c.t,0,999,0),ap:{hair:n(a.hair,0,AP.hair.length-1,0),eyes:n(a.eyes,0,AP.eyes.length-1,0),outfit:n(a.outfit,0,AP.outfit.length-1,0),acc:n(a.acc,0,AP.acc.length-1,0),cape:n(a.cape,0,AP.cape.length-1,1),eyeCol:n(a.eyeCol,0,AP.eyeCol.length-1,0),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}}

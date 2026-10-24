@@ -40,6 +40,10 @@ jobs:
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/theme.js
         env: {NODE_PATH: ./node_modules}
+      - name: Store, items, weapons, wings, effects, music
+        timeout-minutes: 8
+        run: bash tools/ci-test.sh tests/store.js
+        env: {NODE_PATH: ./node_modules}
       - name: End-to-end (real server + 3 real browser clients, weather, persistence, restart)
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/e2e.js

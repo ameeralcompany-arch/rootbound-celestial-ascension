@@ -90,4 +90,21 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
  A3.c.clear();for(let i=0;i<200;i++)A3.c.send({t:'e',d:{k:3000+i,a:[3,0,0,0]}});await sleep(300);const w3=S.worlds.get('aliceland');const applied=Object.keys(w3.edits).filter(k=>+k>=3000).length;ok('edit flood is rate-limited',applied<=75,applied+' of 200 applied');
  // --- capacity
  S.cfg.maxPlayers=1;const f1=await guest(port,'F1');const fe=await f1.rpc({t:'enter',w:'aliceland'},m=>m.t=='joined'||m.t=='enter_err');ok('world capacity enforced',fe.t=='enter_err'&&/full/.test(fe.m));
+ // --- store: wallet, purchases, idempotency, persistence (server is the authority on prices + ownership)
+ {const cat=require('../server/shop').loadCatalog();const P=id=>cat.get(id).price;
+  const SH=await reg(port,'shopper','shopper-pass-1');const sc=SH.c;const buy=(o,ms)=>sc.rpc(Object.assign({t:'buy'},o),m=>m.t=='buy_res',ms);
+  const g0=await guest(port,'Gst');const gb=await g0.rpc({t:'buy',id:'wing_dove',rid:'g1'},m=>m.t=='buy_res');ok('guests cannot buy',!gb.ok);
+  let r=await buy({id:'wing_dove',rid:'r0'});ok('purchase with an empty wallet fails and charges nothing',!r.ok&&r.gems===0,r.m);
+  const w1=await sc.rpc({t:'sync',gems:100000},m=>m.t=='wallet');ok('gem growth is rate-limited (cannot sync an arbitrary balance)',w1.gems<=1500&&w1.gems>0,w1.gems);
+  r=await buy({id:'nope_item',rid:'r1'});ok('unknown item rejected',!r.ok);
+  r=await buy({id:'wing_dove',rid:'r2',price:1,gems:99999});const after=r.gems;ok('client-sent price/balance is ignored: charged the catalog price',r.ok&&r.spent===P('wing_dove')&&after===w1.gems-P('wing_dove'),JSON.stringify(r));
+  const r2=await buy({id:'wing_dove',rid:'r2'});ok('repeating the same request id does not charge twice',r2.ok&&r2.dup&&r2.gems===after,JSON.stringify(r2));
+  const r3=await buy({id:'wing_dove',rid:'r3'});ok('owning a non-stackable item blocks a second purchase',!r3.ok&&r3.gems===after,r3.m);
+  const r4=await buy({id:'blk_1',qty:5,rid:'r4'});ok('stackable items buy by quantity at catalog price',r4.ok&&r4.spent===P('blk_1')*5&&r4.owned===5);
+  const r5=await buy({id:'blk_1',qty:-3,rid:'r5'});const r6=await buy({id:'blk_1',qty:1000,rid:'r6'});ok('negative / huge quantities rejected',!r5.ok&&!r6.ok);
+  const r7=await buy({id:'wing_moth',rid:'r7'});ok('too-expensive purchase rejected without charge',!r7.ok&&r7.gems===r4.gems,r7.m);
+  const wl=await sc.rpc({t:'wallet'},m=>m.t=='wallet');ok('wallet view shows ownership',wl.owned.wing_dove===1&&wl.owned.blk_1===5&&wl.gems===r4.gems);
+  await sleep(1700);await S.close();S=createServer({port,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});await S.listen();
+  const SH2=await login(port,'shopper','shopper-pass-1');const wl2=await SH2.c.wait(m=>m.t=='wallet');ok('wallet and ownership survive a server restart',wl2.owned.wing_dove===1&&wl2.gems===r4.gems,JSON.stringify(wl2));
+  ok('every catalog item has a valid price, rarity and unique id',[...cat.values()].every(i=>i.price>0&&['common','uncommon','rare','epic','legendary','mythic','exclusive'].includes(i.rar)&&i.n&&i.d&&i.cat));}
  await S.close();console.log(fails?'FAILURES '+fails:'all server tests passed');process.exit(fails?1:0)})().catch(e=>{console.log('FAIL exception',e&&e.stack||e);process.exit(1)});

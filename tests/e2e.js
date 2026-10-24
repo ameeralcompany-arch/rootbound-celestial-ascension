@@ -55,15 +55,25 @@ const ev=(p,f,a)=>p.evaluate(f,a);
   // A disconnects; B continues
   await ev(A,()=>NET7.toOffline());await sleep(900);
   ok('B stays connected after A disconnects',await ev(B,()=>NET7.online&&NET7.world=='e2eworld'));
+  // purchases: server-validated wallet + ownership, persisted across a restart
+  const E=await client(b,url,'E');await ev(E,()=>NET7.send({t:'login',name:'Creator',pass:'owner-pass-123456'}));await E.waitForFunction(()=>NET7.owner&&SHOP7.serverMode,null,{timeout:8000}).catch(()=>{});
+  ok('signed-in client has a server wallet',await ev(E,()=>SHOP7.serverMode));
+  await ev(E,()=>{gems=1500;NET7.send({t:'sync',gems:1500})});await sleep(700);
+  const g1=await ev(E,()=>gems);ok('server accepted a small gem sync (rate-limited)',g1==1500,String(g1));
+  const r1=await ev(E,()=>SHOP7.buy('wpn_frostbite'));ok('server purchase succeeds and charges the catalog price',r1.ok==1&&await ev(E,()=>gems)==800&&await ev(E,()=>SHOP7.has('wpn_frostbite')),JSON.stringify(r1));
+  const r2=await ev(E,()=>new Promise(res=>{NET7.send({t:'buy',id:'wpn_frostbite',qty:1,rid:'dup1'});setTimeout(()=>res({gems,has:SHOP7.has('wpn_frostbite')}),700)}));ok('forged repeat purchase does not charge again',r2.gems==800&&r2.has,JSON.stringify(r2));
+  const r3=await ev(B,()=>new Promise(res=>{const g0=gems;SHOP7.buy('wpn_frostbite').then(r=>res({r,same:gems==g0}))}));ok('guests cannot use the server shop and are not charged',r3.same,JSON.stringify(r3));
   // server restart: world, block and weather persist
   await S.close?.();await sleep(300);S=mkS(port);await S.listen();
   await B.waitForFunction(()=>NET7.online&&NET7.world=='e2eworld',null,{timeout:30000}).catch(()=>{});
   ok('B auto-reconnects after a server restart',await ev(B,()=>NET7.online&&NET7.world=='e2eworld'));
   ok('block still present after restart',await ev(B,k=>tiles[k]==3,K));
   ok('weather still galaxy after restart',await ev(B,()=>ENV7.target)=='galaxy');
+  const F=await client(b,url,'F');await ev(F,()=>NET7.send({t:'login',name:'Creator',pass:'owner-pass-123456'}));await F.waitForFunction(()=>NET7.owner&&SHOP7.serverMode,null,{timeout:8000}).catch(()=>{});await sleep(500);
+  const pr=await ev(F,()=>({has:SHOP7.has('wpn_frostbite'),gems}));ok('purchase + wallet persisted across the server restart',pr.has&&pr.gems==800,JSON.stringify(pr));
   const C=await client(b,url,'C');await ev(C,()=>NET7.go('e2eworld',false));await C.waitForFunction(()=>NET7.world=='e2eworld',null,{timeout:8000}).catch(()=>{});
   ok('late joiner receives saved world + weather',await ev(C,()=>ENV7.target)=='galaxy'&&await ev(C,k=>tiles[k]==3,K));
-  const errs=[...A.errs,...B.errs,...C.errs];ok('no page errors in any client',errs.length==0,errs.slice(0,3).join(' | '));
+  const errs=[...A.errs,...B.errs,...C.errs,...E.errs,...F.errs];ok('no page errors in any client',errs.length==0,errs.slice(0,3).join(' | '));
  }catch(e){ok('e2e harness',false,String(e.stack||e).slice(0,500))}
  await b.close();try{await S.close?.()}catch(_){}
  console.log(fails?'FAILURES '+fails:'all e2e tests passed');process.exit(fails?1:0)})();

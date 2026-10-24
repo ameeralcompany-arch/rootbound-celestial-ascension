@@ -1,13 +1,13 @@
 'use strict';
 // Rootbound persistent multiplayer server. Zero dependencies (Node 18+). See server/README.md.
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
-const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store');
+const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop');
 const ENV=process.env;
 function createServer(opts={}){
  const cfg=Object.assign({port:+ENV.PORT||8787,host:ENV.HOST||'0.0.0.0',dataDir:ENV.DATA_DIR||path.join(__dirname,'data'),client:ENV.CLIENT_FILE||path.join(__dirname,'..','index.html'),
   maxPlayers:+ENV.MAX_PLAYERS_PER_WORLD||24,maxWorlds:+ENV.MAX_WORLDS||500,maxWorldsPerAccount:+ENV.MAX_WORLDS_PER_ACCOUNT||8,maxConns:+ENV.MAX_CONNECTIONS||400,maxConnsPerIp:+ENV.MAX_CONNS_PER_IP||12,
   wxCooldownMs:+ENV.WEATHER_COOLDOWN_MS||20000,origins:ENV.ALLOWED_ORIGINS?ENV.ALLOWED_ORIGINS.split(','):null,scryptN:+ENV.SCRYPT_N||16384},opts);
- const store=new Store(cfg.dataDir);const t0=Date.now();
+ const store=new Store(cfg.dataDir);const t0=Date.now();const CAT=SHOP.loadCatalog();
  // ---------- accounts / owner / bans
  let accounts=store.readJSON(store.p('accounts.json'),{users:{}}),owner=store.readJSON(store.p('owner.json'),null),bans=store.readJSON(store.p('bans.json'),{bans:{},mutes:{}}),sess=store.readJSON(store.p('sessions.json'),{});
  const saveAcc=()=>store.later('acc',()=>store.writeJSON(store.p('accounts.json'),accounts)),saveBans=()=>store.later('bans',()=>store.writeJSON(store.p('bans.json'),bans)),saveSess=()=>store.later('sess',()=>store.writeJSON(store.p('sessions.json'),sess));
@@ -92,7 +92,8 @@ function createServer(opts={}){
  const authFail={};
  function loginThrottle(key,lim){const a=authFail[key];if(a&&a.until&&Date.now()>a.until){delete authFail[key];return false}return !!a&&a.n>=lim}
  function failed(key,lim){const a=authFail[key]||(authFail[key]={n:0,until:0});a.n++;if(a.n>=lim)a.until=Date.now()+60000}
- function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token});store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
+ function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token});sendWallet(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
+ function sendWallet(s,u){if(!u)return;send(s,Object.assign({t:'wallet'},SHOP.view(u)))}
  function onMsg(s,raw){let m;if(raw.length>20000&&!/^\{"t":"(e|o|meta|_p)"/.test(raw.slice(0,12)))return;try{m=JSON.parse(raw)}catch(_){if(++s.strikes>8)s.conn.close(1008);return}
   if(!m||typeof m.t!='string')return;
   if(!bucket(s,'all',300,5000)){if(++s.strikes>20)s.conn.close(1008);return}
@@ -112,7 +113,7 @@ function createServer(opts={}){
    setAuth(s,u);return}
   case 'resume':{if(!bucket(s,'auth',10,60000))return;const rec=sess[hashTok(String(m.token||''))];if(!rec||rec.exp<Date.now())return send(s,{t:'auth',ok:0,m:'Session expired',expired:1});const u=userById(rec.uid);if(!u||bans.bans[u.id])return send(s,{t:'auth',ok:0,m:'Account unavailable'});
    for(const o of sessions.values())if(o.uid==u.id&&o!==s){send(o,{t:'_kick',m:'Signed in from another place'});o.conn.close(1000)}
-   s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1});return}
+   s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1});sendWallet(s,u);return}
   case 'logout':{const h=hashTok(String(m.token||''));if(sess[h]){delete sess[h];saveSess()}return}
   }
   if(!s.uid)return;// everything below requires an identity (account or guest)
@@ -121,6 +122,11 @@ function createServer(opts={}){
   case 'worlds':{if(!bucket(s,'wl',10,10000))return;return send(s,{t:'worlds',list:listWorlds().filter(x=>!x.priv).sort((a,b)=>b.pop-a.pop||(b.updated||0)-(a.updated||0)).slice(0,200),max:cfg.maxPlayers})}
   case 'enter':if(!bucket(s,'enter',12,30000))return send(s,{t:'enter_err',m:'Slow down'});return enter(s,m.w,!!m.create);
   case 'leave':return leaveWorld(s);
+  case 'sync':{if(s.kind=='guest'||!bucket(s,'sync',12,60000))return;const u=userById(s.uid);if(!u)return;SHOP.sync(u,m.gems);sendWallet(s,u);saveAcc();return}
+  case 'wallet':{if(s.kind=='guest')return send(s,{t:'wallet',gems:0,owned:{},guest:1});const u=userById(s.uid);return sendWallet(s,u)}
+  case 'buy':{if(!bucket(s,'buy',10,10000))return send(s,{t:'buy_res',ok:0,m:'Slow down',rid:String(m.rid||'')});
+   if(s.kind=='guest')return send(s,{t:'buy_res',ok:0,m:'Sign in to buy items in shared worlds',rid:String(m.rid||'')});
+   const u=userById(s.uid);if(!u)return;const r=SHOP.buy(u,CAT,m);if(r.ok&&!r.dup){saveAcc();store.audit({ev:'buy',uid:s.uid,id:r.id,qty:r.qty,spent:r.spent})}send(s,Object.assign({t:'buy_res'},r));return}
   case 'admin':{if(!bucket(s,'admin',30,10000))return;return adminOp(s,m)}
   }
   const wid=s.world;if(!wid)return;const w=wid=='plaza'?null:worlds.get(wid);

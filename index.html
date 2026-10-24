@@ -512,6 +512,26 @@ html[data-reduce=true] *{animation-duration:.001s!important;animation-iteration-
 .netcard .dot{width:9px;height:9px;border-radius:50%;background:var(--silver)}.netcard.online .dot{background:var(--green);box-shadow:0 0 0 3px rgba(47,143,107,.2)}.netcard.connecting .dot,.netcard.reconnecting .dot{background:#d9a23a;animation:rbpulse 1s infinite}
 @keyframes rbpulse{50%{opacity:.35}}.netcard .nmsg{margin:6px 0 8px;font-size:12px;line-height:1.5;color:var(--ink-2)}.netcard .nerr{color:var(--accent);font-size:12px;margin:4px 0}
 
+/* ========== CSS: 55-store.css ========== */
+/* ===== STORE7 ===== */
+#store7{position:fixed;inset:0;z-index:7000;display:none;background:var(--overlay);opacity:0;transition:opacity var(--t-med,.25s) var(--ease,ease);font-family:var(--font-ui);color:var(--ink)}#store7.on{opacity:1}
+#store7 .shell{position:absolute;inset:max(10px,2vh) max(10px,2vw);background-color:var(--surface-solid,#171530);border:1px solid var(--line);border-radius:var(--rad-lg);box-shadow:var(--sh-3);display:grid;grid-template-rows:auto auto 1fr;overflow:hidden;background-image:radial-gradient(900px 400px at 85% -10%,rgba(160,110,255,.18),transparent),radial-gradient(700px 400px at -10% 110%,rgba(60,220,210,.12),transparent)}
+#store7 header{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line)}#store7 header h2{margin:0;font:900 20px var(--font-ui);letter-spacing:.24em}#store7 header .gv{margin-left:auto;display:flex;gap:6px;align-items:center;font-weight:800}#store7 .x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--btn-bg);color:var(--ink);cursor:pointer;font-size:16px}
+#store7 .bar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 20px;border-bottom:1px solid var(--line);align-items:center}#store7 .bar input,#store7 .bar select{background:var(--input-bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:600 13px var(--font-ui)}#store7 .bar input{flex:1;min-width:140px}
+#store7 .chip{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--btn-bg);color:var(--ink);font:700 12px var(--font-ui);cursor:pointer}#store7 .chip.on{background:var(--btn-primary);color:#fff;border-color:transparent}
+#store7 .main{display:grid;grid-template-columns:150px 1fr 330px;min-height:0}#store7 nav{padding:12px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;overflow:auto}#store7 nav button{text-align:left;padding:10px 12px;border-radius:10px;border:0;background:transparent;color:var(--muted);font:700 13px var(--font-ui);cursor:pointer}#store7 nav button.on{background:var(--sel-bg);color:var(--ink)}#store7 nav button:hover{color:var(--ink)}
+#store7 .grid{overflow:auto;padding:16px 18px;min-height:0}#store7 .grid h4{margin:14px 0 8px;font:900 11px var(--font-ui);letter-spacing:.2em;color:var(--muted);text-transform:uppercase}#store7 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+#store7 .card{position:relative;border:1px solid var(--line);border-radius:14px;padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:5px;text-align:left;color:var(--ink);font:600 12px var(--font-ui);transition:transform var(--t-fast,.15s) var(--ease,ease),box-shadow var(--t-fast,.15s)}#store7 .card:hover,#store7 .card:focus-visible{transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.35);outline:0}#store7 .card.sel{box-shadow:0 0 0 2px var(--rc)}
+#store7 .card canvas,#store7 .card img{width:100%;aspect-ratio:1/.8;border-radius:10px;background:rgba(0,0,0,.22);object-fit:contain}#store7 .card b{font-weight:800;font-size:12.5px;line-height:1.15}#store7 .card .pr{display:flex;justify-content:space-between;align-items:center;font-weight:800}
+#store7 .badge{position:absolute;top:6px;right:6px;font:800 9px var(--font-ui);letter-spacing:.08em;padding:3px 7px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff}#store7 .badge.own{background:#2c9b62}#store7 .badge.eq{background:#6a5cff}#store7 .badge.new{background:#ff5a8a}#store7 .card.lock canvas,#store7 .card.lock img{opacity:.55}
+#store7 aside{border-left:1px solid var(--line);padding:16px;overflow:auto;display:flex;flex-direction:column;gap:10px}#store7 aside canvas{width:100%;height:auto;flex:none;aspect-ratio:300/255;border-radius:14px;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.08),rgba(0,0,0,.35))}#store7 aside h3{margin:0;font:900 20px var(--font-ui)}#store7 aside p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+#store7 aside .acts{display:flex;gap:8px;flex-wrap:wrap}#store7 aside button{padding:11px 16px;border-radius:12px;border:1px solid var(--line);background:var(--btn-bg);color:var(--ink);font:800 13px var(--font-ui);cursor:pointer}#store7 aside button.pri{background:var(--btn-primary);color:#fff;border-color:transparent}#store7 aside button:disabled{opacity:.45;cursor:not-allowed}
+#store7 .empty{padding:40px;text-align:center;color:var(--muted)}#store7 .gem{display:inline-block;width:10px;height:10px;transform:rotate(45deg);background:linear-gradient(135deg,#9ff,#59f);border-radius:2px;margin-right:4px}
+#store7 .qty{display:flex;align-items:center;gap:6px}#store7 .qty input{width:64px;background:var(--input-bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px;font:700 13px var(--font-ui)}
+#bstore{width:auto!important;padding:0 14px!important;font:900 12px var(--font-ui)!important;letter-spacing:.16em;background:linear-gradient(135deg,#ff7ac8,#8a6bff)!important;color:#fff!important;border:0!important;animation:rbPulse 3.2s ease-in-out infinite}@keyframes rbPulse{0%,100%{box-shadow:0 0 0 0 rgba(160,110,255,.0)}50%{box-shadow:0 0 18px 2px rgba(160,110,255,.55)}}
+@media (max-width:860px){#store7 .main{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}#store7 nav{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}#store7 aside{border-left:0;border-top:1px solid var(--line);max-height:45vh}}
+@media (prefers-reduced-motion:reduce){#bstore{animation:none}#store7 .card{transition:none}}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -792,7 +812,7 @@ function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=h
  if(rm){for(const p of rm.peers()){if(p.isMe||p.kind!='viewer')continue;const q=p.presence;if(!q||typeof q.x!='number')continue;const r=rp[p.peer]||(rp[p.peer]={x:q.x,y:q.y});r.x+=(q.x-r.x)*.25;r.y+=(q.y-r.y)*.25;drawChar(r.x-cam.x,r.y-cam.y,q.f>0?1:-1,+q.h||0,(q.lv?'['+(q.lv|0)+'] ':'')+String(q.n||'Guest').slice(0,14),tm,+q.vx||0,0,bub[p.peer]&&bub[p.peer].e>now?bub[p.peer].t:'',q.wp,q.sw?.12:0,q.fm,{hat:q.hat,wing:q.wing,boot:q.boot,glove:q.glove,body:q.body,wo:q.wo},0,q.lk,q)}}
  if(iT>0&&Math.floor(now/80)%2)g.globalAlpha=.5;drawChar(P.x-cam.x,P.y-cam.y+(P.so||0),P.f,myHue,'['+lvl+'] '+myName,tm,P.vx,!P.g,bub.me&&bub.me.e>now?bub.me.t:'',wp,swing>0?swing:0,swing>-.8?1:0,wr,dash>0,look,'me');g.globalAlpha=1;
  drawWater(x0,x1,y0,y1,now);drawTarget(now);drawAmbient(vw,vh,now,Math.min(.05,(now-(window._al||now))/1000));window._al=now;g.globalCompositeOperation='lighter';for(const p of projs){const px=p.x-cam.x,py=p.y-cam.y,gg=g.createRadialGradient(px,py,0,px,py,26);gg.addColorStop(0,'rgba('+p.w.g+',.95)');gg.addColorStop(1,'rgba('+p.w.g+',0)');g.fillStyle=gg;g.fillRect(px-26,py-26,52,52)}
- for(let i=slashes.length-1;i>=0;i--){const s=slashes[i],a=(now-s.t)/240;if(a>=1){slashes.splice(i,1);continue}const arc=s.w.k=='scythe'?1.9:1.1,e=Math.min(1,a*2.5),rg=s.w.k=='fist'?T*.9:s.w.k=='scythe'?T*2.2:T*1.6;g.strokeStyle='rgba('+s.w.g+','+(1-a)+')';g.lineCap='round';for(let k=0;k<3;k++){g.lineWidth=(15-k*4)*(1-a);g.beginPath();g.arc(s.x-cam.x,s.y-cam.y,rg*(.7+k*.1),s.a-arc,s.a-arc+2*arc*e);g.stroke()}g.lineCap='butt'}
+ for(let i=slashes.length-1;i>=0;i--){const s=slashes[i],a=(now-s.t)/240;if(a>=1){slashes.splice(i,1);continue}if(window.WFX7&&WFX7.trail(g,s,a))continue;const arc=s.w.k=='scythe'?1.9:1.1,e=Math.min(1,a*2.5),rg=s.w.k=='fist'?T*.9:s.w.k=='scythe'?T*2.2:T*1.6;g.strokeStyle='rgba('+s.w.g+','+(1-a)+')';g.lineCap='round';for(let k=0;k<3;k++){g.lineWidth=(15-k*4)*(1-a);g.beginPath();g.arc(s.x-cam.x,s.y-cam.y,rg*(.7+k*.1),s.a-arc,s.a-arc+2*arc*e);g.stroke()}g.lineCap='butt'}
  for(let i=rings.length-1;i>=0;i--){const q=rings[i],a=(now-q.t)/380;if(a>=1){rings.splice(i,1);continue}g.globalAlpha=1-a;g.strokeStyle=q.c;g.lineWidth=3;g.beginPath();g.arc(q.x-cam.x,q.y-cam.y,6+a*34,0,6.3);g.stroke()}g.globalAlpha=1;g.globalCompositeOperation='source-over';
  let pl=0;for(const q of parts){if(q.k=='p'){pl=1;continue}g.globalAlpha=Math.min(1,q.l*2.2);g.fillStyle=q.c;if(q.k=='f'){g.beginPath();g.ellipse(q.x-cam.x,q.y-cam.y,q.s*1.5,q.s*.5,q.r,0,6.3);g.fill()}else if(q.k=='b'){g.strokeStyle='rgba(220,245,255,.9)';g.lineWidth=1.5;g.beginPath();g.arc(q.x-cam.x,q.y-cam.y,q.s,0,6.3);g.stroke()}else g.fillRect(q.x-cam.x-q.s/2,q.y-cam.y-q.s/2,q.s,q.s)}
  if(pl){g.globalCompositeOperation='lighter';for(const q of parts){if(q.k!='p')continue;g.globalAlpha=Math.min(1,q.l*2.2);g.fillStyle=q.c;g.beginPath();g.arc(q.x-cam.x,q.y-cam.y,q.s*.6,0,6.3);g.fill()}g.globalCompositeOperation='source-over'}g.globalAlpha=1;
@@ -1504,21 +1524,23 @@ const cel={v:CEL_VER,wing:'auto',wingsOn:1,aura:'auto',auraOn:1,plate:'auto',ap:
 function celSave(){try{localStorage.setItem('rbc',JSON.stringify(cel))}catch(_){}}
 function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'null')}catch(_){}if(!o||typeof o!='object')return;
  const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;
- cel.wing=WINGS.some(w=>w.id==o.wing)||o.wing=='auto'?o.wing:'auto';cel.wingsOn=o.wingsOn?1:0;cel.aura=AURAS.some(a=>a.id==o.aura)||o.aura=='auto'?o.aura:'auto';cel.auraOn=o.auraOn==0?0:1;
+ cel.wing=WINGS.some(w=>w.id==o.wing)||o.wing=='auto'||/^(dove|blossom|crystal|mech|umbral|galaxy|dragon|moth)$/.test(o.wing)?o.wing:'auto';cel.wingsOn=o.wingsOn?1:0;cel.aura=AURAS.some(a=>a.id==o.aura)||o.aura=='auto'?o.aura:'auto';cel.auraOn=o.auraOn==0?0:1;
  cel.plate=o.plate=='auto'?'auto':n(o.plate,'auto',0,99);cel.seenW=n(o.seenW,0,0,99);cel.seenNp=n(o.seenNp,0,0,999);cel.tut=n(o.tut,0,0,9);
  const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);
  A.hairCol=col(a.hairCol,A.hairCol);A.skinCol=col(a.skinCol,A.skinCol);A.outCol=col(a.outCol,A.outCol);A.trimCol=col(a.trimCol,A.trimCol);
  const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['light','dark','auto'].includes(p.theme)?p.theme:'light'}
 // ---- derived progression (single source of truth: character level)
-const wingUnlocked=(l)=>WINGS.filter(w=>l>=w.lvl);
+const wingOwned=(w,l)=>{if(!w.shop)return (l==null?lvl:l)>=w.lvl;try{return SHOP7.has('wing_'+w.id)}catch(_){return false}};
+const wingUnlocked=(l)=>WINGS.filter(w=>!w.shop&&l>=w.lvl);
 const bestWing=l=>{const u=wingUnlocked(l);return u.length?u[u.length-1]:null};
-function curWing(l){if(!cel.wingsOn)return null;if(cel.wing!='auto'){const w=WINGS.find(x=>x.id==cel.wing);if(w&&l>=w.lvl)return w}return bestWing(l)}
+function curWing(l){if(!cel.wingsOn)return null;if(cel.wing!='auto'){const w=WINGS.find(x=>x.id==cel.wing);if(w&&wingOwned(w,l))return w}return bestWing(l)}
 function curAura(l){if(!cel.auraOn)return AURAS[0];if(cel.aura!='auto'){const a=AURAS.find(x=>x.id==cel.aura);if(a&&l>=a.lvl)return a}const u=AURAS.filter(a=>l>=a.lvl);return u[u.length-1]}
 const curPlateTier=l=>{const t=npTier(l);return cel.plate=='auto'?t:Math.min(t,cel.plate|0)};
 celLoad();
 // validation for cosmetic data received from other players (host and clients both run this)
 function cleanCx(c){if(!c||typeof c!='object')return null;const n=(v,lo,hi,d)=>{v=+v;return Number.isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>typeof v=='string'&&/^#[0-9a-f]{6}$/i.test(v)?v:d,a=c.ap||{},A=cel.ap;
- return{w:n(c.w,-1,WINGS.length-1,-1),a:n(c.a,0,AURAS.length-1,0),t:n(c.t,0,999,0),ap:{hair:n(a.hair,0,AP.hair.length-1,0),eyes:n(a.eyes,0,AP.eyes.length-1,0),outfit:n(a.outfit,0,AP.outfit.length-1,0),acc:n(a.acc,0,AP.acc.length-1,0),cape:n(a.cape,0,AP.cape.length-1,1),eyeCol:n(a.eyeCol,0,AP.eyeCol.length-1,0),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}}
+ const wl=(v,l)=>typeof v=='string'&&l.indexOf(v)>=0?v:'';
+ return{fx:{au:wl(c.fx&&c.fx.au,['aura_void','aura_solar','aura_blossom','aura_frost','aura_astral']),ch:wl(c.fx&&c.fx.ch,['star','moon','leaf','chain','raven']),ws:wl(c.fx&&c.fx.ws,['skin_obsidian','skin_pearl','skin_sakura'])},w:n(c.w,-1,WINGS.length-1,-1),a:n(c.a,0,AURAS.length-1,0),t:n(c.t,0,999,0),ap:{hair:n(a.hair,0,AP.hair.length-1,0),eyes:n(a.eyes,0,AP.eyes.length-1,0),outfit:n(a.outfit,0,AP.outfit.length-1,0),acc:n(a.acc,0,AP.acc.length-1,0),cape:n(a.cape,0,AP.cape.length-1,1),eyeCol:n(a.eyeCol,0,AP.eyeCol.length-1,0),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}}
 
 /* ========== LATE: 30-quality.js ========== */
 // ===== V6 Quality manager: presets + optional adaptive downgrade; reads cel.opt =====
@@ -1594,6 +1616,7 @@ const WingArt=(()=>{
    x.fillStyle='rgba(255,255,255,.2)';x.beginPath();x.moveTo(L*.2,-w*.2);x.lineTo(L*.62,-w*.7);x.lineTo(L*.48,-w*.05);x.closePath();x.fill();
    x.fillStyle='rgba(120,200,255,.18)';x.beginPath();x.moveTo(L*.4,w*.1);x.lineTo(L*.9,-w*.1);x.lineTo(L*.55,w*.5);x.closePath();x.fill()}
   x.restore()}
+ const STY={}; // extra feather silhouettes (shop wings); filled in by 51-wings2.js
  function build(tier,hd){
   const W=WINGS[tier],ds=hd?2:1.25,CW=Math.round(250*ds*W.span*.9),CH=Math.round(260*ds*W.span*.9),ox=Math.round(CW*.1),oy=Math.round(CH*.72),pal=W.pal,rand=sr(tier*977+13),layers=[];
   const Lmax=Math.min(CW*.86,128*ds*W.span);
@@ -1603,7 +1626,7 @@ const WingArt=(()=>{
    const jf=j/(rows-1||1),n=W.fe-(j>>1),aMin=-60+j*2,aMax=26-j*4;
    const col0=j<rows/2?pal[0]:pal[1],col1=j<rows/2?pal[1]:pal[2],col2=j==rows-1?pal[2]:pal[2];
    for(let i=0;i<n;i++){const u=i/(n-1||1),a=(aMin+(aMax-aMin)*u+(rand()-.5)*3)*RAD,L=Lmax/ds*(.5+.5*Math.pow(1-u,.7))*(1-jf*.4)*(.94+rand()*.12),w=L*(.2+.06*(1-jf));
-    x.save();x.rotate(a);x.globalAlpha=.78+.22*(j/rows);feather(x,L,w,col0,col1,col2,W.corona||W.cosmic?pal[3]:null,W.corona?pal[3]:null,W.crys>3,rand);x.restore()}
+    x.save();x.rotate(a);x.globalAlpha=.78+.22*(j/rows);(STY[W.style]||feather)(x,L,w,col0,col1,col2,W.corona||W.cosmic?pal[3]:null,W.corona?pal[3]:null,W.crys>3,rand);x.restore()}
    if(W.nebula&&j==rows-1){ // sparkle-star dust across the front row
     x.globalCompositeOperation='source-atop';for(let i=0;i<46;i++){const a=(aMin+rand()*(aMax-aMin))*RAD,r=10+rand()*Lmax/ds*.8;x.fillStyle=['#fff','#7ff0ff','#ff9be8','#c05cff'][i%4];x.globalAlpha=.4+rand()*.5;x.fillRect(Math.cos(a)*r,Math.sin(a)*r,1.6,1.6)}}
    layers.push(c)}
@@ -1637,10 +1660,50 @@ const WingArt=(()=>{
    g.restore()}
   g.restore()}
  // extras that sit with the wings: halo above the head, storm arcs
- function extras(g,tier,cx,cy,t){const W=WINGS[tier],ph=QM.cur.wfx;if(!ph)return;
+ function extras(g,tier,cx,cy,t){const W=WINGS[tier],ph=QM.cur.wfx;if(!ph)return;if(W.fxk&&window.FX7)FX7.wingFx(W,cx,cy,t);
   if(W.halo){g.save();g.globalCompositeOperation='lighter';g.translate(cx,cy-50);g.scale(1,.28);g.lineWidth=3;g.strokeStyle=W.pal[3];g.shadowColor=W.pal[3];g.shadowBlur=10;g.globalAlpha=.85;g.beginPath();g.arc(0,0,19,0,6.3);g.stroke();g.lineWidth=1;g.globalAlpha=.6;g.setLineDash([3,5]);g.lineDashOffset=-t*20;g.beginPath();g.arc(0,0,24,0,6.3);g.stroke();g.restore()}
   if(W.arc&&ph>=2&&((t*8)|0)%5==0){g.save();g.globalCompositeOperation='lighter';g.strokeStyle='#bfe8ff';g.lineWidth=1.4;g.shadowColor='#78c8ff';g.shadowBlur=8;for(let s=-1;s<=1;s+=2){g.beginPath();let x=cx+s*8,y=cy-4;g.moveTo(x,y);for(let i=0;i<5;i++){x+=s*(10+((t*97+i*13)%7));y+=-6+((t*57+i*31)%12);g.lineTo(x,y)}g.stroke()}g.restore()}}
- return{get,draw,extras,tiers:WINGS.length}})();
+ return{get,draw,extras,STY,tiers:WINGS.length}})();
+
+/* ========== LATE: 51-wings2.js ========== */
+// ===== Shop wings: each has its own silhouette (STY), palette, animation weight and particle behaviour (fxk, see FX7.wingFx) =====
+(()=>{const STY=WingArt.STY,fillG=(x,L,c0,c1,c2)=>{const g=x.createLinearGradient(0,0,L,0);g.addColorStop(0,c0);g.addColorStop(.5,c1);g.addColorStop(1,c2);x.fillStyle=g};
+ // dove: broad rounded feathers with soft glowing tips
+ STY.dove=(x,L,w,c0,c1,c2,glow,edge,cr,rand)=>{x.save();x.beginPath();x.moveTo(0,0);x.bezierCurveTo(L*.3,-w*1.25,L*.85,-w*1.3,L,-w*.1);x.bezierCurveTo(L*1.02,w*.5,L*.6,w*1.05,0,0);x.closePath();fillG(x,L,c0,c1,c2);x.shadowColor='#fff';x.shadowBlur=w*.5;x.fill();x.shadowBlur=0;x.strokeStyle='rgba(150,170,220,.55)';x.lineWidth=Math.max(1,w*.06);x.stroke();
+  x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=Math.max(.8,w*.08);x.beginPath();x.moveTo(L*.04,0);x.quadraticCurveTo(L*.5,-w*.3,L*.96,-w*.08);x.stroke();x.fillStyle='rgba(255,255,255,.85)';x.beginPath();x.arc(L*.94,-w*.1,w*.18,0,6.3);x.fill();x.restore()};
+ // blossom: petal shapes with a notched tip and a pink vein
+ STY.petal=(x,L,w,c0,c1,c2)=>{x.save();x.beginPath();x.moveTo(0,0);x.bezierCurveTo(L*.2,-w*1.3,L*.8,-w*1.4,L*.98,-w*.35);x.lineTo(L*.88,-w*.05);x.lineTo(L,w*.3);x.bezierCurveTo(L*.7,w*1.1,L*.25,w*1.0,0,0);x.closePath();fillG(x,L,c0,c1,c2);x.fill();x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=Math.max(1,w*.07);x.stroke();
+  x.strokeStyle='rgba(190,60,110,.45)';x.lineWidth=Math.max(.8,w*.06);x.beginPath();x.moveTo(L*.05,0);x.quadraticCurveTo(L*.5,-w*.25,L*.9,-w*.05);x.stroke();x.restore()};
+ // crystal: faceted kite shards
+ STY.shard=(x,L,w,c0,c1,c2)=>{x.save();x.beginPath();x.moveTo(0,0);x.lineTo(L*.35,-w*.95);x.lineTo(L,-w*.1);x.lineTo(L*.45,w*.7);x.closePath();fillG(x,L,c0,c1,c2);x.shadowColor=c2;x.shadowBlur=w*.6;x.fill();x.shadowBlur=0;x.strokeStyle='rgba(255,255,255,.9)';x.lineWidth=Math.max(1,w*.08);x.stroke();
+  x.fillStyle='rgba(255,255,255,.32)';x.beginPath();x.moveTo(0,0);x.lineTo(L*.35,-w*.95);x.lineTo(L*.5,-w*.1);x.closePath();x.fill();x.fillStyle='rgba(90,170,255,.28)';x.beginPath();x.moveTo(L*.5,-w*.1);x.lineTo(L,-w*.1);x.lineTo(L*.45,w*.7);x.closePath();x.fill();
+  x.strokeStyle='rgba(255,255,255,.5)';x.beginPath();x.moveTo(L*.35,-w*.95);x.lineTo(L*.45,w*.7);x.stroke();x.restore()};
+ // mechanical: tapered metal plates with a glowing conduit and rivets
+ STY.blade=(x,L,w,c0,c1,c2)=>{x.save();x.beginPath();x.moveTo(0,-w*.25);x.lineTo(L*.9,-w*.55);x.lineTo(L,-w*.05);x.lineTo(L*.85,w*.5);x.lineTo(0,w*.3);x.closePath();const g=x.createLinearGradient(0,-w,0,w);g.addColorStop(0,'#cfd6e4');g.addColorStop(.45,'#7d8799');g.addColorStop(1,'#2e3440');x.fillStyle=g;x.fill();x.strokeStyle='#161a22';x.lineWidth=Math.max(1,w*.09);x.stroke();
+  x.shadowColor='#3ff3ff';x.shadowBlur=w*.5;x.strokeStyle='#3ff3ff';x.lineWidth=Math.max(1,w*.1);x.beginPath();x.moveTo(L*.1,0);x.lineTo(L*.8,-w*.18);x.stroke();x.shadowBlur=0;x.fillStyle='#e8eef9';for(let i=1;i<4;i++){x.beginPath();x.arc(L*(.2+i*.2),-w*.2+i*.02*w,Math.max(1,w*.06),0,6.3);x.fill()}x.restore()};
+ // umbral eclipse: serrated black feathers with a violet rim light
+ STY.jag=(x,L,w,c0,c1,c2)=>{x.save();x.beginPath();x.moveTo(0,0);x.lineTo(L*.2,-w*.75);x.lineTo(L*.3,-w*.5);x.lineTo(L*.5,-w*1.0);x.lineTo(L*.58,-w*.55);x.lineTo(L*.8,-w*.8);x.lineTo(L,-w*.1);x.lineTo(L*.7,w*.35);x.lineTo(L*.45,w*.55);x.lineTo(L*.2,w*.45);x.closePath();fillG(x,L,c0,c1,c2);x.shadowColor='#9b5cff';x.shadowBlur=w*.8;x.fill();x.shadowBlur=0;x.strokeStyle='rgba(190,140,255,.85)';x.lineWidth=Math.max(1,w*.09);x.stroke();x.restore()};
+ // galaxy: feather silhouette with a starfield inside
+ STY.star=(x,L,w,c0,c1,c2,glow,edge,cr,rand)=>{x.save();x.beginPath();x.moveTo(0,0);x.bezierCurveTo(L*.25,-w*1.0,L*.7,-w*.9,L,-w*.15);x.bezierCurveTo(L*.72,w*.55,L*.3,w*.8,0,0);x.closePath();fillG(x,L,c0,c1,c2);x.fill();x.save();x.clip();for(let i=0;i<26;i++){x.fillStyle=['#fff','#9fe8ff','#ffb3f0','#c9a8ff'][i%4];x.globalAlpha=.35+rand()*.65;const s=.8+rand()*1.8;x.fillRect(rand()*L,(rand()-.5)*w*1.6,s,s)}x.restore();x.globalAlpha=1;x.strokeStyle='rgba(190,170,255,.8)';x.lineWidth=Math.max(1,w*.07);x.stroke();x.restore()};
+ // dragon: a bone finger with a leathery membrane webbed to the next finger
+ STY.bone=(x,L,w,c0,c1,c2)=>{x.save();x.beginPath();x.moveTo(0,0);x.lineTo(L,-w*.1);x.lineTo(L*.8,w*.95);x.quadraticCurveTo(L*.45,w*.55,0,w*.15);x.closePath();const g=x.createLinearGradient(0,0,L,w);g.addColorStop(0,c0);g.addColorStop(.6,c1);g.addColorStop(1,c2);x.globalAlpha*=.92;x.fillStyle=g;x.fill();x.globalAlpha=1;
+  x.strokeStyle='#2a0a0a';x.lineWidth=Math.max(1.5,w*.16);x.lineCap='round';x.beginPath();x.moveTo(0,0);x.quadraticCurveTo(L*.5,-w*.2,L,-w*.1);x.stroke();x.strokeStyle='#e9d9c8';x.lineWidth=Math.max(.8,w*.07);x.stroke();x.fillStyle='#e9d9c8';x.beginPath();x.moveTo(L,-w*.1);x.lineTo(L*1.08,-w*.08);x.lineTo(L,0);x.fill();x.restore()};
+ // omen moth: broad rounded lobes with glowing veins and an eye spot
+ STY.lobe=(x,L,w,c0,c1,c2)=>{x.save();x.beginPath();x.moveTo(0,0);x.bezierCurveTo(L*.1,-w*2.0,L*.95,-w*2.1,L,-w*.4);x.bezierCurveTo(L*1.0,w*.9,L*.4,w*1.4,0,0);x.closePath();fillG(x,L,c0,c1,c2);x.fill();x.strokeStyle='rgba(255,120,120,.7)';x.lineWidth=Math.max(1,w*.06);x.stroke();
+  x.shadowColor='#ff3a4a';x.shadowBlur=w*.5;x.strokeStyle='rgba(255,90,90,.85)';x.lineWidth=Math.max(.8,w*.05);for(let i=-2;i<=2;i++){x.beginPath();x.moveTo(L*.05,0);x.quadraticCurveTo(L*.5,i*w*.55,L*.9,i*w*.6-w*.2);x.stroke()}x.shadowBlur=0;
+  x.fillStyle='#fff0d8';x.beginPath();x.ellipse(L*.68,-w*.5,w*.4,w*.55,.4,0,6.3);x.fill();x.fillStyle='#2a0612';x.beginPath();x.ellipse(L*.69,-w*.5,w*.2,w*.3,.4,0,6.3);x.fill();x.restore()};
+ // ---- entries (ids match the catalog: wing_<ref>). lvl 0 + shop:1 => never part of level progression; ownership decides.
+ const E=[
+  {id:'dove',n:'Dove Wings',style:'dove',rows:4,fe:9,span:1.2,pal:['#c9d3ee','#f1f5ff','#ffffff','#fff2d0'],crys:1,sp:'#fff',fxk:'glitter',d:'Pearl-white feather wings with luminous tips and falling glitter.'},
+  {id:'blossom',n:'Blossom Wings',style:'petal',rows:3,fe:8,span:1.15,pal:['#e66a9a','#ffb0cf','#fff0f6','#ff7fb0'],crys:0,sp:'#ffd0e4',fxk:'petals',d:'Soft petal-shaped wings that shed cherry-blossom petals as you move.'},
+  {id:'crystal',n:'Crystal Wings',style:'shard',rows:3,fe:8,span:1.15,pal:['#2a76c9','#8fe0ff','#f4fdff','#7ff0ff'],crys:6,sp:'#c8f6ff',fxk:'glints',d:'Angular shards with refracting light bands.'},
+  {id:'mech',n:'Mechanical Wings',style:'blade',rows:3,fe:7,span:1.2,pal:['#2e3440','#7d8799','#cfd6e4','#3ff3ff'],crys:0,sp:'#3ff3ff',fxk:'sparks',d:'Metal plates and glowing conduits with small turning gears.'},
+  {id:'umbral',n:'Umbral Eclipse Wings',style:'jag',rows:4,fe:10,span:1.35,pal:['#07040d','#2d1458','#7a42d6','#b88bff'],crys:4,sp:'#b88bff',fxk:'smoke',d:'Violet-black feathers wrapped in rising dark energy.'},
+  {id:'galaxy',n:'Galaxy Wings',style:'star',rows:4,fe:10,span:1.4,pal:['#140a3a','#4b2fb0','#2fb6ff','#ff7fe0'],crys:5,sp:'#fff',fxk:'stars',cosmic:1,d:'Feather silhouettes filled with a living starfield.'},
+  {id:'dragon',n:'Dragon Wings',style:'bone',rows:2,fe:5,span:1.55,pal:['#5a0f12','#b3262b','#ff7a4a','#ffb347'],crys:0,sp:'#ff9a4a',fxk:'embers',d:'Large articulated bat wings with membranes and bone fingers.'},
+  {id:'moth',n:'Omen Moth Wings',style:'lobe',rows:3,fe:4,span:1.6,pal:['#1a0409','#6e0f1c','#c4283a','#ffb8a0'],crys:0,sp:'#ff4a5a',fxk:'omen',d:'Broad crimson-black moth wings with glowing veins.'}];
+ for(const e of E){e.lvl=0;e.shop=1;WINGS.push(e)}
+})();
 
 /* ========== LATE: 55-plate.js ========== */
 // ===== V6 nameplates: data-driven tiers (every 15 levels), cached sprites per (tier,name,level) =====
@@ -1832,10 +1895,13 @@ const AC6=(()=>{
   if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,(cx*.01)%6);WingArt.extras(g,wingIdx,cx,cy+24,t)}
   else if(hasLegacy){g.save();g.translate(cx,feet);g.scale(1.1*f,1.1);try{drawWings(wr.wing,wr.wo!=null?wr.wo:wingOpen,wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,t)}catch(_){}g.restore()}
   g.save();g.translate(cx,feet);g.scale(1.12*f,1.12);g.lineJoin='round';g.lineCap='round';
-  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr})}finally{g.restore()}
+  FX7.ld=local;
+  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.06)VFX.feather(cx+cam.x+(Math.random()<.5?-1:1)*30,cy+cam.y+10+Math.random()*30,WINGS[wingIdx].pal[2],f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}
+  // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
+  try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
   // nameplate + bubble
   const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50,tier,nm,lvv);
   if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-96,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-79);g.restore()}
@@ -1845,7 +1911,7 @@ const AC6=(()=>{
 drawChar=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){AC6.draw(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q)};
 nameTag=function(){};
 // compact, validated cosmetic block for multiplayer presence
-function celPres(){const w=curWing(lvl),a=curAura(lvl);return{w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
+function celPres(){const w=curWing(lvl),a=curAura(lvl);return{fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
 
 /* ========== LATE: 70-world.js ========== */
 // ===== V6 world: 2.5D parallax sky, 12-state weather manager (smooth blends), color grading, bloom =====
@@ -1931,6 +1997,142 @@ const POST6=(()=>{const bc=document.createElement('canvas'),bx=bc.getContext('2d
   if(q.bloom&&cel.opt.bloom&&ZM>=.7&&can&&entered){const bw=w>>2,bh=hh>>2;if(bc.width!=bw){bc.width=b2.width=bw;bc.height=b2.height=bh}bx.globalCompositeOperation='copy';bx.drawImage(cv,0,0,bw,bh);b2x.filter='brightness(.8) contrast(2.6) saturate(1.3) blur('+(q.bloom==2?5:3)+'px)';b2x.globalCompositeOperation='copy';b2x.drawImage(bc,0,0);b2x.filter='none';g.save();g.globalCompositeOperation='lighter';g.globalAlpha=(q.bloom==2?.38:.22)*(QM.reduce?.6:1);g.drawImage(b2,0,0,w,hh);g.restore()}
   const tb=q.cine&&cel.opt.cine!==0?1:0;bars+=(tb-bars)*.08;if(bars>.01){const bh2=hh*.07*bars;g.fillStyle='#000';g.fillRect(0,0,w,bh2);g.fillRect(0,hh-bh2,w,bh2)}}}})();
 
+/* ========== LATE: 72-catalog.js ========== */
+// ===== SHOP7: item catalog (shared with the server), ownership, equipment slots and the purchase flow =====
+// The catalog (ids, prices, rarity) is generated into server/catalog.json and inlined here at build time. Online (signed-in) purchases are
+// validated by the server against its own copy of the catalog and its own wallet; offline/guest purchases are validated locally.
+const CATALOG7={"v":1,"items":[{"id":"blk_1","cat":"blocks","n":"Dirt","price":2,"rar":"common","stack":1,"ref":1,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_101","cat":"seeds","n":"Dirt Seed","price":10,"rar":"common","stack":1,"ref":101,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_8","cat":"blocks","n":"Sand","price":3,"rar":"common","stack":1,"ref":8,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_108","cat":"seeds","n":"Sand Seed","price":15,"rar":"common","stack":1,"ref":108,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_3","cat":"blocks","n":"Stone","price":4,"rar":"common","stack":1,"ref":3,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_103","cat":"seeds","n":"Stone Seed","price":20,"rar":"common","stack":1,"ref":103,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_5","cat":"blocks","n":"Wood","price":7,"rar":"common","stack":1,"ref":5,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_105","cat":"seeds","n":"Wood Seed","price":35,"rar":"common","stack":1,"ref":105,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_6","cat":"blocks","n":"Glass","price":9,"rar":"common","stack":1,"ref":6,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_106","cat":"seeds","n":"Glass Seed","price":45,"rar":"common","stack":1,"ref":106,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_7","cat":"blocks","n":"Brick","price":12,"rar":"common","stack":1,"ref":7,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_107","cat":"seeds","n":"Brick Seed","price":60,"rar":"common","stack":1,"ref":107,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_11","cat":"blocks","n":"Cobblestone","price":5,"rar":"common","stack":1,"ref":11,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_111","cat":"seeds","n":"Cobblestone Seed","price":25,"rar":"common","stack":1,"ref":111,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_15","cat":"blocks","n":"Hedge","price":6,"rar":"common","stack":1,"ref":15,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_115","cat":"seeds","n":"Hedge Seed","price":30,"rar":"common","stack":1,"ref":115,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_14","cat":"blocks","n":"Roof Tile","price":10,"rar":"common","stack":1,"ref":14,"lv":1,"d":"Building block.","how":"store","feat":0},{"id":"seed_114","cat":"seeds","n":"Roof Tile Seed","price":50,"rar":"common","stack":1,"ref":114,"lv":1,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_12","cat":"blocks","n":"Marble","price":12,"rar":"common","stack":1,"ref":12,"lv":3,"d":"Building block.","how":"store","feat":0},{"id":"seed_112","cat":"seeds","n":"Marble Seed","price":60,"rar":"common","stack":1,"ref":112,"lv":3,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_13","cat":"blocks","n":"Street Lamp","price":20,"rar":"common","stack":1,"ref":13,"lv":3,"d":"Building block.","how":"store","feat":0},{"id":"seed_113","cat":"seeds","n":"Street Lamp Seed","price":100,"rar":"uncommon","stack":1,"ref":113,"lv":3,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_17","cat":"blocks","n":"World Lock","price":500,"rar":"rare","stack":1,"ref":17,"lv":2,"d":"Building block.","how":"store","feat":0},{"id":"blk_9","cat":"blocks","n":"Crystal","price":40,"rar":"common","stack":1,"ref":9,"lv":5,"d":"Building block.","how":"store","feat":0},{"id":"seed_109","cat":"seeds","n":"Crystal Seed","price":200,"rar":"uncommon","stack":1,"ref":109,"lv":5,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"blk_10","cat":"blocks","n":"Gold","price":80,"rar":"common","stack":1,"ref":10,"lv":9,"d":"Building block.","how":"store","feat":0},{"id":"seed_110","cat":"seeds","n":"Gold Seed","price":400,"rar":"rare","stack":1,"ref":110,"lv":9,"d":"Plant it and it grows into a harvestable tree.","how":"store","feat":0},{"id":"obj_20","cat":"objects","n":"Oak Door","price":30,"rar":"common","stack":1,"ref":20,"lv":2,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_21","cat":"objects","n":"Stone Gate","price":60,"rar":"common","stack":1,"ref":21,"lv":6,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_22","cat":"objects","n":"Steel Hatch","price":120,"rar":"uncommon","stack":1,"ref":22,"lv":10,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_27","cat":"objects","n":"Treasure Chest","price":80,"rar":"common","stack":1,"ref":27,"lv":3,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_28","cat":"objects","n":"Signpost","price":12,"rar":"common","stack":1,"ref":28,"lv":1,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_29","cat":"objects","n":"Lantern","price":40,"rar":"common","stack":1,"ref":29,"lv":2,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_30","cat":"objects","n":"Lever","price":50,"rar":"common","stack":1,"ref":30,"lv":4,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_31","cat":"objects","n":"Pressure Plate","price":40,"rar":"common","stack":1,"ref":31,"lv":4,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_33","cat":"objects","n":"Crafting Table","price":90,"rar":"common","stack":1,"ref":33,"lv":3,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_34","cat":"objects","n":"Storage Crate","price":40,"rar":"common","stack":1,"ref":34,"lv":1,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_35","cat":"objects","n":"Training Dummy","price":60,"rar":"common","stack":1,"ref":35,"lv":3,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_36","cat":"objects","n":"Waystone","price":200,"rar":"uncommon","stack":1,"ref":36,"lv":5,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_37","cat":"objects","n":"Bench","price":25,"rar":"common","stack":1,"ref":37,"lv":1,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_38","cat":"objects","n":"Banner","price":20,"rar":"common","stack":1,"ref":38,"lv":1,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_32","cat":"objects","n":"Teleport Pad","price":250,"rar":"uncommon","stack":1,"ref":32,"lv":9,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_23","cat":"objects","n":"Magic Portal","price":300,"rar":"uncommon","stack":1,"ref":23,"lv":8,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_24","cat":"objects","n":"Neon Gate","price":220,"rar":"uncommon","stack":1,"ref":24,"lv":12,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_25","cat":"objects","n":"Starlit Gate","price":900,"rar":"rare","stack":1,"ref":25,"lv":25,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_26","cat":"objects","n":"Sealed Gate","price":600,"rar":"rare","stack":1,"ref":26,"lv":15,"d":"Placeable interactive object.","how":"store","feat":0},{"id":"obj_39","cat":"weather","n":"Blossom Weather Machine","price":900,"rar":"rare","stack":1,"ref":39,"lv":8,"d":"Turns the whole world into a pink cherry-blossom evening with drifting petals.","how":"store","feat":0},{"id":"obj_40","cat":"weather","n":"Space Weather Machine","price":1600,"rar":"epic","stack":1,"ref":40,"lv":16,"d":"Opens the sky to deep space: planets, nebulae and slow stars.","how":"store","feat":0},{"id":"obj_41","cat":"weather","n":"Galaxy Weather Machine","price":3200,"rar":"legendary","stack":1,"ref":41,"lv":28,"d":"A swirling galaxy with colourful nebulae. The grandest sky in Rootbound.","how":"store","feat":1},{"id":"wpn_ember","cat":"weapons","n":"Emberbrand","price":80,"rar":"common","stack":0,"ref":"ember","lv":0,"d":"Flames sear monsters. Breaks fast.","how":"store","legacy":1,"feat":0},{"id":"wpn_frost","cat":"weapons","n":"Glacial Edge","price":140,"rar":"uncommon","stack":0,"ref":"frost","lv":0,"d":"Chills monsters, steady breaker.","how":"store","legacy":1,"feat":0},{"id":"wpn_venom","cat":"weapons","n":"Viper Reed","price":200,"rar":"uncommon","stack":0,"ref":"venom","lv":0,"d":"Heals you on every hit.","how":"store","legacy":1,"feat":0},{"id":"wpn_blood","cat":"weapons","n":"Crimson Fang","price":300,"rar":"uncommon","stack":0,"ref":"blood","lv":0,"d":"Heavy hits that steal life.","how":"store","legacy":1,"feat":0},{"id":"wpn_arcane","cat":"weapons","n":"Arcane Lash","price":380,"rar":"uncommon","stack":0,"ref":"arcane","lv":0,"d":"Piercing wave breaks 3 blocks in a line.","how":"store","legacy":1,"feat":0},{"id":"wpn_void","cat":"weapons","n":"Void Reaper","price":520,"rar":"rare","stack":0,"ref":"void","lv":0,"d":"Sweeps a wide area, pulls monsters in.","how":"store","legacy":1,"feat":0},{"id":"wpn_glaive","cat":"weapons","n":"Twin Glaives","price":700,"rar":"rare","stack":0,"ref":"glaive","lv":0,"d":"Returning blades chew through blocks.","how":"store","legacy":1,"feat":0},{"id":"wpn_hammer","cat":"weapons","n":"Thunder Hammer","price":600,"rar":"rare","stack":0,"ref":"hammer","lv":0,"d":"Smashes a wide area and stuns monsters.","how":"store","legacy":1,"feat":0},{"id":"wpn_pan","cat":"weapons","n":"Frying Pan","price":60,"rar":"common","stack":0,"ref":"pan","lv":0,"d":"Fast bonks that stun monsters.","how":"store","legacy":1,"feat":0},{"id":"wpn_sickle","cat":"weapons","n":"Harvest Sickle","price":250,"rar":"uncommon","stack":0,"ref":"sickle","lv":0,"d":"Doubles what you get from harvesting trees.","how":"store","legacy":1,"feat":0},{"id":"wpn_cinder","cat":"weapons","n":"Cinder Brand","price":150,"rar":"uncommon","stack":0,"ref":"cinder","lv":0,"d":"A spark of living flame. Evolves as you slay.","how":"store","legacy":1,"feat":0},{"id":"wpn_rime","cat":"weapons","n":"Rime Needle","price":180,"rar":"uncommon","stack":0,"ref":"rime","lv":0,"d":"Chills what it touches. Evolves as you slay.","how":"store","legacy":1,"feat":0},{"id":"wpn_spark","cat":"weapons","n":"Spark Mallet","price":350,"rar":"uncommon","stack":0,"ref":"spark","lv":0,"d":"Stuns on impact. Evolves as you slay.","how":"store","legacy":1,"feat":0},{"id":"wpn_umbra","cat":"weapons","n":"Umbral Twins","price":450,"rar":"rare","stack":0,"ref":"umbra","lv":0,"d":"Blades that drink life. Evolves as you slay.","how":"store","legacy":1,"feat":0},{"id":"wear_helmet","cat":"gear","n":"Miner Helmet","price":60,"rar":"common","stack":0,"ref":"helmet","lv":1,"d":"Light +90","how":"store","legacy":1,"sub":"hat","feat":0},{"id":"wear_clover","cat":"gear","n":"Lucky Clover","price":120,"rar":"uncommon","stack":0,"ref":"clover","lv":2,"d":"Gems +20%","how":"store","legacy":1,"sub":"hat","feat":0},{"id":"wear_sage","cat":"gear","n":"Sage Hood","price":220,"rar":"uncommon","stack":0,"ref":"sage","lv":4,"d":"XP +15%","how":"store","legacy":1,"sub":"hat","feat":0},{"id":"wear_crown","cat":"gear","n":"Gold Crown","price":480,"rar":"rare","stack":0,"ref":"crown","lv":7,"d":"+1 gem per break","how":"store","legacy":1,"sub":"hat","feat":0},{"id":"wear_vest","cat":"gear","n":"Miner Vest","price":90,"rar":"common","stack":0,"ref":"vest","lv":1,"d":"Damage taken -12%","how":"store","legacy":1,"sub":"body","feat":0},{"id":"wear_robe","cat":"gear","n":"Mage Robe","price":260,"rar":"uncommon","stack":0,"ref":"robe","lv":4,"d":"XP +10%, light +40","how":"store","legacy":1,"sub":"body","feat":0},{"id":"wear_plate","cat":"gear","n":"Knight Plate","price":520,"rar":"rare","stack":0,"ref":"plate","lv":8,"d":"Damage -30%, speed -5%","how":"store","legacy":1,"sub":"body","feat":0},{"id":"wear_angel","cat":"gear","n":"Angel Wings","price":150,"rar":"uncommon","stack":0,"ref":"angel","lv":2,"d":"Double jump","how":"store","legacy":1,"sub":"wing","feat":0},{"id":"wear_fairy","cat":"gear","n":"Fairy Wings","price":240,"rar":"uncommon","stack":0,"ref":"fairy","lv":4,"d":"Slow fall, sparkle trail","how":"store","legacy":1,"sub":"wing","feat":0},{"id":"wear_bat","cat":"gear","n":"Bat Wings","price":330,"rar":"uncommon","stack":0,"ref":"bat","lv":6,"d":"Glide, more light at night","how":"store","legacy":1,"sub":"wing","feat":0},{"id":"wear_phoenix","cat":"gear","n":"Phoenix Wings","price":520,"rar":"rare","stack":0,"ref":"phoenix","lv":8,"d":"Glide, fire trail","how":"store","legacy":1,"sub":"wing","feat":0},{"id":"wear_crystal","cat":"gear","n":"Crystal Wings","price":900,"rar":"rare","stack":0,"ref":"crystal","lv":11,"d":"Triple jump","how":"store","legacy":1,"sub":"wing","feat":0},{"id":"wear_spring","cat":"gear","n":"Spring Boots","price":90,"rar":"common","stack":0,"ref":"spring","lv":1,"d":"Jump +25%","how":"store","legacy":1,"sub":"boot","feat":0},{"id":"wear_sandal","cat":"gear","n":"Swift Sandals","price":160,"rar":"uncommon","stack":0,"ref":"sandal","lv":3,"d":"Speed +12%","how":"store","legacy":1,"sub":"boot","feat":0},{"id":"wear_rocket","cat":"gear","n":"Rocket Boots","price":380,"rar":"uncommon","stack":0,"ref":"rocket","lv":6,"d":"Speed +25%","how":"store","legacy":1,"sub":"boot","feat":0},{"id":"wear_power","cat":"gear","n":"Power Gloves","price":110,"rar":"uncommon","stack":0,"ref":"power","lv":2,"d":"Break power +1","how":"store","legacy":1,"sub":"glove","feat":0},{"id":"wear_garden","cat":"gear","n":"Gardener Gloves","price":240,"rar":"uncommon","stack":0,"ref":"garden","lv":4,"d":"Farm XP +25%, more seeds","how":"store","legacy":1,"sub":"glove","feat":0},{"id":"wear_midas","cat":"gear","n":"Midas Gloves","price":600,"rar":"rare","stack":0,"ref":"midas","lv":9,"d":"Gems +50%","how":"store","legacy":1,"sub":"glove","feat":0},{"id":"wear_nightcap","cat":"gear","n":"Starry Nightcap","price":150,"rar":"uncommon","stack":0,"ref":"nightcap","lv":2,"d":"Slowly regenerates health","how":"store","legacy":1,"sub":"hat","feat":0},{"id":"wear_cap","cat":"gear","n":"Runner Cap","price":110,"rar":"uncommon","stack":0,"ref":"cap","lv":1,"d":"Speed +6%","how":"store","legacy":1,"sub":"hat","feat":0},{"id":"wear_pajamas","cat":"gear","n":"Starry Pajamas","price":200,"rar":"uncommon","stack":0,"ref":"pajamas","lv":2,"d":"Regenerate, damage -5%","how":"store","legacy":1,"sub":"body","feat":0},{"id":"wear_hoodie","cat":"gear","n":"Comfy Hoodie","price":240,"rar":"uncommon","stack":0,"ref":"hoodie","lv":3,"d":"XP +8%, jump +4%","how":"store","legacy":1,"sub":"body","feat":0},{"id":"wear_jacket","cat":"gear","n":"Denim Jacket","price":320,"rar":"uncommon","stack":0,"ref":"jacket","lv":5,"d":"Damage taken -15%","how":"store","legacy":1,"sub":"body","feat":0},{"id":"wear_sneakers","cat":"gear","n":"Cloud Runner Sneakers","price":300,"rar":"uncommon","stack":0,"ref":"sneakers","lv":4,"d":"Speed +20%, jump +10%","how":"store","legacy":1,"sub":"boot","feat":0},{"id":"wear_slippers","cat":"gear","n":"Fuzzy Slippers","price":130,"rar":"uncommon","stack":0,"ref":"slippers","lv":1,"d":"Slowly regenerate","how":"store","legacy":1,"sub":"boot","feat":0},{"id":"wear_cowboy","cat":"gear","n":"Trail Boots","price":280,"rar":"uncommon","stack":0,"ref":"cowboy","lv":5,"d":"Damage -10%, speed +5%","how":"store","legacy":1,"sub":"boot","feat":0},{"id":"wpn_solarfang","cat":"weapons","n":"Solar Fang","price":1200,"rar":"epic","stack":0,"ref":"solarfang","lv":0,"d":"A radiant gold-orange blade. Every hit bursts into a sunflare and sets monsters alight.","how":"store","new":1,"feat":1},{"id":"wpn_frostbite","cat":"weapons","n":"Frostbite Edge","price":700,"rar":"rare","stack":0,"ref":"frostbite","lv":0,"d":"Icy crystal edge that sheds frost shards and slows whatever it cuts.","how":"store","new":1,"feat":0},{"id":"wpn_astralkat","cat":"weapons","n":"Astral Katana","price":1500,"rar":"epic","stack":0,"ref":"astralkat","lv":0,"d":"A thin blue-violet blade that leaves a starlit slash and fires a piercing wave.","how":"store","new":1,"feat":1},{"id":"wpn_crimsonrift","cat":"weapons","n":"Crimson Rift","price":2800,"rar":"legendary","stack":0,"ref":"crimsonrift","lv":0,"d":"Tears red cracks in the ground and pulls monsters into the rift.","how":"store","new":1,"feat":1},{"id":"wpn_verdant","cat":"weapons","n":"Verdant Breaker","price":450,"rar":"uncommon","stack":0,"ref":"verdant","lv":0,"d":"A living-wood hammer-blade that scatters leaves and heals you while you fight.","how":"store","new":1,"feat":0},{"id":"wing_dove","cat":"wings","n":"Dove Wings","price":600,"rar":"rare","stack":0,"ref":"dove","lv":0,"d":"Pearl-white feather wings with luminous tips and falling glitter.","how":"store","new":1,"excl":false,"feat":0},{"id":"wing_blossom","cat":"wings","n":"Blossom Wings","price":400,"rar":"uncommon","stack":0,"ref":"blossom","lv":0,"d":"Soft petal-shaped wings that shed cherry-blossom petals as you move.","how":"store","new":1,"excl":false,"feat":0},{"id":"wing_crystal","cat":"wings","n":"Crystal Wings","price":800,"rar":"rare","stack":0,"ref":"crystal","lv":0,"d":"Angular shards with refracting light bands.","how":"store","new":1,"excl":false,"feat":0},{"id":"wing_mech","cat":"wings","n":"Mechanical Wings","price":1400,"rar":"epic","stack":0,"ref":"mech","lv":0,"d":"Metal plates and glowing conduits with small turning gears.","how":"store","new":1,"excl":false,"feat":0},{"id":"wing_umbral","cat":"wings","n":"Umbral Eclipse Wings","price":1800,"rar":"epic","stack":0,"ref":"umbral","lv":0,"d":"Violet-black feathers wrapped in rising dark energy.","how":"store","new":1,"excl":false,"feat":0},{"id":"wing_galaxy","cat":"wings","n":"Galaxy Wings","price":3000,"rar":"legendary","stack":0,"ref":"galaxy","lv":40,"d":"Feather silhouettes filled with a living starfield. Needs level 40.","how":"store","new":1,"excl":false,"feat":1},{"id":"wing_dragon","cat":"wings","n":"Dragon Wings","price":3400,"rar":"legendary","stack":0,"ref":"dragon","lv":60,"d":"Large articulated bat wings with membranes and bone fingers. Needs level 60.","how":"store","new":1,"excl":false,"feat":0},{"id":"wing_moth","cat":"wings","n":"Omen Moth Wings","price":8000,"rar":"mythic","stack":0,"ref":"moth","lv":100,"d":"Broad crimson-black moth wings with glowing veins. The rarest wings. Needs level 100.","how":"store","new":1,"excl":true,"feat":1},{"id":"fx_aura_void","cat":"effects","n":"Void Aura","price":600,"rar":"rare","stack":0,"ref":"aura_void","lv":0,"d":"Slow violet smoke curls around you.","how":"store","new":1,"sub":"aura","feat":1},{"id":"fx_aura_solar","cat":"effects","n":"Solar Aura","price":900,"rar":"epic","stack":0,"ref":"aura_solar","lv":0,"d":"A warm ring of drifting sparks.","how":"store","new":1,"sub":"aura","feat":0},{"id":"fx_aura_blossom","cat":"effects","n":"Blossom Aura","price":500,"rar":"uncommon","stack":0,"ref":"aura_blossom","lv":0,"d":"Petals orbit gently.","how":"store","new":1,"sub":"aura","feat":0},{"id":"fx_aura_frost","cat":"effects","n":"Frost Aura","price":600,"rar":"rare","stack":0,"ref":"aura_frost","lv":0,"d":"Snow motes and a cold shimmer.","how":"store","new":1,"sub":"aura","feat":0},{"id":"fx_aura_astral","cat":"effects","n":"Astral Aura","price":1600,"rar":"legendary","stack":0,"ref":"aura_astral","lv":0,"d":"Tiny stars orbit on a tilted ring.","how":"store","new":1,"sub":"aura","feat":0},{"id":"fx_trail_ember","cat":"effects","n":"Ember Dash Trail","price":350,"rar":"uncommon","stack":0,"ref":"trail_ember","lv":0,"d":"Embers fall behind your dashes and sprints.","how":"store","new":1,"sub":"trail","feat":0},{"id":"fx_trail_neon","cat":"effects","n":"Neon Dash Trail","price":700,"rar":"rare","stack":0,"ref":"trail_neon","lv":0,"d":"Cyan and pink after-images.","how":"store","new":1,"sub":"trail","feat":0},{"id":"fx_trail_crow","cat":"effects","n":"Crow Flock Dash","price":1200,"rar":"epic","stack":0,"ref":"trail_crow","lv":0,"d":"A flock of dark crows scatters behind your dash.","how":"store","new":1,"sub":"trail","feat":0},{"id":"fx_spawn_chains","cat":"effects","n":"Spectral Chains Spawn","price":800,"rar":"rare","stack":0,"ref":"spawn_chains","lv":0,"d":"Violet chains ring the ground when you arrive.","how":"store","new":1,"sub":"spawn","feat":0},{"id":"fx_spawn_bloom","cat":"effects","n":"Bloom Spawn","price":500,"rar":"uncommon","stack":0,"ref":"spawn_bloom","lv":0,"d":"A burst of petals when you arrive.","how":"store","new":1,"sub":"spawn","feat":0},{"id":"fx_vic_nova","cat":"effects","n":"Victory Nova","price":900,"rar":"epic","stack":0,"ref":"vic_nova","lv":0,"d":"A star nova when you level up or defeat a boss.","how":"store","new":1,"sub":"victory","feat":0},{"id":"fx_wt_rose","cat":"effects","n":"Rose Weapon Trail","price":400,"rar":"uncommon","stack":0,"ref":"wt_rose","lv":0,"d":"Pink slash trail for any weapon.","how":"store","new":1,"sub":"wtrail","feat":0},{"id":"fx_wt_azure","cat":"effects","n":"Azure Weapon Trail","price":400,"rar":"uncommon","stack":0,"ref":"wt_azure","lv":0,"d":"Pale-blue slash trail for any weapon.","how":"store","new":1,"sub":"wtrail","feat":0},{"id":"fx_wt_void","cat":"effects","n":"Void Weapon Trail","price":650,"rar":"rare","stack":0,"ref":"wt_void","lv":0,"d":"Violet-black slash trail for any weapon.","how":"store","new":1,"sub":"wtrail","feat":0},{"id":"fx_skin_obsidian","cat":"effects","n":"Obsidian Weapon Skin","price":700,"rar":"rare","stack":0,"ref":"skin_obsidian","lv":0,"d":"Recolours any weapon in glossy black and violet.","how":"store","new":1,"sub":"wskin","feat":0},{"id":"fx_skin_pearl","cat":"effects","n":"Pearl Weapon Skin","price":700,"rar":"rare","stack":0,"ref":"skin_pearl","lv":0,"d":"Recolours any weapon in pearl white.","how":"store","new":1,"sub":"wskin","feat":0},{"id":"fx_skin_sakura","cat":"effects","n":"Sakura Weapon Skin","price":1000,"rar":"epic","stack":0,"ref":"skin_sakura","lv":0,"d":"Recolours any weapon in blossom pink.","how":"store","new":1,"sub":"wskin","feat":0},{"id":"charm_star","cat":"charms","n":"Star Charm","price":250,"rar":"uncommon","stack":0,"ref":"star","lv":0,"d":"A small star that floats beside you.","how":"store","new":1,"feat":0},{"id":"charm_moon","cat":"charms","n":"Moon Charm","price":300,"rar":"uncommon","stack":0,"ref":"moon","lv":0,"d":"A crescent that glows softly.","how":"store","new":1,"feat":0},{"id":"charm_leaf","cat":"charms","n":"Leaf Charm","price":150,"rar":"common","stack":0,"ref":"leaf","lv":0,"d":"A leaf that turns slowly.","how":"store","new":1,"feat":0},{"id":"charm_chain","cat":"charms","n":"Spectral Chain Charm","price":450,"rar":"rare","stack":0,"ref":"chain","lv":0,"d":"A short chain of light that swings as you move.","how":"store","new":1,"feat":0},{"id":"charm_raven","cat":"charms","n":"Raven Companion","price":1100,"rar":"epic","stack":0,"ref":"raven","lv":0,"d":"A small raven that circles you.","how":"store","new":1,"feat":1}]};
+const SHOP7=(()=>{
+ const items=CATALOG7.items,byId=new Map(items.map(i=>[i.id,i])),RAR=['common','uncommon','rare','epic','legendary','mythic','exclusive'];
+ const RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive'};
+ const CATS=[['featured','Featured'],['weapons','Weapons'],['wings','Wings'],['effects','Effects'],['charms','Charms'],['weather','Weather'],['gear','Gear'],['blocks','Blocks'],['seeds','Seeds'],['objects','Objects']];
+ const SLOTS=['aura','trail','spawn','victory','wtrail','wskin']; // effect sub-types, one equipped at a time each (+ 'charm')
+ const st={own:{},eq:{},seen:{},pend:0,first:1};
+ const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
+ function load(){try{const o=JSON.parse(lsGet('rbc3')||'{}');if(o.own&&typeof o.own=='object')for(const k of Object.keys(o.own).slice(0,400)){const it=byId.get(k);if(it&&o.own[k]>0)st.own[k]=Math.min(9999,o.own[k]|0)}
+  if(o.eq&&typeof o.eq=='object')for(const s of [...SLOTS,'charm'])if(typeof o.eq[s]=='string'&&byId.has(o.eq[s]))st.eq[s]=o.eq[s];if(o.seen&&typeof o.seen=='object')for(const k of Object.keys(o.seen).slice(0,400))if(byId.has(k))st.seen[k]=1;st.pend=Math.max(0,Math.min(1e7,+o.pend||0))}catch(_){}}
+ function save(){try{localStorage.setItem('rbc3',JSON.stringify({own:st.own,eq:st.eq,seen:st.seen,pend:st.pend}))}catch(_){}}
+ load();
+ // ---- server link
+ let srv=null; // {owned:{id:qty}} from the server wallet message
+ const srvMode=()=>{try{return NET7.online&&NET7.auth&&NET7.auth.kind!='guest'&&!!srv}catch(_){return false}};
+ // ---- ownership. Legacy items keep living in their old stores (own / ownW); everything else is in st.own (or the server record when signed in).
+ function has(id){const it=byId.get(id);if(!it)return false;
+  if(it.cat=='weapons'&&it.legacy)return !!(own[it.ref]);if(it.cat=='gear'&&it.legacy)return !!(typeof ownW!='undefined'&&ownW[it.ref]);
+  if(it.stack)return count(id)>0;
+  if(srvMode())return !!(srv.owned[id]);return !!st.own[id]}
+ const count=id=>{const it=byId.get(id);if(!it)return 0;if(it.stack){const k=+it.ref;return typeof cnt=='function'?cnt(k):0}return has(id)?1:0};
+ function grantLocal(it,q){q=q||1;
+  if(it.cat=='weapons'){if(it.legacy||true)own[it.ref]=1;st.own[it.id]=1}
+  else if(it.cat=='gear'){ownW[it.ref]=1;st.own[it.id]=1}
+  else if(it.stack){addI(+it.ref,q);try{barDirty=1}catch(_){}}
+  else st.own[it.id]=1;
+  save();try{saveP()}catch(_){}}
+ // ---- levels
+ const needLv=it=>it.lv|0;
+ const lvOk=it=>(lvl|0)>=needLv(it);
+ // ---- purchase
+ const pending=new Map(),RO7={common:0,uncommon:1,rare:2,epic:3,legendary:4,mythic:5,exclusive:6};
+ const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+ function sfx(n){try{UIS.play(n)}catch(_){}}
+ async function buy(id,qty){const it=byId.get(id);if(!it)return{ok:0,m:'That item does not exist'};
+  qty=it.stack?Math.max(1,Math.min(99,qty|0||1)):1;const total=it.price*qty;
+  if(!lvOk(it)){sfx('error');return{ok:0,m:'Requires level '+needLv(it)}}
+  if(!it.stack&&has(id)){sfx('error');return{ok:0,m:'You already own this'}}
+  if(gems<total){sfx('error');return{ok:0,m:'Not enough gems ('+total+' needed)'}}
+  if(srvMode()){const r=rid();
+   const res=await new Promise(ok=>{const t=setTimeout(()=>{pending.delete(r);ok({ok:0,m:'The server did not answer. You were not charged.'})},8000);pending.set(r,v=>{clearTimeout(t);ok(v)});if(!NET7.send({t:'buy',id,qty,rid:r})){clearTimeout(t);pending.delete(r);ok({ok:0,m:'Not connected. You were not charged.'})}});
+   if(!res.ok){sfx('error');return res}
+   gems=Math.max(0,res.gems|0);if(!srv.owned)srv.owned={};srv.owned[id]=res.owned|0;grantLocal(it,res.qty||qty);try{renderBar&&renderBar()}catch(_){}sfx(RO7[it.rar]>=3?'rare':'buy');return{ok:1,qty:res.qty||qty,m:'Purchased '+it.n}}
+  gems-=total;grantLocal(it,qty);sfx(RO7[it.rar]>=3?'rare':'buy');return{ok:1,qty,m:'Purchased '+it.n+(qty>1?' x'+qty:'')}}
+ function net(m){if(m.t=='wallet'){if(m.guest){srv=null;return}srv={owned:m.owned||{}};
+   // adopt the server wallet; any local excess is credited gradually (the server rate-limits gem growth)
+   const total=(gems|0)+st.pend;if(st.first){st.first=0;}
+   if(m.gems!=null){const w=m.gems|0;if(total>w){st.pend=total-w}else st.pend=0;gems=w;save()}
+   return}
+  if(m.t=='buy_res'){const f=pending.get(m.rid);if(f){pending.delete(m.rid);f(m)}}}
+ setInterval(()=>{if(!srvMode())return;try{const total=Math.max(0,(gems|0)+st.pend);NET7.send({t:'sync',gems:total})}catch(_){}},15000);
+ // ---- equipment
+ const slotOf=it=>it.cat=='effects'?it.sub:it.cat=='charms'?'charm':it.cat=='wings'?'wing':it.cat=='weapons'?'weapon':it.cat=='gear'?'gear':null;
+ function equipped(id){const it=byId.get(id);if(!it)return false;const s=slotOf(it);if(s=='wing')return cel.wingsOn&&cel.wing==it.ref;if(s=='weapon')return wp==it.ref;if(s=='gear')return wear[it.sub]==it.ref;return st.eq[s]===id}
+ function equip(id){const it=byId.get(id);if(!it||!has(id)){sfx('error');return false}const s=slotOf(it);if(!s)return false;
+  if(!lvOk(it)){say('Requires level '+needLv(it));sfx('error');return false}
+  if(s=='wing'){cel.wing=it.ref;cel.wingsOn=1;try{celSave()}catch(_){}}
+  else if(s=='gear'){wear[it.sub]=it.ref}
+  else if(s=='weapon'){if(!own[it.ref])return false;wp=it.ref;try{renderW();renderBar()}catch(_){}}
+  else{st.eq[s]=id;save()}
+  sfx('select');try{FX7.onEquip(s,id)}catch(_){}return true}
+ function unequip(id){const it=byId.get(id);if(!it)return;const s=slotOf(it);if(s=='wing'){cel.wingsOn=0;try{celSave()}catch(_){}}else if(s=='weapon'){wp='fist';try{renderW();renderBar()}catch(_){}}else if(s=='gear'){wear[it.sub]=''}else{delete st.eq[s];save()}sfx('click');try{FX7.onEquip(s,null)}catch(_){}}
+ const eqRef=slot=>{const id=st.eq[slot];const it=id&&byId.get(id);return it&&has(id)?it.ref:null};
+ return{items,byId,RAR,RN,CATS,SLOTS,st,has,count,buy,net,equip,unequip,equipped,eqRef,slotOf,lvOk,needLv,get serverMode(){return srvMode()},get pend(){return st.pend},save,
+  markSeen(id){if(!st.seen[id]){st.seen[id]=1;save()}},isNew(id){const it=byId.get(id);return !!(it&&it.new&&!st.seen[id])},grantLocal}})();
+
+/* ========== LATE: 73-fx7.js ========== */
+// ===== FX7: cosmetic effect system (auras, dash trails, spawn, victory, weapon trails, charms, wing particles) =====
+// Every effect is a small function that emits into the shared pooled VFX system, so the global particle cap and quality presets bound the cost.
+// Budget rules: nothing allocates per frame beyond the emitted particles; each emitter is rate-limited by QM.cur.vfx; reduced-effects mode keeps only a faint version.
+const FX7=(()=>{
+ const R=Math.random,add=(k,c,x,y,vx,vy,l,s0,s1,o)=>{try{VFX.add(k,c,x,y,vx,vy,l,s0,s1,o)}catch(_){}};
+ const k=()=>{const q=QM.cur.vfx*(QM.reduce?.25:1);return q};
+ const acc={};const gate=(key,dt,rate)=>{acc[key]=(acc[key]||0)+dt*rate*k();let n=0;while(acc[key]>=1&&n<4){acc[key]--;n++}if(acc[key]>4)acc[key]=0;return n};
+ const WCOL={wt_rose:['#ff7fb0','#ffd0e4'],wt_azure:['#4fb4ff','#d0ecff'],wt_void:['#8a4cff','#e0c8ff']};
+ const SKIN={skin_obsidian:{tint:[40,34,58],glow:'#7a5cff'},skin_pearl:{tint:[240,236,255],glow:'#ffffff'},skin_sakura:{tint:[255,170,200],glow:'#ff8fb8'}};
+ // ---- continuous emitters: world coordinates, local player only
+ const AUR={
+  aura_void(n,x,y){for(let i=0;i<n;i++)add(0,'#6a2cc8',x+(R()-.5)*34,y-4+R()*10,(R()-.5)*14,-26-R()*26,1.4,26,6,{a:.55});if(R()<.1*k())add(0,'#e0c8ff',x+(R()-.5)*22,y-30,0,-20,.9,10,3,{a:.6})},
+  aura_solar(n,x,y,t){for(let i=0;i<n;i++){const a=R()*6.28;add(1,'#ffd24a',x+Math.cos(a)*22,y-8+Math.sin(a)*8,Math.cos(a)*10,-24-R()*30,1.1,10,2,{a:.9})}},
+  aura_blossom(n,x,y,t){for(let i=0;i<n;i++){const a=t*1.6+i*2.1;add(4,'#ffb0cf',x+Math.cos(a)*26,y+8+Math.sin(a*1.3)*20,Math.cos(a+1.6)*18,10+R()*10,1.6,12,8,{r:R()*6,vr:2})}},
+  aura_frost(n,x,y){for(let i=0;i<n;i++)add(1,'#bfe8ff',x+(R()-.5)*50,y-30+R()*60,(R()-.5)*8,14+R()*14,1.7,6,2,{a:.85})},
+  aura_astral(n,x,y,t){for(let i=0;i<n;i++){const a=t*2.2+i*3.14;add(1,'#9fe0ff',x+Math.cos(a)*30,y+4+Math.sin(a)*Math.cos(.5)*30*.45-18,0,-6,.7,8,2,{a:.95})}}};
+ let last=0;
+ function tick(dt){if(!entered||dt>.2)return;const t=performance.now()/1000;
+  const a=SHOP7.eqRef('aura');if(a&&AUR[a]){const n=gate('au',dt,14);if(n)AUR[a](n,P.x,P.y+P.h-6,t)}
+  const ch=SHOP7.eqRef('charm');if(ch&&R()<.05*k())charmSpark(ch,t);
+  trailTick(dt);spawnTick(dt)}
+ function charmSpark(c,t){const p=charmPos(c,t);const col={star:'#ffe9a0',moon:'#d9d4ff',leaf:'#9ff0a8',chain:'#c9b8ff',raven:'#9a7cff'}[c]||'#fff';add(0,col,p.x,p.y,(R()-.5)*8,-8,.7,10,2,{a:.6})}
+ function charmPos(c,t){const f=P.f||1;if(c=='raven')return{x:P.x-f*30+Math.sin(t*2)*8,y:P.y-12+Math.sin(t*3.1)*10};return{x:P.x-f*10,y:P.y+20}}
+ // ---- dash trail (emitted while dash>0)
+ let dashPrev=0;
+ const TRL={
+  trail_ember(x,y){for(let i=0;i<3;i++)add(0,'#ff8a2a',x+(R()-.5)*10,y+10+R()*30,-P.f*40*R(),-20-R()*30,.6,16,3,{a:.9})},
+  trail_neon(x,y){const c=['#3ff3ff','#ff5ae8','#8a6bff'][(performance.now()/90|0)%3];for(let i=0;i<2;i++)add(0,c,x-P.f*i*12,y+26,0,0,.45,34,6,{a:.8})},
+  trail_crow(x,y){if(R()<.7)add(4,'#14101e',x,y+10+R()*36,-P.f*(80+R()*80),(R()-.5)*80,.8,16,10,{r:R()*6,vr:6,a:1})}};
+ function trailTick(dt){const tr=SHOP7.eqRef('trail');if(dash>0&&tr&&TRL[tr]){TRL[tr](P.x,P.y)}dashPrev=dash}
+ // ---- spawn effect (fired once when a world starts / after respawn)
+ let spT=0,spK=null;
+ function spawn(){const s=SHOP7.eqRef('spawn');if(!s)return;spK=s;spT=1.2;try{VFX.ring&&0}catch(_){}}
+ function spawnTick(dt){if(spT<=0)return;spT-=dt;const x=P.x,y=P.y+P.h;
+  if(spK=='spawn_chains'){const n=gate('sp',dt,24);for(let i=0;i<n;i++){const a=R()*6.28;add(3,'#c9b8ff',x+Math.cos(a)*30,y-R()*50,Math.cos(a)*-40,-10,.7,14,4,{a:.9})}}
+  else if(spK=='spawn_bloom'){const n=gate('sp',dt,26);for(let i=0;i<n;i++){const a=R()*6.28,r=20+R()*40;add(4,'#ffb0cf',x+Math.cos(a)*r,y-R()*60,Math.cos(a)*30,-40-R()*30,1.2,12,8,{r:R()*6,vr:3})}}}
+ // ---- victory (boss defeated)
+ function victory(x,y){const v=SHOP7.eqRef('victory');if(!v)return;x=x==null?P.x:x;y=y==null?P.y:y;const n=Math.round(28*k());for(let i=0;i<n;i++){const a=i/n*6.28,s=120+R()*120;add(1,i%2?'#ffe9a0':'#9fe0ff',x,y,Math.cos(a)*s,Math.sin(a)*s,1.1,12,3,{a:1,d:1.6})}add(0,'#fff6c8',x,y,0,0,.5,20,160,{a:.9})}
+ // ---- weapon trail colour override (cosmetic) and skins
+ const wtCol=()=>{const r=SHOP7.eqRef('wtrail');return r&&WCOL[r]||null};
+ const wskin=()=>{const r=SHOP7.eqRef('wskin');return r&&SKIN[r]||null};
+ // ---- wing particle behaviour; cx,cy in screen space (callers draw in the camera frame)
+ function wingFx(W,cx,cy,t){if(!W.fxk)return;const q=k();if(q<=0||R()>.16*q)return;const wx=cx+cam.x+(R()<.5?-1:1)*(18+R()*50),wy=cy+cam.y-10+R()*50;
+  switch(W.fxk){
+   case'glitter':add(1,'#fff6d8',wx,wy,(R()-.5)*10,16+R()*10,1.4,8,2,{a:.9});break;
+   case'petals':add(4,'#ffb0cf',wx,wy,(R()-.5)*24,22+R()*14,2,12,8,{r:R()*6,vr:2});break;
+   case'glints':add(1,'#c8f6ff',wx,wy,0,0,.5,16,2,{a:1});break;
+   case'sparks':add(1,'#3ff3ff',wx,wy,(R()-.5)*60,-30,.5,8,1,{a:1,g:90});break;
+   case'smoke':add(0,'#5b2aa8',wx,wy,(R()-.5)*10,-30,1.4,30,6,{a:.5});break;
+   case'stars':add(1,['#fff','#9fe8ff','#ffb3f0'][(R()*3)|0],wx,wy,0,-6,1,10,2,{a:1});break;
+   case'embers':add(0,'#ff7a2a',wx,wy,(R()-.5)*20,-34,.9,10,2,{a:.9});break;
+   case'omen':add(0,'#ff3a4a',wx,wy,(R()-.5)*10,-14,1.2,14,3,{a:.6});break}}
+ // ---- charm drawing (called from the character draw, screen space)
+ function charmDraw(g,c,cx,cy,t,f){const sz=7;g.save();g.translate(cx,cy);g.lineJoin='round';
+  if(c=='star'){g.translate(-f*14,28+Math.sin(t*2)*2);g.rotate(t*.8);g.fillStyle='#ffe27a';g.strokeStyle='#8a5a10';g.lineWidth=1.5;g.beginPath();for(let i=0;i<10;i++){const r=i%2?sz*.45:sz,a=i*Math.PI/5-Math.PI/2;g.lineTo(Math.cos(a)*r,Math.sin(a)*r)}g.closePath();g.fill();g.stroke()}
+  else if(c=='moon'){g.translate(-f*14,28+Math.sin(t*2)*2);g.fillStyle='#e6e2ff';g.strokeStyle='#4a3f9a';g.lineWidth=1.5;g.beginPath();g.arc(0,0,sz,.5,5.8);g.arc(sz*.45,-sz*.1,sz*.75,5.6,.7,true);g.closePath();g.fill();g.stroke()}
+  else if(c=='leaf'){g.translate(-f*14,28);g.rotate(Math.sin(t*2)*.3);g.fillStyle='#6fe08a';g.strokeStyle='#1d6a35';g.lineWidth=1.5;g.beginPath();g.moveTo(0,-sz);g.quadraticCurveTo(sz,-2,0,sz);g.quadraticCurveTo(-sz,-2,0,-sz);g.fill();g.stroke();g.beginPath();g.moveTo(0,-sz);g.lineTo(0,sz);g.stroke()}
+  else if(c=='chain'){g.strokeStyle='#cbbcff';g.lineWidth=2;g.shadowColor='#8a6bff';g.shadowBlur=6;for(let i=0;i<5;i++){const a=-.4+i*.3+Math.sin(t*2+i)*.04;g.beginPath();g.ellipse(Math.sin(a)*22,30+i*3-Math.cos(a)*6,4,2.4,a,0,6.3);g.stroke()}}
+  else if(c=='raven'){const p=charmPos('raven',t);g.restore();g.save();g.translate(p.x-cam.x,p.y-cam.y);g.scale(f,1);g.fillStyle='#14101e';g.strokeStyle='#6b52c8';g.lineWidth=1;g.beginPath();g.ellipse(0,0,9,6,0,0,6.3);g.fill();g.stroke();g.beginPath();g.moveTo(8,-1);g.lineTo(15,1);g.lineTo(8,3);g.closePath();g.fillStyle='#d8a040';g.fill();g.fillStyle='#14101e';const fl=Math.sin(t*14)*7;g.beginPath();g.moveTo(-2,-2);g.lineTo(-10,-10+fl);g.lineTo(2,-4);g.fill();g.beginPath();g.moveTo(-2,2);g.lineTo(-12,6-fl);g.lineTo(2,3);g.fill();g.fillStyle='#ff4a6a';g.fillRect(5,-3,2,2)}
+  g.restore()}
+ function onEquip(slot,id){try{if(id){const r=SHOP7.byId.get(id);if(slot=='spawn')spawn();else if(slot=='victory'){victory()}else if(slot=='aura'||slot=='trail'){const x=P.x,y=P.y+P.h;for(let i=0;i<12;i++)add(1,'#fff',x,y-20,(R()-.5)*160,(R()-.5)*160,.7,10,2)}}}catch(_){}}
+ return{tick,spawn,victory,wtCol,wskin,wingFx,charmDraw,onEquip,AUR,TRL,WCOL,SKIN}})();
+// spawn effect when a world finishes loading
+{const _lw7=loadWorld;loadWorld=function(){const r=_lw7.apply(this,arguments);setTimeout(()=>{try{FX7.spawn()}catch(_){}},700);return r}}
+
 /* ========== LATE: 74-components.js ========== */
 // ===== Shared UI components (modal / confirm / form). Uses design tokens only. =====
 const DLG7=(()=>{
@@ -1991,6 +2193,7 @@ const NET7=(()=>{
   if(t=='worlds'){list=m.list||[];try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}return}
   if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it and become its owner.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Creator mode','Tools are available in the top bar',2600);return}
+  if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}
   if(!room)return;
   if(t=='_p'){if(m.f&&m.f!==room.id)room.ps[m.f]=cleanPres(m.d);return}
@@ -2223,6 +2426,175 @@ const NPC7=(()=>{
    try{base(g,n,hx,hy,t);themed(g,n,hx,hy,t,wx);greet(g,n,hx,hy,t)}catch(e){if(!drawNPCs.e){drawNPCs.e=1;console.error(e)}}}};
  return{star,petal}})();
 
+/* ========== LATE: 77-z-plaza.js ========== */
+// ===== NPCs live only in the Plaza. Other worlds (and creator worlds) have none: not drawn, not talkable. =====
+{const _nn=nearNPC;nearNPC=function(){return cur=='plaza'?_nn():null};
+ const _dn=drawNPCs;drawNPCs=function(now){if(cur=='plaza')return _dn(now);const keep=NPCS.splice(0);try{_dn(now)}finally{NPCS.push(...keep)}};
+ window.NPC_PLAZA_ONLY=1}
+
+/* ========== LATE: 78-weapons.js ========== */
+// ===== WFX7: shop weapons. Each new weapon has its own model (drawn here), swing trail, impact effect, swing sound, and stats in WPN. =====
+// Hooks: legacy slash drawing calls WFX7.trail, drawWeapon is wrapped for the models, hurtMob/useWeapon are wrapped for impact and sound.
+const WFX7=(()=>{
+ const R=Math.random;
+ const NEW={
+  solarfang:{n:'Solar Fang',g:[255,190,60],bd:2,md:17,cd:.38,k:'sword',cost:1200,fx:'burn',d:'A curved golden fang that sets enemies alight and leaves a blazing crescent.'},
+  frostbite:{n:'Frostbite Edge',g:[130,215,255],bd:2,md:13,cd:.3,k:'sword',cost:700,fx:'slow',d:'A shard of living ice. Slows enemies and sheds snow on every swing.'},
+  astralkat:{n:'Astral Katana',g:[140,150,255],bd:2,md:16,cd:.36,k:'sword',cost:1500,fx:'wave',d:'A slim star-lit blade that throws a piercing wave of light.'},
+  crimsonrift:{n:'Crimson Rift',g:[255,40,80],bd:3,md:30,cd:.8,k:'scythe',cost:2800,fx:'area',d:'Tears the air open. Wide sweeps pull enemies into the rift.'},
+  verdant:{n:'Verdant Breaker',g:[110,230,120],bd:4,md:15,cd:.55,k:'hammer',cost:450,fx:'harvest',d:'A vine-wrapped maul. Breaks blocks hard and doubles tree harvests.'}};
+ for(const id in NEW)WPN[id]=NEW[id];for(const id in WPN)WPN[id].id=id;
+ const rgb=a=>a.join(',');
+ // ---- models: origin at the hand, blade towards +x, L ~ 44 in-game length. skin (local player only) may replace the palette.
+ function pal(id,w){const sk=FX7.ld&&id==wp?FX7.wskin():null;return sk?{c:rgb(sk.tint),glow:sk.glow,sk:1}:{c:rgb(w.g),glow:'rgb('+rgb(w.g)+')',sk:0}}
+ const MODEL={
+  solarfang(x,L,t,P){x.strokeStyle='#000';x.lineWidth=2;x.fillStyle='#5a2a10';x.fillRect(-L*.2,-3,L*.25,6);x.strokeRect(-L*.2,-3,L*.25,6);
+   x.fillStyle='#ffd24a';x.beginPath();x.moveTo(L*.02,-9);x.lineTo(L*.1,0);x.lineTo(L*.02,9);x.lineTo(-L*.04,0);x.closePath();x.fill();x.stroke();
+   const g=x.createLinearGradient(0,-L*.3,L,0);g.addColorStop(0,'#fff6c8');g.addColorStop(.5,P.sk?'rgb('+P.c+')':'#ffb23a');g.addColorStop(1,P.sk?'#fff':'#ff6a1a');x.fillStyle=g;x.shadowColor=P.glow;x.shadowBlur=8;
+   x.beginPath();x.moveTo(L*.08,-4);x.bezierCurveTo(L*.5,-L*.34,L*.95,-L*.22,L*1.05,L*.16);x.bezierCurveTo(L*.7,-L*.02,L*.4,L*.05,L*.08,5);x.closePath();x.fill();x.shadowBlur=0;x.stroke();
+   x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=1;x.beginPath();x.moveTo(L*.12,-1);x.bezierCurveTo(L*.5,-L*.2,L*.85,-L*.12,L*.98,L*.1);x.stroke();
+   x.globalCompositeOperation='lighter';for(let i=0;i<4;i++){const u=.25+i*.2,py=-L*.2+Math.sin(t*8+i)*3-u*8;x.fillStyle='rgba(255,170,60,.7)';x.beginPath();x.arc(L*u,py,2.4,0,6.3);x.fill()}x.globalCompositeOperation='source-over'},
+  frostbite(x,L,t,P){x.strokeStyle='#000';x.lineWidth=2;x.fillStyle='#23405c';x.fillRect(-L*.2,-3,L*.25,6);x.strokeRect(-L*.2,-3,L*.25,6);x.fillStyle='#9fd8ff';x.fillRect(L*.04,-8,5,16);x.strokeRect(L*.04,-8,5,16);
+   x.shadowColor=P.glow;x.shadowBlur=9;const g=x.createLinearGradient(0,-6,L,6);g.addColorStop(0,'#fff');g.addColorStop(.5,P.sk?'rgb('+P.c+')':'#a9e6ff');g.addColorStop(1,'#4fa8ff');x.fillStyle=g;
+   x.beginPath();x.moveTo(L*.09,-5);x.lineTo(L*.38,-7);x.lineTo(L*.5,-13);x.lineTo(L*.58,-5);x.lineTo(L*.8,-6);x.lineTo(L*.92,-10);x.lineTo(L*1.06,0);x.lineTo(L*.9,6);x.lineTo(L*.6,5);x.lineTo(L*.45,10);x.lineTo(L*.35,5);x.lineTo(L*.09,5);x.closePath();x.fill();x.shadowBlur=0;x.stroke();
+   x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=1;x.beginPath();x.moveTo(L*.1,0);x.lineTo(L*1.0,0);x.moveTo(L*.5,-12);x.lineTo(L*.45,9);x.stroke();
+   x.fillStyle='#fff';x.globalCompositeOperation='lighter';for(let i=0;i<4;i++){x.globalAlpha=.5+.5*Math.sin(t*5+i*2);x.fillRect(L*(.2+i*.2),-9+((i*7)%11),2,2)}x.globalAlpha=1;x.globalCompositeOperation='source-over'},
+  astralkat(x,L,t,P){x.strokeStyle='#000';x.lineWidth=2;x.fillStyle='#1b1840';x.fillRect(-L*.3,-2.5,L*.3,5);x.strokeRect(-L*.3,-2.5,L*.3,5);x.strokeStyle='#8a8aff';x.lineWidth=1;for(let i=0;i<4;i++){x.beginPath();x.moveTo(-L*.26+i*L*.07,-2.5);x.lineTo(-L*.2+i*L*.07,2.5);x.stroke()}
+   x.strokeStyle='#000';x.lineWidth=2;x.fillStyle='#d9c36a';x.beginPath();x.ellipse(L*.02,0,3,9,0,0,6.3);x.fill();x.stroke();
+   x.shadowColor=P.glow;x.shadowBlur=8;const g=x.createLinearGradient(0,-3,0,3);g.addColorStop(0,'#fff');g.addColorStop(.6,P.sk?'rgb('+P.c+')':'#c9d0ff');g.addColorStop(1,'#6a70e8');x.fillStyle=g;
+   x.beginPath();x.moveTo(L*.06,-3);x.quadraticCurveTo(L*.6,-7,L*1.12,-1);x.quadraticCurveTo(L*.6,3,L*.06,3);x.closePath();x.fill();x.shadowBlur=0;x.stroke();
+   x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=.8;x.beginPath();x.moveTo(L*.1,1.2);x.quadraticCurveTo(L*.6,-1.8,L*1.08,-.4);x.stroke();
+   x.globalCompositeOperation='lighter';x.fillStyle='#fff';for(let i=0;i<6;i++){x.globalAlpha=.4+.6*Math.abs(Math.sin(t*4+i*1.7));x.beginPath();x.arc(L*(.15+i*.15),-1+Math.sin(i*3)*1.5,1.3,0,6.3);x.fill()}x.globalAlpha=1;x.globalCompositeOperation='source-over'},
+  crimsonrift(x,L,t,P){x.strokeStyle='#000';x.lineWidth=7;x.beginPath();x.moveTo(-L*.35,0);x.lineTo(L*.7,0);x.stroke();x.strokeStyle='#2a0a14';x.lineWidth=4;x.stroke();x.strokeStyle='#ff3a5a';x.lineWidth=1.2;for(let i=0;i<5;i++){x.beginPath();x.moveTo(-L*.3+i*L*.2,-2);x.lineTo(-L*.26+i*L*.2,2);x.stroke()}
+   x.shadowColor=P.glow;x.shadowBlur=12;const g=x.createLinearGradient(L*.6,0,L,-L*.8);g.addColorStop(0,'#1a0610');g.addColorStop(.6,P.sk?'rgb('+P.c+')':'#b0123a');g.addColorStop(1,'#ff5a7a');x.fillStyle=g;x.strokeStyle='#000';x.lineWidth=2;
+   x.beginPath();x.moveTo(L*.66,5);x.bezierCurveTo(L*1.2,L*.0,L*1.15,-L*.7,L*.5,-L*.9);x.bezierCurveTo(L*.95,-L*.55,L*.98,-L*.2,L*.7,-5);x.closePath();x.fill();x.stroke();x.shadowBlur=0;
+   x.strokeStyle='#05010a';x.lineWidth=2;x.beginPath();x.moveTo(L*.85,-L*.05);x.lineTo(L*.8,-L*.25);x.lineTo(L*.92,-L*.4);x.lineTo(L*.84,-L*.6);x.stroke();
+   x.globalCompositeOperation='lighter';x.strokeStyle='rgba(255,70,110,'+(.5+.3*Math.sin(t*6))+')';x.lineWidth=1.5;x.beginPath();x.moveTo(L*.85,-L*.05);x.lineTo(L*.8,-L*.25);x.lineTo(L*.92,-L*.4);x.lineTo(L*.84,-L*.6);x.stroke();x.globalCompositeOperation='source-over'},
+  verdant(x,L,t,P){x.strokeStyle='#000';x.lineWidth=2;x.fillStyle='#6a4a2a';x.fillRect(-L*.2,-3,L*1.0,6);x.strokeRect(-L*.2,-3,L*1.0,6);
+   x.strokeStyle='#3fae58';x.lineWidth=2;x.beginPath();for(let s=-L*.2;s<=L*.8;s+=3){const y=Math.sin(s*.3+t*2)*3.2;s==-L*.2?x.moveTo(s,y):x.lineTo(s,y)}x.stroke();
+   x.fillStyle='#6fe08a';for(let i=0;i<4;i++){x.save();x.translate(L*(.05+i*.2),Math.sin(i*2+t*2)*3);x.rotate(i%2?1:-1);x.beginPath();x.ellipse(4,0,5,2.4,0,0,6.3);x.fill();x.restore()}
+   const hx=L*.82;x.fillStyle='#6b6f78';x.strokeStyle='#000';x.lineWidth=2;x.beginPath();x.moveTo(hx,-15);x.lineTo(hx+L*.28,-11);x.lineTo(hx+L*.3,11);x.lineTo(hx,15);x.closePath();x.fill();x.stroke();
+   x.fillStyle=P.sk?'rgb('+P.c+')':'#4aa86a';x.fillRect(hx+3,-12,L*.2,24);x.strokeRect(hx+3,-12,L*.2,24);x.strokeStyle='#d6ffdc';x.lineWidth=1;x.beginPath();x.moveTo(hx+L*.1,-9);x.lineTo(hx+L*.1,9);x.stroke();
+   x.fillStyle='#ff9fc8';for(let i=0;i<3;i++){x.beginPath();x.arc(hx+4+i*L*.08,-14+i*2,2.2,0,6.3);x.fill()}}};
+ // ---- slash trails. draw in screen space using s (x,y,a=angle,w), a=0..1 progress. return true if handled.
+ const arc=(g,s,a,rg,half,widths,cols,e)=>{g.lineCap='round';for(let k=0;k<widths.length;k++){g.strokeStyle=cols[k];g.lineWidth=widths[k]*(1-a);g.beginPath();g.arc(s.x-cam.x,s.y-cam.y,rg*(1+k*.05),s.a-half,s.a-half+2*half*e);g.stroke()}g.lineCap='butt'};
+ const burstOnce=(s,n,f)=>{if(s.fxd)return;s.fxd=1;if(QM.reduce)n=Math.ceil(n/4);for(let i=0;i<Math.ceil(n*QM.cur.vfx);i++)f(i)};
+ const TRAIL={
+  solarfang(g,s,a){const e=Math.min(1,a*2.4);g.globalCompositeOperation='lighter';arc(g,s,a,T*1.75,1.15,[22,12,5],['rgba(255,110,30,'+(.55*(1-a))+')','rgba(255,190,70,'+(.8*(1-a))+')','rgba(255,250,210,'+(1-a)+')'],e);g.globalCompositeOperation='source-over';
+   burstOnce(s,10,i=>{const q=s.a+(R()-.5)*1.6;VFX.add(0,'#ff9a2a',s.x+Math.cos(q)*T*1.7,s.y+Math.sin(q)*T*1.7,Math.cos(q)*50,Math.sin(q)*50-20,.6,14,2,{a:.9})})},
+  frostbite(g,s,a){const e=Math.min(1,a*2.6);arc(g,s,a,T*1.6,1.1,[8,4,2],['rgba(120,200,255,'+(.6*(1-a))+')','rgba(200,240,255,'+(.8*(1-a))+')','rgba(255,255,255,'+(1-a)+')'],e);
+   burstOnce(s,12,i=>{const q=s.a+(R()-.5)*1.8;VFX.add(1,'#d8f4ff',s.x+Math.cos(q)*T*1.6,s.y+Math.sin(q)*T*1.6,(R()-.5)*30,20+R()*20,1.1,9,2,{a:1})})},
+  astralkat(g,s,a){const e=Math.min(1,a*3.2);g.globalCompositeOperation='lighter';arc(g,s,a,T*2.0,.9,[6,2.5],['rgba(150,160,255,'+(.8*(1-a))+')','rgba(255,255,255,'+(1-a)+')'],e);g.globalCompositeOperation='source-over';
+   burstOnce(s,9,i=>{const q=s.a-.9+R()*1.8;VFX.add(1,'#fff',s.x+Math.cos(q)*T*2,s.y+Math.sin(q)*T*2,0,-6,.9,10,2,{a:1})})},
+  crimsonrift(g,s,a){const e=Math.min(1,a*2.2);arc(g,s,a,T*2.3,1.9,[20,10],['rgba(10,0,10,'+(.85*(1-a))+')','rgba(255,50,90,'+(.9*(1-a))+')'],e);g.globalCompositeOperation='lighter';g.strokeStyle='rgba(255,120,150,'+(.8*(1-a))+')';g.lineWidth=2;for(let i=0;i<6;i++){const q=s.a-1.9+i*.6*e;g.beginPath();g.moveTo(s.x-cam.x+Math.cos(q)*T*1.7,s.y-cam.y+Math.sin(q)*T*1.7);g.lineTo(s.x-cam.x+Math.cos(q)*T*2.7,s.y-cam.y+Math.sin(q)*T*2.7);g.stroke()}g.globalCompositeOperation='source-over';
+   burstOnce(s,14,i=>{const q=s.a-1.9+R()*3.8;VFX.add(0,'#d01040',s.x+Math.cos(q)*T*2.3,s.y+Math.sin(q)*T*2.3,-Math.cos(q)*60,-Math.sin(q)*60,.6,16,2,{a:.9})})},
+  verdant(g,s,a){const e=Math.min(1,a*2.2);arc(g,s,a,T*1.5,1.0,[14,6],['rgba(60,150,80,'+(.6*(1-a))+')','rgba(160,255,170,'+(.8*(1-a))+')'],e);
+   burstOnce(s,8,i=>{const q=s.a+(R()-.5)*1.6;VFX.add(4,'#6fe08a',s.x+Math.cos(q)*T*1.5,s.y+Math.sin(q)*T*1.5,Math.cos(q)*40,Math.sin(q)*40-10,1,12,8,{r:R()*6,vr:4})})},
+  void(g,s,a){const e=Math.min(1,a*2.3);arc(g,s,a,T*2.1,1.8,[18,9,3],['rgba(20,0,40,'+(.7*(1-a))+')','rgba(140,70,255,'+(.8*(1-a))+')','rgba(230,200,255,'+(1-a)+')'],e);
+   burstOnce(s,10,i=>{const q=s.a-1.8+R()*3.6;VFX.add(0,'#8a4cff',s.x+Math.cos(q)*T*2.1,s.y+Math.sin(q)*T*2.1,-Math.cos(q)*45,-Math.sin(q)*45,.7,20,3,{a:.8})})}};
+ // cosmetic weapon trail for weapons without a custom trail (colours picked from FX7)
+ function plainTrail(g,s,a,c){const e=Math.min(1,a*2.5),rg=s.w.k=='scythe'?T*2.2:s.w.k=='fist'?T*.9:T*1.6,half=s.w.k=='scythe'?1.9:1.1;g.globalCompositeOperation='lighter';arc(g,s,a,rg,half,[14,7,3],['rgba(0,0,0,0)',c[0],c[1]].map((v,i)=>i?alpha(v,1-a):v),e);g.globalCompositeOperation='source-over'}
+ const alpha=(hex,a)=>{const n=parseInt(hex.slice(1),16);return'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')'};
+ function trail(g,s,a){const id=s.w&&s.w.id,ct=FX7.wtCol();if(ct){plainTrail(g,s,a,ct);return true}
+  if(id&&TRAIL[id]&&own[id]){TRAIL[id](g,s,a);return true}return false}
+ // ---- impact (on hit) + swing sound
+ const IMP={
+  solarfang(m){for(let i=0;i<8;i++){const a=R()*6.28;VFX.add(1,'#ffb23a',m.x,m.y,Math.cos(a)*120,Math.sin(a)*120,.5,10,2,{a:1,d:2})}},
+  frostbite(m){for(let i=0;i<8;i++){const a=R()*6.28;VFX.add(2,'#bfe8ff',m.x,m.y,Math.cos(a)*100,Math.sin(a)*100-30,.6,12,3,{r:a,vr:3,g:200})}},
+  astralkat(m){for(let i=0;i<7;i++)VFX.add(1,'#fff',m.x+(R()-.5)*20,m.y+(R()-.5)*20,(R()-.5)*60,-30,.7,12,2,{a:1})},
+  crimsonrift(m){VFX.add(3,'#ff2a5a',m.x,m.y,0,0,.5,10,70,{a:.9});for(let i=0;i<6;i++){const a=R()*6.28;VFX.add(0,'#a00a30',m.x,m.y,-Math.cos(a)*70,-Math.sin(a)*70,.5,16,2,{a:.9})}},
+  verdant(m){for(let i=0;i<7;i++)VFX.add(4,'#6fe08a',m.x,m.y,(R()-.5)*160,-60-R()*80,1,12,8,{r:R()*6,vr:4,g:160})},
+  void(m){for(let i=0;i<8;i++){const a=R()*6.28;VFX.add(0,'#7a3cff',m.x+Math.cos(a)*30,m.y+Math.sin(a)*30,-Math.cos(a)*90,-Math.sin(a)*90,.5,18,3,{a:.9})}}};
+ const SFX={ // [freq, dur, type, vol, slide]
+  solarfang:[[520,.12,'sawtooth',.05,.5],[900,.08,'triangle',.03,.6]],frostbite:[[1300,.1,'triangle',.05,.5],[2100,.06,'sine',.03,.7]],astralkat:[[1500,.14,'sine',.05,.4],[2400,.1,'sine',.025,.5]],
+  crimsonrift:[[110,.3,'sawtooth',.07,.4],[70,.35,'square',.04,.5]],verdant:[[200,.16,'triangle',.07,.6],[150,.12,'square',.04,.7]],void:[[140,.28,'sawtooth',.05,.5],[420,.2,'sine',.03,.3]]};
+ function swing(id){const a=SFX[id];if(a&&own[id])for(const s of a)snd(s[0],s[1],s[2],s[3],s[4])}
+ const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const w=WPN[id];if(w&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';try{MODEL[id](x,L,t||0,pal(id,w))}finally{x.restore()}return}
+  const sk=FX7.ld&&id==wp&&id!='fist'&&FX7.wskin();if(sk&&w){const g0=w.g;w.g=sk.tint;try{_dw(x,id,L,t)}finally{w.g=g0}return}_dw(x,id,L,t)};
+ const _hm=hurtMob;hurtMob=function(m,d,w,ang){const r=_hm.apply(this,arguments);try{if(w&&w.id&&IMP[w.id]&&d>0&&own[w.id])IMP[w.id](m)}catch(_){}return r};
+ const _uw=useWeapon;useWeapon=function(){const r=_uw.apply(this,arguments);try{swing(wp)}catch(_){}return r};
+ // the stand-alone list (used by the store preview and by tests)
+ return{NEW,MODEL,TRAIL,IMP,SFX,trail,swing,ids:Object.keys(NEW).concat(['void'])}})();
+
+/* ========== LATE: 79-store.js ========== */
+// ===== STORE7: the full item store (every catalog item: browse, preview, buy, equip). Prices/ownership come from SHOP7 (server-validated when signed in). =====
+const STORE7=(()=>{
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const RO={common:0,uncommon:1,rare:2,epic:3,legendary:4,mythic:5,exclusive:6};
+ const COLL=[['Void Collection','Dark violet power',['wpn_void','fx_aura_void','fx_wt_void','fx_skin_obsidian','wing_umbral']],['Blossom Collection','Soft pink spring',['wing_blossom','fx_aura_blossom','fx_spawn_bloom','fx_wt_rose','fx_skin_sakura','obj_39','charm_leaf']],['Astral Collection','Stars and moonlight',['wpn_astralkat','fx_aura_astral','wing_galaxy','obj_41','charm_moon','charm_star']],['Ember & Frost','Fire against ice',['wpn_solarfang','fx_aura_solar','fx_trail_ember','wpn_frostbite','fx_aura_frost','fx_wt_azure']]];
+ const FX_COL={aura_void:['#6a2cc8','#e0c8ff','rise'],aura_solar:['#ffd24a','#fff4c4','orbit'],aura_blossom:['#ffb0cf','#fff0f6','fall'],aura_frost:['#bfe8ff','#ffffff','fall'],aura_astral:['#9fe0ff','#ffffff','orbit'],trail_ember:['#ff8a2a','#ffd24a','stream'],trail_neon:['#3ff3ff','#ff5ae8','stream'],trail_crow:['#14101e','#8a6bff','stream'],spawn_chains:['#c9b8ff','#ffffff','burst'],spawn_bloom:['#ffb0cf','#fff0f6','burst'],vic_nova:['#ffe9a0','#9fe0ff','burst'],wt_rose:['#ff7fb0','#ffd0e4','arc'],wt_azure:['#4fb4ff','#d0ecff','arc'],wt_void:['#8a4cff','#e0c8ff','arc'],skin_obsidian:['#2a2238','#7a5cff','arc'],skin_pearl:['#f2eeff','#ffffff','arc'],skin_sakura:['#ffaac8','#fff0f6','arc']};
+ const WX_COL={39:['#40204a','#ff9cc8','petal'],40:['#050a24','#9fc8ff','star'],41:['#1a0a40','#ff7fe0','star']};
+ let el=null,cat='featured',q='',sort='feat',rar='all',ownedOnly=0,selId=null,pv=null,raf=0,parts=[],fxLast=0,busy=0;
+ const st=()=>({gems:gems|0});
+ const cache={};let missing=0;function thumb(it){if(cache[it.id])return cache[it.id];let u='';missing=0;try{const c=document.createElement('canvas');c.width=132;c.height=106;const x=c.getContext('2d');drawPrev(x,it,132,106,.8,.45,true);u=c.toDataURL()}catch(_){}if(missing)return u;return cache[it.id]=u}
+ function silhouette(x,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='rgba(70,60,110,.55)';x.beginPath();x.arc(0,-34,11,0,6.3);x.fill();x.beginPath();x.moveTo(-13,-20);x.lineTo(13,-20);x.lineTo(10,22);x.lineTo(-10,22);x.closePath();x.fill();x.fillRect(-9,22,7,26);x.fillRect(2,22,7,26);x.restore()}
+ function sparkle(x,px,py,c,r,a){x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;x.fillStyle=c;x.beginPath();x.arc(px,py,r,0,6.3);x.fill();x.restore()}
+ function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
+  try{
+  if(it.cat=='weapons'){x.save();x.translate(cx,cy+8*k);x.scale(k*1.25,k*1.25);const a=still?-.9:-1.1+Math.sin(t*2.4)*.7;x.rotate(a);x.translate(-30,0);const w=WPN[ref];
+   if(w){x.save();x.globalCompositeOperation='lighter';x.strokeStyle='rgba('+w.g+',.35)';x.lineWidth=14;x.beginPath();x.arc(30,0,70,-.2,-.2-(still?1.2:Math.max(0,Math.cos(t*2.4))*1.6),true);x.stroke();x.restore()}
+   drawWeapon(x,ref,96,t);x.restore()}
+  else if(it.cat=='wings'){silhouette(x,cx,cy,k*1.1);const i=WINGS.findIndex(w=>w.id==ref);x.save();x.scale(k*.72,k*.72);if(i>=0)WingArt.draw(x,i,cx/k/.72,(cy-10*k)/k/.72,1,t,0,0,0,1);x.restore();
+   if(!still){const W2=WINGS[i];if(W2&&W2.fxk&&Math.random()<.5)parts.push({x:cx+(Math.random()-.5)*170*k,y:cy-30*k+Math.random()*70*k,vx:(Math.random()-.5)*8,vy:W2.fxk=='petals'?26:-22,l:1.3,c:W2.pal[3],r:2.2})}}
+  else if(it.cat=='charms'){silhouette(x,cx,cy,k*1.1);x.save();x.scale(k*1.6,k*1.6);if(ref=='raven'){x.translate(cx/k/1.6-(P.x-cam.x)+30,cy/k/1.6-(P.y-cam.y)-50)}else x.translate(cx/k/1.6,(cy-30*k)/k/1.6);FX7.charmDraw(x,ref,0,0,t,1);x.restore()}
+  else if(it.cat=='effects'){const f=FX_COL[ref]||['#fff','#fff','rise'];silhouette(x,cx,cy,k*1.1);const sub=it.sub;
+   if(sub=='aura'||sub=='spawn'||sub=='victory'||sub=='trail'||still){x.save();x.globalCompositeOperation='lighter';const g=x.createRadialGradient(cx,cy+40*k,2,cx,cy+40*k,70*k);g.addColorStop(0,f[0]+'aa');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,H);x.restore()}
+   if(sub=='wtrail'||sub=='wskin'){x.save();x.translate(cx,cy);x.scale(k*1.1,k*1.1);const a=still?-1:-1.1+Math.sin(t*2.4)*.7;x.globalCompositeOperation='lighter';x.strokeStyle=f[0];x.lineWidth=12;x.beginPath();x.arc(0,0,76,a-1.1,a);x.stroke();x.strokeStyle=f[1];x.lineWidth=4;x.stroke();x.globalCompositeOperation='source-over';x.rotate(a);x.fillStyle=sub=='wskin'?f[0]:'#c8d0dc';x.strokeStyle=sub=='wskin'?f[1]:'#000';x.lineWidth=2;x.beginPath();x.moveTo(0,-4);x.lineTo(76,-2);x.lineTo(84,0);x.lineTo(76,2);x.lineTo(0,4);x.closePath();x.fill();x.stroke();x.restore()}
+   else if(!still&&Math.random()<.8){const m=f[2];const n=m=='burst'?3:1;for(let i=0;i<n;i++){const a=Math.random()*6.28;parts.push(m=='orbit'?{x:cx+Math.cos(t*2.2+i)*50*k,y:cy+10*k+Math.sin(t*2.2+i)*14*k,vx:0,vy:-14,l:1,c:f[i%2],r:2}:m=='fall'?{x:cx+(Math.random()-.5)*110*k,y:cy-60*k,vx:(Math.random()-.5)*10,vy:30,l:1.6,c:f[i%2],r:2.4}:m=='burst'?{x:cx,y:cy,vx:Math.cos(a)*90,vy:Math.sin(a)*90,l:.9,c:f[i%2],r:2.4}:m=='stream'?{x:cx-20*k,y:cy+Math.random()*40*k,vx:-70,vy:0,l:.7,c:f[i%2],r:3}:{x:cx+(Math.random()-.5)*50*k,y:cy+44*k,vx:(Math.random()-.5)*10,vy:-34,l:1.3,c:f[i%2],r:2.6})}}
+   else if(still){for(let i=0;i<8;i++)sparkle(x,cx+Math.cos(i*.9)*(40+i*5)*k,cy+Math.sin(i*1.3)*40*k,f[i%2],2.4,.8)}}
+  else if(it.cat=='weather'){const c=WX_COL[ref]||['#222','#fff','star'];const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,c[0]);g.addColorStop(1,c[1]+'66');x.fillStyle=g;x.fillRect(0,0,W,H);
+   if(still)for(let i=0;i<24;i++)sparkle(x,(i*53)%W,(i*37)%H,c[1],1.6+(i%3)*.6,.7);else if(Math.random()<.7)parts.push(c[2]=='petal'?{x:Math.random()*W,y:-4,vx:12,vy:26+Math.random()*20,l:H/30,c:c[1],r:3}:{x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,l:1.6,c:c[1],r:1.8});
+   x.save();x.translate(cx,H*.72);x.fillStyle='#2a2f44';x.strokeStyle='#000';x.lineWidth=2;x.fillRect(-26,-18,52,36);x.strokeRect(-26,-18,52,36);x.fillStyle=c[1];x.beginPath();x.arc(0,-2,10,0,6.3);x.fill();x.restore()}
+  else{let u=null;const key=it.cat=='gear'?'a:'+ref:it.cat=='seeds'?+ref:+ref;try{u=iconURL(key)}catch(_){}
+   if(u){let im=cache['i'+key];if(!im){im=cache['i'+key]=new Image();im.onload=()=>{try{delete cache[it.id];if(isOpen())render()}catch(_){}};im.src=u}if(!im.complete)missing=1;const s=Math.min(W,H)*.62,by=still?0:Math.sin(t*2)*4;if(im.complete)x.drawImage(im,cx-s/2,cy-s*.65+by,s,s)}}
+  }catch(e){}
+  if(!still){for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.l-=.016;if(p.l<=0||parts.length>160){parts.splice(i,1);continue}p.x+=p.vx*.016;p.y+=p.vy*.016;sparkle(x,p.x,p.y,p.c,p.r,Math.min(1,p.l*2))}}}
+ // ---- state helpers
+ const has=it=>SHOP7.has(it.id),cnt=it=>SHOP7.count(it.id),eqd=it=>SHOP7.equipped(it.id),equipable=it=>!!SHOP7.slotOf(it);
+ const stateOf=it=>it.stack?(cnt(it)>0?'Owned x'+cnt(it):''):eqd(it)?'EQUIPPED':has(it)?'OWNED':'';
+ function list(){let L=SHOP7.items.slice();
+  if(cat=='featured')L=L.filter(i=>i.feat||i.new&&!i.legacy&&i.cat!='gear'&&0);else if(cat!='all')L=L.filter(i=>i.cat==cat);
+  if(q){const s=q.toLowerCase();L=L.filter(i=>(i.n+' '+i.d+' '+i.cat+' '+i.rar+' '+(i.sub||'')).toLowerCase().includes(s))}
+  if(rar!='all')L=L.filter(i=>i.rar==rar);if(ownedOnly)L=L.filter(has);
+  const cmp={feat:(a,b)=>(b.feat|0)-(a.feat|0)||(b.new|0)-(a.new|0)||a.price-b.price,pa:(a,b)=>a.price-b.price,pd:(a,b)=>b.price-a.price,rar:(a,b)=>RO[b.rar]-RO[a.rar]||a.price-b.price,name:(a,b)=>a.n.localeCompare(b.n),neu:(a,b)=>(b.new|0)-(a.new|0)||a.price-b.price}[sort];L.sort(cmp);return L}
+ function card(it){const s=stateOf(it),b=eqd(it)?'<span class="badge eq">EQUIPPED</span>':!it.stack&&has(it)?'<span class="badge own">OWNED</span>':SHOP7.isNew(it.id)?'<span class="badge new">NEW</span>':'';
+  const lk=!SHOP7.lvOk(it);return'<button class="card'+(selId==it.id?' sel':'')+(lk?' lock':'')+'" data-id="'+it.id+'" data-rar="'+it.rar+'" aria-label="'+esc(it.n)+', '+it.rar+', '+it.price+' gems">'+b+'<img alt="" src="'+thumb(it)+'"><b>'+esc(it.n)+'</b><span class="rtag">'+esc(SHOP7.RN[it.rar])+'</span><span class="pr"><span><i class="gem"></i>'+it.price+'</span>'+(lk?'<small>Lv '+it.lv+'</small>':s&&!it.stack?'<small>✓</small>':'')+'</span></button>'}
+ function render(){if(!el)return;el.querySelector('#s7g').textContent=gems|0;el.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.c==cat));
+  const g=el.querySelector('.grid');let h='';
+  if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly){h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
+  else{const L=list();h+=L.length?'<div class="cards">'+L.map(card).join('')+'</div>':'<div class="empty">Nothing matches. Try a different search or filter.</div>'}
+  g.innerHTML=h;g.querySelectorAll('.card').forEach(c=>c.onclick=()=>select(c.dataset.id));renderDetail()}
+ function renderDetail(){const a=el.querySelector('aside');const it=selId&&SHOP7.byId.get(selId);if(!it){a.innerHTML='<h3>Pick an item</h3><p>Select anything to see a live preview, what it does, and how to get it.</p>';pv=null;return}
+  const owned=!it.stack&&has(it),lk=!SHOP7.lvOk(it),can=gems>=it.price;let btn='';
+  if(owned){btn=equipable(it)?(eqd(it)?'<button data-a="un">Unequip</button>':'<button class="pri" data-a="eq">Equip</button>'):'<button disabled>Owned</button>'}
+  else if(lk)btn='<button disabled>Requires level '+it.lv+'</button>';
+  else btn=(it.stack?'<span class="qty"><input id="s7q" type="number" min="1" max="99" value="1" aria-label="Quantity"></span>':'')+'<button class="pri" data-a="buy"'+(can?'':' disabled')+'>'+(can?'Buy · '+it.price+' gems':'Need '+(it.price-gems)+' more gems')+'</button>';
+  a.innerHTML='<canvas id="s7pv" width="300" height="255"></canvas><div><span class="rtag" data-rar="'+it.rar+'">'+esc(SHOP7.RN[it.rar])+' · '+esc(it.cat)+(it.sub?' · '+esc(it.sub):'')+'</span><h3>'+esc(it.n)+'</h3></div><p>'+esc(it.d)+'</p>'+(it.lv?'<p>Level required: <b>'+it.lv+'</b></p>':'')+(it.stack?'<p>You have: <b>'+cnt(it)+'</b></p>':'')+'<div class="acts">'+btn+'</div><small id="s7m" role="status" style="color:var(--muted)"></small>';
+  pv=a.querySelector('#s7pv');parts.length=0;a.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a))}
+ function select(id){selId=id;SHOP7.markSeen(id);try{UIS.play('select')}catch(_){}render()}
+ const msg=t=>{const m=el&&el.querySelector('#s7m');if(m)m.textContent=t;else try{say(t)}catch(_){}};
+ async function act(a){const it=SHOP7.byId.get(selId);if(!it||busy)return;
+  if(a=='eq'){if(SHOP7.equip(it.id))msg(it.n+' equipped');render();return}
+  if(a=='un'){SHOP7.unequip(it.id);render();return}
+  if(a=='buy'){const qEl=el.querySelector('#s7q'),qty=it.stack?Math.max(1,Math.min(99,(qEl&&+qEl.value)|0||1)):1,total=it.price*qty;
+   if(total>=500||qty>1){const ok=await DLG7.confirm('Buy '+it.n+(qty>1?' x'+qty:'')+'?','This costs '+total+' gems. You have '+(gems|0)+'.','Buy for '+total);if(!ok)return}
+   busy=1;const r=await SHOP7.buy(it.id,qty);busy=0;msg(r.m);if(r.ok){try{VFX.add(1,'#ffe9a0',P.x,P.y,0,-30,1,14,2)}catch(_){}if(SHOP7.slotOf(it)&&!it.stack)msg(r.m+' — press Equip to use it.')}render()}}
+ function mk(){if(el)return;el=document.createElement('div');el.id='store7';el.innerHTML='<div class="shell" role="dialog" aria-modal="true" aria-label="Item store"><header><h2>STORE</h2><span class="gv"><i class="gem"></i><b id="s7g">0</b></span><button class="x" aria-label="Close store">✕</button></header>'
+  +'<div class="bar"><input id="s7s" type="search" placeholder="Search items" aria-label="Search items"><select id="s7r" aria-label="Rarity"><option value="all">All rarities</option>'+SHOP7.RAR.slice(0,6).map(r=>'<option value="'+r+'">'+SHOP7.RN[r]+'</option>').join('')+'</select><select id="s7o" aria-label="Sort"><option value="feat">Featured</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option><option value="rar">Rarity</option><option value="name">Name</option><option value="neu">Newest</option></select><button class="chip" id="s7w">Owned only</button></div>'
+  +'<div class="main"><nav>'+[['featured','Featured']].concat(SHOP7.CATS.slice(1)).map(c=>'<button data-c="'+c[0]+'">'+c[1]+'</button>').join('')+'<button data-c="all">All items</button></nav><div class="grid"></div><aside></aside></div></div>';
+  document.body.appendChild(el);
+  el.querySelector('.x').onclick=close;el.addEventListener('mousedown',e=>{if(e.target===el)close()});
+  el.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{cat=b.dataset.c;render()});
+  el.querySelector('#s7s').oninput=e=>{q=e.target.value.trim();render()};el.querySelector('#s7r').onchange=e=>{rar=e.target.value;render()};el.querySelector('#s7o').onchange=e=>{sort=e.target.value;render()};el.querySelector('#s7w').onclick=e=>{ownedOnly^=1;e.target.classList.toggle('on',!!ownedOnly);render()};
+  addEventListener('keydown',e=>{if(el.style.display!='none'&&el.style.display&&e.key=='Escape'&&!DLG7.isOpen){e.stopPropagation();close()}},true)}
+ const isOpen=()=>!!el&&el.style.display=='flex';
+ function loop(){if(!isOpen()){raf=0;return}const t=performance.now()/1000;if(pv&&selId){const it=SHOP7.byId.get(selId);if(it)drawPrev(pv.getContext('2d'),it,300,255,t,1,false)}raf=requestAnimationFrame(loop)}
+ function open(o){mk();if(o&&o.cat)cat=o.cat;if(o&&o.item){const it=SHOP7.byId.get(o.item);if(it){cat='all';selId=it.id}}el.style.display='flex';requestAnimationFrame(()=>el.classList.add('on'));render();try{UIS.play('open')}catch(_){}if(!raf)raf=requestAnimationFrame(loop);try{keys&&Object.keys(keys).forEach(k=>keys[k]=0)}catch(_){}}
+ function close(){if(!el)return;el.classList.remove('on');try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},200)}
+ function btn(){if(document.getElementById('bstore'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bstore';b.className='pn';b.textContent='STORE';b.title='Open the item store';b.onclick=()=>isOpen()?close():open();hr.insertBefore(b,hr.firstChild)}
+ btn();if(document.readyState!='complete')addEventListener('load',btn);
+ return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;render()}}})();
+
 /* ========== LATE: 80-ui.js ========== */
 // ===== V6 UI: HUD (portrait/title/wing), banner, minimap, character hub (profile, appearance, wings, nameplates, skills, settings, account) =====
 const UI6=(()=>{
@@ -2259,10 +2631,10 @@ const UI6=(()=>{
  addEventListener('keydown',e=>{if(!entered||RB_SESS==null)return;const k=e.key.toLowerCase();if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;if(hubOn){e.stopPropagation();if(k=='escape'||k=='c')close();return}if(k=='c'&&menuEl.style.display=='none'&&!dlgOpen){open();e.stopPropagation()}},true);
  function canvasFor(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
  function previewChar(c,scale,over){const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);withCtx(x,()=>{const o=cam.x,oy=cam.y;try{AC6.draw(c.width/2,c.height/2-30*scale/2.2,1,0,over&&over.name||myName,performance.now()/1000,0,false,'',wp,0,0,{},false,look,'me')}finally{}})}
- function wingCard(i,w){const u=lvl>=w.lvl,c=canvasFor(260,170);const x=c.getContext('2d');withCtx(x,()=>{x.save();x.fillStyle='rgba(0,0,0,0)';WingArt.draw(x,i,130,90,1,performance.now()/1000,0,0,0,u?1:.35);x.restore()});return c}
+ function wingCard(i,w){const u=wingOwned(w),c=canvasFor(260,170);const x=c.getContext('2d');withCtx(x,()=>{x.save();x.fillStyle='rgba(0,0,0,0)';WingArt.draw(x,i,130,90,1,performance.now()/1000,0,0,0,u?1:.35);x.restore()});return c}
  const sel=(cond)=>cond?' sel':'';
  function render(){nav.innerHTML='<h2>HUB</h2>'+TABS.map(t=>'<button data-t="'+t[0]+'" class="'+(t[0]==tab?'on':'')+'">'+t[1]+'</button>').join('');nav.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});body.scrollTop=0;(EXT[tab]||({profile,look,wings,plates,skills,gear,quests,settings,account})[tab])()}
- function profile(){const t=npTier(lvl),w=curWing(lvl),nx=npRange(t)[1]+1,nw=WINGS.find(x=>lvl<x.lvl);body.innerHTML='<h3>Profile</h3><div class="prof"><canvas id="pv" width="200" height="260"></canvas><div><div style="font-size:22px;color:var(--gold2)">'+esc(myName)+'</div><div class="dim">'+npName(t)+' - Level '+lvl+'</div><div class="hrow"><div class="hchip on">HP '+Math.round(maxHP())+'</div><div class="hchip">Gems '+gems+'</div><div class="hchip">Skill points '+pst.pts+'</div></div>'+
+ function profile(){const t=npTier(lvl),w=curWing(lvl),nx=npRange(t)[1]+1,nw=WINGS.find(x=>!x.shop&&lvl<x.lvl);body.innerHTML='<h3>Profile</h3><div class="prof"><canvas id="pv" width="200" height="260"></canvas><div><div style="font-size:22px;color:var(--gold2)">'+esc(myName)+'</div><div class="dim">'+npName(t)+' - Level '+lvl+'</div><div class="hrow"><div class="hchip on">HP '+Math.round(maxHP())+'</div><div class="hchip">Gems '+gems+'</div><div class="hchip">Skill points '+pst.pts+'</div></div>'+
   '<div class="stat"><span>XP</span><div class="bar"><i style="width:'+Math.min(100,xp/xpNeed(lvl)*100)+'%"></i></div><small>'+xp+'/'+xpNeed(lvl)+'</small></div>'+
   '<p class="dim">Wings: <b style="color:var(--ice)">'+(w?w.n:'none yet')+'</b>'+(nw?' - next: '+nw.n+' at level '+nw.lvl:' - all wings unlocked')+'<br>Next nameplate tier: <b style="color:var(--vio)">'+npName(t+1)+'</b> at level '+nx+'<br>Blocks broken '+(stats.break|0)+' - Monsters defeated '+(stats.kill|0)+'</p></div></div>';
   const c=el('pv');const x=c.getContext('2d');let raf;const loop=()=>{if(!hubOn||tab!='profile')return;x.clearRect(0,0,200,260);withCtx(x,()=>{AC6.draw(100,95,1,0,'',performance.now()/1000,0,false,'',wp,0,0,wear,false,look,'me')});raf=requestAnimationFrame(loop)};loop()}
@@ -2280,10 +2652,10 @@ const UI6=(()=>{
   el('crand').onclick=()=>{const r=n=>Math.random()*n|0,hx=()=>'#'+[0,0,0].map(()=>(40+r(180)).toString(16).padStart(2,'0')).join('');Object.assign(cel.ap,{hair:r(AP.hair.length),eyes:r(AP.eyes.length),outfit:r(AP.outfit.length),acc:r(AP.acc.length),cape:r(3),eyeCol:r(AP.eyeCol.length),hairCol:hx(),outCol:hx(),trimCol:hx()});upd();render()};
   el('cname').onclick=()=>{const n=prompt('Character name (max 14)',myName);if(n){myName=n.trim().slice(0,14)||myName;saveP()}}}
  function wings(){const w0=curWing(lvl),a0=curAura(lvl);let h='<h3>Celestial Wings</h3><div class="hrow"><span class="hchip'+(cel.wingsOn?' on':'')+'" id="wtog">Wings '+(cel.wingsOn?'ON':'OFF')+'</span><span class="hchip'+(cel.wing=='auto'?' on':'')+'" id="wauto">Auto (best unlocked)</span></div><div class="hgrid">';
-  WINGS.forEach((w,i)=>{const u=lvl>=w.lvl;h+='<div class="hcard'+(u?'':' lock')+sel(w0&&w0.id==w.id)+'" data-w="'+i+'"><div class="cv"></div><b>'+w.n+'</b><small>'+(u?w.d:'Unlocks at level '+w.lvl)+'</small></div>'});
+  WINGS.forEach((w,i)=>{const u=wingOwned(w);h+='<div class="hcard'+(u?'':' lock')+sel(w0&&w0.id==w.id)+'" data-w="'+i+'"><div class="cv"></div><b>'+w.n+'</b><small>'+(u?w.d:w.shop?'Available in the Store':'Unlocks at level '+w.lvl)+'</small></div>'});
   h+='</div><h3 style="margin-top:18px">Ground Aura</h3><div class="hrow"><span class="hchip'+(cel.auraOn?' on':'')+'" id="atog">Aura '+(cel.auraOn?'ON':'OFF')+'</span><span class="hchip'+(cel.aura=='auto'?' on':'')+'" id="aauto">Auto</span></div><div class="hgrid">';
   AURAS.forEach((a,i)=>{if(a.id=='none')return;const u=lvl>=a.lvl;h+='<div class="hcard'+(u?'':' lock')+sel(a0.id==a.id)+'" data-a="'+i+'"><div class="cv"></div><b>'+a.n+'</b><small>'+(u?'Unlocked':'Unlocks at level '+a.lvl)+'</small></div>'});
-  body.innerHTML=h+'</div>';body.querySelectorAll('.hcard[data-w]').forEach(d=>{const i=+d.dataset.w;d.querySelector('.cv').appendChild(wingCard(i,WINGS[i]));d.onclick=()=>{if(lvl>=WINGS[i].lvl){cel.wing=WINGS[i].id;cel.wingsOn=1;celSave();render()}}});
+  body.innerHTML=h+'</div>';body.querySelectorAll('.hcard[data-w]').forEach(d=>{const i=+d.dataset.w;d.querySelector('.cv').appendChild(wingCard(i,WINGS[i]));d.onclick=()=>{if(wingOwned(WINGS[i])){cel.wing=WINGS[i].id;cel.wingsOn=1;celSave();render()}else if(WINGS[i].shop){try{STORE7.open({item:'wing_'+WINGS[i].id})}catch(_){}}}});
   body.querySelectorAll('.hcard[data-a]').forEach(d=>{const i=+d.dataset.a,a=AURAS[i],c=canvasFor(260,120),x=c.getContext('2d');withCtx(x,()=>{Sigil.draw(x,a,130,60,0,110,lvl>=a.lvl?1:.3)});d.querySelector('.cv').appendChild(c);d.onclick=()=>{if(lvl>=a.lvl){cel.aura=a.id;cel.auraOn=1;celSave();render()}}});
   el('wtog').onclick=()=>{cel.wingsOn=cel.wingsOn?0:1;celSave();render()};el('wauto').onclick=()=>{cel.wing='auto';celSave();render()};el('atog').onclick=()=>{cel.auraOn=cel.auraOn?0:1;celSave();render()};el('aauto').onclick=()=>{cel.aura='auto';celSave();render()}}
  function plates(){const t0=npTier(lvl),cur=curPlateTier(lvl);let h='<h3>Nameplate Gallery</h3><div class="hrow"><span class="dim">A new nameplate unlocks every '+NP_STEP+' levels. Pick any unlocked one to display.</span><span class="hchip'+(cel.plate=='auto'?' on':'')+'" id="pauto">Auto (highest)</span></div><div class="hgrid">';
@@ -2347,7 +2719,7 @@ const BOSS6=(()=>{
   if(!ok){say('No room for the boss here - try a wider cave');return false}
   const hp=Math.round(d.hp*(1+.6*(online-1)));mobs.push({k,x,y,w:d.w,h:d.h,vx:0,vy:0,hp,mhp:hp,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:1,g:false,wall:0,boss:1,bs:'idle',bt:2.4,at:0,phase:1,sum:0});act=mobs[mobs.length-1];
   VFX.wave(x,y+d.h,b.c,320,1.2,.3);VFX.burst(x,y+d.h/2,[b.c,'#fff'],40,300,1,1.2,16);UI6.say6(b.n.toUpperCase(),'A BOSS APPEARS',3600);snd(80,1.2,'sawtooth',.1,.5);return true}
- function reward(m,b){bossK[b.id]=(bossK[b.id]|0)+1;const first=!relics[b.relic];relics[b.relic]=1;gems+=b.gems;stat('gems',b.gems);xpGain('fight',b.xp);VFX.shatter(m.x,m.y+m.h/2,[b.c,'#fff','#ffd24a'],40);VFX.wave(m.x,m.y+m.h/2,'#fff',300,1,.3);UI6.say6('BOSS DEFEATED',b.n.toUpperCase()+(first?'  -  RELIC: '+b.rn:''),4200);burst(m.x,m.y+m.h/2,'#ffd24a',40,320,5,'p');rings.push({x:m.x,y:m.y+m.h/2,c:'#ffd24a',t:performance.now()});shake=Math.max(shake,QM.reduce?0:.25);try{saveP()}catch(_){}lastEnd=performance.now()}
+ function reward(m,b){try{FX7.victory(m.x,m.y)}catch(_){}bossK[b.id]=(bossK[b.id]|0)+1;const first=!relics[b.relic];relics[b.relic]=1;gems+=b.gems;stat('gems',b.gems);xpGain('fight',b.xp);VFX.shatter(m.x,m.y+m.h/2,[b.c,'#fff','#ffd24a'],40);VFX.wave(m.x,m.y+m.h/2,'#fff',300,1,.3);UI6.say6('BOSS DEFEATED',b.n.toUpperCase()+(first?'  -  RELIC: '+b.rn:''),4200);burst(m.x,m.y+m.h/2,'#ffd24a',40,320,5,'p');rings.push({x:m.x,y:m.y+m.h/2,c:'#ffd24a',t:performance.now()});shake=Math.max(shake,QM.reduce?0:.25);try{saveP()}catch(_){}lastEnd=performance.now()}
  const _hm=hurtMob;hurtMob=function(m,d,w,ang){const was=m.dead;const r=_hm.apply(this,arguments);if(m.boss&&m.hp<=0&&!was&&!m.rew){m.rew=1;m.dead=true;const b=def(m);if(b)reward(m,b);act=null}return r};
  function bolt(m,ang,sp,c){BP.push({x:m.x,y:m.y+m.h*.4,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,l:4,c})}
  function tick(dt){if(!entered){return}ui();
@@ -2408,6 +2780,51 @@ const DAILY6=(()=>{
  function claim(i){const t=dly.tasks[i];if(!t||t.claimed||prog(t)<t.need)return;t.claimed=1;t.done=1;const bonus=1+Math.min(.5,dly.streak*.1);gems+=Math.round(t.g*bonus);stat('gems',Math.round(t.g*bonus));xpGain('fight',Math.round(t.x*bonus));VFX.levelUp(P.x,P.y,'#9fe0ff');snd(880,.3,'triangle');
   if(dly.tasks.every(x=>x.claimed)&&dly.last!=dly.day){dly.last=dly.day;dly.streak++;gems+=100*Math.min(5,dly.streak);UI6.say6('DAILY COMPLETE','STREAK '+dly.streak+' - +'+100*Math.min(5,dly.streak)+' GEMS',3400)}try{saveP()}catch(_){}}
  let tm=0;return{roll,prog,label,claim,tick(dt){tm-=dt;if(tm<=0){tm=15;if(entered)roll()}},today}})();
+
+/* ========== LATE: 87-music.js ========== */
+// ===== MUS7: calm generative anime-lofi music with a mood per place (plaza / blossom / space / galaxy / combat) =====
+// Everything is synthesised with WebAudio (no audio files). startBGM() is replaced so existing music volume / mute code keeps working: bgm.m is the music master gain.
+const MUS7=(()=>{
+ const MOODS={
+  plaza:{bpm:76,root:130.81,ch:[[0,4,7,11,14],[-3,0,4,7,11],[-7,-3,0,4,7],[-5,-1,2,5,9]],sc:[0,2,4,7,9,12,14],pad:.035,mel:.045,sw:.12,drums:1,wave:'triangle',hat:.04},
+  blossom:{bpm:62,root:146.83,ch:[[0,3,7,10,14],[-4,0,3,7,10],[-9,-5,-2,3,7],[-2,2,5,9,12]],sc:[0,2,3,7,8,12,14],pad:.032,mel:.06,sw:.05,drums:0,wave:'triangle',pluck:1,hat:0},
+  space:{bpm:52,root:164.81,ch:[[0,7,12,14,19],[-5,2,7,12,14],[-3,4,9,12,16],[-7,0,5,7,12]],sc:[0,2,7,9,14,16,19],pad:.05,mel:.03,sw:0,drums:0,wave:'sine',bell:1,hat:0},
+  galaxy:{bpm:68,root:174.61,ch:[[0,4,7,12,16],[-3,0,4,9,12],[-5,-1,4,7,11],[2,7,9,14,16]],sc:[0,4,7,9,12,16,19],pad:.04,mel:.04,sw:.06,drums:0,wave:'sine',arp:1,hat:0},
+  combat:{bpm:100,root:110,ch:[[0,3,7,10],[-4,0,3,7],[-9,-5,-2,3],[-2,2,5,9]],sc:[0,3,5,7,10,12],pad:.03,mel:.04,sw:.05,drums:2,wave:'triangle',hat:.05}};
+ let mood='plaza',want='plaza',ctx=null,master=null,mg=null,lp=null,wet=null,nb=null,timer=0,nextT=0,step=0,on=false,holdUntil=0,last='';
+ const R=Math.random,F=(m,n)=>m.root*2**(n/12);
+ function mkReverb(){const len=ctx.sampleRate*2.2,b=ctx.createBuffer(2,len,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}const cv=ctx.createConvolver();cv.buffer=b;return cv}
+ const env=(g,t,a,d,v)=>{g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0005,t+d)};
+ function voice(fr,t,d,ty,v,a,dest){const o=ctx.createOscillator(),g=ctx.createGain();o.type=ty;o.frequency.value=fr;env(g,t,a||.03,d,v);o.connect(g);g.connect(dest||lp);o.start(t);o.stop(t+d+.05)}
+ function pad(m,fr,t,d){voice(fr,t,d,m.wave,m.pad,.6);voice(fr*1.004,t,d,'sine',m.pad*.7,.8)}
+ function pluck(m,fr,t,v){voice(fr,t,1.3,'triangle',v,.006);voice(fr*2,t,.5,'sine',v*.4,.004)}
+ function bell(fr,t,v){voice(fr,t,3.2,'sine',v,.01,wet);voice(fr*2.76,t,1.6,'sine',v*.3,.01,wet)}
+ function kick(t,v){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(42,t+.14);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.25)}
+ function hat(t,v){const b=ctx.createBufferSource();b.buffer=nb;const h=ctx.createBiquadFilter();h.type='highpass';h.frequency.value=7000;const g=ctx.createGain();g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);b.connect(h);h.connect(g);g.connect(mg);b.start(t);b.stop(t+.07)}
+ function tick(){if(!on||!ctx)return;const m=MOODS[mood],e8=60/m.bpm/2;
+  while(nextT<ctx.currentTime+.4){const s=step%8,bar=(step>>3),c=m.ch[bar%4],t=nextT+(s%2?m.sw*e8:0);
+   if(s==0){c.forEach((n,i)=>pad(m,F(m,n),t+i*.02,e8*8+1));voice(F(m,c[0]-24),t,e8*4,'sine',.1)}
+   if(s==4&&m.drums!=1)voice(F(m,c[0]-24),t,e8*3,'sine',.07);
+   if(m.pluck&&(s==2||s==5||s==7)&&R()<.7)pluck(m,F(m,m.sc[(R()*m.sc.length)|0]+12),t,m.mel);
+   else if(m.bell&&s%4==0&&R()<.5)bell(F(m,m.sc[(R()*m.sc.length)|0]+24),t,m.mel);
+   else if(m.arp&&s%1==0&&R()<.65)pluck(m,F(m,c[(s*3+bar)%c.length]+24),t,m.mel*.7);
+   else if(!m.pluck&&!m.bell&&!m.arp&&(s==1||s==3||s==6)&&R()<.45)pluck(m,F(m,m.sc[(R()*m.sc.length)|0]+12),t,m.mel);
+   if(m.drums){if(s==0||(m.drums==2&&s==4)||s==5)kick(t,m.drums==2?.16:.12);if(s%2==1)hat(t,m.hat)}
+   nextT+=e8;step++}}
+ function start(){ac();if(on||!AC)return;ctx=AC;master=ctx.createGain();master.gain.value=mute?0:(OPT.mv==null?.5:OPT.mv);mg=ctx.createGain();mg.gain.value=1;lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2400;
+  wet=ctx.createGain();wet.gain.value=.3;const rv=mkReverb();lp.connect(mg);lp.connect(rv);rv.connect(wet);wet.connect(mg);mg.connect(master);master.connect(ctx.destination);
+  nb=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+  bgm={m:master};on=true;nextT=ctx.currentTime+.1;timer=setInterval(tick,120);setInterval(detect,1000)}
+ function fadeTo(m2){if(m2==mood||!ctx)return;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(0,t+1.2);setTimeout(()=>{mood=m2;step=0;nextT=ctx.currentTime+.1;const t2=ctx.currentTime;mg.gain.cancelScheduledValues(t2);mg.gain.setValueAtTime(0,t2);mg.gain.linearRampToValueAtTime(1,t2+1.5)},1250)}
+ function detect(){try{if(!entered)return;let m='plaza';const e=ENV7.target;if(e=='blossom'||e=='space'||e=='galaxy')m=e;
+  let fight=false;try{if(BOSS6.active())fight=true}catch(_){}for(const k of mobs){if(Math.abs(k.x-P.x)<420&&Math.abs(k.y-P.y)<300){fight=true;break}}
+  const now=performance.now();if(fight)holdUntil=now+7000;if(now<holdUntil)m='combat';want=m;if(m!=last){last=m;fadeTo(m)}}catch(_){}}
+ return{start,get mood(){return mood},get want(){return want},get on(){return on},MOODS,detect,force(m){want=m;last=m;fadeTo(m)}}})();
+startBGM=function(){MUS7.start()};
+// ambience volume slider (0-100%), saved with the other options
+{const _au=ambUpdate;ambUpdate=function(){_au();try{if(ambG)ambG.gain.value*=OPT.av==null?1:OPT.av}catch(_){}};
+ const addSlider=()=>{const os=document.getElementById('os');if(!os||document.getElementById('oav'))return;const lb=os.parentElement,l=document.createElement('label');l.innerHTML='Ambience <input type="range" id="oav" min="0" max="100">';lb.after(l);const r=l.querySelector('input');r.value=(OPT.av==null?1:OPT.av)*100;r.oninput=e=>{OPT.av=e.target.value/100;try{saveP()}catch(_){}}};
+ addSlider();addEventListener('load',addSlider)}
 
 /* ========== LATE: 87-uisfx.js ========== */
 // ===== V7 UI sounds: tiny soft synthesised cues (no audio files), own volume + mute, rate limited =====
@@ -2667,7 +3084,7 @@ function sanAp(a){const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math
 const _hm6=hurtMob;hurtMob=function(m,d,w,ang){const r=_hm6.apply(this,arguments);try{if(m&&d>0)VFX.hit(m.x,m.y+(m.h||20)/2,'#fff',false)}catch(_){}return r};
 const _brk6=breakAt;breakAt=function(x,y,dmg){const r=_brk6.apply(this,arguments);try{if(r){const b=BLK[tiles[y*W+x]]||null;VFX.mine((x+.5)*T,(y+.5)*T,'#fff')}}catch(_){}return r};
 const EV6={wasG:true,vy:0,stepT:0,dash:0};
-function evTick(dt){if(!entered)return;const e=EV6;if(P.g&&!e.wasG&&e.vy>260)VFX.land(P.x,P.y+P.h,e.vy);e.wasG=P.g;e.vy=P.vy;e.stepT-=dt;if(P.g&&Math.abs(P.vx)>70&&e.stepT<=0){e.stepT=.13;VFX.step(P.x-P.f*4,P.y+P.h)}
+function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if(P.g&&!e.wasG&&e.vy>260)VFX.land(P.x,P.y+P.h,e.vy);e.wasG=P.g;e.vy=P.vy;e.stepT-=dt;if(P.g&&Math.abs(P.vx)>70&&e.stepT<=0){e.stepT=.13;VFX.step(P.x-P.f*4,P.y+P.h)}
  if(dash>0&&e.dash<=0){const w=curWing(lvl);VFX.dash(P.x,P.y+25,-P.f,w?w.pal[3]:'#9fd8ff');if(w)for(let i=0;i<5;i++)VFX.feather(P.x,P.y+20+i*4,w.pal[2],P.f)}e.dash=dash;
  const w=curWing(lvl);if(w&&!P.g&&P.vy<-100&&Math.random()<.5)VFX.feather(P.x-P.f*10,P.y+25,w.pal[2],P.f)}
 
@@ -3234,12 +3651,12 @@ const SHOW7=(()=>{
    +'<div class="galhead"><div class="gsel"><button data-a="gmenu" aria-haspopup="true">MY GALLERY ▾</button><div class="gmenu" hidden><button data-g="chars" class="'+(X6.sc.gal=='chars'?'on':'')+'">Characters</button><button data-g="wings" class="'+(X6.sc.gal=='wings'?'on':'')+'">Wings</button></div></div><div class="gpg"><button data-p="-1" aria-label="Previous page">‹</button><span>'+(gpage+1)+'/'+pages()+'</span><button data-p="1" aria-label="Next page">›</button></div></div>'
    +'<div class="gal">'+galTiles()+'</div>';
   return h}
- const gItems=()=>X6.sc.gal=='wings'?WINGS.map((w,i)=>({k:'w'+i,n:w.n,lock:lvl<w.lvl,sub:lvl<w.lvl?'Lv '+w.lvl:(cel.wing==w.id||(cel.wing=='auto'&&bestWing(lvl)==w)?'Equipped':'Unlocked')})):CHARS.map((c,i)=>({k:'c'+i,n:i?c.first:String(myName).slice(0,10),lock:!unlocked(i),sub:unlocked(i)?(X6.sc.act==i?'Active':X6.sc.fav[i]?'Favorite':'Owned'):'Lv '+c.lv,cur:i==cur}));
+ const gItems=()=>X6.sc.gal=='wings'?WINGS.map((w,i)=>({k:'w'+i,n:w.n,lock:!wingOwned(w),sub:!wingOwned(w)?(w.shop?'Store':'Lv '+w.lvl):(cel.wing==w.id||(cel.wing=='auto'&&bestWing(lvl)==w)?'Equipped':'Unlocked')})):CHARS.map((c,i)=>({k:'c'+i,n:i?c.first:String(myName).slice(0,10),lock:!unlocked(i),sub:unlocked(i)?(X6.sc.act==i?'Active':X6.sc.fav[i]?'Favorite':'Owned'):'Lv '+c.lv,cur:i==cur}));
  const pages=()=>Math.max(1,Math.ceil(gItems().length/4));
  function galTiles(){const it=gItems().slice(gpage*4,gpage*4+4);return it.map(x=>'<button class="gt'+(x.cur?' sel':'')+(x.lock?' lock':'')+'" data-t="'+x.k+'" aria-label="'+esc(x.n)+' '+esc(x.sub)+'"><canvas width="160" height="100" data-tk="'+x.k+'"></canvas><span>'+esc(x.n)+'</span><small>'+esc(x.sub)+'</small></button>').join('')}
  function paintTiles(){el.querySelectorAll('canvas[data-tk]').forEach(c=>{const k=c.dataset.tk,g=c.getContext('2d');g.clearRect(0,0,160,100);g.fillStyle='#e7e4dc';g.fillRect(0,0,160,100);
   if(k[0]=='c'){const i=+k.slice(1),L=SHOWART.info(apOf(i));g.save();g.beginPath();g.rect(0,0,160,100);g.clip();try{SHOWART.draw(g,160,230,{look:unlocked(i)?L:grey(L),t:0,wpn:'fist',wings:false,zoom:1.5,ox:80,dy:92})}catch(e){}g.restore()}
-  else{const i=+k.slice(1);g.save();g.translate(80,60);g.scale(.62,.62);if(lvl<WINGS[i].lvl)g.globalAlpha=.35;try{WingArt.draw(g,i,0,0,1,1,0,0,0,1)}catch(e){}g.restore()}})}
+  else{const i=+k.slice(1);g.save();g.translate(80,60);g.scale(.62,.62);if(!wingOwned(WINGS[i]))g.globalAlpha=.35;try{WingArt.draw(g,i,0,0,1,1,0,0,0,1)}catch(e){}g.restore()}})}
  function render(){const box=el.querySelector('#sInfo');box.innerHTML=info();paintTiles();el.querySelector('#sIdx').textContent=String(cur+1).padStart(2,'0');el.querySelector('#sTot').textContent='/'+String(CHARS.length).padStart(2,'0');
   el.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.n=='home'))}
  // ---- drawing
@@ -3264,7 +3681,7 @@ const SHOW7=(()=>{
   if(a.dataset.d){swap(+a.dataset.d);return}
   if(a.dataset.p){const n=pages();gpage=(gpage+ +a.dataset.p+n)%n;el.querySelector('.gal').innerHTML=galTiles();el.querySelector('.gpg span').textContent=(gpage+1)+'/'+n;paintTiles();UIS.play('tab');return}
   if(a.dataset.g){X6.sc.gal=a.dataset.g;gpage=0;x6Save();render();UIS.play('tab');return}
-  if(a.dataset.t){const k=a.dataset.t,i=+k.slice(1);if(k[0]=='c'){if(i!=cur){const d=i-cur;busy=0;cur=cur;swapTo(i)}}else{const w=WINGS[i];if(lvl<w.lvl){say(w.n+' unlocks at level '+w.lvl);UIS.play('error');return}cel.wing=w.id;try{celSave()}catch(_){}render();UIS.play('select')}return}
+  if(a.dataset.t){const k=a.dataset.t,i=+k.slice(1);if(k[0]=='c'){if(i!=cur){const d=i-cur;busy=0;cur=cur;swapTo(i)}}else{const w=WINGS[i];if(!wingOwned(w)){say(w.shop?w.n+' is sold in the Store':w.n+' unlocks at level '+w.lvl);UIS.play('error');return}cel.wing=w.id;try{celSave()}catch(_){}render();UIS.play('select')}return}
   const act=a.dataset.a;
   if(act=='gmenu'){const m=el.querySelector('.gmenu');m.hidden=!m.hidden;UIS.play('tab');e.stopPropagation();return}
   if(act=='fav'){X6.sc.fav[cur]=X6.sc.fav[cur]?0:1;if(!X6.sc.fav[cur])delete X6.sc.fav[cur];x6Save();render();UIS.play('select');return}
