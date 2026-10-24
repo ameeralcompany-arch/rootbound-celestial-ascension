@@ -3693,7 +3693,7 @@ const SHOW7=(()=>{
   if(k=='home'||k=='chars'){X6.sc.gal='chars';render();return}
   const go=f=>{close();ensureGame(f)};
   if(k=='inv')go(()=>INV7.open());
-  else if(k=='store')go(()=>openStore());
+  else if(k=='store')go(()=>STORE7.open());
   else if(k=='worlds'){close();setTimeout(()=>{try{openMenu('mworlds')}catch(_){}},120)}
   else if(k=='coll')go(()=>{try{UI6.open('wings')}catch(_){}});
   else if(k=='prof')go(()=>{try{UI6.open('profile')}catch(_){}});
