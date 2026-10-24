@@ -26,6 +26,7 @@ for w in L['weapons']:
     add(id='wpn_'+w['id'],cat='weapons',n=w['n'],price=w['cost'],rar=rar_by_price(w['cost']),stack=0,ref=w['id'],lv=0,d=w['d'],how='store',legacy=1)
 # ---- legacy gear
 for w in L['wear']:
+    if w['s']=='wing': continue  # wearable wings were removed: wings are appearance items now
     add(id='wear_'+w['id'],cat='gear',n=w['n'],price=w['cost'],rar=rar_by_price(w['cost']),stack=0,ref=w['id'],lv=w['lv'],d=w['d'],how='store',legacy=1,sub=w['s'])
 # ---- NEW weapons
 W=[('solarfang','Solar Fang','epic',1200,'A radiant gold-orange blade. Every hit bursts into a sunflare and sets monsters alight.'),
@@ -34,15 +35,18 @@ W=[('solarfang','Solar Fang','epic',1200,'A radiant gold-orange blade. Every hit
  ('crimsonrift','Crimson Rift','legendary',2800,'Tears red cracks in the ground and pulls monsters into the rift.'),
  ('verdant','Verdant Breaker','uncommon',450,'A living-wood hammer-blade that scatters leaves and heals you while you fight.')]
 for i,n,r,p,d in W: add(id='wpn_'+i,cat='weapons',n=n,price=p,rar=r,stack=0,ref=i,lv=0,d=d,how='store',new=1)
+# ---- new building blocks (ids 42-59), data shared with the client through tools/new-blocks.json
+for b in json.load(open(os.path.join(R,'tools/new-blocks.json'))):
+    add(id='blk_%d'%b['id'],cat='blocks',n=b['n'],price=b['p'],rar=rar_by_price(b['p']),stack=1,ref=b['id'],lv=b['lv'],d=b['d'],how='store',new=1)
 # ---- NEW wings
-WG=[('dove','Dove Wings','rare',600,0,'Pearl-white feather wings with luminous tips and falling glitter.'),
- ('blossom','Blossom Wings','uncommon',400,0,'Soft petal-shaped wings that shed cherry-blossom petals as you move.'),
- ('crystal','Crystal Wings','rare',800,0,'Angular shards with refracting light bands.'),
- ('mech','Mechanical Wings','epic',1400,0,'Metal plates and glowing conduits with small turning gears.'),
- ('umbral','Umbral Eclipse Wings','epic',1800,0,'Violet-black feathers wrapped in rising dark energy.'),
- ('galaxy','Galaxy Wings','legendary',3000,40,'Feather silhouettes filled with a living starfield. Needs level 40.'),
- ('dragon','Dragon Wings','legendary',3400,60,'Large articulated bat wings with membranes and bone fingers. Needs level 60.'),
- ('moth','Omen Moth Wings','mythic',8000,100,'Broad crimson-black moth wings with glowing veins. The rarest wings. Needs level 100.')]
+WG=[('dove','Dove Wings','rare',600,0,'Pearl-white feather wings with luminous tips and falling glitter. Gives a double jump.'),
+ ('blossom','Blossom Wings','uncommon',400,0,'Soft petal-shaped wings that shed cherry-blossom petals as you move. Gives a double jump.'),
+ ('crystal','Crystal Wings','rare',800,0,'Angular shards with refracting light bands. Gives a double jump.'),
+ ('mech','Mechanical Wings','epic',1400,0,'Metal plates and glowing conduits with small turning gears. Gives a double jump.'),
+ ('umbral','Umbral Eclipse Wings','epic',1800,0,'Violet-black feathers wrapped in rising dark energy. Gives a double jump.'),
+ ('galaxy','Galaxy Wings','legendary',3000,40,'Feather silhouettes filled with a living starfield. Needs level 40. Gives a double jump.'),
+ ('dragon','Dragon Wings','legendary',3400,60,'Large articulated bat wings with membranes and bone fingers. Needs level 60. Gives a double jump.'),
+ ('moth','Omen Moth Wings','mythic',8000,100,'Broad crimson-black moth wings with glowing veins. The rarest wings. Needs level 100. Gives a double jump.')]
 for i,n,r,p,lv,d in WG: add(id='wing_'+i,cat='wings',n=n,price=p,rar=r,stack=0,ref=i,lv=lv,d=d,how='store',new=1,excl=(r=='mythic'))
 # ---- NEW effects
 FXI=[('aura_void','aura','Void Aura','rare',600,'Slow violet smoke curls around you.'),

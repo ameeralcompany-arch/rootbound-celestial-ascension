@@ -136,3 +136,13 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - Weapon trails/impacts/sounds are visible/audible to the player using the weapon; other players see the weapon model. Weapon skins and weapon-trail colours are local-only.
 - I could not listen to the music or watch frame rates on a real PC. Art is procedural (drawn by code), not hand-painted.
 - The reference-inspired world art and full UI redesign of crafting/trade panels are only partly done.
+
+## V10 – Sounds, water, blocks, plaza, music (current)
+- **Voices and monsters:** the character now shouts short Japanese words (ya, ha, hai, ei, hya, ta, sei) when attacking, and each monster has its own soft, cute hit/defeat/idle sound.
+- **Rain:** the loud rain noise bed is gone.
+- **Water:** new realistic water drawing (depth colour, waves, foam, light shafts, bubbles) and a "blop" / splash sound when you put something in or step into water.
+- **Wings:** wearable wings were removed (owners are refunded automatically). The wings in Appearance are the main wings, and **all of them give a double jump**.
+- **Blocks:** 18 new blocks (ids 42-59, listed in `tools/new-blocks.json`) with hand-painted textures, bevel lighting, and glow for the crystal and lantern blocks. All are in the Store.
+- **Plaza:** rebuilt from the new blocks only: pond with an arched bridge, cottage, fountain with a glowing crystal, torii gate, two-storey teahouse, bamboo grove, cherry trees, lantern strings, mountain backdrop. NPCs and the door keep their positions.
+- **Music:** every weather and place has its own songs (10 moods, 2-3 songs each). Songs are generated from a motif that changes as it goes, and the same song never plays twice in a row.
+- **Honest limits:** all sounds and music are synthesised in code. The tests check that they start and switch correctly, but nobody has listened to them, so tone and loudness are unverified; the Volume sliders in Settings control them. All art is drawn in code, not hand-made.

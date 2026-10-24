@@ -21,5 +21,8 @@ for k,v in (('<!--@@BOOT@@-->',open(os.path.join(R,'src/boot/boot.html'),encodin
 cat_json=open(os.path.join(R,'server/catalog.json'),encoding='utf-8').read().replace('</','<\\/')
 assert s.count('/*@@CATALOG@@*/{items:[]}')==1,'catalog marker'
 s=s.replace('/*@@CATALOG@@*/{items:[]}',cat_json)
+nb_json=open(os.path.join(R,'tools/new-blocks.json'),encoding='utf-8').read()
+assert s.count('/*@@NEWBLOCKS@@*/[]')==1,'newblocks marker'
+s=s.replace('/*@@NEWBLOCKS@@*/[]',nb_json.replace('</','<\\/'))
 open(os.path.join(R,'index.html'),'w',encoding='utf-8').write(s)
 print('built index.html',len(s),'bytes')

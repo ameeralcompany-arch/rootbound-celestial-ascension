@@ -64,8 +64,16 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  r=await p.evaluate(()=>{const o={};const m=NPCS[0];P.x=m.x*T+T/2;P.y=sh(m.x)*T-P.h-2;cur='plaza';o.plaza=!!nearNPC();cur='garden';o.other=nearNPC()===null;cur='plaza';return o});
  ok('NPCs talkable in plaza only',r.plaza&&r.other,JSON.stringify(r));
  // --- music moods + volume controls
- r=await p.evaluate(async()=>{startBGM();await new Promise(r=>setTimeout(r,300));const o={on:MUS7.on,moods:Object.keys(MUS7.MOODS)};ENV7.set('blossom',{instant:true});MUS7.detect();o.blossom=MUS7.want;ENV7.set('space',{instant:true});MUS7.detect();o.space=MUS7.want;ENV7.set('galaxy',{instant:true});MUS7.detect();o.galaxy=MUS7.want;ENV7.set('default',{instant:true});MUS7.detect();o.plaza=MUS7.want;
+ r=await p.evaluate(async()=>{startBGM();await new Promise(r=>setTimeout(r,300));const o={on:MUS7.on,moods:Object.keys(MUS7.MOODS)};ENV7.set('blossom',{instant:true});MUS7.detect();o.blossom=MUS7.want;ENV7.set('space',{instant:true});MUS7.detect();o.space=MUS7.want;ENV7.set('galaxy',{instant:true});MUS7.detect();o.galaxy=MUS7.want;ENV7.set('default',{instant:true});MUS7.detect();o.plaza=MUS7.want;o.moods2=Object.keys(MUS7.MOODS);o.songs=Object.values(MUS7.MOODS).map(m=>m.songs.length);
   o.slider=!!document.getElementById('oav')&&!!document.getElementById('ov')&&!!document.getElementById('os');return o});
- ok('music starts; moods follow the weather (blossom/space/galaxy/plaza) and 5 moods exist',r.on&&r.moods.length==5&&r.blossom=='blossom'&&r.space=='space'&&r.galaxy=='galaxy'&&r.plaza=='plaza'&&r.slider,JSON.stringify(r));
+ ok('music starts; every place/weather has its own mood with 2+ songs',r.on&&r.moods.length==10&&r.songs.every(n=>n>=2)&&r.blossom=='blossom'&&r.space=='space'&&r.galaxy=='galaxy'&&['plaza','night','cloud','rain','storm','snow'].includes(r.plaza)&&r.slider,JSON.stringify(r));
+ r=await p.evaluate(()=>{const o={};MUS7.force('rain');MUS7.newSong('rain');const a=MUS7.played.slice(-1)[0];MUS7.newSong('rain');MUS7.newSong('rain');const pl=MUS7.played.slice(-3);o.noRepeat=pl[0]!=pl[1]&&pl[1]!=pl[2];return o});
+ ok('songs never repeat back-to-back',r.noRepeat,JSON.stringify(r));
+ r=await p.evaluate(()=>{const o={};o.blocks=[];for(let b=42;b<=59;b++){const s=spr(b,0,0);const d=s.getContext('2d').getImageData(0,0,48,48).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>200)n++;o.blocks.push(n>2000&&!!BLK[b]&&PRICE[b]>0)}
+  o.wear=['angel','fairy','bat','phoenix','crystal'].every(k=>!(k in WEAR));o.jump=typeof maxAir=='function';o.sfx=['voice','mobSound','bloop','splash'].every(k=>typeof SFX7[k]=='function');
+  o.plaza=NPCS.length==3&&tiles[21*W+DX]==0&&NPCS.every(n=>tiles[21*W+n.x]==0&&tiles[22*W+n.x]>0);o.floor=tiles[22*W+DX]==44;o.glow=!!GLOW7[52]&&!!GLOW7[53];return o});
+ ok('18 new blocks paint, are priced and glow where intended',r.blocks.every(Boolean)&&r.glow,JSON.stringify(r.blocks));
+ ok('wearable wings removed, double-jump hook and new sounds exist',r.wear&&r.jump&&r.sfx,JSON.stringify(r));
+ ok('plaza rebuilt from new blocks (slate promenade, NPCs kept)',r.floor&&r.plaza,JSON.stringify(r));
  ok('no page errors in the whole run',errs.length==0,errs.slice(0,3).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all store tests passed');process.exit(fails?1:0)})();
