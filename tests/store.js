@@ -55,6 +55,11 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   for(let i=0;i<400;i++){try{FX7.tick(.016);dash=i%60<12?.2:0;FX7.victory();FX7.spawn()}catch(x){e.push(x.message)}frames++}
   return{e:e.slice(0,3),ms:(performance.now()-t0)/frames}});
  ok('all cosmetics active together: no errors, cheap per frame',r.e.length==0&&r.ms<4,JSON.stringify(r));
+ // --- wing pose: folded at rest, opens calmly on a timer, snaps open in the air; weapon animations draw and expire
+ r=await p.evaluate(()=>{const c=document.createElement('canvas').getContext('2d');const i=WINGS.findIndex(w=>w.id=='crystal');let mn=9,mx=-1,t=100;for(let k=0;k<1200;k++){t+=.016;const s=WingArt.draw(c,i,100,100,1,t,0,0,0,1,'tst',0);mn=Math.min(mn,s);mx=Math.max(mx,s)}
+  let air=0;for(let k=0;k<40;k++){t+=.016;air=WingArt.draw(c,i,100,100,1,t,2,0,0,1,'tst',-300)}let fold=air;for(let k=0;k<300;k++){t+=.016;fold=WingArt.draw(c,i,100,100,1,t,0,0,0,1,'tst2',0)}
+  const o={mn,mx,air};FX7.AN.length=0;let errs=0;for(const id of Object.keys(FX7.WANIM)){FX7.weaponAnim(id)}const n=FX7.AN.length;for(let k=0;k<5;k++){try{FX7.drawAnims(c,0,0)}catch(e){errs++}}o.n=n;o.errs=errs;return o});
+ ok('wings: rest folded, open calmly at times, fully open in the air',r.mn<.25&&r.mx>.7&&r.air>.9,JSON.stringify(r));ok('6 weapon animations play and draw without errors',r.n==6&&r.errs==0);
  // --- NPCs only in plaza
  r=await p.evaluate(()=>{const o={};const m=NPCS[0];P.x=m.x*T+T/2;P.y=sh(m.x)*T-P.h-2;cur='plaza';o.plaza=!!nearNPC();cur='garden';o.other=nearNPC()===null;cur='plaza';return o});
  ok('NPCs talkable in plaza only',r.plaza&&r.other,JSON.stringify(r));

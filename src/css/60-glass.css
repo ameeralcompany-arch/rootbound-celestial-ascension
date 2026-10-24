@@ -1,0 +1,45 @@
+/* ===== Calm glass dark theme (overrides the dark tokens; light theme untouched) ===== */
+html[data-theme=dark]:root{
+ --ink:#e9ecf8;--ink-2:#c3c9e0;--muted:#8f98b8;--line:rgba(255,255,255,.09);--line-strong:rgba(255,255,255,.2);
+ --accent:#9db4ff;--accent-2:#b3a6f0;--accent-soft:rgba(157,180,255,.14);--focus:#9db4ff;
+ --bg-page:linear-gradient(140deg,#0d1020 0%,#14172b 55%,#0f1a28 100%);
+ --surface:linear-gradient(160deg,rgba(40,46,76,.5),rgba(22,26,46,.42));
+ --surface-solid:#161a2e;--surface-2:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.035));--surface-3:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+ --overlay:rgba(6,8,18,.55);--glass-blur:22px;
+ --btn-bg:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.045));--btn-bg-hover:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.08));--btn-ink:#e9ecf8;
+ --btn-primary:linear-gradient(180deg,#6f7fe0,#5a53b5);--btn-primary-ink:#fff;
+ --sel-bg:linear-gradient(160deg,rgba(157,180,255,.2),rgba(179,166,240,.1));--sel-bd:#9db4ff;--input-bg:rgba(8,10,22,.5);
+ --r-common-a:rgba(255,255,255,.07);--r-common-b:rgba(255,255,255,.03);--r-common-c:#aab2cc;
+ --r-uncommon-a:rgba(110,210,160,.18);--r-uncommon-b:rgba(110,210,160,.05);--r-uncommon-c:#86d9ac;
+ --r-rare-a:rgba(110,160,255,.2);--r-rare-b:rgba(110,160,255,.05);--r-rare-c:#8fb8ff;
+ --r-epic-a:rgba(170,130,255,.22);--r-epic-b:rgba(170,130,255,.06);--r-epic-c:#bba0ff;
+ --r-legendary-a:rgba(255,200,100,.2);--r-legendary-b:rgba(255,200,100,.05);--r-legendary-c:#f0cd7e;
+ --r-mythic-a:rgba(255,120,160,.22);--r-mythic-b:rgba(255,120,160,.05);--r-mythic-c:#ff9fbb;
+ --sh-1:0 1px 0 rgba(255,255,255,.06) inset,0 2px 8px -4px rgba(0,0,0,.5);--sh-2:0 1px 0 rgba(255,255,255,.08) inset,0 14px 40px -16px rgba(0,0,0,.7);--sh-3:0 1px 0 rgba(255,255,255,.08) inset,0 30px 80px -24px rgba(0,0,0,.85);--glow:0 0 0 1px rgba(157,180,255,.45),0 0 22px -6px rgba(157,180,255,.5);
+ --toast-bg:rgba(24,28,50,.7);--toast-bd:rgba(157,180,255,.35);
+ --bg:#0d1020;--pn:rgba(28,32,56,.5);--panel:rgba(28,32,56,.55);--panel2:rgba(40,46,76,.5);--gold:#9db4ff;--gold2:#e9ecf8;--vio:#b3a6f0;--ice:#9ec0ee;
+ --ed-bg:rgba(20,24,44,.55);--ed-paper:rgba(34,40,68,.5);--ed-soft:rgba(255,255,255,.05)}
+/* glass panels: soft blur, hairline border, inner top highlight */
+html[data-theme=dark] body .pn,html[data-theme=dark] #hubc,html[data-theme=dark] #dlg7 .box,html[data-theme=dark] #store7 .shell,html[data-theme=dark] #tools7 .sheet,html[data-theme=dark] #chestui,html[data-theme=dark] #inv7 .panel,html[data-theme=dark] .netcard,html[data-theme=dark] #dlg{
+ background:var(--surface)!important;backdrop-filter:blur(var(--glass-blur)) saturate(1.25);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.25);border:1px solid var(--line)!important;box-shadow:var(--sh-2)!important}
+html[data-theme=dark] #store7 .shell{background-image:radial-gradient(800px 380px at 88% -12%,rgba(150,130,255,.14),transparent),radial-gradient(700px 380px at -8% 112%,rgba(90,200,220,.08),transparent)!important}
+html[data-theme=dark] #store7,html[data-theme=dark] #tools7,html[data-theme=dark] #dlg7{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+html[data-theme=dark] body button{backdrop-filter:blur(6px);border-color:var(--line)}
+html[data-theme=dark] body button:hover{border-color:var(--line-strong)}
+html[data-theme=dark] .hpb,html[data-theme=dark] .bar{background:rgba(255,255,255,.08)!important}
+html[data-theme=dark] #hudL .hpb i{background:linear-gradient(90deg,#d0607c,#f0a0b4)!important}
+html[data-theme=dark] #store7 .card{background:linear-gradient(160deg,var(--ra),var(--rb));border-color:var(--line)}
+html[data-theme=dark] #store7 .card canvas,html[data-theme=dark] #store7 .card img{background:rgba(5,7,16,.35)}
+html[data-theme=dark] #store7 aside canvas{background:radial-gradient(circle at 50% 40%,rgba(157,180,255,.1),rgba(5,7,16,.5))}
+html[data-theme=dark] #store7 nav button.on{background:var(--sel-bg);box-shadow:inset 0 0 0 1px rgba(157,180,255,.3)}
+html[data-theme=dark] #bstore{background:linear-gradient(135deg,#7686e6,#8a6bd0)!important;animation:none;box-shadow:0 0 16px -4px rgba(150,140,255,.55)}
+html[data-theme=dark] ::-webkit-scrollbar{width:8px;height:8px}html[data-theme=dark] ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}html[data-theme=dark] ::-webkit-scrollbar-track{background:transparent}
+html[data-theme=dark] body .pn,html[data-theme=dark] #hubc,html[data-theme=dark] #store7 .shell{transition:background .3s,border-color .3s}
+@media (prefers-reduced-motion:reduce){html[data-theme=dark] *{transition:none!important}}
+@media (prefers-reduced-transparency:reduce){html[data-theme=dark] body .pn,html[data-theme=dark] #hubc,html[data-theme=dark] #dlg7 .box,html[data-theme=dark] #store7 .shell,html[data-theme=dark] #tools7 .sheet{backdrop-filter:none;background:var(--surface-solid)!important}}
+/* hotbar + inventory pull-tab use the editorial paper tokens; give them the same glass in dark */
+html[data-theme=dark] #bar,html[data-theme=dark] #pull{background:var(--surface)!important;border:1px solid var(--line)!important;color:var(--ink)!important;backdrop-filter:blur(var(--glass-blur)) saturate(1.2);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.2);box-shadow:var(--sh-2)!important;border-radius:14px!important}
+html[data-theme=dark] #bar .hb{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--ink)}
+html[data-theme=dark] #bar .hb *{color:var(--ink)}html[data-theme=dark] #bar .hb small,html[data-theme=dark] #bar .hb i{color:var(--muted)}
+html[data-theme=dark] #bar .hb:hover{border-color:var(--line-strong)}html[data-theme=dark] #bar .hb.on{border-color:var(--sel-bd);background:var(--sel-bg);box-shadow:var(--glow)}
+html[data-theme=dark] #bar .hb.wp{width:auto}

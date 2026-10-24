@@ -532,6 +532,53 @@ html[data-reduce=true] *{animation-duration:.001s!important;animation-iteration-
 @media (max-width:860px){#store7 .main{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}#store7 nav{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}#store7 aside{border-left:0;border-top:1px solid var(--line);max-height:45vh}}
 @media (prefers-reduced-motion:reduce){#bstore{animation:none}#store7 .card{transition:none}}
 
+/* ========== CSS: 60-glass.css ========== */
+/* ===== Calm glass dark theme (overrides the dark tokens; light theme untouched) ===== */
+html[data-theme=dark]:root{
+ --ink:#e9ecf8;--ink-2:#c3c9e0;--muted:#8f98b8;--line:rgba(255,255,255,.09);--line-strong:rgba(255,255,255,.2);
+ --accent:#9db4ff;--accent-2:#b3a6f0;--accent-soft:rgba(157,180,255,.14);--focus:#9db4ff;
+ --bg-page:linear-gradient(140deg,#0d1020 0%,#14172b 55%,#0f1a28 100%);
+ --surface:linear-gradient(160deg,rgba(40,46,76,.5),rgba(22,26,46,.42));
+ --surface-solid:#161a2e;--surface-2:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.035));--surface-3:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+ --overlay:rgba(6,8,18,.55);--glass-blur:22px;
+ --btn-bg:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.045));--btn-bg-hover:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.08));--btn-ink:#e9ecf8;
+ --btn-primary:linear-gradient(180deg,#6f7fe0,#5a53b5);--btn-primary-ink:#fff;
+ --sel-bg:linear-gradient(160deg,rgba(157,180,255,.2),rgba(179,166,240,.1));--sel-bd:#9db4ff;--input-bg:rgba(8,10,22,.5);
+ --r-common-a:rgba(255,255,255,.07);--r-common-b:rgba(255,255,255,.03);--r-common-c:#aab2cc;
+ --r-uncommon-a:rgba(110,210,160,.18);--r-uncommon-b:rgba(110,210,160,.05);--r-uncommon-c:#86d9ac;
+ --r-rare-a:rgba(110,160,255,.2);--r-rare-b:rgba(110,160,255,.05);--r-rare-c:#8fb8ff;
+ --r-epic-a:rgba(170,130,255,.22);--r-epic-b:rgba(170,130,255,.06);--r-epic-c:#bba0ff;
+ --r-legendary-a:rgba(255,200,100,.2);--r-legendary-b:rgba(255,200,100,.05);--r-legendary-c:#f0cd7e;
+ --r-mythic-a:rgba(255,120,160,.22);--r-mythic-b:rgba(255,120,160,.05);--r-mythic-c:#ff9fbb;
+ --sh-1:0 1px 0 rgba(255,255,255,.06) inset,0 2px 8px -4px rgba(0,0,0,.5);--sh-2:0 1px 0 rgba(255,255,255,.08) inset,0 14px 40px -16px rgba(0,0,0,.7);--sh-3:0 1px 0 rgba(255,255,255,.08) inset,0 30px 80px -24px rgba(0,0,0,.85);--glow:0 0 0 1px rgba(157,180,255,.45),0 0 22px -6px rgba(157,180,255,.5);
+ --toast-bg:rgba(24,28,50,.7);--toast-bd:rgba(157,180,255,.35);
+ --bg:#0d1020;--pn:rgba(28,32,56,.5);--panel:rgba(28,32,56,.55);--panel2:rgba(40,46,76,.5);--gold:#9db4ff;--gold2:#e9ecf8;--vio:#b3a6f0;--ice:#9ec0ee;
+ --ed-bg:rgba(20,24,44,.55);--ed-paper:rgba(34,40,68,.5);--ed-soft:rgba(255,255,255,.05)}
+/* glass panels: soft blur, hairline border, inner top highlight */
+html[data-theme=dark] body .pn,html[data-theme=dark] #hubc,html[data-theme=dark] #dlg7 .box,html[data-theme=dark] #store7 .shell,html[data-theme=dark] #tools7 .sheet,html[data-theme=dark] #chestui,html[data-theme=dark] #inv7 .panel,html[data-theme=dark] .netcard,html[data-theme=dark] #dlg{
+ background:var(--surface)!important;backdrop-filter:blur(var(--glass-blur)) saturate(1.25);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.25);border:1px solid var(--line)!important;box-shadow:var(--sh-2)!important}
+html[data-theme=dark] #store7 .shell{background-image:radial-gradient(800px 380px at 88% -12%,rgba(150,130,255,.14),transparent),radial-gradient(700px 380px at -8% 112%,rgba(90,200,220,.08),transparent)!important}
+html[data-theme=dark] #store7,html[data-theme=dark] #tools7,html[data-theme=dark] #dlg7{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+html[data-theme=dark] body button{backdrop-filter:blur(6px);border-color:var(--line)}
+html[data-theme=dark] body button:hover{border-color:var(--line-strong)}
+html[data-theme=dark] .hpb,html[data-theme=dark] .bar{background:rgba(255,255,255,.08)!important}
+html[data-theme=dark] #hudL .hpb i{background:linear-gradient(90deg,#d0607c,#f0a0b4)!important}
+html[data-theme=dark] #store7 .card{background:linear-gradient(160deg,var(--ra),var(--rb));border-color:var(--line)}
+html[data-theme=dark] #store7 .card canvas,html[data-theme=dark] #store7 .card img{background:rgba(5,7,16,.35)}
+html[data-theme=dark] #store7 aside canvas{background:radial-gradient(circle at 50% 40%,rgba(157,180,255,.1),rgba(5,7,16,.5))}
+html[data-theme=dark] #store7 nav button.on{background:var(--sel-bg);box-shadow:inset 0 0 0 1px rgba(157,180,255,.3)}
+html[data-theme=dark] #bstore{background:linear-gradient(135deg,#7686e6,#8a6bd0)!important;animation:none;box-shadow:0 0 16px -4px rgba(150,140,255,.55)}
+html[data-theme=dark] ::-webkit-scrollbar{width:8px;height:8px}html[data-theme=dark] ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}html[data-theme=dark] ::-webkit-scrollbar-track{background:transparent}
+html[data-theme=dark] body .pn,html[data-theme=dark] #hubc,html[data-theme=dark] #store7 .shell{transition:background .3s,border-color .3s}
+@media (prefers-reduced-motion:reduce){html[data-theme=dark] *{transition:none!important}}
+@media (prefers-reduced-transparency:reduce){html[data-theme=dark] body .pn,html[data-theme=dark] #hubc,html[data-theme=dark] #dlg7 .box,html[data-theme=dark] #store7 .shell,html[data-theme=dark] #tools7 .sheet{backdrop-filter:none;background:var(--surface-solid)!important}}
+/* hotbar + inventory pull-tab use the editorial paper tokens; give them the same glass in dark */
+html[data-theme=dark] #bar,html[data-theme=dark] #pull{background:var(--surface)!important;border:1px solid var(--line)!important;color:var(--ink)!important;backdrop-filter:blur(var(--glass-blur)) saturate(1.2);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.2);box-shadow:var(--sh-2)!important;border-radius:14px!important}
+html[data-theme=dark] #bar .hb{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--ink)}
+html[data-theme=dark] #bar .hb *{color:var(--ink)}html[data-theme=dark] #bar .hb small,html[data-theme=dark] #bar .hb i{color:var(--muted)}
+html[data-theme=dark] #bar .hb:hover{border-color:var(--line-strong)}html[data-theme=dark] #bar .hb.on{border-color:var(--sel-bd);background:var(--sel-bg);box-shadow:var(--glow)}
+html[data-theme=dark] #bar .hb.wp{width:auto}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -1641,24 +1688,39 @@ const WingArt=(()=>{
   return{layers,ox,oy,ds,W:CW,H:CH,rows}}
  function get(tier,hd){const k=tier+(hd?'h':'l');let a=cache.get(k);if(!a){a=build(tier,hd);cache.set(k,a)}return a}
  // draw both wings behind the body. cx,cy = character centre; f = facing; t = time; mode: 0 idle 1 run 2 air; strength = open amount
- function draw(g,tier,cx,cy,f,t,mode,vx,phase,alpha){
-  const art=get(tier,QM.cur.hd),W=WINGS[tier],ph=phase||0;
-  const fl=mode==2?Math.sin(t*9+ph)*.22:Math.sin(t*1.7+ph)*.05,open=mode==2?1:mode==1?.78:.9,lag=Math.max(-.25,Math.min(.25,-(vx||0)*.0006))*f;
-  const sh=QM.cur.wfx>=1;
+ // ---- wing pose: smoothed spread per character. 0 = folded against the back, 1 = fully spread.
+ // Idle: wings rest folded, then every few seconds open calmly, hold, and fold back. Jump: snap open with a flap on the way up, glide open on the way down.
+ const POSE=new Map();const sm=(a,b,x)=>{x=Math.max(0,Math.min(1,(x-a)/(b-a)));return x*x*(3-2*x)};
+ function pose(key,t,mode,vx,vy,ph){let p=POSE.get(key);if(!p){p={s:0,t:t,fl:0,air:0,lastAir:0};POSE.set(key,p);if(POSE.size>40)POSE.delete(POSE.keys().next().value)}
+  let dt=t-p.t;p.t=t;if(!(dt>0)||dt>.25)dt=.016;
+  const air=mode==2,u=((t+ph*3.1)%8.5)/8.5,idle=sm(0,.1,u)*(1-sm(.34,.46,u)); // calm open (~0.9s), hold (~2s), fold (~1s)
+  let target=air?1:mode==1?.28+idle*.5:idle*.92;
+  // flap: strong beats while rising, slow soft beats while gliding/falling, a small flutter when running
+  const rising=air&&(vy==null||vy<60);const rate=rising?15:air?4.5:mode==1?7:0;const amp=rising?.3:air?.07:mode==1?.04:0;
+  p.fl+=dt*rate;if(air&&!p.lastAir)p.fl=0;p.lastAir=air?1:0;
+  const k=target>p.s?(air?20:3.2):(air?6:2.4);p.s+=(target-p.s)*(1-Math.exp(-dt*k));
+  return{s:p.s,flap:Math.sin(p.fl)*amp*(air?1:p.s),rise:rising}}
+ // draw both wings behind the body. cx,cy = character centre; f = facing; t = time; mode: 0 idle 1 run 2 air. key/vy optional (pose smoothing per character).
+ function draw(g,tier,cx,cy,f,t,mode,vx,phase,alpha,key,vy){
+  const art=get(tier,QM.cur.hd),W=WINGS[tier],ph=phase||0,ps=key?pose(key,t,mode,vx,vy,ph):{s:1,flap:0,rise:0},S=ps.s;
+  const lag=Math.max(-.25,Math.min(.25,-(vx||0)*.0006))*f,sh=QM.cur.wfx>=1;
   g.save();if(alpha!=null)g.globalAlpha*=alpha;
-  const sx=1/art.ds*1,rootY=cy+6,spread=(1-open)*.5+ (mode==0?.02*Math.sin(t*1.7+ph):0);
+  const sx=1/art.ds,rootY=cy+6,breathe=Math.sin(t*1.7+ph)*.018;
   for(let side=-1;side<=1;side+=2){
    g.save();g.translate(cx+side*4,rootY);g.scale(side,1);
-   // far wing (the one behind) is dimmer for depth
-   const far=(side*f<0)?.82:1;
-   for(let i=0;i<art.layers.length;i++){
-    const li=i,isC=i==art.layers.length-1,k=isC?0:(art.rows-1-li)/art.rows;
-    g.save();g.globalAlpha*=far;g.rotate(spread*(1+k)+fl*(.5+k*.8)+lag*(.5+k)+Math.sin(t*2.1+li*.7+ph)*.015);
+   const far=(side*f<0)?.82:1,nl=art.layers.length;
+   for(let i=0;i<nl;i++){
+    const isC=i==nl-1,k=isC?0:(art.rows-1-i)/art.rows;                  // k: 0 = back/long row, ~1 = front/short row
+    const sk=Math.max(0,Math.min(1,S*1.35-k*.35));                         // outer feathers open a beat later, so the wing unfurls like a fan
+    const fold=1.4-k*.4,spread=-.1-k*.05;                                 // folded: swept down along the back; spread: lifted out and up
+    const ang=fold+(spread-fold)*sk+ps.flap*(.55+k*.9)*(ps.rise?-1:1)+lag*(.5+k)+breathe*(1+k)+Math.sin(t*2.1+i*.7+ph)*.012*S;
+    const wsx=.4+.6*sk+(ps.rise?ps.flap*.08:0);
+    g.save();g.globalAlpha*=far;g.rotate(ang);g.scale(wsx,1-.06*(1-sk));
     g.drawImage(art.layers[i],-art.ox*sx,-art.oy*sx,art.W*sx,art.H*sx);
-    if(sh&&isC){g.globalCompositeOperation='lighter';g.globalAlpha*=.35+.2*Math.sin(t*3+ph);g.drawImage(art.layers[i],-art.ox*sx,-art.oy*sx,art.W*sx,art.H*sx)}
+    if(sh&&isC){g.globalCompositeOperation='lighter';g.globalAlpha*=(.35+.2*Math.sin(t*3+ph))*Math.min(1,.4+S);g.drawImage(art.layers[i],-art.ox*sx,-art.oy*sx,art.W*sx,art.H*sx)}
     g.restore()}
    g.restore()}
-  g.restore()}
+  g.restore();return S}
  // extras that sit with the wings: halo above the head, storm arcs
  function extras(g,tier,cx,cy,t){const W=WINGS[tier],ph=QM.cur.wfx;if(!ph)return;if(W.fxk&&window.FX7)FX7.wingFx(W,cx,cy,t);
   if(W.halo){g.save();g.globalCompositeOperation='lighter';g.translate(cx,cy-50);g.scale(1,.28);g.lineWidth=3;g.strokeStyle=W.pal[3];g.shadowColor=W.pal[3];g.shadowBlur=10;g.globalAlpha=.85;g.beginPath();g.arc(0,0,19,0,6.3);g.stroke();g.lineWidth=1;g.globalAlpha=.6;g.setLineDash([3,5]);g.lineDashOffset=-t*20;g.beginPath();g.arc(0,0,24,0,6.3);g.stroke();g.restore()}
@@ -1892,7 +1954,7 @@ const AC6=(()=>{
   g.save();const sd=QM.cur.shadow;g.fillStyle='rgba(0,0,0,'+(sd?.32:.22)+')';g.beginPath();g.ellipse(cx,feet,15,4,0,0,6.3);g.fill();g.restore();
   // wings sit behind the body
   const hasLegacy=wr.wing&&WEAR[wr.wing];
-  if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,(cx*.01)%6);WingArt.extras(g,wingIdx,cx,cy+24,t)}
+  if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,local?0:(cxo&&cxo.w!=null?(String(name).length%6):0),null,local?'me':'p:'+name,local?P.vy:null);WingArt.extras(g,wingIdx,cx,cy+24,t)}
   else if(hasLegacy){g.save();g.translate(cx,feet);g.scale(1.1*f,1.1);try{drawWings(wr.wing,wr.wo!=null?wr.wo:wingOpen,wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,t)}catch(_){}g.restore()}
   g.save();g.translate(cx,feet);g.scale(1.12*f,1.12);g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
@@ -2084,6 +2146,44 @@ const FX7=(()=>{
   aura_blossom(n,x,y,t){for(let i=0;i<n;i++){const a=t*1.6+i*2.1;add(4,'#ffb0cf',x+Math.cos(a)*26,y+8+Math.sin(a*1.3)*20,Math.cos(a+1.6)*18,10+R()*10,1.6,12,8,{r:R()*6,vr:2})}},
   aura_frost(n,x,y){for(let i=0;i<n;i++)add(1,'#bfe8ff',x+(R()-.5)*50,y-30+R()*60,(R()-.5)*8,14+R()*14,1.7,6,2,{a:.85})},
   aura_astral(n,x,y,t){for(let i=0;i<n;i++){const a=t*2.2+i*3.14;add(1,'#9fe0ff',x+Math.cos(a)*30,y+4+Math.sin(a)*Math.cos(.5)*30*.45-18,0,-6,.7,8,2,{a:.95})}}};
+
+ // ---- timed vector animations (ground bursts, spectral chains, lances, orbs, crow flocks). Drawn on top of the particle pass; capped and self-removing.
+ const AN=[],ease=u=>1-(1-u)*(1-u),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+ function anim(kind,x,y,d,c,o){if(QM.reduce&&kind!='lance')return;if(AN.length>=10)AN.shift();AN.push(Object.assign({k:kind,x,y,d,c,t0:performance.now(),dur:kind=='crows'?800:kind=='chains'?950:kind=='orb'?800:kind=='lance'?650:750,seed:(R()*1e6)|0},o||{}))}
+ const rnd=(s,i)=>{const v=Math.sin(s*12.9898+i*78.233)*43758.5453;return v-Math.floor(v)};
+ function shardDraw(g,A,u,cx,cy){const n=Math.max(4,Math.round(8*Math.max(.5,QM.cur.vfx)));const gy=A.y-cy;
+  g.save();g.globalCompositeOperation='lighter';const rr=ease(u);g.strokeStyle=A.c[0];g.globalAlpha=(1-u)*.7;g.lineWidth=3;g.beginPath();g.ellipse(A.x-cx+A.d*70,gy,16+rr*120,(16+rr*120)*.2,0,0,6.3);g.stroke();g.globalAlpha=(1-u)*.35;g.lineWidth=9;g.stroke();g.restore();
+  for(let i=0;i<n;i++){const del=i*.045,lu=clamp((u-del)/(1-del),0,1);if(lu<=0)continue;const up=lu<.28?ease(lu/.28):1-Math.pow((lu-.28)/.72,1.6),h=(30+rnd(A.seed,i)*46)*(1-i*.04)*up;if(h<=1)continue;
+   const bx=A.x-cx+A.d*(26+i*24)+(rnd(A.seed,i+9)-.5)*10,w=7+rnd(A.seed,i+3)*6,lean=(rnd(A.seed,i+5)-.5)*.5;
+   g.save();g.translate(bx,gy);g.rotate(lean);g.globalAlpha=Math.min(1,(1-lu)*1.6);
+   if(A.leaf){g.fillStyle=A.c[0];g.strokeStyle=A.c[1];g.lineWidth=1.5;g.beginPath();g.moveTo(-w*.6,0);g.quadraticCurveTo(-w*1.4,-h*.6,A.d*w*.6,-h);g.quadraticCurveTo(w*1.4,-h*.5,w*.6,0);g.closePath();g.fill();g.stroke()}
+   else{const gr=g.createLinearGradient(0,0,0,-h);gr.addColorStop(0,A.c[0]);gr.addColorStop(1,A.c[1]);g.fillStyle=gr;g.shadowColor=A.c[0];g.shadowBlur=10;g.beginPath();g.moveTo(-w,0);g.lineTo(-w*.5,-h*.65);g.lineTo(0,-h);g.lineTo(w*.6,-h*.6);g.lineTo(w,0);g.closePath();g.fill();g.shadowBlur=0;g.strokeStyle='rgba(255,255,255,.8)';g.lineWidth=1;g.stroke();g.fillStyle='rgba(255,255,255,.45)';g.beginPath();g.moveTo(-w,0);g.lineTo(-w*.5,-h*.65);g.lineTo(0,-h);g.lineTo(-w*.1,-h*.3);g.closePath();g.fill()}
+   g.restore()}}
+ function chainsDraw(g,A,u,cx,cy){const px=A.x-cx,py=A.y-cy-4,N=Math.max(10,Math.round(20*Math.max(.5,QM.cur.vfx))),r=34+ease(clamp(u*1.5,0,1))*62,fade=u<.15?u/.15:1-Math.pow((u-.15)/.85,1.4);
+  g.save();g.globalCompositeOperation='lighter';g.globalAlpha=fade*.5;const gr=g.createRadialGradient(px,py,4,px,py,r*1.15);gr.addColorStop(0,A.c[0]+'00');gr.addColorStop(.8,A.c[0]+'66');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.ellipse(px,py,r*1.15,r*.34,0,0,6.3);g.fill();
+  for(let ring=0;ring<2;ring++){const rr=r*(1-ring*.22),sp=(ring?-1:1)*u*5;for(let i=0;i<N;i++){const a=i/N*6.283+sp,x=px+Math.cos(a)*rr,y=py+Math.sin(a)*rr*.3-ring*8,tg=Math.atan2(Math.cos(a)*rr*.3,-Math.sin(a)*rr);g.save();g.translate(x,y);g.rotate(tg);g.scale(1,Math.abs(Math.sin(a))*.5+.5);g.globalAlpha=fade*(.55+.4*Math.sin(a));g.lineWidth=2.4;g.strokeStyle=i%2?A.c[0]:A.c[1];g.beginPath();g.ellipse(0,0,i%2?7:5,i%2?3.2:4,0,0,6.3);g.stroke();g.restore()}}
+  g.globalAlpha=fade*.8;g.strokeStyle=A.c[1];g.lineWidth=1.4;g.beginPath();g.ellipse(px,py,r*1.3,r*.39,u*2,0,6.3);g.setLineDash([4,8]);g.stroke();g.restore()}
+ function lanceDraw(g,A,u,cx,cy){const px=A.x-cx,py=A.y-cy-26,L=ease(clamp(u*1.8,0,1))*190,fade=u<.5?1:1-(u-.5)/.5;g.save();g.translate(px,py);g.scale(A.d,1);g.globalCompositeOperation='lighter';g.globalAlpha=fade;
+  const gr=g.createLinearGradient(0,0,L,0);gr.addColorStop(0,A.c[0]+'00');gr.addColorStop(.6,A.c[0]);gr.addColorStop(1,A.c[1]);g.fillStyle=gr;g.shadowColor=A.c[0];g.shadowBlur=14;g.beginPath();g.moveTo(10,-3);g.lineTo(L*.8,-6);g.lineTo(L,0);g.lineTo(L*.8,6);g.lineTo(10,3);g.closePath();g.fill();g.shadowBlur=0;
+  g.strokeStyle=A.c[1];g.lineWidth=1.6;for(let i=0;i<3;i++){const rx=L*(.25+i*.22),ru=clamp(u*1.8-.2-i*.12,0,1);if(ru<=0)continue;g.globalAlpha=fade*(1-ru);g.beginPath();g.ellipse(rx,0,5+ru*8,10+ru*30,0,0,6.3);g.stroke()}
+  g.globalAlpha=fade*.8;g.fillStyle=A.c[1];for(let i=0;i<6;i++){const q=(i/6+u*1.3)%1;g.fillRect(L*.1+q*L*.9,Math.sin(i*5+u*9)*9,2,2)}g.restore()}
+ function orbDraw(g,A,u,cx,cy){const px=A.x-cx+A.d*64,py=A.y-cy-44,r=(10+ease(clamp(u*1.4,0,1))*34)*(u>.7?1-(u-.7)/.3*.4:1),fade=u<.75?1:1-(u-.75)/.25;g.save();g.translate(px,py);g.globalAlpha=fade;
+  const gr=g.createRadialGradient(-r*.3,-r*.3,r*.1,0,0,r);gr.addColorStop(0,A.c[1]);gr.addColorStop(1,A.c[0]);g.shadowColor=A.c[0];g.shadowBlur=22;g.fillStyle=gr;g.beginPath();g.arc(0,0,r,0,6.3);g.fill();g.shadowBlur=0;
+  g.save();g.beginPath();g.arc(0,0,r,0,6.3);g.clip();g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=r*.16;for(let i=0;i<4;i++){g.beginPath();g.arc(Math.sin(u*3+i)*r*.2,(i-1.5)*r*.45,r*1.2,.3+u*2+i,2.4+u*2+i);g.stroke()}g.restore();
+  g.globalCompositeOperation='lighter';g.strokeStyle=A.c[1];g.lineWidth=2;for(let i=0;i<2;i++){g.save();g.rotate(i?-.5:.4);g.globalAlpha=fade*.8;g.beginPath();g.ellipse(0,0,r*1.7,r*.38,0,0,6.3);g.stroke();g.restore()}
+  if(u>.6){const eu=(u-.6)/.4;g.globalAlpha=(1-eu)*.7;g.lineWidth=3;g.beginPath();g.arc(0,0,r*(1+eu*1.6),0,6.3);g.stroke()}g.restore()}
+ function crowsDraw(g,A,u,cx,cy){const n=Math.max(5,Math.round(10*Math.max(.5,QM.cur.vfx))),fade=u<.7?1:1-(u-.7)/.3;g.save();g.globalAlpha=fade;
+  for(let i=0;i<n;i++){const off=rnd(A.seed,i),x=A.x-cx+A.d*(u*300-i*16-off*30),y=A.y-cy+14+(rnd(A.seed,i+4)-.5)*70+Math.sin(u*10+i)*6,fl=Math.sin(u*40+i*1.7)*7,sz=.8+off*.6;
+   g.save();g.globalCompositeOperation='lighter';g.strokeStyle='rgba(150,80,255,.35)';g.lineWidth=3;g.beginPath();g.moveTo(x,y);g.lineTo(x-A.d*(26+off*22),y);g.stroke();g.restore();
+   g.save();g.translate(x,y);g.scale(A.d*sz,sz);g.fillStyle='#120d1c';g.strokeStyle='#8a5cff';g.lineWidth=1;g.beginPath();g.ellipse(0,0,6,3.2,0,0,6.3);g.fill();g.stroke();g.beginPath();g.moveTo(5,-1);g.lineTo(10,.5);g.lineTo(5,1.6);g.closePath();g.fill();g.beginPath();g.moveTo(-1,-1);g.lineTo(-7,-9-fl);g.lineTo(3,-2);g.closePath();g.fill();g.beginPath();g.moveTo(-1,1);g.lineTo(-8,7+fl);g.lineTo(3,2);g.closePath();g.fill();g.restore()}
+  g.restore()}
+ function drawAnims(g,cx,cy){if(!AN.length)return;const now=performance.now();g.save();
+  for(let i=AN.length-1;i>=0;i--){const A=AN[i],u=(now-A.t0)/A.dur;if(u>=1){AN.splice(i,1);continue}try{({shards:shardDraw,chains:chainsDraw,lance:lanceDraw,orb:orbDraw,crows:crowsDraw})[A.k](g,A,u,cx,cy)}catch(_){AN.splice(i,1)}}
+  g.restore()}
+ // one signature animation per weapon (played on every swing, after the cooldown logic of the weapon itself)
+ const WANIM={void:['chains',['#8a4cff','#e0c8ff']],crimsonrift:['shards',['#c01048','#ff9fc0']],frostbite:['shards',['#3f9cff','#e8f8ff']],astralkat:['lance',['#8f9cff','#ffffff']],solarfang:['orb',['#ff8a1f','#fff0b0']],verdant:['shards',['#3fae58','#c8ffd0'],{leaf:1}]};
+ function weaponAnim(id){const a=WANIM[id];if(!a)return;anim(a[0],P.x,P.y+P.h,P.f||1,a[1],a[2])}
+ const _vd=VFX.draw;VFX.draw=function(g,cx,cy,w,h){_vd.apply(this,arguments);try{drawAnims(g,cx,cy)}catch(_){}};
  let last=0;
  function tick(dt){if(!entered||dt>.2)return;const t=performance.now()/1000;
   const a=SHOP7.eqRef('aura');if(a&&AUR[a]){const n=gate('au',dt,14);if(n)AUR[a](n,P.x,P.y+P.h-6,t)}
@@ -2097,7 +2197,7 @@ const FX7=(()=>{
   trail_ember(x,y){for(let i=0;i<3;i++)add(0,'#ff8a2a',x+(R()-.5)*10,y+10+R()*30,-P.f*40*R(),-20-R()*30,.6,16,3,{a:.9})},
   trail_neon(x,y){const c=['#3ff3ff','#ff5ae8','#8a6bff'][(performance.now()/90|0)%3];for(let i=0;i<2;i++)add(0,c,x-P.f*i*12,y+26,0,0,.45,34,6,{a:.8})},
   trail_crow(x,y){if(R()<.7)add(4,'#14101e',x,y+10+R()*36,-P.f*(80+R()*80),(R()-.5)*80,.8,16,10,{r:R()*6,vr:6,a:1})}};
- function trailTick(dt){const tr=SHOP7.eqRef('trail');if(dash>0&&tr&&TRL[tr]){TRL[tr](P.x,P.y)}dashPrev=dash}
+ function trailTick(dt){const tr=SHOP7.eqRef('trail');if(dash>0&&tr&&TRL[tr]){TRL[tr](P.x,P.y);if(tr=='trail_crow'&&dashPrev<=0)anim('crows',P.x,P.y+P.h-40,P.f||1,['#8a5cff','#14101e'])}dashPrev=dash}
  // ---- spawn effect (fired once when a world starts / after respawn)
  let spT=0,spK=null;
  function spawn(){const s=SHOP7.eqRef('spawn');if(!s)return;spK=s;spT=1.2;try{VFX.ring&&0}catch(_){}}
@@ -2129,7 +2229,7 @@ const FX7=(()=>{
   else if(c=='raven'){const p=charmPos('raven',t);g.restore();g.save();g.translate(p.x-cam.x,p.y-cam.y);g.scale(f,1);g.fillStyle='#14101e';g.strokeStyle='#6b52c8';g.lineWidth=1;g.beginPath();g.ellipse(0,0,9,6,0,0,6.3);g.fill();g.stroke();g.beginPath();g.moveTo(8,-1);g.lineTo(15,1);g.lineTo(8,3);g.closePath();g.fillStyle='#d8a040';g.fill();g.fillStyle='#14101e';const fl=Math.sin(t*14)*7;g.beginPath();g.moveTo(-2,-2);g.lineTo(-10,-10+fl);g.lineTo(2,-4);g.fill();g.beginPath();g.moveTo(-2,2);g.lineTo(-12,6-fl);g.lineTo(2,3);g.fill();g.fillStyle='#ff4a6a';g.fillRect(5,-3,2,2)}
   g.restore()}
  function onEquip(slot,id){try{if(id){const r=SHOP7.byId.get(id);if(slot=='spawn')spawn();else if(slot=='victory'){victory()}else if(slot=='aura'||slot=='trail'){const x=P.x,y=P.y+P.h;for(let i=0;i<12;i++)add(1,'#fff',x,y-20,(R()-.5)*160,(R()-.5)*160,.7,10,2)}}}catch(_){}}
- return{tick,spawn,victory,wtCol,wskin,wingFx,charmDraw,onEquip,AUR,TRL,WCOL,SKIN}})();
+ return{anim,weaponAnim,drawAnims,AN,WANIM,tick,spawn,victory,wtCol,wskin,wingFx,charmDraw,onEquip,AUR,TRL,WCOL,SKIN}})();
 // spawn effect when a world finishes loading
 {const _lw7=loadWorld;loadWorld=function(){const r=_lw7.apply(this,arguments);setTimeout(()=>{try{FX7.spawn()}catch(_){}},700);return r}}
 
@@ -2508,7 +2608,7 @@ const WFX7=(()=>{
  const SFX={ // [freq, dur, type, vol, slide]
   solarfang:[[520,.12,'sawtooth',.05,.5],[900,.08,'triangle',.03,.6]],frostbite:[[1300,.1,'triangle',.05,.5],[2100,.06,'sine',.03,.7]],astralkat:[[1500,.14,'sine',.05,.4],[2400,.1,'sine',.025,.5]],
   crimsonrift:[[110,.3,'sawtooth',.07,.4],[70,.35,'square',.04,.5]],verdant:[[200,.16,'triangle',.07,.6],[150,.12,'square',.04,.7]],void:[[140,.28,'sawtooth',.05,.5],[420,.2,'sine',.03,.3]]};
- function swing(id){const a=SFX[id];if(a&&own[id])for(const s of a)snd(s[0],s[1],s[2],s[3],s[4])}
+ function swing(id){const a=SFX[id];if(a&&own[id]){for(const s of a)snd(s[0],s[1],s[2],s[3],s[4]);FX7.weaponAnim(id)}}
  const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const w=WPN[id];if(w&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';try{MODEL[id](x,L,t||0,pal(id,w))}finally{x.restore()}return}
   const sk=FX7.ld&&id==wp&&id!='fist'&&FX7.wskin();if(sk&&w){const g0=w.g;w.g=sk.tint;try{_dw(x,id,L,t)}finally{w.g=g0}return}_dw(x,id,L,t)};
  const _hm=hurtMob;hurtMob=function(m,d,w,ang){const r=_hm.apply(this,arguments);try{if(w&&w.id&&IMP[w.id]&&d>0&&own[w.id])IMP[w.id](m)}catch(_){}return r};

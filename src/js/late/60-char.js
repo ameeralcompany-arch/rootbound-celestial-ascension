@@ -118,7 +118,7 @@ const AC6=(()=>{
   g.save();const sd=QM.cur.shadow;g.fillStyle='rgba(0,0,0,'+(sd?.32:.22)+')';g.beginPath();g.ellipse(cx,feet,15,4,0,0,6.3);g.fill();g.restore();
   // wings sit behind the body
   const hasLegacy=wr.wing&&WEAR[wr.wing];
-  if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,(cx*.01)%6);WingArt.extras(g,wingIdx,cx,cy+24,t)}
+  if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,local?0:(cxo&&cxo.w!=null?(String(name).length%6):0),null,local?'me':'p:'+name,local?P.vy:null);WingArt.extras(g,wingIdx,cx,cy+24,t)}
   else if(hasLegacy){g.save();g.translate(cx,feet);g.scale(1.1*f,1.1);try{drawWings(wr.wing,wr.wo!=null?wr.wo:wingOpen,wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,t)}catch(_){}g.restore()}
   g.save();g.translate(cx,feet);g.scale(1.12*f,1.12);g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;

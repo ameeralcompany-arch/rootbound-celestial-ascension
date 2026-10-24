@@ -41,24 +41,39 @@ const WingArt=(()=>{
   return{layers,ox,oy,ds,W:CW,H:CH,rows}}
  function get(tier,hd){const k=tier+(hd?'h':'l');let a=cache.get(k);if(!a){a=build(tier,hd);cache.set(k,a)}return a}
  // draw both wings behind the body. cx,cy = character centre; f = facing; t = time; mode: 0 idle 1 run 2 air; strength = open amount
- function draw(g,tier,cx,cy,f,t,mode,vx,phase,alpha){
-  const art=get(tier,QM.cur.hd),W=WINGS[tier],ph=phase||0;
-  const fl=mode==2?Math.sin(t*9+ph)*.22:Math.sin(t*1.7+ph)*.05,open=mode==2?1:mode==1?.78:.9,lag=Math.max(-.25,Math.min(.25,-(vx||0)*.0006))*f;
-  const sh=QM.cur.wfx>=1;
+ // ---- wing pose: smoothed spread per character. 0 = folded against the back, 1 = fully spread.
+ // Idle: wings rest folded, then every few seconds open calmly, hold, and fold back. Jump: snap open with a flap on the way up, glide open on the way down.
+ const POSE=new Map();const sm=(a,b,x)=>{x=Math.max(0,Math.min(1,(x-a)/(b-a)));return x*x*(3-2*x)};
+ function pose(key,t,mode,vx,vy,ph){let p=POSE.get(key);if(!p){p={s:0,t:t,fl:0,air:0,lastAir:0};POSE.set(key,p);if(POSE.size>40)POSE.delete(POSE.keys().next().value)}
+  let dt=t-p.t;p.t=t;if(!(dt>0)||dt>.25)dt=.016;
+  const air=mode==2,u=((t+ph*3.1)%8.5)/8.5,idle=sm(0,.1,u)*(1-sm(.34,.46,u)); // calm open (~0.9s), hold (~2s), fold (~1s)
+  let target=air?1:mode==1?.28+idle*.5:idle*.92;
+  // flap: strong beats while rising, slow soft beats while gliding/falling, a small flutter when running
+  const rising=air&&(vy==null||vy<60);const rate=rising?15:air?4.5:mode==1?7:0;const amp=rising?.3:air?.07:mode==1?.04:0;
+  p.fl+=dt*rate;if(air&&!p.lastAir)p.fl=0;p.lastAir=air?1:0;
+  const k=target>p.s?(air?20:3.2):(air?6:2.4);p.s+=(target-p.s)*(1-Math.exp(-dt*k));
+  return{s:p.s,flap:Math.sin(p.fl)*amp*(air?1:p.s),rise:rising}}
+ // draw both wings behind the body. cx,cy = character centre; f = facing; t = time; mode: 0 idle 1 run 2 air. key/vy optional (pose smoothing per character).
+ function draw(g,tier,cx,cy,f,t,mode,vx,phase,alpha,key,vy){
+  const art=get(tier,QM.cur.hd),W=WINGS[tier],ph=phase||0,ps=key?pose(key,t,mode,vx,vy,ph):{s:1,flap:0,rise:0},S=ps.s;
+  const lag=Math.max(-.25,Math.min(.25,-(vx||0)*.0006))*f,sh=QM.cur.wfx>=1;
   g.save();if(alpha!=null)g.globalAlpha*=alpha;
-  const sx=1/art.ds*1,rootY=cy+6,spread=(1-open)*.5+ (mode==0?.02*Math.sin(t*1.7+ph):0);
+  const sx=1/art.ds,rootY=cy+6,breathe=Math.sin(t*1.7+ph)*.018;
   for(let side=-1;side<=1;side+=2){
    g.save();g.translate(cx+side*4,rootY);g.scale(side,1);
-   // far wing (the one behind) is dimmer for depth
-   const far=(side*f<0)?.82:1;
-   for(let i=0;i<art.layers.length;i++){
-    const li=i,isC=i==art.layers.length-1,k=isC?0:(art.rows-1-li)/art.rows;
-    g.save();g.globalAlpha*=far;g.rotate(spread*(1+k)+fl*(.5+k*.8)+lag*(.5+k)+Math.sin(t*2.1+li*.7+ph)*.015);
+   const far=(side*f<0)?.82:1,nl=art.layers.length;
+   for(let i=0;i<nl;i++){
+    const isC=i==nl-1,k=isC?0:(art.rows-1-i)/art.rows;                  // k: 0 = back/long row, ~1 = front/short row
+    const sk=Math.max(0,Math.min(1,S*1.35-k*.35));                         // outer feathers open a beat later, so the wing unfurls like a fan
+    const fold=1.4-k*.4,spread=-.1-k*.05;                                 // folded: swept down along the back; spread: lifted out and up
+    const ang=fold+(spread-fold)*sk+ps.flap*(.55+k*.9)*(ps.rise?-1:1)+lag*(.5+k)+breathe*(1+k)+Math.sin(t*2.1+i*.7+ph)*.012*S;
+    const wsx=.4+.6*sk+(ps.rise?ps.flap*.08:0);
+    g.save();g.globalAlpha*=far;g.rotate(ang);g.scale(wsx,1-.06*(1-sk));
     g.drawImage(art.layers[i],-art.ox*sx,-art.oy*sx,art.W*sx,art.H*sx);
-    if(sh&&isC){g.globalCompositeOperation='lighter';g.globalAlpha*=.35+.2*Math.sin(t*3+ph);g.drawImage(art.layers[i],-art.ox*sx,-art.oy*sx,art.W*sx,art.H*sx)}
+    if(sh&&isC){g.globalCompositeOperation='lighter';g.globalAlpha*=(.35+.2*Math.sin(t*3+ph))*Math.min(1,.4+S);g.drawImage(art.layers[i],-art.ox*sx,-art.oy*sx,art.W*sx,art.H*sx)}
     g.restore()}
    g.restore()}
-  g.restore()}
+  g.restore();return S}
  // extras that sit with the wings: halo above the head, storm arcs
  function extras(g,tier,cx,cy,t){const W=WINGS[tier],ph=QM.cur.wfx;if(!ph)return;if(W.fxk&&window.FX7)FX7.wingFx(W,cx,cy,t);
   if(W.halo){g.save();g.globalCompositeOperation='lighter';g.translate(cx,cy-50);g.scale(1,.28);g.lineWidth=3;g.strokeStyle=W.pal[3];g.shadowColor=W.pal[3];g.shadowBlur=10;g.globalAlpha=.85;g.beginPath();g.arc(0,0,19,0,6.3);g.stroke();g.lineWidth=1;g.globalAlpha=.6;g.setLineDash([3,5]);g.lineDashOffset=-t*20;g.beginPath();g.arc(0,0,24,0,6.3);g.stroke();g.restore()}

@@ -73,7 +73,7 @@ const WFX7=(()=>{
  const SFX={ // [freq, dur, type, vol, slide]
   solarfang:[[520,.12,'sawtooth',.05,.5],[900,.08,'triangle',.03,.6]],frostbite:[[1300,.1,'triangle',.05,.5],[2100,.06,'sine',.03,.7]],astralkat:[[1500,.14,'sine',.05,.4],[2400,.1,'sine',.025,.5]],
   crimsonrift:[[110,.3,'sawtooth',.07,.4],[70,.35,'square',.04,.5]],verdant:[[200,.16,'triangle',.07,.6],[150,.12,'square',.04,.7]],void:[[140,.28,'sawtooth',.05,.5],[420,.2,'sine',.03,.3]]};
- function swing(id){const a=SFX[id];if(a&&own[id])for(const s of a)snd(s[0],s[1],s[2],s[3],s[4])}
+ function swing(id){const a=SFX[id];if(a&&own[id]){for(const s of a)snd(s[0],s[1],s[2],s[3],s[4]);FX7.weaponAnim(id)}}
  const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const w=WPN[id];if(w&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';try{MODEL[id](x,L,t||0,pal(id,w))}finally{x.restore()}return}
   const sk=FX7.ld&&id==wp&&id!='fist'&&FX7.wskin();if(sk&&w){const g0=w.g;w.g=sk.tint;try{_dw(x,id,L,t)}finally{w.g=g0}return}_dw(x,id,L,t)};
  const _hm=hurtMob;hurtMob=function(m,d,w,ang){const r=_hm.apply(this,arguments);try{if(w&&w.id&&IMP[w.id]&&d>0&&own[w.id])IMP[w.id](m)}catch(_){}return r};
