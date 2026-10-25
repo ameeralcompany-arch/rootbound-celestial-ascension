@@ -105,7 +105,7 @@ const PLZ7=(()=>{
  // ----- parallax backdrop (mountains, hills, distant pagoda) painted over the sky -----
  const lerp=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t),col=c=>'rgb('+c.map(Math.round)+')';
  function ridge(g,w,base,par,amp,fq,seed,c0,c1,snow){const off=cam.x*par;g.beginPath();g.moveTo(0,base+400);for(let x=0;x<=w;x+=8){const u=(x+off)*fq+seed;const y=base-amp*(.55+.28*Math.sin(u)+.17*Math.sin(u*2.3+1.7)+.1*Math.sin(u*5.1));g.lineTo(x,y)}g.lineTo(w,base+400);g.closePath();const gr=g.createLinearGradient(0,base-amp,0,base+20);gr.addColorStop(0,col(c0));gr.addColorStop(1,col(c1));g.fillStyle=gr;g.fill()}
- function backdrop(w,hh,now){if(cur!='plaza')return;const base=S*T-cam.y+6,dk=night,wx=Math.min(1,wxC||0);if(base<-50)return;
+ function backdrop(w,hh,now,g){if(cur!='plaza')return;const base=S*T-cam.y+6,dk=night,wx=Math.min(1,wxC||0);if(base<-50)return;
   const dim=(c)=>lerp(lerp(c,[200,205,215],wx*.5),[c[0]*.22,c[1]*.25,c[2]*.5],dk*.88),haze=dim([205,225,245]);
   g.save();
   // far snowy peak (cone with snow cap)
@@ -123,8 +123,14 @@ const PLZ7=(()=>{
   // haze veil to blend into the ground
   const hz=g.createLinearGradient(0,base-120,0,base+10);hz.addColorStop(0,'rgba(255,255,255,0)');hz.addColorStop(1,col(haze).replace('rgb','rgba').replace(')',',.55)'));g.fillStyle=hz;g.fillRect(0,base-120,w,130);
   g.restore()}
- return{build,draw,backdrop,cherry,TR,S}})();
+ // the backdrop is painted at half resolution into a cache and only repainted when the camera / sky / weather actually changed
+ const bc=document.createElement('canvas'),bcx=bc.getContext('2d');let bk={x:-1e9,y:-1e9,n:-1,wx:-1,w:0,h:0,q:-1,t:0};
+ function backdropCached(G,w,hh,now){if(cur!='plaza')return;const q=QM.cur.id,k=(q=='potato'||q=='low')?.5:.7,cw=Math.max(2,Math.round(w*k)),ch=Math.max(2,Math.round(hh*k)),wx=Math.min(1,wxC||0);
+  const moved=Math.abs(cam.x-bk.x)>(q=='potato'||q=='low'?6:3)||Math.abs(cam.y-bk.y)>3,sky=Math.abs(night-bk.n)>.006||Math.abs(wx-bk.wx)>.02;
+  if(bc.width!=cw||bc.height!=ch||moved||sky){if(bc.width!=cw||bc.height!=ch){bc.width=cw;bc.height=ch}bcx.setTransform(1,0,0,1,0,0);bcx.clearRect(0,0,cw,ch);bcx.scale(cw/w,ch/hh);backdrop(w,hh,now,bcx);bk.x=cam.x;bk.y=cam.y;bk.n=night;bk.wx=wx}
+  const base=S*T-cam.y+6,y0=Math.max(0,Math.floor(base-470)),y1=Math.min(hh,Math.ceil(base+24));if(y1<=y0)return;G.drawImage(bc,0,y0*ch/hh,cw,(y1-y0)*ch/hh,0,y0,w,y1-y0)}
+ return{build,draw,backdrop:backdropCached,cherry,TR,S}})();
 {const _g=gen;gen=function(){_g();if(cur=='plaza'){try{PLZ7.build()}catch(e){console.error('plaza',e)}}}}
-{const _ds=drawSky;drawSky=function(w,hh,now){_ds(w,hh,now);try{PLZ7.backdrop(w,hh,now)}catch(e){}}}
+{const _ds=drawSky;drawSky=function(w,hh,now){_ds(w,hh,now);try{PLZ7.backdrop(g,w,hh,now)}catch(e){}}}
 {const _dn=drawNPCs;drawNPCs=function(now){try{PLZ7.draw(now)}catch(e){}return _dn(now)}}
 if(cur=='plaza'){try{gen()}catch(e){console.error(e)}}

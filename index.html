@@ -578,6 +578,9 @@ html[data-theme=dark] #bar .hb{background:var(--surface-2);border:1px solid var(
 html[data-theme=dark] #bar .hb *{color:var(--ink)}html[data-theme=dark] #bar .hb small,html[data-theme=dark] #bar .hb i{color:var(--muted)}
 html[data-theme=dark] #bar .hb:hover{border-color:var(--line-strong)}html[data-theme=dark] #bar .hb.on{border-color:var(--sel-bd);background:var(--sel-bg);box-shadow:var(--glow)}
 html[data-theme=dark] #bar .hb.wp{width:auto}
+/* low / lowest graphics (or no hardware acceleration): drop the expensive blur behind panels */
+html.lowfx *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.lowfx .pn,html.lowfx #hud *{box-shadow:none!important}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -1557,6 +1560,7 @@ const AP={hair:['Spiky swept','Long tail','Side-parted','Wild layered','Undercut
  eyeCol:['#35c9c0','#6aa8ff','#ffb347','#d25cff','#ff5a6e','#7dff8a','#e8e8ff']};
 // Quality presets. Every cost-driving system reads these - nothing is hard-coded elsewhere.
 const QPRE=[
+ {id:'potato',n:'Lowest (very weak PCs)',rsc:.5,vfx:.2,cap:200,part:.3,bloom:0,par:1,shadow:0,wx:.25,wfx:0,feat:0,grade:0,cine:0,hd:0,fps:30},
  {id:'low',n:'Low',rsc:.7,vfx:.35,cap:350,part:.45,bloom:0,par:1,shadow:0,wx:.35,wfx:0,feat:0,grade:0,cine:0,hd:0,fps:30},
  {id:'med',n:'Medium',rsc:.85,vfx:.65,cap:700,part:.7,bloom:0,par:2,shadow:1,wx:.6,wfx:1,feat:1,grade:1,cine:0,hd:0,fps:60},
  {id:'high',n:'High',rsc:1,vfx:1,cap:1200,part:1,bloom:1,par:3,shadow:1,wx:1,wfx:2,feat:2,grade:1,cine:0,hd:1,fps:60},
@@ -1611,13 +1615,13 @@ featherFx=function(n){const w=curWing(lvl);if(!w||parts.length>480)return;const 
 
 /* ========== LATE: 30-quality.js ========== */
 // ===== V6 Quality manager: presets + optional adaptive downgrade; reads cel.opt =====
-const QM={cur:QPRE[2],auto:true,ema:16.7,lowT:0,hiT:0,lastChange:0,reduce:false,vfxK:1,
- apply(id,silent){const p=QPRE.find(q=>q.id==id)||QPRE[2];QM.cur=p;RSC=p.rsc;OPT.q=Math.min(1.6,p.part);QM.reduce=!!cel.opt.reduce||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches&&cel.opt.reduce!=0&&false);QM.vfxK=p.vfx*cel.opt.vfx*(QM.reduce?.4:1);try{rs()}catch(_){}if(!silent&&typeof say=='function')say('Graphics: '+p.n)},
- init(){const s=cel.opt.qp;QM.auto=s=='auto';let id=s;if(QM.auto){const m=navigator.hardwareConcurrency||4,small=Math.min(innerWidth,innerHeight)<500;id=small||m<=2?'low':m<=4?'med':'high'}QM.apply(id,true)},
+const QM={cur:QPRE.find(q=>q.id=='high'),auto:true,ema:16.7,lowT:0,hiT:0,lastChange:0,reduce:false,vfxK:1,
+ apply(id,silent){const p=QPRE.find(q=>q.id==id)||QPRE.find(q=>q.id=='high');QM.cur=p;RSC=p.rsc;try{document.documentElement.classList.toggle('lowfx',p.id=='low'||p.id=='potato')}catch(_){}OPT.q=Math.min(1.6,p.part);QM.reduce=!!cel.opt.reduce||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches&&cel.opt.reduce!=0&&false);QM.vfxK=p.vfx*cel.opt.vfx*(QM.reduce?.4:1);try{rs()}catch(_){}if(!silent&&typeof say=='function')say('Graphics: '+p.n)},
+ init(){const s=cel.opt.qp;QM.auto=s=='auto';let id=s;if(QM.auto){const m=navigator.hardwareConcurrency||4,small=Math.min(innerWidth,innerHeight)<500;id=small||m<=2?'low':m<=4?'med':'high';/* no hardware canvas/WebGL = software drawing: start low */try{const t=document.createElement('canvas');if(!(t.getContext('webgl')||t.getContext('experimental-webgl'))&&id!='low')id='low'}catch(_){id='low'}}QM.apply(id,true)},
  setting(s){cel.opt.qp=s;celSave();QM.auto=s=='auto';if(!QM.auto)QM.apply(s);else QM.init()},
  // adaptive: called each frame with frame ms. Downgrades one step after ~2s of sustained >24ms; never auto-upgrades past the initial pick.
  tick(ms,now){if(!QM.auto||document.hidden)return;QM.ema+=(Math.min(100,ms)-QM.ema)*.05;
-  if(QM.ema>24&&now-QM.lastChange>4000){QM.lowT+=ms;if(QM.lowT>2000){const i=QPRE.indexOf(QM.cur);if(i>0){QM.apply(QPRE[i-1].id,true);QM.lastChange=now;QM.ema=16;if(typeof say=='function')say('Auto quality: '+QPRE[i-1].n)}QM.lowT=0}}else QM.lowT=Math.max(0,QM.lowT-ms)}};
+  if(QM.ema>24&&now-QM.lastChange>4000){QM.lowT+=ms;if(QM.lowT>1200){const i=QPRE.indexOf(QM.cur);if(i>0){QM.apply(QPRE[i-1].id,true);QM.lastChange=now;QM.ema=16;if(typeof say=='function')say('Auto quality: '+QPRE[i-1].n)}QM.lowT=0}}else QM.lowT=Math.max(0,QM.lowT-ms)}};
 QM.init();
 
 /* ========== LATE: 40-vfx.js ========== */
@@ -2731,7 +2735,7 @@ const PLZ7=(()=>{
  // ----- parallax backdrop (mountains, hills, distant pagoda) painted over the sky -----
  const lerp=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t),col=c=>'rgb('+c.map(Math.round)+')';
  function ridge(g,w,base,par,amp,fq,seed,c0,c1,snow){const off=cam.x*par;g.beginPath();g.moveTo(0,base+400);for(let x=0;x<=w;x+=8){const u=(x+off)*fq+seed;const y=base-amp*(.55+.28*Math.sin(u)+.17*Math.sin(u*2.3+1.7)+.1*Math.sin(u*5.1));g.lineTo(x,y)}g.lineTo(w,base+400);g.closePath();const gr=g.createLinearGradient(0,base-amp,0,base+20);gr.addColorStop(0,col(c0));gr.addColorStop(1,col(c1));g.fillStyle=gr;g.fill()}
- function backdrop(w,hh,now){if(cur!='plaza')return;const base=S*T-cam.y+6,dk=night,wx=Math.min(1,wxC||0);if(base<-50)return;
+ function backdrop(w,hh,now,g){if(cur!='plaza')return;const base=S*T-cam.y+6,dk=night,wx=Math.min(1,wxC||0);if(base<-50)return;
   const dim=(c)=>lerp(lerp(c,[200,205,215],wx*.5),[c[0]*.22,c[1]*.25,c[2]*.5],dk*.88),haze=dim([205,225,245]);
   g.save();
   // far snowy peak (cone with snow cap)
@@ -2749,9 +2753,15 @@ const PLZ7=(()=>{
   // haze veil to blend into the ground
   const hz=g.createLinearGradient(0,base-120,0,base+10);hz.addColorStop(0,'rgba(255,255,255,0)');hz.addColorStop(1,col(haze).replace('rgb','rgba').replace(')',',.55)'));g.fillStyle=hz;g.fillRect(0,base-120,w,130);
   g.restore()}
- return{build,draw,backdrop,cherry,TR,S}})();
+ // the backdrop is painted at half resolution into a cache and only repainted when the camera / sky / weather actually changed
+ const bc=document.createElement('canvas'),bcx=bc.getContext('2d');let bk={x:-1e9,y:-1e9,n:-1,wx:-1,w:0,h:0,q:-1,t:0};
+ function backdropCached(G,w,hh,now){if(cur!='plaza')return;const q=QM.cur.id,k=(q=='potato'||q=='low')?.5:.7,cw=Math.max(2,Math.round(w*k)),ch=Math.max(2,Math.round(hh*k)),wx=Math.min(1,wxC||0);
+  const moved=Math.abs(cam.x-bk.x)>(q=='potato'||q=='low'?6:3)||Math.abs(cam.y-bk.y)>3,sky=Math.abs(night-bk.n)>.006||Math.abs(wx-bk.wx)>.02;
+  if(bc.width!=cw||bc.height!=ch||moved||sky){if(bc.width!=cw||bc.height!=ch){bc.width=cw;bc.height=ch}bcx.setTransform(1,0,0,1,0,0);bcx.clearRect(0,0,cw,ch);bcx.scale(cw/w,ch/hh);backdrop(w,hh,now,bcx);bk.x=cam.x;bk.y=cam.y;bk.n=night;bk.wx=wx}
+  const base=S*T-cam.y+6,y0=Math.max(0,Math.floor(base-470)),y1=Math.min(hh,Math.ceil(base+24));if(y1<=y0)return;G.drawImage(bc,0,y0*ch/hh,cw,(y1-y0)*ch/hh,0,y0,w,y1-y0)}
+ return{build,draw,backdrop:backdropCached,cherry,TR,S}})();
 {const _g=gen;gen=function(){_g();if(cur=='plaza'){try{PLZ7.build()}catch(e){console.error('plaza',e)}}}}
-{const _ds=drawSky;drawSky=function(w,hh,now){_ds(w,hh,now);try{PLZ7.backdrop(w,hh,now)}catch(e){}}}
+{const _ds=drawSky;drawSky=function(w,hh,now){_ds(w,hh,now);try{PLZ7.backdrop(g,w,hh,now)}catch(e){}}}
 {const _dn=drawNPCs;drawNPCs=function(now){try{PLZ7.draw(now)}catch(e){}return _dn(now)}}
 if(cur=='plaza'){try{gen()}catch(e){console.error(e)}}
 

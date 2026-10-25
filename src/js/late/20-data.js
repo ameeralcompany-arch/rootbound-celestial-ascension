@@ -35,6 +35,7 @@ const AP={hair:['Spiky swept','Long tail','Side-parted','Wild layered','Undercut
  eyeCol:['#35c9c0','#6aa8ff','#ffb347','#d25cff','#ff5a6e','#7dff8a','#e8e8ff']};
 // Quality presets. Every cost-driving system reads these - nothing is hard-coded elsewhere.
 const QPRE=[
+ {id:'potato',n:'Lowest (very weak PCs)',rsc:.5,vfx:.2,cap:200,part:.3,bloom:0,par:1,shadow:0,wx:.25,wfx:0,feat:0,grade:0,cine:0,hd:0,fps:30},
  {id:'low',n:'Low',rsc:.7,vfx:.35,cap:350,part:.45,bloom:0,par:1,shadow:0,wx:.35,wfx:0,feat:0,grade:0,cine:0,hd:0,fps:30},
  {id:'med',n:'Medium',rsc:.85,vfx:.65,cap:700,part:.7,bloom:0,par:2,shadow:1,wx:.6,wfx:1,feat:1,grade:1,cine:0,hd:0,fps:60},
  {id:'high',n:'High',rsc:1,vfx:1,cap:1200,part:1,bloom:1,par:3,shadow:1,wx:1,wfx:2,feat:2,grade:1,cine:0,hd:1,fps:60},

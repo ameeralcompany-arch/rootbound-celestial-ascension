@@ -43,3 +43,6 @@ html[data-theme=dark] #bar .hb{background:var(--surface-2);border:1px solid var(
 html[data-theme=dark] #bar .hb *{color:var(--ink)}html[data-theme=dark] #bar .hb small,html[data-theme=dark] #bar .hb i{color:var(--muted)}
 html[data-theme=dark] #bar .hb:hover{border-color:var(--line-strong)}html[data-theme=dark] #bar .hb.on{border-color:var(--sel-bd);background:var(--sel-bg);box-shadow:var(--glow)}
 html[data-theme=dark] #bar .hb.wp{width:auto}
+/* low / lowest graphics (or no hardware acceleration): drop the expensive blur behind panels */
+html.lowfx *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.lowfx .pn,html.lowfx #hud *{box-shadow:none!important}
