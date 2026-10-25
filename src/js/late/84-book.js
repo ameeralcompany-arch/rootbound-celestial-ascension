@@ -14,7 +14,7 @@ const BOOK7=(()=>{
  function render(){const S=stats(),srv=(()=>{try{return SHOP7.serverMode}catch(_){return false}})();let own=0,all=0;let h='';
   for(const s of S){own+=s.own.length;all+=s.l.length;const p=s.l.length?s.own.length/s.l.length:0;
    h+='<section class="sec"><h3><span>'+esc(s.n)+'</span><span>'+s.own.length+' / '+s.l.length+'</span></h3><div class="bar"><i style="width:'+Math.round(p*100)+'%"></i></div><div class="chips">'+s.l.map(i=>'<span class="chip'+(s.own.includes(i)?' on':'')+'" title="'+esc(i.n)+'">'+esc(i.n)+'</span>').join('')+'</div><div class="rw">'+MS.map(([q,g])=>{const k=s.c+':'+q,done=!!claimed[k],ok=p>=q-1e-9&&s.l.length>0;return'<button data-claim="'+k+'"'+(done||!ok||srv?' disabled':'')+'>'+(done?'Claimed':Math.round(q*100)+'% · '+g+' gems')+'</button>'}).join('')+'</div></section>'}
-  el.querySelector('#b7body').innerHTML=h;el.querySelector('#b7tot').textContent=own+' / '+all+' items collected'+(srv?' · rewards are offline-only':'')}
+  el.querySelector('#b7body').innerHTML=h;el.querySelector('#b7tot').textContent=own+' / '+all+' items collected · Spirit Stones '+HUNT7.count()+'/'+HUNT7.SPOTS.length+(HUNT7.title?' · Stone Seeker':' · '+HUNT7.hint())+(srv?' · rewards are offline-only':'')}
  function claim(k){let srv=false;try{srv=SHOP7.serverMode}catch(_){}if(srv||claimed[k])return;const[c,q]=k.split(':'),m=MS.find(x=>String(x[0])==q);if(!m)return;const s=stats().find(x=>x.c==c);if(!s||!s.l.length||s.own.length/s.l.length<m[0]-1e-9)return;claimed[k]=1;save();gems+=m[1];try{say('Collection reward: +'+m[1]+' gems');G&&0;saveP()}catch(_){}render()}
  function openB(){build();open=true;el.style.display='block';render();try{UIS.play('open')}catch(_){}}
  function close(){open=false;if(el)el.style.display='none'}
