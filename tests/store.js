@@ -87,5 +87,23 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('Spirit Stone hunt: 7 stones in free spots, each pays once, all-found bonus + title',r.empty.every(Boolean)&&r.count==7&&r.gems==850&&r.title,JSON.stringify(r));
  r=await p.evaluate(async()=>{const o={};RUN7.reset();enterWorld('plaza');const on=k=>{const q=RUN7.PL[k];P.x=(DX+q.x+1)*T;P.y=q.y*T-P.h-.01;P.vx=P.vy=0;P.g=true;RUN7.tick(performance.now())};o.solid=RUN7.PL.every(q=>tiles[q.y*W+DX+q.x]>0);gems=0;try{SHOP7.serverMode}catch(_){}on(0);o.run=RUN7.state;await new Promise(r=>setTimeout(r,60));on(RUN7.N-1);o.done=RUN7.state;o.best=RUN7.best>0;o.title=RUN7.title;RUN7.reset();return o});
  ok('Sky Run parkour: platforms built, start/finish detected, best time + title saved',r.solid&&r.run=='run'&&r.done=='done'&&r.best&&r.title,JSON.stringify(r));
+ r=await p.evaluate(async()=>{enterWorld('fxtest');gems=99999;await new Promise(r=>setTimeout(r,2200));while(!P.g)await new Promise(r=>setTimeout(r,50));const out={};
+  for(const[id,far]of[['void',60],['crimsonrift',150],['frostbite',150],['solarfang',127],['verdant',150]]){own[id]=1;wp=id;mobs.length=0;P.f=1;mx=cv.width/2+300;my=cv.height/2;const m={k:'golem',x:P.x+(id=='void'?0:far),y:P.y+P.h-54-(id=='void'?30:0),w:46,h:54,vx:0,vy:0,hp:9999,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0};mobs.push(m);const px=m.x,py=m.y,h0=m.hp,pin=setInterval(()=>{m.x=px;m.y=py;m.vx=m.vy=0},8);wcd=0;useWeapon();await new Promise(r=>setTimeout(r,1000));clearInterval(pin);out[id]=h0-m.hp}wp='fist';mobs.length=0;return out});
+ ok('weapon effect animations deal damage beyond sword range (void ring, rift/frost/leaf shards, solar orb)',Object.values(r).every(v=>v>0),JSON.stringify(r));
+ r=await p.evaluate(async()=>{const o={};enterWorld('evtest');await new Promise(r=>setTimeout(r,2200));while(!P.g)await new Promise(r=>setTimeout(r,50));gems=1000;mobs.length=0;
+  // deterministic schedule: same world + slot => same event for everybody; plaza has none
+  const a=WEV7.eventFor(7),b=WEV7.eventFor(7);o.det=JSON.stringify([a&&a.kind,a&&a.tx])==JSON.stringify([b&&b.kind,b&&b.tx]);let n=0;for(let k=0;k<200;k++)if(WEV7.eventFor(k))n++;o.rate=n>80&&n<190;
+  // spirit
+  WEV7.force('spirit');P.x=WEV7.ev.x;await new Promise(r=>setTimeout(r,120));P.hp=10;const g0=gems;WEV7.interactEv();o.spirit=gems-g0==80&&P.hp>10;const g1=gems;WEV7.interactEv();o.once=gems==g1;
+  // trader
+  WEV7.force('trader');P.x=WEV7.ev.x;await new Promise(r=>setTimeout(r,120));const g2=gems;WEV7.interactEv();o.trader=g2-gems==250;
+  // rift: mobs appear; killing 6 closes it and pays
+  WEV7.force('rift');await new Promise(r=>setTimeout(r,200));let spawned=0;for(let i=0;i<8;i++){WEV7.tick(5);}spawned=mobs.filter(m=>m.rift).length;o.rift=spawned>0;const g3=gems;for(let i=0;i<40&&gems-g3<150;i++){for(const m of mobs)if(m.rift)m.hp=0;mobs.splice(0,mobs.length,...mobs.filter(m=>!m.rift));WEV7.tick(5)}o.riftPay=gems-g3>=150;
+  // meteor: an impact hurts a nearby monster and drops loot
+  WEV7.force('meteor');const ev=WEV7.ev;const gy=(()=>{let y=0;while(y<H-2&&!solidAt(Math.floor(ev.x/T),y))y++;return y*T})();const mm={k:'golem',x:ev.x,y:gy-54,w:46,h:54,vx:0,vy:0,hp:500,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0};mobs.push(mm);drops.length=0;
+  const mt=WEV7.meteors[0];mt.x=ev.x;mt.at=Date.now()-mt.dur-10;const hp0=mm.hp;WEV7.tick(.016);o.meteorHurt=mm.hp<hp0;o.meteorLoot=drops.length>0;return o});
+ ok('world events: deterministic schedule, spirit heals once, trader sells, rift pays when cleared, meteors hurt monsters and drop loot',r.det&&r.rate&&r.spirit&&r.once&&r.trader&&r.rift&&r.riftPay&&r.meteorHurt&&r.meteorLoot,JSON.stringify(r));
+ r=await p.evaluate(()=>{enterWorld('plaza');const o={};o.none=true;for(let k=0;k<400;k++){}WEV7.tick(.1);o.ev=WEV7.ev;return o});
+ ok('no world events in the Plaza',r.ev===null,JSON.stringify(r));
  ok('no page errors in the whole run',errs.length==0,errs.slice(0,3).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all store tests passed');process.exit(fails?1:0)})();
