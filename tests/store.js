@@ -81,5 +81,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   ok('old saves (new weapons, removed wings) start cleanly and keep their weapons',o.ready&&o.wp=='solarfang'&&o.own&&!o.wing&&!o.errs&&!qe.length,JSON.stringify(o)+qe.join('|'))}
  r=await p.evaluate(()=>{const o={};o.items=COMP7.IDS.every(i=>SHOP7.byId.has('charm_'+i));gems=99999;o.eq=COMP7.IDS.map(i=>{SHOP7.buy('charm_'+i);SHOP7.equip('charm_'+i);return SHOP7.eqRef('charm')==i});o.voice=!!document.getElementById('ovo')&&!!document.getElementById('osub');SHOP7.unequip('charm');return o});
  ok('4 companions are in the Store and can be bought and equipped; voice volume + subtitles controls exist',r.items&&r.eq.every(Boolean)&&r.voice,JSON.stringify(r));
+ r=await p.evaluate(()=>{const o={};BOOK7.open();o.open=BOOK7.isOpen&&document.querySelectorAll('#book7 .sec').length==9;const st=BOOK7.stats().find(x=>x.c=='charms');gems=99999;for(const i of st.l)SHOP7.buy(i.id);const g0=gems;BOOK7.claim('charms:0.25');o.gain=gems-g0==100;const g1=gems;BOOK7.claim('charms:0.25');o.once=gems==g1;BOOK7.close();return o});
+ ok('Collection Book opens, shows every category, pays each milestone once',r.open&&r.gain&&r.once,JSON.stringify(r));
  ok('no page errors in the whole run',errs.length==0,errs.slice(0,3).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all store tests passed');process.exit(fails?1:0)})();

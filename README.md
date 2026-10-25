@@ -151,4 +151,5 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - **Companions:** four original spirits (Lumi the firefly, Mochi the cloud, Pebble the moss golem, Kitsu the two-tailed fox) in the Store's Charms tab. They follow you, hop when you jump, shut their eyes when you are hurt and doze when you stand still. Other players see them too.
 - **Voice settings:** a separate Voice volume slider and a Subtitles switch (shows the Japanese word and its English meaning) in Settings.
 - **Fixes:** startup crash with saves that own Store weapons or removed wings; weapons bought in the Store are kept across reloads; chests drop their contents when broken.
+- **Collection Book:** the home screen "Collection" page now shows every Store item by category with owned counts and 25/50/75/100% gem rewards (offline play only; a signed-in online account never gets client-side gems).
 - **Still not done (honest list):** the voice is synthesised in code, not recorded by a voice actor (no recording tool here); there is no mini-game, treasure-hunt or world-event system beyond what V9 already had.
