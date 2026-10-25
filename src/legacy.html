@@ -181,7 +181,7 @@ function drawWeaponOld(x,id,L,t){const w=WPN[id],gc=w.g.join(',');x.save();x.lin
   x.beginPath();x.moveTo(L*.2,-3);x.bezierCurveTo(L*.5,-L*.15,L*.95,-L*.55,L*1.05,-L*.7);x.bezierCurveTo(L*.95,-L*.2,L*.6,L*.15,L*.2,5);x.closePath();x.fill();x.stroke();x.shadowBlur=0;x.globalCompositeOperation='lighter';for(let i=0;i<5;i++){const u=i/5,ph=t*8+i*2;x.fillStyle='rgba('+gc+',.6)';x.beginPath();x.arc(L*(.3+u*.7),-L*.7*u*u-6-Math.sin(ph)*3,3+Math.sin(ph)*1.5,0,6.3);x.fill()}}
  x.restore()}
 function nameTag(cx,cy,name,hue){g.save();g.font='600 13px '+FONT;g.textAlign='center';const tw=g.measureText(name).width+18;rr(cx-tw/2,cy-11,tw,22,11);g.fillStyle='rgba(12,16,38,.82)';g.fill();g.strokeStyle='hsl('+hue+',80%,62%)';g.lineWidth=1.6;g.stroke();g.lineWidth=3;g.strokeStyle='rgba(0,0,0,.6)';g.strokeText(name,cx,cy+5);g.fillStyle='#fff';g.fillText(name,cx,cy+5);g.restore()}
-function drawWearIcon(x,id,S){const w=WEAR[id],c=w.c;x.save();x.translate(S/2,S/2);x.lineWidth=2.5;x.strokeStyle='#000';x.fillStyle=c;
+function drawWearIcon(x,id,S){const w=WEAR[id];if(!w)return;const c=w.c;x.save();x.translate(S/2,S/2);x.lineWidth=2.5;x.strokeStyle='#000';x.fillStyle=c;
  if(id=='helmet'){x.beginPath();x.arc(0,4,15,Math.PI,0);x.lineTo(15,10);x.lineTo(-15,10);x.closePath();x.fill();x.stroke();x.fillStyle='#fff6b0';x.beginPath();x.arc(0,-6,5,0,6.3);x.fill();x.stroke()}
  else if(id=='clover'){for(let i=0;i<4;i++){x.save();x.rotate(i*Math.PI/2);x.beginPath();x.arc(7,0,7,0,6.3);x.fill();x.stroke();x.restore()}}
  else if(id=='crown'){x.beginPath();x.moveTo(-15,10);x.lineTo(-15,-6);x.lineTo(-7,2);x.lineTo(0,-10);x.lineTo(7,2);x.lineTo(15,-6);x.lineTo(15,10);x.closePath();x.fill();x.stroke()}
@@ -541,7 +541,7 @@ function iconURL(k){if(ICON[k])return ICON[k];const S=48,c=document.createElemen
  if(typeof k=='number'&&k<100)x.drawImage(spr(k,0,0),0,0,S,S);else if(typeof k=='number'&&k>=200)matIcon(x,k,S);else if(typeof k=='number')seedIcon(x,k-100,S);
  else if(k[0]=='w'){burstBG(x,S);const id=k.slice(2);if(id=='fist'){x.fillStyle='#ffd9a8';x.strokeStyle='#000';x.lineWidth=3;x.beginPath();x.arc(24,26,12,0,6.3);x.fill();x.stroke();x.lineWidth=2;for(let i=0;i<3;i++){x.beginPath();x.moveTo(18+i*6,16);x.lineTo(18+i*6,23);x.stroke()}}else{x.translate(22,27);x.rotate(-Math.PI/4);const L=WPN[id].k=='sword'?34:28;x.translate(-L*.4,0);drawWeapon(x,id,L,0)}}
  else{burstBG(x,S);drawWearIcon(x,k.slice(2),S)}ICONC[k]=c;return ICON[k]=c.toDataURL()}
-function drawWearIcon(x,id,S){const w=WEAR[id],c=w.c;x.save();x.translate(S/2,S/2+1);x.lineWidth=2;x.strokeStyle='#000';x.lineJoin='round';x.fillStyle=c;
+function drawWearIcon(x,id,S){const w=WEAR[id];if(!w)return;const c=w.c;x.save();x.translate(S/2,S/2+1);x.lineWidth=2;x.strokeStyle='#000';x.lineJoin='round';x.fillStyle=c;
  if(id=='helmet'){x.beginPath();x.arc(0,3,13,Math.PI,0);x.lineTo(14,9);x.lineTo(-14,9);x.closePath();x.fill();x.stroke();x.fillStyle='#fff6b0';x.beginPath();x.arc(0,-6,4,0,6.3);x.fill();x.stroke()}
  else if(id=='clover'){for(let i=0;i<4;i++){x.save();x.rotate(i*Math.PI/2);x.beginPath();x.arc(6,0,6,0,6.3);x.fill();x.stroke();x.restore()}}
  else if(id=='sage'){x.beginPath();x.moveTo(-14,9);x.lineTo(0,-16);x.lineTo(14,9);x.closePath();x.fill();x.stroke();x.fillStyle='#ffd24a';x.fillRect(-16,8,32,4);x.strokeRect(-16,8,32,4)}

@@ -70,7 +70,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  r=await p.evaluate(()=>{const o={};MUS7.force('rain');MUS7.newSong('rain');const a=MUS7.played.slice(-1)[0];MUS7.newSong('rain');MUS7.newSong('rain');const pl=MUS7.played.slice(-3);o.noRepeat=pl[0]!=pl[1]&&pl[1]!=pl[2];return o});
  ok('songs never repeat back-to-back',r.noRepeat,JSON.stringify(r));
  r=await p.evaluate(()=>{const o={};o.blocks=[];for(let b=42;b<=59;b++){const s=spr(b,0,0);const d=s.getContext('2d').getImageData(0,0,48,48).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>200)n++;o.blocks.push(n>2000&&!!BLK[b]&&PRICE[b]>0)}
-  o.wear=['angel','fairy','bat','phoenix','crystal'].every(k=>!(k in WEAR));o.jump=typeof maxAir=='function';o.sfx=['voice','mobSound','bloop','splash'].every(k=>typeof SFX7[k]=='function');
+  o.wear=['angel','fairy','bat','phoenix','crystal'].every(k=>!Object.keys(WEAR).includes(k));o.jump=typeof maxAir=='function';o.sfx=['voice','mobSound','bloop','splash'].every(k=>typeof SFX7[k]=='function');
   o.plaza=NPCS.length==3&&tiles[21*W+DX]==0&&NPCS.every(n=>tiles[21*W+n.x]==0&&tiles[22*W+n.x]>0);o.floor=tiles[22*W+DX]==44;o.glow=!!GLOW7[52]&&!!GLOW7[53];return o});
  ok('18 new blocks paint, are priced and glow where intended',r.blocks.every(Boolean)&&r.glow,JSON.stringify(r.blocks));
  ok('wearable wings removed, double-jump hook and new sounds exist',r.wear&&r.jump&&r.sfx,JSON.stringify(r));

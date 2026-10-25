@@ -703,7 +703,7 @@ function drawWeaponOld(x,id,L,t){const w=WPN[id],gc=w.g.join(',');x.save();x.lin
   x.beginPath();x.moveTo(L*.2,-3);x.bezierCurveTo(L*.5,-L*.15,L*.95,-L*.55,L*1.05,-L*.7);x.bezierCurveTo(L*.95,-L*.2,L*.6,L*.15,L*.2,5);x.closePath();x.fill();x.stroke();x.shadowBlur=0;x.globalCompositeOperation='lighter';for(let i=0;i<5;i++){const u=i/5,ph=t*8+i*2;x.fillStyle='rgba('+gc+',.6)';x.beginPath();x.arc(L*(.3+u*.7),-L*.7*u*u-6-Math.sin(ph)*3,3+Math.sin(ph)*1.5,0,6.3);x.fill()}}
  x.restore()}
 function nameTag(cx,cy,name,hue){g.save();g.font='600 13px '+FONT;g.textAlign='center';const tw=g.measureText(name).width+18;rr(cx-tw/2,cy-11,tw,22,11);g.fillStyle='rgba(12,16,38,.82)';g.fill();g.strokeStyle='hsl('+hue+',80%,62%)';g.lineWidth=1.6;g.stroke();g.lineWidth=3;g.strokeStyle='rgba(0,0,0,.6)';g.strokeText(name,cx,cy+5);g.fillStyle='#fff';g.fillText(name,cx,cy+5);g.restore()}
-function drawWearIcon(x,id,S){const w=WEAR[id],c=w.c;x.save();x.translate(S/2,S/2);x.lineWidth=2.5;x.strokeStyle='#000';x.fillStyle=c;
+function drawWearIcon(x,id,S){const w=WEAR[id];if(!w)return;const c=w.c;x.save();x.translate(S/2,S/2);x.lineWidth=2.5;x.strokeStyle='#000';x.fillStyle=c;
  if(id=='helmet'){x.beginPath();x.arc(0,4,15,Math.PI,0);x.lineTo(15,10);x.lineTo(-15,10);x.closePath();x.fill();x.stroke();x.fillStyle='#fff6b0';x.beginPath();x.arc(0,-6,5,0,6.3);x.fill();x.stroke()}
  else if(id=='clover'){for(let i=0;i<4;i++){x.save();x.rotate(i*Math.PI/2);x.beginPath();x.arc(7,0,7,0,6.3);x.fill();x.stroke();x.restore()}}
  else if(id=='crown'){x.beginPath();x.moveTo(-15,10);x.lineTo(-15,-6);x.lineTo(-7,2);x.lineTo(0,-10);x.lineTo(7,2);x.lineTo(15,-6);x.lineTo(15,10);x.closePath();x.fill();x.stroke()}
@@ -1063,7 +1063,7 @@ function iconURL(k){if(ICON[k])return ICON[k];const S=48,c=document.createElemen
  if(typeof k=='number'&&k<100)x.drawImage(spr(k,0,0),0,0,S,S);else if(typeof k=='number'&&k>=200)matIcon(x,k,S);else if(typeof k=='number')seedIcon(x,k-100,S);
  else if(k[0]=='w'){burstBG(x,S);const id=k.slice(2);if(id=='fist'){x.fillStyle='#ffd9a8';x.strokeStyle='#000';x.lineWidth=3;x.beginPath();x.arc(24,26,12,0,6.3);x.fill();x.stroke();x.lineWidth=2;for(let i=0;i<3;i++){x.beginPath();x.moveTo(18+i*6,16);x.lineTo(18+i*6,23);x.stroke()}}else{x.translate(22,27);x.rotate(-Math.PI/4);const L=WPN[id].k=='sword'?34:28;x.translate(-L*.4,0);drawWeapon(x,id,L,0)}}
  else{burstBG(x,S);drawWearIcon(x,k.slice(2),S)}ICONC[k]=c;return ICON[k]=c.toDataURL()}
-function drawWearIcon(x,id,S){const w=WEAR[id],c=w.c;x.save();x.translate(S/2,S/2+1);x.lineWidth=2;x.strokeStyle='#000';x.lineJoin='round';x.fillStyle=c;
+function drawWearIcon(x,id,S){const w=WEAR[id];if(!w)return;const c=w.c;x.save();x.translate(S/2,S/2+1);x.lineWidth=2;x.strokeStyle='#000';x.lineJoin='round';x.fillStyle=c;
  if(id=='helmet'){x.beginPath();x.arc(0,3,13,Math.PI,0);x.lineTo(14,9);x.lineTo(-14,9);x.closePath();x.fill();x.stroke();x.fillStyle='#fff6b0';x.beginPath();x.arc(0,-6,4,0,6.3);x.fill();x.stroke()}
  else if(id=='clover'){for(let i=0;i<4;i++){x.save();x.rotate(i*Math.PI/2);x.beginPath();x.arc(6,0,6,0,6.3);x.fill();x.stroke();x.restore()}}
  else if(id=='sage'){x.beginPath();x.moveTo(-14,9);x.lineTo(0,-16);x.lineTo(14,9);x.closePath();x.fill();x.stroke();x.fillStyle='#ffd24a';x.fillRect(-16,8,32,4);x.strokeRect(-16,8,32,4)}
@@ -1592,15 +1592,22 @@ function cleanCx(c){if(!c||typeof c!='object')return null;const n=(v,lo,hi,d)=>{
 /* ========== LATE: 21-nowingwear.js ========== */
 // ===== Wearable wings are gone. Wings are appearance items (Character menu / Store) and every wing gives a double jump. =====
 const REMOVED_WEAR7=['angel','fairy','bat','phoenix','crystal'];
-for(const id of REMOVED_WEAR7){try{delete WEAR[id]}catch(_){}}
+// hidden (non-enumerable) rather than deleted: old saves that still name them can never crash the game
+for(const id of REMOVED_WEAR7){try{const v=WEAR[id];Object.defineProperty(WEAR,id,{value:v,enumerable:false,writable:true,configurable:true})}catch(_){}}
 const WINGFIX7=(()=>{
  function run(){try{let refund=0;for(const id of REMOVED_WEAR7){if(ownW[id]){refund+=({angel:150,fairy:240,bat:330,phoenix:520,crystal:900})[id]||0;delete ownW[id]}}
-  for(const sl in wear)if(wear[sl]&&!WEAR[wear[sl]])wear[sl]=''
+  for(const sl in wear)if(wear[sl]&&(!WEAR[wear[sl]]||REMOVED_WEAR7.includes(wear[sl])))wear[sl]=''
   if(refund>0){gems+=refund;try{say('Wearable wings were removed. Refunded '+refund+' gems.')}catch(_){}}}catch(_){}}
  run();setInterval(run,300);return{run}})();
 // double-jump feathers use the equipped appearance wing's colours, plus a soft whoosh
 featherFx=function(n){const w=curWing(lvl);if(!w||parts.length>480)return;const pal=w.pal;for(let i=0;i<n;i++)parts.push({x:P.x-P.f*10,y:P.y+22+rnd(-10,10),vx:-P.f*rnd(20,110)+rnd(-40,40),vy:rnd(-60,40),l:rnd(.6,1.2),c:pal[1+(i%3)],s:rnd(3,5),r:Math.random()*6,k:'f'});
  try{if(n>=10)SFX7.tone(520,880,.18,'sine',.05)}catch(_){}};
+// saves made before this update may still reference the removed wings: clean them while the save is read, before anything draws them
+{const _ss=sanitizeSave;sanitizeSave=function(p){const r=_ss(p);try{if(r){const pr={angel:150,fairy:240,bat:330,phoenix:520,crystal:900};let ref=0;
+ if(r.ownW)for(const id of REMOVED_WEAR7)if(r.ownW[id]){ref+=pr[id]||0;delete r.ownW[id]}
+ if(r.wear)for(const sl in r.wear)if(REMOVED_WEAR7.includes(r.wear[sl]))r.wear[sl]='';
+ if(ref&&Number.isFinite(+r.gems))r.gems=+r.gems+ref}}catch(_){}return r}}
+{const _dw=drawWearIcon;drawWearIcon=function(x,id,S){if(!WEAR[id])return;return _dw(x,id,S)}}
 
 /* ========== LATE: 30-quality.js ========== */
 // ===== V6 Quality manager: presets + optional adaptive downgrade; reads cel.opt =====
