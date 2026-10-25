@@ -539,7 +539,7 @@ function seedIcon(x,n,S){burstBG(x,S);const G2=16,px=S/G2,cells=new Uint8Array(G
   else{let nb=0;for(const[a,b]of[[1,0],[-1,0],[0,1],[0,-1]]){const X=xx+a,Y=y+b;if(X>=0&&Y>=0&&X<G2&&Y<G2&&cells[Y*G2+X])nb=1}if(nb){x.fillStyle='#2a160a';x.fillRect(xx*px,y*px,px,px)}}}}
 function iconURL(k){if(ICON[k])return ICON[k];const S=48,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d');
  if(typeof k=='number'&&k<100)x.drawImage(spr(k,0,0),0,0,S,S);else if(typeof k=='number'&&k>=200)matIcon(x,k,S);else if(typeof k=='number')seedIcon(x,k-100,S);
- else if(k[0]=='w'){burstBG(x,S);const id=k.slice(2);if(id=='fist'){x.fillStyle='#ffd9a8';x.strokeStyle='#000';x.lineWidth=3;x.beginPath();x.arc(24,26,12,0,6.3);x.fill();x.stroke();x.lineWidth=2;for(let i=0;i<3;i++){x.beginPath();x.moveTo(18+i*6,16);x.lineTo(18+i*6,23);x.stroke()}}else{x.translate(22,27);x.rotate(-Math.PI/4);const L=WPN[id].k=='sword'?34:28;x.translate(-L*.4,0);drawWeapon(x,id,L,0)}}
+ else if(k[0]=='w'){burstBG(x,S);const id=k.slice(2);if(id=='fist'){x.fillStyle='#ffd9a8';x.strokeStyle='#000';x.lineWidth=3;x.beginPath();x.arc(24,26,12,0,6.3);x.fill();x.stroke();x.lineWidth=2;for(let i=0;i<3;i++){x.beginPath();x.moveTo(18+i*6,16);x.lineTo(18+i*6,23);x.stroke()}}else if(WPN[id]){x.translate(22,27);x.rotate(-Math.PI/4);const L=WPN[id].k=='sword'?34:28;x.translate(-L*.4,0);drawWeapon(x,id,L,0)}}
  else{burstBG(x,S);drawWearIcon(x,k.slice(2),S)}ICONC[k]=c;return ICON[k]=c.toDataURL()}
 function drawWearIcon(x,id,S){const w=WEAR[id];if(!w)return;const c=w.c;x.save();x.translate(S/2,S/2+1);x.lineWidth=2;x.strokeStyle='#000';x.lineJoin='round';x.fillStyle=c;
  if(id=='helmet'){x.beginPath();x.arc(0,3,13,Math.PI,0);x.lineTo(14,9);x.lineTo(-14,9);x.closePath();x.fill();x.stroke();x.fillStyle='#fff6b0';x.beginPath();x.arc(0,-6,4,0,6.3);x.fill();x.stroke()}
@@ -884,7 +884,7 @@ $('mclose').onclick=closeMenu;$('bp').onclick=()=>{startBGM();if(!made){enterWor
 $('wn').onkeydown=e=>{if(e.key=='Enter')enterWorld($('wn').value)};for(const b of document.querySelectorAll('.bk'))b.onclick=()=>scr('mhome');$('bmenu').onclick=()=>openMenu('mhome');$('bzi').onclick=()=>setZoom(ZM*1.2);$('bzo').onclick=()=>setZoom(ZM/1.2);$('bmus').onclick=()=>{startBGM();toggleMute()};
 $('nm').oninput=e=>{myName=e.target.value.slice(0,14)||myName;saveP()};$('ov').oninput=e=>{OPT.mv=e.target.value/100;if(bgm)bgm.m.gain.value=mute?0:OPT.mv;saveP()};$('os').oninput=e=>{OPT.sv=e.target.value/100;saveP()};$('oq').onchange=e=>{OPT.q=+e.target.value;saveP()};$('osh').onchange=e=>{OPT.sh=e.target.checked?1:0;saveP()};
 document.addEventListener('pointerdown',()=>startBGM());
-gen();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;renderBar();renderSkills();renderW();renderQuest();hud();
+gen();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;for(const f of[renderBar,renderSkills,renderW,renderQuest,hud])try{f()}catch(_){/* items added by later scripts are not defined yet; they re-render once everything has loaded */}
 if(!made){enterWorld('plaza');showCreator()}// ---------- pixel-art pipeline (chibi sprites with black pixel outline)
 const PXS=2,pxC=document.createElement('canvas'),pxG=pxC.getContext('2d',{willReadFrequently:true});
 const PXCACHE=new WeakMap();function pixelize(cx,cy,hw,hh,fn,key){const ps=PXS,sx=Math.round(cx/ps)*ps,sy=Math.round(cy/ps)*ps,w=Math.ceil(hw/ps)*2,h=Math.ceil(hh/ps)*2;if(key){const c=PXCACHE.get(key);if(c&&c.hw==hw&&c.hh==hh&&c.ps==ps&&performance.now()-c.t<(window.pxTtl6||55)){g.save();g.imageSmoothingEnabled=false;g.drawImage(c.cv,sx-c.w/2*ps,sy-c.h/2*ps,c.w*ps,c.h*ps);g.restore();return}}if(pxC.width!=w||pxC.height!=h){pxC.width=w;pxC.height=h}
@@ -931,7 +931,7 @@ function drawChar(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk){wpn=WPN[wp
  pixelize(cx,cy+28,84,88,()=>chibiBody(cx,cy,f,t,vx,air,wpn,sw,fm,wr,dsh,lk,Wk));
  nameTag(cx,cy-24,name,hue);if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-60,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-43);g.restore()}}
 // ---------- evolving weapons
-for(const k of Object.keys(own))if(!WPN[k])delete own[k];own.fist=1;if(!WPN[wp]||!own[wp])wp='fist';
+own.fist=1;if(!own[wp])wp='fist';/* weapons added by later scripts are validated again once everything has loaded (99-a-sanitize.js) */
 function wKill(){const w=WPN[wp];if(!w||!w.ev)return;wK[wp]=(wK[wp]|0)+1;if(wK[wp]>=w.kn){const o=wp,n=w.ev;own[n]=1;delete own[o];wUp[n]=wUp[o]|0;wK[n]=0;wp=n;renderW();burst(P.x,P.y+20,'rgb('+WPN[n].g+')',46,260,6,'p');rings.push({x:P.x,y:P.y+25,c:'#fff',t:performance.now()});snd(880,.5,'triangle',.07,1.5);say('✨ '+WPN[o].n+' evolved into '+WPN[n].n+'!')}else if(wK[wp]%5==0)renderW()}
 const _dwp=drawWeapon;drawWeapon=function(x,id,L,t){const w=WPN[id]||{};if(w.st){L*=1+.07*w.st}_dwp(x,id,L,t);if(w.st>=2){x.save();x.globalCompositeOperation='lighter';const gc=w.g.join(','),r=10+w.st*5,gr=x.createRadialGradient(L*.7,0,1,L*.7,0,r+Math.sin((t||0)*6)*2);gr.addColorStop(0,'rgba('+gc+',.55)');gr.addColorStop(1,'rgba('+gc+',0)');x.fillStyle=gr;x.fillRect(L*.7-r-4,-r-4,2*r+8,2*r+8);x.restore()}};
 

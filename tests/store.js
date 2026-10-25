@@ -75,5 +75,9 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('18 new blocks paint, are priced and glow where intended',r.blocks.every(Boolean)&&r.glow,JSON.stringify(r.blocks));
  ok('wearable wings removed, double-jump hook and new sounds exist',r.wear&&r.jump&&r.sfx,JSON.stringify(r));
  ok('plaza rebuilt from new blocks (slate promenade, NPCs kept)',r.floor&&r.plaza,JSON.stringify(r));
+ // regression: a save that owns store-added weapons / removed wings must start cleanly and keep the weapons
+ {const q=await b.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));await q.addInitScript(()=>{if(!localStorage.getItem('s9')){localStorage.setItem('s9','1');localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rbp',JSON.stringify({v:1,gems:10,lvl:20,own:{fist:1,solarfang:1},wp:'solarfang',ownW:{angel:1},wear:{wing:'angel'}}))}});
+  await q.goto(FILE);await q.waitForTimeout(1500);const o=await q.evaluate(()=>({ready:RBDIAG.ready,wp,own:!!own.solarfang,wing:wear.wing,errs:RBDIAG.errors.length}));await q.close();
+  ok('old saves (new weapons, removed wings) start cleanly and keep their weapons',o.ready&&o.wp=='solarfang'&&o.own&&!o.wing&&!o.errs&&!qe.length,JSON.stringify(o)+qe.join('|'))}
  ok('no page errors in the whole run',errs.length==0,errs.slice(0,3).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all store tests passed');process.exit(fails?1:0)})();
