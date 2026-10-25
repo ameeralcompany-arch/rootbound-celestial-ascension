@@ -3765,6 +3765,9 @@ function objIcon(id){if(OBJICON[id])return OBJICON[id];const d=ODEF[id],c=docume
 const _bs6=blockSprite;blockSprite=function(b,v){if(isObjId(b))return objIcon(b);return _bs6(b,v)};
 const _dnp6=drawNPCs;drawNPCs=function(now){_dnp6(now);try{OBJ6.draw(now)}catch(e){if(!OBJ6.err){OBJ6.err=1;console.error(e)}}};
 Object.assign(LVREQ,{39:8,40:16,41:28,20:2,21:6,22:10,23:8,24:12,25:25,26:15,27:3,29:2,30:4,31:4,32:9,33:3,35:3,36:5});
+// breaking a chest spills everything inside it as drops (it used to vanish with the chest)
+{const _ba=breakAt;breakAt=function(x,y,dmg){let items=null;try{const o=OBJ[y*W+x];if(o&&o.c&&Array.isArray(o.c.it)&&o.c.it.length)items=o.c.it.map(a=>[a[0],a[1]])}catch(_){}
+ const r=_ba(x,y,dmg);try{if(items&&r&&!tiles[y*W+x]){const px=x*T+T/2,py=y*T+T/2;for(const[it,n]of items){let left=n;while(left>0){const c=Math.min(left,Math.max(1,Math.ceil(n/6)));spawnDrop(px,py,it,c);left-=c}}}}catch(_){}return r}}
 
 /* ========== LATE: 92-doors.js ========== */
 // ===== V6 doors / portals / interaction / configuration UI =====

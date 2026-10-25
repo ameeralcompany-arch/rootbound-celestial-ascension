@@ -65,6 +65,8 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
 
  // farming growth uses wall-clock timestamps => continues while the game is closed
  const fm=await E(()=>{const k=(H-20)*W+30;trees.set(k,{s:1,r:1,p:Date.now()-3600*1000});const a=prog(trees.get(k));trees.set(k,{s:1,r:1,p:Date.now()});const b=prog(trees.get(k));return{a,b}},0);ok('crop planted an hour ago is fully grown, fresh crop is not',fm.a===1&&fm.b<.2,JSON.stringify(fm));
+ // breaking a chest drops everything that was inside
+ const cb=await E(i=>{const x=44,y=sh(44)-1,k=y*W+x;tiles[k]=27;pushEdit(k);OBJ[k].c.it=[[5,12],[7,3]];drops.length=0;let n=0;while(tiles[k]&&n++<200)breakAt(x,y,50);const s={};for(const d of drops)s[d.k]=(s[d.k]||0)+d.n;return{s}},0);ok('breaking a chest drops its contents',cb.s[5]==12&&cb.s[7]==3,JSON.stringify(cb));
  // object persistence through world save + page reload
  await E(i=>{const k=i.ks[2];tiles[k]=27;pushEdit(k);OBJ[k].c.it=[[5,7]];OBJ[k].c.nm='Persist';dirty=1},info);await p.waitForTimeout(4500);
  await p.reload();await p.waitForTimeout(700);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}});await p.waitForTimeout(500);await p.evaluate(()=>enterWorld('objtest'));await p.waitForTimeout(900);
