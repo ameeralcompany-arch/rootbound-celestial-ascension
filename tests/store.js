@@ -43,7 +43,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   STORE7.setFilter({sort:'pd'});const pd=STORE7.list().map(i=>i.price);o.desc=pd.every((v,i)=>!i||pd[i-1]>=v);
   STORE7.setFilter({sort:'feat',rar:'legendary'});o.rar=STORE7.list().every(i=>i.rar=='legendary');STORE7.setFilter({rar:'all',owned:true});o.owned=STORE7.list().every(i=>SHOP7.has(i.id));STORE7.setFilter({owned:false,cat:'featured'});
   o.hud=!!document.getElementById('bstore');return o});
- ok('store opens, every category lists items',r.open&&r.weapons>=15&&r.wings==8&&r.effects>=15&&r.charms==5&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
+ ok('store opens, every category lists items',r.open&&r.weapons>=15&&r.wings==8&&r.effects>=15&&r.charms==9&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
  // buy through the UI with confirm dialog
  await p.evaluate(()=>{gems=5000;lvl=120;STORE7.setFilter({cat:'all',q:'Solar Fang'});STORE7.select('wpn_solarfang')});await p.waitForTimeout(300);
@@ -79,5 +79,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  {const q=await b.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));await q.addInitScript(()=>{if(!localStorage.getItem('s9')){localStorage.setItem('s9','1');localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rbp',JSON.stringify({v:1,gems:10,lvl:20,own:{fist:1,solarfang:1},wp:'solarfang',ownW:{angel:1},wear:{wing:'angel'}}))}});
   await q.goto(FILE);await q.waitForTimeout(1500);const o=await q.evaluate(()=>({ready:RBDIAG.ready,wp,own:!!own.solarfang,wing:wear.wing,errs:RBDIAG.errors.length}));await q.close();
   ok('old saves (new weapons, removed wings) start cleanly and keep their weapons',o.ready&&o.wp=='solarfang'&&o.own&&!o.wing&&!o.errs&&!qe.length,JSON.stringify(o)+qe.join('|'))}
+ r=await p.evaluate(()=>{const o={};o.items=COMP7.IDS.every(i=>SHOP7.byId.has('charm_'+i));gems=99999;o.eq=COMP7.IDS.map(i=>{SHOP7.buy('charm_'+i);SHOP7.equip('charm_'+i);return SHOP7.eqRef('charm')==i});o.voice=!!document.getElementById('ovo')&&!!document.getElementById('osub');SHOP7.unequip('charm');return o});
+ ok('4 companions are in the Store and can be bought and equipped; voice volume + subtitles controls exist',r.items&&r.eq.every(Boolean)&&r.voice,JSON.stringify(r));
  ok('no page errors in the whole run',errs.length==0,errs.slice(0,3).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all store tests passed');process.exit(fails?1:0)})();

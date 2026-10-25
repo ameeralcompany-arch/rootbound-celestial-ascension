@@ -9,8 +9,10 @@ const SFX7=(()=>{
   {n:'ya',c:'y',s:[['a',.2,1.18,.92]]},{n:'ha',c:'h',s:[['a',.17,1.12,.9]]},{n:'hai',c:'h',s:[['a',.11,1.15,1.05],['i',.12,1.05,.85]]},{n:'ei',c:'',s:[['e',.1,1.1,1.15],['i',.15,1.15,.88]]},
   {n:'hya',c:'h',s:[['i',.05,1.2,1.25],['a',.17,1.25,.95]]},{n:'ta',c:'t',s:[['a',.2,1.15,.88]]},{n:'sei',c:'s',s:[['e',.1,1.1,1.1],['i',.15,1.1,.85]]}];
  let lastV=0;
+ const SUB={ya:['やっ','Yah!'],ha:['はっ','Ha!'],hai:['はい','Yes!'],ei:['えいっ','Hup!'],hya:['ひゃっ','Hyah!'],ta:['たっ','Tah!'],sei:['せいっ','Take that!']};let subEl=null,subT=0;
+ function subtitle(n){if(!OPT.sub)return;const d=SUB[n];if(!d)return;if(!subEl){subEl=document.createElement('div');subEl.style.cssText='position:fixed;left:50%;bottom:150px;transform:translateX(-50%);padding:6px 14px;border-radius:10px;background:rgba(20,18,40,.72);color:#fff;font:600 15px system-ui,sans-serif;pointer-events:none;z-index:50;transition:opacity .2s;opacity:0';document.body.appendChild(subEl)}subEl.textContent=d[0]+'  ('+d[1]+')';subEl.style.opacity=1;clearTimeout(subT);subT=setTimeout(()=>{subEl.style.opacity=0},1100)}
  function voice(strength){if(!ok())return;const now=performance.now();if(now-lastV<420)return;lastV=now;
-  const w=WORDS[(R()*WORDS.length)|0],t0=AC.currentTime+.01,base=150+R()*40,v=.085*vol()*(strength||1);let t=t0;
+  const w=WORDS[(R()*WORDS.length)|0],t0=AC.currentTime+.01,base=150+R()*40,v=.085*vol()*(OPT.vo==null?1:OPT.vo)*(strength||1);try{subtitle(w.n)}catch(_){}let t=t0;
   const out=AC.createGain();out.gain.value=1;out.connect(AC.destination);
   if(w.c){const nz=AC.createBufferSource();nz.buffer=noiseBuf();const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=w.c=='s'?5500:w.c=='t'?3500:w.c=='h'?2400:1800;bp.Q.value=1.2;const g=AC.createGain();const d=w.c=='t'?.025:.06;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.5,t+.008);g.gain.exponentialRampToValueAtTime(.0005,t+d);nz.connect(bp);bp.connect(g);g.connect(out);nz.start(t);nz.stop(t+d+.02);t+=d*.7}
   for(const[vw,dur,p0,p1]of w.s){const o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(base*p0,t);o.frequency.exponentialRampToValueAtTime(base*p1,t+dur);

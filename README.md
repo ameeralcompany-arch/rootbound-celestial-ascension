@@ -146,3 +146,9 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - **Plaza:** rebuilt from the new blocks only: pond with an arched bridge, cottage, fountain with a glowing crystal, torii gate, two-storey teahouse, bamboo grove, cherry trees, lantern strings, mountain backdrop. NPCs and the door keep their positions.
 - **Music:** every weather and place has its own songs (10 moods, 2-3 songs each). Songs are generated from a motif that changes as it goes, and the same song never plays twice in a row.
 - **Honest limits:** all sounds and music are synthesised in code. The tests check that they start and switch correctly, but nobody has listened to them, so tone and loudness are unverified; the Volume sliders in Settings control them. All art is drawn in code, not hand-made.
+
+### V10.1
+- **Companions:** four original spirits (Lumi the firefly, Mochi the cloud, Pebble the moss golem, Kitsu the two-tailed fox) in the Store's Charms tab. They follow you, hop when you jump, shut their eyes when you are hurt and doze when you stand still. Other players see them too.
+- **Voice settings:** a separate Voice volume slider and a Subtitles switch (shows the Japanese word and its English meaning) in Settings.
+- **Fixes:** startup crash with saves that own Store weapons or removed wings; weapons bought in the Store are kept across reloads; chests drop their contents when broken.
+- **Still not done (honest list):** the voice is synthesised in code, not recorded by a voice actor (no recording tool here); there is no mini-game, treasure-hunt or world-event system beyond what V9 already had.

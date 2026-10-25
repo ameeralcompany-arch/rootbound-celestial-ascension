@@ -69,6 +69,8 @@ FXI=[('aura_void','aura','Void Aura','rare',600,'Slow violet smoke curls around 
 for i,s,n,r,p,d in FXI: add(id='fx_'+i,cat='effects',n=n,price=p,rar=r,stack=0,ref=i,lv=0,d=d,how='store',new=1,sub=s)
 # ---- NEW charms
 CH=[('star','Star Charm','uncommon',250,'A small star that floats beside you.'),('moon','Moon Charm','uncommon',300,'A crescent that glows softly.'),
+ ('lumi','Lumi, Firefly Spirit','uncommon',600,'A tiny glowing firefly that lights your way and flutters beside you. A companion.'),('mochi','Mochi, Cloud Spirit','rare',900,'A soft cloud puff that bounces after you, squishes when you jump and naps when you stand still. A companion.'),
+ ('pebble','Pebble, Moss Golem','rare',1000,'A tiny mossy rock with a glowing rune eye. It hops along behind you. A companion.'),('kitsu','Kitsu, Fox Spirit','epic',1600,'A two-tailed fox spirit with blue flames on its tails. A companion.'),
  ('leaf','Leaf Charm','common',150,'A leaf that turns slowly.'),('chain','Spectral Chain Charm','rare',450,'A short chain of light that swings as you move.'),
  ('raven','Raven Companion','epic',1100,'A small raven that circles you.')]
 for i,n,r,p,d in CH: add(id='charm_'+i,cat='charms',n=n,price=p,rar=r,stack=0,ref=i,lv=0,d=d,how='store',new=1)
