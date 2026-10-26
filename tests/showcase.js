@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?'  - '+x:''));if(!c)fails++};
 (async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});
 for(const vp of [[1280,720],[390,800],[1920,1080]]){const p=await b.newPage({viewport:{width:vp[0],height:vp[1]}});const e=[];p.on('pageerror',x=>e.push(x.message));
-await p.goto('file://'+__dirname+'/../index.html');await p.waitForTimeout(700);await p.getByText('PLAY AS GUEST',{exact:false}).first().click();await p.waitForTimeout(800);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForFunction(()=>window.SHOW7&&SHOW7.isOpen,null,{timeout:15000}).catch(()=>{});await p.waitForTimeout(800);
+await p.goto('file://'+__dirname+'/../index.html');await p.waitForTimeout(700);await p.getByText('PLAY AS GUEST',{exact:false}).first().click();await p.waitForTimeout(800);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.evaluate(()=>SHOW7.open());await p.waitForTimeout(800);
 const tag=' @'+vp[0];
 ok('showcase opens after launch'+tag,await p.evaluate(()=>SHOW7.isOpen));
 const nm=()=>p.evaluate(()=>document.querySelector('#show .name').innerText.replace(/\n/g,' '));

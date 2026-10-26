@@ -108,5 +108,4 @@ startBGM=function(){MUS7.start()};
 {const _au=ambUpdate;ambUpdate=function(){_au();try{if(ambG)ambG.gain.value*=OPT.av==null?1:OPT.av}catch(_){}};
  const addSlider=()=>{const os=document.getElementById('os');if(!os||document.getElementById('oav'))return;const lb=os.parentElement,l=document.createElement('label');l.innerHTML='Ambience <input type="range" id="oav" min="0" max="100">';lb.after(l);const r=l.querySelector('input');r.value=(OPT.av==null?1:OPT.av)*100;r.oninput=e=>{OPT.av=e.target.value/100;try{saveP()}catch(_){}}};
  addSlider();addEventListener('load',addSlider);
- const addVoice=()=>{const os=document.getElementById('os');if(!os||document.getElementById('ovo'))return;const lb=os.parentElement,l=document.createElement('label');l.innerHTML='Voice <input type="range" id="ovo" min="0" max="100"> <span style="margin-left:8px">Subtitles <input type="checkbox" id="osub"></span>';lb.after(l);const r=l.querySelector('#ovo'),c=l.querySelector('#osub');r.value=(OPT.vo==null?1:OPT.vo)*100;c.checked=!!OPT.sub;r.oninput=e=>{OPT.vo=e.target.value/100;try{saveP()}catch(_){}};c.onchange=e=>{OPT.sub=e.target.checked?1:0;try{saveP()}catch(_){}}};
- addVoice();addEventListener('load',addVoice)}
+}

@@ -3,24 +3,7 @@ const SFX7=(()=>{
  const R=Math.random,vol=()=>(OPT.sv==null?1:OPT.sv);
  const ok=()=>{try{ac()}catch(_){}return !!AC&&AC.state!='closed'};
  let nbuf=null;const noiseBuf=()=>nbuf||(nbuf=(()=>{const b=AC.createBuffer(1,AC.sampleRate,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b})());
- // ---- Japanese battle shouts: a glottal sawtooth through three vowel formants. Short, light, a little breathy.
- const FORM={a:[820,1250,2650],e:[520,1900,2600],i:[310,2250,3000],o:[510,930,2500],u:[340,1150,2300]};
- const WORDS=[ // [vowel segments..., consonant at start]  each segment: [vowel,seconds,pitchFrom,pitchTo]
-  {n:'ya',c:'y',s:[['a',.2,1.18,.92]]},{n:'ha',c:'h',s:[['a',.17,1.12,.9]]},{n:'hai',c:'h',s:[['a',.11,1.15,1.05],['i',.12,1.05,.85]]},{n:'ei',c:'',s:[['e',.1,1.1,1.15],['i',.15,1.15,.88]]},
-  {n:'hya',c:'h',s:[['i',.05,1.2,1.25],['a',.17,1.25,.95]]},{n:'ta',c:'t',s:[['a',.2,1.15,.88]]},{n:'sei',c:'s',s:[['e',.1,1.1,1.1],['i',.15,1.1,.85]]}];
- let lastV=0;
- const SUB={ya:['やっ','Yah!'],ha:['はっ','Ha!'],hai:['はい','Yes!'],ei:['えいっ','Hup!'],hya:['ひゃっ','Hyah!'],ta:['たっ','Tah!'],sei:['せいっ','Take that!']};let subEl=null,subT=0;
- function subtitle(n){if(!OPT.sub)return;const d=SUB[n];if(!d)return;if(!subEl){subEl=document.createElement('div');subEl.style.cssText='position:fixed;left:50%;bottom:150px;transform:translateX(-50%);padding:6px 14px;border-radius:10px;background:rgba(20,18,40,.72);color:#fff;font:600 15px system-ui,sans-serif;pointer-events:none;z-index:50;transition:opacity .2s;opacity:0';document.body.appendChild(subEl)}subEl.textContent=d[0]+'  ('+d[1]+')';subEl.style.opacity=1;clearTimeout(subT);subT=setTimeout(()=>{subEl.style.opacity=0},1100)}
- function voice(strength){if(!ok())return;const now=performance.now();if(now-lastV<420)return;lastV=now;
-  const w=WORDS[(R()*WORDS.length)|0],t0=AC.currentTime+.01,base=150+R()*40,v=.085*vol()*(OPT.vo==null?1:OPT.vo)*(strength||1);try{subtitle(w.n)}catch(_){}let t=t0;
-  const out=AC.createGain();out.gain.value=1;out.connect(AC.destination);
-  if(w.c){const nz=AC.createBufferSource();nz.buffer=noiseBuf();const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=w.c=='s'?5500:w.c=='t'?3500:w.c=='h'?2400:1800;bp.Q.value=1.2;const g=AC.createGain();const d=w.c=='t'?.025:.06;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*.5,t+.008);g.gain.exponentialRampToValueAtTime(.0005,t+d);nz.connect(bp);bp.connect(g);g.connect(out);nz.start(t);nz.stop(t+d+.02);t+=d*.7}
-  for(const[vw,dur,p0,p1]of w.s){const o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(base*p0,t);o.frequency.exponentialRampToValueAtTime(base*p1,t+dur);
-   const lfo=AC.createOscillator(),lg=AC.createGain();lfo.frequency.value=6;lg.gain.value=base*.012;lfo.connect(lg);lg.connect(o.frequency);
-   const env=AC.createGain();env.gain.setValueAtTime(0,t);env.gain.linearRampToValueAtTime(v,t+.012);env.gain.setValueAtTime(v,t+dur*.65);env.gain.exponentialRampToValueAtTime(.0005,t+dur+.05);
-   const F=FORM[vw];F.forEach((fr,i)=>{const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=fr;bp.Q.value=i?10:7;const gn=AC.createGain();gn.gain.value=[1,.55,.25][i];o.connect(bp);bp.connect(gn);gn.connect(env)});
-   env.connect(out);o.start(t);lfo.start(t);o.stop(t+dur+.08);lfo.stop(t+dur+.08);t+=dur*.9}
-  setTimeout(()=>{try{out.disconnect()}catch(_){}},900)}
+ // (character voice removed: the hero is silent)
  // ---- cute, calm monster sounds: soft sine "pyu/pop/boop" with a little pitch glide, per species
  const MV={slime:[330,.7,'boop'],moth:[880,1,'flute'],crab:[520,.9,'tick'],cloud:[260,.6,'fuwa'],bat:[1100,1.2,'squeak'],golem:[170,.55,'dun'],wraith:[420,.8,'woo'],magma:[210,.6,'blub']};
  function tone(f0,f1,d,ty,v,delay,vib){if(!ok())return;const t=AC.currentTime+(delay||0)+.005,o=AC.createOscillator(),g=AC.createGain(),lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;o.type=ty||'sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t+d*.9);
@@ -41,10 +24,9 @@ const SFX7=(()=>{
   const n=Math.min(5,1+(s*3|0));for(let i=0;i<n;i++)plip(.05+i*.045+R()*.03);
   const t=AC.currentTime,nz=AC.createBufferSource();nz.buffer=noiseBuf();const bp=AC.createBiquadFilter();bp.type='lowpass';bp.frequency.setValueAtTime(1500,t);bp.frequency.exponentialRampToValueAtTime(350,t+.25);const g=AC.createGain();g.gain.setValueAtTime(.05*vol()*s,t);g.gain.exponentialRampToValueAtTime(.0005,t+.28);nz.connect(bp);bp.connect(g);g.connect(AC.destination);nz.start(t);nz.stop(t+.3)}
  function bubble(){if(!ok())return;const f=500+R()*500;tone(f,f*1.8,.07,'sine',.03)}
- return{voice,mobSound,bloop,plip,splash,bubble,tone}})();
+ return{mobSound,bloop,plip,splash,bubble,tone}})();
 // --- hooks
 { // swing -> shout
- const _uw=useWeapon;useWeapon=function(){const r=_uw.apply(this,arguments);try{if(Math.random()<.8)SFX7.voice(wp=='fist'?.85:1.05)}catch(_){}return r}
  // monsters: soft hit/death sounds
  const _hm=hurtMob;hurtMob=function(m,d,w,ang){const was=m.hp>0,r=_hm.apply(this,arguments);try{if(was&&d>0)SFX7.mobSound(m,m.hp<=0?'die':'hit')}catch(_){}return r};
  setInterval(()=>{try{if(!entered||!mobs.length||Math.random()<.45)return;const m=mobs[(Math.random()*mobs.length)|0];if(m&&!m.dead)SFX7.mobSound(m,'idle')}catch(_){}},2600);

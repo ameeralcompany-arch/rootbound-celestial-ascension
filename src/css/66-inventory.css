@@ -1,0 +1,20 @@
+/* Inventory search / sort / favourites (uses the shared theme tokens, so light + night glass both apply) */
+#inv7 .sheet{grid-template-rows:auto auto auto 1fr}
+#inv7 .tb7{grid-column:1;grid-row:3;display:flex;gap:8px;align-items:center;padding:10px 22px 0}
+#inv7 .tb7 input,#inv7 .tb7 select{font:inherit;font-size:12px;color:var(--ink);background:var(--input-bg,var(--ed-paper));border:1px solid var(--line);border-radius:10px;padding:7px 10px;min-width:0}
+#inv7 .tb7 input{flex:1}
+#inv7 .tb7 input:focus,#inv7 .tb7 select:focus{outline:2px solid var(--accent);outline-offset:1px}
+#inv7 .tb7 .eyebrow{white-space:nowrap}
+#inv7 .grid7{grid-column:1;grid-row:4}
+#inv7 aside{grid-column:2;grid-row:3/5}
+#inv7 .it7 .fv7{position:absolute;right:5px;bottom:3px;text-decoration:none;font-size:11px;color:#e0a526;line-height:1}
+@media(max-width:760px){#inv7 .sheet{grid-template-rows:auto auto auto 1fr auto}#inv7 .tb7,#inv7 .grid7,#inv7 aside{grid-column:1}#inv7 .grid7{grid-row:4}#inv7 aside{grid-row:5}}
+/* Settings groups + search */
+.setq7{display:flex;gap:10px;align-items:center;margin:6px 0 12px}
+.setq7 input{flex:1;font:inherit;font-size:13px;color:var(--ink);background:var(--input-bg,var(--surface));border:1px solid var(--line);border-radius:12px;padding:9px 12px;min-width:0}
+.setq7 input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.setsec7{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px 14px 10px;margin:0 0 12px}
+.setsec7 h4{margin:8px 0 4px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);display:flex;align-items:baseline;gap:10px}
+.setsec7 h4 small{font-size:11px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted)}
+.setsec7 .hrow{border-top:1px solid var(--line);margin:0;padding:9px 0}
+.setsec7 h4+.hrow{border-top:0}

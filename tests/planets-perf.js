@@ -1,0 +1,14 @@
+// Star Atlas performance probe (CPU throttled to mimic a slow PC). Run: node tests/planets-perf.js [rate]
+const {chromium}=require('playwright');const path=require('path');const rate=+process.argv[2]||4;
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox','--disable-gpu']});const ctx=await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+ await p.addInitScript("localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));if(!localStorage.getItem('seeded')){localStorage.setItem('seeded','1');const N=[];for(let i=0;i<12;i++)N.push('w'+(1000+i));localStorage.setItem('rbidx',JSON.stringify(N));for(const n of N)localStorage.setItem('rbw_'+n,JSON.stringify({5:[3,0,0,0]}));const th=['verdant','blossom','frost','void','astral','galaxy','ember','tidal','dune'],w={};N.forEach((n,i)=>w[n]={theme:th[i%9],ix:i,ent:1});localStorage.setItem('rbpl',JSON.stringify({w}))}");
+ await p.goto('file://'+path.join(__dirname,'..','index.html'));await p.waitForTimeout(800);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(400);
+ await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}});await p.waitForTimeout(300);await p.evaluate(()=>{PLN7.close();SHOW7.close()});await p.waitForTimeout(300);
+ const c=await ctx.newCDPSession(p);await c.send('Emulation.setCPUThrottlingRate',{rate});
+ await c.send('Profiler.enable');await c.send('Profiler.start');const t0=Date.now();await p.evaluate(()=>PLN7.open());
+ await p.waitForTimeout(4000);const loaded=Date.now()-t0;
+ const fr=await p.evaluate(()=>new Promise(res=>{const t=performance.now();let n=0,mx=0,l=t,sl=0;const f=now=>{n++;const d=now-l;mx=Math.max(mx,d);if(d>50)sl++;l=now;if(now-t>3000)res({fps:+(n/3).toFixed(1),maxFrameMs:Math.round(mx),slow:sl});else requestAnimationFrame(f)};requestAnimationFrame(f)}));
+ await p.evaluate(()=>PLN7.select('w1003'));await p.waitForTimeout(1500);
+ const fr2=await p.evaluate(()=>new Promise(res=>{const t=performance.now();let n=0,mx=0,l=t;const f=now=>{n++;mx=Math.max(mx,now-l);l=now;if(now-t>3000)res({fps:+(n/3).toFixed(1),maxFrameMs:Math.round(mx)});else requestAnimationFrame(f)};requestAnimationFrame(f)}));
+ const prof=(await c.send('Profiler.stop')).profile;const self={};const dt=prof.timeDeltas,ids=prof.samples;const byId={};prof.nodes.forEach(n=>byId[n.id]=n);ids.forEach((id,i)=>{const n=byId[id],k=n.callFrame.functionName+':'+n.callFrame.lineNumber;self[k]=(self[k]||0)+dt[i]/1000});console.log(Object.entries(self).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>e[0]+' '+Math.round(e[1])).join('\n'));
+ console.log(JSON.stringify({rate,loadedAllPlanetsMs:loaded,overview:fr,focused:fr2,errs:errs.slice(0,2)}));await b.close()})();

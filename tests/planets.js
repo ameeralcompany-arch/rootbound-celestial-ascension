@@ -6,7 +6,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
 async function boot(b,seed,vp){const ctx=await b.newContext({viewport:vp||{width:1280,height:720}});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message+' @'+String(e.stack).split('\n').slice(1,3).join('|')));p.on('console',m=>{if(m.type()=='error'&&!/ERR_|Failed to load/.test(m.text()))errs.push('C:'+m.text())});
  await p.addInitScript("localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));if(!localStorage.getItem('seeded')){localStorage.setItem('seeded','1');"+(seed?'('+seed.toString()+')()':'')+"}");
  await p.goto(FILE);await p.waitForTimeout(800);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(400);
- await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}});await p.waitForFunction(()=>SHOW7.isOpen,null,{timeout:8000}).catch(()=>{});await p.evaluate(()=>SHOW7.close());await p.waitForTimeout(300);return{p,errs,ctx}}
+ await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}});await p.waitForTimeout(300);await p.evaluate(()=>{PLN7.close();SHOW7.close()});await p.waitForTimeout(300);return{p,errs,ctx}}
 const seed=()=>{const N=['mochi','sakura','night'];localStorage.setItem('rbidx',JSON.stringify(N));for(const n of N)localStorage.setItem('rbw_'+n,JSON.stringify({1234:[3,0,0,0],1235:[3,0,0,0]}));localStorage.setItem('rbw_bad','not json {{');localStorage.setItem('rbc2',JSON.stringify({wx:{sakura:'blossom'}}))};
 (async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox']});
  // ---------- 1. list, data, selection
@@ -117,4 +117,28 @@ const seed=()=>{const N=['mochi','sakura','night'];localStorage.setItem('rbidx',
  const fr=await p.evaluate(()=>new Promise(res=>{const t=performance.now();let n=0,mx=0,l=t;const f=now=>{n++;mx=Math.max(mx,now-l);l=now;if(now-t>1500)res({fps:n/1.5,mx});else requestAnimationFrame(f)};requestAnimationFrame(f)}));
  ok('frame rate with 48 planets is playable in software rendering',fr.fps>=10,JSON.stringify(fr));
  ok('no page errors (many worlds)',errs.length==0,errs.slice(0,3).join(' | '));
+ // ---------- 9. launch flow: intro -> atlas -> plaza, plus world title cards
+ {const ctx=await b.newContext({viewport:{width:1280,height:720}});const q=await ctx.newPage();const er=[];q.on('pageerror',e=>er.push(e.message));
+  await q.addInitScript("localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rb_force_launch','1');if(!localStorage.getItem('seeded')){localStorage.setItem('seeded','1');localStorage.setItem('rbc2','{}');localStorage.setItem('rbp',JSON.stringify({v:1,made:true,lvl:3}))}");
+  await q.goto(FILE);await q.waitForTimeout(900);
+  let playing=await q.evaluate(()=>INTRO7.playing);
+  await q.waitForTimeout(600);
+  ok('launch plays the intro first (atlas not yet open)',playing&&await q.evaluate(()=>!PLN7.isOpen&&!!document.getElementById('intro7')),String(playing));
+  await q.keyboard.press('Space');await q.waitForFunction(()=>PLN7.isOpen,null,{timeout:6000}).catch(()=>{});
+  await q.waitForTimeout(700);ok('any key skips the intro and opens the Star Atlas',await q.evaluate(()=>PLN7.isOpen&&!INTRO7.playing));
+  ok('the game is paused behind the atlas (no wasted frames)',await q.evaluate(()=>window.RB_COVER===true));
+  await q.keyboard.press('Escape');await q.waitForFunction(()=>entered&&cur=='plaza'&&!PLN7.isOpen,null,{timeout:8000}).catch(()=>{});
+  r=await q.evaluate(()=>({entered,cur,cover:window.RB_COVER,card:document.getElementById('wcard7')&&document.getElementById('wcard7').classList.contains('on'),k:document.querySelector('#wcard7 .k')&&document.querySelector('#wcard7 .k').textContent}));
+  ok('closing the atlas before entering a world takes you to the Plaza, game running, with a title card',r.entered&&r.cur=='plaza'&&!r.cover&&r.card&&/WELCOME/.test(r.k),JSON.stringify(r));
+  await q.keyboard.press('KeyA');await q.waitForTimeout(500);ok('title card disappears on any key and never blocks play',await q.evaluate(()=>!document.getElementById('wcard7').classList.contains('on')));
+  await q.evaluate(()=>{PLN7.open({create:'cardtest'})});await q.waitForTimeout(700);await q.evaluate(()=>document.querySelector('[data-a=form]').click());
+  await q.waitForFunction(()=>!PLN7.state.form,null,{timeout:9000}).catch(()=>{});await q.waitForTimeout(300);await q.evaluate(()=>PLN7.go('cardtest'));
+  await q.waitForFunction(()=>entered&&cur=='cardtest',null,{timeout:8000}).catch(()=>{});await q.waitForTimeout(400);
+  let k1=await q.evaluate(()=>document.querySelector('#wcard7 .k').textContent+'|'+document.querySelector('#wcard7 h1').textContent);
+  ok('entering a brand-new world shows "NEW WORLD DISCOVERED" with its name',/NEW WORLD/.test(k1)&&/cardtest/.test(k1),k1);
+  await q.waitForTimeout(9000);await q.evaluate(()=>{PLN7.open();PLN7.select('plaza');PLN7.go('plaza')});await q.waitForFunction(()=>cur=='plaza',null,{timeout:8000}).catch(()=>{});
+  await q.waitForTimeout(9000);await q.evaluate(()=>{PLN7.open();PLN7.select('cardtest');PLN7.go('cardtest')});await q.waitForFunction(()=>cur=='cardtest',null,{timeout:8000}).catch(()=>{});await q.waitForTimeout(500);
+  k1=await q.evaluate(()=>document.querySelector('#wcard7 .k').textContent);
+  ok('entering a world you have been to shows "WELCOME BACK"',/WELCOME BACK/.test(k1),k1);
+  ok('no page errors (launch flow)',er.length==0,er.slice(0,2).join(' | '));await ctx.close()}
  await b.close();console.log(fails?'FAILED '+fails:'all planet tests passed');process.exit(fails?1:0)})().catch(e=>{console.log('FAIL crash',e);process.exit(2)});
