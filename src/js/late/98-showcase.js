@@ -86,7 +86,7 @@ const SHOW7=(()=>{
   const go=f=>{close();ensureGame(f)};
   if(k=='inv')go(()=>INV7.open());
   else if(k=='store')go(()=>STORE7.open());
-  else if(k=='worlds'){close();setTimeout(()=>{try{openMenu('mworlds')}catch(_){}},120)}
+  else if(k=='worlds'){close();setTimeout(()=>{try{PLN7.open()}catch(e){console.error(e);try{openMenu('mworlds')}catch(_){}}},120)}
   else if(k=='coll')go(()=>{try{BOOK7.open()}catch(_){try{UI6.open('wings')}catch(_){}}});
   else if(k=='prof')go(()=>{try{UI6.open('profile')}catch(_){}});
   else if(k=='set')go(()=>{try{UI6.open('settings')}catch(_){}})}

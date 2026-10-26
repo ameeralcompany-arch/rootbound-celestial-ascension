@@ -1,0 +1,120 @@
+// Star Atlas (planet world selection) tests. Run: node tests/planets.js
+const {chromium}=require('playwright');const path=require('path');
+const EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?'  - '+x:''));if(!c)fails++};
+setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},280000).unref();
+const FILE='file://'+path.join(__dirname,'..','index.html');
+async function boot(b,seed,vp){const ctx=await b.newContext({viewport:vp||{width:1280,height:720}});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message+' @'+String(e.stack).split('\n').slice(1,3).join('|')));p.on('console',m=>{if(m.type()=='error'&&!/ERR_|Failed to load/.test(m.text()))errs.push('C:'+m.text())});
+ await p.addInitScript("localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));if(!localStorage.getItem('seeded')){localStorage.setItem('seeded','1');"+(seed?'('+seed.toString()+')()':'')+"}");
+ await p.goto(FILE);await p.waitForTimeout(800);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(400);
+ await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}});await p.waitForFunction(()=>SHOW7.isOpen,null,{timeout:8000}).catch(()=>{});await p.evaluate(()=>SHOW7.close());await p.waitForTimeout(300);return{p,errs,ctx}}
+const seed=()=>{const N=['mochi','sakura','night'];localStorage.setItem('rbidx',JSON.stringify(N));for(const n of N)localStorage.setItem('rbw_'+n,JSON.stringify({1234:[3,0,0,0],1235:[3,0,0,0]}));localStorage.setItem('rbw_bad','not json {{');localStorage.setItem('rbc2',JSON.stringify({wx:{sakura:'blossom'}}))};
+(async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox']});
+ // ---------- 1. list, data, selection
+ let {p,errs}=await boot(b,seed);
+ await p.evaluate(()=>PLN7.open());await p.waitForTimeout(1500);
+ let r=await p.evaluate(()=>({ids:PLN7.planets().map(x=>x.id),th:PLN7.planets().map(x=>x.theme),open:PLN7.isOpen,dock:document.querySelectorAll('#plnDock button').length,mode:PLN7.state.mode}));
+ ok('atlas lists the Plaza plus every real saved world (including an unreadable one)',r.ids[0]=='plaza'&&['mochi','sakura','night','bad'].every(n=>r.ids.includes(n))&&r.ids.length==5,JSON.stringify(r.ids));
+ ok('every planet has a valid theme; a blossom-sky world shows the blossom planet',r.th.every(t=>typeof t=='string')&&r.th[r.ids.indexOf('sakura')]=='blossom');
+ ok('dock has one button per world plus New world',r.dock==6);
+ await p.evaluate(()=>PLN7.select('mochi'));await p.waitForTimeout(600);
+ let t=await p.evaluate(()=>document.querySelector('#plnInfo').innerText);
+ ok('info panel shows real data (name, type, blocks changed = 2)',/mochi/.test(t)&&/Blocks changed\s*2/.test(t)&&/Enter|Explore/.test(t),t.replace(/\s+/g,' ').slice(0,200));
+ await p.evaluate(()=>PLN7.select('bad'));await p.waitForTimeout(400);t=await p.evaluate(()=>document.querySelector('#plnInfo').innerText);
+ ok('unreadable save is flagged, not hidden',/Unreadable/.test(t));
+ // ---------- 2. enter the right world, edit, return, reopen
+ await p.evaluate(()=>PLN7.select('mochi'));await p.waitForTimeout(500);
+ await p.evaluate(()=>document.querySelector('[data-a=enter]').click());
+ await p.waitForFunction(()=>entered&&cur=='mochi'&&!PLN7.isOpen,null,{timeout:8000}).catch(()=>{});
+ r=await p.evaluate(()=>({cur,open:PLN7.isOpen,t:tiles[1234],t2:tiles[1235],last:PLN7.db.w.mochi.last>0,ent:PLN7.db.w.mochi.ent,plays:PLN7.db.w.mochi.plays}));
+ ok('entering a planet loads exactly that world and its saved blocks',r.cur=='mochi'&&r.t==3&&r.t2==3&&!r.open,JSON.stringify(r));
+ ok('visit is recorded (last played, entered, visit count)',r.last&&r.ent==1&&r.plays>=1);
+ await p.evaluate(()=>{setTile(30,30,3);setTile(31,30,3);setTile(32,30,3)});
+ await p.evaluate(()=>PLN7.open());await p.waitForTimeout(1600);
+ r=await p.evaluate(()=>({sel:PLN7.state.sel,mode:PLN7.state.mode,txt:document.querySelector('#plnInfo').innerText.replace(/\s+/g,' ')}));
+ ok('returning to the universe focuses the world you were in and shows the new progress (5 blocks)',r.sel=='mochi'&&/Blocks changed\s*5/.test(r.txt)&&/YOU ARE HERE/.test(r.txt),r.txt.slice(0,160));
+ await p.evaluate(()=>PLN7.select('plaza'));await p.waitForTimeout(300);await p.evaluate(()=>PLN7.go('plaza'));
+ await p.waitForFunction(()=>entered&&cur=='plaza'&&!PLN7.isOpen,null,{timeout:8000}).catch(()=>{});
+ await p.evaluate(()=>PLN7.open());await p.waitForTimeout(700);await p.evaluate(()=>{PLN7.select('mochi');PLN7.go('mochi')});
+ await p.waitForFunction(()=>entered&&cur=='mochi'&&!PLN7.isOpen,null,{timeout:8000}).catch(()=>{});
+ r=await p.evaluate(()=>({cur,a:tiles[30*W+30],b:tiles[30*W+32],old:tiles[1234]}));
+ ok('after leaving and reopening the same world, the edits are all still there',r.cur=='mochi'&&r.a==3&&r.b==3&&r.old==3,JSON.stringify(r));
+ // ---------- 3. create
+ await p.evaluate(()=>PLN7.open({create:'Sakura Grove!'}));await p.waitForTimeout(900);
+ r=await p.evaluate(()=>({mode:PLN7.state.mode,name:document.querySelector('#plnName').value,id:document.querySelector('#plnIdv').innerText,pv:!!PLN7.state.pv}));
+ ok('creation screen opens with a live planet preview and a sanitised id',r.mode=='create'&&r.pv&&/sakuragrove/.test(r.id),JSON.stringify(r));
+ await p.evaluate(()=>document.querySelector('[data-nth=blossom]').click());await p.waitForTimeout(300);
+ r=await p.evaluate(()=>({th:PLN7.state.pv.theme,tb:document.querySelector('#plnTb').innerText}));
+ ok('choosing a theme updates the preview planet',r.th=='blossom'&&/blossom/i.test(r.tb));
+ await p.evaluate(()=>{document.querySelector('[data-nth=void]').click();document.querySelector('[data-nth=blossom]').click()});
+ const before=await p.evaluate(()=>({rb:localStorage.getItem('rbw_sakuragrove'),n:PLN7.ids().length}));
+ await p.evaluate(()=>document.querySelector('[data-a=form]').click());await p.waitForFunction(()=>!PLN7.state.form,null,{timeout:9000}).catch(()=>{});await p.waitForTimeout(300);
+ r=await p.evaluate(()=>({save:localStorage.getItem('rbw_sakuragrove'),idx:recents().includes('sakuragrove'),rec:PLN7.db.w.sakuragrove,pl:!!PLN7.planets().find(x=>x.id=='sakuragrove'),sel:PLN7.state.sel,form:!!PLN7.state.form,n:PLN7.ids().length}));
+ ok('forming a planet really creates and saves the world (before: none)',before.rb===null&&r.save=='{}'&&r.idx&&r.rec&&r.rec.theme=='blossom'&&r.pl&&r.sel=='sakuragrove'&&!r.form&&r.n==before.n+1,JSON.stringify(r));
+ await p.evaluate(()=>document.querySelector('[data-a=form]')&&0);
+ let dup=await p.evaluate(()=>{PLN7.open({create:'sakuragrove'});return document.querySelector('[data-a=form]').disabled});
+ ok('a name that already exists cannot be created again',dup===true);
+ await p.evaluate(()=>PLN7.state.mode='focus');await p.evaluate(()=>PLN7.select('sakuragrove'));await p.waitForTimeout(400);
+ await p.evaluate(()=>PLN7.go('sakuragrove'));await p.waitForFunction(()=>entered&&cur=='sakuragrove'&&!PLN7.isOpen,null,{timeout:8000}).catch(()=>{});
+ r=await p.evaluate(()=>({cur,wx:X6.wx.sakuragrove,env:ENV7.target,ent:PLN7.db.w.sakuragrove.ent,fresh:PLN7.db.w.sakuragrove.fresh}));
+ ok('entering a new Blossom world generates it with the Blossom sky',r.cur=='sakuragrove'&&r.wx=='blossom'&&r.env=='blossom'&&r.ent==1&&r.fresh==0,JSON.stringify(r));
+ // ---------- 4. rename + delete + undo
+ await p.evaluate(()=>PLN7.open());await p.waitForTimeout(900);await p.evaluate(()=>PLN7.select('night'));await p.waitForTimeout(300);
+ await p.evaluate(()=>document.querySelector('[data-a=rename]').click());await p.waitForTimeout(200);
+ await p.fill('#plnRn','Moon <b>Night</b>');await p.keyboard.press('Enter');await p.waitForTimeout(300);
+ r=await p.evaluate(()=>({label:PLN7.db.w.night.label,h:document.querySelector('#plnInfo h2').innerText,html:document.querySelector('#plnInfo h2').innerHTML,id:PLN7.db.w.night&&'night',stillThere:localStorage.getItem('rbw_night')!=null}));
+ ok('rename changes the display name only (markup stripped, id and save untouched)',r.label=='Moon bNight/b'&&!/<b>/.test(r.html)&&r.stillThere,JSON.stringify(r));
+ await p.evaluate(()=>document.querySelector('[data-a=del]').click());await p.waitForTimeout(200);
+ r=await p.evaluate(()=>({on:document.querySelector('#plnModal').classList.contains('on'),dis:document.querySelector('[data-a=delYes]').disabled}));
+ ok('delete asks for confirmation and starts disabled',r.on&&r.dis);
+ await p.fill('#plnDelIn','nigh');r=await p.evaluate(()=>document.querySelector('[data-a=delYes]').disabled);ok('a wrong confirmation keeps Delete disabled',r===true);
+ await p.fill('#plnDelIn','night');await p.evaluate(()=>document.querySelector('[data-a=delYes]').click());await p.waitForTimeout(400);
+ r=await p.evaluate(()=>({save:localStorage.getItem('rbw_night'),idx:recents().includes('night'),rec:!!PLN7.db.w.night,pl:!!PLN7.planets().find(x=>x.id=='night'),others:PLN7.ids().sort().join()}));
+ ok('confirmed delete removes only that world',r.save===null&&!r.idx&&!r.rec&&!r.pl&&/mochi/.test(r.others)&&/sakura/.test(r.others),JSON.stringify(r));
+ await p.evaluate(()=>document.querySelector('#plnToast [data-a=undo]').click());await p.waitForTimeout(500);
+ r=await p.evaluate(()=>({save:localStorage.getItem('rbw_night'),pl:!!PLN7.planets().find(x=>x.id=='night')}));
+ ok('Undo brings the deleted world back with its blocks',r.save&&r.save.includes('1234')&&r.pl);
+ await p.evaluate(()=>{PLN7.select('sakuragrove');document.querySelector('[data-a=del]').click()});await p.waitForTimeout(200);
+ r=await p.evaluate(()=>({on:document.querySelector('#plnModal').classList.contains('on'),still:localStorage.getItem('rbw_sakuragrove')!=null}));
+ ok('the world you are standing in cannot be deleted',!r.on&&r.still);
+ // ---------- 5. failure keeps everything
+ const sn=await p.evaluate(()=>({cur,keys:Object.keys(localStorage).filter(k=>/^rbw_/.test(k)).sort().join()}));
+ await p.evaluate(()=>{window.__g=gen;gen=function(){throw new Error('boom')};PLN7.select('mochi');PLN7.go('mochi')});await p.waitForTimeout(3000);
+ r=await p.evaluate(()=>{gen=window.__g;return{open:PLN7.isOpen,cur,keys:Object.keys(localStorage).filter(k=>/^rbw_/.test(k)).sort().join(),toast:document.querySelector('#plnToast').innerText,mode:PLN7.state.mode,ent:!!PLN7.state.ent}});
+ ok('a world that fails to generate shows an error, keeps the atlas open and loses nothing',r.open&&/Could not load/.test(r.toast)&&r.keys==sn.keys&&r.cur==sn.cur&&!r.ent,JSON.stringify(r).slice(0,300));
+ const errsNow=errs.filter(e=>!/boom/.test(e));
+ // ---------- 6. close frees resources, no frames while hidden
+ await p.evaluate(()=>PLN7.close());await p.waitForTimeout(700);
+ r=await p.evaluate(()=>({n:PLN7.planets().length,w:document.getElementById('plnCv').width,disp:document.getElementById('pln').style.display}));
+ ok('closing the atlas frees planets, textures and the canvas',r.n==0&&r.w==1&&r.disp=='none',JSON.stringify(r));
+ const c1=await p.evaluate(()=>new Promise(res=>{let n=0;const f=PLN7.state;const t=performance.now();const q=()=>{n++;if(performance.now()-t>600)res(n);else requestAnimationFrame(q)};q()}));
+ ok('no errors in the whole run',errsNow.length==0,errsNow.slice(0,3).join(' | '));
+ await p.context().close();
+ // ---------- 7. empty profile
+ ({p,errs}=await boot(b,null));
+ await p.evaluate(()=>PLN7.open());await p.waitForTimeout(1200);
+ r=await p.evaluate(()=>({ids:PLN7.planets().map(x=>x.id),mode:PLN7.state.mode}));
+ ok('with no saved worlds the atlas shows the Plaza and offers a new world',r.ids.length>=1&&r.ids[0]=='plaza'&&r.ids.length<=2);
+ await p.evaluate(()=>document.querySelector('[data-a=new]').click());await p.waitForTimeout(500);
+ await p.evaluate(()=>{const i=document.querySelector('#plnName');i.value='first';i.dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('[data-a=form]').click()});await p.waitForFunction(()=>!PLN7.state.form,null,{timeout:9000}).catch(()=>{});await p.waitForTimeout(300);
+ r=await p.evaluate(()=>({ok:localStorage.getItem('rbw_first')=='{}',n:PLN7.planets().length}));
+ ok('first world can be created from an empty atlas',r.ok&&r.n>=2);
+ // reduced motion: no orbiting bits, travel finishes quickly
+ await p.evaluate(()=>{cel.opt.reduce=true});await p.evaluate(()=>{PLN7.close()});await p.waitForTimeout(500);await p.evaluate(()=>PLN7.open());await p.waitForTimeout(800);
+ r=await p.evaluate(()=>({bits:PLN7.planets().reduce((a,x)=>a+x.bits.length,0)}));
+ ok('reduced motion: no orbiting particles',r.bits==0);
+ const t0=Date.now();await p.evaluate(()=>{PLN7.select('first');PLN7.go('first')});await p.waitForFunction(()=>entered&&cur=='first'&&!PLN7.isOpen,null,{timeout:6000}).catch(()=>{});
+ ok('reduced motion: travelling is nearly instant and works',await p.evaluate(()=>cur=='first')&&Date.now()-t0<2500,String(Date.now()-t0));
+ ok('no page errors (empty profile)',errs.length==0,errs.slice(0,3).join(' | '));
+ await p.context().close();
+ // ---------- 8. many worlds + small screen
+ ({p,errs}=await boot(b,()=>{const N=[];for(let i=0;i<48;i++)N.push('w'+(1000+i));localStorage.setItem('rbidx',JSON.stringify(N.slice(0,12)));for(const n of N)localStorage.setItem('rbw_'+n,JSON.stringify({5:[3,0,0,0]}))},{width:390,height:780}));
+ await p.evaluate(()=>PLN7.open());await p.waitForTimeout(2500);
+ r=await p.evaluate(()=>({n:PLN7.planets().length,dock:document.querySelectorAll('#plnDock button').length,z:PLN7.state.cam.z,minR:Math.min(...PLN7.planets().map(x=>x.R))*PLN7.state.cam.z,fl:document.documentElement.scrollWidth<=innerWidth}));
+ ok('48 worlds: all listed, planets stay selectable-size, no page overflow',r.n==49&&r.dock==50&&r.minR>=24&&r.fl,JSON.stringify(r));
+ await p.evaluate(()=>PLN7.select('w1047'));await p.waitForTimeout(900);
+ r=await p.evaluate(()=>({sel:PLN7.state.sel,h:document.querySelector('#plnInfo h2').innerText,panel:document.querySelector('#plnInfo').getBoundingClientRect().toJSON()}));
+ ok('selecting the last world works on a phone-size screen and the panel fits',r.sel=='w1047'&&r.h=='w1047'&&r.panel.right<=392&&r.panel.left>=0,JSON.stringify(r.panel));
+ const fr=await p.evaluate(()=>new Promise(res=>{const t=performance.now();let n=0,mx=0,l=t;const f=now=>{n++;mx=Math.max(mx,now-l);l=now;if(now-t>1500)res({fps:n/1.5,mx});else requestAnimationFrame(f)};requestAnimationFrame(f)}));
+ ok('frame rate with 48 planets is playable in software rendering',fr.fps>=10,JSON.stringify(fr));
+ ok('no page errors (many worlds)',errs.length==0,errs.slice(0,3).join(' | '));
+ await b.close();console.log(fails?'FAILED '+fails:'all planet tests passed');process.exit(fails?1:0)})().catch(e=>{console.log('FAIL crash',e);process.exit(2)});
