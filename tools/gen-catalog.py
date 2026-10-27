@@ -33,7 +33,15 @@ W=[('solarfang','Solar Fang','epic',1200,'A radiant gold-orange blade. Every hit
  ('frostbite','Frostbite Edge','rare',700,'Icy crystal edge that sheds frost shards and slows whatever it cuts.'),
  ('astralkat','Astral Katana','epic',1500,'A thin blue-violet blade that leaves a starlit slash and fires a piercing wave.'),
  ('crimsonrift','Crimson Rift','legendary',2800,'Tears red cracks in the ground and pulls monsters into the rift.'),
- ('verdant','Verdant Breaker','uncommon',450,'A living-wood hammer-blade that scatters leaves and heals you while you fight.')]
+ ('verdant','Verdant Breaker','uncommon',450,'A living-wood hammer-blade that scatters leaves and heals you while you fight.'),
+ ('skyspear','Skyspear','rare',600,'A long thrust that pierces everything in a straight line.'),
+ ('thornlash','Thornlash','epic',900,'A living whip that cracks along its length and drags enemies in.'),
+ ('moonchakram','Moon Chakram','epic',1100,'Thrown in a wide curve, it returns to your hand and cuts both ways.'),
+ ('zephyrbow','Zephyr Bow','rare',800,'Arrows that fall in an arc and stick into walls.'),
+ ('stormflail','Stormflail','epic',1500,'A spiked ball on a chain with real momentum.'),
+ ('gravitystaff','Graviton Rod','legendary',1800,'Launches a heavy orb that bounces off walls and bursts.'),
+ ('galeshuriken','Gale Shurikens','rare',700,'Three seeking stars that ricochet once off walls.'),
+ ('titanmaul','Titan Maul','legendary',2400,'Slams the ground and sends a shockwave along the terrain.')]
 for i,n,r,p,d in W: add(id='wpn_'+i,cat='weapons',n=n,price=p,rar=r,stack=0,ref=i,lv=0,d=d,how='store',new=1)
 # ---- new building blocks (ids 42-59), data shared with the client through tools/new-blocks.json
 for b in json.load(open(os.path.join(R,'tools/new-blocks.json'))):
