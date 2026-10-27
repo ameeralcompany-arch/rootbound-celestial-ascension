@@ -1,0 +1,37 @@
+// ===== Flight (FLY7): hold Space (or W / Up) in the air with wings to beat upward. Lift comes in pulses with each wing beat,
+// stamina limits it, the rest is a glide. Wind and wing-beat sounds follow your speed. =====
+const FLY7=(()=>{
+ const F={on:false,sta:1,ph:0,air:0,beat:0,last:0,tier:0};let wn=null;
+ const wingNow=()=>{try{return cel.wingsOn?curWing(lvl):null}catch(_){return null}};
+ const maxT=t=>3.2+.14*t;
+ function flap(strong){try{wingFlap=1;wingOpen=1}catch(_){}try{featherFx(strong?3:1)}catch(_){}
+  const v=Math.min(.12,.07+F.tier*.004);noise(.16,520+F.tier*30,v);snd(90+F.tier*3,.14,'sine',.05,.55)}
+ function step(dt,ax,busy){const w=wingNow(),hold=!busy&&(K.w||K[' ']||K.arrowup),down=K.s||K.arrowdown;
+  F.tier=w?Math.max(0,WINGS.indexOf(w)):0;
+  if(P.g||P.sw){F.air=0;F.sta=Math.min(1,F.sta+dt*1.1);if(F.on){F.on=false;WingArt.FL.on=false}F.last=0;return}
+  F.air+=dt;
+  const can=!!w&&!busy&&hold&&F.sta>0&&F.air>.1&&(P.vy>-150||F.on);
+  if(can){
+   if(!F.on){F.on=true;F.ph=0;F.last=-1;try{UI6&&0}catch(_){}}
+   WingArt.FL.on=true;WingArt.FL.rate=2*Math.PI*(2.7-.05*Math.min(8,F.tier));WingArt.FL.amp=.5;
+   F.ph+=dt*WingArt.FL.rate;const s=Math.sin(F.ph);F.sta=Math.max(0,F.sta-dt/maxT(F.tier));
+   if(s>=0&&F.last<0)flap(true);F.last=s>=0?1:-1;
+   const climb=-(230+F.tier*12)*(.55+.45*s);
+   if(down)P.vy=Math.min(P.vy+900*dt,160);else if(P.vy>climb)P.vy=climb+(P.vy-climb)*Math.exp(-dt*28);
+   if(ax){const top=260*(1+bonus().spd)*1.2;P.vx+=(ax*top-P.vx)*Math.min(1,dt*2.6)}
+   if(F.sta<=0){F.on=false;WingArt.FL.on=false;try{say('Out of breath - glide!')}catch(_){}}
+  }else{
+   if(F.on){F.on=false;WingArt.FL.on=false}
+   if(w&&!busy&&hold&&P.vy>0)P.vy=Math.min(P.vy,F.sta>0?170:200);   // gliding
+   F.sta=Math.min(1,F.sta+dt*(hold?0:.18));F.last=0}}
+ {const _p=physics;physics=function(dt,ax,busy){const r=_p.apply(this,arguments);try{step(dt,ax,busy)}catch(e){console.error('FLY7',e)}return r}}
+ // wind: a looping filtered-noise bed that follows speed
+ function wind(){if(!AC||!entered)return;if(!wn){try{const b=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),a=b.getChannelData(0);let l=0;for(let i=0;i<a.length;i++){l=l*.6+(Math.random()*2-1)*.4;a[i]=l}
+    const s=AC.createBufferSource(),bp=AC.createBiquadFilter(),g=AC.createGain();s.buffer=b;s.loop=true;bp.type='bandpass';bp.Q.value=.6;bp.frequency.value=500;g.gain.value=0;s.connect(bp);bp.connect(g);g.connect(AC.destination);s.start();wn={g,bp}}catch(_){wn={dead:1}}}
+  if(wn.dead)return;const sp=Math.hypot(P.vx*.55,P.vy),air=!P.g&&!P.sw,want=(air&&!window.RB_COVER?Math.max(0,Math.min(1,(sp-140)/640))*.75+(F.on?.28:0):0)*(OPT.sv==null?1:OPT.sv),t=AC.currentTime;
+  wn.g.gain.setTargetAtTime(Math.min(.16,want*.16),t,.1);wn.bp.frequency.setTargetAtTime(300+sp*1.3+(F.on?260:0),t,.12)}
+ // stamina pill above the head
+ function drawMeter(g,cx,cy){if(F.sta>=.995&&!F.on)return;const x=P.x-cx,y=P.y-cy-44,w=44;g.save();g.globalAlpha=.9;g.fillStyle='rgba(20,18,30,.55)';g.beginPath();g.roundRect?g.roundRect(x-w/2,y,w,6,3):g.rect(x-w/2,y,w,6);g.fill();
+  g.fillStyle=F.sta>.3?'#bff3ff':'#ff9a8a';g.beginPath();g.roundRect?g.roundRect(x-w/2+1,y+1,(w-2)*Math.max(.02,F.sta),4,2):g.rect(x-w/2+1,y+1,(w-2)*F.sta,4);g.fill();g.restore()}
+ {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{wind()}catch(_){}};BOSS6.drawProj=function(g,cx,cy){_d.call(this,g,cx,cy);try{if(wingNow())drawMeter(g,cx,cy)}catch(_){}}}
+ return{F,step}})();

@@ -43,13 +43,13 @@ const WingArt=(()=>{
  // draw both wings behind the body. cx,cy = character centre; f = facing; t = time; mode: 0 idle 1 run 2 air; strength = open amount
  // ---- wing pose: smoothed spread per character. 0 = folded against the back, 1 = fully spread.
  // Idle: wings rest folded, then every few seconds open calmly, hold, and fold back. Jump: snap open with a flap on the way up, glide open on the way down.
- const POSE=new Map();const sm=(a,b,x)=>{x=Math.max(0,Math.min(1,(x-a)/(b-a)));return x*x*(3-2*x)};
+ const FL={on:false,rate:15,amp:.3};const POSE=new Map();const sm=(a,b,x)=>{x=Math.max(0,Math.min(1,(x-a)/(b-a)));return x*x*(3-2*x)};
  function pose(key,t,mode,vx,vy,ph){let p=POSE.get(key);if(!p){p={s:0,t:t,fl:0,air:0,lastAir:0};POSE.set(key,p);if(POSE.size>40)POSE.delete(POSE.keys().next().value)}
   let dt=t-p.t;p.t=t;if(!(dt>0)||dt>.25)dt=.016;
   const air=mode==2,u=((t+ph*3.1)%8.5)/8.5,idle=sm(0,.1,u)*(1-sm(.34,.46,u)); // calm open (~0.9s), hold (~2s), fold (~1s)
   let target=air?1:mode==1?.28+idle*.5:idle*.92;
   // flap: strong beats while rising, slow soft beats while gliding/falling, a small flutter when running
-  const rising=air&&(vy==null||vy<60);const rate=rising?15:air?4.5:mode==1?7:0;const amp=rising?.3:air?.07:mode==1?.04:0;
+  const fly=key=='me'&&FL.on&&air;const rising=fly||air&&(vy==null||vy<60);const rate=fly?FL.rate:rising?15:air?4.5:mode==1?7:0;const amp=fly?FL.amp:rising?.3:air?.07:mode==1?.04:0;
   p.fl+=dt*rate;if(air&&!p.lastAir)p.fl=0;p.lastAir=air?1:0;
   const k=target>p.s?(air?20:3.2):(air?6:2.4);p.s+=(target-p.s)*(1-Math.exp(-dt*k));
   return{s:p.s,flap:Math.sin(p.fl)*amp*(air?1:p.s),rise:rising}}
@@ -78,4 +78,4 @@ const WingArt=(()=>{
  function extras(g,tier,cx,cy,t){const W=WINGS[tier],ph=QM.cur.wfx;if(!ph)return;if(W.fxk&&window.FX7)FX7.wingFx(W,cx,cy,t);
   if(W.halo){g.save();g.globalCompositeOperation='lighter';g.translate(cx,cy-50);g.scale(1,.28);g.lineWidth=3;g.strokeStyle=W.pal[3];g.shadowColor=W.pal[3];g.shadowBlur=10;g.globalAlpha=.85;g.beginPath();g.arc(0,0,19,0,6.3);g.stroke();g.lineWidth=1;g.globalAlpha=.6;g.setLineDash([3,5]);g.lineDashOffset=-t*20;g.beginPath();g.arc(0,0,24,0,6.3);g.stroke();g.restore()}
   if(W.arc&&ph>=2&&((t*8)|0)%5==0){g.save();g.globalCompositeOperation='lighter';g.strokeStyle='#bfe8ff';g.lineWidth=1.4;g.shadowColor='#78c8ff';g.shadowBlur=8;for(let s=-1;s<=1;s+=2){g.beginPath();let x=cx+s*8,y=cy-4;g.moveTo(x,y);for(let i=0;i<5;i++){x+=s*(10+((t*97+i*13)%7));y+=-6+((t*57+i*31)%12);g.lineTo(x,y)}g.stroke()}g.restore()}}
- return{get,draw,extras,STY,tiers:WINGS.length}})();
+ return{get,draw,extras,STY,FL,tiers:WINGS.length}})();

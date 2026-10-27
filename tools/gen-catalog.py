@@ -54,7 +54,11 @@ WG=[('dove','Dove Wings','rare',600,0,'Pearl-white feather wings with luminous t
  ('umbral','Umbral Eclipse Wings','epic',1800,0,'Violet-black feathers wrapped in rising dark energy. Gives a double jump.'),
  ('galaxy','Galaxy Wings','legendary',3000,40,'Feather silhouettes filled with a living starfield. Needs level 40. Gives a double jump.'),
  ('dragon','Dragon Wings','legendary',3400,60,'Large articulated bat wings with membranes and bone fingers. Needs level 60. Gives a double jump.'),
- ('moth','Omen Moth Wings','mythic',8000,100,'Broad crimson-black moth wings with glowing veins. The rarest wings. Needs level 100. Gives a double jump.')]
+ ('moth','Omen Moth Wings','mythic',8000,100,'Broad crimson-black moth wings with glowing veins. The rarest wings. Needs level 100. Gives a double jump.'),
+ ('eagle','Eagle Wings','rare',900,0,'Broad brown-and-cream flight feathers, built for long glides. Hold Space to fly.'),
+ ('swan','Swan Wings','epic',1600,0,'Layered white plumage with a soft glow. Hold Space to fly.'),
+ ('raven','Raven Wings','epic',1800,0,'Glossy black feathers with a violet sheen. Hold Space to fly.'),
+ ('plume','Phoenix Plume Wings','legendary',3200,70,'Realistic plumage that burns from deep red to gold. Needs level 70. Hold Space to fly.')]
 for i,n,r,p,lv,d in WG: add(id='wing_'+i,cat='wings',n=n,price=p,rar=r,stack=0,ref=i,lv=lv,d=d,how='store',new=1,excl=(r=='mythic'))
 # ---- NEW effects
 FXI=[('aura_void','aura','Void Aura','rare',600,'Slow violet smoke curls around you.'),
