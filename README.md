@@ -178,3 +178,10 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - **World goals** (`91-world-goals.js`): 3 tracked goals per world (break, place, defeat, plant, harvest), counted only inside that world, shown in the Atlas panel. Gems for goals are paid offline only, like the other rewards.
 - All new screens use the shared theme tokens, so both the light and the night glass looks apply.
 - Checked with automated tests and a 500-step random-input run (no errors); not hand-played on a real PC.
+
+## V12.1 — bosses, deep treasure, no creator screen
+
+- **Bosses** (`85-z-bosses2.js`): telegraphed red danger zones (thorn eruptions and a ground wave for the Warden; falling crystal columns and horizontal beams for the Sovereign; homing void orbs, a dash and a gravity pull for the Eclipse Lord). Every 4th special attack leaves the boss exhausted for ~3.5 s (+45% damage taken). The Sovereign and Eclipse Lord raise a shield at 66% and 33% health; breaking it staggers them. Spawn-rise, wind-up crouch, ground shadow, shield bubble and exhaustion stars were added around the existing art.
+- You cannot place blocks inside (or one tile beside) a boss. The boss HP bar now hides as soon as the boss dies.
+- **Deep treasure** (`71-deep.js`, block ids 60-65): Moonstone Ore, Amber Fossil, Magma Vein, Glowshroom (heals), Treasure Urn and Void Geode, generated from the world seed; each gives bonus gems and XP. Server block limit raised to 66.
+- The "Create your character" panel no longer appears; Customize opens the home screen.
