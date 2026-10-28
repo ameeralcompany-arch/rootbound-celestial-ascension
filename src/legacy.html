@@ -7,7 +7,7 @@
 /* Optional networking settings. Leave as null to use the defaults.
    ice:  your own array of WebRTC iceServers (STUN/TURN) for the best reliability.
    peer: your own PeerJS server, e.g. {host:'my-peer.example.com',port:443,path:'/',secure:true,key:'peerjs'} */
-window.RB_CONFIG={ice:null,peer:null};
+window.RB_CONFIG=Object.assign({ice:null,peer:null,solo:true},window.RB_CONFIG_OVERRIDE||{});   // solo: single-player, never connects to a server
 </script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#0a0d1c;--pn:rgba(16,21,46,.82);--bd:rgba(255,255,255,.13);--ac:#ffb545;--ac2:#6c5cff;--tx:#f4f6ff;--mu:#9aa3c7;font-family:'Pixelify Sans','Fredoka',system-ui,-apple-system,'Segoe UI',sans-serif}
@@ -637,7 +637,7 @@ function renderInv(){gridEl.innerHTML='';for(const b of tabsEl.children)b.classL
  if(!n0)gridEl.innerHTML='<span style="color:var(--mu)">Nothing here yet. Break some blocks!</span>'}
 function hud(){if(barDirty){barDirty=0;renderBar();if(showInv)renderInv()}const nm=['Noon','Afternoon','Dusk','Night','Midnight','Night','Dawn','Morning'][Math.floor(clock()*8)%8],n=rm?Math.max(1,rm.peers().filter(p=>p.kind=='viewer').length):1;
  checkAch();$('pname').textContent='Lv '+lvl+'  '+myName;$('hpf').style.width=Math.max(0,P.hp/maxHP()*100)+'%';$('xpf').style.width=Math.min(100,xp/xpNeed(lvl)*100)+'%';$('gv').textContent=gems;$('wname').textContent=cur.toUpperCase();
- $('wchip').textContent=nm+'  -  '+(()=>{try{return ENV7.target!='default'?ENV7.names[ENV7.target]:WX_NAMES[WX6.cur]}catch(_){return wxN}})()+'  -  '+(()=>{try{return NET7.chip(n)}catch(_){return rm?n+' online':'offline'}})();
+ $('wchip').textContent=nm+'  -  '+(()=>{try{return ENV7.target!='default'?ENV7.names[ENV7.target]:WX_NAMES[WX6.cur]}catch(_){return wxN}})()+(()=>{const c=(()=>{try{return NET7.chip(n)}catch(_){return rm?n+' online':'offline'}})();return c?'  -  '+c:''})();
  for(const s in cdT){const u=document.querySelector('#sk_'+s+' u');if(u)u.style.height=(wear[s]?cdT[s]/WEAR[wear[s]].cd*100:0)+'%'}
  const nn0=nearNPC(),ob=(()=>{try{return OBJ6.promptText(nn0)}catch(_){return''}})(),nn=ob?null:nn0,nd=!nn&&!ob&&nearDoor(),pr=$('prompt');pr.style.display=(nn||nd||ob)&&!dlgOpen&&!creatorOn&&menuEl.style.display=='none'?'block':'none';if(nn)pr.textContent='Press E to talk to '+nn.n;else if(nd)pr.textContent='Press E to use the door and travel to another world';else if(ob)pr.textContent=ob}
 // ---------- networking: see src/js/late/75-net.js (persistent server; the old PeerJS host rooms were removed)

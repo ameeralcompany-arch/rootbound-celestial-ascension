@@ -28,7 +28,9 @@ const AUTH=(()=>{
   logout(){raw.removeItem('rb_session');location.reload()},
   sess:RB_SESS};
  return api})();
-(function(){const L=$('login');if(RB_SESS){return}L.style.display='flex';
+(function(){const L=$('login');if(RB_SESS){return}
+ // the single-player desktop app has one save and no login screen
+ if(window.RB_CONFIG&&RB_CONFIG.solo&&/Electron/i.test(navigator.userAgent)){AUTH.start('guest','Guest');return}L.style.display='flex';
  let mode='in';const msg=(t,ok)=>{$('lmsg').textContent=t||'';$('lmsg').className=ok?'ok':''};
  const setMode=m=>{mode=m;for(const[k,id]of[['in','ltIn'],['up','ltUp'],['rec','ltRec']])$(id).classList.toggle('on',k==m);$('lfRec').style.display=m=='rec'?'block':'none';$('lfPass').style.display=m=='rec'?'none':'block';$('lgo').textContent=m=='in'?'Sign in':m=='up'?'Create account':'Reset password';$('lp').autocomplete=m=='up'?'new-password':'current-password';msg('');$('lrec').style.display='none'};
  $('ltIn').onclick=()=>setMode('in');$('ltUp').onclick=()=>setMode('up');$('ltRec').onclick=()=>setMode('rec');

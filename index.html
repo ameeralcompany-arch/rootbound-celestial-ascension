@@ -51,7 +51,7 @@ var mo=new MutationObserver(function(){if(document.body){mo.disconnect();start()
 /* Optional networking settings. Leave as null to use the defaults.
    ice:  your own array of WebRTC iceServers (STUN/TURN) for the best reliability.
    peer: your own PeerJS server, e.g. {host:'my-peer.example.com',port:443,path:'/',secure:true,key:'peerjs'} */
-window.RB_CONFIG={ice:null,peer:null};
+window.RB_CONFIG=Object.assign({ice:null,peer:null,solo:true},window.RB_CONFIG_OVERRIDE||{});   // solo: single-player, never connects to a server
 </script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#0a0d1c;--pn:rgba(16,21,46,.82);--bd:rgba(255,255,255,.13);--ac:#ffb545;--ac2:#6c5cff;--tx:#f4f6ff;--mu:#9aa3c7;font-family:'Pixelify Sans','Fredoka',system-ui,-apple-system,'Segoe UI',sans-serif}
@@ -1303,7 +1303,7 @@ function renderInv(){gridEl.innerHTML='';for(const b of tabsEl.children)b.classL
  if(!n0)gridEl.innerHTML='<span style="color:var(--mu)">Nothing here yet. Break some blocks!</span>'}
 function hud(){if(barDirty){barDirty=0;renderBar();if(showInv)renderInv()}const nm=['Noon','Afternoon','Dusk','Night','Midnight','Night','Dawn','Morning'][Math.floor(clock()*8)%8],n=rm?Math.max(1,rm.peers().filter(p=>p.kind=='viewer').length):1;
  checkAch();$('pname').textContent='Lv '+lvl+'  '+myName;$('hpf').style.width=Math.max(0,P.hp/maxHP()*100)+'%';$('xpf').style.width=Math.min(100,xp/xpNeed(lvl)*100)+'%';$('gv').textContent=gems;$('wname').textContent=cur.toUpperCase();
- $('wchip').textContent=nm+'  -  '+(()=>{try{return ENV7.target!='default'?ENV7.names[ENV7.target]:WX_NAMES[WX6.cur]}catch(_){return wxN}})()+'  -  '+(()=>{try{return NET7.chip(n)}catch(_){return rm?n+' online':'offline'}})();
+ $('wchip').textContent=nm+'  -  '+(()=>{try{return ENV7.target!='default'?ENV7.names[ENV7.target]:WX_NAMES[WX6.cur]}catch(_){return wxN}})()+(()=>{const c=(()=>{try{return NET7.chip(n)}catch(_){return rm?n+' online':'offline'}})();return c?'  -  '+c:''})();
  for(const s in cdT){const u=document.querySelector('#sk_'+s+' u');if(u)u.style.height=(wear[s]?cdT[s]/WEAR[wear[s]].cd*100:0)+'%'}
  const nn0=nearNPC(),ob=(()=>{try{return OBJ6.promptText(nn0)}catch(_){return''}})(),nn=ob?null:nn0,nd=!nn&&!ob&&nearDoor(),pr=$('prompt');pr.style.display=(nn||nd||ob)&&!dlgOpen&&!creatorOn&&menuEl.style.display=='none'?'block':'none';if(nn)pr.textContent='Press E to talk to '+nn.n;else if(nd)pr.textContent='Press E to use the door and travel to another world';else if(ob)pr.textContent=ob}
 // ---------- networking: see src/js/late/75-net.js (persistent server; the old PeerJS host rooms were removed)
@@ -1643,7 +1643,9 @@ const AUTH=(()=>{
   logout(){raw.removeItem('rb_session');location.reload()},
   sess:RB_SESS};
  return api})();
-(function(){const L=$('login');if(RB_SESS){return}L.style.display='flex';
+(function(){const L=$('login');if(RB_SESS){return}
+ // the single-player desktop app has one save and no login screen
+ if(window.RB_CONFIG&&RB_CONFIG.solo&&/Electron/i.test(navigator.userAgent)){AUTH.start('guest','Guest');return}L.style.display='flex';
  let mode='in';const msg=(t,ok)=>{$('lmsg').textContent=t||'';$('lmsg').className=ok?'ok':''};
  const setMode=m=>{mode=m;for(const[k,id]of[['in','ltIn'],['up','ltUp'],['rec','ltRec']])$(id).classList.toggle('on',k==m);$('lfRec').style.display=m=='rec'?'block':'none';$('lfPass').style.display=m=='rec'?'none':'block';$('lgo').textContent=m=='in'?'Sign in':m=='up'?'Create account':'Reset password';$('lp').autocomplete=m=='up'?'new-password':'current-password';msg('');$('lrec').style.display='none'};
  $('ltIn').onclick=()=>setMode('in');$('ltUp').onclick=()=>setMode('up');$('ltRec').onclick=()=>setMode('rec');
@@ -2937,14 +2939,14 @@ const DLG7=(()=>{
 // local flags for authorization; it only displays what the server tells it. The game works fully offline when no server is reachable.
 const say6=(a,b,c)=>{try{UI6.say6(a,b,c)}catch(_){}};
 const NET7=(()=>{
- const LOCAL_ID=myId,esc=DLG7.esc;
+ const LOCAL_ID=myId,esc=DLG7.esc,SOLO=!!(window.RB_CONFIG&&RB_CONFIG.solo);   // single-player build: no server, no online UI
  let mySid='',st='offline',ws=null,url='',auth=null,info=null,list=[],room=null,want=null,joinedW=null,tries=0,retry=false,rt=0,hbT=0,lastPong=0,err='',manual=false,wantCreate=false,lastEnter=0,saved=null,resyncAt=0;
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
  const D=window.RBDIAG||{stage(){},err(){}};
  // ---- address handling
  function norm(a){a=String(a||'').trim();if(!a)return'';if(/^wss?:\/\//i.test(a))return a.replace(/\/+$/,'').replace(/\/ws$/,'')+'/ws';if(/^https?:\/\//i.test(a))return a.replace(/^http/i,'ws').replace(/\/+$/,'').replace(/\/ws$/,'')+'/ws';
   const local=/^(localhost|127\.|192\.168\.|10\.|\[::1\])/.test(a);return(local||location.protocol=='http:'?'ws://':'wss://')+a.replace(/\/+$/,'')+'/ws'}
- async function discover(){const c=window.RB_CONFIG&&window.RB_CONFIG.server;if(c)return norm(c);const s=lsGet('rbsrv');
+ async function discover(){if(SOLO)return'';const c=window.RB_CONFIG&&window.RB_CONFIG.server;if(c)return norm(c);const s=lsGet('rbsrv');
   if(/^https?:$/.test(location.protocol)){try{const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),2500);const r=await fetch(location.origin+'/health',{signal:ctl.signal,cache:'no-store'});clearTimeout(t);const j=await r.json();if(j&&j.game=='rootbound')return norm(location.origin)}catch(_){}}
   return s?norm(s):''}
  const send=m=>{try{if(ws&&ws.readyState==1){ws.send(JSON.stringify(m));return true}}catch(_){}return false};
@@ -3016,7 +3018,7 @@ const NET7=(()=>{
   _enterLocal(n)};
  leaveNet=function(){if(room){room.dead=1;send({t:'leave'})}if(rm){rm=null}room=null;joinedW=null;guest=false;roomCode=''};
  // ---- UI: world menu
- function render(){const el=$('wnet');if(!el)return;const online=st=='online';let h='<div class="netcard '+st+'"><div class="nrow"><span class="dot"></span><b>'+({offline:'Offline',connecting:'Connecting…',reconnecting:'Reconnecting…',online:'Online'}[st])+'</b>';
+ function render(){const el=$('wnet');if(!el)return;if(SOLO){el.innerHTML='';el.style.display='none';return}const online=st=='online';let h='<div class="netcard '+st+'"><div class="nrow"><span class="dot"></span><b>'+({offline:'Offline',connecting:'Connecting…',reconnecting:'Reconnecting…',online:'Online'}[st])+'</b>';
   if(online)h+='<span class="nsub">'+esc(auth.name)+(auth.kind=='guest'?' · guest':auth.owner?' · creator':'')+'</span>';else if(url)h+='<span class="nsub">'+esc(url.replace(/^wss?:\/\//,'').replace(/\/ws$/,''))+'</span>';h+='</div>';
   if(err&&!online)h+='<div class="nerr">'+esc(err)+'</div>';
   if(!online&&st=='offline')h+='<p class="nmsg">Worlds you open now are saved on this device only. Connect to a Rootbound server to play in shared worlds that stay saved for everyone.</p><div class="nrow"><input id="nsrv" placeholder="Server address, e.g. play.example.com" value="'+esc(lsGet('rbsrv')||'')+'" maxlength="120"><button id="nco">Connect</button></div>';
@@ -3034,6 +3036,7 @@ const NET7=(()=>{
  // directory (public worlds)
  const _rw=renderWorlds;renderWorlds=function(){render();const live=$('wlive'),rec=$('wrec');if(!live)return;
   const row=(n,c,sub,tag)=>'<div class="wr" data-w="'+esc(n)+'"><span><b>'+esc(n)+'</b>'+(tag?' <small>'+esc(tag)+'</small>':'')+(sub?'<br><small>'+esc(sub)+'</small>':'')+'</span><span class="'+(c?'on':'')+'">'+(c?c+' online':'')+'</span></div>';
+  if(SOLO){live.style.display='none';if(live.previousElementSibling&&live.previousElementSibling.tagName=='H3')live.previousElementSibling.style.display='none';rec.innerHTML=recents().map(n=>row(n,0,'',0)).join('')||'<div class="rb-empty">Nothing here yet. Type a world name above.</div>';for(const e of menuEl.querySelectorAll('.wr'))e.onclick=()=>enterWorld(e.dataset.w);return}
   if(st=='online'){live.innerHTML=list.length?list.map(x=>row(x.id,x.pop,(x.owner?'by '+x.owner+' · ':'')+(x.weather&&x.weather!='default'?x.weather+' · ':'')+'saved on server',x.hub?'hub':'')).join(''):'<div class="rb-empty">No public worlds yet. Type a name above to create the first one.</div>'}
   else live.innerHTML='<div class="rb-empty">Connect to a server to see public worlds.</div>';
   rec.innerHTML=recents().map(n=>row(n,0,st=='online'?'':'on this device',0)).join('')||'<div class="rb-empty">Nothing here yet. Type a world name above.</div>';
@@ -3041,7 +3044,7 @@ const NET7=(()=>{
  setInterval(()=>{if(st=='online'&&menuEl.style.display!='none')refresh()},6000);
  const _om=openMenu;openMenu=function(s){_om(s);if(s=='mworlds'||!s){try{render()}catch(_){}}};
  // HUD status chip text
- function chip(n){if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
+ function chip(n){if(SOLO)return'';if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
  // boot: try to discover a server without ever blocking the game
  async function boot(){try{const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
@@ -6349,7 +6352,7 @@ const TOOLS7=(()=>{
 /* ========== LATE: 96-hubx.js ========== */
 // ===== V6 hub tabs: World management, Directory, Social, Crafting guide =====
 (()=>{const X=UI6.ext,esc=UI6.esc,B=()=>UI6.body,el=id=>document.getElementById(id);
- UI6.TABS.splice(UI6.TABS.findIndex(t=>t[0]=='settings'),0,['world','World'],['dir','Directory'],['social','Social'],['craft','Crafting']);
+ UI6.TABS.splice(UI6.TABS.findIndex(t=>t[0]=='settings'),0,...(window.RB_CONFIG&&RB_CONFIG.solo?[['world','World']]:[['world','World'],['dir','Directory'],['social','Social']]),['craft','Crafting']);
  const roleLbl=['Visitor','Trusted','Builder','Owner'];
  function readWorld(n){try{const e=JSON.parse(localStorage.getItem('rbw_'+n)||'null');return e&&e.m?e.m:null}catch(_){return null}}
  X.world=function(){const b=B();

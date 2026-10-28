@@ -3,14 +3,14 @@
 // local flags for authorization; it only displays what the server tells it. The game works fully offline when no server is reachable.
 const say6=(a,b,c)=>{try{UI6.say6(a,b,c)}catch(_){}};
 const NET7=(()=>{
- const LOCAL_ID=myId,esc=DLG7.esc;
+ const LOCAL_ID=myId,esc=DLG7.esc,SOLO=!!(window.RB_CONFIG&&RB_CONFIG.solo);   // single-player build: no server, no online UI
  let mySid='',st='offline',ws=null,url='',auth=null,info=null,list=[],room=null,want=null,joinedW=null,tries=0,retry=false,rt=0,hbT=0,lastPong=0,err='',manual=false,wantCreate=false,lastEnter=0,saved=null,resyncAt=0;
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
  const D=window.RBDIAG||{stage(){},err(){}};
  // ---- address handling
  function norm(a){a=String(a||'').trim();if(!a)return'';if(/^wss?:\/\//i.test(a))return a.replace(/\/+$/,'').replace(/\/ws$/,'')+'/ws';if(/^https?:\/\//i.test(a))return a.replace(/^http/i,'ws').replace(/\/+$/,'').replace(/\/ws$/,'')+'/ws';
   const local=/^(localhost|127\.|192\.168\.|10\.|\[::1\])/.test(a);return(local||location.protocol=='http:'?'ws://':'wss://')+a.replace(/\/+$/,'')+'/ws'}
- async function discover(){const c=window.RB_CONFIG&&window.RB_CONFIG.server;if(c)return norm(c);const s=lsGet('rbsrv');
+ async function discover(){if(SOLO)return'';const c=window.RB_CONFIG&&window.RB_CONFIG.server;if(c)return norm(c);const s=lsGet('rbsrv');
   if(/^https?:$/.test(location.protocol)){try{const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),2500);const r=await fetch(location.origin+'/health',{signal:ctl.signal,cache:'no-store'});clearTimeout(t);const j=await r.json();if(j&&j.game=='rootbound')return norm(location.origin)}catch(_){}}
   return s?norm(s):''}
  const send=m=>{try{if(ws&&ws.readyState==1){ws.send(JSON.stringify(m));return true}}catch(_){}return false};
@@ -82,7 +82,7 @@ const NET7=(()=>{
   _enterLocal(n)};
  leaveNet=function(){if(room){room.dead=1;send({t:'leave'})}if(rm){rm=null}room=null;joinedW=null;guest=false;roomCode=''};
  // ---- UI: world menu
- function render(){const el=$('wnet');if(!el)return;const online=st=='online';let h='<div class="netcard '+st+'"><div class="nrow"><span class="dot"></span><b>'+({offline:'Offline',connecting:'Connecting…',reconnecting:'Reconnecting…',online:'Online'}[st])+'</b>';
+ function render(){const el=$('wnet');if(!el)return;if(SOLO){el.innerHTML='';el.style.display='none';return}const online=st=='online';let h='<div class="netcard '+st+'"><div class="nrow"><span class="dot"></span><b>'+({offline:'Offline',connecting:'Connecting…',reconnecting:'Reconnecting…',online:'Online'}[st])+'</b>';
   if(online)h+='<span class="nsub">'+esc(auth.name)+(auth.kind=='guest'?' · guest':auth.owner?' · creator':'')+'</span>';else if(url)h+='<span class="nsub">'+esc(url.replace(/^wss?:\/\//,'').replace(/\/ws$/,''))+'</span>';h+='</div>';
   if(err&&!online)h+='<div class="nerr">'+esc(err)+'</div>';
   if(!online&&st=='offline')h+='<p class="nmsg">Worlds you open now are saved on this device only. Connect to a Rootbound server to play in shared worlds that stay saved for everyone.</p><div class="nrow"><input id="nsrv" placeholder="Server address, e.g. play.example.com" value="'+esc(lsGet('rbsrv')||'')+'" maxlength="120"><button id="nco">Connect</button></div>';
@@ -100,6 +100,7 @@ const NET7=(()=>{
  // directory (public worlds)
  const _rw=renderWorlds;renderWorlds=function(){render();const live=$('wlive'),rec=$('wrec');if(!live)return;
   const row=(n,c,sub,tag)=>'<div class="wr" data-w="'+esc(n)+'"><span><b>'+esc(n)+'</b>'+(tag?' <small>'+esc(tag)+'</small>':'')+(sub?'<br><small>'+esc(sub)+'</small>':'')+'</span><span class="'+(c?'on':'')+'">'+(c?c+' online':'')+'</span></div>';
+  if(SOLO){live.style.display='none';if(live.previousElementSibling&&live.previousElementSibling.tagName=='H3')live.previousElementSibling.style.display='none';rec.innerHTML=recents().map(n=>row(n,0,'',0)).join('')||'<div class="rb-empty">Nothing here yet. Type a world name above.</div>';for(const e of menuEl.querySelectorAll('.wr'))e.onclick=()=>enterWorld(e.dataset.w);return}
   if(st=='online'){live.innerHTML=list.length?list.map(x=>row(x.id,x.pop,(x.owner?'by '+x.owner+' · ':'')+(x.weather&&x.weather!='default'?x.weather+' · ':'')+'saved on server',x.hub?'hub':'')).join(''):'<div class="rb-empty">No public worlds yet. Type a name above to create the first one.</div>'}
   else live.innerHTML='<div class="rb-empty">Connect to a server to see public worlds.</div>';
   rec.innerHTML=recents().map(n=>row(n,0,st=='online'?'':'on this device',0)).join('')||'<div class="rb-empty">Nothing here yet. Type a world name above.</div>';
@@ -107,7 +108,7 @@ const NET7=(()=>{
  setInterval(()=>{if(st=='online'&&menuEl.style.display!='none')refresh()},6000);
  const _om=openMenu;openMenu=function(s){_om(s);if(s=='mworlds'||!s){try{render()}catch(_){}}};
  // HUD status chip text
- function chip(n){if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
+ function chip(n){if(SOLO)return'';if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
  // boot: try to discover a server without ever blocking the game
  async function boot(){try{const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);

@@ -1,6 +1,6 @@
 // ===== V6 hub tabs: World management, Directory, Social, Crafting guide =====
 (()=>{const X=UI6.ext,esc=UI6.esc,B=()=>UI6.body,el=id=>document.getElementById(id);
- UI6.TABS.splice(UI6.TABS.findIndex(t=>t[0]=='settings'),0,['world','World'],['dir','Directory'],['social','Social'],['craft','Crafting']);
+ UI6.TABS.splice(UI6.TABS.findIndex(t=>t[0]=='settings'),0,...(window.RB_CONFIG&&RB_CONFIG.solo?[['world','World']]:[['world','World'],['dir','Directory'],['social','Social']]),['craft','Crafting']);
  const roleLbl=['Visitor','Trusted','Builder','Owner'];
  function readWorld(n){try{const e=JSON.parse(localStorage.getItem('rbw_'+n)||'null');return e&&e.m?e.m:null}catch(_){return null}}
  X.world=function(){const b=B();

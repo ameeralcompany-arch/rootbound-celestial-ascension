@@ -10,7 +10,7 @@ const env=Object.assign({},process.env,{DATA_DIR:dir,SCRYPT_N:SN});
 const OWN='owner-pass-123456';
 spawnSync('node',[path.join(__dirname,'..','server','cli.js'),'set-owner','Creator','--password-stdin'],{input:OWN+'\n',env});
 const mkS=port=>createServer({port,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});
-async function client(b,url,tag){const p=await b.newPage({viewport:{width:1280,height:720}});p.errs=[];p.on('pageerror',e=>p.errs.push(tag+': '+e.message.slice(0,140)));
+async function client(b,url,tag){const p=await b.newPage({viewport:{width:1280,height:720}});await p.addInitScript(()=>{window.RB_CONFIG_OVERRIDE={solo:false}});p.errs=[];p.on('pageerror',e=>p.errs.push(tag+': '+e.message.slice(0,140)));
  await p.goto(url);await p.waitForTimeout(900);await p.getByText('PLAY AS GUEST',{exact:false}).first().click();await p.waitForTimeout(700);
  await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(500);await p.evaluate(()=>{try{PLN7.close();SHOW7.close()}catch(_){}});
  await p.waitForFunction(()=>NET7.online,null,{timeout:12000});return p}

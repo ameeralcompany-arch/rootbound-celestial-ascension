@@ -11,6 +11,8 @@ function create(){
  w.webContents.on('did-fail-load',(_e,code,desc,url)=>{log('did-fail-load '+code+' '+desc+' '+url);if(!SMOKE)dialog.showErrorBox('Rootbound could not load','The game file failed to load ('+desc+').\nA log was written to:\n'+logf)});
  w.webContents.on('render-process-gone',(_e,d)=>{log('render-process-gone '+JSON.stringify(d));if(!SMOKE&&!SAFE){app.relaunch({args:process.argv.slice(1).concat('--safe-mode')});app.exit(0)}});
  w.webContents.setWindowOpenHandler(()=>({action:'deny'}));
+ // F11 toggles fullscreen (the app menu is hidden, so add it back by hand)
+ w.webContents.on('before-input-event',(e,i)=>{if(i.type=='keyDown'&&i.key=='F11'){w.setFullScreen(!w.isFullScreen());e.preventDefault()}});
  w.loadFile(path.join(__dirname,'index.html'));
  if(SMOKE){let n=0;const iv=setInterval(async()=>{n++;try{const r=await w.webContents.executeJavaScript('(function(){return window.RBDIAG?{ready:RBDIAG.ready,errors:RBDIAG.errors.length,rep:RBDIAG.report()}:null})()');if(r&&r.ready){clearInterval(iv);console.log('SMOKE-OK ready; runtime errors='+r.errors);console.log(r.rep);app.exit(0)}}catch(e){log('smoke eval '+e)}if(n>40){clearInterval(iv);console.log('SMOKE-FAIL not ready in 20s');try{console.log(await w.webContents.executeJavaScript('RBDIAG.report()'))}catch(_){}app.exit(1)}},500)}
 }
