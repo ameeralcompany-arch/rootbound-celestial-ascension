@@ -6,7 +6,7 @@ const CHEST7=(()=>{
  const tierOf=dp=>dp<20?0:dp<32?1:2;const TN=['Wooden','Iron','Golden'];
  function build(){list=[];if(cur=='plaza')return;const R=rr((9157+Math.floor(ws*65537))>>>0);let lastX=-99;
   for(let x=4;x<W-4;x++){if(x-lastX<10)continue;const s=sh(x);for(let y=s+10;y<H-4;y++){if(!tiles[y*W+x]&&!tiles[(y-1)*W+x]&&tiles[(y+1)*W+x]&&tiles[(y+1)*W+x]!=17&&R()<.07){list.push({i:list.length,tx:x,ty:y,dp:y-s});lastX=x;break}}}
-  list=list.slice(0,9);list.forEach((c,i)=>c.i=i)}
+  list=list.slice(0,Math.round(9*W/100));list.forEach((c,i)=>c.i=i)}
  {const _gb=genBase;genBase=function(){const r=_gb.apply(this,arguments);try{build()}catch(e){console.error('chests',e)}return r}}
  const isOpen=c=>!!(opened[cur]&&opened[cur].includes(c.i));
  const near=()=>{let b=null,bd=T*1.7;for(const c of list){if(isOpen(c))continue;const d=Math.hypot((c.tx+.5)*T-P.x,(c.ty+.5)*T-(P.y+P.h/2));if(d<bd){bd=d;b=c}}return b};

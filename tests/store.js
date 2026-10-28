@@ -94,13 +94,13 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   // deterministic schedule: same world + slot => same event for everybody; plaza has none
   const a=WEV7.eventFor(7),b=WEV7.eventFor(7);o.det=JSON.stringify([a&&a.kind,a&&a.tx])==JSON.stringify([b&&b.kind,b&&b.tx]);let n=0;for(let k=0;k<200;k++)if(WEV7.eventFor(k))n++;o.rate=n>80&&n<190;
   // spirit
-  WEV7.force('spirit');P.x=WEV7.ev.x;await new Promise(r=>setTimeout(r,120));P.hp=10;const g0=gems;WEV7.interactEv();o.spirit=gems-g0==80&&P.hp>10;const g1=gems;WEV7.interactEv();o.once=gems==g1;
+  WEV7.force('spirit');P.x=WEV7.ev.x;{let y=Math.max(0,sh(WEV7.ev.tx)-3);while(y<H-2&&!solidAt(WEV7.ev.tx,y))y++;P.y=y*T-P.h-1}await new Promise(r=>setTimeout(r,120));P.hp=10;const g0=gems;WEV7.interactEv();o.spirit=gems-g0==80&&P.hp>10;const g1=gems;WEV7.interactEv();o.once=gems==g1;
   // trader
-  WEV7.force('trader');P.x=WEV7.ev.x;await new Promise(r=>setTimeout(r,120));const g2=gems;WEV7.interactEv();o.trader=g2-gems==250;
+  WEV7.force('trader');P.x=WEV7.ev.x;{let y=Math.max(0,sh(WEV7.ev.tx)-3);while(y<H-2&&!solidAt(WEV7.ev.tx,y))y++;P.y=y*T-P.h-1}await new Promise(r=>setTimeout(r,120));const g2=gems;WEV7.interactEv();o.trader=g2-gems==250;
   // rift: mobs appear; killing 6 closes it and pays
   WEV7.force('rift');await new Promise(r=>setTimeout(r,200));let spawned=0;for(let i=0;i<8;i++){WEV7.tick(5);}spawned=mobs.filter(m=>m.rift).length;o.rift=spawned>0;const g3=gems;for(let i=0;i<40&&gems-g3<150;i++){for(const m of mobs)if(m.rift)m.hp=0;mobs.splice(0,mobs.length,...mobs.filter(m=>!m.rift));WEV7.tick(5)}o.riftPay=gems-g3>=150;
   // meteor: an impact hurts a nearby monster and drops loot
-  WEV7.force('meteor');const ev=WEV7.ev;const gy=(()=>{let y=0;while(y<H-2&&!solidAt(Math.floor(ev.x/T),y))y++;return y*T})();const mm={k:'golem',x:ev.x,y:gy-54,w:46,h:54,vx:0,vy:0,hp:500,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0};mobs.push(mm);drops.length=0;
+  WEV7.force('meteor');const ev=WEV7.ev;const gy=(()=>{let y=Math.max(0,sh(Math.floor(ev.x/T))-3);while(y<H-2&&!solidAt(Math.floor(ev.x/T),y))y++;return y*T})();const mm={k:'golem',x:ev.x,y:gy-54,w:46,h:54,vx:0,vy:0,hp:500,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0};mobs.push(mm);drops.length=0;
   const mt=WEV7.meteors[0];mt.x=ev.x;mt.at=Date.now()-mt.dur-10;const hp0=mm.hp;WEV7.tick(.016);o.meteorHurt=mm.hp<hp0;o.meteorLoot=drops.length>0;return o});
  ok('world events: deterministic schedule, spirit heals once, trader sells, rift pays when cleared, meteors hurt monsters and drop loot',r.det&&r.rate&&r.spirit&&r.once&&r.trader&&r.rift&&r.riftPay&&r.meteorHurt&&r.meteorLoot,JSON.stringify(r));
  r=await p.evaluate(()=>{enterWorld('plaza');const o={};o.none=true;for(let k=0;k<400;k++){}WEV7.tick(.1);o.ev=WEV7.ev;return o});

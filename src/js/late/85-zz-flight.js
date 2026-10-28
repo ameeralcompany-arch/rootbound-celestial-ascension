@@ -5,6 +5,7 @@ const FLY7=(()=>{
  const wingNow=()=>{try{return cel.wingsOn?curWing(lvl):null}catch(_){return null}};
  const maxT=t=>3.2+.14*t;
  function flap(strong){try{wingFlap=1;wingOpen=1}catch(_){}try{featherFx(strong?3:1)}catch(_){}
+  if(typeof WINGSFX!='undefined'){WINGSFX.flap(strong);return}
   const v=Math.min(.12,.07+F.tier*.004);noise(.16,520+F.tier*30,v);snd(90+F.tier*3,.14,'sine',.05,.55)}
  function step(dt,ax,busy){const w=wingNow(),hold=!busy&&(K.w||K[' ']||K.arrowup),down=K.s||K.arrowdown;
   F.tier=w?Math.max(0,WINGS.indexOf(w)):0;

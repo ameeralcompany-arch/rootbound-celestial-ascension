@@ -12,7 +12,7 @@ const WEV7=(()=>{
  const mk=seed=>()=>(seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296;
  const srv=()=>{try{return SHOP7.serverMode}catch(_){return false}};
  let ev=null,hud=null,claimed=new Set(),lastAnn='',riftMobs=[],riftT=0,riftDone=false,meteors=[],mDone=new Set(),traded=0,lastCheck=0;
- const groundY=x=>{let y=0;while(y<H-2&&!solidAt(x,y))y++;return y*T};
+ const groundY=x=>{let y=Math.max(0,sh(x)-3);while(y<H-2&&!solidAt(x,y))y++;return y*T};   // start just above the surface so sky islands are skipped
  function eventFor(n){const R=mk(hash(cur+'|'+n));if(R()>.75)return null;const kind=KINDS[(R()*KINDS.length)|0],off=15000+R()*(SLOT-DUR[kind]-30000),tx=8+Math.floor(R()*(W-16)),R2=mk(hash(cur+'#'+n));
   return{id:cur+':'+n,kind,t0:n*SLOT+off,t1:n*SLOT+off+DUR[kind],x:tx*T+T/2,tx,seed:hash(cur+'~'+n),R2}}
  function current(now){const n=Math.floor(now/SLOT);for(const k of[n-1,n]){const e=eventFor(k);if(e&&now>=e.t0&&now<e.t1)return e}return null}

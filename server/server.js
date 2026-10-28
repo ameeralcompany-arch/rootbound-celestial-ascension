@@ -26,14 +26,16 @@ function createServer(opts={}){
  const worlds=new Map(); // id -> world
  const wname=n=>String(n||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16);
  const wfile=id=>store.p('worlds',id+'.json');
+ // worlds saved before the world grew were 100 tiles wide: move each tile key to its new index (x,y unchanged)
+ function migrateWorld(j){const ow=j.W||100,re=k=>Math.floor(k/ow)*R.W+(k%ow),mv=o=>{const r={};if(o&&typeof o=='object')for(const k of Object.keys(o)){const n=+k;if(Number.isInteger(n)&&n>=0)r[re(n)]=o[k]}return r};j.edits=mv(j.edits);j.objs=mv(j.objs);j.W=R.W}
  function loadWorld(id,create,ownerUid){let w=worlds.get(id);if(w)return w;const j=store.readJSON(wfile(id),null);
-  if(j&&j.id==id){w={id,name:j.name||id,created:j.created||Date.now(),ownerUid:j.ownerUid||'',edits:{},meta:R.cleanMeta(j.meta)||null,objs:R.cleanObjMap(j.objs),weather:R.WEATHERS.includes(j.weather)?j.weather:'default',rev:j.rev|0,updated:j.updated||0,lastWx:0};
+  if(j&&j.id==id){if(j.W!==R.W)migrateWorld(j);w={id,name:j.name||id,created:j.created||Date.now(),ownerUid:j.ownerUid||'',edits:{},meta:R.cleanMeta(j.meta)||null,objs:R.cleanObjMap(j.objs),weather:R.WEATHERS.includes(j.weather)?j.weather:'default',rev:j.rev|0,updated:j.updated||0,lastWx:0};
    for(const k of Object.keys(j.edits||{})){if(R.validEdit({k:+k,a:j.edits[k]}))w.edits[k]=j.edits[k]}}
   else if(create){if(countWorlds()>=cfg.maxWorlds)return null;w={id,name:id,created:Date.now(),ownerUid:ownerUid||'',edits:{},meta:null,objs:{},weather:'default',rev:0,updated:Date.now(),lastWx:0};}
   else return null;
   w.members=new Set();w.dirty=false;w.emptySince=Date.now();worlds.set(id,w);if(create&&!j){saveWorld(w,true);store.audit({ev:'world-created',w:id,by:ownerUid})}return w}
  function countWorlds(){try{return fs.readdirSync(store.p('worlds')).filter(f=>f.endsWith('.json')).length}catch(_){return worlds.size}}
- function saveWorld(w,now){w.dirty=true;const doSave=()=>{w.dirty=false;w.rev++;w.updated=Date.now();store.writeJSON(wfile(w.id),{v:1,id:w.id,name:w.name,created:w.created,ownerUid:w.ownerUid,weather:w.weather,rev:w.rev,updated:w.updated,meta:w.meta,objs:w.objs,edits:w.edits})};if(now)doSave();else store.later('w:'+w.id,doSave)}
+ function saveWorld(w,now){w.dirty=true;const doSave=()=>{w.dirty=false;w.rev++;w.updated=Date.now();store.writeJSON(wfile(w.id),{v:1,W:R.W,id:w.id,name:w.name,created:w.created,ownerUid:w.ownerUid,weather:w.weather,rev:w.rev,updated:w.updated,meta:w.meta,objs:w.objs,edits:w.edits})};if(now)doSave();else store.later('w:'+w.id,doSave)}
  const worldExists=id=>worlds.has(id)||fs.existsSync(wfile(id));
  function listWorlds(){const out=[];let files=[];try{files=fs.readdirSync(store.p('worlds')).filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5))}catch(_){}
   for(const id of files){const w=worlds.get(id);let info;if(w)info={id,pop:w.members.size,owner:w.meta?w.meta.on:'',weather:w.weather,rev:w.rev,updated:w.updated,priv:!!(w.meta&&w.meta.pr)};else{try{const st=fs.statSync(wfile(id));info={id,pop:0,owner:'',weather:'default',rev:0,updated:st.mtimeMs,priv:false,cold:1}}catch(_){continue}}out.push(info)}
