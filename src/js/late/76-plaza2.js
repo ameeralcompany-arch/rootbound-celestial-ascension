@@ -1,7 +1,8 @@
 // ===== Plaza redesign: "Blossom Garden Plaza" built only from the 18 new blocks (ids 42-59) =====
 // Layout (x relative to the door DX): pond+arched bridge (-44..-38), cottage (-36..-28), cherry tree (-23),
 // fountain with Lumen crystal (-17..-11), paved promenade, door + crystal pedestals (0), torii gate (+16..+20),
-// two-storey teahouse (+25..+35), bamboo grove (+38..+44). NPC spots (-7,+7,+13) stay on flat paving.
+// two-storey teahouse (+25..+35), bamboo grove (+38..+44). NPC spots (-7,+7,+13) stay on flat paving; the other NPC stations
+// (garden -23, fountain mage -19, gate guard +22, teahouse +30, bamboo +42, fields beyond) are listed in 77-npcs2.js.
 const PLZ7=(()=>{
  const S=22;
  function build(){
@@ -58,8 +59,8 @@ const PLZ7=(()=>{
    set(x0-1,S-2,59);set(x1+1,S-2,59);set(x0-1,S-1,59);set(x1+1,S-1,59)}
   // ---- bamboo grove
   [[D+38,6],[D+41,8],[D+44,5],[D+47,7]].forEach(([x,h])=>{for(let y=S-1;y>=S-h;y--)set(x,y,51)});
-  // ---- flower planters (coral)
-  for(const x of[D-20,D-2,D+2,D+14,D+23]){set(x,S-1,59)}
+  // ---- flower planters (coral) flanking the door; D-20 / D+14 / D+23 stay open for the mage, the smith's anvil and the gate guard (NPC2)
+  for(const x of[D-2,D+2]){set(x,S-1,59)}
   trees.clear();
  }
  // ----- decor sprites (drawn behind characters): cherry trees, shrubs, flowers -----
