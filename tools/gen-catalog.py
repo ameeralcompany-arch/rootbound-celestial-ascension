@@ -41,7 +41,14 @@ W=[('solarfang','Solar Fang','epic',1200,'A radiant gold-orange blade. Every hit
  ('stormflail','Stormflail','epic',1500,'A spiked ball on a chain with real momentum.'),
  ('gravitystaff','Graviton Rod','legendary',1800,'Launches a heavy orb that bounces off walls and bursts.'),
  ('galeshuriken','Gale Shurikens','rare',700,'Three seeking stars that ricochet once off walls.'),
- ('titanmaul','Titan Maul','legendary',2400,'Slams the ground and sends a shockwave along the terrain.')]
+ ('titanmaul','Titan Maul','legendary',2400,'Slams the ground and sends a shockwave along the terrain.'),
+ ('starwand','Star Wand','rare',900,'Fires a fan of three star bolts that burst into sparkles.'),
+ ('frostwand','Frost Wand','epic',1400,'Ice crystals erupt in a line, then shatter in a snowflake ring.'),
+ ('voidwand','Void Wand','legendary',2200,'Launches an orb that becomes a black hole with violet lightning.'),
+ ('tendrilwand','Crimson Tendril Wand','epic',1700,'Three living tendrils lash out in a red slash.'),
+ ('chainwand','Spectral Chains','legendary',2000,'Ghostly chains burst around you and drag enemies in.'),
+ ('crowbow','Murder Bow','legendary',1900,'Looses a flock of spectral crows that weave toward enemies.'),
+ ('icebow','Glacier Bow','epic',1500,'A frozen arrow that shatters into ice shards.')]
 for i,n,r,p,d in W: add(id='wpn_'+i,cat='weapons',n=n,price=p,rar=r,stack=0,ref=i,lv=0,d=d,how='store',new=1)
 # ---- new building blocks (ids 42-59), data shared with the client through tools/new-blocks.json
 for b in json.load(open(os.path.join(R,'tools/new-blocks.json'))):
