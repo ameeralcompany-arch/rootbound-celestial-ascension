@@ -74,7 +74,7 @@ const WINGX=(()=>{
   AURAS.forEach((a,i)=>{if(a.id=='none')return;const u=lvl>=a.lvl;h+='<div class="hcard'+(u?'':' lock')+(a0.id==a.id?' sel':'')+'" data-a="'+i+'"><div class="cv"></div><b>'+a.n+'</b><small>'+(u?'Unlocked':'Unlocks at level '+a.lvl)+'</small></div>'});return h+'</div>'}
  function render(){const B=UI6.body;if(!selId||!wingById(selId)){const e=curWing(lvl);selId=e?e.id:WINGS[0].id}const w=wingById(selId),own=WINGS.filter(owned).length,eq=curWing(lvl);
   B.innerHTML='<div id="wcRoot"><h3>Wing Collection</h3><div class="hrow"><span class="hchip on">Owned '+own+' / '+WINGS.length+'</span><span class="hchip">'+(eq?'Wearing: '+esc(eq.n):'No wings equipped')+'</span>'+(eq?'<button class="hbtn" data-wa="unall">Unequip wings</button>':'')+'</div>'+
-   '<div class="prof" style="align-items:flex-start;flex-wrap:wrap"><canvas id="wcPv" width="340" height="250" style="max-width:100%;border-radius:12px"></canvas><div id="wcTop" style="flex:1;min-width:220px">'+info(w)+'</div></div>'+
+   '<div class="prof" style="align-items:flex-start;flex-wrap:wrap"><canvas id="wcPv" width="340" height="250" style="width:340px;height:auto;max-width:100%;border-radius:12px;background:linear-gradient(#2a2348,#0e0b1c)"></canvas><div id="wcTop" style="flex:1;min-width:220px">'+info(w)+'</div></div>'+
    '<h4>Next level rewards</h4>'+upcoming()+
    '<h4>Filters</h4>'+chips('own',[['all','All'],['owned','Owned'],['locked','Locked']])+chips('rar',[['all','Any rarity'],...WRAR.map(r=>[r,RN[r]])])+chips('fam',[['all','Any family'],...Object.keys(WFAM).map(k=>[k,WFAM[k]])])+
    '<div class="hgrid" id="wcGrid">'+grid()+'</div>'+auraHtml()+'</div>';
@@ -101,8 +101,12 @@ const WINGX=(()=>{
     if(WPREV.id){x.fillStyle='rgba(255,255,255,.85)';x.font='600 12px sans-serif';x.fillText('PREVIEW',10,18)}}
    if(now-lastCard<40)return;lastCard=now;const br=UI1();let nb=0;
    for(const c of root.querySelectorAll('canvas[data-wc]')){const r=c.getBoundingClientRect();if(r.bottom<br.top||r.top>br.bottom||!r.width)continue;const id=c.dataset.wc,i=WINGS.findIndex(w=>w.id==id);if(i<0)continue;
-    if(!built.has(id)){if(nb>=2)continue;nb++;built.add(id)}const W=WINGS[i],x=c.getContext('2d'),k=Math.min(1.15,46/(W.a.L*1.18)),own=owned(W);x.clearRect(0,0,168,112);
-    x.save();x.translate(84,78);x.scale(k,k);try{WingArt.draw(x,i,0,6,1,t+i*.37,0,0,i,own?1:.38,null,null,{ds:1})}catch(_){}x.restore();if(!own){x.fillStyle='rgba(255,255,255,.75)';x.font='600 11px sans-serif';x.fillText('LOCKED',6,14)}}};raf=requestAnimationFrame(step)}
+    if(!built.has(id)){if(nb>=2)continue;nb++;built.add(id)}const W=WINGS[i],x=c.getContext('2d'),k=Math.min(1.45,60/(W.a.L*1.15)),own=owned(W);x.drawImage(backdrop(W.rar),0,0);
+    x.save();x.translate(84,76);x.scale(k,k);try{WingArt.draw(x,i,0,6,1,t+i*.37,0,0,i,own?1:.55,null,null,{ds:1})}catch(_){}x.restore();
+    if(!own){x.fillStyle='rgba(10,8,20,.6)';x.fillRect(6,6,58,16);x.fillStyle='#fff';x.font='700 10px sans-serif';x.fillText('LOCKED',14,18)}}};raf=requestAnimationFrame(step)}
+ // dark display-case backdrop per rarity (cached), so white and dark wings both read on any theme
+ const BD={};function backdrop(r){if(BD[r])return BD[r];const c=document.createElement('canvas');c.width=168;c.height=112;const x=c.getContext('2d');const g0=x.createLinearGradient(0,0,0,112);g0.addColorStop(0,'#2a2348');g0.addColorStop(1,'#0e0b1c');x.fillStyle=g0;x.beginPath();x.roundRect?x.roundRect(0,0,168,112,10):x.rect(0,0,168,112);x.fill();
+  const g1=x.createRadialGradient(84,70,4,84,70,80);g1.addColorStop(0,RC[r]+'55');g1.addColorStop(1,RC[r]+'00');x.fillStyle=g1;x.fillRect(0,0,168,112);x.fillStyle=RC[r];x.fillRect(0,108,168,4);return BD[r]=c}
  const UI1=()=>{try{return UI6.body.getBoundingClientRect()}catch(_){return{top:0,bottom:innerHeight}}};
  UI6.ext.wings=render;
  return{render}})();

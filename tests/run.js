@@ -23,6 +23,9 @@ async function enter(p,lv){await p.goto(URL);await p.waitForTimeout(700);await p
   // level-up awakens (once per milestone)
   const up=await p.evaluate(()=>new Promise(res=>{lvl=4;setTimeout(()=>{lvl=5;setTimeout(()=>{const b=document.getElementById('banner').firstChild.textContent,s=document.getElementById('banner').lastChild.textContent,c=!!WINGX.S.claimed.feather;res({b,s,c})},1100)},400)}));ok('reaching a wing level fires the awakening, once',/WINGS AWAKENED/.test(up.b)&&/FLEDGLING/.test(up.s)&&up.c,JSON.stringify(up));
   const f=await p.evaluate(()=>{lvl=20;cel.wing='cosmic';const w=curWing(20);cel.wing='sovereign';const x=curWing(20);cel.wing='auto';return JSON.stringify([w,x])});ok('locked / exclusive wing cannot be equipped via saved data (shows nothing, never swaps in another)',f=='[null,null]',f);
+  const ex=await p.evaluate(()=>{const o={};o.sfx=WINGS.filter(w=>!WINGSFX.P7[w.id]).map(w=>w.id);o.before=WINGX.has('sovereign');o.need=WINGX.req('sovereign')[0].need;for(const b of BOSSES)bossK[b.id]=1;WINGX.tick();o.after=WINGX.has('sovereign');o.eq=wingEquip('sovereign');o.cur=curWing(lvl)&&curWing(lvl).id;
+   o.stored=!!JSON.parse(localStorage.getItem('rbcwing')).ex.sovereign;for(const b of BOSSES)bossK[b.id]=0;WINGX.tick();o.kept=WINGX.has('sovereign');o.reqs=WINGS.filter(w=>w.src=='excl').every(w=>WINGX.req(w.id).length>0);wingUnequip();return o});
+  ok('every wing has a sound profile; exclusive wings unlock from real achievements, persist and stay unlocked',!ex.sfx.length&&!ex.before&&ex.need==6&&ex.after&&ex.eq&&ex.cur=='sovereign'&&ex.stored&&ex.kept&&ex.reqs,JSON.stringify(ex));
   ok('progression: no errors',p.errs.length==0,p.errs.join('|'));await p.close()}
  // 4. every wing tier, aura, outfit, hair renders without error
  {const p=await page(b,guest);await enter(p,160);

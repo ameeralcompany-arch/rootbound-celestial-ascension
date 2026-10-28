@@ -20,9 +20,9 @@ const WINGS=[
  {id:'eclipse',n:'Eclipse Wings',fam:'cosmic',rar:'epic',src:'level',lvl:50,pal:['#07050c','#24163a','#5e4382','#ffcf5a'],sp:'#ffd98a',fxk:'omen',d:'Great black crescent blades rimmed in gold, with a burning corona behind the back.',
   a:{L:72,corona:{c:'#ffcf5a',r:.42},parts:[{s:'fan',tip:'crescent',rows:2,n:6,a:[-50,72],arm:-42,att:.45,fw:.18,rim:'#ffcf5a',rf:.62}]}},
  {id:'ascendant',n:'Royal Ascendant Wings',fam:'fantasy',rar:'legendary',src:'level',lvl:100,pal:['#a8843a','#f6e2b0','#ffffff','#ffe39a'],sp:'#fff4c4',fxk:'glitter',d:'Four layers of white-gold royal plumage, a second lower pair and a radiant halo.',
-  a:{L:88,halo:'#ffe39a',parts:[{s:'fan',off:42,sc:.56,tip:'point',rows:2,n:8,a:[-40,78],arm:-30,att:.5,fw:.24,rim:'#e8c26a'},{s:'fan',tip:'point',rows:4,n:13,a:[-56,82],arm:-42,att:.56,fw:.23,cov:'round',rim:'#e8c26a'}]}},
+  a:{L:88,halo:'#ffe39a',parts:[{s:'fan',off:36,sc:.52,tip:'point',rows:2,n:8,a:[-40,70],arm:-30,att:.5,fw:.24,rim:'#e8c26a'},{s:'fan',tip:'point',rows:4,n:13,a:[-56,82],arm:-42,att:.56,fw:.23,cov:'round',rim:'#e8c26a'}]}},
  {id:'cosmic',n:'Transcendent Wings',fam:'cosmic',rar:'mythic',src:'level',lvl:150,pal:['#1a0b45','#7a3cff','#7ff0ff','#ff9be8'],sp:'#ffffff',fxk:'stars',d:'Three layers of living nebula, an orbit ring and drifting stars. The final milestone.',
-  a:{L:104,halo:'#ff9be8',orbit:'#7ff0ff',stars:30,parts:[{s:'fan',off:44,sc:.6,tip:'star',rows:2,n:8,a:[-40,78],arm:-30,att:.5,fw:.24},{s:'rib',kind:'nebula',n:5,a:[-60,40],len:1.08,w:7},{s:'fan',tip:'star',rows:3,n:13,a:[-54,82],arm:-42,att:.56,fw:.24,glow:1}]}},
+  a:{L:104,halo:'#ff9be8',orbit:'#7ff0ff',stars:30,parts:[{s:'fan',off:36,sc:.52,tip:'star',rows:2,n:8,a:[-40,70],arm:-30,att:.5,fw:.24},{s:'rib',kind:'nebula',n:5,a:[-60,40],len:1.08,w:7},{s:'fan',tip:'star',rows:3,n:13,a:[-54,82],arm:-42,att:.56,fw:.24,glow:1}]}},
  {id:'dove',n:'Dove Wings',fam:'feathered',rar:'common',src:'shop',pal:['#c9d3ee','#f1f5ff','#ffffff','#fff2d0'],sp:'#fff',fxk:'glitter',d:'Broad, rounded pearl-white feathers with luminous tips.',
   a:{L:44,parts:[{s:'fan',tip:'round',rows:3,n:9,a:[-40,88],arm:-30,att:.5,fw:.34,lc:'mid'}]}},
  {id:'blossom',n:'Blossom Wings',fam:'fantasy',rar:'common',src:'shop',pal:['#e66a9a','#ffb0cf','#fff0f6','#ff7fb0'],sp:'#ffd0e4',fxk:'petals',d:'Soft petal wings that shed cherry-blossom petals as you move.',
@@ -82,7 +82,7 @@ const WINGS=[
  {id:'phoenix',n:'Phoenix Reborn',fam:'elemental',rar:'exclusive',src:'excl',pal:['#5a0a04','#ff4a12','#ffd040','#fff6c0'],sp:'#ffd040',fxk:'embers',d:'Massive wings of fire that burst into a rebirth flame.',
   a:{L:110,rebirth:1,parts:[{s:'fan',tip:'flame',rows:3,n:12,a:[-64,74],arm:-48,att:.5,fw:.3},{s:'rib',kind:'flame',n:6,a:[-62,30],len:.95,w:7}]}},
  {id:'eternity',n:'Seraph of Eternity',fam:'feathered',rar:'exclusive',src:'excl',pal:['#7a84a4','#d6dbea','#ffffff','#ffe9a0'],sp:'#fff4c4',fxk:'glitter',d:'Three pairs of silver and gold wings that open slowly and majestically.',
-  a:{L:100,halo:'#ffe9a0',slow:1,parts:[{s:'fan',off:48,sc:.56,tip:'point',rows:2,n:8,a:[-40,78],arm:-30,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',off:-38,sc:.62,tip:'point',rows:2,n:8,a:[-60,60],arm:-48,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',tip:'point',rows:3,n:13,a:[-54,82],arm:-40,att:.56,fw:.23,cov:'round'}]}},
+  a:{L:100,halo:'#ffe9a0',slow:1,parts:[{s:'fan',off:38,sc:.52,tip:'point',rows:2,n:8,a:[-40,70],arm:-30,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',off:-38,sc:.62,tip:'point',rows:2,n:8,a:[-60,60],arm:-48,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',tip:'point',rows:3,n:13,a:[-54,82],arm:-40,att:.56,fw:.23,cov:'round'}]}},
  {id:'drakelord',n:'Dragon Sovereign',fam:'fantasy',rar:'exclusive',src:'excl',pal:['#120808','#3a1410','#d89a3a','#ff8a2a'],sp:'#ff8a2a',fxk:'embers',d:'Colossal obsidian dragon wings with five spiked fingers and molten veins.',
   a:{L:112,parts:[{s:'mem',fingers:5,bone:'#2a1a12',claw:1,spikes:1,vein:1,glowVein:1}]}}
 ];

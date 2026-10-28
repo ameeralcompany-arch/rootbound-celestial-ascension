@@ -95,7 +95,8 @@ const WingArt=(()=>{
    layers.push({c:cv,ox:-x0,oy:-y0,w:x1-x0,h:y1-y0})}
   const off=(p.off||0)*RAD,fl=layers[layers.length-1];
   const nS=(A.stars|0)*(p.sc&&p.sc<1?.3:1)|0,nG=A.glint?10:0;
-  return{kind:'fan',layers,fold:(p.att===0?(78-(p.a[0]+p.a[1])/2)*RAD:Math.PI*.5-armOf(p)-.25),rest:off-(A.rise||0)*RAD,fs:cl(44/L,.3,.92),stg:A.unfold?.85:.35,ruf:/point|round|ragged|real|star|storm/.test(p.tip),stars:sample(fl,ds,nS,r),glints:sample(fl,ds,nG,r),glow:p.glow?pal[3]:null,pal,sub:p.sc&&p.sc<1?1:0}}
+  // folded = the same art squeezed narrow behind the shoulder (wrist up, feathers hanging along the back)
+  return{kind:'fan',layers,fold:.12+(p.off||0)*RAD*.25,rest:off-(A.rise||0)*RAD,fsx:p.att===0?.4:.3,fsy:cl(58/L,.45,.86),stg:A.unfold?.85:.35,ruf:/point|round|ragged|real|star|storm/.test(p.tip),stars:sample(fl,ds,nS,r),glints:sample(fl,ds,nG,r),glow:p.glow?pal[3]:null,pal,sub:p.sc&&p.sc<1?1:0}}
  // ---------- fragments ----------
  function fragSprite(shape,s,pal,r,ds){const m=s*1.6,cv=mkC(m*2*ds,m*2*ds),x=cv.getContext('2d');x.scale(ds,ds);x.translate(m,m);x.shadowColor=pal[3];x.shadowBlur=s*.8;x.lineJoin='round';
   if(shape=='star'){x.fillStyle=pal[2];x.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,R=i%2?s*.3:s;x.lineTo(Math.cos(a)*R,Math.sin(a)*R)}x.closePath();x.fill();x.shadowBlur=0;x.fillStyle='#fff';x.beginPath();x.arc(0,0,s*.22,0,6.3);x.fill()}
@@ -109,9 +110,9 @@ const WingArt=(()=>{
   const rays=Math.ceil(n/2),att=p.att==null?.5:p.att,armA=armOf(p),pairs=[];
   for(let i=0;i<n;i++){const k=i%rays,tipF=i>=rays,u=rays>1?k/(rays-1):0,ra=lerp(p.a[0],p.a[1],u)*RAD,d=att*L*(1-u),Li=L*LC.top(u)*(1-.5*att*(1-u)),dist=Li*(tipF?.92:.42)*(.92+r()*.16);
    const x=Math.cos(armA)*d+Math.cos(ra)*dist,y=Math.sin(armA)*d+Math.sin(ra)*dist,rad=Math.hypot(x,y);
-   fr.push({a:Math.atan2(y,x),r:rad,fa:(84+u*18)*RAD,k:rad/L,ph:r()*6.3,v:tipF?Math.min(vars.length-1,(r()*2)|0):(vars.length-1-((r()*2)|0)),rot:r()*6.3,spin:(r()-.5)*.6,ori:p.shape=='void'?1:0})}
+   fr.push({a:Math.atan2(y,x),r:rad,fa:(-72+u*150)*RAD,k:rad/L,ph:r()*6.3,v:tipF?Math.min(vars.length-1,(r()*2)|0):(vars.length-1-((r()*2)|0)),rot:r()*6.3,spin:(r()-.5)*.6,ori:p.shape=='void'?1:0})}
   if(p.line)for(let k=0;k<rays;k++){if(k+rays<n)pairs.push([k,k+rays]);if(k+1<rays)pairs.push([k,k+1])}
-  return{kind:'frag',fr,vars,pairs,line:p.line?pal[2]:null,fs:cl(44/L,.3,.92),tmp:new Float32Array(n*2),pal,L,scat:A.unfold||W.id=='voidemp'?1:0}}
+  return{kind:'frag',fr,vars,pairs,line:p.line?pal[2]:null,fs:cl(36/L,.28,.5),tmp:new Float32Array(n*2),pal,L,scat:A.unfold||W.id=='voidemp'?1:0}}
  // ---------- mechanical plates ----------
  function plate(style,lp,w,pal,joint,ds){const pad=4,cv=mkC((lp+pad*2)*ds,(w*2.6+pad*2)*ds),x=cv.getContext('2d'),oy=w*1.3+pad;x.scale(ds,ds);x.translate(pad,oy);x.lineJoin='round';
   if(style=='hex'){const m=3,R=lp/(m*1.45);x.strokeStyle=pal[1];x.lineWidth=Math.max(1,w*.16);x.beginPath();x.moveTo(0,0);x.lineTo(lp,0);x.stroke();
@@ -125,10 +126,10 @@ const WingArt=(()=>{
    x.shadowColor=pal[3];x.shadowBlur=w*.5;x.strokeStyle=pal[3];x.lineWidth=Math.max(1,w*.1);x.beginPath();x.moveTo(lp*.1,0);x.lineTo(lp*.82,-w*.16);x.stroke();x.shadowBlur=0;x.fillStyle='#e8eef9';for(let i=1;i<4;i++){x.beginPath();x.arc(lp*(.18+i*.2),-w*.22+i*.02*w,Math.max(.8,w*.06),0,6.3);x.fill()}}
   return{c:cv,ox:pad,oy,w:lp+pad*2,h:w*2.6+pad*2,lp}}
  function buildMech(W,p,L,ds,pal){const n=p.n,spr=[],ang=[],fa=[];for(let i=0;i<n;i++){const u=n>1?i/(n-1):0,lp=L*(p.style=='hex'?.56-.2*u:.62-.22*u),w=lp*(p.style=='panel'?.26:p.style=='hex'?.2:.25);spr.push(plate(p.style,lp,w,pal,p.joint,ds));ang.push(lerp(p.a[0],p.a[1],u)*RAD);fa.push((96+u*8)*RAD)}
-  return{kind:'mech',n,spr,ang,fa,L,pal,joint:p.joint||pal[2],style:p.style,click:p.style=='panel',fs:cl(46/L,.32,.92),dark:mix(pal[0],'#000000',.4)}}
- function buildMem(W,p,L,pal){const nf=p.fingers,lens=[],fa=[],ff=[];for(let i=0;i<nf;i++){const u=nf>1?i/(nf-1):0;lens.push(L*(.6-.2*u));fa.push(lerp(-34,64,u)*RAD);ff.push((98+i*6)*RAD)}
+  return{kind:'mech',n,spr,ang,fa,L,pal,joint:p.joint||pal[2],style:p.style,click:p.style=='panel',fs:cl(58/L,.45,.92),dark:mix(pal[0],'#000000',.4)}}
+ function buildMem(W,p,L,pal){const nf=p.fingers,lens=[],fa=[],ff=[];for(let i=0;i<nf;i++){const u=nf>1?i/(nf-1):0;lens.push(L*(.6-.2*u));fa.push(lerp(-34,64,u)*RAD);ff.push((84+i*5)*RAD)}
   const x=mkC(2,2).getContext('2d'),gr=x.createLinearGradient(0,-L*.5,L*.8,L*.4);gr.addColorStop(0,mix(pal[0],pal[1],.35));gr.addColorStop(.55,pal[1]);gr.addColorStop(1,mix(pal[1],pal[2],.55));
-  return{kind:'mem',L,nf,lens,fa,ff,gr,bone:p.bone,dark:mix(pal[0],'#000000',.55),pal,claw:p.claw,hook:p.hook,scal:p.scal||.26,ghost:p.ghost,spikes:p.spikes,vein:p.vein,gv:p.glowVein,fs:cl(48/L,.3,.9),tmp:new Float32Array(nf*2)}}
+  return{kind:'mem',L,nf,lens,fa,ff,gr,bone:p.bone,dark:mix(pal[0],'#000000',.55),pal,claw:p.claw,hook:p.hook,scal:p.scal||.26,ghost:p.ghost,spikes:p.spikes,vein:p.vein,gv:p.glowVein,fs:cl(60/L,.45,.9),tmp:new Float32Array(nf*2)}}
  const RIBK={nebula:{add:1,w:7,wav:.12,sp:1.1,bend:.32},wind:{add:0,w:3,wav:.16,sp:2.1,bend:.6,dash:1},water:{add:0,w:3,wav:.22,sp:1.5,bend:.45,dash:1},flame:{add:1,w:5,wav:.28,sp:6.5,bend:-.12},void:{add:0,w:6,wav:.2,sp:1.4,bend:.25}};
  function buildRib(W,p,L,pal){const K=RIBK[p.kind]||RIBK.nebula,n=p.n,a=[];for(let i=0;i<n;i++)a.push(lerp(p.a[0],p.a[1],n>1?i/(n-1):.5)*RAD);
   const c1=p.kind=='nebula'?pal[3]:p.kind=='wind'?'#ffffff':p.kind=='void'?pal[0]:pal[1],c2=p.kind=='void'?pal[3]:pal[2];
@@ -165,7 +166,7 @@ const WingArt=(()=>{
  function drawFan(g,P,ps,t,ph,fx){const nl=P.layers.length,S=ps.s;
   for(let i=0;i<nl;i++){const l=P.layers[i],kb=nl>1?1-i/(nl-1):0,e=ease(S*(1+P.stg)-kb*P.stg-P.sub*.08);
    const ang=lerp(P.fold,P.rest,e)+ps.fl*(.5+kb*.8)*(P.sub?.7:1)+ps.lag*(.5+kb)+Math.sin(t*1.7+ph)*.016*(1+kb)+(P.ruf?Math.sin(t*2.6+i*1.9+ph)*.02*S*(1+kb):0)+ps.land*.32*(1+kb*.5);
-   const sc=lerp(P.fs,1,e);g.save();g.rotate(ang);g.scale(sc*(1-.16*(1-e)),sc);g.drawImage(l.c,-l.ox,-l.oy,l.w,l.h);
+   g.save();g.rotate(ang);g.scale(lerp(P.fsx,1,e),lerp(P.fsy,1,e));g.drawImage(l.c,-l.ox,-l.oy,l.w,l.h);
    if(i==nl-1&&fx&&S>.25){const a0=g.globalAlpha;
     if(P.glow){g.globalCompositeOperation='lighter';g.globalAlpha=a0*(.07+.06*Math.sin(t*2.2+ph))*S;g.drawImage(l.c,-l.ox,-l.oy,l.w,l.h);g.globalAlpha=a0}
     if(P.stars.length){g.globalCompositeOperation='lighter';g.fillStyle='#ffffff';for(let j=0;j<P.stars.length;j++){const q=P.stars[j],tw=Math.sin(t*q[2]+q[3]);if(tw<-.2)continue;g.globalAlpha=a0*S*(.25+.75*tw*tw);const z=.8+tw*.9;g.fillRect(q[0]+Math.sin(t*.6+q[3])*1.4-z/2,q[1]+Math.cos(t*.5+q[3])*1.1-z/2,z,z)}g.globalAlpha=a0}
@@ -173,7 +174,7 @@ const WingArt=(()=>{
     g.globalCompositeOperation='source-over'}
    g.restore()}}
  function drawMem(g,P,ps,t,ph,fx){const S=ps.s,e=ease(S*1.15),L=P.L,sc=lerp(P.fs,1,e),q=ps.ph,A=ps.amp,F=P.tmp,nf=P.nf,a0=g.globalAlpha;const flx=k=>Math.sin(q-k)*A;
-  const armA=lerp(66,-20,e)*RAD+ps.fl*.7+ps.land*.3,foreA=lerp(106,-50,e)*RAD+flx(.35)*.9+ps.land*.4,la=L*.22,lf=L*.27;
+  const armA=lerp(-36,-20,e)*RAD+ps.fl*.7+ps.land*.3,foreA=lerp(104,-50,e)*RAD+flx(.35)*.9+ps.land*.4,la=L*.22,lf=L*.27;
   g.save();g.scale(sc,sc);const Ex=Math.cos(armA)*la,Ey=Math.sin(armA)*la,Wx=Ex+Math.cos(foreA)*lf,Wy=Ey+Math.sin(foreA)*lf;
   for(let i=0;i<nf;i++){const u=nf>1?i/(nf-1):0,ei=ease(S*1.3-u*.3),a=lerp(P.ff[i],P.fa[i],ei)+flx(.6+i*.3)*(.8+.35*i)+Math.sin(t*1.5+i+ph)*.025+ps.land*.3,ln=P.lens[i]*lerp(.55,1,ei);F[i*2]=Wx+Math.cos(a)*ln;F[i*2+1]=Wy+Math.sin(a)*ln}
   const Bx=L*.06,By=L*.3,sca=P.scal*(1+Math.sin(q*.5+ph)*.12);
@@ -192,7 +193,7 @@ const WingArt=(()=>{
   if(P.claw){const a=foreA-.9,c=L*(P.hook?.1:.07);g.strokeStyle=P.bone;g.lineWidth=L*.02;g.beginPath();g.moveTo(Wx,Wy);g.quadraticCurveTo(Wx+Math.cos(a)*c,Wy+Math.sin(a)*c,Wx+Math.cos(a+.9)*c*1.1,Wy+Math.sin(a+.9)*c*1.1);g.stroke()}
   g.fillStyle=P.bone;g.beginPath();g.arc(Ex,Ey,L*.022,0,6.3);g.moveTo(Wx+L*.026,Wy);g.arc(Wx,Wy,L*.026,0,6.3);g.fill();g.restore()}
  function drawMech(g,P,ps,t,ph,fx){const S=ps.s,e=ease(S*1.2),L=P.L,sc=lerp(P.fs,1,e),a0=g.globalAlpha;
-  const armA=lerp(64,-26,e)*RAD+ps.fl*.6+ps.land*.25,foreA=lerp(102,-50,e)*RAD+ps.fl*.85+ps.land*.3,la=L*.22,lf=L*.26;
+  const armA=lerp(-66,-26,e)*RAD+ps.fl*.6+ps.land*.25,foreA=lerp(64,-50,e)*RAD+ps.fl*.85+ps.land*.3,la=L*.22,lf=L*.26;
   g.save();g.scale(sc,sc);const Ex=Math.cos(armA)*la,Ey=Math.sin(armA)*la,Wx=Ex+Math.cos(foreA)*lf,Wy=Ey+Math.sin(foreA)*lf,tot=la+lf;
   for(let i=P.n-1;i>=0;i--){const u=P.n>1?i/(P.n-1):0,ei=ease(S*1.7-u*.7),ov=P.click?Math.sin(ei*Math.PI)*.1:0,v=(1-u*.8)*tot;
    const hx=v<=la?Ex*v/la:Ex+(Wx-Ex)*(v-la)/lf,hy=v<=la?Ey*v/la:Ey+(Wy-Ey)*(v-la)/lf,pa=lerp(P.fa[i],P.ang[i],ei)+ov+ps.fl*(.35+.5*(1-u))+Math.sin(t*1.4+i*.8+ph)*.012;
@@ -202,9 +203,9 @@ const WingArt=(()=>{
   g.lineCap='round';g.strokeStyle=P.dark;g.lineWidth=L*.065;g.beginPath();g.moveTo(0,0);g.lineTo(Ex,Ey);g.lineTo(Wx,Wy);g.stroke();g.strokeStyle=P.pal[1];g.lineWidth=L*.035;g.stroke();g.strokeStyle='rgba(255,255,255,.45)';g.lineWidth=L*.01;g.stroke();
   g.fillStyle=P.joint;for(const q of[[0,0],[Ex,Ey],[Wx,Wy]]){g.beginPath();g.arc(q[0],q[1],L*.035,0,6.3);g.fill()}g.fillStyle=P.pal[3];g.beginPath();g.arc(Ex,Ey,L*.014,0,6.3);g.moveTo(Wx+L*.014,Wy);g.arc(Wx,Wy,L*.014,0,6.3);g.fill();g.restore()}
  function drawFrag(g,P,ps,t,ph,fx,flare){const S=ps.s,n=P.fr.length,pts=P.tmp,a0=g.globalAlpha,sca=1+P.scat*flare*.22;
-  for(let i=0;i<n;i++){const f=P.fr[i],ei=ease(S*1.3-f.k*.3),a=lerp(f.fa,f.a,ei)+ps.fl*(.35+f.k*.6)+Math.sin(t*.9+f.ph)*.03+ps.land*.25,rad=f.r*lerp(P.fs,1,ei)*(1+(sca-1)*f.k)+Math.sin(t*1.4+f.ph)*1.6*S;pts[i*2]=Math.cos(a)*rad;pts[i*2+1]=Math.sin(a)*rad}
+  for(let i=0;i<n;i++){const f=P.fr[i],ei=ease(S*1.3-f.k*.3),a=lerp(f.fa,f.a,ei)+ps.fl*(.35+f.k*.6)+Math.sin(t*.9+f.ph)*.03+ps.land*.25,rad=f.r*lerp(P.fs,1,ei)*(1+(sca-1)*f.k)+Math.sin(t*1.4+f.ph)*1.6*S;pts[i*2]=Math.cos(a)*rad*lerp(.35,1,ei);pts[i*2+1]=Math.sin(a)*rad}
   if(P.line&&S>.3&&P.pairs.length){g.globalCompositeOperation='lighter';g.strokeStyle=rgba(P.line,.42*S);g.lineWidth=Math.max(.6,P.L*.008);g.beginPath();for(const q of P.pairs){g.moveTo(pts[q[0]*2],pts[q[0]*2+1]);g.lineTo(pts[q[1]*2],pts[q[1]*2+1])}g.stroke();g.globalCompositeOperation='source-over'}
-  for(let i=0;i<n;i++){const f=P.fr[i],v=P.vars[f.v],x=pts[i*2],y=pts[i*2+1];g.save();g.translate(x,y);g.rotate(f.ori?Math.atan2(y,x):f.rot+t*f.spin);g.drawImage(v.c,-v.o,-v.o,v.m,v.m);g.restore()}}
+  for(let i=0;i<n;i++){const f=P.fr[i],v=P.vars[f.v],x=pts[i*2],y=pts[i*2+1],z=lerp(.5,1,ease(S*1.3-f.k*.3));g.save();g.translate(x,y);g.rotate(f.ori?Math.atan2(y,x):f.rot+t*f.spin);g.drawImage(v.c,-v.o*z,-v.o*z,v.m*z,v.m*z);g.restore()}}
  function drawRib(g,P,ps,t,ph,fx){const S=ps.s,e=ease(S*1.25-.12);if(e<=.02)return;const K=P.K,L=P.L*lerp(P.fs,1,e),a0=g.globalAlpha;
   g.save();g.lineCap='round';g.lineJoin='round';if(K.add)g.globalCompositeOperation='lighter';if(K.dash){g.setLineDash([L*.22,L*.12]);g.lineDashOffset=-t*L*.9}
   for(let i=0;i<P.n;i++){const u=P.n>1?i/(P.n-1):.5,ba=lerp(P.fold,P.a[i],e)+ps.fl*(.5+.4*(1-u))+ps.land*.3,Lr=L*P.len*(.55+.45*(1-u));let px=0,py=0;g.beginPath();g.moveTo(0,0);
