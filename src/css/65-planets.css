@@ -97,3 +97,7 @@ html.lowfx #wcard7 .card{backdrop-filter:none}
 .gl7 i b{display:block;height:100%;background:var(--accent);border-radius:5px}
 .gl7 small{color:var(--muted);font-size:11px}
 .gl7.ok span{color:var(--muted);text-decoration:line-through}.gl7.ok i b{background:#3f9b5a}
+/* world title card: compact, centred, never stretched across the screen */
+#wcard7>.card{display:block!important;width:max-content!important;max-width:min(460px,88vw)!important;right:auto!important;padding:14px 28px!important;border-radius:22px!important;top:20%!important}
+#wcard7>.card .k,#wcard7>.card h1,#wcard7>.card .s{display:block!important}
+#wcard7>.card h1{font-size:clamp(20px,3.2vw,30px)!important;margin:6px 0 2px!important}

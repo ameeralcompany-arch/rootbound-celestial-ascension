@@ -45,16 +45,17 @@ const AC6=(()=>{
   g.strokeStyle=shade(hair,-.5);g.lineWidth=1.5;g.lineCap='round';const bt=es==2?2.2:es==1?-.3:.6;g.beginPath();g.moveTo(-6,ey-5.6+bt);g.lineTo(-0.6,ey-6.2-bt*.3);g.stroke();g.beginPath();g.moveTo(2.6,ey-6.2-bt*.3);g.lineTo(8.6,ey-5.4+bt);g.stroke();
   // nose + mouth
   g.strokeStyle=shade(skin,-.4);g.lineWidth=.9;g.beginPath();g.moveTo(3.6,ey+3.6);g.lineTo(4.4,ey+5);g.stroke();g.strokeStyle='#8e4a52';g.lineWidth=1.1;g.beginPath();g.moveTo(1.8,hy+8);g.quadraticCurveTo(3.4,hy+8.6,5,hy+7.8);g.stroke();
+  g.fillStyle='rgba(255,120,150,.32)';g.beginPath();g.ellipse(-5.6,hy+5.2,2.6,1.5,0,0,6.3);g.ellipse(7.4,hy+5.2,2.6,1.5,0,0,6.3);g.fill();
   // jaw shade
   g.fillStyle='rgba(60,30,70,.12)';g.beginPath();g.moveTo(-8,hy+4);g.quadraticCurveTo(-4,hy+10,1,hy+10.8);g.lineTo(-3,hy+7);g.closePath();g.fill()}
  function drawBody(g,L,o){
-  const {t,vx,air,f,sw,wpn,fm,wr}=o,run=Math.abs(vx)>10,ph=t*(run?14:2.4),ls=run?Math.sin(ph):0,as=run?Math.sin(ph+3.1):0,breath=run?0:Math.sin(t*2.2)*.5,bob=(run?Math.abs(Math.sin(ph))*-1.8:breath*.5)+(air?-1:0);
+  const {t,vx,air,f,sw,wpn,fm,wr}=o,run=Math.abs(vx)>10,ph=t*(run?14:2.4),ls=run?Math.sin(ph):0,as=run?Math.sin(ph+3.1):0,breath=run?0:Math.sin(t*2.2)*.5,bob=(run?Math.abs(Math.sin(ph))*-2.7:breath*.8)+(air?-1:0);
   const hs=clamp(-vx*.018,-6,6)+Math.sin(t*2.6)*1.1+(air?-2:0),blink=(t%4.2)<.13,out=L.out,trim=L.trim,sh=-37+bob,hip=-21+bob*.5;
   const boot=wr.boot&&WEAR[wr.boot]?WEAR[wr.boot].c:'#2a2030',glove=wr.glove&&WEAR[wr.glove]?WEAR[wr.glove].c:L.skin,bodyW=wr.body&&WEAR[wr.body]?WEAR[wr.body].c:null,oc=bodyW||out;
   const of=L.of;
   // --- cape (behind)
   if(L.cape){const len=L.cape==2?30:19,fl=clamp(-vx*.03,-10,10)+Math.sin(t*3)*1.5+(air?-6:0);celf(g,()=>{g.beginPath();g.moveTo(-5,sh+2);g.lineTo(6,sh+2);g.bezierCurveTo(8+fl*.3,sh+len*.5,10+fl,sh+len,6+fl*1.3,sh+len+4);g.lineTo(-9+fl*1.4,sh+len+3);g.bezierCurveTo(-11+fl*.6,sh+len*.5,-8,sh+8,-5,sh+2);g.closePath()},shade(trim,-.45),1.1)}
-  hairBack(g,HS[L.hs],-50+bob,L.hair,hs,t);
+  g.save();g.translate(0,-43+bob);g.scale(1.16,1.16);g.translate(0,43-bob);hairBack(g,HS[L.hs],-50+bob,L.hair,hs,t);g.restore();
   // --- far arm
   const swing=sw>0?1-sw/.22:-1,armA=swing>=0?-2.1+3.5*swing:null;
   limb(g,-5,sh+3,-8-as*2.2,hip-3-as*.8,4.4,shade(oc,-.2));g.fillStyle=glove;g.strokeStyle=OL;g.lineWidth=1;g.beginPath();g.arc(-8-as*2.2,hip-2-as*.8,2.4,0,6.3);g.fill();g.stroke();
@@ -85,8 +86,8 @@ const AC6=(()=>{
   if(of==1||L.acc==5){for(const s of[-1,1]){celf(g,()=>{g.beginPath();g.ellipse(s*9.3,sh+2,L.acc==5?5.6:4.6,3.6,0,0,6.3)},L.acc==5?shade(trim,-.35):shade(trim,-.2),1)}}
   // scarf
   if(L.acc==1){celf(g,poly(g,[-5.6,sh-2,5.6,sh-2,5,sh+3,-5,sh+3]),trim,1);const tl=clamp(-vx*.04,-9,9)+Math.sin(t*4)*1.2;celf(g,()=>{g.beginPath();g.moveTo(-3,sh+2);g.lineTo(2,sh+2);g.lineTo(-6+tl,sh+15);g.lineTo(-10+tl,sh+13);g.closePath()},shade(trim,-.15),1)}
-  // head
-  head(g,L,-50+bob,t,air,blink,hs);
+  // head (a little oversized for a cuter proportion)
+  g.save();g.translate(0,-43+bob);g.scale(1.16,1.16);g.translate(0,43-bob);head(g,L,-50+bob,t,air,blink,hs);
   // face-side accessories
   if(L.acc==2){g.fillStyle='#fff';g.shadowColor=trim;g.shadowBlur=4;g.beginPath();g.arc(-9.4,-50+bob+4.2,1.5,0,6.3);g.fill();g.shadowBlur=0}
   if(L.acc==3){celf(g,poly(g,[-6,-50+bob+4,8,-50+bob+4,5,-50+bob+11,-3,-50+bob+11.6]),shade('#2a2438',0),1)}
@@ -95,6 +96,7 @@ const AC6=(()=>{
   if(L.acc==4){g.fillStyle=trim;g.strokeStyle=OL;g.lineWidth=.9;g.fillRect(-10,-50+bob-5,20,2.8);g.strokeRect(-10,-50+bob-5,20,2.8)}
   // legacy hat item
   if(wr.hat&&WEAR[wr.hat]){g.save();g.translate(0,-62+bob);g.scale(.62,.62);g.translate(-24,-24);try{drawWearIcon(g,wr.hat,48)}catch(_){}g.restore()}
+  g.restore();
   // --- near arm (+ weapon)
   const hx=6,hy2=sh+4;let hxp,hyp;
   if(armA!=null&&fm){hxp=hx+Math.cos(armA)*15;hyp=hy2+Math.sin(armA)*15}else{hxp=9+as*2.2;hyp=hip-2+as*.8}
@@ -104,6 +106,9 @@ const AC6=(()=>{
   g.fillStyle=glove;g.strokeStyle=OL;g.lineWidth=1;g.beginPath();g.arc(hxp,hyp+.6,2.6,0,6.3);g.fill();g.stroke();
   if(fm&&sw>0&&wpn=='fist'){g.fillStyle=L.skin;g.beginPath();g.arc(hxp+8*(1-sw/.22),hyp,4,0,6.3);g.fill();g.stroke()}
  }
+ // landing squash / jump stretch for the local player
+ const SQUISH=(()=>{let v=0,was=true,tp=0;return{tick(dt){const g2=P.g;if(g2&&!was&&P.pvy>300)v=Math.min(.2,P.pvy/4500);was=g2;v*=Math.exp(-dt*12)},v:()=>v}})();
+ try{const _lf=landFx;landFx=function(dt){SQUISH.tick(dt);return _lf.apply(this,arguments)}}catch(_){}
  // collect look + cosmetic info for either the local player or a validated remote presence
  function info(lk,q,local){const A=local?cel.ap:(q&&q.cx&&q.cx.ap)||cel.ap;const lvv=local?lvl:+((q&&q.lv)||1);
   const eyeC=AP.eyeCol[A.eyeCol|0]||AP.eyeCol[0];
@@ -120,7 +125,7 @@ const AC6=(()=>{
   const hasLegacy=wr.wing&&WEAR[wr.wing];
   if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,local?0:(cxo&&cxo.w!=null?(String(name).length%6):0),null,local?'me':'p:'+name,local?P.vy:null);WingArt.extras(g,wingIdx,cx,cy+24,t)}
   else if(hasLegacy){g.save();g.translate(cx,feet);g.scale(1.1*f,1.1);try{drawWings(wr.wing,wr.wo!=null?wr.wo:wingOpen,wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,t)}catch(_){}g.restore()}
-  g.save();g.translate(cx,feet);g.scale(1.12*f,1.12);g.lineJoin='round';g.lineCap='round';
+  g.save();g.translate(cx,feet);{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
   try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr})}finally{g.restore();FX7.ld=false}
   // idle VFX

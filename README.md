@@ -185,3 +185,13 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - You cannot place blocks inside (or one tile beside) a boss. The boss HP bar now hides as soon as the boss dies.
 - **Deep treasure** (`71-deep.js`, block ids 60-65): Moonstone Ore, Amber Fossil, Magma Vein, Glowshroom (heals), Treasure Urn and Void Geode, generated from the world seed; each gives bonus gems and XP. Server block limit raised to 66.
 - The "Create your character" panel no longer appears; Customize opens the home screen.
+
+## V12.2 — weapons, wings, flight, bosses, chests, polish
+
+- **8 physics weapons** (`78-z-weapons2.js`, `85-zz-weapons2.js`; store items): Skyspear (piercing thrust line), Thornlash (whip rope that drags enemies), Moon Chakram (curved throw that returns), Zephyr Bow (arrows with gravity that stick in walls), Stormflail (spring-damper ball on a chain), Graviton Rod (bouncing orb that bursts), Gale Shurikens (3 seeking stars that ricochet), Titan Maul (ground shockwave that follows the terrain).
+- **Realistic wings** (`52-wings-real.js`): Eagle, Swan, Raven and Phoenix Plume with barbed feathers and shafts (store items).
+- **Flight** (`85-zz-flight.js`): hold Space/W in the air with any wings to beat upward in pulses; a stamina pill shows above you; stamina refills on the ground; when empty you glide. Wing-beat thumps and a speed-based wind sound.
+- **Bosses:** cleaner danger-zone drawing and activation particles; three new bosses (Magma Colossus, Abyssal Leviathan, Tempest Roc) with their own art, tidal waves, lingering fire, lightning, gale and bullet volleys.
+- **Deep chests** (`85-zz-chests.js`): wooden/iron/golden chests hidden in caves (seeded per world); press E to open once per world for gems, ores, materials and seeds.
+- **Character** is ~20% smaller with a bigger head, blush, bouncier run, landing squash and jump stretch. **Footsteps** change with the block under you. More UI sounds: hover/click everywhere, toggles, slider ticks, favourites, pop on notifications.
+- Test note: store tests now expect 12 shop wings and 20+ weapons.

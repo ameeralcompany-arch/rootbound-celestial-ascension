@@ -9,10 +9,16 @@ const UIS=(()=>{let ctx=null,last={},master=null;const opt=()=>{try{return cel.o
   open:()=>{air(0,.22,.05,2000);tone(392,.02,.18,.03,'sine',1.25)},close:()=>{air(0,.18,.035,1400);tone(440,0,.16,.03,'sine',.75)},
   char:()=>{tone(523,0,.35,.04);tone(784,.07,.4,.035);tone(1046,.14,.5,.025)},rare:()=>{[523,659,784,1046,1318].forEach((f,i)=>tone(f,i*.07,.6,.035));air(0,.5,.03,4200)},
   buy:()=>{tone(659,0,.14,.05,'triangle');tone(988,.09,.28,.05,'triangle')},error:()=>{tone(220,0,.16,.045,'sine',.85)},level:()=>{[392,494,587,784].forEach((f,i)=>tone(f,i*.09,.4,.045,'triangle'))},world:()=>{air(0,.5,.06,900);tone(330,0,.5,.035,'sine',2)}};
- const gap={hover:140,click:40,tab:50,select:60,open:120,close:120,char:150,rare:300,buy:150,error:200,level:400,world:300};
+ Object.assign(BANK,{toggle:()=>{tone(880,0,.06,.045,'triangle');tone(1320,.05,.09,.03,'sine')},tick:()=>tone(1900,0,.03,.02,'sine'),pop:()=>{tone(620,0,.07,.035,'sine',1.5);tone(930,.05,.09,.02,'sine')},
+  equip:()=>{tone(300,0,.08,.05,'square',1.6);tone(900,.05,.12,.03,'triangle');air(0,.1,.03,3000)},coin:()=>{tone(1318,0,.08,.04,'triangle');tone(1760,.06,.2,.04,'triangle')},whoosh:()=>air(0,.3,.05,1700),heart:()=>{tone(880,0,.1,.04,'sine');tone(1175,.08,.18,.035,'sine')}});
+ const gap={toggle:60,tick:35,pop:160,equip:90,coin:80,whoosh:150,heart:100,hover:140,click:40,tab:50,select:60,open:120,close:120,char:150,rare:300,buy:150,error:200,level:400,world:300};
  function play(n){const v=vol();if(!v||!BANK[n])return;const t=performance.now();if(t-(last[n]||0)<(gap[n]||60))return;last[n]=t;const c=ac();if(!c)return;if(c.state=='suspended')c.resume().catch(()=>{});if(master)master.gain.value=v;try{BANK[n]()}catch(_){}}
  // global hover/click for editorial UI
- document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('.ed button:not(:disabled),.ed .it7,.ed .hb,.ed .gal');if(b&&b!==UIS._h){UIS._h=b;play('hover')}},true);
+ document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('.ed button:not(:disabled),.ed .it7,.ed .hb,.ed .gal,button:not(:disabled),.hcard,.hchip,.hb,.plnPanel button,select');if(b&&b!==UIS._h){UIS._h=b;play('hover')}},true);
  document.addEventListener('pointerout',e=>{if(e.target===UIS._h)UIS._h=null},true);
- document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.ed .btn,.ed .nav a,.ed nav a');if(b)play('click')},true);
- return{play,get vol(){return vol()}}})();
+ document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;if(t.closest('.hchip'))return play('toggle');if(t.closest('[data-a=fav]'))return play('heart');const b=t.closest('.ed .btn,.ed .nav a,.ed nav a,button,.hcard');if(b&&!b.disabled)play(b.id=='hubx'?'close':'click')},true);
+ document.addEventListener('input',e=>{const t=e.target;if(t&&t.type=='range')play('tick')},true);
+ document.addEventListener('change',e=>{const t=e.target;if(t&&t.tagName=='SELECT')play('select')},true);
+ try{const _s=say;say=function(m){const r=_s.apply(this,arguments);try{play('pop')}catch(_){}return r}}catch(_){}
+ try{for(const k of['open','close']){const f=UI6[k];if(typeof f=='function')UI6[k]=function(){try{play(k)}catch(_){}return f.apply(this,arguments)}}}catch(_){}
+ return{play,BANK,get vol(){return vol()}}})();

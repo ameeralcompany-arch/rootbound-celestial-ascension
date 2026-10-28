@@ -21,7 +21,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('6 weapons: stats, own model (distinct pixels), trail + impact + sound registered',r.distinct==6&&r.bad.length==0,JSON.stringify(r));
  // --- 8 shop wings distinct
  r=await p.evaluate(()=>{const hs=new Set(),bad=[];for(const w of WINGS.filter(w=>w.shop)){const i=WINGS.indexOf(w);const c=document.createElement('canvas');c.width=320;c.height=260;const x=c.getContext('2d');try{WingArt.draw(x,i,160,130,1,1,0,0,0,1)}catch(e){bad.push(w.id)}const d=x.getImageData(0,0,320,260).data;let h=0,px=0;for(let k=0;k<d.length;k+=4)if(d[k+3]>20){px++;h=(h*31+d[k]*3+d[k+1]*5+d[k+2]*7+k)>>>0}if(px<800)bad.push('blank '+w.id);hs.add(h)}return{n:hs.size,bad}});
- ok('8 shop wings render, each visually distinct',r.n==8&&r.bad.length==0,JSON.stringify(r));
+ ok('12 shop wings render, each visually distinct',r.n==12&&r.bad.length==0,JSON.stringify(r));
  // --- purchase rules (offline/local)
  r=await p.evaluate(async()=>{gems=1000;lvl=1;const o={};const g0=gems;o.noMoney=await SHOP7.buy('wpn_astralkat');o.gemsAfterFail=gems==g0;o.has0=SHOP7.has('wpn_astralkat');
   gems=5000;const a=await SHOP7.buy('wpn_astralkat');o.buy=a.ok;o.gems=gems;const dup=await SHOP7.buy('wpn_astralkat');o.dup=dup.ok;o.gems2=gems;
@@ -43,7 +43,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   STORE7.setFilter({sort:'pd'});const pd=STORE7.list().map(i=>i.price);o.desc=pd.every((v,i)=>!i||pd[i-1]>=v);
   STORE7.setFilter({sort:'feat',rar:'legendary'});o.rar=STORE7.list().every(i=>i.rar=='legendary');STORE7.setFilter({rar:'all',owned:true});o.owned=STORE7.list().every(i=>SHOP7.has(i.id));STORE7.setFilter({owned:false,cat:'featured'});
   o.hud=!!document.getElementById('bstore');return o});
- ok('store opens, every category lists items',r.open&&r.weapons>=15&&r.wings==8&&r.effects>=15&&r.charms==9&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
+ ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==12&&r.effects>=15&&r.charms==9&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
  // buy through the UI with confirm dialog
  await p.evaluate(()=>{gems=5000;lvl=120;STORE7.setFilter({cat:'all',q:'Solar Fang'});STORE7.select('wpn_solarfang')});await p.waitForTimeout(300);
