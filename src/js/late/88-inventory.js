@@ -7,10 +7,9 @@ const INV7=(()=>{
  try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'default'}catch(_){}
  const saveP=()=>{try{localStorage.setItem(PK(),JSON.stringify({f:favs,s:sortBy}))}catch(_){}};
  const SORTS=[['default','Default order'],['name','Name A–Z'],['count','Most owned'],['rar','Rarest first'],['value','Highest value']];
- const RARS=[['Common','#9aa0ab'],['Uncommon','#3f9b5a'],['Rare','#3a78c2'],['Epic','#8a4cc4'],['Legendary','#c27a1a']];
- const rarByCost=c=>c<30?0:c<110?1:c<320?2:c<800?3:4;
- const kind=k=>typeof k=='string'?(k[0]=='a'?'wear':'weapons'):k>=200?'mats':k>=100?'seeds':(k>=20&&k<=41&&typeof ODEF!='undefined'&&ODEF[k])?'objects':'blocks';
- const costOf=k=>typeof k=='string'?(k[0]=='a'?WEAR[k.slice(2)].cost+(WEAR[k.slice(2)].lv|0)*40:WPN[k.slice(2)].cost):MAT[k]?MAT[k].p*3:(PRICE[k%100]||10)*(k>=100?5:1);
+ // rarity, category and value all come from the shared ITEM7 helper (74-components.js)
+ const kind=k=>({block:'blocks',seed:'seeds',mat:'mats',fish:'mats',bait:'mats',obj:'objects',door:'objects',wear:'wear',weapon:'weapons'})[ITEM7.cat(k)]||'blocks';
+ const costOf=k=>ITEM7.value(k);
  const nameOf=k=>typeof k=='string'?(k[0]=='a'?WEAR[k.slice(2)].n:WPN[k.slice(2)].n):iname(k);
  const iconOf=k=>{try{return iconURL(k)}catch(_){return ''}};
  const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Right-click to place it, left-click with a tool to break it.';if(t=='seeds')return 'Plant on a block with right-click. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. Used in crafting and sold at the market.';if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then press G beside it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Press E beside it to open.':'A world object. Press E beside it to use it.');return ''};
@@ -32,7 +31,7 @@ const INV7=(()=>{
   const qq=q.trim().toLowerCase();if(qq)list=list.filter(i=>nameOf(i.k).toLowerCase().includes(qq));
   const val=i=>{try{return costOf(i.k)}catch(_){return 0}};
   list=list.map((i,x)=>[i,x]).sort((A,B)=>{const a=A[0],b=B[0];let d=(favs[b.k]?1:0)-(favs[a.k]?1:0);if(d)return d;d=(b.own|0)-(a.own|0);if(d)return d;
-   if(sortBy=='name')d=nameOf(a.k).localeCompare(nameOf(b.k));else if(sortBy=='count')d=(b.n|0)-(a.n|0);else if(sortBy=='rar')d=rarByCost(val(b))-rarByCost(val(a));else if(sortBy=='value')d=val(b)-val(a);
+   if(sortBy=='name')d=nameOf(a.k).localeCompare(nameOf(b.k));else if(sortBy=='count')d=(b.n|0)-(a.n|0);else if(sortBy=='rar')d=ITEM7.tier(b.k)-ITEM7.tier(a.k);else if(sortBy=='value')d=val(b)-val(a);
    return d||A[1]-B[1]}).map(x=>x[0]);
   const sel=list.find(i=>i.k===selK)||null;
   let h='<header><div><div class="eyebrow">Backpack · '+esc(myName)+'</div><h2 class="ttl">Inventory</h2></div><div style="display:flex;gap:8px;align-items:center"><span class="eyebrow">◆ '+gems+' gems</span><button class="x" data-a="close" title="Close (Esc)" aria-label="Close">✕</button></div></header>';
@@ -42,9 +41,10 @@ const INV7=(()=>{
   else h+='<div class="grid7">'+(list.length?list.map(i=>tile(i)).join(''):'<div class="empty7">'+(q.trim()?'No items match “'+esc(q.trim())+'”.':filter=='fav'?'No favourites yet. Select an item and press ☆ Favourite to pin it here and to the top of every list.':filter=='all'||filter=='blocks'||filter=='seeds'||filter=='mats'||filter=='objects'?'Nothing here yet. Break blocks, harvest crops and defeat monsters to fill your backpack.':'Nothing to show.')+'</div>')+'</div>';
   h+='<aside>'+detail(sel)+'</aside>';sh.innerHTML=h;
   const ab=document.getElementById('asb');ab.style.display=assign>=0?'block':'none';ab.textContent='Choose a block for slot '+(assign+1)+' · Esc to cancel'}
- function tile(i){const t=i.t,own=i.own,r=RARS[rarByCost(costOf(i.k))];return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+'" data-k="'+esc(i.k)+'" title="'+esc(nameOf(i.k))+'"><i class="rar" style="background:'+r[1]+'"></i><img src="'+iconOf(i.k)+'" alt="">'+(favs[i.k]?'<u class="fv7">★</u>':'')+(i.n?'<b>'+i.n+'</b>':'')+(i.worn?'<em>'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span>'+esc(nameOf(i.k))+'</span></button>'}
+ // item tile: icon plate, quantity pill, rarity glyph (shape per tier) + label in the tooltip, state ribbon
+ function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k);return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+'" data-k="'+esc(i.k)+'"'+ITEM7.attrs(i.k)+' title="'+esc(nm)+' · '+ITEM7.label(i.k)+' '+ITEM7.catName(i.k).toLowerCase()+'">'+ITEM7.glyph(i.k)+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
  function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does and what you can do with it.</p><p style="margin-top:14px">Tip: <b>1</b> and <b>2</b> choose your block slots, <b>3</b> switches weapon.</p>';
-  const k=s.k,nm=nameOf(k),r=RARS[rarByCost(costOf(k))];let h='<div class="eyebrow">'+({blocks:'Block',seeds:'Seed',mats:'Material',objects:'Object',wear:'Wearable',weapons:'Weapon'})[s.t]+' · <span style="color:'+r[1]+'">'+r[0]+'</span></div><div class="pic"><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
+  const k=s.k,nm=nameOf(k),c=ITEM7.cat(k);let h='<div class="rbar7"><span class="catl7"><i>'+ITEM7.CATG[c]+'</i>'+ITEM7.CATN[c]+'</span>'+ITEM7.tag(k)+'</div><div class="pic"'+ITEM7.attrs(k)+'><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
   if(s.t=='wear'){const w=WEAR[k.slice(2)];h+='<p>'+esc(w.d)+'<br><b>'+esc(w.sd)+'</b></p>';h+='<div class="kv"><span>Slot</span>'+({hat:'Head',body:'Body',wing:'Wings',boot:'Boots',glove:'Gloves'})[w.s]+'</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+w.lv+'</div>':'');
    h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(s.own?'<button class="btn" data-a="wear">'+(s.worn?'Take off':'Wear')+'</button>':s.lock?'<button class="btn" disabled>Level '+w.lv+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')}
   else if(s.t=='weapons'){const w=WPN[k.slice(2)],u=wUp[k.slice(2)]|0;h+='<p>'+esc(w.d)+'</p><div class="kv"><span>Power</span>'+(w.bd+u)+'</div><div class="kv"><span>Speed</span>'+(1/w.cd).toFixed(1)+' / s</div>'+(w.ev?'<div class="kv"><span>Evolves</span>'+(wK[k.slice(2)]|0)+' / '+w.kn+' kills</div>':w.st?'<div class="kv"><span>Form</span>Final</div>':'');
@@ -78,11 +78,11 @@ setInv=function(v){if(v)INV7.open();else INV7.close()};
 renderInv=function(){if(INV7.isOpen)INV7.render()};
 renderBar=function(){const el=document.getElementById('bar');if(!el)return;el.innerHTML='';
  if(sel>1)sel=0;
- const blk=i=>{const k=bar[i],s=document.createElement('div');s.className='hb'+(i==sel?' on':'')+(k?'':' empty');s.tabIndex=0;s.title=k?iname(k)+' — click to select, click again to change':'Empty — click to choose a block';
+ const blk=i=>{const k=bar[i],s=document.createElement('div');s.className='hb'+(i==sel?' on':'')+(k?'':' empty');s.tabIndex=0;s.title=k?iname(k)+' — click to select, click again to change':'Empty — click to choose a block';if(k){s.dataset.cat=ITEM7.cat(k);s.dataset.rar=ITEM7.rar(k)}
   if(k){const im=new Image();im.src=iconURL(k);s.append(im);const b=document.createElement('b');b.textContent=cnt(k);s.append(b)}const n=document.createElement('i');n.textContent=i+1;s.append(n);const sm=document.createElement('small');sm.textContent=k?iname(k):'Block';if(!k)s.append(sm);
   s.onclick=()=>{if(i==sel||!bar[i]){INV7.open('blocks',i)}else{sel=i;renderBar();try{UIS.play('select')}catch(_){}}};s.onkeydown=e=>{if(e.key=='Enter')s.onclick()};return s};
  el.append(blk(0),blk(1));
- const w=WPN[wp],s=document.createElement('div');s.className='hb wp';s.tabIndex=0;s.title='Weapon — press 3 to switch, click to open weapons';const im=new Image();im.src=iconURL('w:'+wp);const d=document.createElement('div');d.innerHTML=esc3(w.n)+'<small>'+(w.ev?'Evolves '+(wK[wp]|0)+'/'+w.kn+' kills':w.st?'Final form':'Left click to use')+'</small>';const n=document.createElement('i');n.textContent='3';s.append(im,d,n);s.onclick=()=>INV7.open('weapons');s.onkeydown=e=>{if(e.key=='Enter')s.onclick()};el.append(s)};
+ const w=WPN[wp],s=document.createElement('div');s.className='hb wp';s.tabIndex=0;s.dataset.cat='weapon';s.dataset.rar=ITEM7.rar('w:'+wp);s.title='Weapon — press 3 to switch, click to open weapons';const im=new Image();im.src=iconURL('w:'+wp);const d=document.createElement('div');d.innerHTML=esc3(w.n)+'<small>'+(w.ev?'Evolves '+(wK[wp]|0)+'/'+w.kn+' kills':w.st?'Final form':'Left click to use')+'</small>';const n=document.createElement('i');n.textContent='3';s.append(im,d,n);s.onclick=()=>INV7.open('weapons');s.onkeydown=e=>{if(e.key=='Enter')s.onclick()};el.append(s)};
 const esc3=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 renderW=function(){renderBar()};
 selBar=function(i){if(i<=1){sel=i;renderBar()}else if(i==2){cycleWeapon()}};

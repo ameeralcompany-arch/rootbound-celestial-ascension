@@ -14,3 +14,22 @@ const DLG7=(()=>{
   box.querySelector('[data-ok]').onclick=()=>{const o={};for(const i of box.querySelectorAll('[data-k]'))o[i.dataset.k]=i.value;done(o)};const c=box.querySelector('[data-cancel]');if(c)c.onclick=()=>done(null);
   const f=box.querySelector('input,select');setTimeout(()=>{try{(f||box.querySelector('[data-ok]')).focus()}catch(_){}},30)})}
  return{open,confirm:(title,text,ok,danger)=>open({title,text,ok:ok||'Confirm',danger}).then(v=>!!v),alert:(title,text)=>open({title,text,cancel:'',ok:'OK'}),esc,get isOpen(){return !!cur}}})();
+// ===== ITEM7: one item vocabulary for every screen. Category from the key, rarity from the catalog first (else by value), glyph + label so rarity never relies on colour alone =====
+const ITEM7=(()=>{
+ const RAR=['common','uncommon','rare','epic','legendary','mythic'],RN=['Common','Uncommon','Rare','Epic','Legendary','Mythic'],GLY=['○','◇','◆','✦','★','✷'];
+ const CATN={block:'Block',seed:'Seed',mat:'Material',fish:'Fish',bait:'Bait',obj:'Object',door:'Door',wear:'Wearable',weapon:'Weapon',wing:'Wings',fx:'Effect'};
+ const CATG={block:'▦',seed:'❦',mat:'◈',fish:'≈',bait:'∘',obj:'▣',door:'⌂',wear:'✧',weapon:'⚔︎',wing:'❧',fx:'✺'};
+ let map=null;const keyOf=i=>i.cat=='weapons'?'w:'+i.ref:i.cat=='gear'?'a:'+i.ref:i.cat=='wings'?'wing:'+i.ref:(i.cat=='blocks'||i.cat=='seeds'||i.cat=='objects')?String(+i.ref):'id:'+i.id;
+ const idx=()=>{if(map)return map;map={};try{for(const i of SHOP7.items)map[keyOf(i)]=i.rar=='exclusive'?'mythic':i.rar}catch(_){}return map};
+ function cat(k){if(typeof k=='string'){if(/^\d+$/.test(k))k=+k;else return k[0]=='a'?'wear':k.startsWith('w:')?'weapon':k.startsWith('wing:')?'wing':'fx'}
+  if(k>=250&&k<=252)return'bait';if(k>=240&&k<=249)return'fish';if(k>=200)return'mat';if(k>=100)return'seed';
+  if(k>=20&&k<=41&&typeof ODEF!='undefined'&&ODEF[k])return ODEF[k].cat=='door'?'door':'obj';return'block'}
+ function value(k){try{if(typeof k=='string'){if(k[0]=='a'){const w=WEAR[k.slice(2)];return w.cost+(w.lv|0)*40}if(k.startsWith('w:'))return WPN[k.slice(2)].cost|0;return 0}return MAT[k]?MAT[k].p*3:(PRICE[k%100]||10)*(k>=100?5:1)}catch(_){return 0}}
+ const byValue=c=>c<30?0:c<110?1:c<320?2:c<800?3:c<2000?4:5;
+ function tier(k){const r=idx()[String(k)];if(r){const t=RAR.indexOf(r);if(t>=0)return t}return byValue(value(k))}
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ // attributes for any item element, and the small rarity label
+ const attrs=k=>' data-cat="'+cat(k)+'" data-rar="'+RAR[tier(k)]+'"';
+ const tag=k=>{const t=tier(k);return'<span class="rtag" data-rar="'+RAR[t]+'">'+RN[t]+'</span>'};
+ const glyph=k=>{const t=tier(k);return'<i class="rp7" aria-hidden="true">'+GLY[t]+'</i>'};
+ return{RAR,RN,GLY,CATN,CATG,cat,value,tier,rar:k=>RAR[tier(k)],label:k=>RN[tier(k)],attrs,tag,glyph,esc,catName:k=>CATN[cat(k)]||'Item'}})();
