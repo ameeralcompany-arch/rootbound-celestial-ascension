@@ -2,10 +2,12 @@
 const INV7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const FILT=[['all','All'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Objects'],['wear','Wearables'],['weapons','Weapons'],['fav','★ Favourites'],['stats','Stats']];
- let el=null,filter='all',selK=null,assign=-1,hold=0,q='',sortBy='default',favs={};
+ let el=null,filter='all',selK=null,assign=-1,hold=0,q='',sortBy='default',favs={},seen=null;
  const PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpinv';
- try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'default'}catch(_){}
- const saveP=()=>{try{localStorage.setItem(PK(),JSON.stringify({f:favs,s:sortBy}))}catch(_){}};
+ try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'default';if(o.n&&typeof o.n=='object')seen=o.n}catch(_){}
+ const saveP=()=>{try{localStorage.setItem(PK(),JSON.stringify({f:favs,s:sortBy,n:seen||{}}))}catch(_){}};
+ // "new" items: anything owned that has not been looked at yet (the first run marks the current backpack as seen)
+ const isNew=i=>i.own&&seen&&!seen[i.k];
  const SORTS=[['default','Default order'],['name','Name A–Z'],['count','Most owned'],['rar','Rarest first'],['value','Highest value']];
  // rarity, category and value all come from the shared ITEM7 helper (74-components.js)
  const kind=k=>({block:'blocks',seed:'seeds',mat:'mats',fish:'mats',bait:'mats',obj:'objects',door:'objects',wear:'wear',weapon:'weapons'})[ITEM7.cat(k)]||'blocks';
@@ -26,7 +28,7 @@ const INV7=(()=>{
   el.addEventListener('change',e=>{if(e.target.id=='ins7'){sortBy=e.target.value;saveP();render()}});
   el.addEventListener('keydown',e=>{if(e.target.id=='inq7'){e.stopPropagation();if(e.key=='Escape'){if(q){q='';render()}else close()}}});
   addEventListener('keydown',e=>{if(showInv&&el.classList.contains('open')&&e.key=='Escape'){close();e.stopPropagation()}},true)};
- function render(){const sh=el.querySelector('.sheet'),all=items(),cntOf=f=>all.filter(i=>f=='all'?i.own:f=='fav'?(i.own&&favs[i.k]):(i.t==f&&i.own)).length;
+ function render(){const sh=el.querySelector('.sheet'),all=items();if(!seen){seen={};for(const i of all)if(i.own)seen[i.k]=1;saveP()}const cntOf=f=>all.filter(i=>f=='all'?i.own:f=='fav'?(i.own&&favs[i.k]):(i.t==f&&i.own)).length;
   let list=all.filter(i=>filter=='all'?i.own:filter=='stats'?false:filter=='fav'?(i.own&&favs[i.k]):i.t==filter);
   const qq=q.trim().toLowerCase();if(qq)list=list.filter(i=>nameOf(i.k).toLowerCase().includes(qq));
   const val=i=>{try{return costOf(i.k)}catch(_){return 0}};
@@ -42,7 +44,7 @@ const INV7=(()=>{
   h+='<aside>'+detail(sel)+'</aside>';sh.innerHTML=h;
   const ab=document.getElementById('asb');ab.style.display=assign>=0?'block':'none';ab.textContent='Choose a block for slot '+(assign+1)+' · Esc to cancel'}
  // item tile: icon plate, quantity pill, rarity glyph (shape per tier) + label in the tooltip, state ribbon
- function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k);return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+'" data-k="'+esc(i.k)+'"'+ITEM7.attrs(i.k)+' title="'+esc(nm)+' · '+ITEM7.label(i.k)+' '+ITEM7.catName(i.k).toLowerCase()+'">'+ITEM7.glyph(i.k)+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
+ function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k);return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+(isNew(i)?' new':'')+'" data-k="'+esc(i.k)+'"'+ITEM7.attrs(i.k)+' title="'+esc(nm)+' · '+ITEM7.label(i.k)+' '+ITEM7.catName(i.k).toLowerCase()+'">'+ITEM7.glyph(i.k)+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
  function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does and what you can do with it.</p><p style="margin-top:14px">Tip: <b>1</b> and <b>2</b> choose your block slots, <b>3</b> switches weapon.</p>';
   const k=s.k,nm=nameOf(k),c=ITEM7.cat(k);let h='<div class="rbar7"><span class="catl7"><i>'+ITEM7.CATG[c]+'</i>'+ITEM7.CATN[c]+'</span>'+ITEM7.tag(k)+'</div><div class="pic"'+ITEM7.attrs(k)+'><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
   if(s.t=='wear'){const w=WEAR[k.slice(2)];h+='<p>'+esc(w.d)+'<br><b>'+esc(w.sd)+'</b></p>';h+='<div class="kv"><span>Slot</span>'+({hat:'Head',body:'Body',wing:'Wings',boot:'Boots',glove:'Gloves'})[w.s]+'</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+w.lv+'</div>':'');
@@ -58,7 +60,7 @@ const INV7=(()=>{
  function onClick(e){const f=e.target.closest('[data-f]');if(f){filter=f.dataset.f;selK=null;render();UIS&&UIS.play('tab');return}
   const t=e.target.closest('[data-k]');if(t){let k=t.dataset.k;if(/^\d+$/.test(k))k=+k;
    if(assign>=0&&(kind(k)=='blocks'||kind(k)=='seeds'||kind(k)=='objects')){setSlot(assign,k);assign=-1;render();return}
-   selK=k;render();UIS&&UIS.play('select');return}
+   selK=k;if(seen&&!seen[k]){seen[k]=1;saveP()}render();UIS&&UIS.play('select');return}
   const a=e.target.closest('[data-a]');if(!a)return;const act=a.dataset.a,k=selK;
   if(act=='close'){close();return}
   if(act=='fav'&&k!=null){if(favs[k])delete favs[k];else favs[k]=1;saveP();render();UIS&&UIS.play('select');return}

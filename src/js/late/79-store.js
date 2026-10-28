@@ -11,11 +11,12 @@ const STORE7=(()=>{
  function silhouette(x,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='rgba(70,60,110,.55)';x.beginPath();x.arc(0,-34,11,0,6.3);x.fill();x.beginPath();x.moveTo(-13,-20);x.lineTo(13,-20);x.lineTo(10,22);x.lineTo(-10,22);x.closePath();x.fill();x.fillRect(-9,22,7,26);x.fillRect(2,22,7,26);x.restore()}
  function sparkle(x,px,py,c,r,a){x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;x.fillStyle=c;x.beginPath();x.arc(px,py,r,0,6.3);x.fill();x.restore()}
  function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
+  const z=still?1.35:1; // card thumbnails show weapons and wings larger so their silhouettes read at a glance
   try{
-  if(it.cat=='weapons'){x.save();x.translate(cx,cy+8*k);x.scale(k*1.25,k*1.25);const a=still?-.9:-1.1+Math.sin(t*2.4)*.7;x.rotate(a);x.translate(-30,0);const w=WPN[ref];
+  if(it.cat=='weapons'){x.save();x.translate(cx,cy+8*k);x.scale(k*1.25*z,k*1.25*z);const a=still?-.9:-1.1+Math.sin(t*2.4)*.7;x.rotate(a);x.translate(-30,0);const w=WPN[ref];
    if(w){x.save();x.globalCompositeOperation='lighter';x.strokeStyle='rgba('+w.g+',.35)';x.lineWidth=14;x.beginPath();x.arc(30,0,70,-.2,-.2-(still?1.2:Math.max(0,Math.cos(t*2.4))*1.6),true);x.stroke();x.restore()}
    drawWeapon(x,ref,96,t);x.restore()}
-  else if(it.cat=='wings'){silhouette(x,cx,cy,k*1.1);const i=WINGS.findIndex(w=>w.id==ref);x.save();x.scale(k*.72,k*.72);if(i>=0)WingArt.draw(x,i,cx/k/.72,(cy-10*k)/k/.72,1,t,0,0,0,1);x.restore();
+  else if(it.cat=='wings'){const s2=k*.72*z;silhouette(x,cx,cy+(z-1)*30*k,k*1.1*z);const i=WINGS.findIndex(w=>w.id==ref);x.save();x.scale(s2,s2);if(i>=0)WingArt.draw(x,i,cx/s2,(cy-10*k+(z-1)*30*k)/s2,1,t,0,0,0,1);x.restore();
    if(!still){const W2=WINGS[i];if(W2&&W2.fxk&&Math.random()<.5)parts.push({x:cx+(Math.random()-.5)*170*k,y:cy-30*k+Math.random()*70*k,vx:(Math.random()-.5)*8,vy:W2.fxk=='petals'?26:-22,l:1.3,c:W2.pal[3],r:2.2})}}
   else if(it.cat=='charms'){silhouette(x,cx,cy,k*1.1);x.save();x.scale(k*1.6,k*1.6);if(ref=='raven'){x.translate(cx/k/1.6-(P.x-cam.x)+30,cy/k/1.6-(P.y-cam.y)-50)}else x.translate(cx/k/1.6,(cy-30*k)/k/1.6);FX7.charmDraw(x,ref,0,0,t,1);x.restore()}
   else if(it.cat=='effects'){const f=FX_COL[ref]||['#fff','#fff','rise'];silhouette(x,cx,cy,k*1.1);const sub=it.sub;
