@@ -4,7 +4,7 @@ const EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';let fails=0;const ok
 setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unref();
 const FILE='file://'+path.join(__dirname,'..','index.html');
 (async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox']});const ctx=await b.newContext({viewport:{width:1280,height:760}});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
- await p.goto(FILE);await p.waitForTimeout(1200);await p.getByText('PLAY AS GUEST',{exact:false}).first().click();await p.waitForTimeout(1200);await p.getByText('START ADVENTURE',{exact:false}).first().click().catch(()=>{});await p.waitForTimeout(1500);
+ await p.goto(FILE);await p.waitForTimeout(1200);await p.getByText('START ADVENTURE',{exact:false}).first().click().catch(()=>{});await p.waitForTimeout(1500);
  await p.evaluate(()=>{for(const it of SHOP7.items){const c=document.createElement('canvas').getContext('2d');STORE7.drawPrev(c,it,300,255,.7,1,true)}});await p.waitForTimeout(600);
  // --- catalog + every item draws a real, non-empty preview and thumbnail
  let r=await p.evaluate(()=>{const bad=[];const RARS=SHOP7.RAR;let n=0;const hashes={};for(const it of SHOP7.items){n++;if(!it.n||!(it.price>0)||!RARS.includes(it.rar)||!it.d)bad.push('meta '+it.id);

@@ -1,8 +1,8 @@
-// ===== V6 profile namespace: every per-player save key is prefixed by the active account =====
-// Guest = legacy un-prefixed keys (keeps your existing save). Accounts = "a_<id>_" prefix.
-// If nobody is signed in yet, writes go to a throw-away "pending_" prefix and the login screen blocks play.
-const RB_SESS=(()=>{try{const s=JSON.parse(localStorage.getItem('rb_session')||'null');if(s&&typeof s.id=='string')return s}catch(_){}return null})();
-const RB_PREFIX=RB_SESS?(RB_SESS.id=='guest'?'':'a_'+RB_SESS.id+'_'):'pending_';
-(function(){const KEYS=/^(rbp|rbp_bak|rbp_corrupt_|rbopt|rbw_|rbidx|rbid|rbc)/,P=Storage.prototype,gi=P.getItem,si=P.setItem,ri=P.removeItem;
- const map=(o,k)=>o===localStorage&&typeof k=='string'&&KEYS.test(k)&&RB_PREFIX?RB_PREFIX+k:k;
- P.getItem=function(k){return gi.call(this,map(this,k))};P.setItem=function(k,v){return si.call(this,map(this,k),v)};P.removeItem=function(k){return ri.call(this,map(this,k))}})();
+// ===== Single save: Rootbound is single-player and has no accounts, so every save key is used as-is. =====
+// Older versions kept account saves under an "a_<id>_" prefix. If the last session was an account and there is no plain save yet,
+// that account's save is copied to the plain keys once, so nobody loses progress.
+const RB_SESS={id:'guest',name:'Guest'},RB_PREFIX='';
+(function(){try{const KEYS=/^(rbp|rbp_bak|rbopt|rbw_|rbidx|rbid|rbc)/,s=JSON.parse(localStorage.getItem('rb_session')||'null');
+ if(s&&typeof s.id=='string'&&s.id!='guest'&&!localStorage.getItem('rbp')){const pre='a_'+s.id+'_',ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(pre)&&KEYS.test(k.slice(pre.length)))ks.push(k)}
+  for(const k of ks)localStorage.setItem(k.slice(pre.length),localStorage.getItem(k))}
+ localStorage.removeItem('rb_session')}catch(_){}})();

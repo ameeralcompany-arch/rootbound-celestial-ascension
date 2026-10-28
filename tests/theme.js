@@ -1,8 +1,8 @@
 const {chromium}=require('playwright');let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined?'  - '+x:''));if(!c)fails++};
 const SHOT=process.env.SHOTS||'';
 (async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});const p=await b.newPage({viewport:{width:1280,height:720}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
-await p.goto('file://'+__dirname+'/../index.html');await p.waitForTimeout(900);await p.getByText('PLAY AS GUEST',{exact:false}).first().click();await p.waitForTimeout(700);
-await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(300);await p.evaluate(()=>{PLN7.close();SHOW7.close()});await p.waitForTimeout(600);
+await p.goto('file://'+__dirname+'/../index.html');await p.waitForTimeout(900);
+await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(300);await p.evaluate(()=>{SHOW7.close()});await p.waitForTimeout(600);
 ok('light theme is the default',await p.evaluate(()=>document.documentElement.dataset.theme)=='light');
 await p.evaluate(()=>UI6.open('settings'));await p.waitForTimeout(400);
 ok('settings has theme + UI sound controls',await p.evaluate(()=>!!document.getElementById('sth')&&!!document.getElementById('suv')&&!!document.getElementById('sum')));
@@ -14,7 +14,7 @@ const lum=await p.evaluate(()=>{const c=document.createElement('canvas');c.width
 await p.evaluate(()=>{const e=document.getElementById('suv');e.value=25;e.dispatchEvent(new Event('input'))});await p.click('#sum');
 ok('UI sound volume + mute change real options',await p.evaluate(()=>cel.opt.uiv==.25&&cel.opt.uim==1));
 if(SHOT)await p.screenshot({path:SHOT+'/theme_dark_settings.png'});
-await p.reload();await p.waitForTimeout(1200);try{await p.getByText('PLAY AS GUEST',{exact:false}).first().click({timeout:1500});await p.waitForTimeout(900)}catch(_){}await p.evaluate(()=>{try{PLN7.close();SHOW7.close()}catch(_){}});
+await p.reload();await p.waitForTimeout(1200);await p.evaluate(()=>{try{SHOW7.close()}catch(_){}});
 ok('theme + sound options persist across reload',await p.evaluate(()=>cel.opt.theme=='dark'&&cel.opt.uiv==.25&&cel.opt.uim==1&&document.documentElement.dataset.theme=='dark'),await p.evaluate(()=>JSON.stringify([cel.opt.theme,cel.opt.uiv,cel.opt.uim])));
 await p.evaluate(()=>{cel.opt.theme='auto';celSave()});ok('auto theme resolves',['light','dark'].includes(await p.evaluate(()=>document.documentElement.dataset.theme)));
 ok('seed/weapon/gear icons use the pastel backing (no legacy blue burst)',await p.evaluate(()=>{const px=k=>{iconURL(k);const c=ICONC[k],d=c.getContext('2d').getImageData(5,5,1,1).data;return d[0]>200&&d[1]>200};return px(101)&&px('w:ember')&&px('a:helmet')}));

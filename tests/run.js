@@ -6,30 +6,11 @@ async function page(b,init,vp){const ctx=await b.newContext({viewport:vp||{width
 const guest=()=>localStorage.getItem('rb_session')||localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));
 async function enter(p,lv){await p.goto(URL);await p.waitForTimeout(700);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);await p.evaluate(l=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}if(l)lvl=l},lv);await p.waitForTimeout(600)}
 (async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox']});
- // 1. boot + login gate
- {const p=await page(b);await p.goto(URL);await p.waitForTimeout(600);ok('login screen shown when signed out',await p.evaluate(()=>getComputedStyle(document.getElementById('login')).display!='none'));ok('no script errors on boot',p.errs.length==0,p.errs.join('|'));
-  // create account
-  await p.fill('#lu','TestHero');await p.fill('#lp','correct horse');await p.click('#ltUp');await p.fill('#lu','TestHero');await p.fill('#lp','correct horse');await p.click('#lgo');await p.waitForTimeout(1500);
-  const rec=await p.evaluate(()=>document.getElementById('lrec').textContent);ok('account created, recovery code shown',/^[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(rec),rec);
-  const stored=await p.evaluate(()=>localStorage.getItem('rb_acc_testhero'));ok('password is hashed, not stored in clear',stored&&!stored.includes('correct horse')&&/"hash":"[0-9a-f]{64}"/.test(stored));
-  await p.click('#lgo');await p.waitForTimeout(1200);ok('Continue signs in and reloads into the game',await p.evaluate(()=>JSON.parse(localStorage.getItem('rb_session')).id)=='testhero');
-  await p.waitForTimeout(500);ok('login hidden after sign-in',await p.evaluate(()=>getComputedStyle(document.getElementById('login')).display=='none'));
-  // save under account prefix, not under guest keys
-  await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}lvl=33;saveP();celSave()});
-  const keys=await p.evaluate(()=>Object.keys(localStorage));ok('saves are namespaced per account',keys.some(k=>k.startsWith('a_testhero_rbp'))&&!keys.includes('rbp'),keys.join(','));
-  // wrong password + lockout
-  await p.evaluate(()=>localStorage.removeItem('rb_session'));await p.goto(URL);await p.waitForTimeout(500);
-  let msgs=[];for(let i=0;i<6;i++){await p.fill('#lu','TestHero');await p.fill('#lp','nope-nope-'+i);await p.click('#lgo');await p.waitForTimeout(900);msgs.push(await p.textContent('#lmsg'))}
-  ok('wrong password rejected',/Wrong account/.test(msgs[0]));ok('lockout after repeated failures',/Too many attempts/.test(msgs[5]),msgs[5]);
-  // unknown account gives same message (no user enumeration)
-  await p.fill('#lu','Ghost123');await p.fill('#lp','whatever123');await p.click('#lgo');await p.waitForTimeout(900);ok('unknown account does not reveal existence',/Wrong account name or password/.test(await p.textContent('#lmsg')));
-  // recovery
-  await p.evaluate(()=>localStorage.removeItem('rb_fail'));await p.click('#ltRec');await p.fill('#lu','TestHero');await p.fill('#lr','AAAA-AAAA-AAAA');await p.fill('#lp2','new password 1');await p.click('#lgo');await p.waitForTimeout(1200);ok('wrong recovery code rejected',/wrong recovery/i.test(await p.textContent('#lmsg')));
-  await p.fill('#lr',rec);await p.click('#lgo');await p.waitForTimeout(1500);ok('recovery with correct code resets password + new code',/^[A-Z2-9]{4}-/.test(await p.evaluate(()=>document.getElementById('lrec').textContent)));
-  await p.evaluate(()=>localStorage.removeItem('rb_session'));await p.goto(URL);await p.waitForTimeout(500);await p.fill('#lu','TestHero');await p.fill('#lp','new password 1');await p.click('#lgo');await p.waitForTimeout(1500);ok('login with new password works',await p.evaluate(()=>JSON.parse(localStorage.getItem('rb_session')||'null')?.id)=='testhero');
-  await p.waitForTimeout(600);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(600);ok('account progress persisted (level 33)',await p.evaluate(()=>lvl)==33);
-  await p.close()}
- // 2. guest keeps legacy keys; accounts isolated
+ // 1. boot straight into the game (no accounts) + one-time copy of an old account save
+ {const p=await page(b);await p.goto(URL);await p.waitForTimeout(600);ok('no login screen on boot',await p.evaluate(()=>!document.getElementById('login')));ok('no script errors on boot',p.errs.length==0,p.errs.join('|'));await p.close()}
+ {const p=await page(b,()=>{if(!localStorage.getItem('seeded')){localStorage.setItem('seeded','1');localStorage.setItem('rb_session',JSON.stringify({id:'oldhero',name:'OldHero'}));localStorage.setItem('a_oldhero_rbc4',JSON.stringify({lv:{reaper:7},xp:{}}))}});await p.goto(URL);await p.waitForTimeout(700);
+  ok('old account save is copied to the single save',await p.evaluate(()=>CLASS7.lv('reaper')==7&&!localStorage.getItem('rb_session')));await p.close()}
+ // 2. the single save uses the plain keys
  {const p=await page(b,guest);await enter(p,12);await p.evaluate(()=>{saveP()});ok('guest uses legacy keys',await p.evaluate(()=>!!localStorage.getItem('rbp')));ok('guest: no errors',p.errs.length==0,p.errs.join('|'));await p.close()}
  // 3. progression rules
  {const p=await page(b,guest);await enter(p,1);

@@ -159,17 +159,6 @@ html[data-theme=dark] .hcard canvas{background:linear-gradient(160deg,#352a55,#2
 .objpanel .ok{color:var(--green)!important}.objpanel .no{color:var(--accent)!important}
 #chestui .cs.e{background:transparent!important;border:1px dashed var(--line)!important}
 /* ---------- login ---------- */
-#login{background:var(--bg-page)!important;color:var(--ink)!important;font-family:var(--font-ui)}
-#login canvas#lbg{opacity:.28;mix-blend-mode:multiply}html[data-theme=dark] #login canvas#lbg{mix-blend-mode:screen;opacity:.5}
-#lcard{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--rad-lg)!important;box-shadow:var(--sh-3)!important}
-#lcard:before,#lcard:after{background:linear-gradient(90deg,transparent,var(--line-strong),transparent)!important}
-#lcard h1{color:var(--ink)!important;text-shadow:none!important;font-weight:900;font-style:italic;letter-spacing:.04em!important}#lcard h1 span{color:var(--accent)!important}
-#lcard .sub,#lcard label,#lnote{color:var(--muted)!important}
-#lcard input{background:var(--input-bg)!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:var(--rad-sm)!important}
-#lcard input:focus{border-color:var(--accent-2)!important;box-shadow:0 0 0 3px rgba(122,102,194,.2)!important}
-#lcard button{background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border:0!important;border-radius:var(--rad-sm)!important}
-#lcard button.alt,#lcard .tabs button{background:var(--btn-bg)!important;color:var(--btn-ink)!important;border:1px solid var(--line)!important}#lcard .tabs button.on{border-color:var(--sel-bd)!important;background:var(--sel-bg)!important}
-#lmsg{color:var(--accent)!important}#lmsg.ok{color:var(--green)!important}#lrec{color:var(--ink)!important;border-color:var(--line-strong)!important}
 /* ---------- misc shared components ---------- */
 .rb-empty{padding:28px 12px;text-align:center;color:var(--muted);font:600 12px var(--font-ui)}
 .rb-spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent-2);animation:rbspin .9s linear infinite;display:inline-block}@keyframes rbspin{to{transform:rotate(360deg)}}

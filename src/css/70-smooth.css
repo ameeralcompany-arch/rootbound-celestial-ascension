@@ -4,7 +4,6 @@
 #banner b{animation:bnTrack 2.4s cubic-bezier(.22,.7,.2,1) both;text-shadow:0 2px 24px rgba(255,255,255,.95),0 0 2px rgba(0,0,0,.08)!important}
 #banner.on b{animation:bnTrack 2.4s cubic-bezier(.22,.7,.2,1) both}
 @keyframes bnTrack{from{letter-spacing:.7em}to{letter-spacing:.3em}}
-#wcard7 .card{animation-timing-function:cubic-bezier(.22,.7,.2,1)!important}
 #hubbody,#inv7 .sheet{position:relative;isolation:isolate}
 #hubbody::before,#inv7 .sheet::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;opacity:.55;background:radial-gradient(40% 40% at 20% 20%,color-mix(in srgb,var(--accent,#7a5cff) 16%,transparent),transparent 70%),radial-gradient(45% 45% at 80% 70%,color-mix(in srgb,var(--accent-2,#ff7ab8) 14%,transparent),transparent 70%);background-size:140% 140%;animation:aurora7 18s ease-in-out infinite alternate}
 @keyframes aurora7{0%{background-position:0% 0%,100% 100%}100%{background-position:60% 40%,30% 60%}}

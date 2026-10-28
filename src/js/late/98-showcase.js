@@ -66,8 +66,8 @@ const SHOW7=(()=>{
  function swap(d){if(busy)return;busy=1;const n=(cur+d+CHARS.length)%CHARS.length;el.classList.add('swap');UIS.play('char');setTimeout(()=>{cur=n;gpage=Math.floor(cur/4);render();el.classList.remove('swap');el.classList.add('swapin');setTimeout(()=>{el.classList.remove('swapin');busy=0},320)},200)}
  function selectCur(){const i=cur;if(!unlocked(i))return false;X6.sc.act=i;Object.assign(cel.ap,apOf(i));try{celSave()}catch(_){}x6Save();UIS.play(CHARS[i].stars>=5?'rare':'select');say((i?CHARS[i].first:'Your look')+' is now active');return true}
  function ensureGame(cb){if(entered){cb();return}try{$('bp').click()}catch(_){}setTimeout(()=>{if(entered||creatorOn)cb()},60)}
- function close(){if(!open)return;open=false;stop();el.classList.remove('in');setTimeout(()=>{if(!open)el.style.display='none'},260);UIS.play('close')}
- function openUI(){build();open=true;el.style.display='block';try{menuEl.style.display='none'}catch(_){}if(!X6.sc.looks[0])X6.sc.looks[0]=sanAp(cel.ap);cur=X6.sc.act;if(!unlocked(cur))cur=0;gpage=Math.floor(cur/4);render();fit();el.classList.remove('in');void el.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('in')));t0=performance.now();loop();UIS.play('open')}
+ function close(){if(!open)return;open=false;window.RB_COVER=false;stop();el.classList.remove('in');setTimeout(()=>{if(!open)el.style.display='none'},260);UIS.play('close')}
+ function openUI(){build();open=true;window.RB_COVER=true;   /* full-screen and opaque: pause the world behind it */el.style.display='block';try{menuEl.style.display='none'}catch(_){}if(!X6.sc.looks[0])X6.sc.looks[0]=sanAp(cel.ap);cur=X6.sc.act;if(!unlocked(cur))cur=0;gpage=Math.floor(cur/4);render();fit();el.classList.remove('in');void el.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('in')));t0=performance.now();loop();UIS.play('open')}
  function onClick(e){const a=e.target.closest('[data-a],[data-n],[data-d],[data-g],[data-p],[data-t]');if(!a){el.querySelectorAll('.gmenu').forEach(m=>m.hidden=true);return}
   if(a.dataset.n){e.preventDefault();nav(a.dataset.n);return}
   if(a.dataset.d){swap(+a.dataset.d);return}
@@ -86,7 +86,7 @@ const SHOW7=(()=>{
   const go=f=>{close();ensureGame(f)};
   if(k=='inv')go(()=>INV7.open());
   else if(k=='store')go(()=>STORE7.open());
-  else if(k=='worlds'){close();setTimeout(()=>{try{PLN7.open()}catch(e){console.error(e);try{openMenu('mworlds')}catch(_){}}},120)}
+  else if(k=='worlds'){close();setTimeout(()=>{try{openMenu('mworlds')}catch(_){}},120)}
   else if(k=='coll')go(()=>{try{BOOK7.open()}catch(_){try{UI6.open('wings')}catch(_){}}});
   else if(k=='prof')go(()=>{try{UI6.open('profile')}catch(_){}});
   else if(k=='set')go(()=>{try{UI6.open('settings')}catch(_){}})}
@@ -98,7 +98,6 @@ const SHOW7=(()=>{
 function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlgOpen=true;dlg.style.display='block';try{renderDlg()}catch(_){}try{UIS.play('open')}catch(_){}}
 // persist edits made in the appearance editor into the active character slot
 {const _cs=celSave;celSave=function(){try{if(typeof SHOW7!='undefined'&&X6&&X6.sc&&!(X6.sc.act>0&&0)){X6.sc.looks[X6.sc.act|0]=sanAp(cel.ap);x6Save()}}catch(_){}_cs()}}
-// open at launch (after login) and via the HUD Home button / H key chord
-if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(RB_BLOCKED()||creatorOn)return;clearInterval(iv);INTRO7.play(()=>{try{PLN7.open()}catch(e){console.error(e);SHOW7.open()}})},300)}
-function RB_BLOCKED(){try{return getComputedStyle(document.getElementById('login')).display!='none'}catch(_){return false}}
+// open at launch and via the HUD Home button / H key chord
+if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(creatorOn)return;clearInterval(iv);SHOW7.open()},300)}
 (()=>{const mkb=()=>{const g=document.querySelector('#hudbtns')||document.querySelector('#bmenu')?.parentElement;if(!g||document.getElementById('bhome'))return;const b=document.createElement('button');b.id='bhome';b.title='Home / characters';b.textContent='⌂';b.onclick=()=>{if(SHOW7.isOpen)SHOW7.close();else SHOW7.open()};g.insertBefore(b,g.firstChild)};setTimeout(mkb,400)})();
