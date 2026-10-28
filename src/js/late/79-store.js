@@ -11,11 +11,12 @@ const STORE7=(()=>{
  function silhouette(x,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='rgba(70,60,110,.55)';x.beginPath();x.arc(0,-34,11,0,6.3);x.fill();x.beginPath();x.moveTo(-13,-20);x.lineTo(13,-20);x.lineTo(10,22);x.lineTo(-10,22);x.closePath();x.fill();x.fillRect(-9,22,7,26);x.fillRect(2,22,7,26);x.restore()}
  function sparkle(x,px,py,c,r,a){x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;x.fillStyle=c;x.beginPath();x.arc(px,py,r,0,6.3);x.fill();x.restore()}
  function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
+  const z=still?1.35:1; // card thumbnails show weapons and wings larger so their silhouettes read at a glance
   try{
-  if(it.cat=='weapons'){x.save();x.translate(cx,cy+8*k);x.scale(k*1.25,k*1.25);const a=still?-.9:-1.1+Math.sin(t*2.4)*.7;x.rotate(a);x.translate(-30,0);const w=WPN[ref];
+  if(it.cat=='weapons'){x.save();x.translate(cx,cy+8*k);x.scale(k*1.25*z,k*1.25*z);const a=still?-.9:-1.1+Math.sin(t*2.4)*.7;x.rotate(a);x.translate(-30,0);const w=WPN[ref];
    if(w){x.save();x.globalCompositeOperation='lighter';x.strokeStyle='rgba('+w.g+',.35)';x.lineWidth=14;x.beginPath();x.arc(30,0,70,-.2,-.2-(still?1.2:Math.max(0,Math.cos(t*2.4))*1.6),true);x.stroke();x.restore()}
    drawWeapon(x,ref,96,t);x.restore()}
-  else if(it.cat=='wings'){silhouette(x,cx,cy,k*1.1);const i=WINGS.findIndex(w=>w.id==ref);x.save();x.scale(k*.72,k*.72);if(i>=0)WingArt.draw(x,i,cx/k/.72,(cy-10*k)/k/.72,1,t,0,0,0,1);x.restore();
+  else if(it.cat=='wings'){const s2=k*.72*z;silhouette(x,cx,cy+(z-1)*30*k,k*1.1*z);const i=WINGS.findIndex(w=>w.id==ref);x.save();x.scale(s2,s2);if(i>=0)WingArt.draw(x,i,cx/s2,(cy-10*k+(z-1)*30*k)/s2,1,t,0,0,0,1);x.restore();
    if(!still){const W2=WINGS[i];if(W2&&W2.fxk&&Math.random()<.5)parts.push({x:cx+(Math.random()-.5)*170*k,y:cy-30*k+Math.random()*70*k,vx:(Math.random()-.5)*8,vy:W2.fxk=='petals'?26:-22,l:1.3,c:W2.pal[3],r:2.2})}}
   else if(it.cat=='charms'){silhouette(x,cx,cy,k*1.1);x.save();x.scale(k*1.6,k*1.6);if(ref=='raven'){x.translate(cx/k/1.6-(P.x-cam.x)+30,cy/k/1.6-(P.y-cam.y)-50)}else x.translate(cx/k/1.6,(cy-30*k)/k/1.6);FX7.charmDraw(x,ref,0,0,t,1);x.restore()}
   else if(it.cat=='effects'){const f=FX_COL[ref]||['#fff','#fff','rise'];silhouette(x,cx,cy,k*1.1);const sub=it.sub;
@@ -39,7 +40,7 @@ const STORE7=(()=>{
   if(rar!='all')L=L.filter(i=>i.rar==rar);if(ownedOnly)L=L.filter(has);
   const cmp={feat:(a,b)=>(b.feat|0)-(a.feat|0)||(b.new|0)-(a.new|0)||a.price-b.price,pa:(a,b)=>a.price-b.price,pd:(a,b)=>b.price-a.price,rar:(a,b)=>RO[b.rar]-RO[a.rar]||a.price-b.price,name:(a,b)=>a.n.localeCompare(b.n),neu:(a,b)=>(b.new|0)-(a.new|0)||a.price-b.price}[sort];L.sort(cmp);return L}
  function card(it){const s=stateOf(it),b=eqd(it)?'<span class="badge eq">EQUIPPED</span>':!it.stack&&has(it)?'<span class="badge own">OWNED</span>':SHOP7.isNew(it.id)?'<span class="badge new">NEW</span>':'';
-  const lk=!SHOP7.lvOk(it);return'<button class="card'+(selId==it.id?' sel':'')+(lk?' lock':'')+'" data-id="'+it.id+'" data-rar="'+it.rar+'" aria-label="'+esc(it.n)+', '+it.rar+', '+it.price+' gems">'+b+'<img alt="" src="'+thumb(it)+'"><b>'+esc(it.n)+'</b><span class="rtag">'+esc(SHOP7.RN[it.rar])+'</span><span class="pr"><span><i class="gem"></i>'+it.price+'</span>'+(lk?'<small>Lv '+it.lv+'</small>':s&&!it.stack?'<small>✓</small>':'')+'</span></button>'}
+  const lk=!SHOP7.lvOk(it);return'<button class="card'+(selId==it.id?' sel':'')+(lk?' lock':'')+'" data-id="'+it.id+'" data-rar="'+it.rar+'" data-cat="'+it.cat+'" aria-label="'+esc(it.n)+', '+it.rar+', '+it.price+' gems">'+b+'<img alt="" src="'+thumb(it)+'"><b>'+esc(it.n)+'</b><span class="rtag">'+esc(SHOP7.RN[it.rar])+'</span><span class="pr"><span><i class="gem"></i>'+it.price+'</span>'+(lk?'<small>Lv '+it.lv+'</small>':s&&!it.stack?'<small>✓</small>':'')+'</span></button>'}
  function render(){if(!el)return;el.querySelector('#s7g').textContent=gems|0;el.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.c==cat));
   const g=el.querySelector('.grid');let h='';
   if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly){h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
@@ -50,7 +51,7 @@ const STORE7=(()=>{
   if(owned){btn=equipable(it)?(eqd(it)?'<button data-a="un">Unequip</button>':'<button class="pri" data-a="eq">Equip</button>'):'<button disabled>Owned</button>'}
   else if(lk)btn='<button disabled>Requires level '+it.lv+'</button>';
   else btn=(it.stack?'<span class="qty"><input id="s7q" type="number" min="1" max="99" value="1" aria-label="Quantity"></span>':'')+'<button class="pri" data-a="buy"'+(can?'':' disabled')+'>'+(can?'Buy · '+it.price+' gems':'Need '+(it.price-gems)+' more gems')+'</button>';
-  a.innerHTML='<canvas id="s7pv" width="300" height="255"></canvas><div><span class="rtag" data-rar="'+it.rar+'">'+esc(SHOP7.RN[it.rar])+' · '+esc(it.cat)+(it.sub?' · '+esc(it.sub):'')+'</span><h3>'+esc(it.n)+'</h3></div><p>'+esc(it.d)+'</p>'+(it.lv?'<p>Level required: <b>'+it.lv+'</b></p>':'')+(it.stack?'<p>You have: <b>'+cnt(it)+'</b></p>':'')+'<div class="acts">'+btn+'</div><small id="s7m" role="status" style="color:var(--muted)"></small>';
+  a.dataset.cat=it.cat;a.innerHTML='<canvas id="s7pv" width="300" height="255"></canvas><div><span class="rtag" data-rar="'+it.rar+'">'+esc(SHOP7.RN[it.rar])+' · '+esc(it.cat)+(it.sub?' · '+esc(it.sub):'')+'</span><h3>'+esc(it.n)+'</h3></div><p>'+esc(it.d)+'</p>'+(it.lv?'<p>Level required: <b>'+it.lv+'</b></p>':'')+(it.stack?'<p>You have: <b>'+cnt(it)+'</b></p>':'')+'<div class="acts">'+btn+'</div><small id="s7m" role="status" style="color:var(--muted)"></small>';
   pv=a.querySelector('#s7pv');parts.length=0;a.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a))}
  function select(id){selId=id;SHOP7.markSeen(id);try{UIS.play('select')}catch(_){}render()}
  const msg=t=>{const m=el&&el.querySelector('#s7m');if(m)m.textContent=t;else try{say(t)}catch(_){}};
@@ -74,4 +75,4 @@ const STORE7=(()=>{
  function close(){if(!el)return;el.classList.remove('on');try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},200)}
  function btn(){if(document.getElementById('bstore'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bstore';b.className='pn';b.textContent='STORE';b.title='Open the item store';b.onclick=()=>isOpen()?close():open();hr.insertBefore(b,hr.firstChild)}
  btn();if(document.readyState!='complete')addEventListener('load',btn);
- return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;render()}}})();
+ return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,flush(){for(const k in cache)delete cache[k];if(isOpen())render()},get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;render()}}})();

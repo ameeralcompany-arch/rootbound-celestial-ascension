@@ -21,6 +21,9 @@ if(vp[0]==1280){
  await p.evaluate(()=>SHOW7.open());await p.waitForTimeout(400);
  await p.click('#show nav a[data-n=store]');await p.waitForTimeout(500);ok('Store nav opens the full store',await p.evaluate(()=>STORE7.isOpen));await p.evaluate(()=>STORE7.close());await p.waitForTimeout(300);
  ok('UIS volume/mute state exists',await p.evaluate(()=>typeof UIS.play=='function'));
+ await p.evaluate(()=>{cel.opt.theme='dark';celSave();SHOW7.open()});await p.waitForTimeout(500);
+ ok('showcase follows the dark theme',await p.evaluate(()=>getComputedStyle(document.getElementById('show')).backgroundImage.includes('29, 22, 49')&&getComputedStyle(document.querySelector('#show .name')).color!='rgb(20, 18, 26)'));
+ await p.evaluate(()=>{cel.opt.theme='light';celSave()});
 }
 ok('no page errors'+tag,e.length==0,e.join('|'));await p.close()}
 await b.close();console.log(fails?'FAILURES '+fails:'all showcase tests passed');process.exit(fails?1:0)})();

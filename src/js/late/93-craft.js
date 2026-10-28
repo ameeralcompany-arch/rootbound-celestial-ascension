@@ -28,10 +28,15 @@ const CRAFT6=(()=>{let el=null,open=false;
   for(const [i,n] of r.in)if(cnt(i)<n*times){say('Missing '+nm(i));OBJ6.sfx('bad');return}
   for(const [i,n] of r.in)addI(i,-n*times);X6.q={r:id,end:Date.now()+r.secs*1000*times,n:times};x6Save();OBJ6.sfx('craft');say('Crafting '+times+'x '+r.n+'...');render()}
  function collect(){const q=X6.q;if(!q)return;const r=recipeById(q.r);if(!r){X6.q=null;x6Save();return}if(Date.now()<q.end)return;addI(r.out[0],r.out[1]*q.n);X6.q=null;x6Save();say('Crafted '+r.out[1]*q.n+' x '+nm(r.out[0]));OBJ6.sfx('ok');try{VFX.burst(P.x,P.y,['#ffd36a','#fff'],14,160,1,.7,10)}catch(_){}render()}
- function render(){if(!open)return;mk();let h='<h3>Crafting Table</h3>';const q=X6.q;
-  if(q){const r=recipeById(q.r),left=Math.max(0,q.end-Date.now());h+='<div class="cq">'+(left>0?'Crafting '+q.n+'× '+r.n+'… '+Math.ceil(left/1000)+'s (keeps going if you leave)':'<b>'+q.n+'× '+r.n+' ready!</b>')+(left>0?'':' <button data-c="collect">Collect</button>')+'</div>'}
-  for(const r of RECIPES){if(!known(r)){h+='<div class="rc unk">??? <small>(gather the right materials to discover this recipe)</small></div>';continue}
-   const ok=has(r)&&lvl>=r.lv&&!q;h+='<div class="rc"><b>'+r.out[1]+'× '+nm(r.out[0])+'</b> <small>'+r.secs+'s'+(lvl<r.lv?' · needs level '+r.lv:'')+'</small><div>'+r.in.map(([i,n])=>'<span class="'+(cnt(i)>=n?'ok':'no')+'">'+n+'× '+nm(i)+' ('+cnt(i)+')</span>').join(' ')+'</div><button data-c="make:'+r.id+':1"'+(ok?'':' disabled')+'>Craft</button> <button data-c="make:'+r.id+':5"'+(ok&&r.in.every(([i,n])=>cnt(i)>=n*5)?'':' disabled')+'>×5</button></div>'}
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),ic=i=>{try{return iconURL(i)}catch(_){return''}};
+ const out=(i,n)=>'<span class="out7"'+ITEM7.attrs(i)+'><img src="'+ic(i)+'" alt=""><b>'+n+'</b></span>';
+ // recipe card: output tile, name + time, actions, then ingredient chips (✓ / ✗ as well as colour)
+ function render(){if(!open)return;mk();let h='<h3>Crafting Table</h3><div class="sub7">Recipes reveal themselves once you have held every material. Crafts keep running while you are away.</div>';const q=X6.q;
+  if(q){const r=recipeById(q.r),left=Math.max(0,q.end-Date.now()),tot=Math.max(1,r.secs*1000*q.n),pct=Math.max(0,Math.min(100,100-left/tot*100));h+='<div class="cq">'+out(r.out[0],r.out[1]*q.n)+'<div style="flex:1;min-width:0"><b>'+(left>0?'Crafting '+q.n+'× '+esc(r.n):q.n+'× '+esc(r.n)+' is ready')+'</b><small style="display:block;color:var(--muted);margin:2px 0 6px">'+(left>0?Math.ceil(left/1000)+'s left · keeps going if you leave':'Collect it to add it to your backpack')+'</small><div class="pg7"><i style="width:'+pct+'%"></i></div></div>'+(left>0?'':'<button class="pri" data-c="collect">Collect</button>')+'</div>'}
+  for(const r of RECIPES){if(!known(r)){h+='<div class="rc unk">Undiscovered recipe · gather the right materials to reveal it</div>';continue}
+   const ok=has(r)&&lvl>=r.lv&&!q,ok5=ok&&r.in.every(([i,n])=>cnt(i)>=n*5);
+   h+='<div class="rc rc7">'+out(r.out[0],r.out[1])+'<div class="nm7"><b>'+esc(nm(r.out[0]))+'</b><small>'+r.secs+'s · '+(lvl<r.lv?'needs level '+r.lv:'level '+r.lv)+'</small></div><div class="go7"><button class="pri" data-c="make:'+r.id+':1"'+(ok?'':' disabled')+'>Craft</button><button data-c="make:'+r.id+':5"'+(ok5?'':' disabled')+' title="Craft five">×5</button></div>'
+    +'<div class="ings7">'+r.in.map(([i,n])=>'<span class="ing7 '+(cnt(i)>=n?'ok':'no')+'"><img src="'+ic(i)+'" alt="">'+n+'× '+esc(nm(i))+' <em>('+cnt(i)+')</em></span>').join('')+'</div></div>'}
   h+='<div class="row"><button data-c="close">Close</button></div>';el.innerHTML=h;el.style.display='block'}
  function openUI(){mk();open=true;for(const k of Object.keys(inv))if(cnt(+k)>0)X6.seen[k]=1;render()}
  function close(){open=false;if(el)el.style.display='none'}
