@@ -4,9 +4,22 @@
 const R3D=(()=>{
  const lerp=(a,b,t)=>a+(b-a)*t,clampv=(v,a,b)=>Math.max(a,Math.min(b,v));
  const wave=(wx,t)=>Math.sin(t*1.5+wx*.045)*1.9+Math.sin(t*2.6+wx*.11+1.3)*.9+Math.sin(t*.8-wx*.021)*1.3;
- function shade3D(x0,x1,y0,y1){const q=typeof QM!='undefined'?QM.cur:{shadow:1};if(!q.shadow)return;g.save();
-  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])continue;const px=x*T-cam.x,py=y*T-cam.y;
-   const below=y+1<H?tiles[k+W]:1,right=x+1<W?tiles[k+1]:1,left=x>0?tiles[k-1]:1,above=y>0?tiles[k-W]:1;
+ // Shadows are painted once per 8x8-tile chunk into a cached canvas (at the screen's real scale, so it looks the same) and redrawn
+ // only when a block in or around the chunk changes solid/empty, or the zoom changes. Painting them per tile every frame cost ~40% of a frame.
+ const CH=8,PAD=16,CW=CH*T+PAD,cache=new Map(),MAXC=72;let cScale=0;
+ const sol=(x,y)=>{if(x<0||y<0||x>=W||y>=H)return 1;const b=tiles[y*W+x];return b&&SOLID6[b]?1:0};
+ function sig(cx,cy){let h=7;for(let y=cy*CH-1;y<=cy*CH+CH;y++)for(let x=cx*CH-1;x<=cx*CH+CH;x++)h=(Math.imul(h,31)+sol(x,y))|0;return h}
+ function shade3D(x0,x1,y0,y1){const q=typeof QM!='undefined'?QM.cur:{shadow:1};if(!q.shadow)return;
+  const m=g.getTransform(),sc=Math.min(4,Math.max(.25,Math.hypot(m.a,m.b)));if(Math.abs(sc-cScale)>.001){cScale=sc;cache.clear()}
+  const now=performance.now();
+  for(let cy=Math.floor(y0/CH);cy<=Math.floor(y1/CH);cy++)for(let cx=Math.floor(x0/CH);cx<=Math.floor(x1/CH);cx++){const key=cy*1024+cx,s=sig(cx,cy);let e=cache.get(key);
+   if(!e||e.s!==s){if(!e){e={c:document.createElement('canvas')};e.c.width=e.c.height=Math.ceil(CW*sc);cache.set(key,e)}e.s=s;const c=e.c.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,e.c.width,e.c.height);c.setTransform(sc,0,0,sc,0,0);
+    for(let y=cy*CH;y<cy*CH+CH&&y<H;y++)for(let x=cx*CH;x<cx*CH+CH&&x<W;x++)paint(c,x,y,(x-cx*CH)*T,(y-cy*CH)*T)}
+   e.u=now;g.drawImage(e.c,cx*CH*T-cam.x,cy*CH*T-cam.y,CW,CW)}
+  if(cache.size>MAXC){const old=[...cache].sort((a,b)=>a[1].u-b[1].u).slice(0,cache.size-MAXC);for(const[k]of old)cache.delete(k)}}
+ // the original per-tile look: contact shadows, lit top lip, darker front edges, ambient occlusion in inner corners
+ function paint(g,x,y,px,py){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])return;
+  {const below=y+1<H?tiles[k+W]:1,right=x+1<W?tiles[k+1]:1,left=x>0?tiles[k-1]:1,above=y>0?tiles[k-W]:1;
    // cast shadow on the empty tile below / to the right (light comes from the upper left)
    if(!below||!SOLID6[below]){const gr=g.createLinearGradient(0,py+T,0,py+T+16);gr.addColorStop(0,'rgba(8,10,28,.34)');gr.addColorStop(1,'rgba(8,10,28,0)');g.fillStyle=gr;g.fillRect(px,py+T,T,16)}
    if(!right||!SOLID6[right]){const gr=g.createLinearGradient(px+T,0,px+T+12,0);gr.addColorStop(0,'rgba(8,10,28,.24)');gr.addColorStop(1,'rgba(8,10,28,0)');g.fillStyle=gr;g.fillRect(px+T,py,12,T)}
@@ -17,8 +30,7 @@ const R3D=(()=>{
    if(!left||!SOLID6[left]){const gr=g.createLinearGradient(px,0,px+8,0);gr.addColorStop(0,'rgba(255,255,255,.12)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(px,py,8,T)}
    // ambient occlusion in inner corners where a tile meets two neighbours
    if(above&&SOLID6[above]&&left&&SOLID6[left]){const gr=g.createRadialGradient(px,py,0,px,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px,py,16,16)}
-   if(above&&SOLID6[above]&&right&&SOLID6[right]){const gr=g.createRadialGradient(px+T,py,0,px+T,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px+T-16,py,16,16)}}
-  g.restore()}
+   if(above&&SOLID6[above]&&right&&SOLID6[right]){const gr=g.createRadialGradient(px+T,py,0,px+T,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px+T-16,py,16,16)}}}
  function water(x0,x1,y0,y1,now){shade3D(x0,x1,y0,y1);const t=now/1000,nt=typeof night=='number'?night:0,dim=1-nt*.38,hq=QM.cur.wfx>=1;g.save();
   const dens=(typeof QM!='undefined'?QM.cur.vfx:1);
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,v=wl[k];if(!v||tiles[k])continue;

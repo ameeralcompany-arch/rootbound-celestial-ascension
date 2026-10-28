@@ -116,23 +116,6 @@ img{image-rendering:pixelated}
 
 /* ========== CSS: 10-theme.css ========== */
 :root{--ink:#07060d;--panel:#0d0b16;--panel2:#15111f;--line:#3a2a3f;--gold:#d9b46a;--gold2:#f3dca0;--rose:#b3263a;--vio:#9a6bff;--ice:#9fd8ff;--txt:#ece6f4;--dim:#9a90ad;--green:#4dff9a}
-#login{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 20%,#1b1030 0,#07060d 70%);color:var(--txt);font-family:inherit;overflow:auto}
-#login canvas#lbg{position:absolute;inset:0;width:100%;height:100%}
-#lcard{position:relative;width:min(420px,92vw);padding:26px 26px 20px;background:linear-gradient(#120e1d,#0a0812);border:1px solid var(--line);border-radius:6px;box-shadow:0 0 0 1px #000,0 0 60px rgba(154,107,255,.25),inset 0 0 40px rgba(0,0,0,.6)}
-#lcard:before,#lcard:after{content:"";position:absolute;left:14px;right:14px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-#lcard:before{top:6px}#lcard:after{bottom:6px}
-#lcard h1{margin:0 0 2px;text-align:center;font-size:28px;letter-spacing:5px;font-weight:700;color:var(--gold2);text-shadow:0 0 18px rgba(154,107,255,.8)}
-#lcard h1 span{color:var(--vio)}
-#lcard .sub{text-align:center;color:var(--dim);font-size:12px;letter-spacing:3px;margin-bottom:16px}
-#lcard label{display:block;margin:10px 0 3px;font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
-#lcard input{width:100%;box-sizing:border-box;padding:10px 12px;background:#07060d;color:var(--txt);border:1px solid var(--line);border-radius:3px;font-size:15px;outline:none}
-#lcard input:focus{border-color:var(--vio);box-shadow:0 0 0 2px rgba(154,107,255,.25)}
-#lcard button{width:100%;margin-top:12px;padding:11px;background:linear-gradient(#3b2a63,#241a40);color:var(--gold2);border:1px solid var(--vio);border-radius:3px;font-size:14px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
-#lcard button:hover{filter:brightness(1.25)}#lcard button.alt{background:transparent;border-color:var(--line);color:var(--dim)}
-#lcard .tabs{display:flex;gap:6px;margin-bottom:6px}#lcard .tabs button{margin:0;padding:8px;font-size:12px}#lcard .tabs button.on{border-color:var(--gold);color:var(--gold2)}
-#lmsg{min-height:18px;margin-top:10px;font-size:13px;color:#ff8aa0;text-align:center;white-space:pre-wrap}#lmsg.ok{color:var(--green)}
-#lnote{margin-top:12px;font-size:11px;line-height:1.5;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
-#lrec{display:none;margin-top:10px;padding:10px;border:1px dashed var(--gold);color:var(--gold2);font:600 16px monospace;text-align:center;letter-spacing:2px;user-select:all}
 
 /* ========== CSS: 20-hud.css ========== */
 /* ---- V6 dark-celestial reskin of the legacy panels (original behaviour untouched) ---- */
@@ -466,17 +449,6 @@ html[data-theme=dark] .hcard canvas{background:linear-gradient(160deg,#352a55,#2
 .objpanel .ok{color:var(--green)!important}.objpanel .no{color:var(--accent)!important}
 #chestui .cs.e{background:transparent!important;border:1px dashed var(--line)!important}
 /* ---------- login ---------- */
-#login{background:var(--bg-page)!important;color:var(--ink)!important;font-family:var(--font-ui)}
-#login canvas#lbg{opacity:.28;mix-blend-mode:multiply}html[data-theme=dark] #login canvas#lbg{mix-blend-mode:screen;opacity:.5}
-#lcard{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--rad-lg)!important;box-shadow:var(--sh-3)!important}
-#lcard:before,#lcard:after{background:linear-gradient(90deg,transparent,var(--line-strong),transparent)!important}
-#lcard h1{color:var(--ink)!important;text-shadow:none!important;font-weight:900;font-style:italic;letter-spacing:.04em!important}#lcard h1 span{color:var(--accent)!important}
-#lcard .sub,#lcard label,#lnote{color:var(--muted)!important}
-#lcard input{background:var(--input-bg)!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:var(--rad-sm)!important}
-#lcard input:focus{border-color:var(--accent-2)!important;box-shadow:0 0 0 3px rgba(122,102,194,.2)!important}
-#lcard button{background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border:0!important;border-radius:var(--rad-sm)!important}
-#lcard button.alt,#lcard .tabs button{background:var(--btn-bg)!important;color:var(--btn-ink)!important;border:1px solid var(--line)!important}#lcard .tabs button.on{border-color:var(--sel-bd)!important;background:var(--sel-bg)!important}
-#lmsg{color:var(--accent)!important}#lmsg.ok{color:var(--green)!important}#lrec{color:var(--ink)!important;border-color:var(--line-strong)!important}
 /* ---------- misc shared components ---------- */
 .rb-empty{padding:28px 12px;text-align:center;color:var(--muted);font:600 12px var(--font-ui)}
 .rb-spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent-2);animation:rbspin .9s linear infinite;display:inline-block}@keyframes rbspin{to{transform:rotate(360deg)}}
@@ -582,111 +554,6 @@ html[data-theme=dark] #bar .hb.wp{width:auto}
 html.lowfx *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html.lowfx .pn,html.lowfx #hud *{box-shadow:none!important}
 
-/* ========== CSS: 65-planets.css ========== */
-/* ===== Star Atlas + intro. Follows the game's light-glass / night-glass themes (html[data-theme]). ===== */
-#pln,#intro7{--pp:rgba(255,255,255,.86);--pi:#2b2140;--pm:#6d6486;--pl:rgba(60,40,100,.16);--pb:rgba(255,255,255,.74);--pbh:#fff;--pa:#6f5aa8;--pg:linear-gradient(135deg,#8f7bff,#4cc4ff);--pd:#b3263a}
-html[data-theme=dark] #pln,html[data-theme=dark] #intro7{--pp:rgba(20,24,48,.9);--pi:#e9ecf8;--pm:#9aa3c4;--pl:rgba(255,255,255,.13);--pb:rgba(255,255,255,.08);--pbh:rgba(255,255,255,.17);--pa:#9db4ff;--pd:#ff9ba8}
-#pln{position:fixed;inset:0;z-index:75;display:none;color:#eef0ff;font-family:var(--font-ui,system-ui,sans-serif);background:#05040d;opacity:0;transition:opacity .35s ease;user-select:none;-webkit-user-select:none}
-#pln.in{opacity:1}#pln.out{opacity:0;transition-duration:.25s}
-#pln *{box-sizing:border-box}
-#plnCv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-#pln button{font:inherit;color:var(--pi);cursor:pointer;background:var(--pb);border:1px solid var(--pl);border-radius:999px;padding:8px 15px;font-size:12px;letter-spacing:.05em;transition:background .18s,border-color .18s,transform .18s,box-shadow .18s}
-#pln button:hover:not(:disabled){background:var(--pbh);border-color:var(--pa)}
-#pln button:active:not(:disabled){transform:scale(.97)}
-#pln button:disabled{opacity:.4;cursor:default}
-#pln :focus-visible{outline:2px solid var(--pa);outline-offset:2px}
-#pln input{font:inherit;color:var(--pi);background:var(--pb);border:1px solid var(--pl);border-radius:12px;padding:10px 12px;font-size:14px;width:100%;user-select:text;-webkit-user-select:text}
-#pln input::placeholder{color:var(--pm)}
-.plnTop{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(14px,3vw,40px);pointer-events:none;z-index:3}
-.plnTop>*{pointer-events:auto}
-.plnLogo b{display:block;letter-spacing:.38em;font-size:15px;font-weight:700;color:#fff}.plnLogo i{display:block;font-style:normal;letter-spacing:.34em;font-size:9px;color:#fff;opacity:.6;margin-top:4px}
-.plnBtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.plnPanel{position:absolute;right:clamp(12px,3vw,44px);top:84px;bottom:92px;width:min(380px,calc(100vw - 24px));overflow:auto;padding:22px 22px 18px;border-radius:24px;background:var(--pp);color:var(--pi);border:1px solid var(--pl);box-shadow:0 24px 80px rgba(0,0,0,.45);opacity:0;transform:translateX(28px);pointer-events:none;visibility:hidden;transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s .35s;z-index:3;scrollbar-width:thin}
-.hasInfo #plnInfo,.hasNew #plnNew{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition-delay:.12s,.12s,0s}
-.busy .plnPanel{opacity:0!important;transition-delay:0s!important}
-.plnPanel .pk{font-size:10px;letter-spacing:.3em;display:flex;align-items:center;gap:8px;color:var(--pm)}
-.plnPanel .pk i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--pa));box-shadow:0 0 10px var(--c,var(--pa))}
-.plnPanel h2{margin:10px 0 2px;font-size:26px;line-height:1.1;letter-spacing:.02em;font-weight:600;word-break:break-word}
-.plnPanel .pid{font-size:11px;color:var(--pm);letter-spacing:.06em;margin-bottom:12px}
-.plnPanel .blurb{font-size:13px;line-height:1.55;color:var(--pm);margin:0 0 14px}
-.plnPanel dl{margin:0 0 16px;display:grid;gap:7px}
-.plnPanel dl>div{display:flex;justify-content:space-between;gap:14px;font-size:12px;padding-bottom:7px;border-bottom:1px solid var(--pl)}
-.plnPanel dt{color:var(--pm)}.plnPanel dd{margin:0;text-align:right}.plnPanel dd .goals7{text-align:left;min-width:170px}.plnPanel dd small{color:var(--pm)}
-.plnPanel .acts{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
-#pln .pri{background:var(--pg)!important;border-color:transparent!important;color:#fff!important;font-weight:700;padding:11px 20px!important;box-shadow:0 8px 26px rgba(80,120,255,.35)}
-#pln .dng{color:var(--pd)!important}
-.plnPanel .note,.plnPanel .dim{font-size:11px;color:var(--pm);line-height:1.5}
-.plnPanel .warn,#plnModal .warn{color:var(--pd)}
-.plnPanel label,#plnModal label{display:block;font-size:11px;letter-spacing:.14em;color:var(--pm);margin:14px 0 6px;text-transform:uppercase}
-.plnPanel .rn{display:flex;gap:6px;margin:10px 0 2px;flex-wrap:wrap}.plnPanel .rn input{flex:1 1 140px}
-.plnPanel .nm{display:flex;gap:6px}
-.plnPanel .set{border:1px solid var(--pl);border-radius:16px;padding:12px;margin:0 0 12px}
-.plnPanel .set h4{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--pm)}
-.plnPanel .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.plnPanel .chips button{padding:5px 10px;font-size:11px}
-#pln .chips button.on,#pln .themes button.on,#plnDock button.on{background:var(--pbh);border-color:var(--c,var(--pa));box-shadow:0 0 0 1px var(--c,var(--pa))}
-.themes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.themes button{display:flex;align-items:center;gap:8px;text-align:left;border-radius:14px!important;padding:8px 10px!important;font-size:11.5px!important}
-.themes button i{width:12px;height:12px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#fff,var(--c));box-shadow:0 0 8px var(--c)}
-.plnPanel .info2{font-size:12px;line-height:1.5;color:var(--pm);margin:6px 0 12px}
-.plnPop{position:absolute;right:clamp(12px,3vw,40px);top:64px;width:min(320px,calc(100vw - 24px));padding:16px;border-radius:20px;background:var(--pp);color:var(--pi);border:1px solid var(--pl);box-shadow:0 20px 60px rgba(0,0,0,.5);opacity:0;transform:translateY(-8px);pointer-events:none;visibility:hidden;transition:opacity .25s,transform .3s,visibility 0s .25s;z-index:6;max-height:70vh;overflow:auto}
-.plnPop.on{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition-delay:0s}
-.plnPop h3{margin:0 0 4px;letter-spacing:.2em;font-size:13px}.plnPop h4{margin:14px 0 6px;font-size:11px;letter-spacing:.14em;color:var(--pm);text-transform:uppercase}
-.plnPop .dim{font-size:11.5px;color:var(--pm);line-height:1.5;margin:4px 0}
-.plnPop ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:5px}
-.plnPop li{display:flex;align-items:center;gap:8px;font-size:12px;opacity:.5}.plnPop li.ok{opacity:1}.plnPop li i{width:9px;height:9px;border-radius:50%}.plnPop li span{margin-left:auto}
-.plnPop .ms{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--pl);opacity:.65}.plnPop .ms.ok{opacity:1;color:var(--pa)}
-#plnDock{position:absolute;left:0;right:0;bottom:12px;display:flex;gap:8px;padding:6px 16px;overflow-x:auto;z-index:3;scrollbar-width:none}
-#plnDock::-webkit-scrollbar{display:none}
-#plnDock>:first-child{margin-left:auto}#plnDock>:last-child{margin-right:auto}
-#plnDock button{flex:none;display:flex;align-items:center;gap:8px;max-width:190px}
-#plnDock button i{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--c,#9cf));box-shadow:0 0 9px var(--c,#9cf);flex:none}
-#plnDock button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#plnDock button.cur::after{content:"●";font-size:7px;margin-left:2px;opacity:.7}
-#plnDock .plus{border-style:dashed}
-#plnHint{position:absolute;left:0;right:0;bottom:62px;text-align:center;font-size:11px;letter-spacing:.1em;color:#fff;opacity:.5;pointer-events:none;z-index:2;padding:0 70px}
-#plnToast{position:absolute;left:50%;top:70px;transform:translate(-50%,-10px);background:var(--pp);color:var(--pi);border:1px solid var(--pl);padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:8;max-width:min(560px,calc(100vw - 24px));text-align:center}
-#plnToast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
-#plnToast button{margin-left:8px;padding:3px 10px;font-size:11px}
-#plnModal{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,2,12,.65);z-index:9;padding:16px}
-#plnModal.on{display:flex}
-#plnModal .card{width:min(420px,100%);padding:22px;border-radius:22px;background:var(--pp);color:var(--pi);border:1px solid var(--pl);box-shadow:0 30px 90px rgba(0,0,0,.6)}
-#plnModal h3{margin:0 0 8px;font-size:19px}#plnModal p{font-size:13px;line-height:1.55;color:var(--pm);margin:0 0 6px}
-#plnModal .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
-@media (max-width:820px),(max-aspect-ratio:1/1){
- .plnPanel{top:auto;bottom:62px;left:12px;right:12px;width:auto;max-height:46vh;padding:16px;transform:translateY(24px)}
- .plnPanel h2{font-size:21px}.plnPanel .blurb{display:none}
- #plnHint{display:none}.plnLogo i{display:none}.plnBtns button{padding:6px 10px}
-}
-@media (prefers-reduced-motion:reduce){#pln *{transition-duration:.001s!important}}
-/* ----- intro (launch) + world title card ----- */
-#intro7{position:fixed;inset:0;z-index:90;background:#04030b;color:#fff;display:none;opacity:1;transition:opacity .5s ease;cursor:pointer;font-family:var(--font-ui,system-ui,sans-serif)}
-#intro7 canvas{position:absolute;inset:0;width:100%;height:100%}
-#intro7 .skip{position:absolute;right:20px;bottom:18px;font-size:11px;letter-spacing:.2em;opacity:.55}
-#wcard7{position:fixed;left:0;right:0;top:0;bottom:0;z-index:60;pointer-events:none;display:none;font-family:var(--font-ui,system-ui,sans-serif)}
-#wcard7 .bar{position:absolute;left:0;right:0;height:0;background:#05040d;transition:height .7s cubic-bezier(.2,.8,.2,1)}
-#wcard7 .bar.t{top:0}#wcard7 .bar.b{bottom:0}
-#wcard7.on .bar{height:9vh}
-#wcard7 .tint{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease}
-#wcard7.on .tint{opacity:1}
-#wcard7 .card{position:absolute;left:50%;top:26%;transform:translate(-50%,14px);text-align:center;padding:20px 38px;border-radius:26px;background:var(--surface,rgba(255,255,255,.8));backdrop-filter:blur(14px);border:1px solid var(--line,rgba(255,255,255,.3));color:var(--ink,#2b2140);box-shadow:0 20px 70px rgba(0,0,0,.35);opacity:0;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.8,.2,1);max-width:90vw}
-#wcard7.on .card{opacity:1;transform:translate(-50%,0)}
-#wcard7 .k{font-size:10px;letter-spacing:.42em;color:var(--muted,#6d6486)}
-#wcard7 h1{margin:8px 0 4px;font-size:clamp(26px,5vw,46px);letter-spacing:.06em;font-weight:600;word-break:break-word}
-#wcard7 .s{font-size:12px;letter-spacing:.16em;color:var(--muted,#6d6486)}
-html.lowfx #wcard7 .card{backdrop-filter:none}
-@media (prefers-reduced-motion:reduce){#wcard7 *{transition-duration:.001s!important}}
-/* world goals */
-.goals7{display:flex;flex-direction:column;gap:7px;margin-top:2px}
-.gl7{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12px;color:var(--ink)}
-.gl7 i{grid-column:1/3;height:5px;border-radius:5px;background:var(--line);overflow:hidden;display:block}
-.gl7 i b{display:block;height:100%;background:var(--accent);border-radius:5px}
-.gl7 small{color:var(--muted);font-size:11px}
-.gl7.ok span{color:var(--muted);text-decoration:line-through}.gl7.ok i b{background:#3f9b5a}
-/* world title card: compact, centred, never stretched across the screen */
-#wcard7>.card{display:block!important;width:max-content!important;max-width:min(460px,88vw)!important;right:auto!important;padding:14px 28px!important;border-radius:22px!important;top:20%!important}
-#wcard7>.card .k,#wcard7>.card h1,#wcard7>.card .s{display:block!important}
-#wcard7>.card h1{font-size:clamp(20px,3.2vw,30px)!important;margin:6px 0 2px!important}
-
 /* ========== CSS: 66-inventory.css ========== */
 /* Inventory search / sort / favourites (uses the shared theme tokens, so light + night glass both apply) */
 #inv7 .sheet{grid-template-rows:auto auto auto 1fr}
@@ -716,7 +583,6 @@ html.lowfx #wcard7 .card{backdrop-filter:none}
 #banner b{animation:bnTrack 2.4s cubic-bezier(.22,.7,.2,1) both;text-shadow:0 2px 24px rgba(255,255,255,.95),0 0 2px rgba(0,0,0,.08)!important}
 #banner.on b{animation:bnTrack 2.4s cubic-bezier(.22,.7,.2,1) both}
 @keyframes bnTrack{from{letter-spacing:.7em}to{letter-spacing:.3em}}
-#wcard7 .card{animation-timing-function:cubic-bezier(.22,.7,.2,1)!important}
 #hubbody,#inv7 .sheet{position:relative;isolation:isolate}
 #hubbody::before,#inv7 .sheet::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;opacity:.55;background:radial-gradient(40% 40% at 20% 20%,color-mix(in srgb,var(--accent,#7a5cff) 16%,transparent),transparent 70%),radial-gradient(45% 45% at 80% 70%,color-mix(in srgb,var(--accent-2,#ff7ab8) 14%,transparent),transparent 70%);background-size:140% 140%;animation:aurora7 18s ease-in-out infinite alternate}
 @keyframes aurora7{0%{background-position:0% 0%,100% 100%}100%{background-position:60% 40%,30% 60%}}
@@ -736,15 +602,6 @@ html.lowfx #hubbody::before,html.lowfx #inv7 .sheet::before,html[data-motion=off
 <div id="mhome"><input id="nm" maxlength="14" placeholder="Your name" autocomplete="off"><button class="big" id="bp">Play</button><button class="big" id="bw">Worlds</button><button class="big" id="bcu">Customize character</button><button class="big" id="bo">Options</button></div>
 <div id="mworlds"><div id="wnet"></div><div class="row"><input id="wn" maxlength="16" placeholder="Search or create a world" autocomplete="off"><button id="bj">Enter</button></div><div class="row"><button id="br">Random world</button></div><h3>Public worlds</h3><div id="wlive"></div><h3>Your worlds</h3><div id="wrec"></div><button class="bk">Back</button></div>
 <div id="mopt"><label>Music <input type="range" id="ov" min="0" max="100"></label><label>Sound effects <input type="range" id="os" min="0" max="100"></label><label>Particles <select id="oq"><option value=".4">Low</option><option value="1">Medium</option><option value="1.6">High</option></select></label><label>Resolution <select id="orr"><option value="1">Full</option><option value="0.75">75%</option><option value="0.5">50%</option></select></label><label>Screen shake <input type="checkbox" id="osh"></label><button class="bk">Back</button></div></div></div>
-
-/* ========== HTML: 10-login.html ========== */
-<div id="login"><canvas id="lbg"></canvas><div id="lcard"><h1>ROOT<span>BOUND</span></h1><div class="sub">CELESTIAL ASCENSION</div>
-<div class="tabs"><button id="ltIn" class="on">Sign in</button><button id="ltUp">Create account</button><button id="ltRec">Recover</button></div>
-<div id="lfName"><label for="lu">Account name</label><input id="lu" maxlength="16" autocomplete="username" placeholder="3-16 letters, numbers, _ -"></div>
-<div id="lfPass"><label for="lp">Password</label><input id="lp" type="password" maxlength="64" autocomplete="current-password" placeholder="at least 8 characters"></div>
-<div id="lfRec" style="display:none"><label for="lr">Recovery code</label><input id="lr" maxlength="24" placeholder="XXXX-XXXX-XXXX"><label for="lp2">New password</label><input id="lp2" type="password" maxlength="64" autocomplete="new-password"></div>
-<button id="lgo">Sign in</button><div id="lrec"></div><div id="lmsg"></div><button id="lguest" class="alt">Play as guest (no account)</button>
-<div id="lnote">Local prototype: accounts live in this browser only. Passwords are never stored in plain text (PBKDF2-SHA256, per-account salt), but a browser-only login is <b>not real security</b> - anyone with this device can read its storage. The auth layer is isolated so a server login can replace it later.</div></div></div>
 
 /* ========== HTML: 20-hub.html ========== */
 <div id="banner"><b></b><span></span></div><div id="mini" class="pn"><canvas id="minic" width="150" height="96"></canvas></div><button id="bhub" class="pn" title="Character hub (C)">CHARACTER</button>
@@ -989,7 +846,7 @@ function drawPrecip(w,hh,now){if(wxI<.02)return;const t=now/1000,snow=ptype=='sn
 function updSplash(dt,w,hh){if(wxI>.15&&ptype!='snow'&&splashes.length<44&&Math.random()<dt*50*wxI){const x=cam.x+rnd(0,w);let r=Math.max(0,Math.floor(cam.y/T)-1),n=0;const c=Math.floor(x/T);while(r<H&&!solidAt(c,r)&&n++<40)r++;if(r<H&&r>0&&!solidAt(c,r-1))splashes.push({x,y:r*T,t:performance.now()})}}
 // ---------- main draw
 function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=hh/ZM;
- cam.x+=(Math.max(0,Math.min(W*T-vw,P.x-vw/2))-cam.x)*.18;cam.y+=(Math.max(-200,Math.min(H*T-vh,P.y+P.h/2-vh/2))-cam.y)*.18;
+ const ck=1-Math.pow(.82,Math.min(.05,window.FDT||1/144)*144);/* same follow speed as .18 per frame at 144 fps, at any frame rate */cam.x+=(Math.max(0,Math.min(W*T-vw,P.x-vw/2))-cam.x)*ck;cam.y+=(Math.max(-200,Math.min(H*T-vh,P.y+P.h/2-vh/2))-cam.y)*ck;
  const sx=shake?(Math.random()-.5)*shake*34*OPT.sh:0,sy=shake?(Math.random()-.5)*shake*34*OPT.sh:0;drawSky(w,hh,now);
  g.save();g.scale(ZM,ZM);g.translate(sx,sy);const x0=Math.max(0,cam.x/T|0),x1=Math.min(W-1,(cam.x+vw)/T|0),y0=Math.max(0,cam.y/T|0),y1=Math.min(H-1,(cam.y+vh)/T|0);
  
@@ -1545,14 +1402,14 @@ $('crnd').onclick=()=>{const p=a=>a[Math.random()*a.length|0];look={skin:p(SKINS
 
 
 /* ========== EARLY: 00-profile.js ========== */
-// ===== V6 profile namespace: every per-player save key is prefixed by the active account =====
-// Guest = legacy un-prefixed keys (keeps your existing save). Accounts = "a_<id>_" prefix.
-// If nobody is signed in yet, writes go to a throw-away "pending_" prefix and the login screen blocks play.
-const RB_SESS=(()=>{try{const s=JSON.parse(localStorage.getItem('rb_session')||'null');if(s&&typeof s.id=='string')return s}catch(_){}return null})();
-const RB_PREFIX=RB_SESS?(RB_SESS.id=='guest'?'':'a_'+RB_SESS.id+'_'):'pending_';
-(function(){const KEYS=/^(rbp|rbp_bak|rbp_corrupt_|rbopt|rbw_|rbidx|rbid|rbc)/,P=Storage.prototype,gi=P.getItem,si=P.setItem,ri=P.removeItem;
- const map=(o,k)=>o===localStorage&&typeof k=='string'&&KEYS.test(k)&&RB_PREFIX?RB_PREFIX+k:k;
- P.getItem=function(k){return gi.call(this,map(this,k))};P.setItem=function(k,v){return si.call(this,map(this,k),v)};P.removeItem=function(k){return ri.call(this,map(this,k))}})();
+// ===== Single save: Rootbound is single-player and has no accounts, so every save key is used as-is. =====
+// Older versions kept account saves under an "a_<id>_" prefix. If the last session was an account and there is no plain save yet,
+// that account's save is copied to the plain keys once, so nobody loses progress.
+const RB_SESS={id:'guest',name:'Guest'},RB_PREFIX='';
+(function(){try{const KEYS=/^(rbp|rbp_bak|rbopt|rbw_|rbidx|rbid|rbc)/,s=JSON.parse(localStorage.getItem('rb_session')||'null');
+ if(s&&typeof s.id=='string'&&s.id!='guest'&&!localStorage.getItem('rbp')){const pre='a_'+s.id+'_',ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(pre)&&KEYS.test(k.slice(pre.length)))ks.push(k)}
+  for(const k of ks)localStorage.setItem(k.slice(pre.length),localStorage.getItem(k))}
+ localStorage.removeItem('rb_session')}catch(_){}})();
 
 try{Object.assign(OPT,JSON.parse(localStorage.getItem('rbopt')||'{}'));if(OPT.name)myName=OPT.name;const rs=readSave(),p=rs&&rs.p;if(rs&&rs.key!='rbp')try{say('Save was damaged. Restored your backup.')}catch(_){}if(p){inv=p.inv||inv;gems=p.gems|0;own=p.own||own;ownW=p.ownW||{};wear=p.wear||wear;wp=own[p.wp]?p.wp:'fist';bar=p.bar||bar;Object.assign(done,p.done||{});xp=p.xp|0;lvl=p.lvl||1;Object.assign(prof,p.prof||{});Object.assign(wUp,p.wUp||{});Object.assign(wK,p.wK||{});qs=p.qs||[];look=p.look||look;made=!!p.made;Object.assign(stats,p.stats||{});achD=p.achD||{};seenW=p.seenW||{};Object.assign(pst,p.pst||{});Object.assign(relics,p.relics||{});Object.assign(bossK,p.bossK||{});evoH.push(...(p.evoH||[]));Object.assign(dly,p.dly||{});SAVED=p}}catch(_){}if(!qs.length)qs=[newQuest(),newQuest(),newQuest()];
 RSC=OPT.rs||1;ZM=OPT.zm||1;rs();$('orr').value=String(RSC);$('orr').onchange=e=>{RSC=+e.target.value;OPT.rs=RSC;saveP();rs()};$('nm').value=myName;$('ov').value=OPT.mv*100;$('os').value=OPT.sv*100;$('oq').value=OPT.q;$('osh').checked=!!OPT.sh;
@@ -1611,59 +1468,6 @@ own.fist=1;if(!own[wp])wp='fist';/* weapons added by later scripts are validated
 function wKill(){const w=WPN[wp];if(!w||!w.ev)return;wK[wp]=(wK[wp]|0)+1;if(wK[wp]>=w.kn){const o=wp,n=w.ev;own[n]=1;delete own[o];wUp[n]=wUp[o]|0;wK[n]=0;wp=n;renderW();burst(P.x,P.y+20,'rgb('+WPN[n].g+')',46,260,6,'p');rings.push({x:P.x,y:P.y+25,c:'#fff',t:performance.now()});snd(880,.5,'triangle',.07,1.5);say('✨ '+WPN[o].n+' evolved into '+WPN[n].n+'!')}else if(wK[wp]%5==0)renderW()}
 const _dwp=drawWeapon;drawWeapon=function(x,id,L,t){const w=WPN[id]||{};if(w.st){L*=1+.07*w.st}_dwp(x,id,L,t);if(w.st>=2){x.save();x.globalCompositeOperation='lighter';const gc=w.g.join(','),r=10+w.st*5,gr=x.createRadialGradient(L*.7,0,1,L*.7,0,r+Math.sin((t||0)*6)*2);gr.addColorStop(0,'rgba('+gc+',.55)');gr.addColorStop(1,'rgba('+gc+',0)');x.fillStyle=gr;x.fillRect(L*.7-r-4,-r-4,2*r+8,2*r+8);x.restore()}};
 
-
-/* ========== LATE: 10-auth.js ========== */
-// ===== V6 Auth: local-prototype accounts (PBKDF2), recovery code, guest, per-account saves =====
-const AUTH=(()=>{
- const ITER=150000,enc=new TextEncoder(),hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''),unhex=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
- const okName=n=>/^[A-Za-z0-9_-]{3,16}$/.test(n),idOf=n=>n.toLowerCase();
- const rd=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(_){return null}},raw=localStorage;
- // keys not in the namespaced list are untouched by the profile layer
- async function derive(pw,salt,iters){const km=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']);return hex(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:salt,iterations:iters},km,256))}
- const rnd=n=>crypto.getRandomValues(new Uint8Array(n));
- const recCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=rnd(12);let s='';for(let i=0;i<12;i++){s+=A[b[i]%A.length];if(i%4==3&&i<11)s+='-'}return s};
- const fails=()=>rd('rb_fail')||{};
- function lockLeft(id){const f=fails()[id];return f&&f.until>Date.now()?Math.ceil((f.until-Date.now())/1000):0}
- function bad(id){const f=fails(),e=f[id]||{n:0,until:0};e.n++;if(e.n>=5){e.until=Date.now()+30000*Math.min(8,e.n-4)}f[id]=e;raw.setItem('rb_fail',JSON.stringify(f))}
- function good(id){const f=fails();delete f[id];raw.setItem('rb_fail',JSON.stringify(f))}
- const api={
-  secure:()=>!!(window.crypto&&crypto.subtle),
-  list:()=>(rd('rb_accidx')||[]),
-  async create(name,pw){name=String(name||'').trim();if(!okName(name))throw Error('Name must be 3-16 characters: letters, numbers, _ or -');if(String(pw||'').length<8)throw Error('Password must be at least 8 characters');if(!api.secure())throw Error('This browser blocks secure hashing here (open the game over https or localhost). You can still play as a guest.');
-   const id=idOf(name);if(rd('rb_acc_'+id))throw Error('That account name is taken on this device');const salt=rnd(16),rc=recCode(),rsalt=rnd(16);
-   const acc={v:1,name,salt:hex(salt),iters:ITER,hash:await derive(pw,salt,ITER),rsalt:hex(rsalt),rhash:await derive(rc.replace(/-/g,''),rsalt,ITER),created:Date.now()};
-   raw.setItem('rb_acc_'+id,JSON.stringify(acc));const ix=api.list();ix.push(id);raw.setItem('rb_accidx',JSON.stringify(ix));return{id,name,recovery:rc}},
-  async login(name,pw){name=String(name||'').trim();const id=idOf(name),acc=rd('rb_acc_'+id);const w=lockLeft(id);if(w)throw Error('Too many attempts. Try again in '+w+'s');
-   if(!acc){await derive('x',rnd(16),ITER).catch(()=>0);throw Error('Wrong account name or password')}
-   const h=await derive(String(pw||''),unhex(acc.salt),acc.iters||ITER);if(h!==acc.hash){bad(id);throw Error('Wrong account name or password')}good(id);return{id,name:acc.name}},
-  async recover(name,code,newpw){const id=idOf(String(name||'').trim()),acc=rd('rb_acc_'+id);const w=lockLeft(id);if(w)throw Error('Too many attempts. Try again in '+w+'s');if(String(newpw||'').length<8)throw Error('New password must be at least 8 characters');
-   if(!acc){throw Error('Unknown account or wrong recovery code')}const h=await derive(String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,''),unhex(acc.rsalt),acc.iters||ITER);if(h!==acc.rhash){bad(id);throw Error('Unknown account or wrong recovery code')}good(id);
-   const salt=rnd(16),rc=recCode(),rsalt=rnd(16);acc.salt=hex(salt);acc.hash=await derive(newpw,salt,ITER);acc.rsalt=hex(rsalt);acc.rhash=await derive(rc.replace(/-/g,''),rsalt,ITER);acc.iters=ITER;raw.setItem('rb_acc_'+id,JSON.stringify(acc));return{id,name:acc.name,recovery:rc}},
-  start(id,name){raw.setItem('rb_session',JSON.stringify({id,name,t:Date.now()}));location.reload()},
-  logout(){raw.removeItem('rb_session');location.reload()},
-  sess:RB_SESS};
- return api})();
-(function(){const L=$('login');if(RB_SESS){return}
- // the single-player desktop app has one save and no login screen
- if(window.RB_CONFIG&&RB_CONFIG.solo&&/Electron/i.test(navigator.userAgent)){AUTH.start('guest','Guest');return}L.style.display='flex';
- let mode='in';const msg=(t,ok)=>{$('lmsg').textContent=t||'';$('lmsg').className=ok?'ok':''};
- const setMode=m=>{mode=m;for(const[k,id]of[['in','ltIn'],['up','ltUp'],['rec','ltRec']])$(id).classList.toggle('on',k==m);$('lfRec').style.display=m=='rec'?'block':'none';$('lfPass').style.display=m=='rec'?'none':'block';$('lgo').textContent=m=='in'?'Sign in':m=='up'?'Create account':'Reset password';$('lp').autocomplete=m=='up'?'new-password':'current-password';msg('');$('lrec').style.display='none'};
- $('ltIn').onclick=()=>setMode('in');$('ltUp').onclick=()=>setMode('up');$('ltRec').onclick=()=>setMode('rec');
- $('lguest').onclick=()=>AUTH.start('guest','Guest');
- const go=async()=>{const b=$('lgo');b.disabled=true;msg('Working...');try{
-   if(mode=='in'){const r=await AUTH.login($('lu').value,$('lp').value);AUTH.start(r.id,r.name)}
-   else if(mode=='up'){const r=await AUTH.create($('lu').value,$('lp').value);$('lrec').style.display='block';$('lrec').textContent=r.recovery;msg('Account created. Write this recovery code down - it is shown once and is the only way to reset your password.\nThen press Continue.',1);b.textContent='Continue';b.onclick=()=>AUTH.start(r.id,r.name);b.disabled=false;return}
-   else{const r=await AUTH.recover($('lu').value,$('lr').value,$('lp2').value);$('lrec').style.display='block';$('lrec').textContent=r.recovery;msg('Password reset. Your NEW recovery code is shown above - save it.',1);b.textContent='Continue';b.onclick=()=>AUTH.start(r.id,r.name);b.disabled=false;return}
-  }catch(e){msg(e.message||'Something went wrong')}b.disabled=false};
- $('lgo').onclick=go;for(const i of['lu','lp','lr','lp2'])$(i).addEventListener('keydown',e=>{if(e.key=='Enter')$('lgo').onclick()});
- // animated backdrop: drifting crystal motes + slow rune ring
- const c=$('lbg'),x=c.getContext('2d');let W,H,m=[],t0=performance.now();const rs=()=>{W=c.width=innerWidth;H=c.height=innerHeight};rs();addEventListener('resize',rs);
- for(let i=0;i<70;i++)m.push({x:Math.random(),y:Math.random(),s:Math.random()*2+.5,v:Math.random()*.02+.005,h:Math.random()<.5?270:200});
- (function f(n){if(L.style.display=='none')return;const t=(n-t0)/1000;x.clearRect(0,0,W,H);x.save();x.translate(W/2,H*.46);for(let r=0;r<3;r++){x.save();x.rotate(t*(.05+r*.03)*(r%2?-1:1));x.strokeStyle='rgba(154,107,255,'+(.22-r*.05)+')';x.lineWidth=1.2;const R=Math.min(W,H)*(.42+r*.1);x.beginPath();x.arc(0,0,R,0,6.3);x.stroke();x.setLineDash([2,14]);x.beginPath();x.arc(0,0,R*.93,0,6.3);x.stroke();x.setLineDash([]);x.beginPath();for(let k=0;k<=7;k++){const a=k*6.283*2/7;x[k?'lineTo':'moveTo'](Math.cos(a)*R*.9,Math.sin(a)*R*.9)}x.stroke();x.restore()}x.restore();
-  for(const p of m){p.y-=p.v*.016;if(p.y<0)p.y=1;x.fillStyle='hsla('+p.h+',90%,75%,'+(.3+.4*Math.sin(t*2+p.x*9))+')';x.beginPath();x.arc(p.x*W,p.y*H,p.s,0,6.3);x.fill()}requestAnimationFrame(f)})(t0);
- // block legacy input while the login screen is up
- addEventListener('keydown',e=>{if(L.style.display!='none'&&e.target.tagName!='INPUT')e.stopPropagation()},true);
-})();
 
 /* ========== LATE: 20-data.js ========== */
 // ===== V6 data: everything tunable lives here (wings, nameplates, auras, quality presets) =====
@@ -1762,9 +1566,8 @@ const QM={cur:QPRE.find(q=>q.id=='high'),auto:true,ema:16.7,lowT:0,hiT:0,lastCha
  apply(id,silent){const p=QPRE.find(q=>q.id==id)||QPRE.find(q=>q.id=='high');QM.cur=p;RSC=p.rsc;try{document.documentElement.classList.toggle('lowfx',p.id=='low'||p.id=='potato')}catch(_){}OPT.q=Math.min(1.6,p.part);QM.reduce=!!cel.opt.reduce||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches&&cel.opt.reduce!=0&&false);QM.vfxK=p.vfx*cel.opt.vfx*(QM.reduce?.4:1);try{rs()}catch(_){}if(!silent&&typeof say=='function')say('Graphics: '+p.n)},
  init(){const s=cel.opt.qp;QM.auto=s=='auto';let id=s;if(QM.auto){const m=navigator.hardwareConcurrency||4,small=Math.min(innerWidth,innerHeight)<500;id=small||m<=2?'low':m<=4?'med':'high';/* no hardware canvas/WebGL = software drawing: start low */try{const t=document.createElement('canvas');if(!(t.getContext('webgl')||t.getContext('experimental-webgl'))&&id!='low')id='low'}catch(_){id='low'}}QM.apply(id,true)},
  setting(s){cel.opt.qp=s;celSave();QM.auto=s=='auto';if(!QM.auto)QM.apply(s);else QM.init()},
- // adaptive: called each frame with frame ms. Downgrades one step after ~2s of sustained >24ms; never auto-upgrades past the initial pick.
- tick(ms,now){if(!QM.auto||document.hidden)return;QM.ema+=(Math.min(100,ms)-QM.ema)*.05;
-  if(QM.ema>24&&now-QM.lastChange>4000){QM.lowT+=ms;if(QM.lowT>1200){const i=QPRE.indexOf(QM.cur);if(i>0){QM.apply(QPRE[i-1].id,true);QM.lastChange=now;QM.ema=16;if(typeof say=='function')say('Auto quality: '+QPRE[i-1].n)}QM.lowT=0}}else QM.lowT=Math.max(0,QM.lowT-ms)}};
+ // quality never drops on its own: the player picks it in Settings (the old adaptive downgrade is gone)
+ tick(){}};
 QM.init();
 
 /* ========== LATE: 40-vfx.js ========== */
@@ -2587,11 +2390,11 @@ const SKY6=(()=>{
  return{draw}})();
 drawSky=function(w,hh,now){SKY6.draw(w,hh,now)};
 // ---------- post: color grade, vignette, bloom, cinematic bars (run after legacy draw + VFX)
-const POST6=(()=>{const bc=document.createElement('canvas'),bx=bc.getContext('2d'),b2=document.createElement('canvas'),b2x=b2.getContext('2d'),can=('filter'in bx);let bars=0;
+const POST6=(()=>{const bc=document.createElement('canvas'),bx=bc.getContext('2d'),b2=document.createElement('canvas'),b2x=b2.getContext('2d'),can=('filter'in bx);let bars=0,bf=0;   // bf: the blurred bloom buffer is refreshed every 2nd frame (copying the frame stalls the GPU)
  return{run(w,hh){const q=QM.cur;
   if(q.grade&&entered){const d=clock(),tw=Math.max(0,1-Math.abs(night-.5)*4);g.save();g.globalCompositeOperation='soft-light';const tint=night>.5?[40,50,140]:tw>.3?[255,150,90]:[255,245,220],a=q.grade==2?.34:.2;g.globalAlpha=a*(night>.5?night:tw>.3?tw:.3);g.fillStyle='rgb('+tint+')';g.fillRect(0,0,w,hh);if(WX6.cloud>.3){g.globalAlpha=.18*WX6.cloud;g.fillStyle='rgb(120,130,150)';g.fillRect(0,0,w,hh)}g.restore();
    const vg=g.createRadialGradient(w/2,hh/2,hh*.45,w/2,hh/2,hh*.95);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(6,4,16,'+(q.grade==2?.5:.3)+')');g.fillStyle=vg;g.fillRect(0,0,w,hh)}
-  if(q.bloom&&cel.opt.bloom&&ZM>=.7&&can&&entered){const bw=w>>2,bh=hh>>2;if(bc.width!=bw){bc.width=b2.width=bw;bc.height=b2.height=bh}bx.globalCompositeOperation='copy';bx.drawImage(cv,0,0,bw,bh);b2x.filter='brightness(.8) contrast(2.6) saturate(1.3) blur('+(q.bloom==2?5:3)+'px)';b2x.globalCompositeOperation='copy';b2x.drawImage(bc,0,0);b2x.filter='none';g.save();g.globalCompositeOperation='lighter';g.globalAlpha=(q.bloom==2?.38:.22)*(QM.reduce?.6:1);g.drawImage(b2,0,0,w,hh);g.restore()}
+  if(q.bloom&&cel.opt.bloom&&ZM>=.7&&can&&entered){const bw=w>>2,bh=hh>>2;let fresh=false;if(bc.width!=bw||bc.height!=bh){bc.width=b2.width=bw;bc.height=b2.height=bh;fresh=true}if(fresh||(bf++&1)==0){bx.globalCompositeOperation='copy';bx.drawImage(cv,0,0,bw,bh);b2x.filter='brightness(.8) contrast(2.6) saturate(1.3) blur('+(q.bloom==2?5:3)+'px)';b2x.globalCompositeOperation='copy';b2x.drawImage(bc,0,0);b2x.filter='none'}g.save();g.globalCompositeOperation='lighter';g.globalAlpha=(q.bloom==2?.38:.22)*(QM.reduce?.6:1);g.drawImage(b2,0,0,w,hh);g.restore()}
   const tb=q.cine&&cel.opt.cine!==0?1:0;bars+=(tb-bars)*.08;if(bars>.01){const bh2=hh*.07*bars;g.fillStyle='#000';g.fillRect(0,0,w,bh2);g.fillRect(0,hh-bh2,w,bh2)}}}})();
 
 /* ========== LATE: 71-deep.js ========== */
@@ -2697,9 +2500,22 @@ const MINE7=(()=>{
 const R3D=(()=>{
  const lerp=(a,b,t)=>a+(b-a)*t,clampv=(v,a,b)=>Math.max(a,Math.min(b,v));
  const wave=(wx,t)=>Math.sin(t*1.5+wx*.045)*1.9+Math.sin(t*2.6+wx*.11+1.3)*.9+Math.sin(t*.8-wx*.021)*1.3;
- function shade3D(x0,x1,y0,y1){const q=typeof QM!='undefined'?QM.cur:{shadow:1};if(!q.shadow)return;g.save();
-  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])continue;const px=x*T-cam.x,py=y*T-cam.y;
-   const below=y+1<H?tiles[k+W]:1,right=x+1<W?tiles[k+1]:1,left=x>0?tiles[k-1]:1,above=y>0?tiles[k-W]:1;
+ // Shadows are painted once per 8x8-tile chunk into a cached canvas (at the screen's real scale, so it looks the same) and redrawn
+ // only when a block in or around the chunk changes solid/empty, or the zoom changes. Painting them per tile every frame cost ~40% of a frame.
+ const CH=8,PAD=16,CW=CH*T+PAD,cache=new Map(),MAXC=72;let cScale=0;
+ const sol=(x,y)=>{if(x<0||y<0||x>=W||y>=H)return 1;const b=tiles[y*W+x];return b&&SOLID6[b]?1:0};
+ function sig(cx,cy){let h=7;for(let y=cy*CH-1;y<=cy*CH+CH;y++)for(let x=cx*CH-1;x<=cx*CH+CH;x++)h=(Math.imul(h,31)+sol(x,y))|0;return h}
+ function shade3D(x0,x1,y0,y1){const q=typeof QM!='undefined'?QM.cur:{shadow:1};if(!q.shadow)return;
+  const m=g.getTransform(),sc=Math.min(4,Math.max(.25,Math.hypot(m.a,m.b)));if(Math.abs(sc-cScale)>.001){cScale=sc;cache.clear()}
+  const now=performance.now();
+  for(let cy=Math.floor(y0/CH);cy<=Math.floor(y1/CH);cy++)for(let cx=Math.floor(x0/CH);cx<=Math.floor(x1/CH);cx++){const key=cy*1024+cx,s=sig(cx,cy);let e=cache.get(key);
+   if(!e||e.s!==s){if(!e){e={c:document.createElement('canvas')};e.c.width=e.c.height=Math.ceil(CW*sc);cache.set(key,e)}e.s=s;const c=e.c.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,e.c.width,e.c.height);c.setTransform(sc,0,0,sc,0,0);
+    for(let y=cy*CH;y<cy*CH+CH&&y<H;y++)for(let x=cx*CH;x<cx*CH+CH&&x<W;x++)paint(c,x,y,(x-cx*CH)*T,(y-cy*CH)*T)}
+   e.u=now;g.drawImage(e.c,cx*CH*T-cam.x,cy*CH*T-cam.y,CW,CW)}
+  if(cache.size>MAXC){const old=[...cache].sort((a,b)=>a[1].u-b[1].u).slice(0,cache.size-MAXC);for(const[k]of old)cache.delete(k)}}
+ // the original per-tile look: contact shadows, lit top lip, darker front edges, ambient occlusion in inner corners
+ function paint(g,x,y,px,py){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])return;
+  {const below=y+1<H?tiles[k+W]:1,right=x+1<W?tiles[k+1]:1,left=x>0?tiles[k-1]:1,above=y>0?tiles[k-W]:1;
    // cast shadow on the empty tile below / to the right (light comes from the upper left)
    if(!below||!SOLID6[below]){const gr=g.createLinearGradient(0,py+T,0,py+T+16);gr.addColorStop(0,'rgba(8,10,28,.34)');gr.addColorStop(1,'rgba(8,10,28,0)');g.fillStyle=gr;g.fillRect(px,py+T,T,16)}
    if(!right||!SOLID6[right]){const gr=g.createLinearGradient(px+T,0,px+T+12,0);gr.addColorStop(0,'rgba(8,10,28,.24)');gr.addColorStop(1,'rgba(8,10,28,0)');g.fillStyle=gr;g.fillRect(px+T,py,12,T)}
@@ -2710,8 +2526,7 @@ const R3D=(()=>{
    if(!left||!SOLID6[left]){const gr=g.createLinearGradient(px,0,px+8,0);gr.addColorStop(0,'rgba(255,255,255,.12)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(px,py,8,T)}
    // ambient occlusion in inner corners where a tile meets two neighbours
    if(above&&SOLID6[above]&&left&&SOLID6[left]){const gr=g.createRadialGradient(px,py,0,px,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px,py,16,16)}
-   if(above&&SOLID6[above]&&right&&SOLID6[right]){const gr=g.createRadialGradient(px+T,py,0,px+T,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px+T-16,py,16,16)}}
-  g.restore()}
+   if(above&&SOLID6[above]&&right&&SOLID6[right]){const gr=g.createRadialGradient(px+T,py,0,px+T,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px+T-16,py,16,16)}}}
  function water(x0,x1,y0,y1,now){shade3D(x0,x1,y0,y1);const t=now/1000,nt=typeof night=='number'?night:0,dim=1-nt*.38,hq=QM.cur.wfx>=1;g.save();
   const dens=(typeof QM!='undefined'?QM.cur.vfx:1);
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,v=wl[k];if(!v||tiles[k])continue;
@@ -3577,7 +3392,7 @@ const UI6=(()=>{
  el('bhub').onclick=()=>open();
  // ---- hub
  const nav=el('hubnav'),body=el('hubbody');
- const EXT={};const TABS=[['profile','Profile'],['look','Appearance'],['wings','Wings & Aura'],['plates','Nameplates'],['skills','Skills'],['gear','Equipment'],['quests','Quests'],['settings','Settings'],['account','Account']];
+ const EXT={};const TABS=[['profile','Profile'],['look','Appearance'],['wings','Wings & Aura'],['plates','Nameplates'],['skills','Skills'],['gear','Equipment'],['quests','Quests'],['settings','Settings'],['account','Save Data']];
  function open(t){hubOn=true;if(t)tab=t;el('hub').style.display='flex';render()}function close(){hubOn=false;el('hub').style.display='none'}
  el('hubx').onclick=close;el('hub').addEventListener('mousedown',e=>{if(e.target.id=='hub')close()});
  addEventListener('keydown',e=>{if(!entered||RB_SESS==null)return;const k=e.key.toLowerCase();if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;if(hubOn){e.stopPropagation();if(k=='escape'||k=='c')close();return}if(k=='c'&&menuEl.style.display=='none'&&!dlgOpen){open();e.stopPropagation()}},true);
@@ -3641,11 +3456,11 @@ const UI6=(()=>{
   el('sa').onclick=()=>{close();menuEl.style.display='flex';try{showMenuPane&&0}catch(_){}document.getElementById('bo').click()}}
  function applyUi(){const s=cel.opt.ui;for(const id of['hudL','bar','skills','quest','hudR'])el(id)&&(el(id).style.zoom=s);$('fps').style.display=cel.opt.fpsShow?'block':'none'}
  // ---- account / save export & import
- function exportAll(){const o={app:'rootbound',v:1,acct:RB_SESS&&RB_SESS.name,keys:{}};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(RB_PREFIX)&&!/^pending_/.test(k)){const b=k.slice(RB_PREFIX.length);if(/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)/.test(b)&&!b.startsWith('rbp_corrupt'))o.keys[b]=localStorage.getItem(b)}}return JSON.stringify(o)}
+ function exportAll(){const o={app:'rootbound',v:1,keys:{}};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(RB_PREFIX)&&!/^pending_/.test(k)){const b=k.slice(RB_PREFIX.length);if(/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)/.test(b)&&!b.startsWith('rbp_corrupt'))o.keys[b]=localStorage.getItem(b)}}return JSON.stringify(o)}
  function importAll(txt){const o=JSON.parse(txt);if(!o||o.app!='rootbound'||typeof o.keys!='object')throw Error('Not a Rootbound backup');let n=0;for(const k in o.keys){if(!/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)[A-Za-z0-9_-]{0,40}$/.test(k)||typeof o.keys[k]!='string'||o.keys[k].length>4e6)continue;try{if(k!='rbid')JSON.parse(o.keys[k])}catch(_){continue}if(k!='rbid')JSON.parse(o.keys[k]);localStorage.setItem(k,o.keys[k]);n++}return n}
- function account(){const s=RB_SESS||{};body.innerHTML='<h3>Account</h3><p>Signed in as <b style="color:var(--gold2)">'+esc(s.name||'?')+'</b>'+(s.id=='guest'?' <span class="dim">(guest - progress is saved in this browser only)</span>':'')+'</p><div class="hrow"><button class="hbtn" id="alo">Sign out</button><button class="hbtn" id="aex">Export save file</button><button class="hbtn" id="aim">Import save file</button></div><input type="file" id="afile" accept=".json,application/json" style="display:none"><div id="amsg" class="dim"></div><p class="dim">Local prototype: accounts and saves live in this browser. Clearing site data erases them - export a backup. A real server login would replace the local auth layer.</p>';
-  el('alo').onclick=()=>{try{saveP();celSave()}catch(_){}AUTH.logout()};
-  el('aex').onclick=()=>{try{saveP();celSave()}catch(_){}const b=new Blob([exportAll()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rootbound-'+(s.name||'save')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
+ // save backup (the game is single-player: one save on this computer)
+ function account(){body.innerHTML='<h3>Save Data</h3><p>Your progress is saved automatically on this computer.</p><div class="hrow"><button class="hbtn" id="aex">Export save file</button><button class="hbtn" id="aim">Import save file</button></div><input type="file" id="afile" accept=".json,application/json" style="display:none"><div id="amsg" class="dim"></div><p class="dim">Export a backup now and then, so you can bring your progress back if anything happens to this computer.</p>';
+  el('aex').onclick=()=>{try{saveP();celSave()}catch(_){}const b=new Blob([exportAll()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rootbound-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
   el('aim').onclick=()=>el('afile').click();el('afile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const n=importAll(String(r.result));el('amsg').textContent='Imported '+n+' entries. Reloading...';setTimeout(()=>location.reload(),700)}catch(er){el('amsg').textContent='Import failed: '+er.message}};r.readAsText(f)}}
  applyUi();
  return{open,close,say6,minimap,exportAll,importAll,get on(){return hubOn},render,applyUi,ext:EXT,TABS,get body(){return body},esc,get tab(){return tab}}})();
@@ -5120,557 +4935,6 @@ function cycleWeapon(){const ids=Object.keys(WPN).filter(id=>own[id]&&!(WPN[id].
  for(let i=0;i<2;i++)if(!bar[i]||!cnt(bar[i])&&bar[i]>=200)bar[i]=fillable[i]||bar[i]||0;
  sel=0;try{renderBar()}catch(_){}})();
 
-/* ========== LATE: 89-planets-gfx.js ========== */
-// ===== PLG7: planet graphics for the Star Atlas (world selection). Everything is procedural, nothing is loaded from files. =====
-// A planet = a 512x256 surface texture (RGB + a "glow" byte that is not darkened by night) + an optional cloud texture, wrapped on a
-// sphere per pixel with typed arrays and drawn into a small canvas. Lighting, atmosphere, rings, moons and orbiting particles are
-// layered on top with ordinary 2D canvas calls. Textures are shared per (theme, variant) so many worlds stay cheap.
-const PLG7=(()=>{
- let TW=512,TH=256;const TAU=Math.PI*2;
- const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
- const clamp=(v,a,b)=>v<a?a:v>b?b:v,sstep=(a,b,x)=>{x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x)};
- const hash=(x,y,s)=>{let h=(Math.imul(x,374761393)+Math.imul(y,668265263)+Math.imul(s,1274126177))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296};
- function vn(x,y,P,s){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,x0=((xi%P)+P)%P,x1=(x0+1)%P;
-  const a=hash(x0,yi,s),b=hash(x1,yi,s),c=hash(x0,yi+1,s),d=hash(x1,yi+1,s),u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}
- function fbm(u,v,F,oct,s){let a=.5,sum=0,f=F,n=0;for(let o=0;o<oct;o++){sum+=a*vn(u*f,v*f*.5,f,s+o*31);n+=a;a*=.5;f*=2}return sum/n}
- function lut(hs){const st=hs.map(hex),n=st.length,L=new Uint8Array(768);for(let i=0;i<256;i++){const t=i/255*(n-1),k=Math.min(n-2,Math.floor(t)),f=t-k;for(let c=0;c<3;c++)L[i*3+c]=st[k][c]+(st[k+1][c]-st[k][c])*f}return L}
- const put=(L,t,o)=>{const i=(t<=0?0:t>=1?255:(t*255)|0)*3;o[0]=L[i];o[1]=L[i+1];o[2]=L[i+2]};
- const mix=(o,r,g,b,a)=>{o[0]+=(r-o[0])*a;o[1]+=(g-o[1])*a;o[2]+=(b-o[2])*a};
- const ridge=n=>1-Math.abs(2*n-1);
-
- // ---------------------------------------------------------------- themes
- // n: stable number, atm: atmosphere rgb, ai: atmosphere strength, cloud: [threshold, alpha, rgb] or null,
- // fx: orbiting particle kind, moons: [[orbitRadius, size, colour, speed]...], ring: ring spec or null
- let W1=0,W2=0,WH=0; // worley results: nearest distance, second distance, hash of the nearest cell
- function worley(u,v,F,s){const R=F>>1||1,x=u*F,y=v*R,cx=Math.floor(x),cy=Math.floor(y);let d1=9,d2=9,h1=0;
-  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const gx=cx+dx,gy=cy+dy,wx=((gx%F)+F)%F,px=gx+hash(wx,gy,s),py=gy+hash(wx,gy,s+77),d=Math.hypot(px-x,py-y);if(d<d1){d2=d1;d1=d;h1=hash(wx,gy,s+5)}else if(d<d2)d2=d}
-  W1=d1;W2=d2;WH=h1}
- const L={
-  vOcean:lut(['#0b3350','#115e78','#1b8f9a','#3fc0b0']),vLand:lut(['#3fae6a','#2a8a55','#1d6a45','#144f36','#6cc57a']),
-  bSea:lut(['#56427f','#7c5cab','#a47cc2','#d49bd0']),bLand:lut(['#f9d3e0','#f3a9c6','#e784ab','#c95f8f']),
-  fIce:lut(['#2c5a9c','#5b97d4','#9cccf0','#d9eeff']),
-  xVoid:lut(['#05020b','#110826','#24114a','#34196a']),
-  aSky:lut(['#030a26','#07205e','#123f98','#2260c8']),
-  gA:lut(['#120f58','#32198f','#6e30d0','#c13ad0']),gB:lut(['#0a2d66','#1a8fd0','#2ee6ff','#d8ffff']),
-  eRock:lut(['#0c0606','#1e0f0c','#32170f','#4a2416']),eLava:lut(['#a01e08','#ff4a1a','#ff9a3a','#ffe08a']),
-  tSea:lut(['#06295c','#0d4c8c','#1c78bd','#43acdc']),
-  dSand:lut(['#a8682a','#cf8e3c','#eeba6a','#f9e2a8']),
-  pBase:lut(['#5fc6b0','#3fa38e','#2b8176','#80d9b8'])};
- const THEMES={
-  verdant:{n:1,name:'Verdant Haven',blurb:'Teal seas, emerald forests and plants that glow after dark.',atm:[125,255,210],ai:.9,cloud:[.6,.6,[255,255,255]],fx:'firefly',moons:[[1.55,.2,'#bfe8d8',.35]],ring:null,
-   paint(u,v,lat,s,o){const h=fbm(u,v,3,6,s);if(h<.5){put(L.vOcean,h/.5,o);if(h>.47)mix(o,100,230,205,(h-.47)/.03*.7);o[3]=0}
-    else{const t=(h-.5)/.5;put(L.vLand,t,o);const f=fbm(u,v,10,3,s+7);if(f>.55)mix(o,8,55,36,sstep(.55,.68,f)*.65);
-     o[3]=0;const sp=fbm(u,v,28,2,s+3);if(sp>.64&&f>.5){mix(o,130,255,215,.9);o[3]=170*sstep(.64,.72,sp)}}
-    const p=sstep(.86,.95,Math.abs(lat));if(p>0){mix(o,235,248,245,p);o[3]*=1-p}}},
-  blossom:{n:2,name:'Cherry Blossom',blurb:'Rose-coloured skies, blossom groves and drifting petals.',atm:[255,170,205],ai:1,cloud:[.6,.55,[255,236,244]],fx:'petal',moons:[[1.6,.17,'#ffd9e8',.4]],ring:null,
-   paint(u,v,lat,s,o){const h=fbm(u,v,3,6,s);if(h<.52){put(L.bSea,h/.52,o);if(h>.49)mix(o,250,215,235,(h-.49)/.03*.6);o[3]=0}else{put(L.bLand,(h-.52)/.48,o);const f=fbm(u,v,9,4,s+5);if(f>.52)mix(o,225,90,150,sstep(.52,.66,f)*.75);
-     const sp=fbm(u,v,30,2,s+4);o[3]=0;if(sp>.62&&f>.5){mix(o,255,245,250,.85);o[3]=70}}
-    const p=sstep(.86,.95,Math.abs(lat));if(p>0){mix(o,255,246,240,p);o[3]*=1-p}}},
-  frost:{n:3,name:'Frostbound',blurb:'Pale crystalline ice fields lit by a cold, quiet glow.',atm:[185,230,255],ai:.8,cloud:[.68,.4,[236,246,255]],fx:'snow',moons:[[1.5,.14,'#dff1ff',.3]],ring:null,
-   paint(u,v,lat,s,o){const wp=fbm(u,v,6,3,s+3);worley(u+.07*wp,v+.04*wp,20,s);const gap=W2-W1,pl=WH,h=fbm(u,v,4,5,s+1);put(L.fIce,.02+pl*.4+h*.45,o);o[3]=0;
-    if(gap<.075){const k=1-gap/.075;mix(o,30,70,140,k*.8);mix(o,150,235,255,Math.max(0,k-.6)*.9);o[3]=Math.max(0,k-.5)*90}
-    const pc=sstep(.6,.82,Math.abs(lat));mix(o,246,251,255,pc*.85)}},
-  void:{n:4,name:'Void Expanse',blurb:'Dark violet stone split by glowing fissures.',atm:[150,90,255],ai:.55,cloud:null,fx:'shard',moons:[],ring:null,
-   paint(u,v,lat,s,o){const w=fbm(u,v,6,3,s+9);worley(u+.09*w,v+.05*w,18,s);const gap=W2-W1,h=fbm(u,v,4,5,s);put(L.xVoid,h*.8+WH*.25,o);o[3]=0;
-    if(gap<.055){const k=1-gap/.055;mix(o,200,120,255,k);o[3]=70+k*185}else if(gap<.13){mix(o,100,50,180,(1-(gap-.055)/.075)*.35)}
-    if(hash(Math.floor(u*300),Math.floor(v*150),s)>.996){mix(o,235,210,255,.9);o[3]=170}}},
-  astral:{n:5,name:'Astral Frontier',blurb:'Deep-blue plains studded with luminous crystals.',atm:[95,170,255],ai:.9,cloud:null,fx:'twinkle',moons:[],ring:{c:'#9fd2ff',w:.34,t:-.35,gap:.5},
-   paint(u,v,lat,s,o){const h=fbm(u,v,3,6,s);put(L.aSky,h,o);o[3]=0;worley(u,v,16,s+2);if(WH>.62&&W1<.3){const k=sstep(.3,.04,W1);mix(o,120,230,255,k*.85);o[3]=k*190}
-    const g2=fbm(u,v,7,3,s+3);if(g2>.6)mix(o,30,110,200,sstep(.6,.72,g2)*.5);
-    if(hash(Math.floor(u*320),Math.floor(v*160),s+1)>.995){mix(o,255,255,255,.95);o[3]=200}}},
-  galaxy:{n:6,name:'Galaxy Core',blurb:'A swirling nebula of violet, cyan and magenta.',atm:[190,120,255],ai:1,cloud:[.5,.8,[120,230,255]],fx:'star',moons:[],ring:null,
-   paint(u,v,lat,s,o){const w=fbm(u+.22*fbm(u,v,3,3,s+9),v+.22*fbm(u+.3,v,3,3,s+19),3,6,s);put(L.gA,w*1.3-.05,o);const b=fbm(u+.12*w,v,5,5,s+21);
-    if(b>.5){const k=sstep(.5,.72,b),q=[0,0,0];put(L.gB,(b-.5)*2.2,q);mix(o,q[0],q[1],q[2],k*.85)}
-    o[3]=40+w*70;if(hash(Math.floor(u*320),Math.floor(v*160),s)>.995){mix(o,255,255,255,1);o[3]=230}}},
-  ember:{n:7,name:'Ember Reach',blurb:'Black basalt with rivers of molten light.',atm:[255,140,80],ai:.8,cloud:[.62,.4,[100,45,34]],fx:'ember',moons:[[1.5,.13,'#5a2f26',.5]],ring:null,
-   paint(u,v,lat,s,o){const w=fbm(u,v,6,3,s+9);worley(u+.09*w,v+.05*w,16,s);const gap=W2-W1,h=fbm(u,v,4,5,s);put(L.eRock,h*.9+WH*.35,o);o[3]=0;
-    if(gap<.085){const k=1-gap/.085,q=[0,0,0];put(L.eLava,.2+k*.75,q);mix(o,q[0],q[1],q[2],Math.min(1,k*1.5));o[3]=90+k*165}
-    const sea=fbm(u,v,3,4,s+31);if(sea<.3){const k=sstep(.3,.2,sea),q=[0,0,0];put(L.eLava,.3+k*.5,q);mix(o,q[0],q[1],q[2],.95);o[3]=170}}},
-  tidal:{n:8,name:'Tidal Veil',blurb:'An ocean world of bright shallows and tiny island chains.',atm:[110,215,255],ai:1,cloud:[.62,.5,[255,255,255]],fx:'bubble',moons:[[1.5,.17,'#cfe6f2',.45],[2.0,.1,'#e8dcc8',.28]],ring:null,
-   paint(u,v,lat,s,o){const h=fbm(u,v,4,6,s),band=Math.sin(lat*8+h*5)*.05;put(L.tSea,h*.9+band+.05,o);o[3]=0;
-    if(h>.6){const k=sstep(.6,.63,h);mix(o,238,222,160,k);if(h>.655)mix(o,70,170,100,sstep(.655,.69,h)*.9)}
-    else if(h>.55)mix(o,170,240,250,sstep(.55,.6,h)*.75)}},
-  dune:{n:9,name:'Aurelian Dunes',blurb:'Golden ridges, hot haze and a few secret oases.',atm:[255,212,138],ai:.85,cloud:[.66,.35,[255,236,200]],fx:'sand',moons:[[1.5,.12,'#d9b27a',.5],[1.95,.09,'#b88a58',.3]],ring:null,
-   paint(u,v,lat,s,o){const w=fbm(u,v,3,5,s),b=Math.sin(v*50+w*11+Math.sin(u*TAU*3)*1.4)*.5+.5;put(L.dSand,b*.62+w*.5,o);o[3]=0;
-    const k=fbm(u,v,6,4,s+2);if(k>.58)mix(o,110,62,36,sstep(.58,.72,k)*.6);
-    const oz=fbm(u,v,24,2,s+8);if(oz>.7){mix(o,28,190,170,sstep(.7,.76,oz));o[3]=70}}},
-  plaza:{n:10,name:'Lumen Plaza',blurb:'The shared hub: lantern light, a pond and the Lumen crystal.',atm:[255,225,150],ai:1,cloud:[.62,.5,[255,250,235]],fx:'lantern',moons:[[1.55,.16,'#fff1c8',.4]],ring:{c:'#ffd877',w:.22,t:.28,gap:0},
-   paint(u,v,lat,s,o){const h=fbm(u,v,3,6,s);put(L.pBase,h,o);o[3]=0;const wv=fbm(u,v,5,3,s+3),gx=Math.abs(((u*12+wv*.8)%1)-.5),gy=Math.abs(((v*6+wv*.5)%1)-.5);
-    if(gx>.492||gy>.494){mix(o,255,215,120,.7);o[3]=90}}}};
- const ORDER=['verdant','blossom','frost','void','astral','galaxy','ember','tidal','dune'];
- // which in-world sky (ENV7) each theme starts with. Others keep the natural skies.
- const SKY={blossom:'blossom',astral:'space',galaxy:'galaxy'},SKY2THEME={blossom:'blossom',space:'astral',galaxy:'galaxy'};
-
- // ---------------------------------------------------------------- textures (built a few rows per frame so nothing stalls)
- const texCache=new Map(),jobs=[];
- function dot(tex,x,y,r,rgb,glow){for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){const d=Math.hypot(dx,dy);if(d>r+.2)continue;const a=1-d/(r+1),yy=y+dy;if(yy<0||yy>=TH)continue;const xx=((x+dx)%TW+TW)%TW,i=yy*TW+xx,c=tex[i];
-   const R=(c&255)+(rgb[0]-(c&255))*a,G=((c>>8)&255)+(rgb[1]-((c>>8)&255))*a,B=((c>>16)&255)+(rgb[2]-((c>>16)&255))*a,A=Math.max(c>>>24,glow*a);tex[i]=((A&255)<<24|(B&255)<<16|(G&255)<<8|(R&255))>>>0}}
- function startTex(id,variant,hi){const T=THEMES[id],s=(variant*7919+T.n*104729)|0,w=hi?512:256,h=w>>1;return{id,variant,hi:!!hi,s,T,y:0,tex:new Uint32Array(w*h),cl:T.cloud?new Uint8Array(w*h):null,TW:w,TH:h,o:[0,0,0,0],done:false,used:0}}
- function stepTex(j,ms){const t0=performance.now(),{T,s,tex,cl,o}=j;TW=j.TW;TH=j.TH;
-  while(j.y<TH){const y=j.y++,v=(y+.5)/TH,lat=(v-.5)*2;for(let x=0;x<TW;x++){const u=x/TW;T.paint(u,v,lat,s,o);
-    const d=.84+.32*fbm(u,v,22,2,s+55);o[0]*=d;o[1]*=d;o[2]*=d;
-    tex[y*TW+x]=((clamp(o[3],0,255)|0)<<24|(clamp(o[2],0,255)|0)<<16|(clamp(o[1],0,255)|0)<<8|(clamp(o[0],0,255)|0))>>>0;
-    if(cl){const f=fbm(u,v,5,4,s+101),c=clamp((f-T.cloud[0])/(1-T.cloud[0])*2.4,0,1);cl[y*TW+x]=c*c*(3-2*c)*255*T.cloud[1]}}
-   if(performance.now()-t0>ms)return false}
-  finishTex(j);return true}
- function blur(tex){const c=new Uint8Array(tex.buffer),n=TW*TH,t=new Uint8Array(n*4);for(let pass=0;pass<2;pass++){const src=pass?t:c,dst=pass?c:t;
-   for(let y=0;y<TH;y++)for(let x=0;x<TW;x++){const i=y*TW+x,a=pass?((y?y-1:y)*TW+x):(y*TW+((x+TW-1)%TW)),b=pass?((y<TH-1?y+1:y)*TW+x):(y*TW+((x+1)%TW));for(let k=0;k<4;k++)dst[i*4+k]=(src[a*4+k]+2*src[i*4+k]+src[b*4+k])>>2}}}
- function finishTex(j){const{id,tex,s}=j;TW=j.TW;TH=j.TH;const K=TW/512,Y=TH/256;blur(tex);const R=(()=>{let q=s>>>0||1;return()=>(q=(Math.imul(q,1664525)+1013904223)>>>0)/4294967296})();
-  if(id=='astral'){for(let k=0;k<4;k++){let px=R()*TW,py=(40+R()*170)*Y;const pts=[];for(let q=0;q<5;q++){px+=(R()-.3)*34*K;py+=(R()-.5)*26*Y;pts.push([px|0,py|0])}
-    for(let q=0;q<pts.length;q++){dot(tex,pts[q][0],pts[q][1],K>.6?2:1,[220,245,255],255);if(q){const a=pts[q-1],b=pts[q],n=Math.max(1,Math.hypot(b[0]-a[0],b[1]-a[1])|0);for(let w=0;w<=n;w++)dot(tex,(a[0]+(b[0]-a[0])*w/n)|0,(a[1]+(b[1]-a[1])*w/n)|0,0,[170,225,255],150)}}}}
-  if(id=='verdant'||id=='blossom'){for(let k=0;k<26;k++)dot(tex,R()*TW|0,(30+R()*196)*Y|0,1+(R()*2|0),id=='verdant'?[150,255,210]:[255,250,252],id=='verdant'?150:60)}
-  if(id=='plaza'){for(let k=0;k<70;k++)dot(tex,R()*TW|0,(30+R()*196)*Y|0,1,[255,226,150],200)}
-  if(id=='frost'){for(let k=0;k<30;k++)dot(tex,R()*TW|0,(20+R()*216)*Y|0,1,[235,250,255],110)}
-  j.done=true;j.used=performance.now();const key=id+':'+j.variant+':'+(j.hi?1:0);texCache.set(key,j);
-  if(texCache.size>18){let old=null,ok=null;for(const[k,v]of texCache)if(k!=key&&(!old||v.used<old.used)){old=v;ok=k}if(ok)texCache.delete(ok)}}
- function getTex(id,variant,hi){const t=(hi&&texCache.get(id+':'+variant+':1'))||texCache.get(id+':'+variant+':0')||texCache.get(id+':'+variant+':1');if(t)t.used=performance.now();return t||null}
- function want(id,variant,hi){const lo=texCache.has(id+':'+variant+':0');const tier=lo&&hi?1:0;if(texCache.has(id+':'+variant+':'+tier)||jobs.some(j=>j.id==id&&j.variant==variant&&j.hi==!!tier))return;if(hi&&!lo&&texCache.has(id+':'+variant+':1'))return;const j=startTex(id,variant,tier);tier?jobs.push(j):jobs.unshift(j)}
- function pump(ms){if(!jobs.length)return;if(stepTex(jobs[0],ms))jobs.shift()}
- function buildTex(id,variant,hi){let t=getTex(id,variant,hi);if(t&&(!hi||t.hi))return t;const i=jobs.findIndex(j=>j.id==id&&j.variant==variant&&j.hi==!!hi);const j=i>=0?jobs.splice(i,1)[0]:startTex(id,variant,hi);stepTex(j,1e9);return texCache.get(id+':'+variant+':'+(hi?1:0))}
-
-// ---------------------------------------------------------------- sphere renderer
- const geoCache=new Map();
- function geo(N,tilt){const key=N+'|'+tilt.toFixed(2);let g=geoCache.get(key);if(g)return g;
-  const n=N*N,uB=new Float32Array(n),vR=new Float32Array(n),lit=new Uint8Array(n),atm=new Uint8Array(n),msk=new Uint8Array(n),R=N/2,ca=Math.cos(tilt),sa=Math.sin(tilt);
-  let lx=-.55,ly=-.5,lz=.67;const ll=Math.hypot(lx,ly,lz);lx/=ll;ly/=ll;lz/=ll;
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x,px=(x+.5-R)/R,py=(y+.5-R)/R,r2=px*px+py*py;if(r2>1)continue;const pz=Math.sqrt(1-r2);msk[i]=1;
-   const bx=px*ca+py*sa,by=-px*sa+py*ca,lon=Math.atan2(bx,pz),lat=Math.asin(clamp(by,-1,1));uB[i]=lon/TAU+.5;vR[i]=clamp(lat/Math.PI+.5,0,.9999);
-   const d=px*lx+py*ly+pz*lz;lit[i]=clamp(Math.round((.16+.84*sstep(-.22,.78,d))*255),0,255);atm[i]=clamp(Math.round(Math.pow(1-pz,2.3)*255*(.35+.65*sstep(-.5,.6,d))),0,255)}
-  g={uB,vR,lit,atm,msk,N};geoCache.set(key,g);if(geoCache.size>40)geoCache.delete(geoCache.keys().next().value);return g}
- // out: ImageData(N,N). rot / crot are turns (0..1). aRGB atmosphere colour, aI strength 0..1.5. veil 0..1 dims & cools an unexplored planet.
- function render(out,g,tx,rot,crot,T,aI,veil){const N=g.N,o32=new Uint32Array(out.data.buffer),tex=tx.tex,cl=tx.cl,tw=tx.TW,th=tx.TH,sh=(rot*tw)|0,ch=(crot*tw)|0,M=tw-1,uB=g.uB,vR=g.vR,lit=g.lit,atm=g.atm,msk=g.msk;
-  const ar=T.atm[0],ag=T.atm[1],ab=T.atm[2],ca=T.cloud?T.cloud[1]:0,cr=T.cloud?T.cloud[2][0]:0,cg=T.cloud?T.cloud[2][1]:0,cb=T.cloud?T.cloud[2][2]:0,ai=Math.min(255,aI*T.ai*255*.62)|0,vl=veil||0;
-  for(let i=0,n=N*N;i<n;i++){if(!msk[i]){o32[i]=0;continue}
-   const row=((vR[i]*th)|0)*tw,ui=(uB[i]*tw)|0,c=tex[row+((ui+sh)&M)];let r=c&255,gg=(c>>8)&255,b=(c>>16)&255;const gl=c>>>24;
-   const l=lit[i];r=r*l>>8;gg=gg*l>>8;b=b*l>>8;
-   if(gl){r+=((c&255)-r)*gl>>8;gg+=(((c>>8)&255)-gg)*gl>>8;b+=(((c>>16)&255)-b)*gl>>8}
-   if(cl){let a=cl[row+((ui+ch)&M)];if(a){a=a*(.35+l/400)|0;const cc=l+40>255?255:l+40;r+=((cr*cc>>8)-r)*a>>8;gg+=((cg*cc>>8)-gg)*a>>8;b+=((cb*cc>>8)-b)*a>>8}}
-   const t=atm[i]*ai>>8;if(t){r+=(ar-r)*t>>8;gg+=(ag-gg)*t>>8;b+=(ab-b)*t>>8}
-   if(vl){const m=(r+gg+b)/3;r=r+(m*.6+22-r)*vl*.6;gg=gg+(m*.7+30-gg)*vl*.6;b=b+(m*1.0+52-b)*vl*.6}
-   o32[i]=0xff000000|((b>255?255:b)<<16)|((gg>255?255:gg)<<8)|(r>255?255:r)}}
-
- // ---------------------------------------------------------------- backdrop
- const rng=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
- let neb=null,bg=null,stars=null,dust=null;
- function buildBackdrop(low){const mk=(seed,cols)=>{const c=document.createElement('canvas');c.width=low?480:800;c.height=low?270:450;const x=c.getContext('2d'),r=rng(seed);x.fillStyle='#04030c';x.fillRect(0,0,c.width,c.height);x.globalCompositeOperation='lighter';
-   for(let i=0;i<14;i++){const cx=r()*c.width,cy=r()*c.height,rad=70+r()*190,col=cols[i%cols.length],g=x.createRadialGradient(cx,cy,0,cx,cy,rad);g.addColorStop(0,'rgba('+col+',.30)');g.addColorStop(.5,'rgba('+col+',.10)');g.addColorStop(1,'rgba('+col+',0)');x.fillStyle=g;x.fillRect(cx-rad,cy-rad,rad*2,rad*2)}return c};
-  neb=[mk(11,['70,40,150','30,70,150','150,40,120','20,110,130']),mk(29,['90,50,170','20,90,160','40,140,150'])];
-  const r=rng(77),n=low?90:200;stars=[];for(let i=0;i<n;i++)stars.push({x:r(),y:r(),s:.5+r()*1.6,l:r()<.55?0:r()<.7?1:2,p:r()*6.28,f:.6+r()*1.8,c:r()<.18?'255,214,190':r()<.4?'190,215,255':'255,255,255'});
-  dust=[];for(let i=0;i<(low?12:34);i++)dust.push({x:r(),y:r(),s:.4+r()*1.2,v:.004+r()*.012,p:r()*6.28})}
- function disposeBackdrop(){neb=stars=dust=bg=null}
- function mkBg(W,H){const mw=Math.ceil(W*1.1),mh=Math.ceil(H*1.1),c=document.createElement('canvas');c.width=mw;c.height=mh;const x=c.getContext('2d');x.fillStyle='#05040d';x.fillRect(0,0,mw,mh);
-  for(let k=0;k<2;k++){const sc=Math.max(mw/neb[k].width,mh/neb[k].height),w=neb[k].width*sc,h=neb[k].height*sc;x.globalAlpha=k?.55:.95;x.drawImage(neb[k],(mw-w)/2,(mh-h)/2,w,h)}bg={c,w:W,h:H,mw,mh}}
- // cam: {x,y} world position of the view centre; px,py: parallax offsets in pixels
- function drawBackdrop(g,W,H,t,px,py,calm,glow){if(!neb)return;
-  if(!bg||bg.w!=W||bg.h!=H)mkBg(W,H);const mx=(bg.mw-W)/2,my=(bg.mh-H)/2;g.drawImage(bg.c,-mx+clamp(px*.03,-mx,mx),-my+clamp(py*.03,-my,my));
-  g.globalAlpha=1;
-  if(glow){const gr=g.createRadialGradient(glow.x,glow.y,0,glow.x,glow.y,glow.r);gr.addColorStop(0,'rgba('+glow.c+','+glow.a+')');gr.addColorStop(1,'rgba('+glow.c+',0)');g.globalCompositeOperation='lighter';g.fillStyle=gr;g.fillRect(0,0,W,H);g.globalCompositeOperation='source-over'}
-  const par=[.02,.05,.1];
-  for(const s of stars){const f=par[s.l],x=(((s.x*W*1.2-px*f)%(W*1.2))+W*1.2)%(W*1.2)-W*.1,y=(((s.y*H*1.2-py*f)%(H*1.2))+H*1.2)%(H*1.2)-H*.1,tw=calm?.8:.55+.45*Math.sin(t*s.f+s.p);
-   g.fillStyle='rgba('+s.c+','+(tw*(.45+s.l*.22)).toFixed(2)+')';const z=s.s*(1+s.l*.35);g.fillRect(x,y,z,z);
-   if(s.l==2&&s.s>1.5){g.fillStyle='rgba('+s.c+','+(tw*.25).toFixed(2)+')';g.fillRect(x-3,y+z/2-.4,z+6,.8);g.fillRect(x+z/2-.4,y-3,.8,z+6)}}
-  g.fillStyle='rgba(210,200,255,.22)';for(const d of dust){const x=(((d.x*W+Math.sin(t*d.v*40+d.p)*14-px*.14)%W)+W)%W,y=(((d.y*H-(calm?0:t*d.v*H)-py*.14)%H)+H)%H;g.beginPath();g.arc(x,y,d.s,0,TAU);g.fill()}}
-
- // ---------------------------------------------------------------- orbiting bits (drawn around a planet, behind or in front of it)
- function drawBit(g,kind,x,y,sz,a,t,k){
-  g.save();g.translate(x,y);
-  switch(kind){
-   case'petal':g.rotate(a*2+k);g.fillStyle='rgba(255,170,205,.9)';g.beginPath();g.ellipse(0,0,sz*1.5,sz*.8,0,0,TAU);g.fill();break;
-   case'shard':g.rotate(a*3+k);g.fillStyle='rgba(196,120,255,.85)';g.beginPath();g.moveTo(0,-sz*2);g.lineTo(sz*.8,0);g.lineTo(0,sz*2);g.lineTo(-sz*.8,0);g.closePath();g.fill();break;
-   case'snow':g.fillStyle='rgba(240,250,255,.9)';g.beginPath();g.arc(0,0,sz*.8,0,TAU);g.fill();break;
-   case'ember':g.fillStyle='rgba(255,'+(130+80*Math.sin(t*3+k)|0)+',60,.9)';g.beginPath();g.arc(0,0,sz*.7,0,TAU);g.fill();break;
-   case'twinkle':{const s=sz*(1.2+.8*Math.sin(t*4+k));g.fillStyle='rgba(190,235,255,.9)';g.fillRect(-s,-.5,s*2,1);g.fillRect(-.5,-s,1,s*2);g.beginPath();g.arc(0,0,sz*.5,0,TAU);g.fill();break}
-   case'star':g.fillStyle='rgba(255,'+(200+55*Math.sin(k)|0)+',255,.95)';g.beginPath();g.arc(0,0,sz*.7,0,TAU);g.fill();break;
-   case'bubble':g.strokeStyle='rgba(200,240,255,.85)';g.lineWidth=1;g.beginPath();g.arc(0,0,sz,0,TAU);g.stroke();break;
-   case'sand':g.fillStyle='rgba(255,226,160,.75)';g.fillRect(-sz*1.6,-.5,sz*3.2,1.2);break;
-   case'lantern':g.fillStyle='rgba(255,214,120,.95)';g.beginPath();g.arc(0,0,sz*.8,0,TAU);g.fill();break;
-   default:g.fillStyle='rgba(170,255,210,'+(.55+.45*Math.sin(t*2.5+k)).toFixed(2)+')';g.beginPath();g.arc(0,0,sz*.7,0,TAU);g.fill()}
-  g.restore()}
- // little shaded moon sprite
- const moonCache={};
- function moonSprite(col){let c=moonCache[col];if(c)return c;c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d'),g=x.createRadialGradient(22,20,2,32,32,32);g.addColorStop(0,'#ffffff');g.addColorStop(.25,col);g.addColorStop(1,'#10101c');x.beginPath();x.arc(32,32,31,0,TAU);x.fillStyle=g;x.fill();
-  x.globalCompositeOperation='source-atop';x.fillStyle='rgba(0,0,0,.18)';for(let i=0;i<5;i++){x.beginPath();x.arc(14+i*9%40,18+i*13%34,3+i%3,0,TAU);x.fill()}return moonCache[col]=c}
- function dispose(){jobs.length=0;texCache.clear();geoCache.clear();disposeBackdrop();for(const k in moonCache)delete moonCache[k]}
- return{THEMES,ORDER,SKY,SKY2THEME,getTex,buildTex,want,pump,geo,render,buildBackdrop,drawBackdrop,disposeBackdrop,drawBit,moonSprite,dispose,hash,rng,fbm}})();
-
-/* ========== LATE: 89-planets.js ========== */
-// ===== PLN7: Star Atlas. World selection as a universe of planets, one planet per real saved world. =====
-// Data comes only from this device: the recent-worlds list (rbidx), saved edits (rbw_<id>) and a small planet record (rbpl) that stores the
-// planet theme, display name and visit times. A world's terrain is generated from its id, so Rename changes only the display name.
-const PLN7=(()=>{
- const ID=/^[a-z0-9_-]{1,16}$/,KEY='rbpl',TAU=Math.PI*2,POOL=['verdant','frost','void','ember','tidal','dune'];
- const THEMES=PLG7.THEMES,ORDER=PLG7.ORDER;
- const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const ease=t=>t<0?0:t>1?1:t*t*(3-2*t),lerp=(a,b,t)=>a+(b-a)*t,cl=(v,a,b)=>v<a?a:v>b?b:v;
- const hs=s=>{let h=7;for(const c of String(s))h=(Math.imul(h,31)+c.charCodeAt(0))>>>0;return h};
- let redC=0,redV=false;const reduce=()=>{const n=performance.now();if(n-redC>500){redC=n;try{redV=!!(cel.opt.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(_){redV=false}}return redV};
- const lowfx=()=>document.documentElement.classList.contains('lowfx');
- const srv=()=>{try{return SHOP7.serverMode}catch(_){return false}};
- const online=()=>{try{return !!NET7.online}catch(_){return false}};
- // ------------------------------------------------------------ data
- let db={w:{},m:{}};
- function load(){let o={};try{o=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(_){o={}}if(!o||typeof o!='object')o={};const w={},src=o.w&&typeof o.w=='object'?o.w:{};
-  for(const k of Object.keys(src)){if(!ID.test(k)||k=='plaza')continue;const r=src[k];if(!r||typeof r!='object')continue;
-   w[k]={theme:THEMES[r.theme]&&r.theme!='plaza'?r.theme:'',label:typeof r.label=='string'?r.label.replace(/[<>]/g,'').slice(0,24):'',ix:Number.isFinite(+r.ix)?Math.max(0,r.ix|0):-1,created:+r.created||0,last:+r.last||0,plays:r.plays|0,disc:r.disc?1:0,ent:r.ent?1:0,fresh:r.fresh?1:0,rev:+r.rev||0}}
-  const m=o.m&&typeof o.m=='object'?o.m:{};db={w,m:{claimed:m.claimed&&typeof m.claimed=='object'?m.claimed:{},plazaLast:+m.plazaLast||0,plazaPlays:m.plazaPlays|0,plazaEnt:m.plazaEnt?1:0}}}
- function save(){try{localStorage.setItem(KEY,JSON.stringify(db));return true}catch(_){return false}}
- const recentsL=()=>{try{return recents().filter(n=>ID.test(n))}catch(_){return[]}};
- function ids(){const set=new Set(recentsL());try{const pre=(typeof RB_PREFIX=='string'?RB_PREFIX:'');for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(pre+'rbw_')){const n=k.slice(pre.length+4);if(ID.test(n))set.add(n)}}}catch(_){}
-  for(const n of Object.keys(db.w))set.add(n);set.delete('plaza');return[...set]}
- function freeIx(){const used=new Set(Object.values(db.w).map(r=>r.ix));let i=0;while(used.has(i))i++;return i}
- function sync(){let ch=0;const all=ids(),rec=recentsL().slice().reverse();
-  const legacy=all.filter(n=>!db.w[n]).sort((a,b)=>{const ia=rec.indexOf(a),ib=rec.indexOf(b);return(ia<0?1e9:ia)-(ib<0?1e9:ib)||(a<b?-1:1)});
-  for(const n of legacy){db.w[n]={theme:'',label:'',ix:freeIx(),created:0,last:0,plays:0,disc:1,ent:1,fresh:0,rev:0};ch=1}
-  for(const n of all){const r=db.w[n];if(r.ix<0){r.ix=freeIx();ch=1}}
-  // two worlds must never share a slot
-  const seen=new Set();for(const n of Object.keys(db.w).sort((a,b)=>db.w[a].ix-db.w[b].ix)){const r=db.w[n];if(seen.has(r.ix)){r.ix=freeIx();ch=1}seen.add(r.ix)}
-  if(ch)save();return all}
- function skyOf(n){try{return(X6.wx&&X6.wx[n])||''}catch(_){return''}}
- function themeOf(n){if(n=='plaza')return'plaza';const sk=PLG7.SKY2THEME[skyOf(n)];if(sk)return sk;const r=db.w[n];if(r&&r.theme)return r.theme;return POOL[hs(n)%POOL.length]}
- const labelOf=n=>n=='plaza'?'Plaza':(db.w[n]&&db.w[n].label)||n;
- function readSave(n){let raw=null;try{raw=localStorage.getItem('rbw_'+n)}catch(_){}if(raw==null)return{empty:1,blocks:0,objs:0,owner:'',desc:''};
-  try{const e=JSON.parse(raw);if(!e||typeof e!='object'||Array.isArray(e))return{bad:1};let b=0;for(const k in e)if(/^\d+$/.test(k))b++;return{blocks:b,objs:e.o&&typeof e.o=='object'?Object.keys(e.o).length:0,owner:e.m&&e.m.on?String(e.m.on).slice(0,14):'',desc:e.m&&e.m.d?String(e.m.d).slice(0,80):''}}catch(_){return{bad:1}}}
- function flush(){try{if(entered&&cur&&cur!='plaza'&&dirty&&!guest){localStorage.setItem('rbw_'+cur,JSON.stringify(edits));dirty=0}}catch(_){}}
- // a world was loaded by the game (any route): remember it
- function touch(n){try{if(n=='plaza'){db.m.plazaLast=Date.now();db.m.plazaPlays++;db.m.plazaEnt=1;save();atlasCheck();return}if(!ID.test(n))return;let r=db.w[n];const first=!r;
-   if(!r){r=db.w[n]={theme:'',label:'',ix:freeIx(),created:Date.now(),last:0,plays:0,disc:0,ent:0,fresh:0,rev:0}}
-   if(!r.ent)r.rev=Date.now();r.ent=1;r.last=Date.now();r.plays++;save();atlasCheck()}catch(e){console.error('PLN7 touch',e)}}
- // ------------------------------------------------------------ atlas (explored world types)
- const MILES=[[3,100],[6,250],[10,600]];
- function explored(){const s=new Set();if(db.m.plazaEnt)s.add('plaza');for(const n of Object.keys(db.w))if(db.w[n].ent)s.add(themeOf(n));return s}
- function atlasCheck(){try{const c=explored().size;for(const[need,g]of MILES){if(c>=need&&!db.m.claimed[need]){db.m.claimed[need]=1;let m='Star Atlas: '+need+' world types explored';if(!srv()){gems+=g;m+='  +'+g+' gems'}if(need==10)m+='  Title: Star Cartographer';save();setTimeout(()=>{try{say(m);saveP();if(open)renderAtlas()}catch(_){}},900)}}}catch(_){}}
- // ------------------------------------------------------------ audio (all synthesised; respects the music and UI-sound settings)
- const AU=(()=>{let ctx=null,out=null,sfx=null,pad=null,bellT=0,lastH=0,running=false,duckBase=null;
-  const sfxV=()=>{try{const o=cel.opt||{};return o.uim?0:(o.uiv==null?.6:o.uiv)}catch(_){return .6}};
-  const musV=()=>{try{return mute?0:(OPT.mv==null?.5:OPT.mv)}catch(_){return .5}};
-  function ac(){if(ctx)return ctx;try{ctx=(typeof AC!='undefined'&&AC)||new(window.AudioContext||window.webkitAudioContext)();out=ctx.createGain();out.gain.value=1;const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=5200;out.connect(lp);lp.connect(ctx.destination)}catch(_){ctx=null}return ctx}
-  function tone(f,t,d,v,type,slide){const c=ac();if(!c)return;const k=sfxV();if(!k)return;const o=c.createOscillator(),g=c.createGain(),T=c.currentTime+t;o.type=type||'sine';o.frequency.setValueAtTime(f,T);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(40,f*slide),T+d);
-   g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(v*k,T+.015);g.gain.exponentialRampToValueAtTime(.0001,T+d);o.connect(g);g.connect(out);o.start(T);o.stop(T+d+.05)}
-  function sweep(t,d,v,f0,f1){const c=ac();if(!c)return;const k=sfxV();if(!k)return;const n=c.sampleRate*d|0,b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1);const s=c.createBufferSource();s.buffer=b;const fl=c.createBiquadFilter();fl.type='bandpass';fl.Q.value=.9;const T=c.currentTime+t;fl.frequency.setValueAtTime(f0,T);fl.frequency.exponentialRampToValueAtTime(f1,T+d);
-   const g=c.createGain();g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(v*k,T+d*.55);g.gain.linearRampToValueAtTime(0,T+d);s.connect(fl);fl.connect(g);g.connect(out);s.start(T)}
-  const PENT=[587.33,659.25,739.99,880,987.77,1174.66];
-  function ready(){const c=ac();if(!c)return null;if(c.state=='suspended')c.resume().catch(()=>{});return c}
-  const api={
-   hover(n){const now=performance.now();if(now-lastH<170||!ready())return;lastH=now;tone(PENT[n%6],0,.28,.028,'sine');tone(PENT[n%6]*2,.02,.2,.01,'sine')},
-   tick(){const now=performance.now();if(now-lastH<90||!ready())return;lastH=now;tone(1320,0,.05,.014,'sine')},
-   select(){if(!ready())return;tone(660,0,.16,.04,'triangle');tone(990,.07,.22,.03,'sine');sweep(0,.3,.012,1800,3600)},
-   back(){if(!ready())return;tone(520,0,.16,.03,'sine',.8)},
-   error(){if(!ready())return;tone(200,0,.2,.04,'sine',.85)},
-   discover(){if(!ready())return;[880,1174.66,1480].forEach((f,i)=>tone(f,i*.11,.9,.03,'sine'))},
-   form(){if(!ready())return;sweep(0,1.5,.03,260,2600);[392,494,587,784,988,1174.66].forEach((f,i)=>tone(f,.25+i*.13,.8,.032,'triangle'));tone(98,0,1.6,.05,'sine',1.4)},
-   enter(){if(!ready())return;sweep(0,1.1,.05,240,3400);[293.66,440,587.33,739.99].forEach((f,i)=>tone(f,i*.12,.9,.035,'triangle'));tone(110,0,1.1,.05,'sine',1.6)},
-   start(){const c=ready();if(!c||running)return;running=true;
-    pad=c.createGain();pad.gain.value=0;const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=760;lp.Q.value=.5;lp.connect(pad);pad.connect(out);
-    const lfo=c.createOscillator(),lg=c.createGain();lfo.frequency.value=.07;lg.gain.value=240;lfo.connect(lg);lg.connect(lp.frequency);lfo.start();
-    const oscs=[lfo];[146.83,220,293.66,369.99,440.4].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type=i%2?'triangle':'sine';o.frequency.value=f;o.detune.value=(i-2)*5;g.gain.value=[.5,.4,.32,.22,.12][i];o.connect(g);g.connect(lp);o.start();oscs.push(o)});
-    pad._o=oscs;pad._lp=lp;const v=musV();pad.gain.setTargetAtTime(.075*Math.min(1,v*2),c.currentTime,1.4);
-    try{if(bgm&&bgm.m&&bgm.m.gain){duckBase=musV();bgm.m.gain.setTargetAtTime(duckBase*.22,c.currentTime,.5)}}catch(_){}
-    const bell=()=>{if(!running)return;const k=musV();if(k>0&&!document.hidden){const f=PENT[Math.random()*6|0];tone2(f,k)}bellT=setTimeout(bell,2600+Math.random()*4200)};bellT=setTimeout(bell,1800)},
-   stop(){if(!running)return;running=false;clearTimeout(bellT);const c=ctx;try{if(pad&&c){pad.gain.setTargetAtTime(0,c.currentTime,.25);const p=pad;setTimeout(()=>{try{p._o.forEach(o=>o.stop());p.disconnect();p._lp.disconnect()}catch(_){}},900)}pad=null;
-     if(bgm&&bgm.m&&bgm.m.gain&&c)bgm.m.gain.setTargetAtTime(musV(),c.currentTime,.6)}catch(_){}},
-   get running(){return running}};
-  function tone2(f,k){const c=ctx;if(!c||!out)return;const o=c.createOscillator(),o2=c.createOscillator(),g=c.createGain(),T=c.currentTime+.01;o.frequency.value=f;o2.frequency.value=f*2.01;o2.type='sine';g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(.032*Math.min(1,k*2),T+.02);g.gain.exponentialRampToValueAtTime(.0001,T+2.6);const g2=c.createGain();g2.gain.value=.25;o.connect(g);o2.connect(g2);g2.connect(g);g.connect(out);o.start(T);o2.start(T);o.stop(T+2.7);o2.stop(T+2.7)}
-  return api})();
- // ------------------------------------------------------------ state
- let el,cv,g,open=false,raf=0,last=0,t0=0,W=0,H=0,D=1;
- const S={q:0,ema:16,statQ:[],mode:'overview',cam:{x:0,y:0,z:.5},tgt:{x:0,y:0,z:.5},ax:.5,ay:.5,tax:.5,tay:.5,sel:null,hov:null,drag:null,planets:[],lines:true,renaming:false,bits:[],sparks:[],busy:0,from:'',ent:null,arr:null,form:null,pv:null,creating:false,toastT:0,mouse:{x:-1,y:-1}};
- const byId=n=>S.planets.find(p=>p.id==n);
- // ------------------------------------------------------------ planets
- function slot(ix){const a=ix*2.39996+.55,r=340*Math.sqrt(ix+1);return{x:Math.cos(a)*r,y:Math.sin(a)*r*.8}}
- function mkPlanet(id){const plaza=id=='plaza',r=db.w[id],h=hs(id),th=themeOf(id),T=THEMES[th],P=slot(plaza?-1:r.ix);
-  const p={id,plaza,label:labelOf(id),theme:th,T,variant:h%3,tilt:[-.38,-.17,.08,.27,.46][(h>>3)%5],rot0:(h%1000)/1000,spd:.006+(h%7)*.0012,R:plaza?118:84+(h%9)*3,x:plaza?0:P.x,y:plaza?0:P.y,
-   rec:plaza?null:r,auto:!plaza&&!(r&&r.theme)&&!PLG7.SKY2THEME[skyOf(id)],stat:null,cv:null,cx:null,img:null,N:0,spT:0,fade:0,hv:0,sl:0,bits:[],moons:[],born:0,veil:0,err:0};
-  const known=plaza?db.m.plazaEnt:r.ent;p.explored=!!known;p.veil=known?0:1;
-  const nb=lowfx()||reduce()?(reduce()?0:4):7+(h%5);for(let i=0;i<nb;i++)p.bits.push({a:(i/nb)*TAU+(h%10),rad:1.28+((h>>(i%9))&7)*.07,sp:(.16+((h>>i)&3)*.05)*(i%2?1:-1),sz:1.5+((h>>(i+2))&3)*.7,k:i*1.7,tilt:(i%3-1)*.22});
-  for(const m of T.moons)p.moons.push({rad:m[0],size:m[1],col:m[2],sp:m[3]*(h%2?1:-1),a:(h%628)/100});
-  if(!plaza&&r.disc==0){p.born=performance.now()}return p}
- function buildPlanets(){S.planets=[mkPlanet('plaza')];for(const n of ids().sort((a,b)=>db.w[a].ix-db.w[b].ix))S.planets.push(mkPlanet(n));
-  S.statQ=S.planets.filter(p=>!p.plaza);
-  // constellation: every world is joined to its nearest earlier neighbour, which gives a tidy web without crossings
-  for(let i=1;i<S.planets.length;i++){let b=null,bd=1e18;for(let j=0;j<i;j++){const d=(S.planets[i].x-S.planets[j].x)**2+(S.planets[i].y-S.planets[j].y)**2;if(d<bd){bd=d;b=S.planets[j]}}S.planets[i].link=b&&b.id}}
- function order(){return S.planets.slice()}
- // ------------------------------------------------------------ camera
- function bounds(){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const ps=S.planets.concat(S.pv?[S.pv]:[]);for(const p of ps){x0=Math.min(x0,p.x-p.R*1.7);x1=Math.max(x1,p.x+p.R*1.7);y0=Math.min(y0,p.y-p.R*1.6);y1=Math.max(y1,p.y+p.R*2.5)}return{x0,y0,x1,y1}}
- const narrow=()=>W/D<820||W/H<1;
- function viewOverview(snap){const b=bounds(),bw=b.x1-b.x0,bh=b.y1-b.y0;let z=Math.min(W*.9/bw,H*.7/bh);const minR=Math.min(...S.planets.map(p=>p.R));z=Math.max(z,34*D/minR);z=cl(z,.12*D,1.5*D);
-  S.tgt.x=(b.x0+b.x1)/2;S.tgt.y=(b.y0+b.y1)/2;S.tgt.z=z;S.tax=.5;S.tay=.46;if(snap)snapCam()}
- function viewPlanet(p,snap,pad){const small=narrow(),rr=small?Math.min(H*.2,W*.34):Math.min(H*.3,W*.2);S.tgt.x=p.x;S.tgt.y=p.y;S.tgt.z=rr/p.R*(pad||1);S.tax=small?.5:.34;S.tay=small?.27:.5;if(snap)snapCam()}
- function snapCam(){S.cam.x=S.tgt.x;S.cam.y=S.tgt.y;S.cam.z=S.tgt.z;S.ax=S.tax;S.ay=S.tay}
- function stepCam(dt){const f=1-Math.exp(-dt*(reduce()?80:4.4));S.cam.x+=(S.tgt.x-S.cam.x)*f;S.cam.y+=(S.tgt.y-S.cam.y)*f;S.cam.z=Math.exp(Math.log(S.cam.z)+(Math.log(S.tgt.z)-Math.log(S.cam.z))*f);S.ax+=(S.tax-S.ax)*f;S.ay+=(S.tay-S.ay)*f}
- let boost=1;
- const sx=p=>(p.x-S.cam.x)*S.cam.z*boost+W*S.ax,sy=p=>(p.y-S.cam.y)*S.cam.z*boost+H*S.ay,sr=p=>p.R*S.cam.z*boost*(1+p.hv*.05);
- // ------------------------------------------------------------ rendering of one planet
- let budget=0;
- function ensureTex(p){const hi=(p.sl>.5||p===S.pv)&&!lowQ(),tx=PLG7.getTex(p.theme,p.variant,hi);if(!tx||(hi&&!tx.hi))PLG7.want(p.theme,p.variant,hi);return tx}
- const lowQ=()=>lowfx()||S.q>0;
- function updateSprite(p,now,r,force){const tx=ensureTex(p);if(!tx)return false;const foc=p.sl>.5||p===S.pv,want=r*2,cap=foc?(lowQ()?176:256):144;
-  const N=Math.min(cap,want<90?80:want<130?112:want<180?144:want<230?192:256);
-  const per=foc||p.hv>.3?100:S.mode=='overview'?700:1500,upg=p.txHi!==tx.hi;
-  if(!force&&!upg&&p.cv&&p.N==N&&(reduce()||S.q>1||now-p.spT<per))return true;if(budget<=0&&p.cv&&!force&&!upg)return true;budget--;
-  if(!p.cv||p.N!=N){p.cv=document.createElement('canvas');p.cv.width=p.cv.height=N;p.cx=p.cv.getContext('2d');p.img=p.cx.createImageData(N,N);p.N=N}
-  const rot=reduce()?p.rot0:(p.rot0+now/1000*p.spd)%1,ge=PLG7.geo(N,p.tilt);PLG7.render(p.img,ge,tx,rot,(rot*1.4+.31)%1,p.T,.9+p.hv*.3+p.sl*.2,p.veil*.9);p.cx.putImageData(p.img,0,0);
-  // terminator shadow baked into the sprite (only on pixels that exist), so no gradients are built per frame
-  const c=p.cx,R=N/2,sh=c.createRadialGradient(R*.58,R*.58,R*.2,R*.9,R*.9,R*1.12);sh.addColorStop(0,'rgba(255,255,255,.1)');sh.addColorStop(.5,'rgba(0,0,0,0)');sh.addColorStop(1,'rgba(4,2,16,.46)');c.globalCompositeOperation='source-atop';c.fillStyle=sh;c.fillRect(0,0,N,N);c.globalCompositeOperation='source-over';
-  p.spT=now;p.txHi=tx.hi;return true}
- function drawRing(p,x,y,r,front){const rg=p.T.ring;if(!rg)return;g.save();g.translate(x,y);g.rotate(rg.t);g.scale(1,.26);g.lineCap='butt';
-  const a0=front?0:Math.PI,a1=front?Math.PI:TAU;g.globalAlpha=(front?.95:.7)*(.4+.6*p.fade);
-  g.strokeStyle=rg.c;g.lineWidth=r*.2;g.beginPath();g.arc(0,0,r*1.62,a0,a1);g.stroke();g.globalAlpha*=.55;g.lineWidth=r*.06;g.beginPath();g.arc(0,0,r*1.9,a0,a1);g.stroke();g.lineWidth=r*.09;g.beginPath();g.arc(0,0,r*1.43,a0,a1);g.stroke();g.restore()}
- function drawOrbiters(p,x,y,r,t,front){const st=reduce()?0:1;for(const b of p.bits){const a=b.a+t*b.sp*(1+p.hv*.9)*st,s=Math.sin(a);if((s>0)!=front)continue;const rad=r*b.rad,px=x+Math.cos(a)*rad*1.05,py=y+s*rad*(.34+b.tilt)+Math.cos(a)*rad*b.tilt*.4;
-   g.globalAlpha=(front?1:.6)*p.fade*(p.veil?.4:1);PLG7.drawBit(g,p.T.fx,px,py,b.sz*Math.max(.8,r/90),a,t,b.k)}g.globalAlpha=1;
-  for(const m of p.moons){const a=m.a+t*m.sp*.35*(reduce()?0:1),s=Math.sin(a);if((s>0)!=front)continue;const rad=r*m.rad,px=x+Math.cos(a)*rad,py=y+s*rad*.3-rad*.05,ms=r*m.size;g.globalAlpha=p.fade*(front?1:.75);g.drawImage(PLG7.moonSprite(m.col),px-ms,py-ms,ms*2,ms*2)}g.globalAlpha=1}
- function lbl(txt,x,y,px,col,w,sp){g.font=w+' '+px+'px '+LF;g.textAlign='center';try{g.letterSpacing=(sp||0)+'px'}catch(_){}g.lineWidth=3*D;g.strokeStyle='rgba(4,3,16,.75)';g.lineJoin='round';g.strokeText(txt,x,y);g.fillStyle=col;g.fillText(txt,x,y);try{g.letterSpacing='0px'}catch(_){}}
- let LF='system-ui,sans-serif';
- function drawPlanet(p,now,t){const x=sx(p),y=sy(p)+(reduce()?0:Math.sin(t*.7+p.R)*3*D),r=sr(p);if(x<-r*2.4||x>W+r*2.4||y<-r*2.4||y>H+r*2.4)return;
-  let alpha=1;if(p.born){const e=(now-p.born)/2600;if(e<1){alpha=ease(e);p.fade=Math.min(p.fade,alpha)}}
-  const ready=updateSprite(p,now,r,false);p.fade=ready?Math.min(1,p.fade+.06):p.fade;const A=p.fade*alpha;
-  g.save();g.globalAlpha=A;
-  // atmosphere glow
-  const aI=p.T.ai*(.30+.28*p.hv+.18*p.sl)*(.92+.08*Math.sin(t*1.2+p.R)),c=p.T.atm.join(',');
-  g.globalCompositeOperation='lighter';{const gs=glowSpr(p.T),gr=r*(1.62+.3*p.hv);g.globalAlpha=A*Math.min(1,aI*(p.veil?.5:1)*1.6);g.drawImage(gs,x-gr,y-gr,gr*2,gr*2)}g.globalCompositeOperation='source-over';
-  if(!lowQ()){g.globalAlpha=A;drawRing(p,x,y,r,false);drawOrbiters(p,x,y,r,t,false)}
-  // sphere
-  g.globalAlpha=A;g.save();g.beginPath();g.arc(x,y,r,0,TAU);g.clip();
-  if(p.cv&&ready)g.drawImage(p.cv,x-r,y-r,r*2,r*2);else{const pg=g.createRadialGradient(x-r*.35,y-r*.35,r*.1,x,y,r);pg.addColorStop(0,'rgba('+c+',.8)');pg.addColorStop(1,'#0a0818');g.fillStyle=pg;g.fillRect(x-r,y-r,r*2,r*2)}
-  g.restore();
-  // rim light on the lit edge
-  g.save();g.globalAlpha=A;g.globalCompositeOperation='lighter';g.lineWidth=Math.max(1.2,r*.025);const rim=g.createLinearGradient(x-r*.8,y-r*.8,x+r*.6,y+r*.6);rim.addColorStop(0,'rgba('+c+','+(.55+.3*p.hv)+')');rim.addColorStop(.5,'rgba('+c+',.08)');rim.addColorStop(1,'rgba('+c+',0)');g.strokeStyle=rim;g.beginPath();g.arc(x,y,r-g.lineWidth/2,0,TAU);g.stroke();g.restore();
-  // veil for worlds that have never been entered
-  if(p.veil&&!p.plaza){g.save();g.globalAlpha=A*.9;g.setLineDash([4*D,7*D]);g.lineDashOffset=-t*6;g.strokeStyle='rgba(190,205,255,.55)';g.lineWidth=1.3*D;g.beginPath();g.arc(x,y,r*1.14,0,TAU);g.stroke();g.setLineDash([]);
-   if(!reduce()){g.fillStyle='rgba(220,230,255,'+(.18+.14*Math.sin(t*2+p.R)).toFixed(2)+')';for(let i=0;i<5;i++){const a=t*.25+i*1.26,rx=x+Math.cos(a)*r*1.14,ry=y+Math.sin(a)*r*1.14;g.beginPath();g.arc(rx,ry,2*D,0,TAU);g.fill()}}g.restore()}
-  // reveal flash after the first visit
-  const rv=p.rec&&p.rec.rev?(now-p.rec.rev)/1800:2;if(rv>=0&&rv<1&&p.rec.rev>S.openAt){g.save();g.globalCompositeOperation='lighter';g.globalAlpha=(1-rv)*.7;g.strokeStyle='rgba('+c+',1)';g.lineWidth=3*D;g.beginPath();g.arc(x,y,r*(1.05+rv*.9),0,TAU);g.stroke();g.restore()}
-  // unexplored / current / selected markers
-  if(!lowQ()){g.globalAlpha=A;drawRing(p,x,y,r,true);drawOrbiters(p,x,y,r,t,true)}
-  if(p.plaza&&db.m.claimed&&db.m.claimed[10]){g.save();g.globalAlpha=A*.8;g.strokeStyle='rgba(255,226,140,.8)';g.lineWidth=1.5*D;g.beginPath();g.ellipse(x,y,r*2.15,r*.62,-.3,0,TAU);g.stroke();g.restore()}
-  if(entered&&cur==p.id){const k=.5+.5*Math.sin(t*2.4);g.save();g.globalAlpha=A*(.45+.35*k);g.fillStyle='#fff';g.beginPath();g.arc(x+r*.82,y-r*.82,3.2*D,0,TAU);g.fill();g.restore()}
-  g.restore();
-  // label
-  if(r>22*D&&p!==S.pv&&!(S.mode!='overview'&&S.sel==p.id)){const big=S.sel==p.id,ly=y+r*(big?1.28:1.22)+16*D,a=cl(A*(S.mode=='overview'?1:big?.95:.55),0,1);if(a>.02){g.save();g.globalAlpha=a;
-    const px1=Math.round(clampPx(r*.2,12,17)*D),px2=Math.round(clampPx(r*.14,10,12)*D),sub=p.plaza?'Shared hub':p.err?'Could not load':p.stat&&p.stat.bad?'Save unreadable':p.explored?THEMES[p.theme].name:'Unexplored',key=p.label+'|'+sub+'|'+px1+'|'+c;
-    if(!p.lc||p.lc.key!=key){const cv2=p.lc?p.lc.cv:document.createElement('canvas'),w=Math.ceil(px1*Math.max(p.label.length,sub.length)*.9)+20*D,h=px1+px2+26*D;cv2.width=w;cv2.height=h;const q=g;g=cv2.getContext('2d');lbl(p.label.toUpperCase(),w/2,px1+4*D,px1,'#fff','600',2.2*D);lbl(sub,w/2,px1+px2+10*D,px2,'rgba('+c+',.95)','500',1*D);g=q;p.lc={key,cv:cv2}}
-    g.drawImage(p.lc.cv,x-p.lc.cv.width/2,ly-px1-4*D);g.restore()}}}
- const clampPx=(v,a,b)=>cl(v/D,a,b);
- const glowC={};function glowSpr(T){const k=T.n;let c=glowC[k];if(c)return c;c=glowC[k]=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d'),col=T.atm.join(','),gr=x.createRadialGradient(64,64,64/1.62*.86,64,64,64);gr.addColorStop(0,'rgba('+col+',1)');gr.addColorStop(.35,'rgba('+col+',.28)');gr.addColorStop(1,'rgba('+col+',0)');x.fillStyle=gr;x.fillRect(0,0,128,128);return c}
- // ------------------------------------------------------------ frame
- function sparkAt(x,y,col,n,sp){for(let i=0;i<n&&S.sparks.length<90;i++){const a=Math.random()*TAU,s=(20+Math.random()*60)*(sp||1);S.sparks.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-10,l:1,c:col})}}
- function frame(now){if(!open)return;raf=requestAnimationFrame(frame);const fps=reduce()?8:lowQ()?(S.q>1?18:24):32;if(now-last<1000/fps)return;const dt=Math.min(.1,(now-last)/1000);last=now;fit();const t=reduce()?3:(now-t0)/1000;
-  // texture generation (one per frame so nothing stalls)
-  try{PLG7.pump(7)}catch(e){console.error('PLG7',e)}
-  budget=lowQ()?1:2;stepCam(dt);boost=1;S.ema=(S.ema||16)*.9+dt*1000*.1;if(!S.ent&&!S.arr){if(S.ema>46&&S.q<2&&now-(S.qT||0)>2500){S.q++;S.qT=now;for(const p of S.planets)p.bits.length=Math.min(p.bits.length,S.q>0?0:p.bits.length)}}
-  if((S.fc=(S.fc||0)+1)%6==0)statStep();
-  // transitions
-  let veilA=0,veilC='255,255,255';
-  if(S.ent){const e=(now-S.ent.t0)/(reduce()?350:1150),p=byId(S.ent.id);S.ent.e=e;
-   if(p){const k=ease(Math.min(1,e/.85));boost=reduce()?1:Math.exp(Math.log(16)*k*k);S.tax=lerp(S.ax,.5,.1);S.tay=lerp(S.ay,.5,.1);veilC=p.T.atm.join(',');veilA=cl((e-.45)/.4,0,1)}
-   if(!S.ent.done&&(e>=.78||S.ent.skip)){S.ent.done=now;window.RB_COVER=false;doEnter(S.ent.id)}
-   if(S.ent.done){const f=(now-S.ent.done)/(S.ent.skip||reduce()?200:420);veilA=1;el.style.opacity=String(1-cl(f,0,1));if(f>=1&&S.ent.ok)finishClose();else if(f>=1&&!S.ent.ok){S.ent=null;el.style.opacity='1'}}}
-  else if(S.arr){const e=(now-S.arr.t0)/(reduce()?350:1000);boost=reduce()?1:Math.exp(Math.log(16)*(1-ease(e)));veilA=1-ease(Math.min(1,e*1.15));const p=byId(S.arr.id);if(p)veilC=p.T.atm.join(',');if(e>=1){S.arr=null;boost=1}}
-  // backdrop
-  const px=-(S.cam.x*S.cam.z)*.6,py=-(S.cam.y*S.cam.z)*.6,fp=S.sel&&byId(S.sel),pp=S.mode=='create'&&S.pv?S.pv:fp;
-  PLG7.drawBackdrop(g,W,H,t,px,py,reduce(),pp?{x:sx(pp),y:sy(pp),r:Math.max(W,H)*.55,c:pp.T.atm.join(','),a:.09}:null);
-  // orbit paths + constellation lines
-  const hasDash=typeof g.setLineDash=='function';
-  if(S.lines&&S.planets.length&&!S.form){g.save();g.lineWidth=1*D;const cx0=sx({x:0,y:0}),cy0=sy({x:0,y:0});
-   g.strokeStyle='rgba(190,205,255,'+(S.mode=='overview'?.3:.12)+')';if(hasDash)g.setLineDash([5*D,8*D]);
-   for(const p of S.planets){const q=p.link&&byId(p.link);if(!q)continue;g.beginPath();g.moveTo(sx(q),sy(q));g.lineTo(sx(p),sy(p));g.stroke();
-    const mx=(sx(q)+sx(p))/2,my=(sy(q)+sy(p))/2;g.fillStyle='rgba(220,230,255,.5)';g.fillRect(mx-1.5*D,my-1.5*D,3*D,3*D)}if(hasDash)g.setLineDash([]);g.restore()}
-  // hover easing
-  for(const p of S.planets){const th=S.hov==p.id&&!S.ent?1:0,ts=S.sel==p.id?1:0;p.hv+=(th-p.hv)*Math.min(1,dt*9);p.sl+=(ts-p.sl)*Math.min(1,dt*7)}
-  const list=S.planets.slice().sort((a,b)=>a.hv+a.sl-b.hv-b.sl);
-  for(const p of list){if(S.form&&S.form.p===p)continue;drawPlanet(p,now,t)}
-  if(S.pv)drawPreview(now,t);
-  // sparks
-  if(S.sparks.length){g.save();g.globalCompositeOperation='lighter';for(let i=S.sparks.length-1;i>=0;i--){const s=S.sparks[i];s.l-=dt*1.6;if(s.l<=0){S.sparks.splice(i,1);continue}s.x+=s.vx*dt;s.y+=s.vy*dt;g.fillStyle='rgba('+s.c+','+(s.l*.8).toFixed(2)+')';g.beginPath();g.arc(s.x,s.y,(1+s.l*1.6)*D,0,TAU);g.fill()}g.restore()}
-  // streaks while travelling
-  if(S.ent&&!reduce()){const e=S.ent.e||0,n=lowfx()?26:50;g.save();g.globalCompositeOperation='lighter';const cx=W*S.ax,cy=H*S.ay;for(let i=0;i<n;i++){const a=i*2.399+hs(S.ent.id)%7,sp=cl((e-.1)/.7,0,1),r0=(60+((i*53)%140))*D*(1+sp*8)*Math.max(.3,sp),r1=r0+sp*(120+(i%7)*40)*D;if(sp<=0)continue;g.strokeStyle='rgba(255,255,255,'+(.05+.35*sp*(i%3?.6:1))+')';g.lineWidth=(1+(i%3))*D*.8;g.beginPath();g.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);g.lineTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);g.stroke()}g.restore()}
-  if(S.form)drawForm(now,t);
-  if(veilA>.01){const gr=g.createRadialGradient(W*S.ax,H*S.ay,0,W*S.ax,H*S.ay,Math.hypot(W,H)*.6);gr.addColorStop(0,'rgba(255,255,255,'+veilA*.96+')');gr.addColorStop(.55,'rgba('+veilC+','+veilA*.9+')');gr.addColorStop(1,'rgba('+veilC+','+veilA+')');g.fillStyle=gr;g.fillRect(0,0,W,H)}}
- function fit(){const d=Math.min(lowfx()?1:1.25,window.devicePixelRatio||1),w=Math.max(320,innerWidth*d|0),h=Math.max(240,innerHeight*d|0);const first=!W,ch=cv.width!=w||cv.height!=h||D!=d;D=d;if(ch){cv.width=w;cv.height=h}W=w;H=h;if(ch&&!first)relayout()}
- function relayout(){if(S.mode=='overview')viewOverview(true);else if(S.sel&&byId(S.sel))viewPlanet(byId(S.sel),true);else if(S.pv)viewPlanet(S.pv,true)}
- // ------------------------------------------------------------ world creation preview / formation
- function newPlanet(id,theme){const h=hs(id||'newworld'),P=slot(freeIx());const T=THEMES[theme];const p={id:id||'?',plaza:false,label:id||'New world',theme,T,variant:h%3,tilt:[-.38,-.17,.08,.27,.46][(h>>3)%5],rot0:(h%1000)/1000,spd:.008,R:90,x:P.x,y:P.y,rec:null,auto:false,stat:null,cv:null,cx:null,img:null,N:0,spT:0,fade:0,hv:0,sl:1,bits:[],moons:[],born:0,veil:0,err:0,explored:true};
-  const nb=lowfx()||reduce()?(reduce()?0:4):9;for(let i=0;i<nb;i++)p.bits.push({a:(i/nb)*TAU,rad:1.3+(i%4)*.08,sp:(.2+(i%3)*.06)*(i%2?1:-1),sz:1.8+(i%3)*.6,k:i*1.9,tilt:(i%3-1)*.2});for(const m of T.moons)p.moons.push({rad:m[0],size:m[1],col:m[2],sp:m[3],a:(h%628)/100});return p}
- function setPreview(theme,name){const id=cleanId(name)||'';if(S.pv&&S.pv.theme==theme){S.pv.id=id||'?';S.pv.label=id||'New world';const h=hs(id||'newworld');S.pv.variant=h%3;S.pv.rot0=(h%1000)/1000;return}
-  const old=S.pv;S.pv=newPlanet(id,theme);S.pv.oldCv=old&&old.cv?old.cv:null;S.pv.swapT=performance.now();S.pv.fade=old?1:0}
- function drawPreview(now,t){const p=S.pv;if(!p)return;p.hv=.5;const tx=ensureTex(p);const r=sr(p),x=sx(p),y=sy(p);
-  // empty region marker
-  g.save();g.strokeStyle='rgba(200,215,255,.35)';g.lineWidth=1.2*D;if(g.setLineDash)g.setLineDash([3*D,7*D]);g.beginPath();g.arc(x,y,r*1.5,0,TAU);g.stroke();g.restore();
-  if(S.form)return;
-  drawPlanet(p,now,t);
-  // crossfade from the previous theme
-  const k=(now-p.swapT)/450;if(p.oldCv&&k<1){g.save();g.globalAlpha=1-ease(k);g.beginPath();g.arc(x,y,r,0,TAU);g.clip();g.drawImage(p.oldCv,x-r,y-r,r*2,r*2);g.restore()}else if(p.oldCv&&k>=1)p.oldCv=null}
- function drawForm(now,t){const f=S.form,p=f.p,e=(now-f.t0)/(reduce()?500:1900);if(e>=1){S.form=null;return}
-  const x=sx(p),y=sy(p),R=p.R*S.cam.z;
-  // particles converge on the centre, then the planet blooms into view
-  const conv=ease(Math.min(1,e/.62)),n=lowfx()?40:90;g.save();g.globalCompositeOperation='lighter';const c=p.T.atm.join(',');
-  for(let i=0;i<n;i++){const a=i*2.399+f.seed,r0=R*(2.8+((i*37)%11)*.28),rr=lerp(r0,R*.05,conv),sw=a+conv*1.4;g.fillStyle='rgba('+c+','+((1-conv*.6)*.8).toFixed(2)+')';g.beginPath();g.arc(x+Math.cos(sw)*rr,y+Math.sin(sw)*rr*.8,(1+(i%3))*D*(1+(1-conv)),0,TAU);g.fill()}
-  const core=g.createRadialGradient(x,y,0,x,y,R*(.6+conv*.9));core.addColorStop(0,'rgba(255,255,255,'+(.4+.5*conv*(1-ease((e-.6)/.4)))+')');core.addColorStop(1,'rgba('+c+',0)');g.fillStyle=core;g.beginPath();g.arc(x,y,R*1.6,0,TAU);g.fill();g.restore();
-  if(e>.5){const k=ease((e-.5)/.5);const keep=p.hv;p.fade=1;p.sl=1;const sc=.2+.8*(1-Math.pow(1-k,3))*(1+Math.sin(k*Math.PI)*.06);const oR=p.R;p.R=oR*sc;g.save();g.globalAlpha=k;drawPlanet(p,now,t);g.restore();p.R=oR;p.hv=keep}}
- // ------------------------------------------------------------ actions
- function cleanId(s){return String(s||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)}
- function fmtTime(ts){if(!ts)return'';const d=new Date(ts),n=new Date(),same=d.toDateString()==n.toDateString();try{return same?'Today '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString([], {day:'numeric',month:'short',year:'numeric'})}catch(_){return d.toISOString().slice(0,10)}}
- function toast(m,undo){const t=el.querySelector('#plnToast');t.innerHTML=esc(m)+(undo?' <button data-a="undo">Undo</button>':'');t.classList.add('on');clearTimeout(S.toastT);S.toastT=setTimeout(()=>t.classList.remove('on'),undo?12000:3800)}
- function statStep(){const p=S.statQ&&S.statQ.shift();if(p&&!p.stat)p.stat=readSave(p.id)}
- function select(id,quiet){const p=byId(id);if(!p||S.ent||S.form)return;if(S.sel==id&&S.mode=='focus')return;S.sel=id;S.mode='focus';S.renaming=false;S.creating=false;S.pv=null;if(!quiet)AU.select();
-  if(entered&&id==cur)flush();if(!p.plaza)p.stat=readSave(id);viewPlanet(p);if(p.rec&&!p.rec.disc){p.rec.disc=1;save();AU.discover();toast('New world discovered: '+p.label)}renderPanels();sparkAt(sx(p),sy(p),p.T.atm.join(','),10)}
- function overview(){if(S.ent||S.form)return;S.sel=null;S.mode='overview';S.pv=null;S.creating=false;S.renaming=false;viewOverview();renderPanels();AU.back()}
- function step(d){const l=order();if(!l.length)return;let i=l.findIndex(p=>p.id==S.sel);i=i<0?(d>0?0:l.length-1):(i+d+l.length)%l.length;select(l[i].id)}
- function go(id){const p=byId(id);if(!p||S.ent||S.form)return;if(S.creating){}S.mode='entering';S.sel=id;S.renaming=false;viewPlanet(p);AU.enter();S.ent={id,t0:performance.now(),done:0,skip:0,ok:0};renderPanels();hint()}
- function prepare(id){const r=db.w[id];if(r&&r.fresh){const sky=PLG7.SKY[r.theme];if(sky&&!skyOf(id)&&!online()){try{X6.wx[id]=sky;x6Save()}catch(_){}}r.fresh=0;save()}}
- function doEnter(id){const prev=entered?cur:null;try{flush();prepare(id);enterWorld(id);if(!entered||(!online()&&cur!=id))throw new Error('The world did not load');S.ent.ok=1;try{menuEl.style.display='none'}catch(_){}}
-  catch(err){console.error('PLN7 enter',err);S.ent.ok=0;window.RB_COVER=true;const p=byId(id);if(p)p.err=1;try{if(prev&&cur!=prev)loadWorld(prev)}catch(_){}S.mode='focus';toast('Could not load '+labelOf(id)+'. Your other worlds are untouched.');AU.error();S.ent.done=performance.now();S.ent.skip=1;renderPanels()}}
- function skip(){if(S.ent&&!S.ent.done)S.ent.skip=1;if(S.arr)S.arr.t0=-1e9;if(S.form)S.form.t0=-1e9}
- function exit(){if(!entered){if(byId('plaza')){select('plaza',true);go('plaza')}else close()}else close()}
- function finishClose(){S.ent=null;close(true)}
- // rename / delete / settings
- function rename(id,v){const r=db.w[id];if(!r)return;v=String(v||'').replace(/[<>]/g,'').replace(/\s+/g,' ').trim().slice(0,24);r.label=v==id?'':v;save();const p=byId(id);if(p)p.label=labelOf(id);S.renaming=false;renderPanels();buildDock();toast('Renamed. The world id stays “'+id+'”.')}
- let lastDel=null;
- function removeWorld(id){const key='rbw_'+id,raw=(()=>{try{return localStorage.getItem(key)}catch(_){return null}})();
-  lastDel={id,raw,rec:db.w[id],idx:recentsL().indexOf(id),wx:skyOf(id)};
-  try{localStorage.removeItem(key);const rc=recents().filter(x=>x!=id);localStorage.setItem('rbidx',JSON.stringify(rc));delete db.w[id];save();if(X6.wx&&X6.wx[id]){delete X6.wx[id];x6Save()}}catch(e){console.error(e);toast('Could not delete this world.');return false}
-  S.sel=null;S.mode='overview';buildPlanets();viewOverview();renderPanels();buildDock();toast('Deleted “'+id+'”.',true);AU.back();return true}
- function undoDelete(){const d=lastDel;if(!d)return;lastDel=null;try{if(d.raw!=null)localStorage.setItem('rbw_'+d.id,d.raw);if(d.rec)db.w[d.id]=d.rec;const rc=recents().filter(x=>x!=d.id);rc.splice(Math.max(0,d.idx),0,d.id);localStorage.setItem('rbidx',JSON.stringify(rc.slice(0,12)));save();if(d.wx){X6.wx[d.id]=d.wx;x6Save()}}catch(_){}
-  buildPlanets();renderPanels();buildDock();viewOverview();select(d.id,true);toast('Restored “'+d.id+'”.')}
- function setTheme(id,th){const r=db.w[id];if(!r||!THEMES[th]||th=='plaza')return;r.theme=th;save();const p=byId(id);buildPlanets();renderPanels();buildDock()}
- function applySky(id){const r=db.w[id],th=themeOf(id),sky=PLG7.SKY[th];if(!r||!sky||online()){toast(online()?'Skies of online worlds belong to the server.':'This theme has no special sky.');return}
-  try{X6.wx[id]=sky;x6Save();if(entered&&cur==id)ENV7.set(sky,{by:myName})}catch(_){}buildPlanets();renderPanels();toast('Sky set to '+ENV7.names[sky]+'.')}
- function create(name,theme){const id=cleanId(name);const err=m=>{toast(m);AU.error();return false};
-  if(!id)return err('Give your world a name (letters, numbers, - or _).');if(id=='plaza')return err('“plaza” is reserved for the shared hub.');if(!THEMES[theme]||theme=='plaza')return err('Choose a world theme first.');
-  if(ids().includes(id))return err('A world named “'+id+'” already exists. Pick another name, or open it from the atlas.');
-  const prevDb=JSON.stringify(db);let ok=false;
-  try{localStorage.setItem('rbw_'+id,'{}');if(localStorage.getItem('rbw_'+id)!=='{}')throw new Error('write check failed');
-   const rc=recents().filter(x=>x!=id);rc.unshift(id);localStorage.setItem('rbidx',JSON.stringify(rc.slice(0,12)));
-   db.w[id]={theme,label:'',ix:freeIx(),created:Date.now(),last:0,plays:0,disc:1,ent:0,fresh:PLG7.SKY[theme]?1:0,rev:0};if(!save())throw new Error('could not save the planet record');ok=true}
-  catch(e){console.error('PLN7 create',e);try{localStorage.removeItem('rbw_'+id)}catch(_){}try{db=JSON.parse(prevDb)}catch(_){}return err('Could not save the new world on this device. Your existing worlds are untouched.')}
-  buildPlanets();buildDock();const p=byId(id);S.pv=null;S.creating=false;S.sel=id;S.mode='focus';p.fade=1;S.form={p,t0:performance.now(),seed:hs(id)%100};viewPlanet(p);AU.form();renderPanels();
-  setTimeout(()=>{if(open&&S.sel==id){select(id,true);const b=el.querySelector('[data-a=enter]');if(b)b.focus({preventScroll:true})}},reduce()?560:1950);return true}
- // ------------------------------------------------------------ DOM
- function build(){if(el)return;el=document.createElement('div');el.id='pln';el.className='pln';el.setAttribute('role','dialog');el.setAttribute('aria-label','Star Atlas: choose a world');
-  el.innerHTML='<canvas id="plnCv" aria-hidden="true"></canvas>'
-   +'<header class="plnTop"><div class="plnLogo"><b>STAR ATLAS</b><i>YOUR WORLDS</i></div><div class="plnBtns"><button data-a="chars">Characters</button><button data-a="atlas" id="plnAtlasBtn" aria-expanded="false">Atlas</button><button data-a="close" aria-label="Close the atlas">✕</button></div></header>'
-   +'<aside id="plnInfo" class="plnPanel" aria-live="polite"></aside><aside id="plnNew" class="plnPanel"></aside><aside id="plnAtlas" class="plnPop"></aside>'
-   +'<nav id="plnDock" aria-label="Worlds"></nav><div id="plnHint"></div><div id="plnToast" role="status"></div><div id="plnModal"></div>';
-  document.body.appendChild(el);cv=el.querySelector('#plnCv');g=cv.getContext('2d');
-  try{LF=getComputedStyle(document.body).fontFamily||LF}catch(_){}
-  el.addEventListener('click',onClick);el.addEventListener('input',onInput);el.addEventListener('keydown',onFieldKey);
-  for(const ev of['mousedown','mouseup','touchstart','contextmenu','wheel'])el.addEventListener(ev,e=>{e.stopPropagation()},{passive:true});
-  cv.addEventListener('pointerdown',pDown);addEventListener('pointermove',pMove);addEventListener('pointerup',pUp);cv.addEventListener('wheel',onWheel,{passive:false});
-  el.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('button:not(:disabled)');if(b&&b!==el._hb){el._hb=b;AU.tick()}});
-  addEventListener('keydown',onKey,true);addEventListener('resize',()=>{if(open)fit()});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(raf);else if(open){last=0;raf=requestAnimationFrame(frame)}})}
- function hint(){const h=el.querySelector('#plnHint');h.textContent=S.ent?'Click or press any key to skip':S.mode=='create'?'Pick a theme, name your world, then press Form planet':S.mode=='focus'?'Enter: travel · ← → other worlds · Esc: back to the atlas':'Click a planet · Tab or ← → to move · N: new world · Esc: close'}
- function buildDock(){const d=el.querySelector('#plnDock');d.innerHTML=S.planets.map(p=>'<button data-id="'+esc(p.id)+'" class="'+(S.sel==p.id?'on':'')+(entered&&cur==p.id?' cur':'')+'" style="--c:rgb('+p.T.atm.join(',')+')"><i></i><span>'+esc(p.label)+'</span></button>').join('')+'<button data-a="new" class="plus">＋ New world</button>'}
- function panelStat(p){const s=p.stat,rows=[];const sky=skyOf(p.id);
-  rows.push(['Type',esc(THEMES[p.theme].name)+(p.auto?' <small>(assigned from the name)</small>':'')]);
-  rows.push(['Sky',sky&&ENV7.names[sky]?esc(ENV7.names[sky]):'Natural skies']);
-  if(p.plaza){rows.push(['Last visit',db.m.plazaLast?fmtTime(db.m.plazaLast):'Not recorded yet']);rows.push(['Protected',"Yes: shared hub, can't be changed or deleted"])}
-  else{const r=p.rec;rows.push(['Status',p.explored?'Visited':'Not entered yet']);rows.push(['Last played',r.last?fmtTime(r.last)+(r.plays>1?' · '+r.plays+' visits':''):p.explored?'Before the atlas was added':'Never']);
-   if(s&&s.bad)rows.push(['Save','<span class="warn">Unreadable. Entering starts this world fresh.</span>']);else if(s&&!s.empty){rows.push(['Blocks changed',String(s.blocks)]);if(s.objs)rows.push(['Objects placed',String(s.objs)]);if(s.owner)rows.push(['Claimed by',esc(s.owner)])}else if(s)rows.push(['Blocks changed','0']);
-   if(r.created)rows.push(['Created',fmtTime(r.created)])}
-  rows.push(['Goals','<div class="goals7">'+GOAL7.html(p.id)+'</div>']);
-  return rows.map(r=>'<div><dt>'+r[0]+'</dt><dd>'+r[1]+'</dd></div>').join('')}
- function renderPanels(){if(!el)return;const info=el.querySelector('#plnInfo'),nw=el.querySelector('#plnNew');const p=S.sel&&byId(S.sel);
-  el.classList.toggle('hasInfo',!!p&&S.mode!='entering'&&!S.pv);el.classList.toggle('hasNew',S.mode=='create');el.classList.toggle('busy',!!(S.ent||S.form));
-  if(p&&S.mode!='create'){const cur_=entered&&cur==p.id,name=esc(p.label);
-   let h='<div class="pk" style="--c:rgb('+p.T.atm.join(',')+')"><i></i>'+(p.plaza?'SHARED HUB':p.explored?'WORLD':'UNEXPLORED WORLD')+(cur_?' · YOU ARE HERE':'')+'</div>';
-   if(S.renaming)h+='<div class="rn"><input id="plnRn" maxlength="24" value="'+esc(p.rec&&p.rec.label||'')+'" placeholder="'+esc(p.id)+'" aria-label="World display name"><button data-a="rnOk">Save</button><button data-a="rnNo">Cancel</button></div>';
-   else h+='<h2>'+name+'</h2>';
-   h+='<div class="pid">'+(p.plaza?'plaza':'id: '+esc(p.id))+'</div><p class="blurb">'+esc(THEMES[p.theme].blurb)+'</p><dl>'+panelStat(p)+'</dl>';
-   h+='<div class="acts"><button class="pri" data-a="enter">'+(cur_?'Return to this world':p.explored||p.plaza?'Enter World':'Explore this world')+'</button>';
-   if(!p.plaza)h+='<button data-a="settings" aria-expanded="'+(S.settings?'true':'false')+'">World settings</button><button data-a="rename">Rename</button><button class="dng" data-a="del">Delete…</button>';h+='</div>';
-   if(S.settings&&!p.plaza)h+=settingsHtml(p);
-   h+='<div class="note">'+(p.plaza?'':'Renaming changes the display name only. The land is generated from the id, so the id stays. ')+(online()?'Signed-in worlds are kept by the server; this atlas only shows what is on this device.':'Everything here is stored on this device.')+'</div>';
-   info.innerHTML=h;const rn=info.querySelector('#plnRn');if(rn){rn.focus();rn.select()}}else info.innerHTML='';
-  if(S.mode=='create')renderNew();else nw.innerHTML='';buildDock();hint();renderAtlasBtn()}
- function settingsHtml(p){const r=p.rec,sky=PLG7.SKY[p.theme];return'<div class="set"><h4>Appearance theme</h4><div class="chips">'+ORDER.map(k=>'<button data-th="'+k+'" class="'+(r.theme==k||(!r.theme&&k==p.theme)?'on':'')+'">'+esc(THEMES[k].name)+'</button>').join('')+'</div>'
-  +'<p class="dim">The theme is how this planet looks in the atlas. A world’s sky only changes through its Weather Machine'+(sky?', or here:':'.')+'</p>'+(sky?'<button data-a="sky">Give this world its '+esc(ENV7.names[sky])+' sky</button>':'')
-  +(entered&&cur==p.id?'<button data-a="inworld">Open in-world settings</button>':'')+'</div>'}
- function renderNew(){const nw=el.querySelector('#plnNew'),th=S.newTheme||'verdant',name=S.newName||'',id=cleanId(name),dup=id&&(ids().includes(id)||id=='plaza');
-  nw.innerHTML='<div class="pk"><i></i>FORM A NEW WORLD</div><h2>New planet</h2><label for="plnName">World name</label><div class="nm"><input id="plnName" maxlength="16" value="'+esc(name)+'" placeholder="e.g. sakuragrove" autocomplete="off" spellcheck="false"><button data-a="dice" title="Random name" aria-label="Random name">🎲</button></div>'
-   +'<div class="pid" id="plnIdv">'+(id?(dup?'<span class="warn">“'+esc(id)+'” already exists</span>':'world id: '+esc(id)):'Letters, numbers, - and _ only')+'</div>'
-   +'<label>Theme</label><div class="themes">'+ORDER.map(k=>'<button data-nth="'+k+'" class="'+(k==th?'on':'')+'" style="--c:rgb('+THEMES[k].atm.join(',')+')"><i></i>'+esc(THEMES[k].name)+'</button>').join('')+'</div>'
-   +'<p class="blurb" id="plnTb">'+esc(THEMES[th].blurb)+'</p><div class="info2">'+(PLG7.SKY[th]?'Starts with the <b>'+esc(ENV7.names[PLG7.SKY[th]])+'</b> sky.':'Starts with natural skies and weather.')+' The land is generated from the name: the same name always gives the same terrain.</div>'
-   +'<div class="acts"><button class="pri" data-a="form"'+(id&&!dup?'':' disabled')+'>Form planet</button><button data-a="cancelNew">Cancel</button></div>'}
- function renderAtlas(){const a=el.querySelector('#plnAtlas'),ex=explored(),all=['plaza'].concat(ORDER),c=ex.size;
-  a.innerHTML='<h3>Star Atlas</h3><p class="dim">World types you have really entered: <b>'+c+' / '+all.length+'</b></p><ul>'+all.map(k=>'<li class="'+(ex.has(k)?'ok':'')+'"><i style="background:rgb('+THEMES[k].atm.join(',')+')"></i>'+esc(THEMES[k].name)+'<span>'+(ex.has(k)?'✓':'—')+'</span></li>').join('')+'</ul>'
-   +'<h4>Milestones</h4>'+MILES.map(([n,gm])=>'<div class="ms '+(db.m.claimed[n]?'ok':'')+'">'+n+' types · '+(srv()?'badge':gm+' gems')+(n==10?' · title “Star Cartographer”':'')+'<span>'+(db.m.claimed[n]?'claimed':c+'/'+n)+'</span></div>').join('')
-   +'<p class="dim">'+(srv()?'Signed-in wallets are server-owned, so gem rewards are only paid in offline play.':'Rewards are paid once, offline.')+'</p>'}
- function renderAtlasBtn(){const b=el&&el.querySelector('#plnAtlasBtn');if(b)b.textContent='Atlas '+explored().size+'/'+(ORDER.length+1)}
- // ------------------------------------------------------------ input
- function pt(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*(cv.width/r.width),y:(e.clientY-r.top)*(cv.height/r.height)}}
- function hit(x,y){let best=null,bd=1e9;for(const p of S.planets){const dx=x-sx(p),dy=y-sy(p),r=sr(p)+10*D,d=Math.hypot(dx,dy);if(d<r&&d<bd){best=p;bd=d}}return best}
- function pDown(e){if(S.ent){skip();return}if(S.form){skip();return}const q=pt(e),h=S.mode=='create'?null:hit(q.x,q.y);S.drag={x:q.x,y:q.y,moved:0,hit:h,ox:S.tgt.x,oy:S.tgt.y};try{cv.setPointerCapture(e.pointerId)}catch(_){}}
- function pMove(e){if(!open||!cv)return;const q=pt(e);S.mouse=q;
-  if(S.drag){const d=S.drag,dx=q.x-d.x,dy=q.y-d.y;if(Math.hypot(dx,dy)>6*D)d.moved=1;if(d.moved&&S.mode=='overview'&&!d.hit){S.tgt.x=d.ox-dx/S.cam.z;S.tgt.y=d.oy-dy/S.cam.z;S.cam.x=S.tgt.x;S.cam.y=S.tgt.y}}
-  else{const over=e.target===cv,h=over&&S.mode!='create'?hit(q.x,q.y):null,id=h?h.id:null;if(id!=S.hov){S.hov=id;cv.style.cursor=id?'pointer':'default';if(h){AU.hover(h.T.n);sparkAt(sx(h)+Math.cos(1)*sr(h)*.7,sy(h)-sr(h)*.7,h.T.atm.join(','),5,.8)}}}}
- function pUp(e){if(!S.drag)return;const d=S.drag;S.drag=null;if(!open)return;if(!d.moved){if(d.hit){const nw=performance.now(),dbl=S.lc&&S.lc.id==d.hit.id&&nw-S.lc.t<420;S.lc={id:d.hit.id,t:nw};if(dbl&&S.mode=='focus'&&S.sel==d.hit.id)go(d.hit.id);else select(d.hit.id)}else if(S.mode=='focus')overview()}}
- function onWheel(e){if(S.mode!='overview'){e.preventDefault();return}e.preventDefault();S.tgt.z=cl(S.tgt.z*Math.exp(-e.deltaY*.0012),.12*D,2.6*D)}
- function onClick(e){const a=e.target.closest('[data-a],[data-id],[data-th],[data-nth]');if(!a)return;
-  if(a.dataset.id){select(a.dataset.id);return}
-  if(a.dataset.th){setTheme(S.sel,a.dataset.th);AU.select();return}
-  if(a.dataset.nth){S.newTheme=a.dataset.nth;setPreview(S.newTheme,S.newName);renderNew();AU.select();return}
-  const k=a.dataset.a;
-  if(k=='close'){exit()}else if(k=='chars'){close();try{SHOW7.open()}catch(_){}}else if(k=='atlas'){const p=el.querySelector('#plnAtlas'),on=!p.classList.contains('on');if(on)renderAtlas();p.classList.toggle('on',on);a.setAttribute('aria-expanded',on?'true':'false');AU.select()}
-  else if(k=='enter'){if(S.sel)go(S.sel)}
-  else if(k=='new'){openCreate()}
-  else if(k=='cancelNew'){overview()}
-  else if(k=='dice'){const w1=['sakura','lumen','aster','mochi','nova','hoshi','kumo','yuki','ember','tide'],w2=['grove','reach','haven','drift','isle','garden','veil','peak','cove','bloom'];S.newName=w1[Math.random()*10|0]+w2[Math.random()*10|0];setPreview(S.newTheme||'verdant',S.newName);renderNew();AU.select()}
-  else if(k=='form'){create(S.newName,S.newTheme||'verdant')}
-  else if(k=='rename'){S.renaming=true;renderPanels()}
-  else if(k=='rnOk'){const i=el.querySelector('#plnRn');rename(S.sel,i&&i.value)}
-  else if(k=='rnNo'){S.renaming=false;renderPanels()}
-  else if(k=='settings'){S.settings=!S.settings;renderPanels()}
-  else if(k=='sky'){applySky(S.sel)}
-  else if(k=='inworld'){try{close();UI6.open('world')}catch(_){}}
-  else if(k=='del'){askDelete(S.sel)}
-  else if(k=='delNo'){el.querySelector('#plnModal').classList.remove('on')}
-  else if(k=='delYes'){const id=el.querySelector('#plnModal').dataset.id;el.querySelector('#plnModal').classList.remove('on');removeWorld(id)}
-  else if(k=='undo'){undoDelete()}}
- function askDelete(id){const p=byId(id);if(!p||p.plaza)return;const m=el.querySelector('#plnModal');
-  if(entered&&cur==id){toast('You are inside this world right now. Travel somewhere else first, then delete it.');AU.error();return}
-  m.dataset.id=id;const bl=p.stat&&p.stat.blocks?p.stat.blocks:0;
-  m.innerHTML='<div class="card" role="alertdialog" aria-label="Delete world"><h3>Delete “'+esc(p.label)+'”?</h3><p>This permanently erases the saved changes of this world from this device'+(bl?' ('+bl+' blocks changed'+(p.stat.objs?', '+p.stat.objs+' objects':'')+')':'')+'. Your character, items and other worlds are not touched.</p><label for="plnDelIn">Type <b>'+esc(id)+'</b> to confirm</label><input id="plnDelIn" autocomplete="off" spellcheck="false"><div class="acts"><button data-a="delNo">Keep it</button><button class="dng" data-a="delYes" disabled>Delete forever</button></div></div>';
-  m.classList.add('on');setTimeout(()=>{const i=m.querySelector('input');i&&i.focus()},30)}
- function onInput(e){if(e.target.id=='plnDelIn'){const b=el.querySelector('[data-a=delYes]');b.disabled=e.target.value.trim().toLowerCase()!=el.querySelector('#plnModal').dataset.id}
-  else if(e.target.id=='plnName'){S.newName=e.target.value;const id=cleanId(S.newName),dup=id&&(ids().includes(id)||id=='plaza');setPreview(S.newTheme||'verdant',S.newName);el.querySelector('#plnIdv').innerHTML=id?(dup?'<span class="warn">“'+esc(id)+'” already exists</span>':'world id: '+esc(id)):'Letters, numbers, - and _ only';el.querySelector('[data-a=form]').disabled=!id||dup}}
- function onFieldKey(e){if(e.target.tagName!='INPUT')return;if(e.key=='Enter'){e.preventDefault();e.stopPropagation();if(e.target.id=='plnRn')rename(S.sel,e.target.value);else if(e.target.id=='plnName'){const b=el.querySelector('[data-a=form]');if(b&&!b.disabled)b.click()}else if(e.target.id=='plnDelIn'){const b=el.querySelector('[data-a=delYes]');if(b&&!b.disabled)b.click()}}else if(e.key=='Escape'){e.preventDefault();e.stopPropagation();if(e.target.id=='plnRn'){S.renaming=false;renderPanels()}else if(e.target.id=='plnDelIn')el.querySelector('#plnModal').classList.remove('on');else overview()}}
- function onKey(e){if(!open)return;if(e.target&&e.target.tagName=='INPUT'){onFieldKey(e);e.stopPropagation();return}
-  const k=e.key;if(S.ent||S.form){if(k!='Tab'&&k!='Shift'&&k!='Control'&&k!='Alt'&&k!='Meta'){skip();e.preventDefault();e.stopPropagation()}return}
-  if(el.querySelector('#plnModal').classList.contains('on')){if(k=='Escape'){el.querySelector('#plnModal').classList.remove('on');e.preventDefault();e.stopPropagation()}return}
-  if(k=='Escape'){e.preventDefault();e.stopPropagation();const at=el.querySelector('#plnAtlas');if(at.classList.contains('on')){at.classList.remove('on');return}if(S.mode=='focus'||S.mode=='create')overview();else exit()}
-  else if(k=='ArrowRight'||k=='ArrowDown'){if(S.mode!='create'){step(1);e.preventDefault();e.stopPropagation()}}
-  else if(k=='ArrowLeft'||k=='ArrowUp'){if(S.mode!='create'){step(-1);e.preventDefault();e.stopPropagation()}}
-  else if(k=='Enter'&&S.mode=='focus'&&!(e.target.closest&&e.target.closest('button'))){go(S.sel);e.preventDefault();e.stopPropagation()}
-  else if((k=='n'||k=='N')&&S.mode!='create'){openCreate();e.preventDefault();e.stopPropagation()}
-  else if(k=='Tab'){/* native focus order: dock, panel, header */}
-  else if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&k.length==1){e.stopPropagation()}}
- function openCreate(){if(S.ent||S.form)return;S.mode='create';S.creating=true;S.sel=null;S.settings=false;S.newTheme=S.newTheme||'verdant';S.newName=S.newName||'';setPreview(S.newTheme,S.newName);viewPlanet(S.pv);AU.select();renderPanels();setTimeout(()=>{const i=el.querySelector('#plnName');i&&i.focus()},60)}
- // ------------------------------------------------------------ open / close
- function openUI(opts){opts=opts||{};build();if(open){if(opts.create!=null){S.newName=cleanId(opts.create);openCreate();setPreview(S.newTheme,S.newName);renderNew()}else if(opts.select)select(opts.select);return}load();sync();flush();open=true;S.openAt=Date.now();el.style.display='block';el.style.opacity='1';el.classList.remove('out');void el.offsetWidth;el.classList.add('in');
-  try{if(typeof SHOW7!='undefined'&&SHOW7.isOpen)SHOW7.close()}catch(_){}try{menuEl.style.display='none'}catch(_){}try{mdL=mdR=false}catch(_){}
-  W=H=0;S.q=0;S.ema=16;S.ent=S.arr=S.form=null;S.sel=null;S.hov=null;S.pv=null;S.sparks.length=0;S.settings=false;PLG7.buildBackdrop(lowfx());buildPlanets();fit();const now=performance.now();last=0;t0=now;
-  const here=entered?byId(cur):null;
-  if(opts.create!=null){S.mode='overview';viewOverview(true);openCreate();S.newName=cleanId(opts.create);setPreview(S.newTheme,S.newName);renderNew()}
-  else if(here){S.mode='focus';S.sel=here.id;if(!here.plaza)here.stat=readSave(here.id);viewPlanet(here,true);if(!reduce()){S.arr={t0:now,id:here.id}}if(here.rec&&!here.rec.disc){here.rec.disc=1;save()}renderPanels();AU.discover&&0}
-  else{S.mode='overview';viewOverview(true);renderPanels()}
-  if(opts.select&&byId(opts.select))select(opts.select,true);
-  window.RB_COVER=true;cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);AU.start();AU.tick();
-  const newly=S.planets.find(p=>p.rec&&!p.rec.disc);if(newly&&S.mode=='overview'){setTimeout(()=>{if(open&&S.mode=='overview'){newly.rec.disc=1;save();AU.discover();toast('New world discovered: '+newly.label)}},1400)}}
- function close(fast){if(!open)return;open=false;window.RB_COVER=false;cancelAnimationFrame(raf);AU.stop();el.classList.remove('in');el.classList.add('out');S.ent=S.arr=S.form=null;S.drag=null;
-  const done=()=>{if(open)return;el.style.display='none';el.querySelector('#plnModal').classList.remove('on');el.querySelector('#plnAtlas').classList.remove('on');
-   // free everything this screen created
-   S.planets.length=0;S.sparks.length=0;S.pv=null;PLG7.dispose();try{g.clearRect(0,0,cv.width,cv.height)}catch(_){}cv.width=cv.height=1;W=H=0};
-  setTimeout(done,fast?30:260)}
- load();
- return{info:n=>({label:labelOf(n),T:THEMES[themeOf(n)]}),exit,open:openUI,close,touch,sync,select,go,create,rename,removeWorld,undoDelete,themeOf,ids,get isOpen(){return open},get state(){return S},get db(){return db},planets:()=>S.planets,explored,atlasCheck,AU,skip,cleanId,skyOf,load,readSave}})();
-// remember every world the game loads, whichever way the player got there, and play the world title card
-{const _lw=loadWorld;loadWorld=function(n,e){const nn=PLN7.cleanId(n)||'plaza',was=nn=='plaza'?{ent:PLN7.db.m.plazaEnt,last:PLN7.db.m.plazaLast}:PLN7.db.w[nn],info={first:!(was&&was.ent),last:was&&was.last||0};
- const r=_lw.apply(this,arguments);try{PLN7.touch(cur)}catch(_){}try{INTRO7.world(cur,info)}catch(_){}return r}}
-// ---- wiring: the old world list buttons and a HUD button now open the atlas
-(()=>{const $=id=>document.getElementById(id);
- try{$('bw').onclick=()=>PLN7.open();$('bj').onclick=()=>PLN7.open({create:$('wn').value});$('br').onclick=()=>PLN7.open({create:'w'+(1000+Math.random()*9000|0)});$('wn').onkeydown=e=>{if(e.key=='Enter')PLN7.open({create:$('wn').value})}}catch(_){}
-})();
-
 /* ========== LATE: 89-showart.js ========== */
 // ===== V7 showcase illustration: original procedural anime bust-up portrait (vector, scales crisply) =====
 // Driven by the real character data: cel.ap (hair, eyes, outfit, accessory, cape, colours), level-gated wings, equipped weapon.
@@ -5822,54 +5086,6 @@ const SHOWART=(()=>{
 // shared appearance sanitiser (also used for saved character slots)
 function sanAp(a){const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;a=a||{};
  return{hair:n(a.hair,0,0,AP.hair.length-1),eyes:n(a.eyes,0,0,AP.eyes.length-1),outfit:n(a.outfit,0,0,AP.outfit.length-1),acc:n(a.acc,0,0,AP.acc.length-1),cape:n(a.cape,0,0,AP.cape.length-1),eyeCol:n(a.eyeCol,0,0,AP.eyeCol.length-1),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}
-
-/* ========== LATE: 89-z-intro.js ========== */
-// ===== INTRO7: launch cinematic + the title card shown whenever you enter a world (new or returning) =====
-// Both are skippable with any key or click, never block play (the world card lets you keep moving), and shrink to a quick fade with reduced motion.
-const INTRO7=(()=>{
- const reduce=()=>{try{return !!(cel.opt.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(_){return false}};
- const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let el=null,raf=0,playing=false,played=false;
- // ---- launch cinematic
- function play(done){const fin=()=>{try{done&&done()}catch(e){console.error(e)}};
-  if(playing||played||(typeof OPT!='undefined'&&OPT.intro===0)){fin();return}played=playing=true;
-  const root=document.createElement('div');root.id='intro7';root.setAttribute('role','presentation');root.innerHTML='<canvas></canvas><div class="skip">CLICK OR PRESS ANY KEY TO SKIP</div>';document.body.appendChild(root);root.style.display='block';
-  const cv=root.querySelector('canvas'),g=cv.getContext('2d'),red=reduce(),D=Math.min(1.25,devicePixelRatio||1);let W=0,H=0,end=false,t0=performance.now(),last=0,img=null,sp=null,geo=null,tx=null,rot=0;
-  const fit=()=>{W=cv.width=Math.max(320,innerWidth*D|0);H=cv.height=Math.max(240,innerHeight*D|0)};fit();
-  const R=PLG7.rng(5),stars=[];for(let i=0;i<110;i++)stars.push({x:R(),y:R(),s:.5+R()*1.6,p:R()*6,l:R()});
-  try{tx=PLG7.buildTex('plaza',0,false);geo=PLG7.geo(176,.28);sp=document.createElement('canvas');sp.width=sp.height=176;img=sp.getContext('2d').createImageData(176,176)}catch(_){}
-  const T=red?1500:4600;let chime=0;
-  const stop=()=>{if(end)return;end=true;cancelAnimationFrame(raf);root.style.opacity='0';removeEventListener('keydown',skip,true);setTimeout(()=>{root.remove();playing=false},520);fin()};
-  const skip=e=>{if(e&&e.type=='keydown'){e.preventDefault();e.stopPropagation()}stop()};
-  root.addEventListener('pointerdown',skip);addEventListener('keydown',skip,true);
-  const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
-  function frame(now){if(end)return;raf=requestAnimationFrame(frame);if(now-last<(red?100:33))return;last=now;const t=now-t0;if(t>T){stop();return}const u=t/T;
-   g.fillStyle='#04030b';g.fillRect(0,0,W,H);
-   const gl=g.createRadialGradient(W*.5,H*.62,0,W*.5,H*.62,Math.max(W,H)*.7);gl.addColorStop(0,'rgba(90,70,170,'+(.35*ease(u*2.5))+')');gl.addColorStop(1,'rgba(4,3,11,0)');g.fillStyle=gl;g.fillRect(0,0,W,H);
-   for(const s of stars){const tw=.5+.5*Math.sin(t/600*(.5+s.l)+s.p),zz=1+u*(.6+s.l*1.8),x=(s.x-.5)*W*zz+W/2,y=(s.y-.5)*H*zz+H/2;g.fillStyle='rgba(255,255,255,'+(ease(u*4)*(.25+.6*tw*s.l)).toFixed(2)+')';g.fillRect(x,y,s.s*D,s.s*D)}
-   // planet rises from below the horizon
-   const pu=ease((u-.12)/.5),R0=Math.min(W,H)*.2,px=W/2,py=H*(1.15-pu*.55);
-   if(tx&&pu>0){rot=t/90000;PLG7.render(img,geo,tx,rot%1,(rot*1.4)%1,PLG7.THEMES.plaza,1,0);sp.getContext('2d').putImageData(img,0,0);
-    g.save();g.globalCompositeOperation='lighter';g.globalAlpha=pu*.9;const hg=g.createRadialGradient(px,py,R0*.9,px,py,R0*1.9);hg.addColorStop(0,'rgba(255,225,150,.55)');hg.addColorStop(1,'rgba(255,225,150,0)');g.fillStyle=hg;g.beginPath();g.arc(px,py,R0*1.9,0,6.3);g.fill();g.restore();
-    g.save();g.globalAlpha=pu;g.beginPath();g.arc(px,py,R0,0,6.3);g.clip();g.drawImage(sp,px-R0,py-R0,R0*2,R0*2);const sh=g.createRadialGradient(px-R0*.4,py-R0*.4,R0*.2,px,py,R0*1.1);sh.addColorStop(0,'rgba(255,255,255,.08)');sh.addColorStop(.5,'rgba(0,0,0,0)');sh.addColorStop(1,'rgba(4,2,16,.5)');g.fillStyle=sh;g.fillRect(px-R0,py-R0,R0*2,R0*2);g.restore()}
-   // title
-   const tu=ease((u-.42)/.3),fo=1-ease((u-.9)/.1),ls=(1.1-.55*tu),fs=Math.round(Math.min(W/9,H/6.5));
-   if(tu>0){if(!chime){chime=1;try{PLN7.AU.discover()}catch(_){}}g.save();g.globalAlpha=tu*fo;g.textAlign='center';g.fillStyle='#fff';g.font='700 '+fs+'px '+(getComputedStyle(document.body).fontFamily||'sans-serif');try{g.letterSpacing=(fs*ls*.6)+'px'}catch(_){}
-    g.fillText('ROOTBOUND',W/2+(fs*ls*.3),H*.3);g.font='500 '+Math.round(fs*.26)+'px '+(getComputedStyle(document.body).fontFamily||'sans-serif');try{g.letterSpacing=(fs*.12)+'px'}catch(_){}g.globalAlpha=ease((u-.55)/.25)*fo*.8;g.fillStyle='#d9d3ff';g.fillText('CELESTIAL ASCENSION',W/2+(fs*.06),H*.3+fs*.46);g.restore()}
-   if(u>.9){g.fillStyle='rgba(255,255,255,'+(.4*Math.sin((u-.9)*10*Math.PI/1)).toFixed(2)+')';if(u<.97)g.fillRect(0,0,W,H)}}
-  raf=requestAnimationFrame(frame)}
- // ---- world title card
- let card=null,tmr=0,lastN='',lastT=0;
- function world(n,info){if(!n)return;const now=Date.now();if(n==lastN&&now-lastT<8000)return;lastN=n;lastT=now;try{if(typeof creatorOn!='undefined'&&creatorOn)return}catch(_){}
-  let inf=null;try{inf=PLN7.info(n)}catch(_){}if(!inf)return;
-  if(!card){card=document.createElement('div');card.id='wcard7';card.setAttribute('aria-live','polite');card.innerHTML='<div class="tint"></div><div class="bar t"></div><div class="bar b"></div><div class="card"><div class="k"></div><h1></h1><div class="s"></div></div>';document.body.appendChild(card)}
-  const c=inf.T.atm.join(',');card.querySelector('.tint').style.background='radial-gradient(ellipse at 50% 38%,rgba('+c+',.30),rgba('+c+',0) 62%),linear-gradient(180deg,rgba(4,3,11,.55),rgba(4,3,11,0) 35%)';
-  card.querySelector('.k').textContent=info&&info.first?(n=='plaza'?'WELCOME TO ROOTBOUND':'NEW WORLD DISCOVERED'):'WELCOME BACK';card.querySelector('h1').textContent=inf.label;
-  let sub=inf.T.name;if(info&&!info.first&&info.last){try{sub+=' · last visit '+new Date(info.last).toLocaleDateString([], {day:'numeric',month:'short'})}catch(_){}}card.querySelector('.s').textContent=sub;
-  clearTimeout(tmr);card.style.display='block';void card.offsetWidth;card.classList.add('on');
-  const off=()=>{card.classList.remove('on');removeEventListener('keydown',off,true);removeEventListener('pointerdown',off,true);setTimeout(()=>{if(!card.classList.contains('on'))card.style.display='none'},1100)};
-  addEventListener('keydown',off,true);addEventListener('pointerdown',off,true);tmr=setTimeout(off,reduce()?1800:3600)}
- return{play,world,get playing(){return playing}}})();
 
 /* ========== LATE: 90-hooks.js ========== */
 // ===== V6 hooks: connect gameplay events to VFX without rewriting legacy systems =====
@@ -6511,8 +5727,8 @@ const SHOW7=(()=>{
  function swap(d){if(busy)return;busy=1;const n=(cur+d+CHARS.length)%CHARS.length;el.classList.add('swap');UIS.play('char');setTimeout(()=>{cur=n;gpage=Math.floor(cur/4);render();el.classList.remove('swap');el.classList.add('swapin');setTimeout(()=>{el.classList.remove('swapin');busy=0},320)},200)}
  function selectCur(){const i=cur;if(!unlocked(i))return false;X6.sc.act=i;Object.assign(cel.ap,apOf(i));try{celSave()}catch(_){}x6Save();UIS.play(CHARS[i].stars>=5?'rare':'select');say((i?CHARS[i].first:'Your look')+' is now active');return true}
  function ensureGame(cb){if(entered){cb();return}try{$('bp').click()}catch(_){}setTimeout(()=>{if(entered||creatorOn)cb()},60)}
- function close(){if(!open)return;open=false;stop();el.classList.remove('in');setTimeout(()=>{if(!open)el.style.display='none'},260);UIS.play('close')}
- function openUI(){build();open=true;el.style.display='block';try{menuEl.style.display='none'}catch(_){}if(!X6.sc.looks[0])X6.sc.looks[0]=sanAp(cel.ap);cur=X6.sc.act;if(!unlocked(cur))cur=0;gpage=Math.floor(cur/4);render();fit();el.classList.remove('in');void el.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('in')));t0=performance.now();loop();UIS.play('open')}
+ function close(){if(!open)return;open=false;window.RB_COVER=false;stop();el.classList.remove('in');setTimeout(()=>{if(!open)el.style.display='none'},260);UIS.play('close')}
+ function openUI(){build();open=true;window.RB_COVER=true;   /* full-screen and opaque: pause the world behind it */el.style.display='block';try{menuEl.style.display='none'}catch(_){}if(!X6.sc.looks[0])X6.sc.looks[0]=sanAp(cel.ap);cur=X6.sc.act;if(!unlocked(cur))cur=0;gpage=Math.floor(cur/4);render();fit();el.classList.remove('in');void el.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('in')));t0=performance.now();loop();UIS.play('open')}
  function onClick(e){const a=e.target.closest('[data-a],[data-n],[data-d],[data-g],[data-p],[data-t]');if(!a){el.querySelectorAll('.gmenu').forEach(m=>m.hidden=true);return}
   if(a.dataset.n){e.preventDefault();nav(a.dataset.n);return}
   if(a.dataset.d){swap(+a.dataset.d);return}
@@ -6531,7 +5747,7 @@ const SHOW7=(()=>{
   const go=f=>{close();ensureGame(f)};
   if(k=='inv')go(()=>INV7.open());
   else if(k=='store')go(()=>STORE7.open());
-  else if(k=='worlds'){close();setTimeout(()=>{try{PLN7.open()}catch(e){console.error(e);try{openMenu('mworlds')}catch(_){}}},120)}
+  else if(k=='worlds'){close();setTimeout(()=>{try{openMenu('mworlds')}catch(_){}},120)}
   else if(k=='coll')go(()=>{try{BOOK7.open()}catch(_){try{UI6.open('wings')}catch(_){}}});
   else if(k=='prof')go(()=>{try{UI6.open('profile')}catch(_){}});
   else if(k=='set')go(()=>{try{UI6.open('settings')}catch(_){}})}
@@ -6543,9 +5759,8 @@ const SHOW7=(()=>{
 function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlgOpen=true;dlg.style.display='block';try{renderDlg()}catch(_){}try{UIS.play('open')}catch(_){}}
 // persist edits made in the appearance editor into the active character slot
 {const _cs=celSave;celSave=function(){try{if(typeof SHOW7!='undefined'&&X6&&X6.sc&&!(X6.sc.act>0&&0)){X6.sc.looks[X6.sc.act|0]=sanAp(cel.ap);x6Save()}}catch(_){}_cs()}}
-// open at launch (after login) and via the HUD Home button / H key chord
-if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(RB_BLOCKED()||creatorOn)return;clearInterval(iv);INTRO7.play(()=>{try{PLN7.open()}catch(e){console.error(e);SHOW7.open()}})},300)}
-function RB_BLOCKED(){try{return getComputedStyle(document.getElementById('login')).display!='none'}catch(_){return false}}
+// open at launch and via the HUD Home button / H key chord
+if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(creatorOn)return;clearInterval(iv);SHOW7.open()},300)}
 (()=>{const mkb=()=>{const g=document.querySelector('#hudbtns')||document.querySelector('#bmenu')?.parentElement;if(!g||document.getElementById('bhome'))return;const b=document.createElement('button');b.id='bhome';b.title='Home / characters';b.textContent='⌂';b.onclick=()=>{if(SHOW7.isOpen)SHOW7.close();else SHOW7.open()};g.insertBefore(b,g.firstChild)};setTimeout(mkb,400)})();
 
 /* ========== LATE: 99-a-sanitize.js ========== */
@@ -6562,7 +5777,7 @@ try{RBDIAG.stage('late-scripts-loaded')}catch(_){}
 // ===== V6 main loop: legacy update/draw + VFX + minimap + quality manager =====
 (function(){let last=performance.now(),fpsC=0,fpsT=last,acc=0;
  function loop(n){const raw=n-last;last=n;
-  if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const dt=Math.min(.05,raw/1000);
+  if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const dt=Math.min(.05,raw/1000);window.FDT=dt;
   try{update(dt);evTick(dt);BOSS6.tick(dt);try{OBJ6.tick(dt)}catch(_){}DAILY6.tick(dt);VFX.update(dt);draw();if(window.RBDIAG&&!RBDIAG.ready)RBDIAG.done();
    if(entered){const w=cv.width,hh=cv.height;g.save();g.scale(ZM,ZM);VFX.draw(g,cam.x,cam.y,w/ZM,hh/ZM);BOSS6.drawProj(g,cam.x,cam.y);g.restore();POST6.run(w,hh);UI6.minimap(n)}}catch(e){if(!loop.err){loop.err=1;console.error(e)}}
   QM.tick(raw,n);fpsC++;if(n-fpsT>500){$('fps').textContent=Math.round(fpsC*1000/(n-fpsT))+' fps | '+QM.cur.n+' | fx '+VFX.count;fpsC=0;fpsT=n}
