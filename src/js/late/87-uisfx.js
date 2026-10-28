@@ -16,7 +16,7 @@ const UIS=(()=>{let ctx=null,last={},master=null;const opt=()=>{try{return cel.o
  // global hover/click for editorial UI
  document.addEventListener('pointerover',e=>{const b=e.target.closest&&e.target.closest('.ed button:not(:disabled),.ed .it7,.ed .hb,.ed .gal,button:not(:disabled),.hcard,.hchip,.hb,.plnPanel button,select');if(b&&b!==UIS._h){UIS._h=b;play('hover')}},true);
  document.addEventListener('pointerout',e=>{if(e.target===UIS._h)UIS._h=null},true);
- document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;if(t.closest('.hchip'))return play('toggle');if(t.closest('[data-a=fav]'))return play('heart');const b=t.closest('.ed .btn,.ed .nav a,.ed nav a,button,.hcard');if(b&&!b.disabled)play(b.id=='hubx'?'close':'click')},true);
+ document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;if(t.closest('.hchip')||t.matches('.rb-toggle'))return play('toggle');if(t.closest('#hubnav button,.snav7 button,#store7 nav button,#inv7 nav button,.tabs2 button'))return play('tab');if(t.closest('[data-a=fav]'))return play('heart');const b=t.closest('.ed .btn,.ed .nav a,.ed nav a,button,.hcard');if(b&&!b.disabled)play(b.id=='hubx'?'close':'click')},true);
  document.addEventListener('input',e=>{const t=e.target;if(t&&t.type=='range')play('tick')},true);
  document.addEventListener('change',e=>{const t=e.target;if(t&&t.tagName=='SELECT')play('select')},true);
  try{const _s=say;say=function(m){const r=_s.apply(this,arguments);try{play('pop')}catch(_){}return r}}catch(_){}

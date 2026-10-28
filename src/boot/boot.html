@@ -1,10 +1,16 @@
 <style id="rb-boot-css">
 html,body{margin:0;background:#ece8f5}
-#rbboot{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:linear-gradient(135deg,#faf8f4,#ece8f5 55%,#e1ebf7);color:#1d1b26;font:600 13px system-ui,'Segoe UI',Arial,sans-serif;transition:opacity .4s}
+html[data-theme=dark],html[data-theme=dark] body{background:#1d1631}
+#rbboot{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:radial-gradient(900px 520px at 50% 40%,rgba(255,255,255,.85),transparent 65%),linear-gradient(150deg,#faf8f4,#ece6f7 55%,#e1ebf7);color:#1d1b26;font:600 13px system-ui,'Segoe UI',Arial,sans-serif;transition:opacity .4s}
+html[data-theme=dark] #rbboot{background:radial-gradient(900px 520px at 50% 40%,rgba(110,80,170,.3),transparent 65%),linear-gradient(150deg,#1d1631,#251b3d 50%,#141b30);color:#f1ebf8}
+#rbboot:before{content:'';position:absolute;left:50%;top:50%;width:min(520px,90vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(122,102,194,.22);box-shadow:inset 0 0 0 18px transparent,inset 0 0 0 19px rgba(122,102,194,.14);pointer-events:none}
 #rbboot.off{opacity:0;pointer-events:none}
-#rbboot b{font:italic 900 34px system-ui,'Segoe UI',Arial,sans-serif;letter-spacing:-.02em}
-#rbboot i{font:700 9px system-ui;letter-spacing:.34em;color:#6d6a80;font-style:normal}
-#rbboot .sp{width:22px;height:22px;border-radius:50%;border:2px solid #d9d4e4;border-top-color:#7a66c2;animation:rbb 1s linear infinite}@keyframes rbb{to{transform:rotate(360deg)}}
+#rbboot b{font:italic 700 46px 'Cormorant Garamond',Georgia,'Times New Roman',serif;letter-spacing:.04em;position:relative}
+#rbboot i{font:700 9px system-ui;letter-spacing:.34em;color:#6d6a80;font-style:normal;position:relative}
+html[data-theme=dark] #rbboot i{color:#a59dbc}
+#rbboot .sp{position:relative;width:22px;height:22px;border-radius:50%;border:2px solid rgba(122,102,194,.25);border-top-color:#b4405a;animation:rbb 1s linear infinite}@keyframes rbb{to{transform:rotate(360deg)}}
+#rbmsg{position:relative;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+@media (prefers-reduced-motion:reduce){#rbboot .sp{animation-duration:3s}}
 #rbdiag{display:none;max-width:min(640px,92vw);background:#fff;border:1px solid #d9d4e4;border-radius:14px;padding:18px 20px;box-shadow:0 20px 50px -20px rgba(40,30,70,.5);text-align:left}
 #rbdiag h2{margin:0 0 6px;font-size:16px}#rbdiag p{margin:0 0 10px;font-weight:500;color:#3a3748;line-height:1.5}
 #rbdiag pre{max-height:200px;overflow:auto;background:#f4f1f8;border-radius:8px;padding:10px;font:11px/1.45 Consolas,monospace;white-space:pre-wrap;user-select:text;margin:0 0 10px}
@@ -24,6 +30,8 @@ var D=window.RBDIAG={t0:Date.now(),stages:[],errors:[],assets:[],ready:false,
    'userAgent: '+n.userAgent,'viewport: '+innerWidth+'x'+innerHeight+' dpr '+(devicePixelRatio||1),'online: '+n.onLine,'localStorage: '+st,'canvas: '+JSON.stringify(c),
    'ready: '+this.ready+' elapsed: '+(Date.now()-this.t0)+'ms','ERRORS: '+(this.errors.length?this.errors.map(function(e){return e.ms+'ms ['+e.k+'] '+e.m}).join(' || '):'none'),'--- stages ---'].concat(this.stages.map(function(s){return s.ms+'ms '+s.n+(s.i?' ('+s.i+')':'')}),['--- errors ---'],this.errors.length?this.errors.map(function(e){return e.ms+'ms ['+e.k+'] '+e.m}):['none'],['--- optional assets ---'],this.assets.length?this.assets:['none failed']).join('\n')}};
 D.stage('boot-script');
+/* paint the loading screen in the saved theme (97-theme.js stores it); blocked storage just keeps the light theme */
+try{var th=window.localStorage.getItem('rbtheme');if(th=='auto')th=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';if(th=='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}
 /* storage that may throw (blocked site data / policy): fall back to memory so the game still starts */
 try{window.localStorage.getItem('rbt')}catch(e){D.err('storage','localStorage unavailable: '+e.name+' - using in-memory fallback');var m={};try{Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:function(k){return Object.prototype.hasOwnProperty.call(m,k)?m[k]:null},setItem:function(k,v){m[k]=String(v)},removeItem:function(k){delete m[k]},clear:function(){m={}},key:function(i){return Object.keys(m)[i]||null},get length(){return Object.keys(m).length}}})}catch(_){}}
 window.addEventListener('error',function(e){if(e.target&&e.target!==window&&(e.target.src||e.target.href)){D.assets.push((e.target.tagName||'')+' '+(e.target.src||e.target.href));return}D.err('error',(e.message||'')+' @'+(e.filename||'').split('/').pop()+':'+e.lineno+':'+e.colno)},true);

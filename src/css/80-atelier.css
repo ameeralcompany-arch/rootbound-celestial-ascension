@@ -284,7 +284,7 @@ html[data-theme=dark] .prof canvas#pv{background:radial-gradient(circle at 50% 3
 .kv7 div{padding:10px 12px;border:1px solid var(--line);border-radius:var(--rad-md);background:var(--g-pearl)}
 .kv7 small{display:block;font:700 9px var(--font-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}.kv7 b{font:800 17px var(--font-ui);color:var(--ink)}
 /* ---- inventory sheet (#inv7) ---- */
-#inv7{background:var(--overlay)!important}
+#inv7{background:var(--overlay)!important;z-index:65!important}.assignbanner{z-index:66!important}
 #inv7 .sheet{background:var(--bg-page)!important;border:1px solid var(--line)!important;border-radius:var(--rad-lg);overflow:hidden;box-shadow:var(--sh-3)!important}
 #inv7 .sheet::before{animation:none!important;opacity:.35!important}
 #inv7 header{background:var(--g-holo);border-bottom:1px solid var(--line)!important;padding:18px 24px 12px!important;position:relative}
@@ -316,7 +316,7 @@ html[data-theme=dark] #inv7 nav button.on{background:var(--g-accent)!important;c
 #store7 header h2{font-family:var(--font-display);font-style:italic;font-weight:700;font-size:30px!important;letter-spacing:.08em!important}
 #store7 header h2:after{content:'✦ curated atelier';font:700 9px var(--font-ui);letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-style:normal;margin-left:14px;vertical-align:middle}
 #store7 header .gv{padding:6px 14px;border-radius:var(--rad-pill);background:var(--panel);border:1px solid var(--line)}
-#store7 .bar{background:var(--g-pearl)}
+#store7 .bar{background:var(--g-pearl)!important;height:auto!important;margin:0!important;border-radius:0!important}
 #store7 .bar input,#store7 .bar select{border-radius:var(--rad-pill)!important;padding:8px 14px!important}
 #store7 .chip{border-radius:var(--rad-pill)!important}#store7 .chip.on{background:var(--g-accent)!important}
 #store7 nav{background:var(--g-pearl-lav);counter-reset:sn}
@@ -360,7 +360,9 @@ html[data-theme=dark] #show .btn{background:var(--g-accent);border-color:transpa
 html[data-theme=dark] #show .btn.ghost{background:transparent;border-color:var(--line-strong);color:var(--ink)}
 html[data-theme=dark] #show .btn.ghost:hover:not(:disabled),html[data-theme=dark] #show .gsel>button:hover,html[data-theme=dark] #show .gmenu button:hover,html[data-theme=dark] #show .gmenu button.on,html[data-theme=dark] #show .idx .arrows button:hover{background:var(--ink);color:#1d1631}
 #show .btn{border-radius:var(--rad-pill)!important}
-#show .idx b{font-family:var(--font-display);font-style:italic;font-weight:700!important;font-size:40px!important}
+#show .idx b{font-family:var(--font-display);font-style:italic;font-weight:700!important;font-size:40px!important;line-height:1}
+#show .idx i{align-self:flex-end!important;margin:0 0 5px 4px!important}
+#hubbody .hrow input[type=color]+label{min-width:0;margin-left:8px}
 /* ---- world menu network card ---- */
 .netcard{background:var(--g-pearl)!important;border-radius:var(--rad-md)!important}
 
