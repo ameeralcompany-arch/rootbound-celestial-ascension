@@ -1,20 +1,230 @@
 [
- {"id":42,"n":"Moss Turf","c":"#5fae4a","h":3,"p":8,"lv":1,"d":"Lush turf with a deep green top and soft soil beneath."},
- {"id":43,"n":"Rich Loam","c":"#6b4a33","h":3,"p":8,"lv":1,"d":"Dark, fertile soil threaded with tiny roots and pebbles."},
- {"id":44,"n":"Slate Paver","c":"#5d6a82","h":6,"p":20,"lv":3,"d":"Blue-grey slate slabs with a chiselled border. Perfect for plazas."},
- {"id":45,"n":"Sandstone Brick","c":"#d9b982","h":5,"p":18,"lv":2,"d":"Warm sandstone bricks with soft mortar lines."},
- {"id":46,"n":"Plaster Wall","c":"#efe6d2","h":4,"p":14,"lv":2,"d":"Cream plaster with hand-troweled texture."},
- {"id":47,"n":"Timber Beam","c":"#6b4528","h":5,"p":16,"lv":2,"d":"Dark oiled timber with vertical grain and wooden pegs."},
- {"id":48,"n":"Terracotta Roof","c":"#c8643a","h":5,"p":22,"lv":4,"d":"Scalloped clay roof tiles in warm orange."},
- {"id":49,"n":"Indigo Roof","c":"#2f3d6b","h":5,"p":24,"lv":4,"d":"Overlapping fish-scale roof tiles in deep indigo."},
- {"id":50,"n":"Cherry Plank","c":"#d98a9b","h":4,"p":20,"lv":3,"d":"Pink cherry-wood planks with a silky grain."},
- {"id":51,"n":"Bamboo","c":"#8ab85a","h":3,"p":15,"lv":2,"d":"Bundled green bamboo stalks with growth nodes."},
- {"id":52,"n":"Lumen Crystal","c":"#5ff0e0","h":5,"p":60,"lv":8,"d":"A faceted teal crystal that glows softly at night.","glow":[95,240,224]},
- {"id":53,"n":"Paper Lantern","c":"#ffb85a","h":2,"p":40,"lv":5,"d":"A warm glowing paper panel in a dark wooden frame.","glow":[255,184,90]},
- {"id":54,"n":"Basalt Column","c":"#3a3f4c","h":7,"p":28,"lv":6,"d":"Dark hexagonal basalt columns."},
- {"id":55,"n":"River Stone","c":"#8f9aa3","h":5,"p":16,"lv":3,"d":"A mosaic of smooth river pebbles."},
- {"id":56,"n":"Frost Brick","c":"#bfe4f5","h":5,"p":30,"lv":6,"d":"Pale icy bricks that sparkle."},
- {"id":57,"n":"Mossy Cobble","c":"#7d8f78","h":6,"p":18,"lv":3,"d":"Old cobblestones softened by moss."},
- {"id":58,"n":"Gilded Trim","c":"#d9b24a","h":6,"p":80,"lv":10,"d":"Ornate gold inlay on dark stone."},
- {"id":59,"n":"Coral Block","c":"#ff8f9a","h":4,"p":30,"lv":5,"d":"Porous coral in sunset pink."}
+ {
+  "id": 42,
+  "n": "Moss Turf",
+  "c": "#5fae4a",
+  "h": 3,
+  "p": 8,
+  "lv": 1,
+  "d": "Lush turf with a deep green top and soft soil beneath."
+ },
+ {
+  "id": 43,
+  "n": "Rich Loam",
+  "c": "#6b4a33",
+  "h": 3,
+  "p": 8,
+  "lv": 1,
+  "d": "Dark, fertile soil threaded with tiny roots and pebbles."
+ },
+ {
+  "id": 44,
+  "n": "Slate Paver",
+  "c": "#5d6a82",
+  "h": 6,
+  "p": 20,
+  "lv": 3,
+  "d": "Blue-grey slate slabs with a chiselled border. Perfect for plazas."
+ },
+ {
+  "id": 45,
+  "n": "Sandstone Brick",
+  "c": "#d9b982",
+  "h": 5,
+  "p": 18,
+  "lv": 2,
+  "d": "Warm sandstone bricks with soft mortar lines."
+ },
+ {
+  "id": 46,
+  "n": "Plaster Wall",
+  "c": "#efe6d2",
+  "h": 4,
+  "p": 14,
+  "lv": 2,
+  "d": "Cream plaster with hand-troweled texture."
+ },
+ {
+  "id": 47,
+  "n": "Timber Beam",
+  "c": "#6b4528",
+  "h": 5,
+  "p": 16,
+  "lv": 2,
+  "d": "Dark oiled timber with vertical grain and wooden pegs."
+ },
+ {
+  "id": 48,
+  "n": "Terracotta Roof",
+  "c": "#c8643a",
+  "h": 5,
+  "p": 22,
+  "lv": 4,
+  "d": "Scalloped clay roof tiles in warm orange."
+ },
+ {
+  "id": 49,
+  "n": "Indigo Roof",
+  "c": "#2f3d6b",
+  "h": 5,
+  "p": 24,
+  "lv": 4,
+  "d": "Overlapping fish-scale roof tiles in deep indigo."
+ },
+ {
+  "id": 50,
+  "n": "Cherry Plank",
+  "c": "#d98a9b",
+  "h": 4,
+  "p": 20,
+  "lv": 3,
+  "d": "Pink cherry-wood planks with a silky grain."
+ },
+ {
+  "id": 51,
+  "n": "Bamboo",
+  "c": "#8ab85a",
+  "h": 3,
+  "p": 15,
+  "lv": 2,
+  "d": "Bundled green bamboo stalks with growth nodes."
+ },
+ {
+  "id": 52,
+  "n": "Lumen Crystal",
+  "c": "#5ff0e0",
+  "h": 5,
+  "p": 60,
+  "lv": 8,
+  "d": "A faceted teal crystal that glows softly at night.",
+  "glow": [
+   95,
+   240,
+   224
+  ]
+ },
+ {
+  "id": 53,
+  "n": "Paper Lantern",
+  "c": "#ffb85a",
+  "h": 2,
+  "p": 40,
+  "lv": 5,
+  "d": "A warm glowing paper panel in a dark wooden frame.",
+  "glow": [
+   255,
+   184,
+   90
+  ]
+ },
+ {
+  "id": 54,
+  "n": "Basalt Column",
+  "c": "#3a3f4c",
+  "h": 7,
+  "p": 28,
+  "lv": 6,
+  "d": "Dark hexagonal basalt columns."
+ },
+ {
+  "id": 55,
+  "n": "River Stone",
+  "c": "#8f9aa3",
+  "h": 5,
+  "p": 16,
+  "lv": 3,
+  "d": "A mosaic of smooth river pebbles."
+ },
+ {
+  "id": 56,
+  "n": "Frost Brick",
+  "c": "#bfe4f5",
+  "h": 5,
+  "p": 30,
+  "lv": 6,
+  "d": "Pale icy bricks that sparkle."
+ },
+ {
+  "id": 57,
+  "n": "Mossy Cobble",
+  "c": "#7d8f78",
+  "h": 6,
+  "p": 18,
+  "lv": 3,
+  "d": "Old cobblestones softened by moss."
+ },
+ {
+  "id": 58,
+  "n": "Gilded Trim",
+  "c": "#d9b24a",
+  "h": 6,
+  "p": 80,
+  "lv": 10,
+  "d": "Ornate gold inlay on dark stone."
+ },
+ {
+  "id": 59,
+  "n": "Coral Block",
+  "c": "#ff8f9a",
+  "h": 4,
+  "p": 30,
+  "lv": 5,
+  "d": "Porous coral in sunset pink."
+ },
+ {
+  "id": 66,
+  "n": "Galaxy Block",
+  "c": "#2a1a5a",
+  "h": 6,
+  "p": 90,
+  "lv": 8,
+  "d": "A swirling nebula sealed in stone. Stars drift and twinkle inside.",
+  "glow": [
+   140,
+   110,
+   255
+  ]
+ },
+ {
+  "id": 67,
+  "n": "Aurora Block",
+  "c": "#1c5a6a",
+  "h": 6,
+  "p": 90,
+  "lv": 8,
+  "d": "Ribbons of green and violet light ripple through frosted glass.",
+  "glow": [
+   100,
+   240,
+   200
+  ]
+ },
+ {
+  "id": 68,
+  "n": "Starlight Marble",
+  "c": "#e8e4f4",
+  "h": 6,
+  "p": 110,
+  "lv": 10,
+  "d": "Pale marble veined with slowly shimmering gold stardust.",
+  "glow": [
+   255,
+   226,
+   150
+  ]
+ },
+ {
+  "id": 69,
+  "n": "Campfire",
+  "c": "#ff8a2a",
+  "h": 2,
+  "p": 40,
+  "lv": 1,
+  "d": "A cosy animated campfire. Stand close to warm up and slowly heal.",
+  "glow": [
+   255,
+   150,
+   60
+  ]
+ }
 ]

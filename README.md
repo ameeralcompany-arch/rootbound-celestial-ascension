@@ -195,3 +195,10 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - **Deep chests** (`85-zz-chests.js`): wooden/iron/golden chests hidden in caves (seeded per world); press E to open once per world for gems, ores, materials and seeds.
 - **Character** is ~20% smaller with a bigger head, blush, bouncier run, landing squash and jump stretch. **Footsteps** change with the block under you. More UI sounds: hover/click everywhere, toggles, slider ticks, favourites, pop on notifications.
 - Test note: store tests now expect 12 shop wings and 20+ weapons.
+
+## V12.3
+- **Nameplate skins** (Hub > Nameplates): Inferno Bar, Frostglass, Celestial Ornate, Crimson Heritage, Y2K Chrome, Void Singularity. Unlock by level; shown on your own nameplate.
+- **Block-break skins** (Settings > Break effect theme): cute soul wisps that float to you, star sparkles, petals, or classic.
+- **Smooth titles** (blur-in, easing letter-spacing) and gently animated aurora backgrounds on hub/inventory panels.
+- **Wands and bows**: Star Wand, Frost Wand (ice eruption + snowflake ring), Void Wand (black hole + lightning), Crimson Tendril Wand, Spectral Chains, Murder Bow (crow flock), Glacier Bow (shattering arrow).
+- **Animated Galaxy, Aurora and Starlight Marble blocks** (66-68) and a **Campfire** (69, warms/heals nearby); decorated Plaza with soft drifting pollen.
