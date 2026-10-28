@@ -115,7 +115,7 @@ const AC6=(()=>{
   return{skin:A.skinCol||(lk&&lk.skin)||'#f1c9a0',hair:A.hairCol||'#3a2a3a',hs:A.hair|0,es:A.eyes|0,eyeCol:eyeC,of:A.outfit|0,out:A.outCol,trim:A.trimCol,pants:shade(A.outCol,-.35),acc:A.acc|0,cape:A.cape|0,lv:lvv}}
  function draw(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){
   wpn=WPN[wpn]?wpn:'fist';wr=wr||{};const local=q==='me',now=performance.now(),cxo=local?null:(q&&q.cx)||null;
-  const L=info(lk,q,local),lvv=L.lv,wingIdx=local?(()=>{const w=curWing(lvl);return w?WINGS.indexOf(w):-1})():(cxo&&cxo.w!=null?cxo.w:-1),aura=local?curAura(lvl):(cxo&&AURAS[cxo.a])||AURAS[0],tier=local?curPlateTier(lvl):(cxo&&cxo.t!=null?cxo.t:npTier(lvv));
+  const L=info(lk,q,local),lvv=L.lv,wingIdx=local?(()=>{const w=wingShown(lvl);return w?WINGS.indexOf(w):-1})():(cxo&&cxo.w!=null?cxo.w:-1),aura=local?curAura(lvl):(cxo&&AURAS[cxo.a])||AURAS[0],tier=local?curPlateTier(lvl):(cxo&&cxo.t!=null?cxo.t:npTier(lvv));
   const feet=cy+54,mode=air?2:Math.abs(vx)>10?1:0;
   // aura circle under the feet (ground-projected)
   if(aura&&aura.id!='none'&&QM.cur.wfx>=0)Sigil.draw(g,aura,cx,feet-1,t,72,.8);
@@ -123,13 +123,13 @@ const AC6=(()=>{
   g.save();const sd=QM.cur.shadow;g.fillStyle='rgba(0,0,0,'+(sd?.32:.22)+')';g.beginPath();g.ellipse(cx,feet,15,4,0,0,6.3);g.fill();g.restore();
   // wings sit behind the body
   const hasLegacy=wr.wing&&WEAR[wr.wing];
-  if(wingIdx>=0&&!hasLegacy){WingArt.draw(g,wingIdx,cx,cy+24,f,t,mode,vx,local?0:(cxo&&cxo.w!=null?(String(name).length%6):0),null,local?'me':'p:'+name,local?P.vy:null);WingArt.extras(g,wingIdx,cx,cy+24,t)}
+  if(!hasLegacy)WingArt.drawChar(g,wingIdx,cx,cy+24,f,t,mode,vx,local?0:(String(name).length%6),local?'me':'p:'+name,local?P.vy:null);
   else if(hasLegacy){g.save();g.translate(cx,feet);g.scale(1.1*f,1.1);try{drawWings(wr.wing,wr.wo!=null?wr.wo:wingOpen,wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,t)}catch(_){}g.restore()}
   g.save();g.translate(cx,feet);{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
   try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr})}finally{g.restore();FX7.ld=false}
   // idle VFX
-  if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.06)VFX.feather(cx+cam.x+(Math.random()<.5?-1:1)*30,cy+cam.y+10+Math.random()*30,WINGS[wingIdx].pal[2],f);
+  if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.05)WingArt.idleFx(WINGS[wingIdx],cx+cam.x,cy+cam.y+10+Math.random()*30,f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}
   // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
   try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}

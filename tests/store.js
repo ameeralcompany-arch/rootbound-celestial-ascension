@@ -19,9 +19,9 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
    if(id!='void'&&!WFX7.NEW[id])out.bad.push('reg '+id);if(!WFX7.TRAIL[id]||!WFX7.IMP[id]||!WFX7.SFX[id])out.bad.push('fx '+id)}
   out.distinct=sigs.size;return out});
  ok('6 weapons: stats, own model (distinct pixels), trail + impact + sound registered',r.distinct==6&&r.bad.length==0,JSON.stringify(r));
- // --- 8 shop wings distinct
- r=await p.evaluate(()=>{const hs=new Set(),bad=[];for(const w of WINGS.filter(w=>w.shop)){const i=WINGS.indexOf(w);const c=document.createElement('canvas');c.width=320;c.height=260;const x=c.getContext('2d');try{WingArt.draw(x,i,160,130,1,1,0,0,0,1)}catch(e){bad.push(w.id)}const d=x.getImageData(0,0,320,260).data;let h=0,px=0;for(let k=0;k<d.length;k+=4)if(d[k+3]>20){px++;h=(h*31+d[k]*3+d[k+1]*5+d[k+2]*7+k)>>>0}if(px<800)bad.push('blank '+w.id);hs.add(h)}return{n:hs.size,bad}});
- ok('12 shop wings render, each visually distinct',r.n==12&&r.bad.length==0,JSON.stringify(r));
+ // --- shop wings distinct (19 sold for gems; level + exclusive wings are never in the catalog)
+ r=await p.evaluate(()=>{const hs=new Set(),bad=[];if(SHOP7.items.some(it=>it.cat=='wings'&&(!wingById(it.ref)||wingById(it.ref).src!='shop')))bad.push('catalog sells a non-shop wing');if(WINGS.filter(w=>w.shop).some(w=>!SHOP7.byId.get('wing_'+w.id)))bad.push('shop wing missing from catalog');for(const w of WINGS.filter(w=>w.shop)){const i=WINGS.indexOf(w);const c=document.createElement('canvas');c.width=320;c.height=260;const x=c.getContext('2d');try{WingArt.draw(x,i,160,130,1,1,0,0,0,1)}catch(e){bad.push(w.id)}const d=x.getImageData(0,0,320,260).data;let h=0,px=0;for(let k=0;k<d.length;k+=4)if(d[k+3]>20){px++;h=(h*31+d[k]*3+d[k+1]*5+d[k+2]*7+k)>>>0}if(px<800)bad.push('blank '+w.id);hs.add(h)}return{n:hs.size,bad}});
+ ok('19 shop wings render, each visually distinct',r.n==19&&r.bad.length==0,JSON.stringify(r));
  // --- purchase rules (offline/local)
  r=await p.evaluate(async()=>{gems=1000;lvl=1;const o={};const g0=gems;o.noMoney=await SHOP7.buy('wpn_astralkat');o.gemsAfterFail=gems==g0;o.has0=SHOP7.has('wpn_astralkat');
   gems=5000;const a=await SHOP7.buy('wpn_astralkat');o.buy=a.ok;o.gems=gems;const dup=await SHOP7.buy('wpn_astralkat');o.dup=dup.ok;o.gems2=gems;
@@ -34,6 +34,17 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  const q=await ctx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.goto(FILE);await q.waitForTimeout(2000);
  r=await q.evaluate(()=>({dragon:SHOP7.has('wing_dragon'),aura:SHOP7.has('fx_aura_void'),eqA:SHOP7.equipped('fx_aura_void'),wing:cel.wing,kat:SHOP7.has('wpn_astralkat')}));
  ok('ownership + equipped cosmetics survive a reload',r.dragon&&r.aura&&r.eqA&&r.wing=='dragon'&&r.kat,JSON.stringify(r));await q.close();
+ // --- wing equip state: one source of truth; unequipping never brings wings back; buying equips; previews never save
+ r=await p.evaluate(async()=>{gems=9000;lvl=60;const o={},id=()=>{const w=curWing(lvl);return w?w.id:null};wingUnequip();cel.wing='auto';o.auto=id();
+  const g0=gems;o.buy=(await SHOP7.buy('wing_eagle')).ok;o.charged=g0-gems;o.afterBuy=id();o.dup=(await SHOP7.buy('wing_eagle')).ok;o.charged2=g0-gems;
+  SHOP7.unequip('wing_dragon');o.otherUn=id();SHOP7.unequip('wing_eagle');o.afterUn=id();o.on=cel.wingsOn;lvl=61;await new Promise(r=>setTimeout(r,300));o.afterLvl=id();
+  o.storeShows=SHOP7.equipped('wing_eagle');cel.wing='dove';o.notOwned=id();cel.wingsOn=0;o.legacyOff=id()+'|'+cel.wing;cel.wingsOn=1;o.legacyOn=id();
+  o.eqLevel=wingEquip('frost');o.cur=id();o.lockedEq=wingEquip('cosmic');o.cur2=id();o.exclBuy=(await SHOP7.buy('wing_sovereign')).ok;o.exclEq=wingEquip('sovereign');
+  WPREV.id='cosmic';WPREV.until=performance.now()+5000;o.prev=wingShown(lvl).id;o.prevSaved=id();WPREV.id=null;o.dj=maxAir();wingUnequip();o.dj0=maxAir();return o});
+ ok('wing equip/unequip: one state, unequip sticks through level-ups, buy equips once, locked/exclusive cannot be forced, preview is not saved',
+  r.auto=='aegis'&&r.buy==1&&r.charged==800&&r.afterBuy=='eagle'&&r.dup==0&&r.charged2==800&&r.otherUn=='eagle'&&r.afterUn===null&&r.on==0&&r.afterLvl===null&&!r.storeShows&&r.notOwned===null&&r.legacyOff=='null|none'&&r.legacyOn=='aegis'&&r.eqLevel&&r.cur=='frost'&&!r.lockedEq&&r.cur2=='frost'&&r.exclBuy==0&&!r.exclEq&&r.prev=='cosmic'&&r.prevSaved=='frost'&&r.dj==1&&r.dj0==0,JSON.stringify(r));
+ {const q2=await ctx.newPage();q2.on('pageerror',e=>errs.push(e.message));await q2.goto(FILE);await q2.waitForTimeout(1500);r=await q2.evaluate(()=>({w:cel.wing,on:cel.wingsOn,cur:curWing(lvl)}));
+  ok('unequipped wings stay unequipped after a reload',r.w=='none'&&r.on==0&&r.cur===null,JSON.stringify(r));await q2.close()}
  // --- store UI
  await p.evaluate(()=>STORE7.open());await p.waitForTimeout(400);
  r=await p.evaluate(()=>{const o={};const cnt=()=>document.querySelectorAll('#store7 .card').length;o.open=STORE7.isOpen;
@@ -43,7 +54,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   STORE7.setFilter({sort:'pd'});const pd=STORE7.list().map(i=>i.price);o.desc=pd.every((v,i)=>!i||pd[i-1]>=v);
   STORE7.setFilter({sort:'feat',rar:'legendary'});o.rar=STORE7.list().every(i=>i.rar=='legendary');STORE7.setFilter({rar:'all',owned:true});o.owned=STORE7.list().every(i=>SHOP7.has(i.id));STORE7.setFilter({owned:false,cat:'featured'});
   o.hud=!!document.getElementById('bstore');return o});
- ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==12&&r.effects>=15&&r.charms==9&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
+ ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==19&&r.effects>=15&&r.charms==9&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
  // buy through the UI with confirm dialog
  await p.evaluate(()=>{gems=5000;lvl=120;STORE7.setFilter({cat:'all',q:'Solar Fang'});STORE7.select('wpn_solarfang')});await p.waitForTimeout(300);

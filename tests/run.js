@@ -14,13 +14,18 @@ async function enter(p,lv){await p.goto(URL);await p.waitForTimeout(700);await p
  {const p=await page(b,guest);await enter(p,12);await p.evaluate(()=>{saveP()});ok('guest uses legacy keys',await p.evaluate(()=>!!localStorage.getItem('rbp')));ok('guest: no errors',p.errs.length==0,p.errs.join('|'));await p.close()}
  // 3. progression rules
  {const p=await page(b,guest);await enter(p,1);
-  const r=await p.evaluate(()=>{const o={};o.w1=curWing(1);o.w10=curWing(10)&&curWing(10).id;o.w29=curWing(29).id;o.w30=curWing(30).id;o.w150=curWing(150).id;o.w1000=curWing(1000).id;o.np=[1,14,15,29,30,134,135,149,150].map(l=>npTier(l)+':'+npName(npTier(l)));o.cnt=WINGS.filter(w=>!w.shop).length;return o});
-  ok('no wings below level 10',r.w1===null);ok('wing tiers follow level thresholds',r.w10=='celestial'&&r.w29=='celestial'&&r.w30=='frost'&&r.w150=='cosmic'&&r.w1000=='cosmic',JSON.stringify([r.w10,r.w29,r.w30,r.w150]));ok('7 progression wing tiers (+ shop wings separate)',r.cnt==7);
+  const r=await p.evaluate(()=>{const o={};const id=l=>{const w=curWing(l);return w?w.id:null};o.w1=curWing(1);o.w4=curWing(4);o.w5=id(5);o.w10=id(10);o.w29=id(29);o.w30=id(30);o.w100=id(100);o.w150=id(150);o.w1000=id(1000);o.np=[1,14,15,29,30,134,135,149,150].map(l=>npTier(l)+':'+npName(npTier(l)));
+   o.cnt=WINGS.filter(w=>w.src=='level').length;o.mile=WINGX.rewards().map(w=>w.lvl).join(',');o.total=WINGS.length;o.excl=WINGS.filter(w=>w.src=='excl').length;o.ids=new Set(WINGS.map(w=>w.id)).size==WINGS.length;return o});
+  ok('no wings below level 5',r.w1===null&&r.w4===null);ok('wing tiers follow the level reward table',r.w5=='feather'&&r.w10=='celestial'&&r.w29=='silver'&&r.w30=='frost'&&r.w100=='ascendant'&&r.w150=='cosmic'&&r.w1000=='cosmic',JSON.stringify(r));
+  ok('13 level rewards (5..150), 6 exclusive wings, unique ids',r.cnt==13&&r.mile=='5,10,15,20,25,30,40,50,60,75,100,120,150'&&r.excl==6&&r.total>=30&&r.ids,JSON.stringify([r.mile,r.total,r.excl]));
   ok('nameplate tiers every 15 levels (Wanderer 1-14 ... Cosmic Overlord 135-149)',r.np[0]=='0:Wanderer'&&r.np[1]=='0:Wanderer'&&r.np[2]=='1:Initiate'&&r.np[5]=='8:Ascendant Paragon'&&r.np[6]=='9:Cosmic Overlord'&&r.np[7]=='9:Cosmic Overlord'&&r.np[8]=='10:Celestial Sovereign',r.np.join(' '));
   // locked wing cannot be forced
-  const f=await p.evaluate(()=>{cel.wing='cosmic';lvl=20;const w=curWing(20).id;cel.wing='auto';return w});ok('locked wing cannot be equipped via saved data',f=='celestial',f);
-  // level-up awakens
-  const up=await p.evaluate(()=>new Promise(res=>{lvl=9;cel.seenW=0;setTimeout(()=>{lvl=10;setTimeout(()=>res({seen:cel.seenW,b:document.getElementById('banner').firstChild.textContent}),500)},400)}));ok('reaching a wing level fires the awakening',up.seen>=1&&/WINGS AWAKENED/.test(up.b),JSON.stringify(up));
+  // level-up awakens (once per milestone)
+  const up=await p.evaluate(()=>new Promise(res=>{lvl=4;setTimeout(()=>{lvl=5;setTimeout(()=>{const b=document.getElementById('banner').firstChild.textContent,s=document.getElementById('banner').lastChild.textContent,c=!!WINGX.S.claimed.feather;res({b,s,c})},1100)},400)}));ok('reaching a wing level fires the awakening, once',/WINGS AWAKENED/.test(up.b)&&/FLEDGLING/.test(up.s)&&up.c,JSON.stringify(up));
+  const f=await p.evaluate(()=>{lvl=20;cel.wing='cosmic';const w=curWing(20);cel.wing='sovereign';const x=curWing(20);cel.wing='auto';return JSON.stringify([w,x])});ok('locked / exclusive wing cannot be equipped via saved data (shows nothing, never swaps in another)',f=='[null,null]',f);
+  const ex=await p.evaluate(()=>{const o={};o.sfx=WINGS.filter(w=>!WINGSFX.P7[w.id]).map(w=>w.id);o.before=WINGX.has('sovereign');o.need=WINGX.req('sovereign')[0].need;for(const b of BOSSES)bossK[b.id]=1;WINGX.tick();o.after=WINGX.has('sovereign');o.eq=wingEquip('sovereign');o.cur=curWing(lvl)&&curWing(lvl).id;
+   o.stored=!!JSON.parse(localStorage.getItem('rbcwing')).ex.sovereign;for(const b of BOSSES)bossK[b.id]=0;WINGX.tick();o.kept=WINGX.has('sovereign');o.reqs=WINGS.filter(w=>w.src=='excl').every(w=>WINGX.req(w.id).length>0);wingUnequip();return o});
+  ok('every wing has a sound profile; exclusive wings unlock from real achievements, persist and stay unlocked',!ex.sfx.length&&!ex.before&&ex.need==6&&ex.after&&ex.eq&&ex.cur=='sovereign'&&ex.stored&&ex.kept&&ex.reqs,JSON.stringify(ex));
   ok('progression: no errors',p.errs.length==0,p.errs.join('|'));await p.close()}
  // 4. every wing tier, aura, outfit, hair renders without error
  {const p=await page(b,guest);await enter(p,160);

@@ -54,15 +54,15 @@ const SHOP7=(()=>{
  setInterval(()=>{if(!srvMode())return;try{const total=Math.max(0,(gems|0)+st.pend);NET7.send({t:'sync',gems:total})}catch(_){}},15000);
  // ---- equipment
  const slotOf=it=>it.cat=='effects'?it.sub:it.cat=='charms'?'charm':it.cat=='wings'?'wing':it.cat=='weapons'?'weapon':it.cat=='gear'?'gear':null;
- function equipped(id){const it=byId.get(id);if(!it)return false;const s=slotOf(it);if(s=='wing')return cel.wingsOn&&cel.wing==it.ref;if(s=='weapon')return wp==it.ref;if(s=='gear')return wear[it.sub]==it.ref;return st.eq[s]===id}
+ function equipped(id){const it=byId.get(id);if(!it)return false;const s=slotOf(it);if(s=='wing'){const w=curWing(lvl);return !!w&&w.id==it.ref}if(s=='weapon')return wp==it.ref;if(s=='gear')return wear[it.sub]==it.ref;return st.eq[s]===id}
  function equip(id){const it=byId.get(id);if(!it||!has(id)){sfx('error');return false}const s=slotOf(it);if(!s)return false;
   if(!lvOk(it)){say('Requires level '+needLv(it));sfx('error');return false}
-  if(s=='wing'){cel.wing=it.ref;cel.wingsOn=1;try{celSave()}catch(_){}}
+  if(s=='wing'){if(!wingEquip(it.ref)){sfx('error');return false}}
   else if(s=='gear'){wear[it.sub]=it.ref}
   else if(s=='weapon'){if(!own[it.ref])return false;wp=it.ref;try{renderW();renderBar()}catch(_){}}
   else{st.eq[s]=id;save()}
   sfx('select');try{FX7.onEquip(s,id)}catch(_){}return true}
- function unequip(id){const it=byId.get(id);if(!it)return;const s=slotOf(it);if(s=='wing'){cel.wingsOn=0;try{celSave()}catch(_){}}else if(s=='weapon'){wp='fist';try{renderW();renderBar()}catch(_){}}else if(s=='gear'){wear[it.sub]=''}else{delete st.eq[s];save()}sfx('click');try{FX7.onEquip(s,null)}catch(_){}}
+ function unequip(id){const it=byId.get(id);if(!it)return;const s=slotOf(it);if(s=='wing'){if(!equipped(id))return;wingUnequip()}else if(s=='weapon'){wp='fist';try{renderW();renderBar()}catch(_){}}else if(s=='gear'){wear[it.sub]=''}else{delete st.eq[s];save()}sfx('click');try{FX7.onEquip(s,null)}catch(_){}}
  const eqRef=slot=>{const id=st.eq[slot];const it=id&&byId.get(id);return it&&has(id)?it.ref:null};
  return{items,byId,RAR,RN,CATS,SLOTS,st,has,count,buy,net,equip,unequip,equipped,eqRef,slotOf,lvOk,needLv,get serverMode(){return srvMode()},get pend(){return st.pend},save,
   markSeen(id){if(!st.seen[id]){st.seen[id]=1;save()}},isNew(id){const it=byId.get(id);return !!(it&&it.new&&!st.seen[id])},grantLocal}})();
