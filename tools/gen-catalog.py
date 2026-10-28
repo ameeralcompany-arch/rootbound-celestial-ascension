@@ -53,20 +53,27 @@ for i,n,r,p,d in W: add(id='wpn_'+i,cat='weapons',n=n,price=p,rar=r,stack=0,ref=
 # ---- new building blocks (ids 42-59), data shared with the client through tools/new-blocks.json
 for b in json.load(open(os.path.join(R,'tools/new-blocks.json'))):
     add(id='blk_%d'%b['id'],cat='blocks',n=b['n'],price=b['p'],rar=rar_by_price(b['p']),stack=1,ref=b['id'],lv=b['lv'],d=b['d'],how='store',new=1)
-# ---- NEW wings
-WG=[('dove','Dove Wings','rare',600,0,'Pearl-white feather wings with luminous tips and falling glitter. Gives a double jump.'),
- ('blossom','Blossom Wings','uncommon',400,0,'Soft petal-shaped wings that shed cherry-blossom petals as you move. Gives a double jump.'),
- ('crystal','Crystal Wings','rare',800,0,'Angular shards with refracting light bands. Gives a double jump.'),
- ('mech','Mechanical Wings','epic',1400,0,'Metal plates and glowing conduits with small turning gears. Gives a double jump.'),
- ('umbral','Umbral Eclipse Wings','epic',1800,0,'Violet-black feathers wrapped in rising dark energy. Gives a double jump.'),
- ('galaxy','Galaxy Wings','legendary',3000,40,'Feather silhouettes filled with a living starfield. Needs level 40. Gives a double jump.'),
- ('dragon','Dragon Wings','legendary',3400,60,'Large articulated bat wings with membranes and bone fingers. Needs level 60. Gives a double jump.'),
- ('moth','Omen Moth Wings','mythic',8000,100,'Broad crimson-black moth wings with glowing veins. The rarest wings. Needs level 100. Gives a double jump.'),
- ('eagle','Eagle Wings','rare',900,0,'Broad brown-and-cream flight feathers, built for long glides. Hold Space to fly.'),
- ('swan','Swan Wings','epic',1600,0,'Layered white plumage with a soft glow. Hold Space to fly.'),
- ('raven','Raven Wings','epic',1800,0,'Glossy black feathers with a violet sheen. Hold Space to fly.'),
- ('plume','Phoenix Plume Wings','legendary',3200,70,'Realistic plumage that burns from deep red to gold. Needs level 70. Hold Space to fly.')]
-for i,n,r,p,lv,d in WG: add(id='wing_'+i,cat='wings',n=n,price=p,rar=r,stack=0,ref=i,lv=lv,d=d,how='store',new=1,excl=(r=='mythic'))
+# ---- wings sold for gems (level + exclusive wings are never sold; see WINGS in src/js/late/20-data.js)
+WG=[('dove','Dove Wings','common',350,0,'Broad, rounded pearl-white feathers with luminous tips. Gives a double jump.'),
+ ('blossom','Blossom Wings','common',380,0,'Soft petal wings that shed cherry-blossom petals as you move. Gives a double jump.'),
+ ('crystal','Amethyst Crystal Wings','uncommon',900,0,'Angular amethyst crystals grown from the earth, catching every light. Gives a double jump.'),
+ ('mech','Blade Mech Wings','uncommon',1000,0,'Five steel blades on a jointed arm, with glowing conduits. Gives a double jump.'),
+ ('umbral','Umbral Obsidian Wings','rare',2200,20,'Long blades of black volcanic glass with a violet rim light. Needs level 20. Gives a double jump.'),
+ ('galaxy','Galaxy Wings','rare',2400,30,'Feathers filled with a living, twinkling starfield. Needs level 30. Gives a double jump.'),
+ ('dragon','Dragon Wings','rare',2600,35,'Red leather membranes stretched over four bone fingers. They flex with every beat. Needs level 35. Gives a double jump.'),
+ ('moth','Omen Moth Wings','uncommon',950,25,'Broad crimson-black moth wings with glowing veins and eye spots. Needs level 25. Gives a double jump.'),
+ ('eagle','Eagle Wings','uncommon',800,0,'Broad brown-and-cream wings with spread finger feathers, built for long glides. Gives a double jump.'),
+ ('swan','Swan Wings','rare',1800,15,'Long, layered white plumage that rises high and glows along the edge. Needs level 15. Gives a double jump.'),
+ ('raven','Raven Wings','rare',2000,20,'Huge glossy black wings with a violet sheen and ragged finger feathers. Needs level 20. Gives a double jump.'),
+ ('plume','Phoenix Plume Wings','rare',2500,40,'Long realistic plumes that burn from deep red to gold. Needs level 40. Gives a double jump.'),
+ ('zephyr','Zephyr Wings','common',320,0,'Sweeping ribbons of wind around faint, airy feathers. Gives a double jump.'),
+ ('bat','Night Bat Wings','uncommon',850,10,'Small demonic bat wings with hooked claws and scalloped membranes. Needs level 10. Gives a double jump.'),
+ ('ember','Ember Wings','uncommon',900,10,'Wings of living flame that flicker and shed embers. Needs level 10. Gives a double jump.'),
+ ('tide','Tide Wings','uncommon',850,0,'Translucent wings of flowing water with rising bubbles. Gives a double jump.'),
+ ('lunar','Lunar Wings','uncommon',950,0,'Three silver crescent moons on each side, glowing softly. Gives a double jump.'),
+ ('circuit','Circuit Wings','rare',2300,30,'Hexagonal energy panels on a thin frame, pulsing with data light. Needs level 30. Gives a double jump.'),
+ ('spirit','Spectral Wings','rare',2100,25,'Ghostly violet membranes on clawed bones, half in this world. Needs level 25. Gives a double jump.')]
+for i,n,r,p,lv,d in WG: add(id='wing_'+i,cat='wings',n=n,price=p,rar=r,stack=0,ref=i,lv=lv,d=d,how='store',new=1,excl=False)
 # ---- NEW effects
 FXI=[('aura_void','aura','Void Aura','rare',600,'Slow violet smoke curls around you.'),
  ('aura_solar','aura','Solar Aura','epic',900,'A warm ring of drifting sparks.'),

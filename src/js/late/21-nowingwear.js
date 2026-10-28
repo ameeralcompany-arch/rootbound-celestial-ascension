@@ -8,7 +8,9 @@ const WINGFIX7=(()=>{
   if(refund>0){gems+=refund;try{say('Wearable wings were removed. Refunded '+refund+' gems.')}catch(_){}}}catch(_){}}
  run();setInterval(run,300);return{run}})();
 // double-jump feathers use the equipped appearance wing's colours, plus a soft whoosh
-featherFx=function(n){const w=curWing(lvl);if(!w||parts.length>480)return;const pal=w.pal;for(let i=0;i<n;i++)parts.push({x:P.x-P.f*10,y:P.y+22+rnd(-10,10),vx:-P.f*rnd(20,110)+rnd(-40,40),vy:rnd(-60,40),l:rnd(.6,1.2),c:pal[1+(i%3)],s:rnd(3,5),r:Math.random()*6,k:'f'});
+featherFx=function(n){const w=curWing(lvl);if(!w||parts.length>480)return;const pal=w.pal;
+ if(!w.a.parts.some(p=>p.s=='fan'&&/point|round|ragged|real|sickle|petal/.test(p.tip))){try{VFX.burst(P.x-P.f*10,P.y+22,[pal[1],pal[2],pal[3],w.sp||'#fff'],n,140,w.fam=='mechanical'?1:w.fam=='elemental'?0:2,.6,10)}catch(_){}}
+ else for(let i=0;i<n;i++)parts.push({x:P.x-P.f*10,y:P.y+22+rnd(-10,10),vx:-P.f*rnd(20,110)+rnd(-40,40),vy:rnd(-60,40),l:rnd(.6,1.2),c:pal[1+(i%3)],s:rnd(3,5),r:Math.random()*6,k:'f'});
  try{if(n>=10){if(typeof WINGSFX!='undefined')WINGSFX.jump();else SFX7.tone(520,880,.18,'sine',.05)}}catch(_){}};
 // saves made before this update may still reference the removed wings: clean them while the save is read, before anything draws them
 {const _ss=sanitizeSave;sanitizeSave=function(p){const r=_ss(p);try{if(r){const pr={angel:150,fairy:240,bat:330,phoenix:520,crystal:900};let ref=0;

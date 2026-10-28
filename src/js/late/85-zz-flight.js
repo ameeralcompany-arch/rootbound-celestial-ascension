@@ -2,19 +2,19 @@
 // stamina limits it, the rest is a glide. Wind and wing-beat sounds follow your speed. =====
 const FLY7=(()=>{
  const F={on:false,sta:1,ph:0,air:0,beat:0,last:0,tier:0};let wn=null;
- const wingNow=()=>{try{return cel.wingsOn?curWing(lvl):null}catch(_){return null}};
+ const wingNow=()=>{try{return curWing(lvl)}catch(_){return null}};
  const maxT=t=>3.2+.14*t;
  function flap(strong){try{wingFlap=1;wingOpen=1}catch(_){}try{featherFx(strong?3:1)}catch(_){}
   if(typeof WINGSFX!='undefined'){WINGSFX.flap(strong);return}
   const v=Math.min(.12,.07+F.tier*.004);noise(.16,520+F.tier*30,v);snd(90+F.tier*3,.14,'sine',.05,.55)}
  function step(dt,ax,busy){const w=wingNow(),hold=!busy&&(K.w||K[' ']||K.arrowup),down=K.s||K.arrowdown;
-  F.tier=w?Math.max(0,WINGS.indexOf(w)):0;
+  F.tier=w?w.pw:0;   // flight power follows rarity (and size), not the table index
   if(P.g||P.sw){F.air=0;F.sta=Math.min(1,F.sta+dt*1.1);if(F.on){F.on=false;WingArt.FL.on=false}F.last=0;return}
   F.air+=dt;
   const can=!!w&&!busy&&hold&&F.sta>0&&F.air>.1&&(P.vy>-150||F.on);
   if(can){
    if(!F.on){F.on=true;F.ph=0;F.last=-1;try{UI6&&0}catch(_){}}
-   WingArt.FL.on=true;WingArt.FL.rate=2*Math.PI*(2.7-.05*Math.min(8,F.tier));WingArt.FL.amp=.5;
+   WingArt.FL.on=true;WingArt.FL.rate=2*Math.PI*(2.9-.05*Math.min(8,F.tier))*(1.12-Math.min(.42,(w.a.L-34)/180));WingArt.FL.amp=w.a.parts[0].s=='mech'?.32:.5;
    F.ph+=dt*WingArt.FL.rate;const s=Math.sin(F.ph);F.sta=Math.max(0,F.sta-dt/maxT(F.tier));
    if(s>=0&&F.last<0)flap(true);F.last=s>=0?1:-1;
    const climb=-(230+F.tier*12)*(.55+.45*s);
