@@ -127,7 +127,7 @@ const NPC2=(()=>{
   if((segT-=dt)<=0){segT=2.5;for(const n of L){const lo=n.lo,hi=n.hi;segs(n);if(!n.fly&&(n.wx<n.lo-1||n.wx>n.hi+1))n.wx=clampX(n,n.wx)}}
   const vw=cv.width/ZM,cx=cam.x+vw/2;
   for(const n of L){const far=abs(n.wx-cx)>vw*.75+240;if(far){n.acc+=dt;if(n.acc<.2)continue;upd(n,n.acc);n.acc=0}else{if(n.acc){upd(n,n.acc+dt);n.acc=0}else upd(n,dt)}
-   n.fx+=(n.face-n.fx)*min(1,dt*13);const pd=n.on&&n.pd<4.2*T&&!(n.night&&n.alpha<.6)?1:0;n.na+=(pd-n.na)*min(1,dt*7);if(n.na<.01)n.na=0}
+   n.fx+=(n.face-n.fx)*min(1,dt*13);if(n.amb)n.x=floor(n.wx/T);const pd=n.on&&n.pd<4.2*T&&!(n.night&&n.alpha<.6)?1:0;n.na+=(pd-n.na)*min(1,dt*7);if(n.na<.01)n.na=0}
   for(let i=PT.length-1;i>=0;i--){const p=PT[i];p.l-=dt;if(p.l<=0){PT.splice(i,1);continue}p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.k=='s')p.vy+=320*dt;else p.vx+=sin(p.l*6+p.x)*8*dt}
   // auto-close an ambient chat when the player walks away
   if(dlgOpen&&curNPC&&curNPC.amb&&abs(P.x-curNPC.wx)>4.8*T)try{closeDlg()}catch(_){}}
