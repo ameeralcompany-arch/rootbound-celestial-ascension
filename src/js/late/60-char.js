@@ -134,7 +134,7 @@ const AC6=(()=>{
   // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
   try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
   // nameplate + bubble
-  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50,tier,nm,lvv);
+  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50,tier,nm,lvv,local?NPSKIN7.cur():null);
   if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-96,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-79);g.restore()}
  }
  function headFull(g,L,hy,t,air){const h=HS[L.hs];hairBack(g,h,hy,L.hair,0,t);head(g,L,hy,t,air,false,0);hairFront(g,h,hy,L.hair,0,t,air)}

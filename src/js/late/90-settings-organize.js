@@ -1,5 +1,5 @@
 // ===== Settings: grouped sections + search. Rows are regrouped after the hub renders them, so every option added elsewhere still appears. =====
-UI6.ext.post=(tab,body)=>{if(tab!='settings')return;
+UI6.ext.post=(tab,body)=>{if(tab=='plates'){try{UI6.ext.postPlates(body)}catch(e){console.error(e)}return}if(tab!='settings')return;
  const GROUPS=[['Look & feel','Theme, interface size',/theme|ui scale|language|colou?r/i],['Performance','Graphics quality, effects, weather',/graphics|vfx|bloom|weather|motion|fps/i],['Sound','Music and effects',/sound|audio|music|volume|sfx/i],['More','Everything else',/./]];
  const rows=[...body.querySelectorAll(':scope > .hrow')];if(!rows.length)return;
  const h3=body.querySelector('h3');

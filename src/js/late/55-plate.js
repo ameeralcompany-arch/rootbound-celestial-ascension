@@ -6,7 +6,8 @@ const Plate=(()=>{
   const rr2=(X,Y,W,H,r)=>{x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath()};
   const px=14,bx=px,by=10,bw=w-px*2,bh=h-20;
   const panel=(c1,c2)=>{const gr=x.createLinearGradient(0,by,0,by+bh);gr.addColorStop(0,c1);gr.addColorStop(1,c2);x.fillStyle=gr};
-  if(k=='plain'){panel('#1b2236','#0c101c');rr2(bx,by,bw,bh,bh/2);x.fill();x.strokeStyle=a;x.lineWidth=1.4;x.stroke();x.strokeStyle='rgba(255,255,255,.12)';x.beginPath();x.moveTo(bx+8,by+2);x.lineTo(bx+bw-8,by+2);x.stroke()}
+  if(typeof PLATEX7!='undefined'&&PLATEX7[k]){PLATEX7[k](x,w,h,st,bx,by,bw,bh,rr2)}
+  else if(k=='plain'){panel('#1b2236','#0c101c');rr2(bx,by,bw,bh,bh/2);x.fill();x.strokeStyle=a;x.lineWidth=1.4;x.stroke();x.strokeStyle='rgba(255,255,255,.12)';x.beginPath();x.moveTo(bx+8,by+2);x.lineTo(bx+bw-8,by+2);x.stroke()}
   else if(k=='scroll'){panel('#2e2016','#150d09');rr2(bx,by,bw,bh,6);x.fill();x.strokeStyle=a;x.lineWidth=1.8;x.stroke();x.strokeStyle=gl;x.globalAlpha=.5;x.lineWidth=.8;rr2(bx+3,by+3,bw-6,bh-6,4);x.stroke();x.globalAlpha=1;
    x.strokeStyle=a;x.lineWidth=1.8;for(const s of[-1,1]){const X=s<0?bx:bx+bw;x.beginPath();x.moveTo(X,by+bh/2);x.bezierCurveTo(X+s*-10,by-8,X+s*-22,by+2,X+s*-14,by+8);x.stroke();x.beginPath();x.arc(X+s*-12,by+9,2.4,0,6.3);x.fillStyle=gl;x.fill()}}
   else if(k=='crystal'){panel('#18305c','#0a1328');x.beginPath();x.moveTo(bx+8,by);x.lineTo(bx+bw-8,by);x.lineTo(bx+bw,by+bh/2);x.lineTo(bx+bw-8,by+bh);x.lineTo(bx+8,by+bh);x.lineTo(bx,by+bh/2);x.closePath();x.fill();x.strokeStyle=a;x.lineWidth=1.6;x.stroke();
@@ -29,7 +30,7 @@ const Plate=(()=>{
    x.strokeStyle=gl;x.globalAlpha=.7;x.lineWidth=1;x.beginPath();x.ellipse(w/2,by+bh/2,bw/2+9,bh/2+5,0,0,6.3);x.stroke();x.globalAlpha=1;
    for(const s of[-1,1]){x.fillStyle=gl;x.beginPath();x.moveTo(s<0?bx-8:bx+bw+8,by+bh/2-7);x.lineTo(s<0?bx-1:bx+bw+1,by+bh/2);x.lineTo(s<0?bx-8:bx+bw+8,by+bh/2+7);x.lineTo(s<0?bx-4:bx+bw+4,by+bh/2);x.fill()}}
   x.restore()}
- function make(tier,name,lv){const st=NP_STYLE(tier),mc=document.createElement('canvas').getContext('2d');mc.font='700 13px sans-serif';const nm=String(name).slice(0,14),lab='Lv '+lv,ttl=npName(tier).toUpperCase();mc.font='700 13px sans-serif';const w1=mc.measureText(lab+'  '+nm).width;mc.font='600 8.5px sans-serif';const w2=mc.measureText(ttl).width+ttl.length*1.2;
+ function make(tier,name,lv,skin){const st=(typeof NPSKIN7!='undefined'&&skin&&NPSKIN7.byId[skin])?NPSKIN7.byId[skin].st:NP_STYLE(tier),mc=document.createElement('canvas').getContext('2d');mc.font='700 13px sans-serif';const nm=String(name).slice(0,14),lab='Lv '+lv,ttl=npName(tier).toUpperCase();mc.font='700 13px sans-serif';const w1=mc.measureText(lab+'  '+nm).width;mc.font='600 8.5px sans-serif';const w2=mc.measureText(ttl).width+ttl.length*1.2;
   const w=Math.ceil(Math.max(w1,w2)+60),h=44,c=document.createElement('canvas');c.width=w*DPR;c.height=h*DPR;const x=c.getContext('2d');x.scale(DPR,DPR);
   // title ribbon above (slightly lifted), main plate below
   x.save();x.translate(0,4);frame(x,w,h-4,st);x.restore();
@@ -37,5 +38,5 @@ const Plate=(()=>{
   x.font='700 13px sans-serif';const lw=x.measureText(lab).width,nw=x.measureText(nm).width,tot=lw+10+nw,x0=w/2-tot/2;x.textAlign='left';
   x.lineWidth=3;x.strokeStyle='rgba(0,0,0,.85)';x.fillStyle=st.g;x.strokeText(lab,x0,h/2+5);x.fillText(lab,x0,h/2+5);x.fillStyle='#fff';x.strokeText(nm,x0+lw+10,h/2+5);x.fillText(nm,x0+lw+10,h/2+5);
   return{c,w,h}}
- function get(tier,name,lv){const k=tier+'|'+name+'|'+lv;let p=cache.get(k);if(!p){p=make(tier,name,lv);cache.set(k,p);order.push(k);if(order.length>80)cache.delete(order.shift())}return p}
- return{get,draw(g,cx,cy,tier,name,lv){const p=get(tier,name,lv);g.drawImage(p.c,cx-p.w/2,cy-p.h/2,p.w,p.h)},make}})();
+ function get(tier,name,lv,skin){const k=tier+'|'+name+'|'+lv+'|'+(skin||'');let p=cache.get(k);if(!p){p=make(tier,name,lv,skin);cache.set(k,p);order.push(k);if(order.length>80)cache.delete(order.shift())}return p}
+ return{get,draw(g,cx,cy,tier,name,lv,skin){const p=get(tier,name,lv,skin);g.drawImage(p.c,cx-p.w/2,cy-p.h/2,p.w,p.h)},make}})();
