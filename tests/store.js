@@ -90,10 +90,10 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('songs never repeat back-to-back',r.noRepeat,JSON.stringify(r));
  r=await p.evaluate(()=>{const o={};o.blocks=[];for(let b=42;b<=59;b++){const s=spr(b,0,0);const d=s.getContext('2d').getImageData(0,0,48,48).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>200)n++;o.blocks.push(n>2000&&!!BLK[b]&&PRICE[b]>0)}
   o.wear=['angel','fairy','bat','phoenix','crystal'].every(k=>!Object.keys(WEAR).includes(k));o.jump=typeof maxAir=='function';o.sfx=['mobSound','bloop','splash'].every(k=>typeof SFX7[k]=='function');
-  o.plaza=NPCS.length==3&&tiles[21*W+DX]==0&&NPCS.every(n=>tiles[21*W+n.x]==0&&tiles[22*W+n.x]>0);o.floor=tiles[22*W+DX]==44;o.glow=!!GLOW7[52]&&!!GLOW7[53];return o});
+  const S=sh(DX);o.plaza=NPCS.length==3&&tiles[(S-1)*W+DX]==0&&NPCS.every(n=>tiles[(S-1)*W+n.x]==0&&tiles[S*W+n.x]>0);o.floor=tiles[S*W+DX]==12&&tiles[S*W+DX-12]==44;o.glow=!!GLOW7[52]&&!!GLOW7[53];return o});
  ok('18 new blocks paint, are priced and glow where intended',r.blocks.every(Boolean)&&r.glow,JSON.stringify(r.blocks));
  ok('wearable wings removed, double-jump hook and new sounds exist',r.wear&&r.jump&&r.sfx,JSON.stringify(r));
- ok('plaza rebuilt from new blocks (slate promenade, NPCs kept)',r.floor&&r.plaza,JSON.stringify(r));
+ ok('plaza town built from new blocks (marble World Gate, slate Gate Square, NPCs kept)',r.floor&&r.plaza,JSON.stringify(r));
  // regression: a save that owns store-added weapons / removed wings must start cleanly and keep the weapons
  {const q=await b.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));await q.addInitScript(()=>{if(!localStorage.getItem('s9')){localStorage.setItem('s9','1');localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rbp',JSON.stringify({v:1,gems:10,lvl:20,own:{fist:1,solarfang:1},wp:'solarfang',ownW:{angel:1},wear:{wing:'angel'}}))}});
   await q.goto(FILE);await q.waitForTimeout(1500);const o=await q.evaluate(()=>({ready:RBDIAG.ready,wp,own:!!own.solarfang,wing:wear.wing,errs:RBDIAG.errors.length}));await q.close();
