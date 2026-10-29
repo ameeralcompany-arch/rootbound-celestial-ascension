@@ -12,7 +12,7 @@ const BOSSX=(()=>{
  const boss=()=>{const a=BOSS6.active();return a&&!a.dead&&mobs.includes(a)?a:null};
  const id=m=>m.k.slice(5);
  function hit(a,kb){if(iT>0)return;P.hp-=a*(1-Math.min(.8,bonus().arm+(guard>0?.5:0)));iT=.9;P.vx=kb||0;P.vy=-320;hurtF=.45;shake=Math.max(shake,QM.reduce?0:.14);snd(130,.22,'sawtooth',.07)}
- const gyAt=(x,fromY)=>{const tx=Math.max(1,Math.min(W-2,Math.floor(x/T)));let ty=Math.floor(fromY/T);for(let i=0;i<16&&ty<H-2;i++,ty++)if(solidAt(tx,ty))return ty*T;return fromY};
+ const gyAt=(x,fromY)=>{const tx=Math.max(1,Math.min(W-2,Math.floor(x/T)));let ty=Math.floor(fromY/T);for(let i=0;i<40&&ty<H-2;i++,ty++)if(solidAt(tx,ty))return ty*T;return fromY};   // 40 rows: the arena is tall enough to fly 20 tiles up
  const hitsP=z=>z.circ?Math.hypot(P.x-z.cx,P.y+P.h/2-z.cy)<z.r+P.w*.4:P.x+P.w/2>z.x0&&P.x-P.w/2<z.x1&&P.y+P.h>z.y0&&P.y<z.y1;
  // hazard: rectangle (or circle) that warns for tel seconds, then hurts for act seconds
  const addZ=(x0,y0,x1,y1,tel,act,c,dmg,kind,kb,rep)=>{const z={x0,y0,x1,y1,tel,tel0:tel,act,act0:act,c,dmg,kind,kb:kb||260,hit:0,rep:rep||0,rt:0,fx:0};HZ.push(z);return z};

@@ -102,7 +102,7 @@ const WFX10=(()=>{
   for(const m of mobs){if(m.frz>0)m.frz-=dt;if(m.bonk>0)m.bonk-=dt}
   for(let i=Q.length-1;i>=0;i--){const p=Q[i];let dead=false;
    if(p.k=='flame'){p.t-=dt;p.tk-=dt;if(R()<.5)mote(p.x+(R()-.5)*T*.6,p.gy-4-R()*10,R()<.5?'#ffb040':'#ff6a20',10,.35);
-    if(p.tk<=0){p.tk=.4;for(const m of mobs)if(live(m)&&Math.abs(m.x-p.x)<T*.8+m.w/2&&Math.abs(m.y+m.h-p.gy)<T){hit(m,p.w,.35);m.burn=Math.max(m.burn||0,1.5)}}dead=p.t<=0}
+    if(p.tk<=0){p.tk=.4;const tn=performance.now();for(const m of mobs)if(live(m)&&!(m.flT>tn)&&Math.abs(m.x-p.x)<T*.8+m.w/2&&Math.abs(m.y+m.h-p.gy)<T){m.flT=tn+380;hit(m,p.w,.35);m.burn=Math.max(m.burn||0,1.5)}}dead=p.t<=0}   // overlapping patches burn a monster once per tick (they used to stack)
    else if(p.k=='bub'){p.l-=dt;p.vy+=800*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;let pop=p.l<=0||solid(p.x,p.y);for(const m of mobs)if(live(m)&&dist(m,p.x,p.y)<rad(m)+10){pop=true;break}
     if(pop){dead=true;Q.push({k:'cloud',x:p.x,y:p.y,t:3,t0:3,r:T*1.8,w:p.w,tk:0});SFX7.bloop&&SFX7.bloop(.8);spark(p.x,p.y,'#8aff9a',10,140)}}
    else if(p.k=='cloud'){p.t-=dt;p.tk-=dt;if(R()<.4)mote(p.x+(R()-.5)*p.r*1.4,p.y+(R()-.5)*p.r,'rgba(120,255,140,.8)',22,.6);
