@@ -63,6 +63,11 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  // pets: flight draws the player a few px up/down each wingbeat; the pet must keep following (it used to snap to a fixed offset)
  const pet=await E(()=>{const o=document.createElement('canvas').getContext('2d'),r=[];for(const dy of[0,3,-3,6,-6]){COMP7.st.last=0;FX7.charmDraw(o,'mochi',P.x-cam.x,P.y-cam.y+dy,1,1);r.push(COMP7.st.last>0)}return r});
  ok('pets keep following you while the flight bob moves your sprite',pet.every(Boolean),pet);
+ // underground music: 20 m+ = Echo Caves, 46 m+ = Ember Depths, back on the surface = the normal moods (fights still win)
+ const mus=await E(()=>{const o={},x0=P.x,y0=P.y,tx=Math.floor(P.x/T);mobs.length=0;try{BOSS6.clear()}catch(_){}
+  for(const [k,d] of [['surface',0],['d25',25],['d50',50]]){const ty=sh(tx)+d;P.y=ty*T-P.h;MUS7.detect();o[k]=MUS7.want}
+  P.x=x0;P.y=y0;MUS7.detect();o.back=MUS7.want;o.songs=['mine','deep'].map(m=>MUS7.MOODS[m].songs.length);return o});
+ ok('underground music: Echo Caves below 20 m, Ember Depths below 46 m, normal music on the surface',mus.surface!='mine'&&mus.surface!='deep'&&mus.d25=='mine'&&mus.d50=='deep'&&mus.back!='mine'&&mus.back!='deep'&&mus.songs[0]==3&&mus.songs[1]==2,mus);
  // every weather state renders sky (cached) + weather layers, day and night, and the pooled counts stay capped
  const wx=await E(async()=>{const bad=[];let mx2=0;for(const st of WX_STATES)for(const d of[.08,.5]){WX6.force=st;for(const s of WX_STATES)WX6.I[s]=s==st?1:0;clock=()=>d;await new Promise(r=>setTimeout(r,120));try{const c=document.createElement('canvas');c.width=640;c.height=360;const o=g;g=c.getContext('2d');try{SKY6.draw(640,360,performance.now());WX6.draw(640,360,performance.now())}finally{g=o}}catch(e){bad.push(st+':'+e.message)}mx2=Math.max(mx2,VFX.count)}
   WX6.force=null;return{bad,lc:LIFE8.counts}});ok('all weather states render (sky + precipitation + fog + leaves + meteors), day and night',wx.bad.length==0,wx);

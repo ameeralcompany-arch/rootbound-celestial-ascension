@@ -7510,9 +7510,18 @@ const MUS7=(()=>{
    {id:'comet-tail',bpm:66,key:10,sc:'maj',feel:'soft',prog:C([[0,'maj7'],[2,'m9'],[7,'sus'],[5,'maj9']]),lead:'arp'}]},
   combat:{n:'Gentle fight',songs:[
    {id:'brave-steps',bpm:88,key:9,sc:'min',feel:'beat',prog:C([[0,'m7'],[8,'maj7'],[3,'maj7'],[10,'d9']]),lead:'keys'},
-   {id:'small-courage',bpm:92,key:2,sc:'dor',feel:'beat',prog:C([[0,'m9'],[5,'d9'],[10,'maj7'],[7,'m7']]),lead:'box'}]}};
+   {id:'small-courage',bpm:92,key:2,sc:'dor',feel:'beat',prog:C([[0,'m9'],[5,'d9'],[10,'maj7'],[7,'m7']]),lead:'box'}]},
+  // underground (20 m and deeper): a curious cave groove with marimba, water drops and a cave echo...
+  mine:{n:'Echo Caves',cave:1,songs:[
+   {id:'glimmer-tunnels',bpm:84,key:4,sc:'dor',feel:'cave',prog:C([[0,'m9'],[10,'maj7'],[8,'maj9'],[10,'sus']]),lead:'mar'},
+   {id:'crystal-echo',bpm:78,key:9,sc:'min',feel:'cave',prog:C([[0,'m11'],[5,'m9'],[8,'maj7'],[7,'sus']]),lead:'mar'},
+   {id:'lantern-miner',bpm:90,key:2,sc:'dor',feel:'cave',prog:C([[0,'m7'],[3,'maj9'],[5,'d9'],[0,'m9']]),lead:'bell'}]},
+  // ...and deeper still (46 m+): darker, driving, a little dangerous
+  deep:{n:'Ember Depths',cave:1,songs:[
+   {id:'magma-heart',bpm:96,key:5,sc:'hira',feel:'drive',prog:C([[0,'m9'],[1,'maj7'],[8,'maj7'],[7,'sus']]),lead:'mar'},
+   {id:'ancient-forge',bpm:100,key:0,sc:'min',feel:'drive',prog:C([[0,'m11'],[8,'maj9'],[10,'d9'],[7,'m7']]),lead:'koto'}]}};
  const BARS=24;
- let mood='plaza',want='plaza',ctx=null,master=null,mg=null,lp=null,wet=null,nb=null,timer=0,nextT=0,step=0,on=false,holdUntil=0,last='',song=null,songBar=0,played=[],gap=0,fading=0,detT=0,crackT=0;
+ let mood='plaza',want='plaza',ctx=null,master=null,mg=null,lp=null,wet=null,cave=null,caveSend=null,nb=null,timer=0,nextT=0,step=0,on=false,holdUntil=0,last='',song=null,songBar=0,played=[],gap=0,fading=0,detT=0,crackT=0;
  const R=Math.random,pick=a=>a[(R()*a.length)|0];
  const hz=(root,n)=>261.63*2**((root+n)/12)/2;
  function mkReverb(){const len=ctx.sampleRate*2.6,b=ctx.createBuffer(2,len,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4)}const cv=ctx.createConvolver();cv.buffer=b;return cv}
@@ -7526,6 +7535,10 @@ const MUS7=(()=>{
  const pluck=(fr,t,v)=>{voice(fr,t,1.1,'triangle',v,.006);voice(fr*2,t,.4,'sine',v*.35,.004)};
  const padv=(fr,t,d,v)=>{voice(fr,t,d,'sine',v,Math.min(1.4,d*.3),0,-4);voice(fr*1.003,t,d,'triangle',v*.45,Math.min(1.6,d*.35),0,5)};
  const bass=(fr,t,d,v)=>{voice(fr,t,d,'sine',v,.02);voice(fr*2,t,d*.5,'triangle',v*.12,.02)};
+ // underground: a woody marimba, falling water drops into the cave echo, hand-drum and rim sounds
+ const mar=(fr,t,v)=>{voice(fr,t,.55,'sine',v,.003,cave);voice(fr*4,t,.09,'sine',v*.3,.002);voice(fr*10,t,.03,'sine',v*.08,.001)};
+ const drip=t=>{const f=900+R()*1500,o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.9,t+.06);env(g,t,.003,.22,.022);o.connect(g);g.connect(cave);o.start(t);o.stop(t+.3)};
+ const hand=(t,v,lo)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(lo?150:230,t);o.frequency.exponentialRampToValueAtTime(lo?80:150,t+.12);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.22)};
  function kick(t,v){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(100,t);o.frequency.exponentialRampToValueAtTime(40,t+.16);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.24);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.3)}
  function nz(t,d,f1,type,v,dest){const b=ctx.createBufferSource();b.buffer=nb;b.playbackRate.value=.8+R()*.4;const h=ctx.createBiquadFilter();h.type=type;h.frequency.value=f1;const g=ctx.createGain();g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);b.connect(h);h.connect(g);g.connect(dest||mg);b.start(t,R()*.5,d+.05)}
  const hat=(t,v)=>nz(t,.045,8000,'highpass',v);
@@ -7549,30 +7562,40 @@ const MUS7=(()=>{
    // melody (rests in the first bar of each section so the chords breathe)
    if(bar%8!=0||s>2){const ni=mel[s],m2=(bar&1)?mutate(mel,song.sc):mel;const idx=(bar&1)?m2[s]:ni;
     if(idx>=0&&R()<(d.feel=='ambient'?.5:.9)){const oct=(sect==3?12:0)+(R()<.12?12:0),f=hz(song.root,song.sc[idx]+12+oct),v=(d.lead=='bell'?.03:d.lead=='arp'?.026:.032)*hv;
-     d.lead=='box'?box(f,t,v):d.lead=='koto'?koto(f,t,v*1.1):d.lead=='bell'?bellv(f,t,v):d.lead=='arp'?pluck(f,t,v):rhodes(f,t,v*1.15,1.4)}}
+     d.lead=='box'?box(f,t,v):d.lead=='koto'?koto(f,t,v*1.1):d.lead=='bell'?bellv(f,t,v):d.lead=='arp'?pluck(f,t,v):d.lead=='mar'?mar(f,t,v*1.25):rhodes(f,t,v*1.15,1.4)}}
+   if(d.lead=='mar'&&s%2==1&&R()<.6){const n=q[(s+bar)%q.length];mar(hz(song.root+rt,n+24),t,.014*hv)}   // a soft marimba arpeggio under the tune
    if(d.lead=='arp'&&(s%2==0)){const n=q[(s/2+bar)%q.length|0];pluck(hz(song.root+rt,n+24),t,.016*hv)}
    // drums
    if(d.feel=='lofi'||d.feel=='beat'){if(s==0||(s==3&&R()<.4)||s==5||(d.feel=='beat'&&s==4&&R()<.2))kick(t,d.feel=='beat'?.12:.085);if(s==2||s==6)snare(t,d.feel=='beat'?.045:.028);hat(t,(s%2?.016:.026)*hv);if(R()<.07)hat(t+e8*.5,.012)}
    else if(d.feel=='brush'){if(s==0)kick(t,.05);if(s==4)brush(t,.03);if(s%2==0)hat(t,.012*hv)}
    else if(d.feel=='soft'){if(s==0&&R()<.4)kick(t,.04);if(s==4&&R()<.5)brush(t,.016)}
+   else if(d.feel=='cave'){if(s==0||s==5)kick(t,.07);if(s==2||s==6)nz(t,.03,5200,'bandpass',.03);hand(t+e8*.02,(s%2?.03:.045)*hv,s==3||s==7);nz(t,.03,9000,'highpass',.008*hv);if(R()<.18)drip(t+e8*R())}
+   else if(d.feel=='drive'){if(s==0||s==3||s==4||(s==7&&R()<.5))kick(t,.11);if(s==2||s==6)snare(t,.04);hat(t,(s%2?.014:.022)*hv);if(s==7&&bar%4==3){hand(t,.05,1);hand(t+e8*.5,.05,0)}if(R()<.1)drip(t+e8*R())}
    nextT+=e8;step++;if(step%8==0){songBar++;if(songBar>=BARS){endSong();return}}}}
  function endSong(){fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(0,t+3.2);setTimeout(()=>{song=null;fading=0;gap=ctx.currentTime+1.5+R()*3;nextT=gap;fadeIn()},3300)}
  function fadeIn(){const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(0,t);mg.gain.linearRampToValueAtTime(1,t+2.2)}
  function crackle(){if(!on||!ctx)return;const t=ctx.currentTime;if(R()<.7)nz(t,.012+R()*.02,2500+R()*4000,'bandpass',.004+R()*.006);if(R()<.04)nz(t,.05,900,'bandpass',.008)}
  function start(){ac();if(on||!AC)return;ctx=AC;master=ctx.createGain();master.gain.value=mute?0:(OPT.mv==null?.5:OPT.mv);mg=ctx.createGain();mg.gain.value=1;lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;lp.Q.value=.4;
   wet=ctx.createGain();wet.gain.value=.34;const rv=mkReverb();lp.connect(mg);lp.connect(rv);rv.connect(wet);wet.connect(mg);mg.connect(master);master.connect(ctx.destination);
+  // the cave echo (a dotted-eighth delay with feedback): marimba and drops go through it; underground moods also send the whole mix in
+  cave=ctx.createGain();cave.gain.value=1;const dl=ctx.createDelay(1),fb=ctx.createGain(),dlp=ctx.createBiquadFilter();dl.delayTime.value=.33;fb.gain.value=.38;dlp.type='lowpass';dlp.frequency.value=1800;
+  cave.connect(lp);cave.connect(dl);dl.connect(dlp);dlp.connect(fb);fb.connect(dl);dlp.connect(wet);caveSend=ctx.createGain();caveSend.gain.value=0;lp.connect(caveSend);caveSend.connect(dl);
   // gentle tape wobble on the filter keeps the sound alive and slightly warm
   const lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=.13;lg.gain.value=260;lfo.connect(lg);lg.connect(lp.frequency);lfo.start();
   nb=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
   bgm={m:master};on=true;nextT=ctx.currentTime+.1;timer=setInterval(tick,120);crackT=setInterval(crackle,260);detT=setInterval(detect,1000);detect()}
- function switchTo(m2){if(m2==mood&&song)return;if(!ctx)return;fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(0,t+1.6);setTimeout(()=>{mood=m2;song=null;fading=0;gap=0;nextT=ctx.currentTime+.2;fadeIn()},1700)}
- function detect(){try{if(!entered)return;let m='plaza';const e=ENV7.target;
-  if(e=='blossom'||e=='space'||e=='galaxy')m=e;
+ function switchTo(m2){if(m2==mood&&song)return;if(!ctx)return;fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(0,t+1.6);
+  setTimeout(()=>{mood=m2;song=null;fading=0;gap=0;nextT=ctx.currentTime+.2;try{const c=MOODS[m2]&&MOODS[m2].cave,tt=ctx.currentTime;caveSend.gain.setTargetAtTime(c?.32:0,tt,.4);lp.frequency.setTargetAtTime(c?2100:2600,tt,.4)}catch(_){}fadeIn()},1700)}
+ // tiles below the surface under the player (the depth zones count the same way)
+ const depthNow=()=>{try{const tx=Math.max(0,Math.min(W-1,Math.floor(P.x/T)));return Math.floor((P.y+P.h)/T)-sh(tx)}catch(_){return 0}};
+ function detect(){try{if(!entered)return;let m='plaza';const e=ENV7.target,dep=depthNow();
+  if(dep>=46)m='deep';else if(dep>=20)m='mine';
+  else if(e=='blossom'||e=='space'||e=='galaxy')m=e;
   else if(wxN=='storm')m='storm';else if(wxN=='rain')m='rain';else if(wxN=='snow')m='snow';
   else if(night>.6)m='night';else if(wxN=='cloud')m='cloud';
   let fight=false;try{if(BOSS6.active())fight=true}catch(_){}for(const k of mobs){if(Math.abs(k.x-P.x)<420&&Math.abs(k.y-P.y)<300){fight=true;break}}
   const now=performance.now();if(fight)holdUntil=now+7000;if(now<holdUntil)m='combat';want=m;if(m!=last){last=m;switchTo(m)}}catch(_){}}
- return{start,get mood(){return mood},get want(){return want},get on(){return on},get song(){return song&&song.id},get played(){return played.slice()},MOODS,detect,endSong,force(m){want=m;last=m;switchTo(m)},newSong}})();
+ return{start,get mood(){return mood},get want(){return want},get on(){return on},get song(){return song&&song.id},get played(){return played.slice()},MOODS,detect,endSong,force(m){want=m;last=m;switchTo(m)},newSong,depthNow}})();
 startBGM=function(){MUS7.start()};
 // ambience volume slider (0-100%), saved with the other options
 {const _au=ambUpdate;ambUpdate=function(){_au();try{if(ambG)ambG.gain.value*=OPT.av==null?1:OPT.av}catch(_){}};
