@@ -60,6 +60,9 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
   return{bit,after:F.S.st,gained:Object.keys(F.FISHES).reduce((s,k)=>s+cnt(+k),0)-n0}});
  ok('fishing: a fish bites, and clicking reels it in',caught.bit=='bite'&&caught.after=='idle'&&caught.gained==1,caught);
  await E(w=>{TOOLS8.FISH.S.st='idle';wp=w},wp0);
+ // pets: flight draws the player a few px up/down each wingbeat; the pet must keep following (it used to snap to a fixed offset)
+ const pet=await E(()=>{const o=document.createElement('canvas').getContext('2d'),r=[];for(const dy of[0,3,-3,6,-6]){COMP7.st.last=0;FX7.charmDraw(o,'mochi',P.x-cam.x,P.y-cam.y+dy,1,1);r.push(COMP7.st.last>0)}return r});
+ ok('pets keep following you while the flight bob moves your sprite',pet.every(Boolean),pet);
  // every weather state renders sky (cached) + weather layers, day and night, and the pooled counts stay capped
  const wx=await E(async()=>{const bad=[];let mx2=0;for(const st of WX_STATES)for(const d of[.08,.5]){WX6.force=st;for(const s of WX_STATES)WX6.I[s]=s==st?1:0;clock=()=>d;await new Promise(r=>setTimeout(r,120));try{const c=document.createElement('canvas');c.width=640;c.height=360;const o=g;g=c.getContext('2d');try{SKY6.draw(640,360,performance.now());WX6.draw(640,360,performance.now())}finally{g=o}}catch(e){bad.push(st+':'+e.message)}mx2=Math.max(mx2,VFX.count)}
   WX6.force=null;return{bad,lc:LIFE8.counts}});ok('all weather states render (sky + precipitation + fog + leaves + meteors), day and night',wx.bad.length==0,wx);

@@ -20,7 +20,9 @@ const COMP7=(()=>{
   pebble(g,t,m,sq){g.scale(1+sq*.1,1-sq*.1);const gr=g.createLinearGradient(-10,-10,10,10);gr.addColorStop(0,'#aab3bd');gr.addColorStop(1,'#656f7c');g.fillStyle=gr;g.strokeStyle='#2c333d';g.lineWidth=1.7;g.beginPath();g.moveTo(-10,6);g.lineTo(-12,-3);g.lineTo(-6,-11);g.lineTo(6,-11);g.lineTo(12,-2);g.lineTo(10,6);g.closePath();g.fill();g.stroke();
    g.fillStyle='#5fbf6a';g.beginPath();g.ellipse(-3,-11,7,3,0,0,6.3);g.fill();g.fillStyle='#8fe07f';g.beginPath();g.arc(3,-12,2,0,6.3);g.arc(-7,-10,1.6,0,6.3);g.fill();
    g.fillStyle='#ffd24a';g.shadowColor='#ffd24a';g.shadowBlur=5;if(m=='sleep'||Math.sin(t*1.1)>.985)g.fillRect(-3,-3,6,1.5);else{g.beginPath();g.arc(0,-3,2.6,0,6.3);g.fill()}g.shadowBlur=0;g.fillStyle='#4a525d';g.fillRect(-7,6,5,3);g.fillRect(2,6,5,3)}};
- function draw(g,c,cx,cy,t,f){const local=Math.abs(cx-(P.x-cam.x))<2&&Math.abs(cy-(P.y-cam.y))<2;let x,y,m='ok',sq=0;
+ // "local" = this charm belongs to the player. Flight draws the player a few px up/down with each wingbeat (85-zz-flight.js),
+ // so y gets slack: a 2 px check made the pet flip between following and a fixed offset several times per beat (the flying glitch).
+ function draw(g,c,cx,cy,t,f){const local=Math.abs(cx-(P.x-cam.x))<2&&Math.abs(cy-(P.y-cam.y))<16;let x,y,m='ok',sq=0;
   if(local){const now=performance.now();step(now);x=st.x-cam.x;y=st.y-cam.y+Math.sin(t*3)*(c=='lumi'?7:3)-(c=='lumi'?26:0);if(!P.g&&P.vy<-80){m='wow';sq=-.7}else if(!P.g)sq=-.3;else sq=Math.sin(t*5)*.06;try{if(iT>0)m='hurt'}catch(_){}if(st.idle>5&&c!='lumi')m='sleep';
    if(P.g&&Math.abs(P.vx)>60&&(c=='mochi'||c=='pebble'))y-=Math.abs(Math.sin(t*9))*4;}
   else{x=cx-f*30;y=cy+34+Math.sin(t*3)*3}
