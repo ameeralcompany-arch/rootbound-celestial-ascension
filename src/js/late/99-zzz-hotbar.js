@@ -28,7 +28,8 @@ const HOTBAR=(()=>{
  // ---- default layout (new saves and saves from before the hotbar): 1 your weapon, 2-4 Pip / Pebble / Glimmer, 5 your block, 6 Bubbles, 7 Twiggy
  function bestWeapon(){const ids=Object.keys(WPN).filter(id=>own[id]&&WPN[id].k!='tool'&&id!='fist'&&!locked('w:'+id));
   for(const id of[wp,typeof PLAY8!='undefined'?PLAY8.last.wpn:''])if(id&&ids.includes(id))return id;
-  ids.sort((a,b)=>(WPN[b].md|0)-(WPN[a].md|0)||(WPN[b].lv|0)-(WPN[a].lv|0));return ids[0]||'fist'}
+  const pw=id=>typeof window.WPOWER=='function'?+WPOWER(id)||0:WPN[id].md|0;   // effective power (86-zz-balance.js), raw damage as fallback
+  ids.sort((a,b)=>pw(b)-pw(a)||(WPN[b].lv|0)-(WPN[a].lv|0));return ids[0]||'fist'}
  function bestBlock(){const ok=k=>typeof k=='number'&&k>0&&k<200&&okKey(k)&&cnt(k)>0;if(ok(bar[sel]))return bar[sel];for(const k of bar)if(ok(k))return k;
   const ks=Object.keys(inv).map(Number).filter(k=>ok(k)&&k<100&&k!=17&&k!=4&&k!=16).sort((a,b)=>cnt(b)-cnt(a));return ks[0]||null}
  function defaults(){return['w:'+bestWeapon(),'w:pip','w:pebble','w:glimmer',bestBlock(),'w:bubbles','w:twiggy'].map(k=>okKey(k)?k:null)}
