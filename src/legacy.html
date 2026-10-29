@@ -323,7 +323,7 @@ function drawPrecip(w,hh,now){if(wxI<.02)return;const t=now/1000,snow=ptype=='sn
 function updSplash(dt,w,hh){if(wxI>.15&&ptype!='snow'&&splashes.length<44&&Math.random()<dt*50*wxI){const x=cam.x+rnd(0,w);let r=Math.max(0,Math.floor(cam.y/T)-1),n=0;const c=Math.floor(x/T);while(r<H&&!solidAt(c,r)&&n++<40)r++;if(r<H&&r>0&&!solidAt(c,r-1))splashes.push({x,y:r*T,t:performance.now()})}}
 // ---------- main draw
 function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=hh/ZM;
- const ck=1-Math.pow(.82,Math.min(.05,window.FDT||1/144)*144);/* same follow speed as .18 per frame at 144 fps, at any frame rate */cam.x+=(Math.max(0,Math.min(W*T-vw,P.x-vw/2))-cam.x)*ck;cam.y+=(Math.max(-200,Math.min(H*T-vh,P.y+P.h/2-vh/2))-cam.y)*ck;
+ const ck=1-Math.pow(.82,Math.min(.05,window.FDT||1/144)*144);/* same follow speed as .18 per frame at 144 fps, at any frame rate */const ctx_=window.CAMT?CAMT.x:P.x,cty_=window.CAMT?CAMT.y:P.y+P.h/2;/* CAMT: a fixed camera target (boss arena) */cam.x+=(Math.max(0,Math.min(W*T-vw,ctx_-vw/2))-cam.x)*ck;cam.y+=(Math.max(-200,Math.min(H*T-vh,cty_-vh/2))-cam.y)*ck;
  const sx=shake?(Math.random()-.5)*shake*34*OPT.sh:0,sy=shake?(Math.random()-.5)*shake*34*OPT.sh:0;drawSky(w,hh,now);
  g.save();g.scale(ZM,ZM);g.translate(sx,sy);const x0=Math.max(0,cam.x/T|0),x1=Math.min(W-1,(cam.x+vw)/T|0),y0=Math.max(0,cam.y/T|0),y1=Math.min(H-1,(cam.y+vh)/T|0);
  
