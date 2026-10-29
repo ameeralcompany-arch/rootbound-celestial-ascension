@@ -90,6 +90,10 @@ const CINE7=(()=>{
   const chords=(cs,d,v)=>cs.forEach(c=>at(c[0],t=>pad(c[1],t,d,v,1500)));
   const THEME=[[74,2],[76,1],[77,3],[81,2],[79,2],[77,1],[76,1],[77,2],[79,1],[81,3],[82,2],[84,2],[81,2],[86,3]],MAJ={77:78,82:83,84:85};
   const melody=(a,end,v,maj)=>{let lt=a;for(const n of THEME){if(lt>=end-.05)break;const d=Math.min(n[1]*.2,end-lt),m=maj&&MAJ[n[0]]||n[0];at(lt,t=>lead(m,t,d*.95,v));lt+=n[1]*.2}};
+  // energy layers: a crescendo string ostinato, taiko runs and tom fills (used to drive the scenes that were too gentle)
+  const ost=(a,b,ns,v,st)=>{st=st||.15;let i=0;for(let x=a;x<b-.02;x+=st,i++){const n=ns[i%ns.length],k=.45+.55*Math.min(1,(x-a)/Math.max(.01,b-a)*1.3);at(x,t=>o('m',M(n),0,t,st*.85,'sawtooth',v*k,.004))}};
+  const taikoRun=(a,b,st,v,v2)=>{let i=0;for(let x=a;x<b-.02;x+=st,i++){const w=i%2&&v2!=null?v2:v;at(x,t=>taiko(t,w))}};
+  const toms=(t0,v)=>[0,.07,.14,.21].forEach((d,i)=>at(t0+d,t=>{o('m',190-i*28,60,t,.28,'sine',v,.003);nz('m',t,.05,'lowpass',1200,300,v*.3,.002)}));
   sec('tree',0);
   // 1 World Tree: warm pad, music-box arpeggio, wind
   at(0,t=>{pad([50,57,64,65],t,2.7,.032,750);nz('m',t,4.6,'bandpass',420,900,.022,1.6,.7)});
@@ -103,6 +107,8 @@ const CINE7=(()=>{
   at(4.6,t=>{pad([50,57,62,65],t,2.5,.03,800);bass(38,t,2.4,.05)});
   [74,76,77,81,79,77,76,74].forEach((n,i)=>at(4.7+i*.28,t=>bell(n,t,.04,1.8)));
   [[81,4.9,.9],[84,5.9,1.0]].forEach(n=>at(n[1],t=>flute(n[0],t,n[2],.028)));
+  // ...as the camera rises the music wakes up: a string ostinato and taiko build to a cymbal swell into the lantern night
+  ost(3.0,7.0,[62,69,74,69],.011);taikoRun(3.2,6.9,.4,.08,.05);at(5.9,t=>riser(t,1.1,.05));toms(6.7,.06);at(6.98,t=>{crash(t,.05);boom(t,.18)});
   // 1b Lantern night: a gentle waltz in D major (bass on one, plucked chords on two and three), the theme turned bright on flute,
   //    lanterns whooshing up, and the cat's "mrrp!" when it leaps for one
   OFF=0;const V=S0('village');
@@ -110,6 +116,9 @@ const CINE7=(()=>{
   [[74,0,.7],[76,.7,.35],[78,1.05,1.0],[81,2.1,.7],[79,2.8,.35],[78,3.15,1.0],[76,4.2,.7],[78,4.9,.35],[74,5.25,1.1]].forEach(n=>at(V+n[1],t=>flute(n[0],t,n[2],.032)));
   at(V+.2,t=>pad([62,66,69],t,6.2,.018,1000));for(let i=0;i<6;i++)at(V+.6+i*.9,t=>whoosh(t,.9,.012));
   at(V+3.05,t=>{o('s',900,520,t,.35,'triangle',.05,.01);o('s',1300,700,t+.05,.25,'sine',.03,.01)});at(V+3.62,t=>thunk(t,.07));
+  // festival percussion: kick on one, tambourine on two and three, a little fill into each phrase
+  for(let i=0;i<6;i++){const b=V+i*1.05;at(b,t=>kick(t,.09));at(b+.35,t=>{hat(t,.03);nz('m',t,.09,'bandpass',6500,0,.02,.002,2)});at(b+.7,t=>{hat(t,.03);nz('m',t,.09,'bandpass',6500,0,.02,.002,2)})}
+  [V+2.0,V+4.1].forEach(x=>toms(x,.045));at(V+6.1,t=>riser(t,.4,.04));
   sec('eclipse',4.6);
   // 2 Eclipse: drone swell, timpani, shatter, falling comets
   at(4.6,t=>{stack([M(26),M(33),M(38)],t,4.3,.05,'sawtooth',90,90,620,1.6,6)});
@@ -120,12 +129,16 @@ const CINE7=(()=>{
   // trembling strings build to the shatter; a dark choir and a falling brass line after it
   for(let i=0;i<26;i++)at(4.9+i*.058,t=>o('m',M(i%2?65:62),M(i%2?65:62),t,.07,'sawtooth',.006+i*.0007,.01));
   at(6.45,t=>choir([38,45,50,53],t,2.2,.04));[50,49,46,45].forEach((n,i)=>at(6.9+i*.45,t=>brass([n,n-12],t,.5,.045)));
+  // after the shatter the drums never stop: low string 16ths and a taiko run straight into the fall
+  ost(6.45,8.8,[38,45,50,45],.013,.1);taikoRun(6.6,8.75,.2,.11,.06);toms(8.5,.06);
   // 2b The fall: a low choir and drone, rumbling, islands cracking off, and a lonely piano as a lantern drops into the dark
   OFF=0;const F=S0('fall');at(F,t=>{choir([38,41,45],t,5.4,.035);stack([M(26),M(33)],t,5.4,.04,'sawtooth',120,200,90,1,5)});
   [0,1.2,2.4,3.6].forEach(x=>at(F+x,t=>{nz('s',t,1.6,'lowpass',400,60,.12,.05,0,1);o('s',50,30,t,1.2,'sine',.08,.05)}));
   [.2,.9,1.5,2.2].forEach(x=>at(F+x+.1,t=>{boom(t,.18);for(let i=0;i<6;i++)thunk(t+.1+i*.07,.03)}));
   [[69,2.5],[67,3.0],[65,3.5],[64,4.0],[62,4.6]].forEach(n=>at(F+n[1],t=>piano(n[0],t,.05)));
   [93,91,89,88,86,84].forEach((n,i)=>at(F+2.6+i*.38,t=>bell(n,t,.012,1.2)));
+  // a tragic but driving pulse: string ostinato, taiko eighths, tom fills, brass stabs as islands break
+  ost(F,F+5.4,[38,41,45,41],.012);taikoRun(F,F+5.3,.3,.11,.06);[F+2.2,F+4.6].forEach(x=>toms(x,.06));[F+.3,F+1.0,F+1.6].forEach(x=>at(x,t=>brass([38,41,45],t,.45,.05)));
   sec('bosses',8.8);
   // 3 Six shadows: ostinato, taiko per panel, power chords, snare roll
   for(let x=8.8;x<13.4;x+=.2)at(x,t=>{o('m',M(38),M(38),t,.17,'sawtooth',.026,.004);o('m',M(26),M(26),t,.18,'sine',.05,.004)});
@@ -139,6 +152,8 @@ const CINE7=(()=>{
   at(A0,t=>{pad([45,52,57,60],t,2.5,.03,700);nz('m',t,5,'bandpass',300,700,.025,2,.6)});at(A0+2.5,t=>pad([41,48,53,57],t,2.5,.03,900));
   [[69,.4,1.1],[72,1.6,.8],[71,2.5,1.2],[69,3.8,1.0]].forEach(n=>at(A0+n[1],t=>flute(n[0],t,n[2],.028)));
   at(A0+3.4,t=>[74,78,81].forEach((n,i)=>bell(n,t+i*.12,.02,1.6)));
+  // time-lapse drive: a ticking arpeggio and a kick pulse that speed up with the years, then a riser into the awakening
+  ost(A0+.5,A0+5,[57,60,64,69,64,60],.009,.125);for(let x=A0+1,i=0;x<A0+4.9;x+=i<4?.5:.25,i++)at(x,t=>kick(t,.07+Math.min(.06,i*.006)));at(A0+3.8,t=>riser(t,1.2,.05));
   sec('wake',13.6);
   // 4 Awakening: heartbeat, descending twinkles, the eye opens, rising notes of hope
   [13.95,14.2,14.95,15.2].forEach((x,i)=>at(x,t=>kick(t,i%2?.07:.1)));
@@ -180,6 +195,7 @@ const CINE7=(()=>{
   for(let x=0;x<5.95;x+=.15){const n=[62,65,69,65][Math.round(x/.15)%4];at(J+x,t=>o('m',M(n),0,t,.12,'sawtooth',.008,.005))}
   chords([[J,[50,57,62,65]],[J+1.5,[46,53,58,62]],[J+3,[48,55,60,64]],[J+4.5,[45,52,57,61]]],1.45,.022);melody(J+.6,J+6,.04);
   for(let i=0;i<4;i++)at(J+i*1.5+.7,t=>whoosh(t,.6,.04));
+  [[J,[50,57,62]],[J+1.5,[46,53,58]],[J+3,[48,55,60]],[J+4.5,[45,52,57]]].forEach(c=>at(c[0],t=>{brass(c[1],t,.45,.055);crash(t,.035)}));[J+1.28,J+2.78,J+4.28,J+5.75].forEach(x=>toms(x,.055));
   // 7 The fight: thunder and rain, a drone and taiko as the wanderer charges. The strike drops the music to a muffled heartbeat
   //   and a lonely piano in the rain; a choir swells as they stand back up, and the brass answers when the wings reignite
   const SK=CL+.9,KN=CL+1.25,UP=CL+2.9,IG=CL+3.6;
@@ -204,6 +220,7 @@ const CINE7=(()=>{
   for(let i=0;i<14;i++)at(CP+.3+i*.37,t=>{o('s',4200,4300,t,.04,'sine',.006,.002);o('s',4200,4300,t+.06,.04,'sine',.006,.002)});
   [1.0,2.6].forEach(x=>at(CP+x,t=>{nz('s',t,.7,'lowpass',380,200,.05,.3,0);o('s',1100,1500,t+.75,.5,'sine',.012,.2)}));
   at(CP+4.2,t=>{pop(t,.07);o('s',900,1500,t+.05,.12,'triangle',.04,.004)});
+  for(let x=CP+.2,i=0;x<CP+5.3;x+=.45,i++)at(x,t=>o('s',i%3==2?260:200,i%3==2?220:170,t,.09,'sine',.022,.003));   // a soft hand-drum groove by the fire
   // 8 Montage: the theme returns at full strength over the beat, plus each cut's own sounds (and a sad trombone for the boot)
   const cut=i=>MO+MCUT[i][0];
   beat(MO,RS-.1,1.1);bassline([[cut(0),38],[cut(1),46],[cut(2),48],[cut(2)+.8,45],[cut(3),50]],RS-.1);melody(MO,RS-.15,.055);
@@ -219,6 +236,7 @@ const CINE7=(()=>{
   at(RS+1.3,t=>o('s',1500,400,t,.3,'sine',.03,.01));
   at(RS+1.6,t=>{boom(t,.4);crash(t,.08);shing(t,.12);brass([38,45,50,54,57],t,2.2,.06);choir([62,66,69,74],t,4.6,.04)});
   for(let i=0;i<14;i++)at(RS+1.7+i*.12,t=>bell([74,78,81,86,90,93,90][i%7],t,.022,1.2));
+  taikoRun(RS+1.6,RS+2.4,.2,.12,.07);ost(RS+2.4,TI-.1,[62,66,69,74],.011,.15);toms(TI-.35,.07);
   beat(RS+2.4,TI-.1,1);bassline([[RS+2.4,38],[RS+3.4,43],[RS+4.4,45],[RS+5.4,50]],TI-.1);melody(RS+2.4,TI-.15,.05,true);
   chords([[RS+2.4,[62,66,69,74]],[RS+3.4,[59,62,67,71]],[RS+4.4,[61,64,69,73]],[RS+5.4,[62,66,69,74]]],.95,.026);
   at(TI-.9,t=>riser(t,.9,.06));
@@ -227,6 +245,8 @@ const CINE7=(()=>{
   [74,77,81,86,81,77,76,79,83,88,83,79,77,81,86,89].forEach((n,i)=>at(TI+1.0+i*.22,t=>bell(n,t,.03,1.6)));
   [[86,TI+1.0,1.2],[84,TI+2.2,.6],[81,TI+2.8,1.6]].forEach(n=>at(n[1],t=>flute(n[0],t,n[2],.03)));
   at(TI+1.55,t=>o('s',1800,5200,t,.7,'sine',.035,.05,0,1));
+  // the title rides out on the full kit and taiko before the gentle last chord
+  at(TI+.55,t=>taiko(t,.2));beat(TI+.95,TI+3.15,.85);bassline([[TI+.95,38],[TI+1.75,46],[TI+2.55,45]],TI+3.15);taikoRun(TI+.95,TI+3.1,.4,.08,.05);
   // "Your story begins": soft falling bells, the flute's last word, one long warm chord
   at(TI+3.2,t=>[86,81,78,74].forEach((n,i)=>bell(n,t+i*.2,.026,2)));at(TI+4.2,t=>flute(78,t,1.6,.026));at(TI+4.6,t=>{pad([50,57,62,66,69],t,3.2,.03,1200);bass(38,t,3,.04)});
   return E.sort((a,b)=>a[0]-b[0])}
@@ -319,7 +339,8 @@ const CINE7=(()=>{
  function crackPaths(g,f,a){for(const ps of[[10,'rgba(255,80,200,'+(.26*a)+')'],[2.6,'rgba(255,240,255,'+(.95*a)+')']]){g.lineWidth=ps[0];g.strokeStyle=ps[1];g.beginPath();for(const b of I.cr){const n=Math.floor(b.p.length*cl(f*1.5-b.d*.32,0,1));if(n<2)continue;g.moveTo(b.p[0][0],b.p[0][1]);for(let i=1;i<n;i++)g.lineTo(b.p[i][0],b.p[i][1])}g.stroke()}}
  // the fully grown cracks are baked once (re-stroking ~1000 wide segments every frame cost the GPU a lot); only the growth is live
  AB.crk=()=>art(2000,1800,.7,x=>{x.translate(1000,700);x.globalCompositeOperation='lighter';crackPaths(x,1,1)});
- function cracks(g,f,cx,cy,a){g.save();g.globalCompositeOperation='lighter';g.lineJoin='round';g.lineCap='round';if(f>=.999){g.globalAlpha=a;put(g,as('crk'),cx-1000,cy-700)}else{g.translate(cx,cy);crackPaths(g,f,a)}g.restore()}
+ // growing cracks reveal the baked art through an expanding circle (one cheap clip instead of re-stroking every segment each frame)
+ function cracks(g,f,cx,cy,a){g.save();g.globalCompositeOperation='lighter';g.globalAlpha=a;if(f<.999){g.beginPath();g.arc(cx,cy,30+eo(f)*1150,0,TAU);g.clip()}put(g,as('crk'),cx-1000,cy-700);g.restore()}
  function shardGen(){const r=srnd(77),S=[];for(let i=0;i<26;i++){const b=I.cr[(r()*I.cr.length)|0],q=b.p[(r()*b.p.length)|0],n=3+(r()*3|0),sz=16+r()*46,pts=[];for(let k=0;k<n;k++){const a=k/n*TAU+r()*.6;pts.push([Math.cos(a)*sz*(.6+r()*.5),Math.sin(a)*sz*(.6+r()*.5)])}
   S.push({x:q[0],y:q[1],vx:(q[0])*.25+(r()-.5)*60,vy:-40+r()*90,a:r()*6,va:(r()-.5)*5,pts,dl:r()*.35})}return S}
  // ---- art: the six guardians as rim-lit silhouettes (each in a 420x520 box, feet at the bottom)
@@ -683,7 +704,10 @@ const CINE7=(()=>{
  // ---- a hundred years: star trails wheel overhead, the moon races by, snow falls, then moss and flowers creep back over the hill
  function sAges(g,t,d){const k=t/d,C=[800,450,lerp(1.06,1,ez(k))];I.C=C;
   cam(g,C[0],C[1],C[2],.25);put(g,as('sky1'),-100,-300);g.setTransform(1,0,0,1,0,0);g.fillStyle='rgba(4,4,18,.55)';g.fillRect(0,0,I.cw,I.ch);
-  cam(g,C[0],C[1],C[2],.3);const w=t*.45;g.strokeStyle='rgba(220,230,255,.5)';g.lineWidth=1.6;g.beginPath();for(const s of I.trail){g.moveTo(800+Math.cos(s.a)*s.r,-260+Math.sin(s.a)*s.r);g.arc(800,-260,s.r,s.a,s.a+w)}g.stroke();
+  // star trails accumulate on their own canvas: each frame strokes only the new sliver of arc (stroking 150 ever-longer arcs every
+  // frame was the scene's whole cost), then the canvas is drawn in one go
+  cam(g,C[0],C[1],C[2],.3);const w=t*.45;if(!I.trc||I.trw>w){I.trc=mk(1350,975);I.trw=0}const tx=I.trc.getContext('2d');tx.setTransform(.75,0,0,.75,75,225);tx.strokeStyle='rgba(220,230,255,.5)';tx.lineWidth=1.6;tx.lineCap='butt';
+  if(w>I.trw){tx.beginPath();for(const s of I.trail){const a0=s.a+I.trw;tx.moveTo(800+Math.cos(a0)*s.r,-260+Math.sin(a0)*s.r);tx.arc(800,-260,s.r,a0,s.a+w)}tx.stroke();I.trw=w}g.drawImage(I.trc,-100,-300,1800,1300);
   const mu=(t*.8)%1,mx=lerp(-100,1700,mu),my=360-Math.sin(mu*PI)*260;A(g,.8,'lighter');putc(g,glow('#dfe8ff'),mx,my,2.2);A(g,1);g.fillStyle='#eef3ff';g.beginPath();g.arc(mx,my,30,0,TAU);g.fill();
   cam(g,C[0],C[1],C[2],.85);const tw=760,th=tw*1550/1500;put(g,as('tree'),800-tw/2,880-tw,tw,th);
   cam(g,C[0],C[1],C[2],1);g.fillStyle='#06050e';g.beginPath();g.moveTo(-300,1100);g.lineTo(-300,860);g.quadraticCurveTo(800,700,1900,860);g.lineTo(1900,1100);g.closePath();g.fill();
@@ -736,7 +760,7 @@ const CINE7=(()=>{
  const BIO=[['#020c2a','#0d3a7a','#5fe0ff','#0f3a66','#06203e','#7ff6ff'],['#1a0610','#8a2a2a','#ff9a4a','#5a1a1a','#2a0a0a','#ff6a2a'],['#0a1a3a','#4a7ac0','#f0f8ff','#5a7ab0','#2a3a6a','#e8fbff']];
  function sJourney(g,t,d){const seg=d/3,i0=Math.min(2,Math.floor(t/seg)),f=i0<2?ez(((t%seg)/seg-.72)/.28):0,i1=Math.min(2,i0+1),col=j=>mix(BIO[i0][j],BIO[i1][j],f),wt=b=>b==i0?1-f:b==i1?f:0;
   g.setTransform(1,0,0,1,0,0);const sg=g.createLinearGradient(0,0,0,I.ch);sg.addColorStop(0,col(0));sg.addColorStop(.55,col(1));sg.addColorStop(1,col(2));g.fillStyle=sg;g.fillRect(0,0,I.cw,I.ch);
-  stage(g);stars(g,t,.35);
+  stage(g);
   for(let i=0;i<6;i++){const x=((i*520-t*.18*420)%3120+3120)%3120-300;if(x<-100||x>1700)continue;A(g,.55,'lighter');drawStreak(g,BC[BIDS[i]],x,560,-PI/2,420,.6,16);putc(g,glow(BC[BIDS[i]]),x,560,1.4);A(g,1)}
   [[.18,560,col(3),.9],[.45,690,mix(col(3),col(4),.5),.9],[1,800,col(4),1.1]].forEach((l,li)=>{const h=I.mt[li],N=h.length,seg=60,off=t*l[0]*420,base=Math.floor(off/seg),sh=off%seg;g.fillStyle=l[2];g.beginPath();g.moveTo(-seg,900);
    for(let j=-1;j<1600/seg+3;j++)g.lineTo(j*seg-sh,l[1]-h[((base+j)%N+N)%N]*l[3]);g.lineTo(1700,900);g.closePath();g.fill();
@@ -745,12 +769,11 @@ const CINE7=(()=>{
      if(wt(0)>.01){g.globalAlpha=wt(0);g.fillStyle='#7ff6ff';g.beginPath();poly(g,px-12,py+6,px,py-58,px+12,py+6);poly(g,px+8,py+8,px+20,py-30,px+28,py+8);g.fill();A(g,wt(0)*.8,'lighter');putc(g,glow('#7ff6ff'),px,py-20,.5);A(g,1)}
      if(wt(1)>.01){A(g,wt(1)*.9,'lighter');putc(g,glow('#ff6a2a'),px,py+30,.9);putc(g,glow('#ffd36a'),px,py+4,.3);A(g,1)}
      if(wt(2)>.01){g.globalAlpha=wt(2);g.fillStyle='#f4fbff';g.beginPath();poly(g,px-22,py+18,px,py-2,px+22,py+18);g.fill();g.globalAlpha=1}}}});
-  A(g,.7);const cx=(t*520)%2000;put(g,as('clouds'),-cx,680,2000,440);put(g,as('clouds'),2000-cx,680,2000,440);A(g,1);
+  A(g,.7);const cx=(t*520)%2000;put(g,as('clouds'),-cx,680,2000,440);if(cx>400)put(g,as('clouds'),2000-cx,680,2000,440);A(g,1);
   if(wt(1)>.01){A(g,wt(1)*.6,'lighter');for(let i=0;i<20;i++){const m=I.motes[i];putc(g,glow('#ff8a3a'),m.x,900-((t*m.v*4+m.y)%1000),.3)}A(g,1)}
   if(wt(2)>.01){g.fillStyle='rgba(245,250,255,'+(.8*wt(2))+')';for(const r of I.rain)g.fillRect(((r.x-t*600)%1900+1900)%1900-150,((r.y+t*r.v*.15)%1100)-100,3,3)}
   const fx=620+Math.sin(t*1.3)*40,fy=400+Math.sin(t*2.1)*26;A(g,1,'lighter');for(let i=1;i<12;i++)putc(g,glow('#e8fdff'),fx-i*34,400+Math.sin((t-i*.03)*2.1)*26,.75-i*.055);A(g,1);g.save();g.translate(fx,fy);g.rotate(1.38);putc(g,as('flyer'),0,0,.85);g.restore();
-  g.strokeStyle='rgba(20,10,30,.7)';g.lineWidth=3;for(let i=0;i<6;i++){const bx=((1700-t*260-i*70)%1900+1900)%1900-150,by=230+i%3*30+Math.sin(t*3+i)*10,wf=Math.sin(t*14+i)*8;g.beginPath();g.moveTo(bx-14,by-wf);g.lineTo(bx,by);g.lineTo(bx+14,by-wf);g.stroke()}
-  A(g,.08,'lighter');put(g,as('speed'),0,0,1600,900);A(g,1)}
+  g.strokeStyle='rgba(20,10,30,.7)';g.lineWidth=3;g.beginPath();for(let i=0;i<6;i++){const bx=((1700-t*260-i*70)%1900+1900)%1900-150,by=230+i%3*30+Math.sin(t*3+i)*10,wf=Math.sin(t*14+i)*8;g.moveTo(bx-14,by-wf);g.lineTo(bx,by);g.lineTo(bx+14,by-wf)}g.stroke()}
  // ---- campfire: friends around the fire, Sprig asleep (with a snot bubble, naturally) until it pops
  function sCamp(g,t,d){const C=[800,lerp(470,455,ez(t/d)),lerp(1.12,1.05,ez(t/d))],FX=800,FY=700;I.C=C;
   cam(g,C[0],C[1],C[2],.25);put(g,as('sky1'),-100,-300);stars(g,t,1);cam(g,C[0],C[1],C[2],.3);A(g,.45+.1*Math.sin(t),'lighter');put(g,as('aurora'),-100,-250);A(g,1);islands(g,I.islF,C,t);
@@ -812,7 +835,19 @@ const CINE7=(()=>{
   if(id=='montage'){const tc=t-MCUT[1][0];if(tc>0&&tc<MCUT[1][1]){for(const h of[.3,.58]){const v=(tc-h)/.14;if(v>0&&v<1)return(1-v)*10}}}return 0}
  function fit(){if(!I)return;const d=Math.min(1.5,window.devicePixelRatio||1);I.cw=Math.max(320,Math.round(innerWidth*d));I.ch=Math.max(180,Math.round(innerHeight*d));I.cv.width=I.cw;I.cv.height=I.ch;I.s=Math.max(I.cw/1600,I.ch/900)}
  function sched(){const ax=au();while(I.evi<I.ev.length&&I.ev[I.evi][0]<=I.u+.3){const e=I.ev[I.evi++];if(ax&&e[0]>=I.u-.08)try{e[1](ax.a.currentTime+Math.max(0,(e[0]-I.u)*I.k)+.02)}catch(_){}}}
- function frame(now){if(!I)return;I.raf=requestAnimationFrame(frame);const f0=performance.now(),dt=Math.min(.1,(now-I.last)/1000);I.last=now;I.el+=dt;I.u=Math.min(ST,I.el/I.k);
+ function frame(now){if(!I)return;I.raf=requestAnimationFrame(frame);const f0=performance.now();
+  // prep: build every scene's art on a black screen BEFORE the story clock starts (~12 ms of work per frame), so nothing is
+  // built mid-scene. Building art lazily during playback caused freezes of up to 0.3 s in the opening seconds.
+  // each finished picture is also drawn once, tiny, so the GPU has it uploaded before the scene needs it (first draws cost up to 0.1 s)
+  // Then the audio graph is built (its reverb takes ~0.25 s to set up) and every scene is rehearsed once, unseen, at a few moments:
+  // that compiles the GPU's drawing programs for each new kind of draw before the story needs it. Then the clock starts.
+  if(I.prep){if(!AX||AX.a!==AC)au();else nbuf(AX.a);   // a brand-new AudioContext can report 'suspended' for a moment: keep trying until the graph exists
+   while(I.q2.length&&performance.now()-f0<12){const n=I.q2.shift();try{const a=as(n);if(a&&a.c){I.g.setTransform(1,0,0,1,0,0);I.g.drawImage(a.c,0,0,4,4)}}catch(e){console.error('CINE7 art',n,e)}}
+   if(!I.q2.length){if(!I.warm){I.warm=[];for(const s of STORY)for(const k of[.1,.4,.7,.95])I.warm.push(s[3]+s[1]*k)}
+    while(I.warm.length&&performance.now()-f0<12){I.u=I.warm.shift();try{draw()}catch(e){console.error('CINE7 warm',e)}}}
+   if((I.q2.length||I.warm.length||!AX)&&now-I.prep<6000){const g=I.g;g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.fillStyle='#000';g.fillRect(0,0,I.cw,I.ch);return}
+   I.prep=0;I.u=0;I.trc=null;I.isy=0;I.last=now}
+  const dt=Math.min(.1,(now-I.last)/1000);I.last=now;I.el+=dt;I.u=Math.min(ST,I.el/I.k);
   sched();draw();
   // build upcoming art while there is time left in this frame
   if(I.q2.length&&performance.now()-f0<7){const n=I.q2.shift();try{as(n)}catch(e){console.error('CINE7 art',n,e)}}
@@ -823,7 +858,7 @@ const CINE7=(()=>{
  function end(){if(!I)return;cancelAnimationFrame(I.raf);removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
   try{if(!(typeof SHOW7!='undefined'&&SHOW7.isOpen))window.RB_COVER=false}catch(_){window.RB_COVER=false}try{startBGM()}catch(_){}/* the game's music takes over (it was held back during the story) */}
  function intro(done){if(I)return false;const red=reduce(),cv=mk(1,1);cv.id='cine7';cv.setAttribute('role','img');cv.setAttribute('aria-label','Story intro: Rootbound, Celestial Ascension');document.body.appendChild(cv);
-  I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);
+  I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);
   const r=srnd(99);I.stars=[];for(let i=0;i<260;i++)I.stars.push({x:-100+r()*1800,y:-300+r()*950,r:r()<.85?1.2+r()*1.3:2.4+r()*1.5,b:.4+r()*.6,sp:1+r()*3,ph:r()*6});I.big=[];for(let i=0;i<14;i++)I.big.push({x:-50+r()*1700,y:-280+r()*700,r:18+r()*26,ph:r()*6});
   I.motes=[];for(let i=0;i<64;i++)I.motes.push({x:r()*1600,y:r()*900,v:14+r()*36,r:5+r()*13,ph:r()*6,c:r()<.7?'#9ff6ff':'#ffe08a'});
   I.islF=[{a:'isl2',x:300,y:190,p:.6,sc:1,ph:1},{a:'isl3',x:1290,y:120,p:.6,sc:1,ph:2},{a:'isl4',x:1060,y:520,p:.6,sc:1,ph:3}];I.islN=[{a:'isl0',x:150,y:520,p:1.15,sc:1,ph:4},{a:'isl1',x:1460,y:380,p:1.15,sc:1,ph:5}];
