@@ -148,7 +148,10 @@ const WingArt=(()=>{
   a=build(tier,ds);cache.set(k,a);if(cache.size>CMAX)cache.delete(cache.keys().next().value);return a}
  // ---------- pose: spread 0 (folded on the back) .. 1 (open); idle breathing, calm open/fold cycle, jump snap, landing dip,
  // equip unfold, flight beats (FL from FLY7), slow majestic opening and a special idle flourish for exclusive wings
- const FL={on:false,rate:15,amp:.3};const POSE=new Map();
+ const FL={on:false,rate:15,amp:.3,bob:0};const POSE=new Map();
+ // powered flight beat: a quick power downstroke (40% of the beat) and a slower recovery upstroke, instead of an even sine.
+ // The phase is warped so the curve stays smooth at the top and bottom of the stroke. Returns the sine-like value and how far into the upstroke we are.
+ const TAU=Math.PI*2;function beat(th){const v=((th/TAU-.25)%1+1)%1,up=v>=.4,w=up?.75+(v-.4)/.6*.5:.25+v/.4*.5;return{val:Math.sin(TAU*w),fold:up?Math.sin(Math.PI*(v-.4)/.6):0}}
  function pose(key,tier,t,mode,vy,ph,W){let p=POSE.get(key);const A=W.a;
   if(!p){p={s:mode==2?1:0,t,fl:0,lastAir:mode==2,tier,eq:0,land:0};POSE.set(key,p);if(POSE.size>48)POSE.delete(POSE.keys().next().value)}
   let dt=t-p.t;p.t=t;if(!(dt>0)||dt>.25)dt=.016;
@@ -160,12 +163,17 @@ const WingArt=(()=>{
   p.fl+=dt*rate;if(air&&!p.lastAir)p.fl=0;if(!air&&p.lastAir&&mode>=0)p.land=1;p.lastAir=air;
   const k=target>p.s?(air?20:A.slow?1.3:3.2):(air?6:mode<0?7:2.4);p.s+=(target-p.s)*(1-Math.exp(-dt*k));
   p.eq=Math.max(0,p.eq-dt*1.2);p.land=Math.max(0,p.land-dt*3.5);
-  const fl=Math.sin(p.fl)*amp*(air?1:Math.max(p.s,A.flutter?.6:0)),dir=rising?-1:1;
+  const dir=rising?-1:1;
+  if(fly){// realistic flight: power stroke, wings tuck in on the upstroke, outer feathers trail the arm, the body lifts on each downstroke
+   const b=beat(p.fl),bl=beat(p.fl-.45);FL.bob=b.val*3;
+   return{s:p.s*(1-b.fold*.32),fl:b.val*amp*dir,fll:bl.val*amp*dir,ph:p.fl,amp:amp*dir,rise:true,land:0,eq:p.eq,flare:0}}
+  if(key=='me')FL.bob=0;
+  const fl=Math.sin(p.fl)*amp*(air?1:Math.max(p.s,A.flutter?.6:0));
   return{s:p.s,fl:fl*dir,ph:p.fl,amp:amp*dir*(air?1:Math.max(p.s,A.flutter?.6:0)),rise:rising,land:p.land*(1-p.land)*4,eq:p.eq,flare:ex&&!air?idle:0}}
  // ---------- per-family drawing (inside one side's mirrored frame; +x = outward, root at 0,0) ----------
  function drawFan(g,P,ps,t,ph,fx){const nl=P.layers.length,S=ps.s;
   for(let i=0;i<nl;i++){const l=P.layers[i],kb=nl>1?1-i/(nl-1):0,e=ease(S*(1+P.stg)-kb*P.stg-P.sub*.08);
-   const ang=lerp(P.fold,P.rest,e)+ps.fl*(.5+kb*.8)*(P.sub?.7:1)+ps.lag*(.5+kb)+Math.sin(t*1.7+ph)*.016*(1+kb)+(P.ruf?Math.sin(t*2.6+i*1.9+ph)*.02*S*(1+kb):0)+ps.land*.32*(1+kb*.5);
+   const ang=lerp(P.fold,P.rest,e)+(ps.fll!=null?ps.fl*(1-kb*.6)+ps.fll*kb*.6:ps.fl)*(.5+kb*.8)*(P.sub?.7:1)+ps.lag*(.5+kb)+Math.sin(t*1.7+ph)*.016*(1+kb)+(P.ruf?Math.sin(t*2.6+i*1.9+ph)*.02*S*(1+kb):0)+ps.land*.32*(1+kb*.5);
    g.save();g.rotate(ang);g.scale(lerp(P.fsx,1,e),lerp(P.fsy,1,e));g.drawImage(l.c,-l.ox,-l.oy,l.w,l.h);
    if(i==nl-1&&fx&&S>.25){const a0=g.globalAlpha;
     if(P.glow){g.globalCompositeOperation='lighter';g.globalAlpha=a0*(.07+.06*Math.sin(t*2.2+ph))*S;g.drawImage(l.c,-l.ox,-l.oy,l.w,l.h);g.globalAlpha=a0}

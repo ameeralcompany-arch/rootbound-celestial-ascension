@@ -82,7 +82,9 @@ const WINGX=(()=>{
  function refreshTop(){const t=root&&root.querySelector('#wcTop');if(t){t.innerHTML=info(wingById(selId));bindTop(t)}root&&root.querySelectorAll('.wc-card').forEach(c=>c.classList.toggle('sel',c.dataset.w==selId))}
  const msg=t=>{const m=root&&root.querySelector('#wcMsg');if(m)m.textContent=t};
  async function act(a){const w=wingById(selId);if(!w)return;const sfx=n=>{try{UIS.play(n)}catch(_){}};
-  if(a=='prev'){if(WPREV.id==w.id)WPREV.id=null;else{WPREV.id=w.id;WPREV.until=performance.now()+15000}sfx('select');refreshTop();return}
+  if(a=='prev'){if(WPREV.id==w.id)WPREV.id=null;else{WPREV.id=w.id;WPREV.until=performance.now()+15000;
+     // let the player hear this wing too: its unfold sound, then a strong flight beat
+     try{WINGSFX.play('e',w);setTimeout(()=>{try{if(WPREV.id==w.id)WINGSFX.play('f',w,true)}catch(_){}},650)}catch(_){}}sfx('select');refreshTop();return}
   if(a=='eq'){if(wingEquip(w.id)){sfx('select');render()}else{sfx('error');msg('You do not own these wings yet.')}return}
   if(a=='un'||a=='unall'){wingUnequip();sfx('click');render();return}
   if(a=='buy'){const it=item(w);if(!it)return;if(it.price>=500){try{const ok=await DLG7.confirm('Buy '+w.n+'?','This costs '+it.price+' gems. You have '+(gems|0)+'.','Buy for '+it.price);if(!ok)return}catch(_){}}
