@@ -1,5 +1,6 @@
-// 6-slot hotbar: keys 1-6 + wheel, assign anything (click flow, slot buttons, drag & drop), each slot's use does the right thing,
-// clear, used-up stacks stay greyed, under-level weapons locked, layout persists, old saves get the default layout. node tests/hotbar.js
+// 7-slot hotbar: keys 1-7 + wheel, assign anything (click flow, slot buttons, drag & drop), each slot's use does the right thing,
+// clear, used-up stacks stay greyed, under-level weapons locked, layout persists, old saves get the default layout,
+// 6-slot saves migrate to 7 slots (items stay put, slot 7 = Twiggy unless it is already on the bar). node tests/hotbar.js
 const {chromium}=require('playwright');const path=require('path');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';
 let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(d!=null&&d!==''?'  - '+(typeof d=='string'?d:JSON.stringify(d)):''))};
@@ -14,18 +15,18 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
  await p.waitForTimeout(200);
  // ---- structure + default layout
  const st=await E(()=>({n:document.querySelectorAll('#bar .s6').length,slots:HOTBAR.slots,keys:[...document.querySelectorAll('#bar .s6 .k6')].map(e=>e.textContent).join('')}));
- ok('six hotbar slots labelled 1-6',st.n==6&&st.keys=='123456',st);
- ok('default layout: 1 weapon, 2 Pip, 3 Pebble, 4 Glimmer, 5 a block, 6 Bubbles',/^w:/.test(st.slots[0])&&st.slots[1]=='w:pip'&&st.slots[2]=='w:pebble'&&st.slots[3]=='w:glimmer'&&typeof st.slots[4]=='number'&&st.slots[5]=='w:bubbles',st.slots);
- // ---- keys 1-6 select
- const keys=[];for(let i=0;i<6;i++){await p.keyboard.press(String(i+1));await p.waitForTimeout(60);keys.push(await E(()=>({c:HOTBAR.cur,on:[...document.querySelectorAll('#bar .s6')].findIndex(e=>e.classList.contains('on')),wp})))}
- ok('keys 1-6 select their slot (and highlight it)',keys.every((k,i)=>k.c==i&&k.on==i),keys);
- ok('key 2 holds Pip, key 6 holds Bubbles, key 5 (block) empties the hand',keys[1].wp=='pip'&&keys[5].wp=='bubbles'&&keys[4].wp=='fist',keys.map(k=>k.wp));
- await p.keyboard.press('7');await p.waitForTimeout(60);ok('keys 7-9 no longer switch anything',await E(()=>HOTBAR.cur)==5);
- ok('selecting a slot shows the name pill',await E(()=>{const e=document.querySelector('#bar .pill6');return e.classList.contains('on')&&/Bubbles/.test(e.textContent)}));
+ ok('seven hotbar slots labelled 1-7',st.n==7&&st.keys=='1234567',st);
+ ok('default layout: 1 weapon, 2 Pip, 3 Pebble, 4 Glimmer, 5 a block, 6 Bubbles, 7 Twiggy',/^w:/.test(st.slots[0])&&st.slots[1]=='w:pip'&&st.slots[2]=='w:pebble'&&st.slots[3]=='w:glimmer'&&typeof st.slots[4]=='number'&&st.slots[5]=='w:bubbles'&&st.slots[6]=='w:twiggy',st.slots);
+ // ---- keys 1-7 select
+ const keys=[];for(let i=0;i<7;i++){await p.keyboard.press(String(i+1));await p.waitForTimeout(60);keys.push(await E(()=>({c:HOTBAR.cur,on:[...document.querySelectorAll('#bar .s6')].findIndex(e=>e.classList.contains('on')),wp})))}
+ ok('keys 1-7 select their slot (and highlight it)',keys.every((k,i)=>k.c==i&&k.on==i),keys);
+ ok('key 2 holds Pip, key 6 Bubbles, key 7 Twiggy, key 5 (block) empties the hand',keys[1].wp=='pip'&&keys[5].wp=='bubbles'&&keys[6].wp=='twiggy'&&keys[4].wp=='fist',keys.map(k=>k.wp));
+ await p.keyboard.press('8');await p.waitForTimeout(60);await p.keyboard.press('9');await p.waitForTimeout(60);ok('keys 8-9 do not switch anything',await E(()=>HOTBAR.cur)==6);
+ ok('selecting a slot shows the name pill',await E(()=>{const e=document.querySelector('#bar .pill6');return e.classList.contains('on')&&/Twiggy/.test(e.textContent)}));
  // ---- wheel
  await p.mouse.move(640,200);await p.keyboard.press('3');const c0=await E(()=>HOTBAR.cur);await p.mouse.wheel(0,120);await p.waitForTimeout(160);const c1=await E(()=>HOTBAR.cur);await p.mouse.wheel(0,-120);await p.waitForTimeout(160);const c2=await E(()=>HOTBAR.cur);
  await p.keyboard.press('1');await p.mouse.wheel(0,-120);await p.waitForTimeout(160);const c3=await E(()=>HOTBAR.cur);
- ok('mouse wheel cycles the six slots both ways (and wraps)',c0==2&&c1==3&&c2==2&&c3==5,[c0,c1,c2,c3]);
+ ok('mouse wheel cycles the seven slots both ways (and wraps)',c0==2&&c1==3&&c2==2&&c3==6,[c0,c1,c2,c3]);
  // ---- assign: select an item in the inventory, press a number
  await p.keyboard.press('i');await p.waitForTimeout(350);
  await E(()=>INV7.filter='weapons');await E(()=>INV7.render());await p.click('#inv7 [data-k="w:cinder"]');await p.waitForTimeout(80);await p.keyboard.press('1');await p.waitForTimeout(80);
@@ -37,13 +38,13 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
  await p.click('#inv7 aside [data-a="hb4"]');await p.waitForTimeout(80);ok('clicking its own slot button again takes it off the bar',await E(()=>HOTBAR.slots[4]===null));
  await p.click('#inv7 [data-k="1"]');await p.waitForTimeout(80);await p.click('#inv7 aside [data-a="hb4"]');await p.waitForTimeout(80);ok('Dirt → slot 5',await E(()=>HOTBAR.slots[4]===1));
  // select an item, then click a hotbar slot
- await E(()=>{INV7.filter='weapons';INV7.render()});await p.click('#inv7 [data-k="w:twiggy"]');await p.waitForTimeout(60);await p.click('#bar .s6[data-i="2"]');await p.waitForTimeout(80);
+ await E(()=>{INV7.filter='tools';INV7.render()});await p.click('#inv7 [data-k="w:twiggy"]');await p.waitForTimeout(60);await p.click('#bar .s6[data-i="2"]');await p.waitForTimeout(80);
  ok('select Twiggy, click hotbar slot 3 → slot 3',await E(()=>HOTBAR.slots[2]=='w:twiggy'),await E(()=>HOTBAR.slots));
  // assign mode: click a hotbar slot with nothing selected, then pick an item
- await E(()=>{INV7.selK=null;INV7.render()});await p.click('#bar .s6[data-i="2"]');await p.waitForTimeout(120);const asg=await E(()=>INV7.assign);await p.click('#inv7 [data-k="w:pebble"]');await p.waitForTimeout(80);
+ await E(()=>{INV7.selK=null;INV7.filter='tools';INV7.render()});await p.click('#bar .s6[data-i="2"]');await p.waitForTimeout(120);const asg=await E(()=>INV7.assign);await p.click('#inv7 [data-k="w:pebble"]');await p.waitForTimeout(80);
  ok('assign mode: click a slot, then an item (Pebble back to slot 3)',asg==2&&await E(()=>HOTBAR.slots[2]=='w:pebble'),[asg,await E(()=>HOTBAR.slots)]);
  // drag & drop a gun from the inventory onto slot 4
- await E(()=>{INV7.selK=null;INV7.render()});await p.dragAndDrop('#inv7 [data-k="w:'+env.gun+'"]','#bar .s6[data-i="3"]');await p.waitForTimeout(120);
+ await E(()=>{INV7.selK=null;INV7.filter='weapons';INV7.render()});await p.dragAndDrop('#inv7 [data-k="w:'+env.gun+'"]','#bar .s6[data-i="3"]');await p.waitForTimeout(120);
  ok('drag & drop: '+env.gun+' from the inventory onto slot 4',await E(g=>HOTBAR.slots[3]=='w:'+g,env.gun),await E(()=>HOTBAR.slots));
  ok('drag state is cleaned up after the drop',await E(()=>!document.documentElement.classList.contains('hbdrag')&&!document.querySelector('#bar .s6.over')));
  // drag a slot onto another slot swaps them
@@ -127,8 +128,19 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
   await q.addInitScript(o=>{if(!localStorage.getItem('hbseed')){localStorage.setItem('hbseed','1');localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rbp',JSON.stringify(o));localStorage.setItem('rbpsw',JSON.stringify({w:'hammer',t:'glimmer'}))}},OLD);
   await enter(q,'hbold');
   const r=await q.evaluate(o=>({s:HOTBAR.slots,c:HOTBAR.cur,wp,own:Object.keys(o.own).every(k=>own[k]),inv:Object.keys(o.inv).every(k=>cnt(+k)>=o.inv[k]),gems,wear:wear.hat,stored:!!localStorage.getItem('rbphb')}),OLD);
-  ok('old save: default layout (its weapon, Pip, Pebble, Glimmer, its selected block, Bubbles)',JSON.stringify(r.s)==JSON.stringify(['w:hammer','w:pip','w:pebble','w:glimmer',3,'w:bubbles'])&&r.c==0&&r.wp=='hammer',r);
+  ok('old save: default layout (its weapon, Pip, Pebble, Glimmer, its selected block, Bubbles, Twiggy)',JSON.stringify(r.s)==JSON.stringify(['w:hammer','w:pip','w:pebble','w:glimmer',3,'w:bubbles','w:twiggy'])&&r.c==0&&r.wp=='hammer',r);
   ok('old save: every weapon, item, gem and worn item is kept',r.own&&r.inv&&r.gems>=1234&&r.wear=='helmet',r);
   ok('old save: the new layout is stored for next time',r.stored);
   ok('old save: no page errors',qe.length==0,qe.join('|'));await c2.close()}
+ // ---- a 6-slot layout (v1) migrates to 7 slots: every slot stays where it was, slot 7 gets Twiggy (or stays empty if Twiggy is on the bar)
+ for(const[name,six,want7]of[['without Twiggy',['w:cinder',1,'w:pip',null,'w:bubbles','w:pebble'],'w:twiggy'],['with Twiggy',['w:twiggy',1,'w:pip','w:glimmer','w:bubbles','w:pebble'],null]]){
+  const c3=await b.newContext({viewport:{width:1280,height:720}});const q=await c3.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));
+  const SAVE={v:3,gems:50,lvl:10,inv:{1:20,3:5},own:{fist:1,cinder:1},ownW:{},wear:{hat:'',body:'',wing:'',boot:'',glove:''},wp:'pip',bar:[1,0,0,0,0,0,0,0,0]};
+  await q.addInitScript(([o,s])=>{if(!localStorage.getItem('hbseed')){localStorage.setItem('hbseed','1');localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rbp',JSON.stringify(o));localStorage.setItem('rbphb',JSON.stringify({v:1,s,c:2}))}},[SAVE,six]);
+  await enter(q,'hbmig');
+  const r=await q.evaluate(()=>({s:HOTBAR.slots,c:HOTBAR.cur,n:document.querySelectorAll('#bar .s6').length,st:JSON.parse(localStorage.getItem('rbphb'))}));
+  ok('6-slot save '+name+': slots 1-6 unchanged, slot 7 = '+want7,JSON.stringify(r.s.slice(0,6))==JSON.stringify(six)&&r.s[6]===want7&&r.c==2&&r.n==7,r);
+  ok('6-slot save '+name+': stored again as a 7-slot (v2) layout',r.st&&r.st.v==2&&r.st.s.length==7&&r.st.s[6]===want7,r.st);
+  await q.keyboard.press('7');await q.waitForTimeout(80);const k7=await q.evaluate(()=>({c:HOTBAR.cur,wp}));ok('6-slot save '+name+': key 7 selects slot 7',k7.c==6&&(want7?k7.wp=='twiggy':k7.wp=='fist'),k7);
+  ok('6-slot save '+name+': no page errors',qe.length==0,qe.join('|'));await c3.close()}
  await b.close();console.log(fails?fails+' hotbar test(s) FAILED':'all hotbar tests passed');process.exit(fails?1:0)})();

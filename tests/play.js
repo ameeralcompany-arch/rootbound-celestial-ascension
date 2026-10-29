@@ -31,9 +31,9 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  await E(()=>{wp='pebble'});await p.waitForTimeout(80);await E(()=>{wp='cinder'});await p.waitForTimeout(80);
  await p.keyboard.press('x');await p.waitForTimeout(120);const a=await E(()=>wp);await p.keyboard.press('x');await p.waitForTimeout(120);const c=await E(()=>wp);
  ok('X swaps between the last weapon and the last tool',a=='pebble'&&c=='cinder',[a,c]);
- await p.keyboard.press('6');await p.waitForTimeout(80);await p.keyboard.press('9');await p.waitForTimeout(80);ok('6 picks hotbar slot 6 (Bubbles); 9 no longer switches',await E(()=>wp=='bubbles'&&HOTBAR.cur==5));
+ await p.keyboard.press('6');await p.waitForTimeout(80);await p.keyboard.press('9');await p.waitForTimeout(80);ok('6 picks hotbar slot 6 (Bubbles); 9 does not switch',await E(()=>wp=='bubbles'&&HOTBAR.cur==5));await p.keyboard.press('7');await p.waitForTimeout(80);ok('7 picks hotbar slot 7 (Twiggy)',await E(()=>wp=='twiggy'&&HOTBAR.cur==6));await p.keyboard.press('6');await p.waitForTimeout(80);
  await p.mouse.move(640,200);const w0=await E(()=>[wp,HOTBAR.cur]);await p.mouse.wheel(0,120);await p.waitForTimeout(200);const w1=await E(()=>[wp,HOTBAR.cur]);await p.mouse.wheel(0,-120);await p.waitForTimeout(200);const w2=await E(()=>[wp,HOTBAR.cur]);
- ok('mouse wheel cycles the hotbar slots both ways',w1[1]==0&&w1[0]!=w0[0]&&w2[1]==w0[1]&&w2[0]==w0[0],[w0,w1,w2]);
+ ok('mouse wheel cycles the hotbar slots both ways',w1[1]==6&&w1[0]!=w0[0]&&w2[1]==w0[1]&&w2[0]==w0[0],[w0,w1,w2]);
  ok('switching shows the hotbar name pill',await E(()=>{const e=document.querySelector('#bar .pill6');return !!e&&e.classList.contains('on')&&e.textContent.length>3}));
  // inventory open: walking and jumping still work, wheel over the panel does not switch, focus is released on close
  await p.keyboard.press('i');await p.waitForTimeout(300);const x0=await E(()=>P.x);await p.keyboard.down('d');await p.waitForTimeout(600);await p.keyboard.up('d');const x1=await E(()=>P.x);

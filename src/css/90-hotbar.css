@@ -1,4 +1,4 @@
-/* HOTBAR6 (99-zzz-hotbar.js): six slots on keys 1-6. Only transform / opacity animate; the bar is patched, never rebuilt per frame. */
+/* HOTBAR6 (99-zzz-hotbar.js): seven slots on keys 1-7. Only transform / opacity animate; the bar is patched, never rebuilt per frame. */
 #bar.hb6{gap:8px!important;padding:8px!important;align-items:flex-end;contain:layout style}
 html.inv6 #bar.hb6{z-index:67}
 #sw8{display:none!important}
@@ -51,7 +51,7 @@ html[data-reduce=true] #bar.hb6 .s6,html[data-reduce=true] #bar.hb6 .ind6,html[d
 /* inventory: hotbar row in the details + which slot an item sits in */
 #inv7 .it7 .hbn7{position:absolute;right:6px;top:5px;z-index:2;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;display:grid;place-items:center;border-radius:5px;background:var(--ink);color:var(--surface-solid);font:800 9.5px/1 var(--font-ui);text-decoration:none;pointer-events:none}
 #inv7 .it7[draggable=true]{cursor:grab}
-#inv7 aside .hbrow7{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:4px}
+#inv7 aside .hbrow7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:4px}
 #inv7 aside .hbrow7 button{min-width:0;height:32px;padding:0!important;display:grid;place-items:center;font:800 12px var(--font-ui)!important;border-radius:9px!important}
 #inv7 aside .hbrow7 button.on{background:var(--ink)!important;color:var(--surface-solid)!important;border-color:var(--ink)!important}
 #inv7 aside .hbtip7{margin:6px 0 0;font-size:11px;color:var(--muted)}

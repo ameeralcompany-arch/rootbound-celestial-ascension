@@ -40,8 +40,8 @@ const DOORS6=(()=>{
  function close(){if(ui){ui.style.display='none'}if(OBJ[uiK])OBJ[uiK]._open=0;uiK=-1}
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  function config(k,viewOnly){mk();const o=OBJ[k];if(!o)return;const d=ODEF[o.t],c=o.c,can=OBJ6.canConfig(myId);uiK=k;let h='<h3>'+esc(c.nm||d.n)+'</h3>';
-  if(d.cat=='cont'){h+='<label>Contents ('+c.it.length+'/12)</label>'+(c.it.map(x=>'<div class="it"><span>'+x[1]+' × '+esc(OBJ6.itemName(x[0]))+'</span><button data-t="'+x[0]+'" data-n="'+x[1]+'">Take</button></div>').join('')||'<div style="color:#8a7aaa">Empty</div>');
-   h+='<label>Put in (hold item selected on hotbar)</label><div class="row"><button id="op_put1">Put 1</button><button id="op_putall">Put all</button></div>'}
+  // contents are managed in the chest window (CHEST6, 97-chestui.js); this panel only holds the chest's settings
+  if(d.cat=='cont'){h+='<label>Contents</label><div style="color:var(--muted,#8a7aaa)">'+c.it.length+' / '+(typeof CHEST6!='undefined'?CHEST6.capOf(o):12)+' slots used. Press E beside the chest to move items.</div>'}
   if(can&&!viewOnly||(can&&d.cat=='cont')){
    if(d.cat=='door'){h+='<label>Name</label><input type=text id="f_nm" maxlength=16 value="'+esc(c.nm)+'"><label>Destination type</label><select id="f_dt"><option value=w>Another world</option><option value=s>Return to this world\'s spawn</option><option value=l>Linked gate/pad in this world (label)</option></select><label>World name (for "another world")</label><input type=text id="f_d" maxlength=16 value="'+esc(c.d)+'"><label>Link label</label><input type=text id="f_lb" maxlength=12 value="'+esc(c.lb)+'"><label>Who may use it</label><select id="f_ac">'+roleName.map((r,i)=>'<option value='+i+'>'+r+'</option>').join('')+'</select><label>Min. level</label><input type=number id="f_lv" min=0 max=999 value='+c.lv+'><label><input type=checkbox id="f_kr" '+(c.kr?'checked':'')+'> Requires a Gate Key</label><label><input type=checkbox id="f_kc" '+(c.kc?'checked':'')+'> Key is consumed</label><label><input type=checkbox id="f_sw" '+(c.sw?'checked':'')+'> Requires a lever/plate to be on</label>'}
    else if(d.k=='sign')h+='<label>Text (80 chars)</label><input type=text id="f_tx" maxlength=80 value="'+esc(c.tx)+'">';
@@ -54,8 +54,7 @@ const DOORS6=(()=>{
   const set=(id,v)=>{const e=ui.querySelector('#'+id);if(e)e.value=v};set('f_dt',c.dt);set('f_ac',c.ac);
   ui.querySelector('#op_close').onclick=close;const wr=ui.querySelector('#op_wxreset');if(wr)wr.onclick=()=>{WXM7.reset(k);close()};
   const sv=ui.querySelector('#op_save');if(sv)sv.onclick=()=>{const g2=id=>{const e=ui.querySelector('#'+id);return e?e.type=='checkbox'?e.checked?1:0:e.value:undefined},v=Object.assign({},c);for(const f of['nm','dt','d','lb','ac','lv','kr','kc','sw','tx']){const x=g2('f_'+f);if(x!==undefined)v[f]=x}if(OBJ6.configure(k,v)){say('Saved');OBJ6.sfx('ok');close()}};
-  ui.querySelectorAll('.it button').forEach(b=>b.onclick=()=>OBJ6.chestOp(k,'take',+b.dataset.t,+b.dataset.n));
-  const p1=ui.querySelector('#op_put1'),pa=ui.querySelector('#op_putall'),sel=()=>bar[sel];if(p1)p1.onclick=()=>{const it=sel();if(it)OBJ6.chestOp(k,'put',it,1);else say('Select an item on the hotbar')};if(pa)pa.onclick=()=>{const it=sel();if(it&&cnt(it))OBJ6.chestOp(k,'put',it,cnt(it));else say('Select an item on the hotbar')}}
+}
  UI6.chestRefresh=()=>{if(uiK>=0&&OBJ[uiK]&&ui.style.display=='block'&&ODEF[OBJ[uiK].t].cat=='cont')config(uiK,true)};
  addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;const k=e.key.toLowerCase();if(k=='escape'&&ui&&ui.style.display=='block'){close();return}if(k=='g'&&entered&&!e.repeat){const n=OBJ6.near();if(n)config(n.k,false)}});
  return{use,config,cancel,close,check,find,go,get busy(){return busy}}})();
