@@ -11,7 +11,8 @@ let logf=null;function log(m){const l=new Date().toISOString()+' '+m+'\n';try{if
 function create(){
  const w=new BrowserWindow(Object.assign({width:1280,height:720,show:false,backgroundColor:'#ece8f5',title:'Rootbound',autoHideMenuBar:true,webPreferences:{contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}},OFF?{x:-32000,y:-32000,skipTaskbar:true,focusable:false}:{}));
  Menu.setApplicationMenu(null);
- const show=()=>{if(OFF)w.showInactive();else w.show()};
+ // the game always opens full-screen (F11 still switches to a window and back); test runs stay off-screen and windowed
+ const show=()=>{if(OFF)w.showInactive();else{w.show();if(!SMOKE)w.setFullScreen(true)}};
  w.once('ready-to-show',show);setTimeout(()=>{if(!w.isDestroyed()&&!w.isVisible())show()},4000);
  w.webContents.on('console-message',(_e,lvl,msg)=>{if(lvl>=2)log('console: '+msg.slice(0,300))});
  w.webContents.on('did-fail-load',(_e,code,desc,url)=>{log('did-fail-load '+code+' '+desc+' '+url);/* -3 = load aborted by a reload/navigation: harmless */if(code!==-3&&!SMOKE&&!OFF)dialog.showErrorBox('Rootbound could not load','The game file failed to load ('+desc+').\nA log was written to:\n'+logf)});
