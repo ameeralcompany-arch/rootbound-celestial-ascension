@@ -1394,6 +1394,190 @@ html[data-reduce=true] #rw8lv.on{animation:none;opacity:1;transform:translate(-5
 @media(prefers-reduced-motion:reduce){.rw8c,#dz8{transition:none!important}.rw8roll{animation:none;transform:translateY(-96px)}.rw8ray{display:none}#rw8lv.on{animation:none;opacity:1;transform:translate(-50%,0)}}
 @media(max-width:640px){.rw8t{font-size:17px}.rw8num{font-size:70px}#dz8{top:150px}#rw8{top:120px}}
 
+/* ========== CSS: 89-z-tools.css ========== */
+/* ===== TOOLLV + GUIDE8: tool level banner, XP chip, animated shine on tool icons (filter on img[src$="#tl8-N"], ring on [data-tl8]) and the Tool Guide.
+   Animations are transform / opacity / filter on small elements only; still with reduced motion. ===== */
+#tl8lv{position:fixed;left:50%;top:calc(15% + env(safe-area-inset-top,0px));z-index:59;pointer-events:none;text-align:center;opacity:0;transform:translate(-50%,10px) scale(.8);display:none}
+#tl8lv.on{display:block;animation:rw8in .6s cubic-bezier(.2,1.3,.35,1) forwards}
+#tl8lv.off{animation:rw8out .45s ease-in forwards}
+#tl8lv .tl8bi{display:block;margin:0 auto 6px;width:68px;height:68px;border-radius:16px;box-shadow:0 0 0 2px #fff,0 0 26px rgba(255,214,110,.9);animation:tl8spin .9s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes tl8spin{from{transform:scale(.2) rotate(-200deg)}to{transform:none}}
+#tl8lv small{display:block;font:800 12px var(--font-ui);letter-spacing:.32em;text-transform:uppercase;color:#a87a12;text-shadow:0 0 14px rgba(255,236,170,.95),0 1px 0 #fff}
+#tl8lv .rw8num{height:84px;font-size:80px;line-height:84px}#tl8lv .rw8roll i{height:84px}#tl8lv .rw8roll{animation-name:tl8roll}
+@keyframes tl8roll{from{transform:translateY(0)}to{transform:translateY(-84px)}}
+#tl8lv em{display:inline-block;margin-top:2px;padding:6px 15px;border-radius:999px;background:var(--g-pearl,rgba(255,255,255,.92));font:600 12px var(--font-ui);font-style:normal;color:var(--ink,#2b2140);box-shadow:var(--sh-2)}
+#tl8lv em b{font-weight:800;margin-right:5px}
+#tl8lv[data-tier="6"] small{background:linear-gradient(90deg,#ff5f7e,#ffb340,#ffe94a,#6fe38a,#5fb8ff,#b07aff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+#tl8lv[data-tier="6"] .rw8num{text-shadow:0 0 26px rgba(255,140,220,.95),0 3px 0 #b05ad0,0 6px 18px rgba(60,0,80,.45)}
+#tl8lv[data-tier="6"] .rw8ray{animation:rw8spin 6s linear infinite,tl8hue 3s linear infinite}
+#tl8lv[data-tier="6"] .tl8bi{animation:tl8spin .9s cubic-bezier(.2,1.4,.4,1) both,tl8rbs 3s linear infinite}
+html[data-theme=dark] #tl8lv em{color:#f3eefc}
+/* XP chip above the hotbar */
+#tl8x{position:fixed;left:50%;bottom:110px;z-index:30;display:flex;align-items:center;gap:8px;padding:4px 13px 4px 4px;border-radius:999px;background:rgba(24,20,38,.74);border:1px solid rgba(255,255,255,.15);box-shadow:0 8px 20px -8px rgba(0,0,0,.45);
+ color:#fff;font:600 12px Fredoka,var(--font-ui),system-ui,sans-serif;pointer-events:none;opacity:0;transform:translate(-50%,6px);transition:opacity .25s ease,transform .32s cubic-bezier(.2,1.2,.35,1);white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+#tl8x.on{opacity:1;transform:translate(-50%,0)}#tl8x.side{transform:translate(-8px,0)}#tl8x.side.on{transform:none}
+#tl8x img{width:26px;height:26px;border-radius:50%}#tl8x small{opacity:.8;font-weight:500}
+#tl8x .tl8b{width:92px;height:6px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden}
+#tl8x .tl8b i{display:block;height:100%;transform-origin:0 50%;background:linear-gradient(90deg,#8fe3ff,#c9a8ff);transition:transform .3s ease-out}
+#tl8x[data-tier="4"] .tl8b i,#tl8x[data-tier="5"] .tl8b i{background:linear-gradient(90deg,#ffe08a,#ffb020)}
+#tl8x[data-tier="6"] .tl8b i{background:linear-gradient(90deg,#ff5f7e,#ffb340,#ffe94a,#6fe38a,#5fb8ff,#b07aff)}
+#tl8x em{font-style:normal;font-variant-numeric:tabular-nums;opacity:.85;font-size:11px}
+/* shine on tool icons: the glow / stars / ring are baked into the image; these add life */
+img[src$="#tl8-3"]{animation:tl8tw 2.6s ease-in-out infinite}
+img[src$="#tl8-4"],img[src$="#tl8-5"]{animation:tl8gd 2s ease-in-out infinite;will-change:filter}
+img[src$="#tl8-6"]{animation:tl8rbs 3s linear infinite;will-change:filter}
+@keyframes tl8tw{0%,100%{filter:none}50%{filter:brightness(1.05) drop-shadow(0 0 3px rgba(255,255,255,.85))}}
+@keyframes tl8gd{0%,100%{filter:drop-shadow(0 0 2px rgba(255,198,64,.5))}50%{filter:brightness(1.08) drop-shadow(0 0 6px rgba(255,198,64,.95))}}
+@keyframes tl8rbs{0%,100%{filter:drop-shadow(0 0 4px #ff5f7e)}17%{filter:drop-shadow(0 0 5px #ffb340)}33%{filter:drop-shadow(0 0 4px #ffe94a)}50%{filter:drop-shadow(0 0 5px #6fe38a)}67%{filter:drop-shadow(0 0 4px #5fb8ff)}83%{filter:drop-shadow(0 0 5px #b07aff)}}
+@keyframes tl8hue{to{filter:hue-rotate(360deg)}}
+/* TOOLLV.decorate(slotEl, id): an animated ring around any slot */
+[data-tl8]{position:relative}
+[data-tl8]::after{content:'';position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;opacity:0}
+[data-tl8="1"]::after,[data-tl8="2"]::after,[data-tl8="3"]::after{opacity:.85;box-shadow:0 0 0 1.5px rgba(255,255,255,.75),0 0 10px rgba(255,255,255,.35)}
+[data-tl8="4"]::after,[data-tl8="5"]::after{opacity:1;box-shadow:0 0 0 2px #ffc640,0 0 14px rgba(255,198,64,.7);animation:tl8pulse 1.8s ease-in-out infinite}
+[data-tl8="6"]::after{opacity:1;inset:-3px;padding:3px;background:conic-gradient(#ff5f7e,#ffb340,#ffe94a,#6fe38a,#5fb8ff,#b07aff,#ff5f7e);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:tl8hue 3s linear infinite}
+@keyframes tl8pulse{50%{opacity:.5}}
+/* ---- Tool Guide (hub tab) ---- */
+.tg8{--tg-dark:linear-gradient(160deg,#1d1736,#121a33 60%,#0d1226);color:var(--ink);font-family:var(--font-ui)}
+.tg8 .gem{display:inline-block;width:9px;height:9px;transform:rotate(45deg);background:linear-gradient(135deg,#a8f4ff,#4f9cff);border-radius:2px;margin-right:5px;vertical-align:1px}
+.tg8 kbd{display:inline-block;min-width:20px;padding:1px 7px;border-radius:6px;border:1px solid var(--line);border-bottom-width:2px;background:var(--surface,#fff);font:800 11px var(--font-ui);text-align:center;color:var(--ink)}
+.tg8top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:0 34px 12px 0}
+.tg8k{display:block;font:800 9.5px var(--font-ui)!important;letter-spacing:.24em;text-transform:uppercase;color:var(--accent-2)!important}
+#hubbody h3.tg8h{margin:2px 0 4px;font:italic 700 30px/1.05 var(--font-display);letter-spacing:.01em;text-transform:none;color:var(--ink)!important}
+.tg8top p{margin:0;max-width:520px}
+.tg8key{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:12px;color:var(--muted);white-space:nowrap}
+.tg8nav{position:sticky;top:-16px;z-index:2;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 -18px 14px;padding:8px 18px 10px;background:var(--bg-page,#fbfaf7);border-bottom:1px solid var(--line)}
+.tg8t{display:flex;align-items:center;gap:8px;padding:5px 11px 5px 5px;border-radius:14px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer;font:inherit;transition:transform .18s var(--mo-ease,ease),border-color .18s,box-shadow .18s}
+.tg8t img{width:34px;height:34px;border-radius:10px}
+.tg8t span{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:62px}.tg8t b{font-size:13px;line-height:1}.tg8t small{font-size:10.5px!important;line-height:1}
+.tg8t:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--tc) 70%,var(--line))}
+.tg8t.on{border-color:var(--tc);box-shadow:0 0 0 2px color-mix(in srgb,var(--tc) 45%,transparent),0 8px 18px -10px var(--tc)}
+.tg8sep{width:1px;height:28px;background:var(--line);margin:0 4px}
+.tg8p{padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font:700 12px var(--font-ui)}
+.tg8p:hover{color:var(--ink)}.tg8p.on{color:var(--ink);background:var(--sel-bg,var(--accent-soft));border-color:var(--sel-bd,var(--line-strong))}
+.tg8bar{display:block;width:100%;height:5px;border-radius:3px;background:color-mix(in srgb,var(--ink) 12%,transparent);overflow:hidden}
+.tg8bar i{display:block;height:100%;transform-origin:0 50%;background:linear-gradient(90deg,color-mix(in srgb,var(--tc,#9db4ff) 85%,#fff),var(--tc,#9db4ff));transition:transform .5s var(--mo-ease,ease)}
+.tg8pg.tg8in{animation:mo-tab .32s var(--mo-ease,ease)}
+.tg8 h5{margin:0 0 6px;font:800 10.5px var(--font-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--accent-2)}
+.tg8 section{margin:0 0 16px}.tg8 p{line-height:1.5}.tg8 p,.tg8 li{font-size:13px}
+#hubbody .tg8info h4{margin:2px 0 4px!important;font:italic 700 26px/1.1 var(--font-display)!important;letter-spacing:.01em!important;text-transform:none!important;color:var(--ink)!important}#hubbody .tg8info h4::before,#hubbody .tg8info h4::after{content:none!important;display:none!important}
+.tg8tool{display:grid;grid-template-columns:minmax(230px,300px) 1fr;gap:18px;align-items:start}
+.tg8hero{display:flex;flex-direction:column;gap:10px;position:sticky;top:60px}
+.tg8cv{display:block;width:100%;height:auto;border-radius:16px;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--tc,#9db4ff) 26%,#251c46),#120f24 72%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 10px 24px -14px rgba(20,10,40,.6)}
+.tg8lv{padding:10px 12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line)}
+.tg8lvt{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}.tg8lvt b{font:italic 700 22px var(--font-display)}
+.tg8tn{font:800 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--tc) 22%,transparent);color:var(--ink)}
+.tg8tn[data-tier="4"],.tg8tn[data-tier="5"]{background:linear-gradient(90deg,#ffe08a,#ffb020);color:#4a3000}
+.tg8tn[data-tier="6"]{background:linear-gradient(90deg,#ff5f7e,#ffb340,#ffe94a,#6fe38a,#5fb8ff,#b07aff);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.tg8lv small{display:block;margin-top:6px}
+.tg8now{padding:10px 12px;border-radius:14px;border:1px dashed var(--line)}.tg8now ul{margin:0;padding-left:16px;font-size:12px;line-height:1.6;color:var(--ink-2,var(--muted))}
+.tg8d{margin:0 0 12px;color:var(--ink-2,var(--muted))}
+.tg8chips{display:flex;flex-wrap:wrap;gap:6px}
+.tg8c{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 3px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font:600 12px var(--font-ui)}
+.tg8c img{width:24px;height:24px;border-radius:7px}
+.tg8tree i{width:24px;height:24px;border-radius:7px;background:radial-gradient(circle at 50% 38%,#7ad850 0 42%,transparent 44%),linear-gradient(#8a5a30,#8a5a30) 50% 100%/5px 45% no-repeat,#e6f4da}
+.tg8steps{margin:0;padding:0;list-style:none;counter-reset:s}
+.tg8steps li{position:relative;padding:3px 0 8px 32px;line-height:1.5;counter-increment:s}
+.tg8steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:800 11px var(--font-ui);color:#fff;background:var(--tc,var(--accent-2));box-shadow:0 0 0 3px color-mix(in srgb,var(--tc,#9db4ff) 25%,transparent)}
+.tg8sp{margin:0;padding-left:18px;line-height:1.6}.tg8sp li::marker{color:var(--tc,var(--accent-2))}
+.tg8pl{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
+.tg8pl li{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:center;padding:7px 10px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);opacity:.62}
+.tg8pl li>i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:800 12px var(--font-ui);font-style:normal;background:color-mix(in srgb,var(--ink) 10%,transparent)}
+.tg8pl li b{display:block;font-size:12.5px}.tg8pl li small{display:block;font-size:11px!important;line-height:1.3}
+.tg8pl li em{font:800 12px var(--font-ui);font-style:normal;white-space:nowrap}
+.tg8pl li.got,.tg8pl li.cur,.tg8pl li.next{opacity:1}
+.tg8pl li.got>i,.tg8pl li.cur>i{background:var(--tc,var(--accent-2));color:#fff}
+.tg8pl li.cur{border-color:var(--tc);box-shadow:0 0 0 2px color-mix(in srgb,var(--tc) 35%,transparent)}
+.tg8pl li.next{border-style:dashed}
+.tg8pl li[data-tier="4"].got>i,.tg8pl li[data-tier="5"].got>i,.tg8pl li[data-tier="4"].cur>i,.tg8pl li[data-tier="5"].cur>i{background:linear-gradient(135deg,#ffe08a,#e8a21a)}
+.tg8pl li[data-tier="6"]>i{background:conic-gradient(#ff5f7e,#ffb340,#ffe94a,#6fe38a,#5fb8ff,#b07aff,#ff5f7e);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.tg8cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:16px}
+.tg8card{padding:12px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line)}.tg8card p{margin:0;font-size:12.5px}
+.tg8card.warn{border-color:color-mix(in srgb,#e0566a 45%,var(--line));background:color-mix(in srgb,#e0566a 7%,transparent)}
+.tg8tbl{display:flex;flex-direction:column;gap:5px}
+.tg8row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 8px 6px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;font:600 12.5px var(--font-ui);color:var(--ink);text-align:left}
+.tg8row b{display:flex;align-items:center;gap:7px;padding:3px 12px 3px 3px;border-radius:999px;background:color-mix(in srgb,var(--tc) 22%,transparent)}.tg8row img{width:26px;height:26px;border-radius:8px}
+.tg8row:hover{border-color:var(--tc)}
+.tg8shine{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.tg8shine figure{margin:0;text-align:center;min-width:0}.tg8shine .tg8cv{border-radius:12px}.tg8shine figcaption{display:block;line-height:1.25}
+.tg8shine figcaption b{display:block;font-size:12px;margin-top:4px}.tg8shine figcaption small{font-size:10.5px!important}
+.tg8shine figure[data-tier="6"] figcaption b{background:linear-gradient(90deg,#ff5f7e,#ffb340,#e8c800,#3fc46a,#3f98ff,#9a5aff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tg8xt{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12px}
+.tg8xt>div{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1.4fr;gap:6px;padding:6px 12px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.tg8xt>div.hd{border-top:0;font:800 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--surface-2)}
+.tg8xt>div[data-tier="6"]{background:linear-gradient(90deg,rgba(255,95,126,.12),rgba(255,233,74,.12),rgba(95,184,255,.12),rgba(176,122,255,.12))}
+.tg8dig{display:flex;flex-direction:column;gap:8px}
+.tg8z{display:grid;grid-template-columns:170px 1fr;gap:12px;padding:10px 12px;border-radius:14px;border:1px solid color-mix(in srgb,var(--zc) 45%,var(--line));background:linear-gradient(90deg,color-mix(in srgb,var(--zc) 16%,transparent),transparent 60%)}
+.tg8zh b{display:block;font:italic 700 19px/1.1 var(--font-display)}.tg8zh small{font-weight:700}
+.tg8z ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.tg8z li{display:flex;align-items:center;gap:8px;font-size:12.5px}.tg8z li img{width:24px;height:24px;border-radius:7px;flex:none}
+.tg8ib{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:700 12px var(--font-ui);cursor:pointer}
+.tg8ib i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font:800 12px var(--font-ui);font-style:normal;color:#fff;background:linear-gradient(135deg,#9a7bff,#5fb8ff)}
+.tg8ib:hover{border-color:var(--line-strong)}
+@media(max-width:1100px){.tg8shine{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:760px){.tg8tool{grid-template-columns:1fr}.tg8hero{position:static}.tg8z{grid-template-columns:1fr}.tg8top{flex-direction:column}}
+html[data-reduce=true] img[src$="#tl8-3"],html[data-reduce=true] img[src$="#tl8-4"],html[data-reduce=true] img[src$="#tl8-5"],html[data-reduce=true] img[src$="#tl8-6"],html[data-reduce=true] [data-tl8]::after,html[data-reduce=true] #tl8lv .tl8bi,html[data-reduce=true] .tg8pg.tg8in{animation:none!important}
+html[data-reduce=true] #tl8lv.on{animation:none;opacity:1;transform:translate(-50%,0)}html[data-reduce=true] #tl8lv.off{animation:none;opacity:0}html[data-reduce=true] #tl8lv .rw8roll{transform:translateY(-84px)}
+@media(prefers-reduced-motion:reduce){img[src$="#tl8-3"],img[src$="#tl8-4"],img[src$="#tl8-5"],img[src$="#tl8-6"],[data-tl8]::after,.tg8pg.tg8in{animation:none!important}#tl8lv.on{animation:none;opacity:1;transform:translate(-50%,0)}#tl8lv .rw8roll{animation:none;transform:translateY(-84px)}}
+
+/* ========== CSS: 90-hotbar.css ========== */
+/* HOTBAR6 (99-zzz-hotbar.js): six slots on keys 1-6. Only transform / opacity animate; the bar is patched, never rebuilt per frame. */
+#bar.hb6{gap:8px!important;padding:8px!important;align-items:flex-end;contain:layout style}
+html.inv6 #bar.hb6{z-index:67}
+#sw8{display:none!important}
+#bar.hb6 .s6{position:relative;z-index:2;flex:0 0 64px;width:64px;height:64px;box-sizing:border-box;display:grid;place-items:center;border-radius:var(--rad-md,14px);border:1px solid var(--line);
+ background:var(--rg,var(--surface-2))!important;box-shadow:var(--sh-1),inset 0 2px 0 -.5px var(--rc,transparent);color:var(--ink);cursor:pointer;outline:none;user-select:none;-webkit-user-select:none;
+ transition:transform .18s var(--ease,ease)}
+#bar.hb6 .s6:hover{transform:translateY(-2px)}
+#bar.hb6 .s6.on{transform:translateY(-4px)}
+#bar.hb6 .s6:active{transform:translateY(-1px) scale(.96)}
+#bar.hb6 .s6:focus-visible{box-shadow:0 0 0 2px var(--focus,var(--accent))}
+#bar.hb6 .s6 canvas{display:block;width:48px;height:48px;border-radius:8px;image-rendering:pixelated;pointer-events:none}
+#bar.hb6 .k6{position:absolute;left:6px;top:4px;z-index:2;font:800 9px/1 var(--font-ui);font-style:normal;color:var(--muted);letter-spacing:.04em;pointer-events:none}
+#bar.hb6 .s6.on .k6{color:var(--sel-bd)}
+#bar.hb6 .n6{position:absolute;right:-5px;bottom:-5px;z-index:3;min-width:18px;height:17px;padding:0 5px;box-sizing:border-box;display:grid;place-items:center;border-radius:var(--rad-pill,999px);
+ background:var(--ink);color:var(--surface-solid);font:800 10px/1 var(--font-ui);box-shadow:0 0 0 2px var(--surface-solid);pointer-events:none;white-space:nowrap}
+#bar.hb6 .n6:empty{display:none}
+#bar.hb6 .lk6{position:absolute;right:5px;top:4px;z-index:2;width:13px;height:13px;display:none;color:var(--accent);pointer-events:none;text-decoration:none}
+#bar.hb6 .lk6 svg{width:100%;height:100%;fill:currentColor;display:block}
+/* states: used-up stack / locked weapon / not owned any more stay in their slot, greyed */
+#bar.hb6 .st-out canvas,#bar.hb6 .st-lock canvas,#bar.hb6 .st-missing canvas{opacity:.36;filter:grayscale(1)}
+#bar.hb6 .st-out .n6,#bar.hb6 .st-lock .n6{background:var(--accent);color:#fff}
+#bar.hb6 .st-lock .lk6,#bar.hb6 .st-missing .lk6{display:block}
+#bar.hb6 .st-lock .n6{left:50%;right:auto;bottom:4px;transform:translateX(-50%);height:15px;font-size:9px;box-shadow:none}
+#bar.hb6 .st-empty{background:var(--sunken,rgba(0,0,0,.05))!important;border-style:dashed;box-shadow:none}
+#bar.hb6 .st-empty:after{content:'+';font:300 22px/1 var(--font-ui);color:var(--line-strong);pointer-events:none}
+#bar.hb6 .s6.worn:after{content:'';position:absolute;right:6px;top:6px;width:7px;height:7px;border-radius:50%;background:var(--accent-2,var(--accent));box-shadow:0 0 0 2px var(--surface-solid)}
+/* the selection ring slides between slots (transform only) */
+#bar.hb6 .ind6{position:absolute;left:5px;top:1px;width:70px;height:70px;box-sizing:border-box;z-index:1;pointer-events:none;border-radius:calc(var(--rad-md,14px) + 3px);
+ border:2px solid var(--sel-bd);box-shadow:0 10px 20px -12px var(--sel-bd);transition:transform .24s cubic-bezier(.3,1.35,.5,1),opacity .18s;will-change:transform}
+#bar.hb6 .ind6:after{content:'';position:absolute;left:50%;bottom:-8px;width:6px;height:6px;margin-left:-3px;transform:rotate(45deg);background:var(--sel-bd)}
+#bar.hb6 .ind6.off{opacity:0}
+/* drag & drop: every slot becomes a target */
+html.hbdrag #bar.hb6{z-index:67}
+html.hbdrag #bar.hb6 .s6{outline:2px dashed var(--accent-2,var(--accent));outline-offset:2px}
+html.hbdrag #bar.hb6 .s6.over{transform:translateY(-7px) scale(1.08)}
+/* name pill when the slot changes */
+#bar.hb6 .pill6{position:absolute;left:50%;bottom:calc(100% + 112px);z-index:5;display:flex;align-items:center;gap:10px;padding:5px 16px 5px 5px;border-radius:var(--rad-pill,999px);
+ background:var(--surface-solid);border:1px solid var(--line);box-shadow:var(--sh-2);color:var(--ink);white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,8px) scale(.96);
+ transition:transform .24s cubic-bezier(.2,.9,.3,1.25),opacity .2s}
+#bar.hb6 .pill6.on{opacity:1;transform:translate(-50%,0)}
+html.inv6 #bar.hb6 .pill6,html.hbdrag #bar.hb6 .pill6{bottom:calc(100% + 14px)}
+#bar.hb6 .pill6 kbd{width:28px;height:28px;flex:0 0 28px;display:grid;place-items:center;border-radius:50%;background:var(--ink);color:var(--surface-solid);font:800 12px/1 var(--font-ui)}
+#bar.hb6 .pill6[data-st=lock] kbd,#bar.hb6 .pill6[data-st=out] kbd,#bar.hb6 .pill6[data-st=missing] kbd{background:var(--accent);color:#fff}
+#bar.hb6 .pill6 span{display:flex;flex-direction:column;line-height:1.2}
+#bar.hb6 .pill6 b{font:700 13px var(--font-ui)}
+#bar.hb6 .pill6 small{font:600 11px var(--font-ui);color:var(--muted)}
+html[data-reduce=true] #bar.hb6 .s6,html[data-reduce=true] #bar.hb6 .ind6,html[data-reduce=true] #bar.hb6 .pill6{transition:none}
+@media (prefers-reduced-motion:reduce){#bar.hb6 .s6,#bar.hb6 .ind6,#bar.hb6 .pill6{transition:none}}
+@media (max-width:520px){#bar.hb6{gap:4px!important;padding:6px!important}#bar.hb6 .s6{flex-basis:52px;width:52px;height:52px}#bar.hb6 .s6 canvas{width:40px;height:40px}#bar.hb6 .ind6{display:none}#bar.hb6 .s6.on{box-shadow:0 0 0 2px var(--sel-bd)}}
+/* inventory: hotbar row in the details + which slot an item sits in */
+#inv7 .it7 .hbn7{position:absolute;right:6px;top:5px;z-index:2;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;display:grid;place-items:center;border-radius:5px;background:var(--ink);color:var(--surface-solid);font:800 9.5px/1 var(--font-ui);text-decoration:none;pointer-events:none}
+#inv7 .it7[draggable=true]{cursor:grab}
+#inv7 aside .hbrow7{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:4px}
+#inv7 aside .hbrow7 button{min-width:0;height:32px;padding:0!important;display:grid;place-items:center;font:800 12px var(--font-ui)!important;border-radius:9px!important}
+#inv7 aside .hbrow7 button.on{background:var(--ink)!important;color:var(--surface-solid)!important;border-color:var(--ink)!important}
+#inv7 aside .hbtip7{margin:6px 0 0;font-size:11px;color:var(--muted)}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -1445,7 +1629,7 @@ spring:{s:'boot',n:'Spring Boots',c:'#4fd1ff',cost:90,cd:8,d:'Jump higher.',sd:'
 power:{s:'glove',n:'Power Gloves',c:'#c0c6d4',cost:110,cd:25,d:'+1 break power.',sd:'F Overdrive: swing twice as fast, 6s'},midas:{s:'glove',n:'Midas Gloves',c:'#ffcf3a',cost:260,cd:30,d:'+50% gems.',sd:'F Midas Touch: double gems 8s'}};
 const MK={slime:{c:'#7ef2c2',hp:22,w:38,h:30,gem:4,surf:1,min:-99,max:16},moth:{c:'#d9c7ff',hp:14,w:30,h:26,gem:5,fly:1,surf:1,min:-99,max:12},crab:{c:'#ff9a6a',hp:28,w:42,h:28,gem:6,surf:1,min:-99,max:16},cloud:{c:'#ffc2e0',hp:18,w:46,h:30,gem:5,fly:1,surf:1,min:-99,max:4},
 bat:{c:'#9a7bd6',hp:16,w:30,h:24,gem:6,fly:1,dmg:5,min:7,max:99},golem:{c:'#9aa3b5',hp:64,w:46,h:54,gem:14,dmg:12,spm:.6,min:12,max:99},wraith:{c:'#8fe0ff',hp:38,w:34,h:46,gem:16,fly:1,ph:1,dmg:9,min:22,max:99},magma:{c:'#ff6a3a',hp:52,w:42,h:34,gem:18,dmg:11,jp:640,sx:200,cd:.7,min:28,max:99},shade:{c:'#8a5cff',hp:95,w:46,h:52,gem:30,fly:1,ph:1,dmg:15,spm:1.5,min:34,max:99}};
-const QUEST_OLD=[['Get moving','Run with A / D, jump with W','move'],['Break a block','Pick a tool (4-8 or the mouse wheel), then left-click a block','break'],['Place a block','Right-click with a block selected','place'],['Plant a seed','Select a seed, right-click the ground','plant'],['Harvest a tree','Wait until it ripens, hit it once','harvest'],['Forge a tool','Inventory, Tools tab','forge'],['Get dressed','Inventory, Wear tab','wear'],['Use a skill','Press Q, E, Shift or F','skill'],['Meet the town','Press E next to an NPC','npc'],['Visit a world','Pick another world by name','world']];
+const QUEST_OLD=[['Get moving','Run with A / D, jump with W','move'],['Break a block','Pick a tool from your hotbar (keys 1-6 or the mouse wheel), then left-click a block','break'],['Place a block','Right-click with a block selected','place'],['Plant a seed','Select a seed, right-click the ground','plant'],['Harvest a tree','Wait until it ripens, hit it once','harvest'],['Forge a tool','Inventory, Tools tab','forge'],['Get dressed','Inventory, Wear tab','wear'],['Use a skill','Press Q, E, Shift or F','skill'],['Meet the town','Press E next to an NPC','npc'],['Visit a world','Pick another world by name','world']];
 const OPT={q:1,sh:1,mv:.5,sv:1,name:''};let ZM=1,entered=0;const setZoom=z=>{const oz=ZM;ZM=Math.max(.5,Math.min(2.2,Math.round(z*100)/100));window.zlow6=ZM<.7;if((oz<.7)!=(ZM<.7)&&entered)setTimeout(rs,0);OPT.zm=ZM;say('Zoom '+Math.round(ZM*100)+'%')};
 // ---------- state
 const P={x:0,y:0,vx:0,vy:0,w:26,h:54,g:false,f:1,hp:100,jumps:0};
@@ -2009,7 +2193,7 @@ let look={skin:'#f1c9a0',hair:'#3a2a1a',style:0,shirt:'#3c6fd1',pants:'#2b3a5a'}
 const ICONC={},drops=[],lightning=[],lampL=[],TS={};
 const MAT={201:{n:'Slime Gel',c:'#7ef2c2',p:6},202:{n:'Moth Dust',c:'#d9c7ff',p:8},203:{n:'Crab Shell',c:'#ff9a6a',p:9},204:{n:'Cloud Puff',c:'#ffc2e0',p:8},205:{n:'Bat Fang',c:'#9a7bd6',p:12},206:{n:'Stone Core',c:'#9aa3b5',p:22},207:{n:'Ectoplasm',c:'#8fe0ff',p:26},208:{n:'Magma Shard',c:'#ff6a3a',p:34},209:{n:'Shade Essence',c:'#8a5cff',p:60}},MOBMAT={slime:201,moth:202,crab:203,cloud:204,bat:205,golem:206,wraith:207,magma:208,shade:209};
 const iname=k=>MAT[k]?MAT[k].n:k<100?(BLK[k]||BLK_UNK)[0]:(BLK[k-100]||BLK_UNK)[0]+' Seed';
-const QUEST=[['Welcome','Walk with A / D and jump with W','move',10],['Meet Mira','The merchant by the market stall. Press E','mira',20],['Open your bag','Swipe up from the bottom or press Tab','bag',10],['Use the door','Stand at the door, press E, enter a world name','world',30],['Claim your world','Right-click to place your World Lock','lockplace',50],['Break a block','Pick a tool (4-8 or the mouse wheel), then left-click a block','break',15],['Place a block','Right-click with a block selected','place',15],['Plant a seed','Select a seed, right-click the ground','plant',20],['Harvest a tree','Hit a ripe tree once','harvest',40],['Get dressed','Wear something from the Wear tab','wear',30],['Use a skill','Press Q, R, Z, Shift or F','skill',25],['Defeat a monster','Fight after dark. Left-click to swing','kill',40]];
+const QUEST=[['Welcome','Walk with A / D and jump with W','move',10],['Meet Mira','The merchant by the market stall. Press E','mira',20],['Open your bag','Swipe up from the bottom or press Tab','bag',10],['Use the door','Stand at the door, press E, enter a world name','world',30],['Claim your world','Right-click to place your World Lock','lockplace',50],['Break a block','Pick a tool from your hotbar (keys 1-6 or the mouse wheel), then left-click a block','break',15],['Place a block','Right-click with a block selected','place',15],['Plant a seed','Select a seed, right-click the ground','plant',20],['Harvest a tree','Hit a ripe tree once','harvest',40],['Get dressed','Wear something from the Wear tab','wear',30],['Use a skill','Press Q, R, Z, Shift or F','skill',25],['Defeat a monster','Fight after dark. Left-click to swing','kill',40]];
 const ACH=[['Pebble Pecker','Break 50 blocks','break',50,30],['Quarryman','Break 500 blocks','break',500,200],['Mountain Mover','Break 3000 blocks','break',3000,900],['Slime Squasher','Defeat 10 monsters','kill',10,60],['Night Hunter','Defeat 75 monsters','kill',75,350],['Nightmare Slayer','Defeat 300 monsters','kill',300,1200],['Green Thumb','Plant 25 seeds','plant',25,50],['Orchardist','Harvest 25 trees','harvest',25,250],['Builder','Place 100 blocks','place',100,80],['Architect','Place 1000 blocks','place',1000,500],['Gem Collector','Earn 1000 gems','gems',1000,150],['Tycoon','Earn 20000 gems','gems',20000,1500],['Explorer','Visit 5 worlds','worlds',5,120],['Veteran','Reach level 10','level',10,400]];
 function stat(k,n){stats[k]=(stats[k]|0)+n;if(n)checkAch()}
 function checkAch(){ACH.forEach((a,i)=>{const v=a[2]=='level'?lvl:stats[a[2]]|0;if(!achD[i]&&v>=a[3]){achD[i]=1;gems+=a[4];say('Achievement: '+a[0]+'  +'+a[4]+' gems');snd(784,.3,'triangle');snd(1047,.4,'triangle',.06);rings.push({x:P.x,y:P.y+20,c:'#ffd24a',t:performance.now()});burst(P.x,P.y+10,'#ffd24a',22,200,5,'p');if($('qm').style.display=='block')renderQM()}})}
@@ -7154,7 +7338,7 @@ const TOOLS8=(()=>{
    x.restore()}}
  {const _t=BOSS6.tick,_dp=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{FISH.tick(dt);FISH.tickQ(dt);twinkle(dt)}catch(e){console.error('TOOLS8',e)}};BOSS6.drawProj=function(g,cx,cy){_dp.call(this,g,cx,cy);try{FISH.draw(g,cx,cy)}catch(e){console.error('TOOLS8d',e)}}}
  // say hello once
- setTimeout(()=>{try{if(entered&&!localStorage.getItem('rbc5')){localStorage.setItem('rbc5','1');UI6.say6('Tiny tools','Only tools break blocks · keys 4–8 or the mouse wheel: Pip, Pebble, Glimmer, Twiggy, Bubbles',4200)}}catch(_){}},4000);
+ setTimeout(()=>{try{if(entered&&!localStorage.getItem('rbc5')){localStorage.setItem('rbc5','1');UI6.say6('Tiny tools','Only tools break blocks: put Pip, Pebble, Glimmer, Twiggy or Bubbles in a hotbar slot (1-6) · press G for the Tool Guide',4200)}}catch(_){}},4000);
  return{TL,catOf,fits,FISH,FISHES,BAIT}})();
 
 /* ========== LATE: 86-sfx7.js ========== */
@@ -7466,6 +7650,224 @@ const LVL9=(()=>{
  setTimeout(()=>{try{const _p=UI6.ext.post;UI6.ext.post=function(tab,body){if(_p)_p.apply(this,arguments);try{if(tab=='profile')card(body)}catch(e){console.error('LVL9 profile',e)}}}catch(e){console.error('LVL9 hub',e)}},0);
  const info=()=>{upd();return{lvl:lvl|0,dmg:cD,hp:cH,arm:cA,boss:bossB(lvl|0)}};
  return{dmgB,hpB,armB,bossB,okW,gate,info,pct}})();
+
+/* ========== LATE: 86-zz-minesfx.js ========== */
+// ===== MSFX8: mining sounds. Every tool hit and break gets a synthesized sound for its material: soft dirt / sand / grass (a crumbly "shff"
+// with a soft thump), leaves (a rustle), glass (a tinkly shatter), wood (a hollow knock + splinter), stone (a sharp crack, a low thud and a gravel
+// tail with pebble ticks), ore (a crunchy rock crack plus a bright crystalline "ting" and sparkles, pitched up the rarer the ore), Crystal Geodes
+// (an even longer rising shimmer), Twiggy's tree chop (knock + creak + leaves), a cascade of rising tings when Glimmer mines a whole vein, a dull
+// muffled "tok" when the tool is wrong for the block, and a shiny chime for tool level-ups. WebAudio only: one shared noise buffer and a few short
+// oscillators per sound, small random pitch variation, a soft compressor on its own bus, follows the "Sound effects" slider (OPT.sv), and a voice
+// budget + per-sound gap so fast mining never piles up. MSFX8.log keeps the last sounds asked for (tests read it). =====
+const MSFX8=(()=>{
+ const R=Math.random,vol=()=>(typeof OPT=='undefined'||OPT.sv==null?1:+OPT.sv);
+ const ok=()=>{try{ac()}catch(_){}return typeof AC!='undefined'&&!!AC&&AC.state!='closed'&&vol()>0};
+ let nb=null,bus=null;
+ const buf=()=>{if(nb&&nb.sampleRate==AC.sampleRate)return nb;const b=AC.createBuffer(1,AC.sampleRate,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;return nb=b};
+ const out=()=>{if(bus&&bus.context===AC)return bus;bus=AC.createGain();bus.gain.value=1;const cp=AC.createDynamicsCompressor();cp.threshold.value=-16;cp.knee.value=12;cp.ratio.value=4;cp.attack.value=.002;cp.release.value=.14;bus.connect(cp);cp.connect(AC.destination);return bus};
+ // filtered noise burst: d seconds, filter type, f0 -> f1, Q, volume, delay
+ function nz(d,ty,f0,f1,q,v,dl){const t=AC.currentTime+(dl||0)+.004,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=buf();f.type=ty;f.Q.value=q||1;f.frequency.setValueAtTime(f0,t);if(f1!=f0)f.frequency.exponentialRampToValueAtTime(Math.max(40,f1),t+d);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+.004);g.gain.exponentialRampToValueAtTime(.0004,t+d);s.connect(f);f.connect(g);g.connect(out());s.start(t,R()*.75,d+.05);s.stop(t+d+.06)}
+ // oscillator with a pitch glide and a fast attack / exponential decay
+ function os(ty,f0,f1,d,v,dl,at){const t=AC.currentTime+(dl||0)+.004,o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f0,t);if(f1!=f0)o.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t+d*.9);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+(at||.004));g.gain.exponentialRampToValueAtTime(.0004,t+d);o.connect(g);g.connect(out());o.start(t);o.stop(t+d+.05)}
+ // a bell-like "ting": sine + an inharmonic partial + a quiet octave
+ const ting=(f,d,v,dl)=>{os('sine',f,f*1.002,d,v,dl);os('sine',f*2.76,f*2.7,d*.4,v*.28,dl);os('triangle',f*2,f*2,d*.5,v*.22,(dl||0)+.006)};
+ const PENT=[1047,1175,1319,1568,1760,2093,2349,2637,3136,3520,4186,4699];
+ // ---- budget: voices started in a short window, and a minimum gap per sound kind
+ let win=0,used=0;const gap={};
+ function gate(kind,n,ms){const now=performance.now();if(now-(gap[kind]||0)<(ms==null?28:ms))return false;if(now-win>120){win=now;used=0}if(used+n>64)return false;used+=n;gap[kind]=now;return true}
+ const log=[],count={};function note(k,c){const key=k+':'+c;count[key]=(count[key]||0)+1;log.push({k,c,t:performance.now()});if(log.length>40)log.shift()}
+ const p=()=>.94+R()*.12;
+ const vari=b=>{const n=((typeof BLK!='undefined'&&BLK[b])||[''])[0];return b==93?'cache':/Glass|Ice/.test(n)?'glass':/Leaf|Leaves|Hedge|Moss|Vine/.test(n)?'leaf':/Sand|Snow/.test(n)?'sand':/Grass/.test(n)?'grass':'dirt'};
+ const rar=b=>{try{const pr=(typeof PRICE!='undefined'&&PRICE[b])||0;return pr>=150?5:pr>=90?4:pr>=60?3:pr>=25?2:pr>=12?1:0}catch(_){return 1}};
+ // ---- material voices
+ const V={
+  soft(b,brk,q){const v=vari(b);if(v=='glass'){if(brk){for(let i=0;i<4;i++){const f=2600+R()*2600;os('sine',f,f*.96,.06+R()*.08,.05,i*.03+R()*.02)}nz(.16,'highpass',5200,3600,.7,.09)}else{os('sine',3000*q,2900*q,.07,.06);nz(.05,'highpass',5000,4000,.7,.05)}return}
+   if(v=='leaf'){nz(brk?.24:.12,'bandpass',3200*q,2100,1.4,brk?.15:.09);nz(brk?.14:.08,'bandpass',2200*q,1600,1.8,.08,.05);if(brk)os('sine',170*q,90,.07,.08);return}
+   const hi=v=='sand'?1.6:v=='grass'?1.15:1;
+   if(brk){nz(.17,'lowpass',2300*hi*q,420,.7,.24);nz(.08,'bandpass',950*hi*q,620,1.2,.13,.01);os('sine',150*q,68,.1,.17);if(v=='grass')nz(.09,'highpass',4200,3000,.7,.05,.02);if(v=='cache'){os('triangle',520*q,300,.08,.08,.04);ting(1568*q,.3,.05,.08)}}
+   else{nz(.07,'lowpass',1600*hi*q,600,.7,.15);os('sine',190*q,120,.05,.09)}},
+  wood(b,brk,q){if(brk){os('triangle',380*q,190,.09,.15);os('sine',225*q,118,.13,.15);nz(.1,'bandpass',1250*q,820,2.5,.16);os('triangle',310*q,165,.07,.08,.05);nz(.06,'highpass',2600,1800,.8,.06,.03)}
+   else{os('triangle',430*q,260,.06,.13);nz(.05,'bandpass',1450*q,1100,3,.09)}},
+  stone(b,brk,q){if(brk){nz(.07,'bandpass',2700*q,1200,1.1,.26);os('sine',122*q,52,.17,.22);nz(.3,'lowpass',1500*q,300,.6,.13,.02);for(let i=0;i<3;i++){const f=1700+R()*1100;os('triangle',f,f*.8,.025,.035,.07+i*.05+R()*.03)}}
+   else{nz(.05,'bandpass',3100*q,1800,1.3,.17);os('triangle',620*q,380,.04,.07)}},
+  ore(b,brk,q){const r=b==94?5:rar(b),f=PENT[3+r]*q;
+   if(brk){nz(.08,'bandpass',2500*q,1100,1.1,.28);os('sine',112*q,50,.18,.22);nz(.26,'lowpass',1700*q,320,.6,.11,.02);ting(f,.5+r*.06,.1,.03);
+    for(let i=0,n=2+(r>>1);i<n;i++){const s=PENT[5+((R()*7)|0)];os('sine',s,s*1.02,.06,.03,.08+i*.045+R()*.02)}}
+   else{nz(.05,'bandpass',3000*q,1900,1.3,.15);ting(f*.75,.16,.05,.01)}},
+  geode(b,brk,q,pr){if(brk){V.ore(94,true,q);[1047,1319,1568,2093,2637,3136,4186].forEach((f,i)=>os('sine',f*q,f*q*1.004,.3,.045,.1+i*.055));os('sine',4186,4180,1.3,.014,.45);nz(.55,'highpass',6500,5200,.6,.03,.12)}
+   else{nz(.06,'bandpass',2600*q,1300,1.1,.2);os('sine',130*q,60,.12,.14);const f=PENT[2+Math.round((pr||0)*5)];os('sine',f,f,.22,.035,.03)}}};
+ const SZ={soft:6,wood:6,stone:9,ore:14,geode:24};
+ function play(kind,cat,b,o){o=o||{};const c=cat=='ore'&&b==94?'geode':cat;if(!V[c])return false;const tag=kind+':'+c;if(!gate(tag,kind=='break'?SZ[c]||8:4))return false;note(kind,c);if(!ok())return true;try{V[c](b,kind=='break',p(),o.pr)}catch(_){}return true}
+ // ---- specials
+ function wrong(cat){if(!gate('wrong',3,70))return false;note('wrong',cat||'');if(!ok())return true;const q=p();try{os('sine',205*q,140,.08,.13);nz(.05,'lowpass',700*q,320,.8,.11);if(cat=='ore')nz(.04,'bandpass',3600,3000,2,.03,.02)}catch(_){}return true}
+ function tree(){if(!gate('tree',12,60))return false;note('break','tree');if(!ok())return true;const q=p();try{os('triangle',300*q,150,.11,.16);os('sine',170*q,92,.16,.17);nz(.11,'bandpass',1100*q,700,2.4,.16);
+  nz(.32,'bandpass',3000*q,2000,1.2,.11,.06);os('triangle',165*q,128,.24,.035,.09,.05);os('triangle',300*q,170,.07,.07,.06)}catch(_){}return true}
+ // one step of a vein cascade: a crunchy little crack and the next note up the scale; the last block lands a sparkly chord
+ function vein(i,n,b){if(!gate('vein',6,20))return false;note('vein','ore');if(!ok())return true;const q=.985+R()*.03,r=rar(b),f=PENT[Math.min(PENT.length-1,(i+r)%PENT.length)]*q;
+  try{nz(.05,'bandpass',2400*q,1300,1.2,.13);ting(f,.32,.075);if(i>=n-1){[0,2,4].forEach((s,j)=>ting(PENT[Math.min(PENT.length-1,(i+r+s)%PENT.length)]*q,.6,.05,.07+j*.05));nz(.4,'highpass',6800,5600,.6,.025,.12)}}catch(_){}return true}
+ function levelup(lv){note('level',String(lv));if(!ok())return;try{const top=lv>=10;[1319,1568,2093,2637].forEach((f,i)=>ting(f,.5,.05,.05+i*.07));if(top){for(let i=0;i<10;i++){const f=PENT[i%PENT.length]*(i>=PENT.length?2:1);os('sine',f,f*1.003,.22,.03,.36+i*.05)}os('sine',2093,2093,1.6,.02,.9)}else os('sine',3136,3136,.9,.018,.35)}catch(_){}}
+ return{play,wrong,tree,vein,levelup,log,count,vari,rar,get budget(){return used}}})();
+
+/* ========== LATE: 86-zz-toollevels.js ========== */
+// ===== TOOLLV: the five tools level up from 1 to 10 by doing their own job (a block the tool fits: soft / wood / stone / ore / trees, Buried
+// Caches, Crystal Geodes; fish for Bubbles). The wrong tool earns nothing. XP to the next level = 18 * level^1.6 (2,409 XP from 1 to 10, about
+// 1,200 dirt blocks for Pip, ~110 ore veins for Glimmer, ~140 fish for Bubbles). Every level pays gems and a perk (faster swing, bonus blocks,
+// gem finds, Worm/Glow Bait from soil, Quartz/Amethyst from stone, bigger veins, 2-tap geodes, extra wood, sooner bites, longer bite window,
+// rarer fish, double catches) with a REW8 celebration (pillar, confetti, fanfare, flying gems, perk card) and a big rolling level number.
+// Tools shine more as they level: plain -> soft glint -> steady glow -> sparkles -> golden aura -> radiant -> RAINBOW at level 10. The shine is
+// drawn in hand (pre-rendered glow / star / ray sprites, no shadowBlur, ~10 drawImage calls) and baked into the tool icons (hotbar, inventory,
+// cards; animated with a CSS filter on img[src$="#tl8-N"]). Mining with a tool also plays the MSFX8 material sounds and mutes the old generic
+// break blip for that hit. Saved per profile in localStorage "rbptool" (missing = every tool at level 1, so old saves load untouched).
+// For slot UIs: iconURL('w:<tool>') already carries the shine; TOOLLV.decorate(slotEl,id) adds an animated ring (data-tl8), TOOLLV.badgeUnder /
+// TOOLLV.badge(ctx,id,x,y,size,t) paint it on a canvas, TOOLLV.info(id) gives level / XP / perk, and a "rbtoollevel" window event fires on change. =====
+const TOOLLV=(()=>{
+ const R=Math.random,IDS=['pip','pebble','glimmer','twiggy','bubbles'],TL8=TOOLS8.TL,catOf=TOOLS8.catOf,fits=TOOLS8.fits;
+ const MAX=10,need=l=>Math.round(18*Math.pow(l,1.6));
+ const TIER=[0,0,1,2,2,3,3,4,4,5,6],TIERN=['Plain','Soft glint','Steady glow','Sparkles','Golden aura','Radiant','Rainbow shine'];
+ const GEMS=[0,0,30,45,60,80,100,130,160,200,400],XP={soft:2,wood:2,stone:2,ore:6,vein:4,tree:6,cache:12,geode:20};
+ const GOLD='#ffc640',RB=['#ff5f7e','#ffb340','#ffe94a','#6fe38a','#5fb8ff','#b07aff'],HS={pip:0,pebble:.2,glimmer:.4,twiggy:.6,bubbles:.8};
+ const hex=g=>'#'+g.map(v=>(v|0).toString(16).padStart(2,'0')).join(''),COL={};for(const id of IDS)COL[id]=hex(TL8[id].g);
+ const rgba=(h,a)=>{h=h.replace('#','');return'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')'};
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ // ---- perks (the formulas below are what the cards promise)
+ const spd=l=>.05*(l-1),drop=l=>.04*(l-1),gemCh=l=>l>=5?.08+.03*(l-5):0,VEIN=[0,8,8,10,10,10,12,12,16,16,22],wood=l=>2+(l>=3)+(l>=6)+(l>=9)+(l>=10);
+ const worm=l=>l>=4?.03+.006*(l-4):0,glowB=l=>l>=7?.012:0,quartz=l=>l>=4?.03+.006*(l-4):0,amet=l=>l>=7?.01:0;
+ const waitM=l=>1-.06*(l-1),bite=l=>.1*(l-1),luck=l=>l>=4?.4+.2*(l-4):0,dbl=l=>l>=5?.03*(l-3):0;
+ const PERKS={
+  pip:[,,['Quick Scoop','Swings 5% faster · 4% chance of a bonus block'],['Lucky Dirt','Bonus block chance 8%'],['Worm Finder','Dirt, grass and sand can turn up Worm Bait'],['Sparkle Soil','8% of digs turn up gems'],['Deep Scoop','Swings 25% faster · bonus blocks 20%'],['Glow Worms','The soil can hide Glow Bait too'],['Speedy Spade','Swings 35% faster'],['Treasure Sense','Gems from 20% of digs'],['Rainbow Pip','Rainbow shine! Swings 45% faster · bonus blocks 36%']],
+  pebble:[,,['Steady Tap','Swings 5% faster · 4% chance of a bonus block'],['Rock Hound','Bonus block chance 8%'],['Quartz Eye','Stone can crack into Quartz Shards'],['Glitter Grit','8% of stones hold gems'],['Heavy Tap','Swings 25% faster · bonus blocks 20%'],['Crystal Ear','Amethyst can turn up in stone'],['Rapid Tapper','Swings 35% faster'],['Gem Cutter','Gems from 20% of stones'],['Rainbow Pebble','Rainbow shine! Swings 45% faster · bonus blocks 36%']],
+  glimmer:[,,['Bright Eye','Swings 5% faster · +4% bonus ore'],['Wide Vein','Mines veins of up to 10 blocks'],['Ore Sense','+12% bonus ore'],['Gem Glint','8% of ores hold gems'],['Deep Vein','Veins of up to 12 blocks · swings 25% faster'],['Geode Whisper','Crystal Geodes crack in 2 taps'],['Mother Lode','Veins of up to 16 blocks'],['Prospector','+32% bonus ore · gems from 20% of ores'],['Rainbow Glimmer','Rainbow shine! Veins of up to 22 blocks']],
+  twiggy:[,,['Sharp Edge','Swings 5% faster · 4% bonus wood blocks'],['Timber','Trees give 3 extra wood'],['Splitter','Bonus wood blocks 12%'],['Sap Gems','8% of trees drop gems'],['Lumberjack','Trees give 4 extra wood · swings 25% faster'],['Woodland Luck','Gems from 14% of trees'],['Whirlwind Chop','Swings 35% faster'],['Forest Friend','Trees give 5 extra wood'],['Rainbow Twiggy','Rainbow shine! Trees give 6 extra wood']],
+  bubbles:[,,['Patient Line','Fish bite 6% sooner'],['Steady Hands','+0.2 s to click when it bites'],['Lucky Lure','Rare fish are more likely'],['Double Hook','6% chance to catch two fish'],['Fish Whisperer','Fish bite 30% sooner'],['Shiny Scales','Rare fish even more likely'],['Big Net','15% chance to catch two'],['Old Salt','Bites 48% sooner · +0.8 s to react'],['Rainbow Bubbles','Rainbow shine! The best luck for legendary fish']]};
+ const pc=v=>Math.round(v*100)+'%';
+ function summary(id,l){const o=[];if(id=='bubbles'){o.push('Bites '+pc(1-waitM(l))+' sooner');o.push('+'+bite(l).toFixed(1)+' s to react');o.push('Rare-fish luck +'+luck(l).toFixed(1));o.push('Double catch '+pc(dbl(l)));return o}
+  o.push('Swing speed +'+pc(spd(l)));if(id=='glimmer'){o.push('Veins up to '+VEIN[l]+' blocks');o.push('Bonus ore 50% + '+pc(drop(l)));o.push('Geodes: '+(l>=7?2:3)+' taps')}
+  else if(id=='twiggy'){o.push(wood(l)+' extra wood per tree');o.push('Bonus wood blocks '+pc(drop(l)))}else o.push('Bonus blocks '+pc(drop(l)));
+  o.push('Gem finds '+pc(gemCh(l)));if(id=='pip')o.push('Worm Bait '+pc(worm(l))+(l>=7?' · Glow Bait '+pc(glowB(l)):''));if(id=='pebble')o.push('Quartz '+pc(quartz(l))+(l>=7?' · Amethyst '+pc(amet(l)):''));return o}
+ // ---- state (per profile)
+ const K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbptool';let S={},dirty=0,lastSave=0;const LOG=[];
+ function load(){let o=null;try{o=JSON.parse(localStorage.getItem(K())||'null')}catch(_){o=null}S={};
+  for(const id of IDS){const q=o&&o.t&&typeof o.t[id]=='object'?o.t[id]:null,l=q?Math.max(1,Math.min(MAX,q.l|0)):1;S[id]={l,x:l>=MAX?0:Math.max(0,Math.min(need(l)-1,q&&+q.x||0)),n:q&&q.n|0||0,tx:q&&+q.tx||0}}}
+ function save(){dirty=0;lastSave=performance.now();try{localStorage.setItem(K(),JSON.stringify({v:1,t:S}))}catch(_){}}
+ load();
+ const lvl=id=>S[id]?S[id].l:1,tier=id=>S[id]?TIER[S[id].l]:0;
+ // ---- sprites (pre-rendered once per colour)
+ const SP={},memo=(k,f)=>SP[k]||(SP[k]=f()),mkc=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));return c};
+ const GLOW=c=>memo('g'+c,()=>mkc(64,64,x=>{const g2=x.createRadialGradient(32,32,0,32,32,32);g2.addColorStop(0,'rgba(255,255,255,.95)');g2.addColorStop(.3,rgba(c,.6));g2.addColorStop(.62,rgba(c,.2));g2.addColorStop(1,rgba(c,0));x.fillStyle=g2;x.fillRect(0,0,64,64)}));
+ const STAR=c=>memo('s'+c,()=>mkc(32,32,x=>{x.translate(16,16);const g2=x.createRadialGradient(0,0,0,0,0,8);g2.addColorStop(0,'rgba(255,255,255,.95)');g2.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g2;x.fillRect(-16,-16,32,32);
+  x.fillStyle=c;x.beginPath();x.moveTo(0,-15);x.quadraticCurveTo(1.6,-1.6,15,0);x.quadraticCurveTo(1.6,1.6,0,15);x.quadraticCurveTo(-1.6,1.6,-15,0);x.quadraticCurveTo(-1.6,-1.6,0,-15);x.fill();x.fillStyle='#fff';x.beginPath();x.moveTo(0,-6);x.lineTo(1.4,0);x.lineTo(0,6);x.lineTo(-1.4,0);x.fill()}));
+ const RAYS=c=>memo('r'+c,()=>mkc(128,128,x=>{x.translate(64,64);const g2=x.createRadialGradient(0,0,4,0,0,64);g2.addColorStop(0,rgba(c,.75));g2.addColorStop(.5,rgba(c,.22));g2.addColorStop(1,rgba(c,0));x.fillStyle=g2;for(let i=0;i<8;i++){const a=i/8*6.2832,w=i%2?.06:.11;x.beginPath();x.moveTo(0,0);x.arc(0,0,64,a-w,a+w);x.closePath();x.fill()}}));
+ const HALO=c=>memo('o'+c,()=>mkc(64,64,x=>{const g2=x.createRadialGradient(32,32,0,32,32,32);g2.addColorStop(0,rgba(c,.9));g2.addColorStop(.45,rgba(c,.5));g2.addColorStop(1,rgba(c,0));x.fillStyle=g2;x.fillRect(0,0,64,64)}));
+ const HUE=i=>memo('h'+i,()=>{const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d'),g2=x.createRadialGradient(32,32,0,32,32,32),h=i*30;g2.addColorStop(0,'rgba(255,255,255,.95)');g2.addColorStop(.3,'hsla('+h+',100%,64%,.62)');g2.addColorStop(.62,'hsla('+h+',100%,60%,.22)');g2.addColorStop(1,'hsla('+h+',100%,60%,0)');x.fillStyle=g2;x.fillRect(0,0,64,64);return c});
+ // ---- shine drawing in tool space (origin at the hand, tool along +x, length L)
+ function under(x,id,L,t,tr){if(tr<2)return;const cx=L*.66,cy=-1,pul=.88+.12*Math.sin(t*(tr>=5?4.2:2.6)),r=L*(tr>=5?.66:tr>=4?.58:tr>=3?.5:.44)*pul;x.save();if(tr<6){x.globalAlpha=Math.min(.6,.18+.07*tr);x.drawImage(HALO(tr>=4?GOLD:COL[id]||'#ffffff'),cx-r*.8,cy-r*.8,r*1.6,r*1.6)}x.globalCompositeOperation='lighter';
+  if(tr>=5){x.save();x.translate(cx,cy);x.rotate(t*.7);x.globalAlpha=.5;x.drawImage(RAYS(tr>=6?RB[((t*1.5)|0)%6]:GOLD),-r*1.2,-r*1.2,r*2.4,r*2.4);x.restore()}
+  if(tr>=6){const h=(t*6)%12,i=h|0,f=h-i;x.globalAlpha=.8*(1-f);x.drawImage(HUE(i),cx-r,cy-r,r*2,r*2);x.globalAlpha=.8*f;x.drawImage(HUE((i+1)%12),cx-r,cy-r,r*2,r*2);/* three colours orbit the head so several hues show at once */for(let j=0;j<3;j++){const a=t*2.4+j*2.094,q=r*.62;x.globalAlpha=.7;x.drawImage(HUE((i+4*j+2)%12),cx+Math.cos(a)*r*.5-q/2,cy+Math.sin(a)*r*.38-q/2,q,q)}}
+  else{x.globalAlpha=tr>=4?.75:tr>=3?.62:.52;x.drawImage(GLOW(tr>=4?GOLD:COL[id]||'#ffffff'),cx-r,cy-r,r*2,r*2)}x.restore()}
+ const NST=[0,0,0,3,4,5,6];
+ function over(x,id,L,t,tr){if(tr<1)return;x.save();x.globalCompositeOperation='lighter';const u=(t*.42+(HS[id]||0))%1;
+  if(u<.22){const s=u/.22,z=7+tr*1.2;x.globalAlpha=Math.sin(s*Math.PI)*.95;x.drawImage(STAR('#ffffff'),L*(.4+.48*s)-z/2,-4-z/2,z,z)}
+  for(let i=0;i<NST[tr];i++){const ph=(t*(.6+.11*i)+i*.37)%1,a=Math.sin(ph*Math.PI);if(a<.06)continue;const px=L*(.34+.58*((i*.618+.1)%1)),py=(((i*.41+.2)%1)-.5)*L*.6,s=(4+7*a)*(tr>=5?1.25:1),
+   c=tr>=6?RB[(i+((t*2)|0))%6]:tr>=4?(i%2?'#fff3c0':GOLD):(i%2?'#ffffff':COL[id]||'#ffffff');x.globalAlpha=a;x.drawImage(STAR(c),px-s/2,py-s/2,s,s)}x.restore()}
+ // in hand: drawWeapon gets a time t for the held, animated draw; the holster on the back passes 0 on the game canvas (icons: 0 on their own canvas)
+ {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const tt=t||(typeof g!='undefined'&&x===g?performance.now()/1000:0),tr=tt&&TL8[id]?tier(id):0;if(!tr)return _dw.apply(this,arguments);try{under(x,id,L,tt,tr)}catch(_){}const r=_dw.apply(this,arguments);try{over(x,id,L,tt,tr)}catch(_){}return r}}
+ // any tier on any canvas (guide previews)
+ function drawTool(x,id,L,t,tr){if(tr==null)tr=tier(id);try{under(x,id,L,t,tr)}catch(_){}const tt=t||.0001,o=S[id];drawWeaponRaw(x,id,L,tt);try{over(x,id,L,t,tr)}catch(_){}}
+ function drawWeaponRaw(x,id,L,t){const keep=S[id];S[id]={l:1,x:0};try{drawWeapon(x,id,L,t)}finally{S[id]=keep}}
+ // ---- icons: the shine is baked in (re-made on level change) and tagged "#tl8-<tier>" so CSS can animate it
+ function iconUnder(x,id,tr){x.save();x.shadowColor='rgba(0,0,0,0)';
+  if(tr>=5){x.globalAlpha=.5;x.drawImage(RAYS(tr>=6?'#ff7ac0':'#ffb020'),-8,-7,64,64)}
+  if(tr>=6){for(let i=0;i<6;i++){const a=i/6*6.2832;x.globalAlpha=.5;x.drawImage(HALO(RB[i]),24+Math.cos(a)*9-15,25+Math.sin(a)*9-15,30,30)}}
+  else if(tr>=2){const r=[0,0,17,19,20,22][tr];x.globalAlpha=[0,0,.5,.62,.72,.85][tr];x.drawImage(HALO(tr>=4?GOLD:COL[id]),24-r,25-r,r*2,r*2)}x.restore()}
+ const ICS=[[38,10,8],[10,37,6],[40,33,6],[11,12,5],[29,5,5]];
+ function iconOver(x,id,tr,l){x.save();x.shadowColor='rgba(0,0,0,0)';
+  if(tr>=4){x.lineWidth=2;let st=rgba(GOLD,.9);if(tr>=6){const g2=x.createLinearGradient(0,0,48,48);RB.forEach((c,i)=>g2.addColorStop(i/5,c));st=g2}x.strokeStyle=st;x.beginPath();if(x.roundRect)x.roundRect(2,2,44,44,8);else x.rect(2,2,44,44);x.stroke()}
+  const n=[0,1,1,2,3,4,5][tr];for(let i=0;i<n;i++){const[a,b,s]=ICS[i],c=tr>=6?RB[(i*2)%6]:tr>=4?'#ffb020':tr<=1?'#ffc640':i%2?'#ffc640':COL[id];x.globalAlpha=1;x.drawImage(STAR(c),a-s,b-s,s*2,s*2)}x.globalAlpha=1;
+  if(l>=2){const s='Lv'+l;x.font='800 9px '+(typeof FONT!='undefined'?FONT:'sans-serif');const w=x.measureText(s).width+7;x.fillStyle=tr>=6?(()=>{const g2=x.createLinearGradient(46-w,0,46,0);RB.forEach((c,i)=>g2.addColorStop(i/5,c));return g2})():tr>=4?'#e8a21a':'rgba(36,26,58,.88)';
+   x.beginPath();if(x.roundRect)x.roundRect(46-w,35,w,11,5.5);else x.rect(46-w,35,w,11);x.fill();x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';x.fillText(s,46-w/2,40.8)}x.restore()}
+ {const _iu=iconURL;iconURL=function(k){if(ICON[k])return ICON[k];const id=typeof k=='string'&&k.startsWith('w:')?k.slice(2):'',tr=id&&TL8[id]?tier(id):0;if(!tr)return _iu.apply(this,arguments);
+   const Sz=48,c=document.createElement('canvas');c.width=c.height=Sz;const x=c.getContext('2d');try{burstBG(x,Sz)}catch(_){}iconUnder(x,id,tr);x.save();x.translate(22,27);x.rotate(-Math.PI/4);const L=28;x.translate(-L*.4,0);drawWeapon(x,id,L,0);x.restore();iconOver(x,id,tr,lvl(id));
+   ICONC[k]=c;return ICON[k]=c.toDataURL()+'#tl8-'+tr}}
+ function flush(id){const k='w:'+id;delete ICON[k];delete ICONC[k]}
+ // DOM helper for any slot element: data-tl8="<tier>" draws an animated ring (CSS, 89-z-tools.css)
+ function decorate(el,k){if(!el)return;const id=String(k||'').replace(/^w:/,''),tr=TL8[id]?tier(id):0;if(tr)el.setAttribute('data-tl8',tr);else el.removeAttribute('data-tl8')}
+ // canvas helpers for a square icon area (x,y,size): aura behind, glint / stars / ring / level pip on top
+ function badgeUnder(g2,k,x,y,z,t){const id=String(k).replace(/^w:/,''),tr=TL8[id]?tier(id):0;if(tr<2)return;g2.save();g2.globalCompositeOperation='lighter';const r=z*(.5+.06*tr)*(.92+.08*Math.sin((t||0)*3));
+  if(tr>=6){const h=((t||0)*6)%12;g2.globalAlpha=.85;g2.drawImage(HUE(h|0),x+z/2-r,y+z/2-r,r*2,r*2)}else{g2.globalAlpha=.7;g2.drawImage(GLOW(tr>=4?GOLD:COL[id]),x+z/2-r,y+z/2-r,r*2,r*2)}g2.restore()}
+ function badge(g2,k,x,y,z,t){const id=String(k).replace(/^w:/,''),tr=TL8[id]?tier(id):0;if(!tr)return;t=t||0;g2.save();
+  if(tr>=4){g2.lineWidth=Math.max(1.5,z/24);g2.strokeStyle=tr>=6?'hsl('+(((t*120)|0)%360)+',100%,62%)':GOLD;g2.globalAlpha=tr>=6?1:.65+.35*Math.sin(t*3);g2.beginPath();if(g2.roundRect)g2.roundRect(x+1,y+1,z-2,z-2,z/6);else g2.rect(x+1,y+1,z-2,z-2);g2.stroke()}
+  g2.globalCompositeOperation='lighter';const u=(t*.42+(HS[id]||0))%1;if(u<.22){const s=u/.22,q=z*.3;g2.globalAlpha=Math.sin(s*Math.PI);g2.drawImage(STAR('#ffffff'),x+z*(.15+.7*s)-q/2,y+z*(.85-.7*s)-q/2,q,q)}
+  for(let i=0;i<NST[tr]&&i<ICS.length;i++){const a=Math.sin(((t*(.6+.11*i)+i*.37)%1)*Math.PI),[px,py]=ICS[i],q=z*(.1+.16*a);g2.globalAlpha=a;g2.drawImage(STAR(tr>=6?RB[(i+((t*2)|0))%6]:tr>=4?GOLD:'#ffffff'),x+px/48*z-q/2,y+py/48*z-q/2,q,q)}g2.restore()}
+ // ---- sounds: the old generic blip is muted for a tool's own hit; TOOLS8's little tones after the break too (until the break's G() call)
+ let U=null,VN=null;const Q={q:0};
+ {const _s=snd;snd=function(f){if(Q.q>0&&f!=660&&f!=880)return;return _s.apply(this,arguments)}}
+ {const _n=noise;noise=function(){if(Q.q>0)return;return _n.apply(this,arguments)}}
+ {const _t=SFX7.tone;SFX7.tone=function(){if(U&&U.mute)return;return _t.apply(this,arguments)}}
+ {const _G=G;G=function(){if(U)U.mute=false;return _G.apply(this,arguments)}}
+ {const _h=harvest;harvest=function(k){const had=trees.has(k),r=_h.apply(this,arguments);if(U&&U.ph==1){if(had&&!trees.has(k))U.tree=k;U.mute=true}return r}}
+ {const _ba=breakAt;breakAt=function(x,y,dmg){const inb=x>=0&&y>=0&&x<W&&y<H,k=y*W+x,b=inb?tiles[k]:0,mine=!!(U&&U.ph==1&&!U.hit&&b),vb=!U&&!!VN&&b&&b==VN.b&&dmg>=100&&performance.now()<VN.until;
+   if(!mine&&!vb)return _ba.apply(this,arguments);Q.q++;let r;try{r=_ba.apply(this,arguments)}finally{Q.q--}
+   try{const broken=!!r&&!tiles[k];if(mine){const cat=catOf(b);U.hit={x,y,k,b,cat,good:fits(U.tool,cat),r:!!r,broken};U.mute=true;if(r&&!broken&&b==94&&U.tool=='ore'&&lvl(U.id)>=7)hp[k]=Math.min(hp[k],BLK[94][2]/3)}
+    else if(broken){const i=VN.i++;try{MSFX8.vein(i,VN.n,b)}catch(_){}addXP('glimmer',XP.vein)}}catch(e){console.error('TOOLLV',e)}return r}}
+ function bfs(tx,ty,id,n){const seen=new Set([ty*W+tx]),q=[[tx,ty]],out=[];while(q.length&&out.length<n){const[x,y]=q.shift();for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=ny*W+nx;if(nx<1||ny<1||nx>=W-1||ny>=H-1||seen.has(k))continue;seen.add(k);if(tiles[k]==id){out.push([nx,ny]);q.push([nx,ny])}}}return out}
+ const fl=(x,y,t,c)=>{try{ft(x,y,t,c)}catch(_){}};
+ const gemDrop=(l,x,y)=>{if(R()<gemCh(l)){const n=(l>=9?2:1)+(R()*3|0);spawnDrop(x,y,'gem',n);fl(x,y-30,'+'+n+' gems found','#9ff0ff');return true}return false};
+ const bonusBlock=(b,x,y,l,txt)=>{if(R()<drop(l)){spawnDrop(x,y,b==2?1:b,1);fl(x,y-22,txt||'Bonus block!','#ffe9b0')}};
+ function perks(id,h,l,px,py){const b=h.b;
+  if(id=='pip'){if(b==93)return;bonusBlock(b,px,py,l);if(b==1||b==2||b==8){if(R()<glowB(l)){spawnDrop(px,py,251,1);fl(px,py-34,'Glow Bait!','#7affe0')}else if(R()<worm(l)){spawnDrop(px,py,250,1);fl(px,py-34,'Worm Bait!','#ffb0a0')}}gemDrop(l,px,py)}
+  else if(id=='pebble'&&h.cat=='stone'){bonusBlock(b,px,py,l);if(R()<amet(l)){spawnDrop(px,py,263,1);fl(px,py-34,'Amethyst!','#d0b0ff')}else if(R()<quartz(l)){spawnDrop(px,py,262,1);fl(px,py-34,'Quartz Shard!','#eef4ff')}gemDrop(l,px,py)}
+  else if(id=='glimmer'&&h.cat=='ore'&&b!=94){bonusBlock(b,px,py,l,'Bonus ore!');gemDrop(l,px,py);const L2=bfs(h.x,h.y,b,VEIN[l]);VN=L2.length?{b,i:0,n:L2.length,until:performance.now()+70*(L2.length+2)+600}:null;
+   L2.slice(8).forEach(([vx,vy],i)=>setTimeout(()=>{try{if(tiles[vy*W+vx]==b)breakAt(vx,vy,255)}catch(_){}},70*(9+i)))}
+  else if(id=='twiggy'&&h.cat=='wood')bonusBlock(b,px,py,l,'Bonus wood!')}
+ function after(u){const l=lvl(u.id);if(typeof wcd=='number'&&wcd>0)wcd/=1+spd(l);
+  if(u.tree>=0){try{MSFX8.tree()}catch(_){}if(u.tool=='tree'){const px=(u.tree%W)*T+T/2,py=(u.tree/W|0)*T,ex=wood(l)-2;addXP(u.id,XP.tree);if(ex>0){spawnDrop(px,py,5,ex);fl(px,py-26,'+'+ex+' bonus wood','#e8ffc8')}gemDrop(l,px,py)}return}
+  const h=u.hit;if(!h||!h.r)return;if(!h.good){try{MSFX8.wrong(h.cat)}catch(_){}return}
+  if(!h.broken){try{MSFX8.play('hit',h.cat,h.b,{pr:h.b==94?1-hp[h.k]/BLK[94][2]:0})}catch(_){}return}
+  try{MSFX8.play('break',h.cat,h.b)}catch(_){}if(h.b==70)return;
+  addXP(u.id,h.b==94?XP.geode:h.b==93?XP.cache:XP[h.cat]||2);perks(u.id,h,l,h.x*T+T/2,h.y*T+T/2)}
+ {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(!(w&&w.k=='tool'&&own[w.id])||w.tool=='rod')return _uw.apply(this,arguments);const u=U={id:w.id,tool:w.tool,ph:1,hit:null,mute:false,tree:-1};
+   try{return _uw.apply(this,arguments)}finally{U=null;try{after(u)}catch(e){console.error('TOOLLV',e)}}}}
+ // ---- fishing: luck during the catch, double catches, sooner bites and a longer bite window (state changes watched each frame)
+ {const F=TOOLS8.FISH,_c=F.click;F.click=function(c){if(F.S.st!='bite')return _c.apply(this,arguments);const l=lvl('bubbles'),B=TOOLS8.BAIT,bk=F.S.bait,o=B[bk]||null,ol=o?o.luck:0,FS=TOOLS8.FISHES,b0={};for(const k in FS)b0[k]=cnt(+k);
+   if(luck(l)>0){if(o)o.luck=ol+luck(l);else B[bk]={luck:luck(l),wait:[4,9]}}let r;try{r=_c.apply(this,arguments)}finally{if(o)o.luck=ol;else delete B[bk]}
+   try{let got=0;for(const k in FS)if(cnt(+k)>b0[k]){got=+k;break}if(got){const f=FS[got];addXP('bubbles',f.junk?3:12+Math.round(f.p/4));if(!f.junk&&R()<dbl(l)){addI(got,1);fl(P.x,P.y-50,'Double catch! +1 '+f.n,'#bff0ff')}}}catch(e){console.error('TOOLLV fish',e)}return r}}
+ let fst='idle';function fishWatch(){const s=TOOLS8.FISH.S;if(s.st===fst)return;const l=lvl('bubbles');if(s.st=='wait')s.t*=waitM(l);else if(s.st=='bite')s.t+=bite(l);fst=s.st}
+ // ---- XP and level-ups
+ const red=()=>{try{return !!(cel.opt.reduce||QM.reduce)}catch(_){return false}};
+ function addXP(id,n){const s=S[id];if(!s||!(n>0))return;s.n=(s.n|0)+1;s.tx=(s.tx||0)+n;if(s.l>=MAX){dirty=1;chip(id);return}s.x+=n;dirty=1;while(s.l<MAX&&s.x>=need(s.l)){s.x-=need(s.l);s.l++;levelUp(id,s.l)}if(s.l>=MAX)s.x=0;chip(id)}
+ const nameOf=id=>TL8[id].n.replace(/ the .*$/,'');
+ function levelUp(id,l){flush(id);const g=GEMS[l]|0,nm=nameOf(id),pk=PERKS[id][l],ct=l>=10?5:l>=8?4:l>=6?3:l>=4?2:1;LOG.push({id,l,g});if(LOG.length>30)LOG.shift();
+  if(g>0){gems+=g;try{stat('gems',g)}catch(_){}}try{MSFX8.levelup(l)}catch(_){}
+  const Rw=typeof REW8!='undefined'?REW8:null;
+  if(Rw&&typeof entered!='undefined'&&entered){const x=P.x,y=P.y+P.h,c=l>=10?'#ff5f9e':l>=7?GOLD:COL[id];
+   try{Rw.celebrate(x,y,c,{d:l>=10?2.4:1.7,s:l>=10?1.4:1.05,n:l>=10?14:26,sp:l>=10?12:16,w:l>=10?240:170});if(l>=10){Rw.confetti(x,y-20,40,RB);Rw.flash('#ff8ad8',.28);Rw.sparkle(x,y-40,'#ffffff',14,260)}Rw.fan('level');if(g)Rw.fly(x,y-30,g)}catch(_){}
+   try{Rw.card({kind:'tool',kick:nm+' reached level '+l,title:pk[0],sub:pk[1],gems:g,tier:ct,icon:'w:'+id,ms:4200+(l>=10?1600:0)})}catch(_){}
+   if(TIER[l]!=TIER[l-1])setTimeout(()=>{try{Rw.card({kind:'tool',kick:'New shine unlocked',title:TIERN[TIER[l]],sub:l>=10?nm+' glows with every colour':nm+' shines brighter · press G for the tool guide',tier:Math.min(5,TIER[l]),icon:'w:'+id,ms:3600})}catch(_){}},700)}
+  banner(id,l,pk);save();try{renderBar()}catch(_){}try{dispatchEvent(new CustomEvent('rbtoollevel',{detail:{id,l,tier:TIER[l]}}))}catch(_){}try{if(typeof INV7!='undefined'&&INV7.isOpen)INV7.render()}catch(_){}try{if(typeof GUIDE8!='undefined')GUIDE8.refresh()}catch(_){}}
+ function banner(id,l,pk){if(typeof document=='undefined')return;let e=document.getElementById('tl8lv');if(!e){e=document.createElement('div');e.id='tl8lv';e.setAttribute('role','status');e.setAttribute('aria-live','polite');document.body.appendChild(e)}
+  e.classList.remove('on','off');e.setAttribute('data-tier',TIER[l]);e.innerHTML='<i class="rw8ray" aria-hidden="true"></i><img class="tl8bi" alt="" src="'+iconURL('w:'+id)+'"><small>'+esc(nameOf(id))+' · tool level</small><div class="rw8num"><span class="rw8roll"><i>'+(l-1)+'</i><i>'+l+'</i></span></div><em><b>'+esc(pk[0])+'</b> '+esc(pk[1])+'</em>';
+  void e.offsetWidth;e.classList.add('on');clearTimeout(banner.t);clearTimeout(banner.t2);banner.t=setTimeout(()=>e.classList.add('off'),2700);banner.t2=setTimeout(()=>e.classList.remove('on','off'),3200)}
+ // ---- small XP chip above the hotbar while you mine (DOM written at most 8x a second, only when it changed)
+ let chEl=null,chId='',chT=0,chD=0,chW=0,chKey='';
+ function chip(id){chId=id;chT=performance.now()+1900;chD=1}
+ function chipTick(now){if(!chEl&&!chD)return;if(chD&&now-chW>125){chD=0;chW=now;if(!chEl){chEl=document.createElement('div');chEl.id='tl8x';chEl.setAttribute('aria-hidden','true');chEl.innerHTML='<img alt=""><b></b><small></small><span class="tl8b"><i></i></span><em></em>';document.body.appendChild(chEl)}
+   const s=S[chId],mx2=s.l>=MAX,key=chId+'|'+s.l+'|'+Math.floor(s.x);if(key!==chKey){chKey=key;const q=a=>chEl.querySelector(a);q('img').src=iconURL('w:'+chId);q('b').textContent=nameOf(chId);q('small').textContent='Lv '+s.l;q('.tl8b i').style.transform='scaleX('+(mx2?1:Math.min(1,s.x/need(s.l))).toFixed(3)+')';q('em').textContent=mx2?'MAX':Math.floor(s.x)+' / '+need(s.l)+' XP';chEl.setAttribute('data-tier',TIER[s.l])}
+   if(!chEl.classList.contains('on')){/* beside the hotbar (right side, vertically centred); above it when there is no room */const bar=document.getElementById('bar'),cw=chEl.offsetWidth||230,chh=chEl.offsetHeight||34;let side=false;if(bar){const r=bar.getBoundingClientRect();if(r.height){if(r.right+16+cw<innerWidth-8){side=true;chEl.style.left=Math.round(r.right+14)+'px';chEl.style.bottom=Math.round(innerHeight-r.bottom+(r.height-chh)/2)+'px'}else{chEl.style.left='';chEl.style.bottom=Math.round(innerHeight-r.top+12)+'px'}}}chEl.classList.toggle('side',side);chEl.classList.add('on')}}
+  if(chEl&&now>chT&&chEl.classList.contains('on'))chEl.classList.remove('on')}
+ // ---- held-tool sparkles in the world (time-based emission, pooled VFX), per frame upkeep
+ let em=0;const ER=[0,0,0,1.6,2.6,3.6,6];
+ function emit(dt){const w=WPN[wp];if(!w||w.k!='tool'||!entered||red())return;const tr=tier(wp);if(tr<3){em=0;return}let k=1;try{k=Math.min(1.2,Math.max(.25,QM.vfxK))}catch(_){}em+=dt*ER[tr]*k;let n=0;
+  while(em>=1&&n<3){em--;n++;const c=tr>=6?RB[(R()*6)|0]:tr>=4?(R()<.6?GOLD:'#fff3c0'):(R()<.5?COL[wp]:'#ffffff');try{VFX.add(1,c,P.x+P.f*(8+R()*16),P.y+P.h*(.32+R()*.28),(R()-.5)*22,-12-R()*26,.6+R()*.5,7+R()*5,1,{g:-6,d:.6,a:.85})}catch(_){}}}
+ function tick(dt){const now=performance.now();try{fishWatch()}catch(_){}emit(dt);chipTick(now);if(dirty&&now-lastSave>4000)save()}
+ {const _t=BOSS6.tick;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){if(!tick.e){tick.e=1;console.error('TOOLLV',e)}}}}
+ addEventListener('beforeunload',()=>{if(dirty)save()});document.addEventListener('visibilitychange',()=>{if(document.hidden&&dirty)save()});
+ // ---- api
+ function info(k){const id=String(k).replace(/^w:/,''),s=S[id];if(!s)return null;return{id,l:s.l,x:s.x,need:s.l>=MAX?0:need(s.l),tier:TIER[s.l],tierName:TIERN[TIER[s.l]],perk:s.l>=2?PERKS[id][s.l]:null,next:s.l<MAX?PERKS[id][s.l+1]:null,gemsNext:s.l<MAX?GEMS[s.l+1]:0,summary:summary(id,s.l),uses:s.n|0}}
+ function set(id,l,x){if(!S[id])return;S[id].tx=S[id].tx||0;S[id].l=Math.max(1,Math.min(MAX,l|0));S[id].x=x|0;flush(id);save();try{renderBar()}catch(_){}try{dispatchEvent(new CustomEvent('rbtoollevel',{detail:{id,l:S[id].l,tier:TIER[S[id].l]}}))}catch(_){}}
+ return{IDS,MAX,need,TIER,TIERN,GEMS,XP,PERKS,VEIN,COL,RB,summary,info,lvl,tier,add:addXP,set,save,reload:()=>{load();for(const id of IDS)flush(id)},get S(){return S},LOG,decorate,badge,badgeUnder,drawTool,under,over,
+  cls:k=>{const id=String(k).replace(/^w:/,'');return TL8[id]?'tl8 tl8-t'+tier(id):''},stats:{spd,drop,gemCh,wood,worm,glowB,quartz,amet,waitM,bite,luck,dbl},get U(){return U},get VN(){return VN},K,fishWatch}})();
 
 /* ========== LATE: 87-music.js ========== */
 // ===== MUS7 v2: calm anime-lofi generated music. Every weather / place has its own set of songs; songs never repeat back-to-back =====
@@ -7852,7 +8254,7 @@ const WINGX=(()=>{
  return{render}})();
 
 /* ========== LATE: 88-inventory.js ========== */
-// ===== V7 inventory (editorial) + 3-slot hotbar: [Block 1] [Block 2] [Weapon] =====
+// ===== V7 inventory (editorial). The 6-slot hotbar lives in 99-zzz-hotbar.js (HOTBAR); here: slot buttons 1-6, drag source, assign mode =====
 const INV7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const FILT=[['all','All'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Objects'],['wear','Wearables'],['weapons','Weapons'],['fav','★ Favourites'],['stats','Stats']];
@@ -7869,15 +8271,19 @@ const INV7=(()=>{
  const nameOf=k=>typeof k=='string'?(k[0]=='a'?WEAR[k.slice(2)].n:WPN[k.slice(2)].n):iname(k);
  const iconOf=k=>{try{return iconURL(k)}catch(_){return ''}};
  const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Right-click to place it, left-click with a tool to break it.';if(t=='seeds')return 'Plant on a block with right-click. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. Used in crafting and sold at the market.';if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then press G beside it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Press E beside it to open.':'A world object. Press E beside it to use it.');return ''};
+ // "equipped" = the weapon in your hand: the held hotbar slot's weapon (holding a block means no weapon is equipped)
+ const heldW=id=>{const h=typeof HOTBAR!='undefined'?HOTBAR:null;return wp==id&&(!h||h.cur<0||h.held()==='w:'+id)};
  function items(){const out=[];
   const inv2=Object.keys(inv).map(Number).filter(k=>cnt(k)>0&&(MAT[k]||BLK[k%100]||BLK[k]));
   for(const k of inv2.sort((a,b)=>a-b)){const t=kind(k);if(k==17&&0)continue;out.push({k,t,n:cnt(k),own:1})}
   for(const id in WEAR){const w=WEAR[id];out.push({k:'a:'+id,t:'wear',own:!!ownW[id],lock:lvl<w.lv&&!ownW[id],worn:wear[w.s]==id})}
-  for(const id in WPN){const w=WPN[id];if(w.hid&&!own[id])continue;out.push({k:'w:'+id,t:'weapons',own:!!own[id],lock:lvl<(w.lv|0),worn:wp==id})}
+  for(const id in WPN){const w=WPN[id];if(w.hid&&!own[id])continue;out.push({k:'w:'+id,t:'weapons',own:!!own[id],lock:lvl<(w.lv|0),worn:heldW(id)})}
   return out}
  const mk=()=>{if(el)return;el=document.createElement('div');el.id='inv7';el.className='ed';el.innerHTML='<div class="sheet" role="dialog" aria-label="Inventory"></div>';document.body.appendChild(el);
   const ab=document.createElement('div');ab.className='assignbanner ed';ab.id='asb';document.body.appendChild(ab);
   el.addEventListener('mousedown',e=>{if(e.target===el)close()});el.addEventListener('click',onClick);
+  // drag an item onto a hotbar slot (the drop is handled by HOTBAR)
+  el.addEventListener('dragstart',e=>{const t=e.target.closest&&e.target.closest('.it7[draggable=true]');if(!t||!HB()){return}let k=t.dataset.k;try{e.dataTransfer.setData('text/plain','rbitem:'+k);e.dataTransfer.effectAllowed='copyMove';const im=t.querySelector('img');if(im)e.dataTransfer.setDragImage(im,24,24)}catch(_){}HB().dragBegin()});
   el.addEventListener('input',e=>{if(e.target.id=='inq7'){q=e.target.value;const p=e.target.selectionStart;render();const n=document.getElementById('inq7');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}}});
   el.addEventListener('change',e=>{if(e.target.id=='ins7'){sortBy=e.target.value;saveP();render()}});
   el.addEventListener('keydown',e=>{if(e.target.id=='inq7'){e.stopPropagation();if(e.key=='Escape'){if(q){q='';render()}else close()}}});
@@ -7898,53 +8304,46 @@ const INV7=(()=>{
   h+='<aside>'+detail(sel)+'</aside>';sh.innerHTML=h;
   // motion: sliding tab underline, gem count ticks, tiles cascade in only when the shelf changes (open / tab / sort), not on every click
   try{MOTION7.ind(sh.querySelector('nav'),'button.on','u',el);const gb=sh.querySelector('.gem7 b');MOTION7.tick(gb,gems,el._g!=null?el._g:gems);el._g=gems;const sk=filter+'|'+sortBy;if(sk!=el._sk){el._sk=sk;MOTION7.stagger(sh.querySelector('.grid7'),'.it7,.stat7 .s',18)}}catch(_){}
-  const ab=document.getElementById('asb');ab.style.display=assign>=0?'block':'none';ab.textContent='Choose a block for slot '+(assign+1)+' · Esc to cancel'}
+  const ab=document.getElementById('asb');ab.style.display=assign>=0?'block':'none';ab.textContent='Choose anything for hotbar slot '+(assign+1)+' · Esc to cancel'}
  // item tile: icon plate, quantity pill, rarity glyph (shape per tier) + label in the tooltip, state ribbon
- function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k);return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+(isNew(i)?' new':'')+'" data-k="'+esc(i.k)+'"'+ITEM7.attrs(i.k)+' title="'+esc(nm)+' · '+ITEM7.label(i.k)+' '+ITEM7.catName(i.k).toLowerCase()+(t=='weapons'&&WPN[i.k.slice(2)].lv?' · Lv '+WPN[i.k.slice(2)].lv+(i.lock?' required':''):'')+'">'+ITEM7.glyph(i.k)+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
- function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does and what you can do with it.</p><p style="margin-top:14px">Tip: <b>1</b> and <b>2</b> choose your block slots. <b>Mouse wheel</b> or <b>3</b> cycles weapons and tools, <b>4–8</b> pick a tool, <b>9</b> your weapon and <b>X</b> swaps weapon ⇄ tool. Only tools break blocks.</p>';
+ const HB=()=>typeof HOTBAR!='undefined'?HOTBAR:null,hbSlot=k=>{const h=HB();return h?h.slotOf(k):-1},hbOk=k=>{const h=HB();return!!h&&h.assignable(k)};
+ function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k),hs=hbSlot(i.k);return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+(isNew(i)?' new':'')+'" data-k="'+esc(i.k)+'"'+(hbOk(i.k)?' draggable="true"':'')+ITEM7.attrs(i.k)+' title="'+esc(nm)+' · '+ITEM7.label(i.k)+' '+ITEM7.catName(i.k).toLowerCase()+(t=='weapons'&&WPN[i.k.slice(2)].lv?' · Lv '+WPN[i.k.slice(2)].lv+(i.lock?' required':''):'')+'">'+ITEM7.glyph(i.k)+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(hs>=0?'<u class="hbn7" title="Hotbar slot '+(hs+1)+'">'+(hs+1)+'</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
+ function hbRow(k){const h=HB();if(!h||!h.assignable(k))return'';const s=h.slotOf(k);let b='';for(let i=0;i<6;i++)b+='<button class="btn ghost'+(i===s?' on':'')+'" data-a="hb'+i+'" title="'+(i===s?'Remove from slot ':'Put in slot ')+(i+1)+'" aria-label="'+(i===s?'Remove from hotbar slot ':'Put in hotbar slot ')+(i+1)+'">'+(i+1)+'</button>';
+  return'<div class="eyebrow" style="margin-top:12px">Hotbar slot</div><div class="hbrow7">'+b+'</div><p class="hbtip7">'+(s>=0?'In slot '+(s+1)+' (click it again to take it off the bar). ':'')+'Or press 1–6, or drag it onto the hotbar.</p>'}
+ function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does and what you can do with it.</p><p style="margin-top:14px">Tip: your hotbar has six slots, keys <b>1–6</b> or the <b>mouse wheel</b>. Put anything you own in any slot: select it and press <b>1–6</b>, or drag it onto the bar. Right-click a slot to clear it. <b>X</b> swaps weapon ⇄ tool. Only tools break blocks.</p>';
   const k=s.k,nm=nameOf(k),c=ITEM7.cat(k);let h='<div class="rbar7"><span class="catl7"><i>'+ITEM7.CATG[c]+'</i>'+ITEM7.CATN[c]+'</span>'+ITEM7.tag(k)+'</div><div class="pic"'+ITEM7.attrs(k)+'><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
   if(s.t=='wear'){const w=WEAR[k.slice(2)];h+='<p>'+esc(w.d)+'<br><b>'+esc(w.sd)+'</b></p>';h+='<div class="kv"><span>Slot</span>'+({hat:'Head',body:'Body',wing:'Wings',boot:'Boots',glove:'Gloves'})[w.s]+'</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+w.lv+'</div>':'');
-   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(s.own?'<button class="btn" data-a="wear">'+(s.worn?'Take off':'Wear')+'</button>':s.lock?'<button class="btn" disabled>Level '+w.lv+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')}
+   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(s.own?'<button class="btn" data-a="wear">'+(s.worn?'Take off':'Wear')+'</button>':s.lock?'<button class="btn" disabled>Level '+w.lv+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
   else if(s.t=='weapons'){const w=WPN[k.slice(2)],u=wUp[k.slice(2)]|0,lk=s.lock;h+='<p>'+esc(w.d)+'</p>'+(w.move?'<div class="kv"><span>Special</span>'+esc(w.move)+'</div>':'')+'<div class="kv"><span>Damage</span>'+w.md+'</div><div class="kv"><span>Speed</span>'+(1/w.cd).toFixed(1)+' / s</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+(lk?'<b style="color:#e0566a">'+w.lv+'</b>':w.lv+' ✓')+'</div>':'')+(w.ev?'<div class="kv"><span>Evolves</span>'+(wK[k.slice(2)]|0)+' / '+w.kn+' kills</div>':w.st?'<div class="kv"><span>Form</span>Final</div>':'');
-   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(lk?'<button class="btn" disabled>Reach level '+w.lv+'</button>':s.own?'<button class="btn" data-a="equip"'+(s.worn?' disabled':'')+'>'+(s.worn?'Equipped':'Equip')+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(lk?'<p>Unlocks at level '+w.lv+' (you are level '+lvl+').</p>':!s.own&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')}
+   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(lk?'<button class="btn" disabled>Reach level '+w.lv+'</button>':s.own?'<button class="btn" data-a="equip"'+(s.worn?' disabled':'')+'>'+(s.worn?'Equipped':'Equip'+(HB()?' · slot '+(HB().equipSlot(k)+1):''))+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(lk?'<p>Unlocks at level '+w.lv+' (you are level '+lvl+').</p>':!s.own&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
   else{h+='<p>'+esc(descOf(k))+'</p><div class="kv"><span>Owned</span>'+s.n+'</div><div class="kv"><span>Market value</span>'+(typeof sellP=='function'?sellP(k):'?')+' gems each</div>';
    h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div>';
-   if(s.t=='blocks'||s.t=='seeds'||s.t=='objects')h+='<div class="row7"><button class="btn" data-a="slot0">Slot 1</button><button class="btn ghost" data-a="slot1">Slot 2</button></div>'+(bar[0]==k?'<p>In slot 1.</p>':bar[1]==k?'<p>In slot 2.</p>':'')}
+   h+=hbRow(k)}
   return h}
  function stats(){const b=bonus(),bar2=(n,p,q)=>'<div class="s"><b class="ttl" style="font-size:13px">'+n+'</b><div class="bar7"><i style="width:'+Math.max(0,Math.min(100,p*100))+'%"></i></div><small style="color:var(--ed-mute)">'+q+'</small></div>';
   return'<div class="stat7">'+bar2('Level '+lvl,xp/xpNeed(lvl),Math.floor(xp)+' / '+xpNeed(lvl)+' XP')+bar2('Mining '+prof.mine.l,prof.mine.x/(xpNeed(prof.mine.l)*.7),'Break power +'+Math.floor(prof.mine.l/6))+bar2('Farming '+prof.farm.l,prof.farm.x/(xpNeed(prof.farm.l)*.7),'Gardening gear boosts this XP')+bar2('Combat '+prof.fight.l,prof.fight.x/(xpNeed(prof.fight.l)*.7),'Damage +'+Math.round(prof.fight.l*4)+'%')+(typeof LVL9!='undefined'?(i=>bar2('Level power',i.dmg/1.5,'All weapons +'+Math.round(i.dmg*100)+'% damage · Max HP +'+i.hp+' · Armor +'+Math.round(i.arm*100)+'%'))(LVL9.info()):'')+'<div class="s"><b class="ttl" style="font-size:13px">Active bonuses</b><br><small style="color:var(--ed-mute);line-height:1.8">Gems +'+Math.round(b.gem*100)+'% · Speed '+Math.round(b.spd*100)+'% · Jump +'+Math.round(b.jump*100)+'% · Armor '+Math.round(b.arm*100)+'% · XP +'+Math.round(b.xp*100)+'% · Light +'+Math.round(b.light)+'</small></div></div>'}
  function onClick(e){const f=e.target.closest('[data-f]');if(f){filter=f.dataset.f;selK=null;render();UIS&&UIS.play('tab');return}
   const t=e.target.closest('[data-k]');if(t){let k=t.dataset.k;if(/^\d+$/.test(k))k=+k;
-   if(assign>=0&&(kind(k)=='blocks'||kind(k)=='seeds'||kind(k)=='objects')){setSlot(assign,k);assign=-1;render();return}
+   if(assign>=0&&hbOk(k)){HB().set(assign,k);assign=-1;selK=k;render();return}
    selK=k;if(seen&&!seen[k]){seen[k]=1;saveP()}render();UIS&&UIS.play('select');return}
   const a=e.target.closest('[data-a]');if(!a)return;const act=a.dataset.a,k=selK;
   if(act=='close'){close();return}
   if(act=='fav'&&k!=null){if(favs[k])delete favs[k];else favs[k]=1;saveP();render();UIS&&UIS.play('select');return}
-  if(act=='slot0'||act=='slot1'){setSlot(+act[4],k);render();return}
+  if(/^hb[0-5]$/.test(act)&&k!=null&&HB()){const i=+act[2];HB().set(i,HB().slotOf(k)===i?null:k);render();return}
   if(typeof k=='string'&&k[0]=='a'){const id=k.slice(2),w=WEAR[id];
    if(act=='buy'){if(lvl<w.lv)return say('Reach level '+w.lv+' first');if(gems<w.cost){say('Need '+w.cost+' gems');UIS&&UIS.play('error');return}gems-=w.cost;ownW[id]=1;wear[w.s]=id;try{G('wear')}catch(_){}UIS&&UIS.play('buy');say(w.n+' purchased and worn');renderSkills();render();return}
    if(act=='wear'){wear[w.s]=wear[w.s]==id?'':id;if(wear[w.s])try{G('wear')}catch(_){}UIS&&UIS.play('select');renderSkills();render()}return}
   if(typeof k=='string'&&k[0]=='w'){const id=k.slice(2),w=WPN[id];
    if((act=='buy'||act=='equip')&&lvl<(w.lv|0)){say('Reach level '+w.lv+' to use '+w.n);UIS&&UIS.play('error');return}
-   if(act=='buy'){if(gems<w.cost){say('Need '+w.cost+' gems');UIS&&UIS.play('error');return}gems-=w.cost;own[id]=1;wp=id;try{G('forge')}catch(_){}UIS&&UIS.play('buy');say(w.n+' purchased and equipped');renderBar();render();return}
-   if(act=='equip'){wp=id;UIS&&UIS.play('select');renderBar();render()}return}}
- function setSlot(i,k){if(i<0||i>1)return;const o=bar[1-i];if(o==k)bar[1-i]=bar[i];bar[i]=k;sel=i;try{renderBar()}catch(_){}say((nameOf(k))+' → slot '+(i+1))}
- function open(f,slot){mk();el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');requestAnimationFrame(()=>el.classList.add('show'));render();try{G('bag')}catch(_){}UIS&&UIS.play('open')}
- function close(){if(!el)return;assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv)el.classList.remove('open')},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';UIS&&UIS.play('close')}
- return{open,close,render,get isOpen(){return showInv&&!!el&&el.classList.contains('open')},get filter(){return filter},set filter(v){filter=v}}})();
-// ---- legacy hooks: inventory toggle, bar, weapon slot
+   if(act=='buy'){if(gems<w.cost){say('Need '+w.cost+' gems');UIS&&UIS.play('error');return}gems-=w.cost;own[id]=1;if(HB())HB().equip(k);else wp=id;try{G('forge')}catch(_){}UIS&&UIS.play('buy');say(w.n+' purchased and equipped');renderBar();render();return}
+   if(act=='equip'){if(HB())HB().equip(k);else wp=id;UIS&&UIS.play('select');renderBar();render()}return}}
+ function open(f,slot){mk();document.documentElement.classList.add('inv6');el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');requestAnimationFrame(()=>el.classList.add('show'));render();try{G('bag')}catch(_){}UIS&&UIS.play('open')}
+ function close(){if(!el)return;assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv){el.classList.remove('open');document.documentElement.classList.remove('inv6')}},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';UIS&&UIS.play('close')}
+ return{open,close,render,get isOpen(){return showInv&&!!el&&el.classList.contains('open')},get filter(){return filter},set filter(v){filter=v},get selK(){return selK},set selK(v){selK=v},get assign(){return assign}}})();
+// ---- legacy hooks: inventory toggle (the bar is drawn by HOTBAR in 99-zzz-hotbar.js)
 setInv=function(v){if(v)INV7.open();else INV7.close()};
 renderInv=function(){if(INV7.isOpen)INV7.render()};
-renderBar=function(){const el=document.getElementById('bar');if(!el)return;el.innerHTML='';
- if(sel>1)sel=0;
- const blk=i=>{const k=bar[i],s=document.createElement('div');s.className='hb'+(i==sel?' on':'')+(k?'':' empty');s.tabIndex=0;s.title=k?iname(k)+' — click to select, click again to change':'Empty — click to choose a block';if(k){s.dataset.cat=ITEM7.cat(k);s.dataset.rar=ITEM7.rar(k)}
-  if(k){const im=new Image();im.src=iconURL(k);s.append(im);const b=document.createElement('b');b.textContent=cnt(k);s.append(b)}const n=document.createElement('i');n.textContent=i+1;s.append(n);const sm=document.createElement('small');sm.textContent=k?iname(k):'Block';if(!k)s.append(sm);
-  s.onclick=()=>{if(i==sel||!bar[i]){INV7.open('blocks',i)}else{sel=i;renderBar();try{UIS.play('select')}catch(_){}}};s.onkeydown=e=>{if(e.key=='Enter')s.onclick()};return s};
- el.append(blk(0),blk(1));
- const w=WPN[wp],s=document.createElement('div');s.className='hb wp';s.tabIndex=0;s.dataset.cat='weapon';s.dataset.rar=ITEM7.rar('w:'+wp);s.title=(w.k=='tool'?'Tool':'Weapon')+' — scroll or press 3 to switch, 4–8 tools, 9 weapon, X swaps weapon/tool; click to open weapons';const im=new Image();im.src=iconURL('w:'+wp);const d=document.createElement('div');d.innerHTML=esc3(w.n)+'<small>'+(w.k=='tool'?'Tool · breaks blocks':w.ev?'Evolves '+(wK[wp]|0)+'/'+w.kn+' kills':w.st?'Final form':'Weapon · scroll for tools')+'</small>';const n=document.createElement('i');n.textContent='3';s.append(im,d,n);s.onclick=()=>INV7.open('weapons');s.onkeydown=e=>{if(e.key=='Enter')s.onclick()};el.append(s)};
-const esc3=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 renderW=function(){renderBar()};
-selBar=function(i){if(i<=1){sel=i;renderBar()}else if(i==2){cycleWeapon()}};
 function cycleWeapon(){const ids=Object.keys(WPN).filter(id=>own[id]&&!(WPN[id].hid&&!own[id]));if(!ids.length)return;wp=ids[(ids.indexOf(wp)+1)%ids.length];renderBar();say(WPN[wp].n);try{UIS.play('select')}catch(_){}}
 (()=>{ // migrate old saves: make sure the two block slots are filled, then draw
  const fillable=Object.keys(inv).map(Number).filter(k=>cnt(k)>0&&k<20&&k!=17&&k!=4&&k!=16);
@@ -9138,7 +9537,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
 (()=>{const X=UI6.ext,el=id=>document.getElementById(id),esc=UI6.esc;
  X.post=(tab,body)=>{if(tab=='plates'){try{X.postPlates(body)}catch(e){console.error(e)}}};
  const CATS=[['general','General','◎','Theme, name and save data'],['graphics','Graphics','✧','Quality and visual effects'],['audio','Audio','♪','Music, effects and interface sounds'],['controls','Controls','⌘','Camera and key reference'],['interface','Interface','▣','HUD size, opacity and panels'],['access','Accessibility','◐','Motion, shake and contrast']];
- const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 · 2','Block slots'],['Mouse wheel · 3','Cycle weapons and tools'],['4 – 8','Pip · Pebble · Glimmer · Twiggy · Bubbles (tools)'],['9','Your last weapon'],['X','Swap weapon ⇄ tool'],['Q R Z Shift F','Gear skills'],['E','Use / talk'],['G','Set a door destination'],['C','Character hub'],['I / Tab','Inventory (you can keep walking while it is open)'],['B','Emote'],['J','Quest journal'],['H','Show / hide quest tracker'],['M','Music on / off'],['+ / − / 0','Zoom in / out / reset'],['Enter','Chat'],['F3','FPS counter']];
+ const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 · 2','Block slots'],['Mouse wheel · 3','Cycle weapons and tools'],['4 – 8','Pip · Pebble · Glimmer · Twiggy · Bubbles (tools)'],['9','Your last weapon'],['X','Swap weapon ⇄ tool'],['Q R Z Shift F','Gear skills'],['E','Use / talk'],['G','Tool guide · beside a door or object: set it up'],['C','Character hub'],['I / Tab','Inventory (you can keep walking while it is open)'],['B','Emote'],['J','Quest journal'],['H','Show / hide quest tracker'],['M','Music on / off'],['+ / − / 0','Zoom in / out / reset'],['Enter','Chat'],['F3','FPS counter']];
  const row=(id,label,desc,ctl)=>'<div class="srow7" data-k="'+esc((label+' '+desc).toLowerCase())+'"><div class="sl7"><label for="'+id+'">'+label+'</label><small>'+desc+'</small></div><div class="sc7">'+ctl+'</div></div>';
  const tog=(id,on,lbl)=>'<input type="checkbox" role="switch" class="rb-toggle" id="'+id+'"'+(on?' checked':'')+' aria-label="'+esc(lbl)+'">';
  const rng=(id,min,max,v,u)=>'<input type="range" id="'+id+'" min="'+min+'" max="'+max+'" value="'+Math.round(v)+'"><output id="'+id+'n">'+Math.round(v)+(u==null?'%':u)+'</output>';
@@ -9834,6 +10233,108 @@ const TOOLS7=(()=>{
   if(X6.q){const q=X6.q,r=recipeById(q.r);h+='<p>In progress: '+q.n+'× '+esc(r?r.n:'?')+' · '+(Date.now()>=q.end?'ready to collect':Math.ceil((q.end-Date.now())/1000)+'s left')+'</p>'}
   b.innerHTML=h}})();
 
+/* ========== LATE: 96-z-guide.js ========== */
+// ===== GUIDE8: the Tool Guide. A hub tab ("Tool Guide") that explains exactly how to use every tool: what each one breaks in one hit (with
+// real block icons), what it is slow at, how to hold and use it, its special abilities, what earns XP, every level's perk and gem reward, and
+// how the shine grows (live, animated previews of each shine tier drawn with the in-game shine code). Also pages for the basics, levels & shine
+// and where to dig at each depth. Open it with G (when you are not standing beside a door or object; G there still sets the object up), from
+// the hub (C) -> Tool Guide, or the "Tool guide" button in the inventory header. A one-time hint mentions it. Preview canvases animate only
+// while the guide is on screen. =====
+const GUIDE8=(()=>{
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const IDS=TOOLLV.IDS,TL=TOOLS8.TL,NM=id=>TL[id].n.replace(/ the .*$/,'');
+ const ico=k=>{try{return iconURL(k)}catch(_){return''}},bn=k=>{try{return iname(k)}catch(_){return'Block'}};
+ const wooden=()=>{const o=[5];try{for(const k in BLK){const n=+k;if(n!=5&&/Plank|Log|Bamboo|Crate/.test(BLK[k][0])&&o.length<4)o.push(n)}}catch(_){}return o};
+ const D={
+  pip:{role:'Your digging buddy for everything soft.',best:()=>[1,2,8,6,15,5,93],slow:'Stone, brick, marble, deepslate and every ore. Swap to Pebble or Glimmer for those.',
+   how:['Put Pip in a hotbar slot (1–6) and press its number, or scroll the mouse wheel until Pip is in your hand.','Aim at a soft block within reach and left-click: one scoop breaks it. Hold the button to keep digging.','In the Glowroot Hollows (8–25 m deep) dig up the golden <b>Buried Caches</b> for treasure and gems.'],
+   sp:['Breaks dirt, grass, sand, glass, leaves and wood in one scoop','Digs out Buried Caches (treasure, gems, ores)','From level 4 the soil turns up Worm Bait for Bubbles, Glow Bait from level 7'],xp:'Soft blocks and wood <b>+2 XP</b> · Buried Cache <b>+12 XP</b>'},
+  pebble:{role:'A little hammer that cracks stone in one tap.',best:()=>[3,11,7,12,14,77],slow:'Dirt, sand, wood and ores. Glimmer gets far more out of ores.',
+   how:['Put Pebble in a hotbar slot (1–6) or scroll to it.','Left-click stone, cobblestone, brick, marble, roof tiles or deepslate: one tap each. Hold to tunnel.','Deepslate begins around 44 m deep and is tough for any other tool, so Pebble is the way through.'],
+   sp:['One tap per stone block, even deepslate','From level 4 stone can crack into Quartz Shards, Amethyst from level 7','From level 5 some stones hold gems'],xp:'Stone blocks <b>+2 XP</b>'},
+  glimmer:{role:'The sparkly ore pick: one click mines the whole vein.',best:()=>[71,72,73,74,75,76,9,10,94],slow:'Everything that is not an ore, crystal, gold or a geode.',
+   how:['Put Glimmer in a hotbar slot (1–6) or scroll to it. While you hold it, ores within about 9 blocks <b>twinkle</b>, so you can see where to dig.','Left-click one ore block: Glimmer mines the whole connected vein (8 blocks, up to 22 with levels) and often pops out a bonus ore.','Crystal Geodes (purple, 26–45 m deep) need 3 taps (2 from level 7) and burst into gems and rare crystals.'],
+   sp:['Mines the entire connected vein in one click','50% chance of a bonus ore on every ore you click','Nearby ores twinkle while you hold it','Cracks Crystal Geodes for gems and crystals'],xp:'Ore <b>+6 XP</b> · every extra vein block <b>+4 XP</b> · Crystal Geode <b>+20 XP</b>'},
+  twiggy:{role:'A leafy axe that chops whole trees for extra wood.',best:wooden,slow:'Stone, dirt, sand and ores.',
+   how:['Put Twiggy in a hotbar slot (1–6) or scroll to it.','Click a tree (trunk or leaves) to chop the whole tree: you get its wood <b>plus 2 extra</b> (up to 6 with levels).','Left-click wood, planks, logs, bamboo or crates to split them in one hit.'],
+   sp:['Chops whole trees with bonus wood','Splits wooden blocks in one hit','From level 5 trees can drop gems'],xp:'Each tree <b>+6 XP</b> · wooden blocks <b>+2 XP</b>'},
+  bubbles:{role:'A cute fishing rod with a duck bobber. It never breaks blocks.',best:()=>[240,241,242,243,247,250,251,252],slow:'It does not mine at all: it only fishes.',
+   how:['Stand on dry ground next to a lake or pool (not swimming) and hold Bubbles: hotbar slot (1–6) or scroll to it.','Click the water to cast. The duck bobber flies out and floats on the surface.','Wait for the bite. When a red <b>!</b> pops up over your head and the bobber dips, click again <b>quickly</b>. Click too early and you reel in nothing; too slow and it gets away.','Bait is used automatically, best first. Punch the blue <b>Tackle Boxes</b> on lake shores with your fists to get Worm, Glow and Golden Bait: better bait means sooner bites and rarer fish.'],
+   sp:['Fish sell at the shop and count for collections','Night: Moonfish · caves: Glowfin · deep caves (35 m+): Void Eel · anywhere: the rare Golden Carp','From level 5 you can catch two fish at once'],xp:'Each fish <b>+12 XP</b> plus a quarter of its price (rarer fish give more) · junk <b>+3 XP</b>'}};
+ const PAGES=[...IDS,'basics','levels','dig'],PN={basics:'Basics',levels:'Levels & shine',dig:'Where to dig'};
+ let pg=null,raf=0,hinted=false;
+ const B=()=>UI6.body,on=()=>UI6.on&&UI6.tab=='toolguide';
+ // ---- pieces
+ const bar=(p)=>'<span class="tg8bar"><i style="transform:scaleX('+Math.max(0,Math.min(1,p)).toFixed(3)+')"></i></span>';
+ const chip=k=>'<span class="tg8c"><img alt="" src="'+ico(k)+'">'+esc(bn(k))+'</span>';
+ function navBtn(id){const i=TOOLLV.info(id);return'<button role="tab" class="tg8t'+(pg==id?' on':'')+'" data-g="'+id+'" style="--tc:'+TOOLLV.COL[id]+'" aria-selected="'+(pg==id)+'"><img alt="" src="'+ico('w:'+id)+'"><span><b>'+esc(NM(id))+'</b><small>Lv '+i.l+(i.l>=10?' · MAX':'')+'</small>'+bar(i.l>=10?1:i.x/i.need)+'</span></button>'}
+ function lvList(id){const i=TOOLLV.info(id),P=TOOLLV.PERKS[id];let h='<ol class="tg8pl">';
+  for(let l=1;l<=10;l++){const st=l<=i.l?(l==i.l?'cur':'got'):l==i.l+1?'next':'',p=l==1?['Starter','Breaks its own blocks in one hit']:P[l];
+   h+='<li class="'+st+'" data-tier="'+TOOLLV.TIER[l]+'"><i>'+l+'</i><div><b>'+esc(p[0])+'</b><small>'+esc(p[1])+'</small></div>'+(TOOLLV.GEMS[l]?'<em><i class="gem"></i>'+TOOLLV.GEMS[l]+'</em>':'<em></em>')+'</li>'}return h+'</ol>'}
+ function toolPage(id){const d=D[id],i=TOOLLV.info(id),nx=i.next;
+  return'<div class="tg8tool" style="--tc:'+TOOLLV.COL[id]+'"><div class="tg8hero"><canvas class="tg8cv" width="440" height="300" data-id="'+id+'" aria-label="'+esc(NM(id))+' with its current shine"></canvas>'
+   +'<div class="tg8lv"><div class="tg8lvt"><b>Level '+i.l+'</b><span class="tg8tn" data-tier="'+i.tier+'">'+esc(i.tierName)+'</span></div>'+bar(i.l>=10?1:i.x/i.need)+'<small>'+(i.l>=10?'Max level · rainbow shine':Math.floor(i.x)+' / '+i.need+' XP · next: <b>'+esc(nx[0])+'</b> (+'+i.gemsNext+' gems)')+'</small></div>'
+   +'<div class="tg8now"><h5>Right now</h5><ul>'+i.summary.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div></div>'
+   +'<div class="tg8info"><small class="tg8k">Tool</small><h4>'+esc(TL[id].n)+'</h4><p class="tg8d">'+esc(d.role)+'</p>'
+   +'<section><h5>'+(id=='bubbles'?'Catches':'Breaks in one hit')+'</h5><div class="tg8chips">'+d.best().map(chip).join('')+(id=='twiggy'?'<span class="tg8c tg8tree"><i aria-hidden="true"></i>Whole trees</span>':'')+'</div></section>'
+   +'<section><h5>Slow at</h5><p>'+esc(d.slow)+'</p></section>'
+   +'<section><h5>How to use</h5><ol class="tg8steps">'+d.how.map(s=>'<li>'+s+'</li>').join('')+'</ol></section>'
+   +'<section><h5>Special</h5><ul class="tg8sp">'+d.sp.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></section>'
+   +'<section><h5>Earns tool XP for</h5><p>'+d.xp+'. The wrong tool earns nothing.</p></section></div></div>'
+   +'<section class="tg8lvls"><h5>Levels and rewards</h5><p class="dim">Each level pays gems and adds a perk. The tool shines brighter as it climbs, and level 10 turns it rainbow.</p>'+lvList(id)+'</section>'}
+ function basics(){const rows=[['Dirt · grass · sand · glass · leaves','pip'],['Stone · cobble · brick · marble · deepslate','pebble'],['Ores · crystal · gold · Crystal Geodes','glimmer'],['Trees · wood · planks · bamboo · crates','twiggy'],['Lakes and pools (fish)','bubbles']];
+  return'<div class="tg8cards"><div class="tg8card"><h5>1 · Hold a tool</h5><p>Put a tool in a <b>hotbar slot (1–6)</b> and press its number, or <b>scroll the mouse wheel</b> to it. <kbd>X</kbd> swaps between your last weapon and your last tool.</p></div>'
+   +'<div class="tg8card"><h5>2 · Mine</h5><p><b>Left-click</b> a block within reach. Hold the button to keep mining. The right tool breaks a block in <b>one hit</b> with its own sound: a soft crunch for dirt, a knock for wood, a crack for stone and a crystal <i>ting</i> for ore.</p></div>'
+   +'<div class="tg8card"><h5>3 · Pick the right one</h5><p>The wrong tool still works but needs many slow taps, makes a dull <i>tok</i> and earns no XP. You will see “Slow — try another tool”.</p></div>'
+   +'<div class="tg8card warn"><h5>Only tools break blocks</h5><p>Weapons fight; they never dig. Your fists can still open Tackle Boxes for bait. Tools never wear out or break.</p></div></div>'
+   +'<section><h5>Which tool for which block?</h5><div class="tg8tbl">'+rows.map(([a,id])=>'<button class="tg8row" data-g="'+id+'" style="--tc:'+TOOLLV.COL[id]+'"><span>'+esc(a)+'</span><b><img alt="" src="'+ico('w:'+id)+'">'+esc(NM(id))+'</b></button>').join('')+'</div></section>'
+   +'<section><h5>Opening this guide</h5><p>Press <kbd>G</kbd> anywhere (beside a door or object G sets that object up instead), open the hub with <kbd>C</kbd> and choose <b>Tool Guide</b>, or press <b>Tool guide</b> in your inventory.</p></section>'}
+ function levels(){const sel=IDS.includes(pg)?pg:(IDS.includes(wp)?wp:'pip');let tot=0;
+  let h='<section><h5>How tools level up</h5><p>Every tool goes from <b>level 1 to 10</b> by doing its own job. Glimmer learns from ores, Pebble from stone, Pip from soft blocks, Twiggy from trees, Bubbles from fish. Each level pays gems, adds a perk and makes the tool shine brighter.</p>'
+   +'<ul class="tg8sp">'+IDS.map(id=>'<li><b>'+esc(NM(id))+':</b> '+D[id].xp+'</li>').join('')+'</ul></section>';
+  h+='<section><h5>Shine</h5><div class="tg8shine">';const SH=[[1,'Lv 1'],[2,'Lv 2'],[3,'Lv 3–4'],[5,'Lv 5–6'],[7,'Lv 7–8'],[9,'Lv 9'],[10,'Lv 10']];
+  for(const[l,t]of SH){const tr=TOOLLV.TIER[l];h+='<figure data-tier="'+tr+'"><canvas class="tg8cv sm" width="180" height="150" data-id="'+sel+'" data-tr="'+tr+'"></canvas><figcaption><b>'+esc(TOOLLV.TIERN[tr])+'</b><small>'+t+'</small></figcaption></figure>'}
+  h+='</div><p class="dim">The shine shows in your hand and on the tool’s icon in the hotbar, inventory and cards. Previewing: '+esc(NM(sel))+' (pick another tool above to preview it).</p></section>';
+  h+='<section><h5>XP and gems per level</h5><div class="tg8xt"><div class="hd"><span>Level</span><span>XP needed</span><span>Total XP</span><span>Gems</span><span>Shine</span></div>';
+  for(let l=2;l<=10;l++){const n=TOOLLV.need(l-1);tot+=n;h+='<div data-tier="'+TOOLLV.TIER[l]+'"><span>'+(l-1)+' → '+l+'</span><span>'+n+'</span><span>'+tot+'</span><span><i class="gem"></i>'+TOOLLV.GEMS[l]+'</span><span>'+esc(TOOLLV.TIERN[TOOLLV.TIER[l]])+'</span></div>'}
+  return h+'</div></section>'}
+ function dig(){const BD=typeof DEPTH8!='undefined'?DEPTH8.BANDS:[];const col=i=>(BD[i]&&BD[i].c)||'#7a8aa0';
+  const Z=[['Surface','0–7 m','#6fbf5a',[['pip','Dirt, grass and sand'],['twiggy','Trees for wood'],['bubbles','Lakes for fishing · Tackle Boxes on the shore for bait'],['glimmer','Copper Ore from 3 m']]],
+   [BD[0]?BD[0].n:'Glowroot Hollows','8–25 m',col(0),[['pip','Buried Caches: dig them with Pip for treasure'],['glimmer','Iron Ore from 12 m'],['pebble','Stone everywhere: Pebble tunnels fast']]],
+   [BD[1]?BD[1].n:'Crystal Caverns','26–45 m',col(1),[['glimmer','Ruby from 30 m, Sapphire from 38 m'],['glimmer','Crystal Geodes: 3 taps with Glimmer (2 from level 7)'],['pebble','Deepslate starts around 44 m']]],
+   [BD[2]?BD[2].n:'Emberdeep','46 m +',col(2),[['glimmer','Emerald from 48 m, Diamond from 62 m'],['pebble','Deepslate: Pebble breaks it in one tap'],['bubbles','Void Eels swim in deep cave water (35 m+)']]]];
+  return'<section><h5>Where to dig</h5><p class="dim">Depth is counted in blocks below the surface. Rarer ores sit deeper, and each band has its own treasures.</p><div class="tg8dig">'+Z.map(([n,d,c,L])=>'<div class="tg8z" style="--zc:'+c+'"><div class="tg8zh"><b>'+esc(n)+'</b><small>'+d+'</small></div><ul>'+L.map(([id,t])=>'<li><img alt="" src="'+ico('w:'+id)+'"><span><b>'+esc(NM(id))+'</b> '+esc(t)+'</span></li>').join('')+'</ul></div>').join('')+'</div></section>'}
+ // ---- render
+ function render(){const b=B();if(!b)return;if(!pg)pg=IDS.includes(wp)?wp:'basics';
+  let h='<div class="tg8"><div class="tg8top"><div><small class="tg8k">Field manual</small><h3 class="tg8h">Tool Guide</h3><p class="dim">Only tools break blocks. The right tool breaks a block in one hit; the wrong one takes many slow taps.</p></div><div class="tg8key"><kbd>G</kbd><span>opens this guide</span></div></div>';
+  h+='<nav class="tg8nav" role="tablist" aria-label="Tool guide pages">'+IDS.map(navBtn).join('')+'<span class="tg8sep"></span>'+['basics','levels','dig'].map(p=>'<button role="tab" class="tg8p'+(pg==p?' on':'')+'" data-g="'+p+'" aria-selected="'+(pg==p)+'">'+PN[p]+'</button>').join('')+'</nav>';
+  h+='<div class="tg8pg" data-p="'+pg+'">'+(IDS.includes(pg)?toolPage(pg):pg=='basics'?basics():pg=='levels'?levels():dig())+'</div></div>';
+  b.innerHTML=h;b.querySelectorAll('[data-g]').forEach(x=>x.onclick=()=>go(x.dataset.g));
+  try{MOTION7.stagger(b.querySelector('.tg8pg'),'section,.tg8hero,.tg8info,.tg8card,figure,.tg8z,.tg8pl li',14)}catch(_){}loop()}
+ function go(p){if(!PAGES.includes(p))return;const keep=B()?B().scrollTop:0;pg=p;render();try{UIS.play('tab')}catch(_){}const pgE=B()&&B().querySelector('.tg8pg');if(pgE){pgE.classList.add('tg8in');setTimeout(()=>pgE.classList.remove('tg8in'),500)}try{const n=B().querySelector('.tg8nav');B().scrollTop=Math.min(keep,n?n.offsetTop:0)}catch(_){}}
+ // animated previews (only while visible)
+ function loop(){cancelAnimationFrame(raf);const step=()=>{const b=B();if(!on()||!b){raf=0;return}const cs=b.querySelectorAll('canvas.tg8cv');if(!cs.length){raf=0;return}const t=performance.now()/1000;
+   for(const c of cs){const x=c.getContext('2d'),id=c.dataset.id,tr=c.dataset.tr!=null?+c.dataset.tr:TOOLLV.tier(id),sm=c.classList.contains('sm'),w=c.width,h=c.height;x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,w,h);
+    const sc=sm?2.6:5.2,L=40;x.translate(w/2-L*sc*.12,h/2+L*sc*.16);x.scale(sc,sc);x.rotate(-Math.PI/4+Math.sin(t*1.6+(tr||0))*.08);x.translate(-L*.42,0);try{TOOLLV.drawTool(x,id,L,t+(tr||0)*.37,tr)}catch(_){}}
+   raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
+ // ---- hub tab + openers
+ UI6.TABS.splice(Math.max(0,UI6.TABS.findIndex(t=>t[0]=='settings')),0,['toolguide','Tool Guide']);
+ UI6.ext.toolguide=render;
+ function open(p){if(p&&PAGES.includes(p))pg=p;try{if(typeof showInv!='undefined'&&showInv)INV7.close()}catch(_){}UI6.open('toolguide');hinted=true;try{localStorage.setItem(HK(),'1')}catch(_){}}
+ function close(){if(on())UI6.close()}
+ function refresh(){if(on())render()}
+ addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.altKey||e.metaKey||String(e.key).toLowerCase()!='g')return;try{if(isTextEl(e.target))return}catch(_){}
+  if(typeof entered=='undefined'||!entered||creatorOn||dlgOpen||menuEl.style.display!='none'||UI6.on)return;try{if(OBJ6.near())return}catch(_){}open()});
+ // inventory header button (re-added whenever the inventory re-renders its sheet)
+ let obs=null;function invBtn(){const s=document.querySelector('#inv7 .sheet');if(!s)return;if(!obs){obs=new MutationObserver(invBtn);obs.observe(s,{childList:true})}const hd=s.querySelector('header');if(!hd||hd.querySelector('.tg8ib'))return;
+  const btn=document.createElement('button');btn.className='tg8ib';btn.type='button';btn.title='How to use every tool (G)';btn.innerHTML='<i aria-hidden="true">?</i>Tool guide';btn.onclick=e=>{e.stopPropagation();open()};const x=hd.querySelector('.x');if(x&&x.parentNode)x.parentNode.insertBefore(btn,x);else hd.appendChild(btn)}
+ try{const _o=INV7.open;INV7.open=function(){const r=_o.apply(this,arguments);try{invBtn()}catch(_){}return r}}catch(_){}
+ // one-time hint
+ const HK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbptgh';
+ let hT=0;const hI=setInterval(()=>{try{if(hinted){clearInterval(hI);return}if(localStorage.getItem(HK())){hinted=true;clearInterval(hI);return}if(!entered||menuEl.style.display!='none'){hT=0;return}hT+=3;if(hT<15||UI6.on||showInv)return;
+  hinted=true;clearInterval(hI);localStorage.setItem(HK(),'1');UI6.say6('Tool guide · press G','How each tool works · tools level up and shine as you use them',5200)}catch(_){}},3000);
+ return{open,close,refresh,go,get page(){return pg},get isOpen(){return on()},D,PAGES}})();
+
 /* ========== LATE: 97-chestui.js ========== */
 // ===== V6 chest UI: two panes (chest | your backpack), click to move, clear hints, closes when you walk away =====
 const CHEST6=(()=>{let el=null,K=-1;const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -10064,9 +10565,8 @@ try{RBDIAG.stage('late-scripts-loaded')}catch(_){}
  requestAnimationFrame(loop)})();
 
 /* ========== LATE: 99-zz-play.js ========== */
-// ===== PLAY8: weapons fight, tools dig. Faster switching: mouse wheel cycles weapons + tools (only over the game, throttled),
-// 3 = next, 4-8 = Pip / Pebble / Glimmer / Twiggy / Bubbles, 9 = your last weapon, X = swap between your last weapon and last tool.
-// A small animated pill above the hotbar shows the item you switched to with the previous / next names. =====
+// ===== PLAY8: weapons fight, tools dig. X = swap between your last weapon and last tool. Keys 1-6 and the mouse wheel belong to
+// the 6-slot hotbar (HOTBAR, 99-zzz-hotbar.js), which replaces selBar / PLAY8.wheel and shows its own name pill (#sw8 is hidden). =====
 const PLAY8=(()=>{
  const TOOLS=['pip','pebble','glimmer','twiggy','bubbles'],PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpsw';
  const S={wpn:'fist',tool:'pip'};try{const o=JSON.parse(localStorage.getItem(PK())||'{}');if(o.w)S.wpn=o.w;if(o.t)S.tool=o.t}catch(_){}
@@ -10081,7 +10581,7 @@ const PLAY8=(()=>{
   if(now-G.tinkT>140){G.tinkT=now;try{for(let i=0;i<3;i++)VFX.add(1,'#e8eef8',px+(Math.random()-.5)*16,py+(Math.random()-.5)*16,(Math.random()-.5)*60,-20-Math.random()*40,.3,8,2,{a:.7})}catch(_){}try{SFX7.tone(260,220,.05,'triangle',.02)}catch(_){}}
   if(now-G.hintT<40000)return;// gentle: at most once every 40 s, never while fighting next to the cursor
   const cx=mx+cam.x,cy=my+cam.y;for(const m of mobs)if(!m.dead&&Math.hypot(m.x-cx,m.y+m.h/2-cy)<T*3)return;
-  G.hintT=now;try{say('Use a tool to break blocks — scroll, 3 or X to switch')}catch(_){}}
+  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–6 / wheel) or press X')}catch(_){}}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&w.k=='tool')return _uw.apply(this,arguments);G.wpn++;try{return _uw.apply(this,arguments)}finally{G.wpn--}}}
  {const _ba=breakAt;breakAt=function(){if(G.wpn>0&&!G.allow)return false;return _ba.apply(this,arguments)}}
  // ---- switching
@@ -10098,14 +10598,13 @@ const PLAY8=(()=>{
   const bar=document.getElementById('bar');if(bar){const r=bar.getBoundingClientRect();if(r.height)el.style.bottom=Math.round(innerHeight-r.top+58)+'px'}
   el.style.opacity='1';const c=q('[data-c]');if(c.animate){c.animate([{transform:'scale(.9) translateY(4px)',opacity:.4},{transform:'scale(1)',opacity:1}],{duration:240,easing:'cubic-bezier(.2,.9,.3,1.25)'});if(dir)for(const s of['[data-p]','[data-x]'])q(s).animate([{transform:'translateX('+(dir*12)+'px)',opacity:0},{transform:'none',opacity:.75}],{duration:260,easing:'ease-out'})}
   clearTimeout(hideT);hideT=setTimeout(()=>{if(el)el.style.opacity='0'},1700)}catch(e){console.error('PLAY8 hud',e)}}
- function note(id){if(!WPN[id])return;if(isTool(id))S.tool=id;else S.wpn=id;save()}
- function set(id,dir){if(!ok(id)||!free())return false;if(id!=wp){wp=id;note(id);seen=id;try{renderBar()}catch(_){}try{UIS.play('select')}catch(_){}}show(dir||0);return true}
+ function note(id){if(!WPN[id]||id=='fist')return;/* fists = an empty hand (or a block held on the hotbar), never "your last weapon" */if(isTool(id))S.tool=id;else S.wpn=id;save()}
+ function set(id,dir){if(!ok(id)||!free())return false;if(id!=wp){wp=id;note(id);seen=id;try{renderBar()}catch(_){}try{UIS.play('select')}catch(_){}}if(typeof HOTBAR=='undefined')show(dir||0);/* the hotbar shows its own pill */return true}
  function step(d){const L=list();if(!L.length)return;const i=L.indexOf(wp);set(L[((i<0?0:i)+d+L.length)%L.length],d)}
  function swap(){if(isTool(wp))set(ok(S.wpn)?S.wpn:'fist',-1);else set(ok(S.tool)?S.tool:'pip',1)}
  function wheel(e){if(!free())return;const now=performance.now(),dy=e.deltaY*(e.deltaMode==1?33:e.deltaMode==2?400:1);if(now-lastW>350)acc=0;lastW=now;acc+=dy;
   if(Math.abs(acc)>=45&&now-lastStep>100){lastStep=now;step(acc>0?1:-1);acc=0}}
- // keys: 1-2 blocks, 3 next, 4-8 tools, 9 last weapon; X swaps weapon <-> tool
- selBar=function(i){if(i<=1){sel=i;renderBar();return}if(i==2){step(1);return}if(i>=3&&i<=7){set(TOOLS[i-3]);return}if(i==8)set(ok(S.wpn)?S.wpn:'fist')};
+ // number keys + wheel: HOTBAR (99-zzz-hotbar.js); X swaps weapon <-> tool
  cycleWeapon=function(){step(1)};cycleW=function(){step(1)};
  addEventListener('keydown',e=>{if(e.repeat||isTextEl(e.target)||e.ctrlKey||e.altKey||e.metaKey)return;if(e.key.toLowerCase()=='x'&&free())swap()});
  // remember the last weapon/tool whatever changed it (inventory, store, shop equip)
@@ -10196,6 +10695,137 @@ const LIFE8=(()=>{
  {const jobs=[];for(const p of['day','storm','dusk'])for(const[k,n]of[['cu',6],['st',2],['ci',2]])for(let i=0;i<n;i++)jobs.push(()=>WXS8.cloud(k,i,p));jobs.push(()=>WXS8.strip('day'),()=>WXS8.strip('storm'),()=>WXS8.fog,()=>WXS8.drops,()=>WXS8.flake,()=>WXS8.firefly,()=>WXS8.ray,()=>WXS8.sun);
   const ric=window.requestIdleCallback||(f=>setTimeout(()=>f({timeRemaining:()=>8}),60));const run=d=>{while(jobs.length&&d.timeRemaining()>4)try{jobs.shift()()}catch(_){}if(jobs.length)ric(run)};ric(run)}
  return{get counts(){return{butterflies:bf.length,fish:fish.length,fireflies:ff.length,flowers:flowers.length,grass:tops}}}})();
+
+/* ========== LATE: 99-zzz-hotbar.js ========== */
+// ===== HOTBAR6: six slots on keys 1-6 (mouse wheel cycles them). Any item you own fits in any slot: blocks, seeds, objects,
+// materials, weapons and guns, the five tools, wearables. Using the held slot does what the item does: blocks / seeds / objects place
+// (left or right click), weapons attack, tools dig, Bubbles fishes, a wearable slot puts it on / takes it off. Empty slot = fists.
+// Assign: drag an item from the inventory onto a slot, or select it and press 1-6 / click a slot / use the slot buttons in its details.
+// Right-click a slot to clear it; drag slot onto slot to swap. A stack that runs out stays in its slot, greyed (never silently swapped).
+// Under-level weapons show locked and say why when used. Layout + selection are saved per profile (RB_PREFIX + 'rbphb').
+// The bar is drawn once and patched only when something changes (barDirty / selection / level); slot icons all go through paint(),
+// which calls window.SLOTDECO(ctx,item,x,y,size) and TOOLLV.badge(ctx,id,x,y,size,t) when present (tool-level shine hook). =====
+const HOTBAR=(()=>{
+ const N=6,PITCH=72,PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbphb';
+ const S={s:[null,null,null,null,null,null],c:0},H={wp:null,st:null,lv:-1,drag:0,warnT:0,pillT:0};
+ const norm=k=>typeof k=='string'&&/^\d+$/.test(k)?+k:(k===0||k==='')?null:k;
+ const okKey=k=>{if(k==null)return false;if(typeof k=='number')return Number.isInteger(k)&&k>0&&(k>=200?!!MAT[k]:k>=100?!!BLK[k-100]:!!BLK[k]);if(typeof k!='string')return false;
+  if(k.startsWith('w:'))return!!WPN[k.slice(2)];if(k.startsWith('a:'))return!!WEAR[k.slice(2)];return false};
+ const wid=k=>typeof k=='string'&&k.startsWith('w:')?k.slice(2):'';
+ const kind=k=>k==null?'empty':typeof k=='number'?(k<200?'place':'mat'):k[0]=='a'?'wear':(WPN[wid(k)]||{}).k=='tool'?'tool':'weapon';
+ const owned=k=>{if(k==null)return false;if(typeof k=='number')return cnt(k)>0;const id=k.slice(2);return k[0]=='a'?!!ownW[id]:!!own[id]};
+ const locked=k=>{const w=WPN[wid(k)];return!!w&&(w.lv|0)>(lvl|0)};
+ const state=k=>k==null?'empty':typeof k=='number'?(cnt(k)>0?'ok':'out'):!owned(k)?'missing':locked(k)?'lock':'ok';
+ const assignable=k=>{k=norm(k);return okKey(k)&&(typeof k=='number'?cnt(k)>0:owned(k))};
+ const nameOf=k=>{try{if(k==null)return'Empty';if(typeof k=='number')return iname(k);return k[0]=='a'?WEAR[k.slice(2)].n:WPN[k.slice(2)].n}catch(_){return String(k)}};
+ const wearing=k=>{const w=WEAR[(k||'').slice(2)];return!!w&&wear[w.s]==k.slice(2)};
+ const icon=k=>{try{return iconURL(k)}catch(_){return''}};
+ const free=()=>entered&&!(typeof dlgOpen!='undefined'&&dlgOpen)&&!(typeof creatorOn!='undefined'&&creatorOn)&&menuEl.style.display=='none';
+ const snd=n=>{try{UIS.play(n)}catch(_){}};
+ // ---- default layout (new saves and saves from before the hotbar): 1 your weapon, 2-4 Pip / Pebble / Glimmer, 5 your block, 6 Bubbles
+ function bestWeapon(){const ids=Object.keys(WPN).filter(id=>own[id]&&WPN[id].k!='tool'&&id!='fist'&&!locked('w:'+id));
+  for(const id of[wp,typeof PLAY8!='undefined'?PLAY8.last.wpn:''])if(id&&ids.includes(id))return id;
+  ids.sort((a,b)=>(WPN[b].md|0)-(WPN[a].md|0)||(WPN[b].lv|0)-(WPN[a].lv|0));return ids[0]||'fist'}
+ function bestBlock(){const ok=k=>typeof k=='number'&&k>0&&k<200&&okKey(k)&&cnt(k)>0;if(ok(bar[sel]))return bar[sel];for(const k of bar)if(ok(k))return k;
+  const ks=Object.keys(inv).map(Number).filter(k=>ok(k)&&k<100&&k!=17&&k!=4&&k!=16).sort((a,b)=>cnt(b)-cnt(a));return ks[0]||null}
+ function defaults(){return['w:'+bestWeapon(),'w:pip','w:pebble','w:glimmer',bestBlock(),'w:bubbles'].map(k=>okKey(k)?k:null)}
+ function load(){let o=null;try{o=JSON.parse(localStorage.getItem(PK())||'null')}catch(_){}
+  if(o&&Array.isArray(o.s)){const seen=new Set();for(let i=0;i<N;i++){const k=norm(o.s[i]);S.s[i]=okKey(k)&&!seen.has(k)?k:null;if(S.s[i]!=null)seen.add(k)}S.c=Number.isInteger(o.c)&&o.c>=-1&&o.c<N?o.c:0;return true}
+  S.s=defaults();const i=S.s.indexOf('w:'+wp);S.c=i>=0?i:0;return false}
+ const save=()=>{try{localStorage.setItem(PK(),JSON.stringify({v:1,s:S.s,c:S.c}))}catch(_){}};
+ // ---- holding: the selected slot decides what is in your hand (wp) and what a click places (bar[sel])
+ function hold(){const k=S.c>=0?S.s[S.c]:null,t=kind(k),st=state(k);H.st=st;
+  if(S.c>=0){bar[0]=typeof k=='number'?k:0;sel=0;let w='fist';if((t=='tool'||t=='weapon')&&st=='ok')w=wid(k);wp=w}H.wp=wp}
+ function pick(i,quiet){if(i<0||i>=N)return;const k=S.s[i];if(kind(k)=='wear'){toggleWear(k,i);return}const ch=i!==S.c;S.c=i;hold();save();render();if(!quiet){pill(i);if(ch){snd('select');pop(i)}}}
+ function step(d){const c=S.c<0?(d>0?-1:N):S.c;pick((c+d+N)%N)}
+ function toggleWear(k,i){const id=k.slice(2),w=WEAR[id];if(!ownW[id]){warn(k,'missing');return}wear[w.s]=wear[w.s]==id?'':id;if(wear[w.s])try{G('wear')}catch(_){}
+  try{renderSkills()}catch(_){}snd('select');pop(i);render();pill(i,(wear[w.s]?'Wearing':'Took off')+' · press '+(i+1)+' again to '+(wear[w.s]?'take it off':'wear it'))}
+ // something outside the hotbar changed the hand (store / inventory equip, X swap, a level gate): follow it
+ function sync(){if(wp===H.wp)return;H.wp=wp;const i=S.s.indexOf('w:'+wp);
+  if(i>=0)S.c=i;else{const t=S.c>=0?kind(S.s[S.c]):'';if(!(wp=='fist'&&(t=='place'||t=='mat'||t=='empty'))){S.c=-1;bar[0]=0}}
+  H.st=S.c>=0?state(S.s[S.c]):null;save();render();if(entered)pill(S.c)}
+ function refresh(){if(wp!==H.wp){sync();return}if(S.c>=0&&state(S.s[S.c])!==H.st)hold();render()}
+ function set(i,k,o){if(i<0||i>=N)return false;k=norm(k);if(k!=null&&!okKey(k))return false;const j=k==null?-1:S.s.indexOf(k);if(j>=0&&j!==i)S.s[j]=S.s[i];S.s[i]=k;
+  if(S.c<0){const a=S.s.indexOf('w:'+wp);if(a>=0)S.c=a}if(S.c===i||S.c===j)hold();save();render();
+  if(!(o&&o.quiet)){if(k!=null){pop(i);snd('select');try{say(nameOf(k)+' → slot '+(i+1))}catch(_){}}else{snd('close');try{say('Slot '+(i+1)+' cleared')}catch(_){}}}return true}
+ function swap(a,b){if(a===b||a<0||b<0||a>=N||b>=N)return;const t=S.s[a];S.s[a]=S.s[b];S.s[b]=t;if(S.c===a)S.c=b;else if(S.c===b)S.c=a;hold();save();render();pop(b);snd('select')}
+ // inventory "Equip": hold it now; if it is not on the bar yet it goes to the first empty slot, else replaces the selected slot
+ const equipSlot=k=>{k=norm(k);const j=S.s.indexOf(k);if(j>=0)return j;const e=S.s.indexOf(null);return e>=0?e:S.c>=0?S.c:0};
+ function equip(k){k=norm(k);if(!assignable(k))return false;const i=equipSlot(k);if(S.s[i]!==k)set(i,k,{quiet:1});pick(i);return true}
+ function warn(k,st){const n=performance.now(),wk=st+'|'+k;if(n-H.warnT<1200&&H.wk===wk)return;H.warnT=n;H.wk=wk;const w=WPN[wid(k)];
+  try{say(st=='lock'?'Reach level '+w.lv+' to use '+w.n:st=='out'?'Out of '+nameOf(k)+' — break or buy more':'You do not own '+nameOf(k)+' any more')}catch(_){}snd('error')}
+ // ---- input: the left button places a held block (same rules as right-click) or explains a locked / used-up slot instead of punching
+ {const _u=update;update=function(dt){sync();if((lvl|0)!==H.lv){H.lv=lvl|0;refresh()}
+   if(!mdL||S.c<0)return _u.apply(this,arguments);const k=S.s[S.c],t=kind(k),st=state(k);
+   if(t!='place'&&(st=='ok'||st=='empty'))return _u.apply(this,arguments);
+   let fake=false;mdL=false;if(t=='place'&&st=='ok'){if(!mdR){mdR=true;fake=true}}else if(!showInv)warn(k,st);
+   try{return _u.apply(this,arguments)}finally{if(fake)mdR=false;if(menuEl.style.display=='none')mdL=true}}}
+ // ---- keys 1-6 (7-9 do nothing now); with the inventory open and an item selected, 1-6 put that item in the slot
+ selBar=function(i){if(i<0||i>=N)return;if(typeof INV7!='undefined'&&INV7.isOpen){const k=INV7.selK;if(k!=null&&assignable(k)){set(i,k);try{INV7.render()}catch(_){}return}}if(free())pick(i)};
+ let acc=0,lastW=0,lastStep=0;
+ function wheel(e){if(!free())return;const now=performance.now(),dy=e.deltaY*(e.deltaMode==1?33:e.deltaMode==2?400:1);if(now-lastW>350)acc=0;lastW=now;acc+=dy;
+  if(Math.abs(acc)>=45&&now-lastStep>90){lastStep=now;step(acc>0?1:-1);acc=0}}
+ try{PLAY8.wheel=wheel}catch(_){}
+ cycleW=function(){step(1)};
+ // the Store's "Equip" on a weapon puts it on the bar too (first empty slot, else the selected one), like the inventory
+ try{const _se=SHOP7.equip;SHOP7.equip=function(id){const r=_se.apply(this,arguments);try{const it=SHOP7.byId.get(id);if(r&&it&&SHOP7.slotOf(it)=='weapon'&&own[it.ref])equip('w:'+it.ref)}catch(_){}return r}}catch(_){}
+ // ---- drawing: built once, then each slot is patched only when its item / count / state / selection changes
+ const LOCK='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5.2a3.5 3.5 0 0 1 7 0V7h.8c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.7a.7.7 0 0 1-.7-.7V7.7c0-.4.3-.7.7-.7zm1.8 0h3.4V5.2a1.7 1.7 0 0 0-3.4 0z"/></svg>';
+ const SUB={soft:'Tool · digs dirt, sand, wood',stone:'Tool · cracks stone & brick',ore:'Tool · mines whole ore veins',tree:'Tool · chops trees & wood',rod:'Tool · click water to fish'};
+ function sub(k){const t=kind(k),st=state(k);if(t=='empty')return'Empty · drag an item here, or click to choose';if(st=='missing')return'You do not own this any more';
+  if(st=='lock')return'Locked · reach level '+WPN[wid(k)].lv;if(st=='out')return'Used up · break or buy more';
+  if(t=='place'){const c=ITEM7.cat(k);return(c=='seed'?'Seed · click soil to plant':c=='obj'||c=='door'?'Object · click to place':'Block · click to place')+' · '+cnt(k)}
+  if(t=='mat')return ITEM7.catName(k)+' · '+cnt(k)+' · sells at the market';if(t=='wear')return wearing(k)?'Wearing · press again to take off':'Wearable · press to wear';
+  const w=WPN[wid(k)];if(t=='tool')return SUB[w.tool]||'Tool';return(typeof GUN9!='undefined'&&GUN9.AIM&&GUN9.AIM.has(wid(k))?'Ranged · aim with the mouse':'Weapon · fights, never digs')}
+ let root=null,ind=null,pl=null;const slots=[],IMC={};
+ const DPR=()=>Math.min(2,Math.max(1,Math.round(window.devicePixelRatio||1)));
+ // the ONE place slot icons are drawn: base icon, then the decoration hooks (SLOTDECO / TOOLLV.badge)
+ function paint(cv,k){const x=cv.getContext('2d'),Z=cv.width;x.clearRect(0,0,Z,Z);if(k==null)return;const url=icon(k);if(!url)return;
+  const im=IMC[url]||(IMC[url]=Object.assign(new Image(),{src:url}));
+  const go=()=>{if(cv._k!==k)return;x.clearRect(0,0,Z,Z);x.imageSmoothingEnabled=false;try{x.drawImage(im,0,0,Z,Z)}catch(_){}deco(x,k,0,0,Z)};
+  if(im.complete&&im.naturalWidth)go();else im.addEventListener('load',go,{once:true})}
+ function deco(x,k,X,Y,Z){try{if(typeof window.SLOTDECO=='function')window.SLOTDECO(x,k,X,Y,Z)}catch(e){console.error('SLOTDECO',e)}
+  try{const id=wid(k);if(id&&WPN[id].k=='tool'&&typeof TOOLLV!='undefined'&&TOOLLV&&typeof TOOLLV.badge=='function')TOOLLV.badge(x,id,X,Y,Z,performance.now()/1000)}catch(e){console.error('TOOLLV.badge',e)}}
+ function build(){const el=document.getElementById('bar');if(!el)return false;if(root===el&&slots[0]&&slots[0].parentNode===el)return true;root=el;slots.length=0;el.innerHTML='';el.classList.add('hb6');el.setAttribute('role','toolbar');el.setAttribute('aria-label','Hotbar');
+  ind=document.createElement('i');ind.className='ind6';ind.setAttribute('aria-hidden','true');el.append(ind);const Z=48*DPR();
+  for(let i=0;i<N;i++){const s=document.createElement('div');s.className='s6 st-empty';s.dataset.i=i;s.tabIndex=0;s.setAttribute('role','button');s.draggable=true;
+   s.innerHTML='<canvas width="'+Z+'" height="'+Z+'"></canvas><i class="k6">'+(i+1)+'</i><b class="n6"></b><u class="lk6">'+LOCK+'</u>';s._cv=s.firstChild;s._n=s.querySelector('.n6');s._sig='';el.append(s);slots.push(s)}
+  pl=document.createElement('div');pl.className='pill6';pl.setAttribute('aria-live','polite');pl.innerHTML='<kbd></kbd><span><b></b><small></small></span>';el.append(pl);
+  el.addEventListener('click',e=>{const s=e.target.closest('.s6');if(!s)return;click(+s.dataset.i)});
+  el.addEventListener('keydown',e=>{if(e.key=='Enter'){const s=e.target.closest('.s6');if(s){e.preventDefault();click(+s.dataset.i)}}});
+  el.addEventListener('contextmenu',e=>{e.preventDefault();const s=e.target.closest('.s6');if(s&&S.s[+s.dataset.i]!=null)set(+s.dataset.i,null)});
+  el.addEventListener('dragstart',e=>{const s=e.target.closest('.s6');if(!s||S.s[+s.dataset.i]==null){e.preventDefault();return}try{e.dataTransfer.setData('text/plain','rbslot:'+s.dataset.i);e.dataTransfer.effectAllowed='move'}catch(_){}dragBegin()});
+  el.addEventListener('dragover',e=>{if(!H.drag)return;const s=e.target.closest('.s6');if(!s)return;e.preventDefault();try{e.dataTransfer.dropEffect='move'}catch(_){}if(!s.classList.contains('over')){for(const o of slots)o.classList.remove('over');s.classList.add('over')}});
+  el.addEventListener('dragleave',e=>{const s=e.target.closest('.s6');if(s&&!s.contains(e.relatedTarget))s.classList.remove('over')});
+  el.addEventListener('drop',e=>{const s=e.target.closest('.s6');if(!s)return;e.preventDefault();let d='';try{d=e.dataTransfer.getData('text/plain')}catch(_){}drop(+s.dataset.i,d);dragEnd()});
+  return true}
+ function drop(i,d){d=String(d||'');if(d.startsWith('rbslot:'))swap(+d.slice(7),i);else if(d.startsWith('rbitem:')){const k=norm(d.slice(7));if(assignable(k)){set(i,k);try{if(INV7.isOpen)INV7.render()}catch(_){}}}}
+ function dragBegin(){H.drag=1;document.documentElement.classList.add('hbdrag');show('↓','Drop it on a hotbar slot','Slots 1–6 · if it is already on the bar the two slots swap','ok',60000)}
+ function dragEnd(){if(!H.drag)return;H.drag=0;document.documentElement.classList.remove('hbdrag');for(const o of slots)o.classList.remove('over');clearTimeout(H.pillT);H.pillT=setTimeout(()=>{if(pl)pl.classList.remove('on')},500)}
+ document.addEventListener('dragend',dragEnd);
+ function click(i){const inv7=typeof INV7!='undefined'&&INV7.isOpen;
+  if(inv7){const k=INV7.selK;if(k!=null&&assignable(k)){set(i,k);try{INV7.render()}catch(_){}}else try{INV7.open(null,i)}catch(_){}return}
+  if(i===S.c||S.s[i]==null){try{INV7.open(null,i)}catch(_){}return}pick(i)}
+ function render(){if(!build())return;for(let i=0;i<N;i++){const s=slots[i],k=S.s[i],t=kind(k),st=state(k),n=(t=='place'||t=='mat')?cnt(k):0,on=i===S.c,url=k==null?'':icon(k),wr=t=='wear'&&wearing(k);
+   const sig=k+'|'+st+'|'+n+'|'+on+'|'+wr;if(sig===s._sig&&url===s._u)continue;s._sig=sig;
+   s.className='s6 st-'+st+' t-'+t+(on?' on':'')+(wr?' worn':'');if(k!=null){s.dataset.rar=ITEM7.rar(k);s.dataset.cat=ITEM7.cat(k)}else{delete s.dataset.rar;delete s.dataset.cat}
+   const nt=st=='lock'?'Lv '+WPN[wid(k)].lv:(t=='place'||t=='mat')?String(n):'';if(s._n.textContent!==nt){const up=n>(s._c|0)&&s._k===k;s._n.textContent=nt;if(up)bump(s._n)}s._c=n;
+   s.title=(i+1)+' · '+nameOf(k)+' — '+sub(k)+(k!=null?' · right-click to clear':'');s.setAttribute('aria-label',s.title);s.setAttribute('aria-pressed',on?'true':'false');
+   if(s._k!==k||url!==s._u){s._k=k;s._u=url;s._cv._k=k;paint(s._cv,k)}}
+  if(ind._c!==S.c){ind._c=S.c;if(S.c>=0)ind.style.transform='translate3d('+(S.c*PITCH)+'px,0,0)';ind.classList.toggle('off',S.c<0)}}
+ const anim=(el,kf,o)=>{try{if(el&&el.animate&&!MOTION7.reduce())el.animate(kf,o)}catch(_){}};
+ function pop(i){const s=slots[i];if(s)anim(s._cv,[{transform:'scale(.72) rotate(-8deg)'},{transform:'scale(1.12) rotate(3deg)',offset:.6},{transform:'none'}],{duration:280,easing:'cubic-bezier(.2,.9,.3,1.2)'})}
+ function bump(el){anim(el,[{transform:'scale(1.35)'},{transform:'none'}],{duration:220,easing:'ease-out'})}
+ function pill(i,txt){const k=i>=0?S.s[i]:wp?'w:'+wp:null;show(i>=0?String(i+1):'✋',i>=0?nameOf(k):nameOf(k)+' (not on the hotbar)',txt||(i>=0?sub(k):'Drag it onto the hotbar, or press 1–6 to switch'),i>=0?state(k):'ok')}
+ function show(kb,ti,su,st,ms){if(!build())return;pl.querySelector('kbd').textContent=kb;pl.querySelector('b').textContent=ti;pl.querySelector('small').textContent=su;pl.dataset.st=st;
+  if(pl.classList.contains('on'))anim(pl.querySelector('span'),[{transform:'translateY(5px)',opacity:.3},{transform:'none',opacity:1}],{duration:200,easing:'ease-out'});else pl.classList.add('on');
+  clearTimeout(H.pillT);H.pillT=setTimeout(()=>pl.classList.remove('on'),ms||1700)}
+ // ---- install: replace the old fixed bar, migrate, draw
+ renderBar=function(){refresh()};renderW=function(){refresh()};
+ try{const q=QUEST.find(q=>q[2]=='break');if(q)q[1]='Hold a tool from your hotbar (keys 1–6 or the mouse wheel), then left-click a block';const p=QUEST.find(q=>q[2]=='place');if(p)p[1]='Select a block on the hotbar, then click to place it'}catch(_){}
+ const had=load();hold();if(!had)save();render();
+ return{get slots(){return S.s.slice()},get cur(){return S.c},N,set,clear:i=>set(i,null),pick,step,swap,equip,equipSlot,assignable,state,kind,nameOf,render,repaint(){for(const s of slots){s._sig='';s._u=null}render()},paint,deco,defaults,load,dragBegin,dragEnd,drop,wheel,
+  slotOf:k=>S.s.indexOf(norm(k)),held:()=>S.c>=0?S.s[S.c]:null}})();
 
 
 </script></body></html>

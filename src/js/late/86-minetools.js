@@ -101,5 +101,5 @@ const TOOLS8=(()=>{
    x.restore()}}
  {const _t=BOSS6.tick,_dp=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{FISH.tick(dt);FISH.tickQ(dt);twinkle(dt)}catch(e){console.error('TOOLS8',e)}};BOSS6.drawProj=function(g,cx,cy){_dp.call(this,g,cx,cy);try{FISH.draw(g,cx,cy)}catch(e){console.error('TOOLS8d',e)}}}
  // say hello once
- setTimeout(()=>{try{if(entered&&!localStorage.getItem('rbc5')){localStorage.setItem('rbc5','1');UI6.say6('Tiny tools','Only tools break blocks · keys 4–8 or the mouse wheel: Pip, Pebble, Glimmer, Twiggy, Bubbles',4200)}}catch(_){}},4000);
+ setTimeout(()=>{try{if(entered&&!localStorage.getItem('rbc5')){localStorage.setItem('rbc5','1');UI6.say6('Tiny tools','Only tools break blocks: put Pip, Pebble, Glimmer, Twiggy or Bubbles in a hotbar slot (1-6) · press G for the Tool Guide',4200)}}catch(_){}},4000);
  return{TL,catOf,fits,FISH,FISHES,BAIT}})();
