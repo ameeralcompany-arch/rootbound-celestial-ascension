@@ -11530,7 +11530,9 @@ const REW8=(()=>{
  function ach(a){const g=a[4]|0,t=g>=900?4:g>=300?3:2,c=RC[t];celebrate(P.x,P.y+P.h,c,{d:1.8,s:1.1,n:34});if(t>=4)flash(c,.22);fly(P.x,P.y-20,g);fan('ach');return card({kind:'ach',kick:'Achievement unlocked',title:a[0],sub:a[1],gems:g,tier:t,ms:3400})}
  // ---- level up: pillar + rays + confetti + a rolling number + fanfare
  let lvEl=null,lvT=0,prevL=0;
- function levelUp(a,b){const x=P.x,y=P.y+P.h;celebrate(x,y,'#ffd24a',{d:2,s:1.3,n:48,sp:22,w:190});fan('level');lvT=performance.now()+2700;
+ // the level card waits for a world-entry title card to finish (both sit top-centre; together the text overlapped)
+ function levelUp(a,b){if(document.getElementById('cine7w')&&(levelUp.w=(levelUp.w|0)+1)<16){clearTimeout(levelUp.wt);levelUp.wt=setTimeout(()=>levelUp(a,b),200);return}levelUp.w=0;
+  const x=P.x,y=P.y+P.h;celebrate(x,y,'#ffd24a',{d:2,s:1.3,n:48,sp:22,w:190});fan('level');lvT=performance.now()+2700;
   if(!lvEl||!lvEl.isConnected){lvEl=document.createElement('div');lvEl.id='rw8lv';lvEl.setAttribute('role','status');document.body.appendChild(lvEl)}
   lvEl.innerHTML='<i class="rw8ray" aria-hidden="true"></i><small>Level up</small><div class="rw8num"><span class="rw8roll"><i>'+a+'</i><i>'+b+'</i></span></div><em>+'+2*(b-a)+' stat points · health restored</em>';
   lvEl.classList.remove('on','off');void lvEl.offsetWidth;lvEl.classList.add('on');clearTimeout(levelUp.t);clearTimeout(levelUp.t2);levelUp.t=setTimeout(()=>lvEl.classList.add('off'),2300);levelUp.t2=setTimeout(()=>lvEl.classList.remove('on','off'),2800)}

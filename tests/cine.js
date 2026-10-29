@@ -27,7 +27,11 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
   const w=await p.evaluate(()=>{const e=document.getElementById('cine7w');return{on:!!e,pe:e&&getComputedStyle(e).pointerEvents,txt:e&&e.textContent,cover:window.RB_COVER}});
   ok('entering a world shows the portal + title card without blocking input',w.on&&w.pe=='none'&&/cinetest/i.test(w.txt)&&/new world/i.test(w.txt)&&!w.cover,JSON.stringify(w));
   ok('internal reload of the same world does not replay it',await p.evaluate(()=>{const a=document.getElementById('cine7w');loadWorld(cur);return document.getElementById('cine7w')===a}));
-  await p.waitForTimeout(3200);ok('world card cleans up',await p.evaluate(()=>!document.getElementById('cine7w')&&!document.body.classList.contains('c7w-on')));
+  // a level-up during the world card waits for it (both sit top-centre; they used to overlap)
+  const lv0=await p.evaluate(async()=>{lvl+=1;await new Promise(r=>setTimeout(r,350));const e=document.getElementById('rw8lv');return{card:!!document.getElementById('cine7w'),lvOn:!!(e&&e.classList.contains('on'))}});
+  await p.waitForTimeout(3200);const lv1=await p.evaluate(()=>{const e=document.getElementById('rw8lv');return!!(e&&e.classList.contains('on'))});
+  ok('a level-up during the world card waits until the card is gone, then shows',lv0.card&&!lv0.lvOn&&lv1,JSON.stringify({lv0,lv1}));
+  ok('world card cleans up',await p.evaluate(()=>!document.getElementById('cine7w')&&!document.body.classList.contains('c7w-on')));
   ok('visited worlds tracked in rbc7',await p.evaluate(()=>!!JSON.parse(localStorage.getItem('rbc7')).v.cinetest));
   const bi=await p.evaluate(()=>new Promise(res=>{mobs.length=0;BOSS6.clear();let okS=false;for(let i=0;i<4&&!okS;i++)okS=BOSS6.spawn('warden');const m=BOSS6.active();if(!m)return res({okS});const x0=m.x,hp0=P.hp;
    setTimeout(()=>res({okS,card:!!document.querySelector('#cine7b.on .c7b-card b'),name:document.querySelector('#cine7b b').textContent,still:Math.abs(m.x-x0)<1,idle:m.bs=='idle',hp:P.hp>=hp0,zoom:cv.style.transform}),2900)}));   // BOSS10: the name card comes with the roar, ~2.5 s into the intro
