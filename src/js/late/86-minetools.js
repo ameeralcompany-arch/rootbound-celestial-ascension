@@ -23,7 +23,7 @@ const TOOLS8=(()=>{
   const tx=Math.floor(c.x/T),ty=Math.floor(c.y/T),k=ty*W+tx;if(!inReach(tx*T+T/2,ty*T+T/2)||tx<1||ty<1||tx>=W-1||ty>=H-1)return;const b=tiles[k];if(!b)return;
   const cat=catOf(b),good=fits(w.tool,cat),dmg=good?255:1;
   const r=breakAt(tx,ty,dmg),broken=r&&!tiles[k];const px=tx*T+T/2,py=ty*T+T/2;
-  if(good){for(let i=0;i<5;i++)VFX.add(1,'rgb('+w.g+')',px,py,(R()-.5)*160,-60-R()*120,.4,8,2,{a:1});tone(900+R()*200,1300,.08,'sine',.035)}else{tone(240,200,.06,'triangle',.03);if(r&&R()<.25)try{ft(px,py-14,'Try another tool','#ffd0d0')}catch(_){}}
+  if(good){for(let i=0;i<5;i++)VFX.add(1,'rgb('+w.g+')',px,py,(R()-.5)*160,-60-R()*120,.4,8,2,{a:1});tone(900+R()*200,1300,.08,'sine',.035)}else{tone(240,200,.06,'triangle',.03);if(r&&performance.now()-(use.tip||0)>9000){use.tip=performance.now();try{ft(px,py-14,'Slow — try another tool','#ffd0d0')}catch(_){}}}
   if(broken){try{G('break')}catch(_){}
    if(w.tool=='ore'&&cat=='ore'){if(R()<.5){spawnDrop(px,py,b,1);ft(px,py-24,'Bonus ore!','#bff6ff')}
     vein(tx,ty,b,8).forEach(([vx,vy],i)=>setTimeout(()=>{try{if(tiles[vy*W+vx]==b)breakAt(vx,vy,255)}catch(_){}},70*(i+1)))}}}
@@ -97,5 +97,5 @@ const TOOLS8=(()=>{
    x.restore()}}
  {const _t=BOSS6.tick,_dp=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{FISH.tick(dt);FISH.tickQ(dt);twinkle(dt)}catch(e){console.error('TOOLS8',e)}};BOSS6.drawProj=function(g,cx,cy){_dp.call(this,g,cx,cy);try{FISH.draw(g,cx,cy)}catch(e){console.error('TOOLS8d',e)}}}
  // say hello once
- setTimeout(()=>{try{if(entered&&!localStorage.getItem('rbc5')){localStorage.setItem('rbc5','1');UI6.say6('New tiny tools!','Press 3 to cycle: Pip, Pebble, Glimmer, Twiggy and Bubbles the Fishing Rod',5200)}}catch(_){}},4000);
- return{TL,catOf,FISH,FISHES,BAIT}})();
+ setTimeout(()=>{try{if(entered&&!localStorage.getItem('rbc5')){localStorage.setItem('rbc5','1');UI6.say6('Tiny tools','Only tools break blocks · keys 4–8 or the mouse wheel: Pip, Pebble, Glimmer, Twiggy, Bubbles',4200)}}catch(_){}},4000);
+ return{TL,catOf,fits,FISH,FISHES,BAIT}})();
