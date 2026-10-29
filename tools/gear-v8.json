@@ -1,0 +1,20 @@
+{"gear":[
+ {"id":"witchhat","n":"Witch Hat","sub":"hat","rar":"uncommon","price":340,"lv":3,"d":"A tall violet witch hat with a gold buckle and a star charm on its tip. XP +10%, light +30. Skill (Q): Hex slows and hurts monsters around you."},
+ {"id":"headphones","n":"Beat Headphones","sub":"hat","rar":"uncommon","price":280,"lv":2,"d":"Hot-pink headphones with neon rings. Speed +5%, cooldowns -5%. Skill (Q): Drop the Beat, a 4s sprint."},
+ {"id":"kabuto","n":"Ronin Kabuto","sub":"hat","rar":"rare","price":760,"lv":10,"d":"A black-lacquer samurai helmet with red guards and a gold crest. Damage taken -8%, damage +8%. Skill (Q): Battle Cry, +50% damage for 6s."},
+ {"id":"astrohelm","n":"Astro Helmet","sub":"hat","rar":"epic","price":1150,"lv":14,"d":"A glass space bubble with a collar ring and a blinking antenna. Light +120, jump +8%. Skill (Q): Low Gravity, floaty jumps for 6s."},
+ {"id":"samurai","n":"Samurai Armor","sub":"body","rar":"epic","price":1300,"lv":12,"d":"Laced red lamellar armour with shoulder guards and plated tassets. Damage taken -18%, damage +10%. Skill (R): Iaido, a dashing slash."},
+ {"id":"bomber","n":"Street Bomber Jacket","sub":"body","rar":"rare","price":620,"lv":6,"d":"A green flight jacket with an orange lining and a star patch. Speed +8%, damage taken -8%. Skill (R): Hype, +40% speed for 5s."},
+ {"id":"astrosuit","n":"Astro Suit","sub":"body","rar":"epic","price":1450,"lv":15,"d":"A white space suit with a chest control panel and a life-support pack. Damage taken -15%, regenerate, light +50. Skill (R): Oxygen Boost, heal 35 HP."},
+ {"id":"moonboots","n":"Moon Boots","sub":"boot","rar":"rare","price":640,"lv":8,"d":"Chunky padded space boots. Jump +22%, speed +4%. Skill (Shift): Moon Leap, a huge floaty leap."},
+ {"id":"hightops","n":"Neon High-Tops","sub":"boot","rar":"rare","price":520,"lv":6,"d":"Black high-tops with glowing cyan soles and pink laces. Speed +16%, jump +6%. Skill (Shift): Neon Dash."},
+ {"id":"royalgaunt","n":"Royal Gauntlets","sub":"glove","rar":"epic","price":980,"lv":12,"d":"Gold plate gauntlets set with a ruby. Break power +1, damage +10%, gems +10%. Skill (F): Royal Decree, double gems for 6s."},
+ {"id":"anonmask","n":"Anonymous Mask","sub":"hat","rar":"mythic","price":4800,"lv":20,"feat":1,"d":"A deep black hood over a plain, featureless white mask with hollow, faintly glowing eyes. A strong dark aura swirls around you. Crit +12%, damage +12%, speed +8%. Skill (Q): Vanish, a living shadow for 5s (untouchable, +40% speed)."},
+ {"id":"anonsuit","n":"Anonymous Cloak","sub":"body","rar":"mythic","price":7500,"lv":25,"feat":1,"d":"A black suit under a ragged shadow cloak and capelet, clasped with a violet gem. A strong dark aura swirls around you. Damage taken -25%, damage +15%, +50 HP, regenerate. Skill (R): Legion of Shadows, a dark nova that crushes and drags every monster nearby."}],
+"charms":[
+ {"id":"pip","n":"Pip, Sprout Bunny","rar":"rare","price":950,"d":"A cream bunny with a two-leaf sprout between its ears. It hops after you and flops its ears when it naps. A companion."},
+ {"id":"gloop","n":"Gloop, Bubble Jelly","rar":"uncommon","price":650,"d":"A floating bubble jelly with swaying ribbon tentacles that bobs along beside you. A companion."},
+ {"id":"cinder","n":"Cinder, Baby Dragon","rar":"legendary","price":2200,"feat":1,"d":"A round baby dragon that flies beside you, flaps its little wings and puffs embers from its flame-tipped tail. A companion."},
+ {"id":"runehalo","n":"Rune Halo Charm","rar":"epic","price":1300,"d":"A ring of golden runes turns slowly above your head."},
+ {"id":"sakura","n":"Sakura Drift Charm","rar":"rare","price":700,"d":"Cherry petals circle you and trail behind as you run."},
+ {"id":"comet","n":"Comet Charm","rar":"rare","price":850,"d":"A little star orbits you, leaving a sparkling tail."}]}

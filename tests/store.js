@@ -54,7 +54,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   STORE7.setFilter({sort:'pd'});const pd=STORE7.list().map(i=>i.price);o.desc=pd.every((v,i)=>!i||pd[i-1]>=v);
   STORE7.setFilter({sort:'feat',rar:'legendary'});o.rar=STORE7.list().every(i=>i.rar=='legendary');STORE7.setFilter({rar:'all',owned:true});o.owned=STORE7.list().every(i=>SHOP7.has(i.id));STORE7.setFilter({owned:false,cat:'featured'});
   o.hud=!!document.getElementById('bstore');return o});
- ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==19&&r.effects>=15&&r.charms==9&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
+ ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==19&&r.effects>=15&&r.charms==15&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
  // the Sparkmouse costume: real catalog gear, buyable + equippable, icons and cached worn art render
  r=await p.evaluate(async()=>{const o={};const h=SHOP7.byId.get('wear_sparkhood'),s=SHOP7.byId.get('wear_sparksuit');

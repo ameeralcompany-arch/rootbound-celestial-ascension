@@ -104,8 +104,8 @@ const AURAS=[
  {id:'eclipse',n:'Eclipse Rune',lvl:110,c:'#c05cff',c2:'#ffd36a',pts:7},
  {id:'cosmos',n:'Cosmic Orrery',lvl:140,c:'#7ff0ff',c2:'#ff9be8',pts:9}
 ];
-// Appearance options (all masculine-leaning anime styles; colours are free)
-const AP={hair:['Spiky swept','Long tail','Side-parted','Wild layered','Undercut','Windblown','Short crop','Shoulder length'],
+// Appearance options (anime styles; colours are free). gd = body type: 0 classic (saves made before v8 keep their exact look), 1 male, 2 female
+const AP={hair:['Spiky swept','Long tail','Side-parted','Wild layered','Undercut','Windblown','Short crop','Shoulder length','Long straight','Twin tails'],gd:['Classic','Male','Female'],
  eyes:['Sharp','Calm','Fierce','Round'],outfit:['Wanderer coat','Knight tunic','Mage robe','Rogue jacket','Scholar vest','Ronin haori'],
  acc:['None','Scarf','Earring','Mask (lower)','Headband','Shoulder mantle'],cape:['None','Short cape','Long cape'],
  eyeCol:['#35c9c0','#6aa8ff','#ffb347','#d25cff','#ff5a6e','#7dff8a','#e8e8ff']};
@@ -129,7 +129,7 @@ function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'nul
  // one wing state: cel.wing = 'auto' (no explicit choice yet: best level wing) | 'none' (unequipped) | a wing id. wingsOn mirrors it.
  cel.wing=WINGS.some(w=>w.id==o.wing)||o.wing=='auto'||o.wing=='none'?o.wing:'auto';if(o.wingsOn!=null&&!o.wingsOn)cel.wing='none';cel.wingsOn=cel.wing=='none'?0:1;cel.aura=AURAS.some(a=>a.id==o.aura)||o.aura=='auto'?o.aura:'auto';cel.auraOn=o.auraOn==0?0:1;
  cel.plate=o.plate=='auto'?'auto':n(o.plate,'auto',0,99);cel.seenW=n(o.seenW,0,0,99);cel.seenNp=n(o.seenNp,0,0,999);cel.tut=n(o.tut,0,0,9);
- const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);
+ const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);A.gd=n(a.gd,0,0,2);
  A.hairCol=col(a.hairCol,A.hairCol);A.skinCol=col(a.skinCol,A.skinCol);A.outCol=col(a.outCol,A.outCol);A.trimCol=col(a.trimCol,A.trimCol);
  const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['light','dark','auto'].includes(p.theme)?p.theme:'light'}
 // ---- derived progression (single source of truth: character level)
@@ -158,4 +158,4 @@ celLoad();
 // validation for cosmetic data received from other players (host and clients both run this)
 function cleanCx(c){if(!c||typeof c!='object')return null;const n=(v,lo,hi,d)=>{v=+v;return Number.isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>typeof v=='string'&&/^#[0-9a-f]{6}$/i.test(v)?v:d,a=c.ap||{},A=cel.ap;
  const wl=(v,l)=>typeof v=='string'&&l.indexOf(v)>=0?v:'';
- return{fx:{au:wl(c.fx&&c.fx.au,['aura_void','aura_solar','aura_blossom','aura_frost','aura_astral']),ch:wl(c.fx&&c.fx.ch,['star','moon','leaf','chain','raven']),ws:wl(c.fx&&c.fx.ws,['skin_obsidian','skin_pearl','skin_sakura'])},w:n(c.w,-1,WINGS.length-1,-1),a:n(c.a,0,AURAS.length-1,0),t:n(c.t,0,999,0),ap:{hair:n(a.hair,0,AP.hair.length-1,0),eyes:n(a.eyes,0,AP.eyes.length-1,0),outfit:n(a.outfit,0,AP.outfit.length-1,0),acc:n(a.acc,0,AP.acc.length-1,0),cape:n(a.cape,0,AP.cape.length-1,1),eyeCol:n(a.eyeCol,0,AP.eyeCol.length-1,0),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}}
+ return{fx:{au:wl(c.fx&&c.fx.au,['aura_void','aura_solar','aura_blossom','aura_frost','aura_astral']),ch:wl(c.fx&&c.fx.ch,['star','moon','leaf','chain','raven','mochi','kitsu','lumi','pebble','pip','gloop','cinder','runehalo','sakura','comet']),ws:wl(c.fx&&c.fx.ws,['skin_obsidian','skin_pearl','skin_sakura'])},w:n(c.w,-1,WINGS.length-1,-1),a:n(c.a,0,AURAS.length-1,0),t:n(c.t,0,999,0),ap:{hair:n(a.hair,0,AP.hair.length-1,0),eyes:n(a.eyes,0,AP.eyes.length-1,0),outfit:n(a.outfit,0,AP.outfit.length-1,0),acc:n(a.acc,0,AP.acc.length-1,0),cape:n(a.cape,0,AP.cape.length-1,1),eyeCol:n(a.eyeCol,0,AP.eyeCol.length-1,0),gd:n(a.gd,0,2,0),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}}
