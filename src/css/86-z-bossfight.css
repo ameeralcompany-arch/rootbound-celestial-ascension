@@ -1,0 +1,26 @@
+/* ===== BOSS10: boss health bar (name, epithet, phase ticks, shield, status) + intro skip hint. Updates touch transform / text only. ===== */
+#bb10{position:fixed;left:50%;top:70px;width:min(640px,86vw);z-index:9;pointer-events:none;color:#fff;font-family:Montserrat,system-ui,'Segoe UI',sans-serif;--c:#ff5a6a;opacity:0;transform:translate(-50%,-12px);transition:opacity .35s,transform .5s cubic-bezier(.2,.8,.2,1);will-change:opacity,transform}
+#bb10.on{opacity:1;transform:translate(-50%,0)}
+.bb10-h{display:flex;align-items:baseline;justify-content:center;gap:12px;margin-bottom:5px;white-space:nowrap}
+.bb10-h b{font:italic 700 23px/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.07em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+.bb10-h em{font:600 9.5px/1 Montserrat,system-ui,sans-serif;font-style:normal;letter-spacing:.3em;text-transform:uppercase;color:#e6dcf6;opacity:.8;text-shadow:0 1px 2px #000}
+.bb10-bar{position:relative;height:13px;background:rgba(12,7,22,.86);border:1px solid rgba(255,255,255,.32);border-radius:3px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.45)}
+.bb10-bar>i{position:absolute;left:0;top:0;bottom:0;width:100%;transform-origin:0 50%}
+.bb10-tr{background:#fff3e0;opacity:.7;transition:transform .55s cubic-bezier(.4,0,.2,1) .35s}
+.bb10-f{background:var(--c);background-image:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,0) 55%,rgba(0,0,0,.25));transition:transform .12s linear}
+.bb10-sh{top:auto!important;height:4px;background:#fff;transform:scaleX(0);opacity:.95}
+.bb10-tk{width:2px!important;margin-left:-1px;background:rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+.bb10-tk.done{background:rgba(255,255,255,.28)}
+.bb10-s{display:flex;justify-content:space-between;margin-top:4px;font:700 9.5px/1.2 Montserrat,system-ui,sans-serif;letter-spacing:.24em;text-transform:uppercase;text-shadow:0 1px 2px #000}
+.bb10-ph{color:var(--c)}
+.bb10-st{opacity:0;transition:opacity .2s;color:#fff}.bb10-st.on{opacity:1}
+.bb10-st.vulnerable,.bb10-st.staggered{color:#ffd24a}.bb10-st.shielded{color:#dff6ff}.bb10-st.phasechange{color:var(--c)}
+#bb10[data-ph="3"] .bb10-bar{border-color:rgba(255,140,140,.6)}
+/* skip hint (repeat encounters only), above the lower letterbox bar */
+#bb10k{position:fixed;right:28px;bottom:calc(11vh + 16px);z-index:61;pointer-events:none;color:#fff;font:700 10px/1 Montserrat,system-ui,sans-serif;letter-spacing:.28em;text-transform:uppercase;text-shadow:0 1px 3px #000;opacity:0;transition:opacity .4s .6s;will-change:opacity}
+#bb10k.on{opacity:.82}
+#bb10k i{display:block;height:2px;margin-top:7px;background:#fff;transform:scaleX(0);transform-origin:0 50%}
+@media (max-width:640px){.bb10-h em{display:none}}
+/* cinematics: the HUD fades out of the way; the intro name card sits low so the roaring boss stays in view */
+body.bb10c :is(#hudL,#hudC,#hudR,#quest,#bar,#skills,#wslot,#mini,#prompt,#dz8,#toast7,#banner){opacity:0!important;transition:opacity .35s;pointer-events:none}
+#cine7b.c7b:not(.win):not(.lose) .c7b-card{top:71%}

@@ -19,19 +19,19 @@
 #cine7b{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden;--c:#b58cff}
 .c7b-bar{position:absolute;left:0;right:0;height:11vh;background:#000;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
 .c7b-bar.t{top:0;transform:translateY(-101%)}.c7b-bar.b{bottom:0;transform:translateY(101%)}
-#cine7b.on .c7b-bar{transform:none}
+#cine7b.on .c7b-bar,#cine7b.bars .c7b-bar{transform:none}#cine7b.b0 .c7b-bar{transition:none}#cine7b.nf .c7b-flash{display:none}
 #cine7b.off .c7b-bar.t{transform:translateY(-101%)}#cine7b.off .c7b-bar.b{transform:translateY(101%)}
 .c7b-sl{position:absolute;inset:0;opacity:0;transition:opacity .25s}.c7b-sl canvas{width:100%;height:100%;display:block}
 #cine7b.on .c7b-sl{opacity:.42;animation:c7bSl .14s steps(2) infinite}#cine7b.off .c7b-sl{opacity:0;transition-duration:.3s}
 @keyframes c7bSl{50%{transform:scale(1.035) rotate(.5deg)}}
-.c7b-card{position:absolute;left:0;right:0;top:63%;transform:translateY(-50%);text-align:center;color:#fff;opacity:0;transition:opacity .3s}
+.c7b-card{position:absolute;left:0;right:0;top:63%;transform:translateY(-50%);text-align:center;color:#fff;opacity:0;transition:opacity .3s;will-change:opacity}
 #cine7b.on .c7b-card{opacity:1}#cine7b.off .c7b-card{opacity:0;transition-duration:.45s}
 .c7b-stripe{position:absolute;left:-6%;right:-6%;top:50%;height:150px;margin-top:-75px;transform:skewY(-3deg) scaleX(0);transform-origin:0 50%;transition:transform .38s cubic-bezier(.2,.8,.2,1) .12s;z-index:-1}
 #cine7b.on .c7b-stripe{transform:skewY(-3deg) scaleX(1)}
 .c7b-card em{display:block;font:700 12px/1 Montserrat,system-ui,sans-serif;letter-spacing:.42em;text-transform:uppercase;color:#f3e6c8;font-style:normal;padding-left:.42em;opacity:0;transform:translateX(-30px);transition:opacity .35s .3s,transform .5s cubic-bezier(.2,.8,.2,1) .3s}
 #cine7b.on .c7b-card em{opacity:1;transform:none}
-.c7b-card b{display:inline-block;margin:8px 0 6px;font:italic 700 clamp(44px,7.4vw,98px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.02em;text-transform:uppercase;text-shadow:0 0 26px var(--c),0 3px 0 rgba(0,0,0,.6);clip-path:inset(0 100% 0 0);transition:clip-path .5s cubic-bezier(.75,0,.2,1) .26s}
-#cine7b.on .c7b-card b{clip-path:inset(0 -5% 0 -5%)}
+.c7b-card b{display:inline-block;margin:8px 0 6px;font:italic 700 clamp(44px,7.4vw,98px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.02em;text-transform:uppercase;text-shadow:0 0 18px var(--c),0 3px 0 rgba(0,0,0,.6);opacity:0;transform:translateX(-46px) skewX(-10deg);will-change:transform,opacity;transition:opacity .3s .26s,transform .55s cubic-bezier(.2,.9,.2,1) .26s}
+#cine7b.on .c7b-card b{opacity:1;transform:none}
 /* the HUD banner would sit under the world card: hide it while the card shows */
 body.c7w-on #banner{opacity:0!important}
 .c7b-card small{display:block;text-shadow:0 1px 4px #000;font:700 11px/1.4 Montserrat,system-ui,sans-serif;letter-spacing:.36em;text-transform:uppercase;color:var(--c);padding-left:.36em;opacity:0;transition:opacity .4s .62s}
