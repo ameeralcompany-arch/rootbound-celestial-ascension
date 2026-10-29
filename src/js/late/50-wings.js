@@ -135,6 +135,7 @@ const WingArt=(()=>{
   const c1=p.kind=='nebula'?pal[3]:p.kind=='wind'?'#ffffff':p.kind=='void'?pal[0]:pal[1],c2=p.kind=='void'?pal[3]:pal[2];
   return{kind:'rib',n,a,L,len:p.len||1,w:(p.w||K.w)*L/60,K,c1,c2,fold:96*RAD,fs:cl(44/L,.3,.92)}}
  function buildParts(W,list,L,ds,pal,seed){return list.map((p,i)=>{const pl=p.p2&&W.pal2?W.pal2:pal,Lp=L*(p.sc&&p.s!='frag'?p.sc:1),sd=seed+i*101;
+  if(api.FAM[p.s])return api.FAM[p.s].build(W,p,Lp,ds,pl,sd,U);   // plug-in families (50-z-wings2.js)
   return p.s=='fan'?buildFan(W,p,Lp,ds,pl,sd,W.a):p.s=='frag'?buildFrag(W,p,L,ds,pl,sd,W.a):p.s=='mech'?buildMech(W,p,Lp,ds,pl):p.s=='mem'?buildMem(W,p,Lp,pl):buildRib(W,p,Lp,pl)})}
  // shared sprites
  let SPK=null;const spark=()=>{if(SPK)return SPK;const c=mkC(24,24),x=c.getContext('2d');x.translate(12,12);const g=x.createRadialGradient(0,0,0,0,0,6);g.addColorStop(0,'#fff');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(-12,-12,24,24);x.fillStyle='#fff';x.beginPath();x.moveTo(0,-12);x.quadraticCurveTo(1,-1,12,0);x.quadraticCurveTo(1,1,0,12);x.quadraticCurveTo(-1,1,-12,0);x.quadraticCurveTo(-1,-1,0,-12);x.fill();return SPK=c};
@@ -148,7 +149,7 @@ const WingArt=(()=>{
   a=build(tier,ds);cache.set(k,a);if(cache.size>CMAX)cache.delete(cache.keys().next().value);return a}
  // ---------- pose: spread 0 (folded on the back) .. 1 (open); idle breathing, calm open/fold cycle, jump snap, landing dip,
  // equip unfold, flight beats (FL from FLY7), slow majestic opening and a special idle flourish for exclusive wings
- const FL={on:false,rate:15,amp:.3,bob:0};const POSE=new Map();
+ const FL={on:false,rate:15,amp:.3,bob:0,ph:0};const POSE=new Map();
  // powered flight beat: a quick power downstroke (40% of the beat) and a slower recovery upstroke, instead of an even sine.
  // The phase is warped so the curve stays smooth at the top and bottom of the stroke. Returns the sine-like value and how far into the upstroke we are.
  const TAU=Math.PI*2;function beat(th){const v=((th/TAU-.25)%1+1)%1,up=v>=.4,w=up?.75+(v-.4)/.6*.5:.25+v/.4*.5;return{val:Math.sin(TAU*w),fold:up?Math.sin(Math.PI*(v-.4)/.6):0}}
@@ -221,6 +222,7 @@ const WingArt=(()=>{
    g.globalAlpha=a0*.24*e;g.strokeStyle=P.c1;g.lineWidth=P.w*2.4;g.stroke();g.globalAlpha=a0*.85*e;g.strokeStyle=P.c2;g.lineWidth=P.w*.55;g.stroke()}
   g.restore()}
  const DRAW={fan:drawFan,mem:drawMem,mech:drawMech,frag:drawFrag,rib:drawRib};
+ const U={mkC,rgba,mix,lum,sr,hash,ease,lerp,cl,spark};
  // ---------- main entry: both wings behind the body. cx,cy = character centre (+24 from the char code); f = facing; t = time;
  // mode: 0 idle 1 run 2 air (-1 = fold away); key/vy optional (pose per character); o.ds overrides the art resolution
  let LAST=null;
@@ -228,13 +230,15 @@ const WingArt=(()=>{
   const ds=o&&o.ds||(QM.cur.hd?2:1.25),art=get(tier,ds),ph=phase||0;f=f||1;
   let ps=key?pose(key,tier,t,mode,vy,ph,W):{s:1,fl:Math.sin(t*2.2+ph)*.06,ph:t*2.2+ph,amp:.06,rise:false,land:0,eq:0,flare:.5+.5*Math.sin(t*.7)};
   if(api.dbg&&key=='me'){ps=Object.assign({},ps,{s:api.dbg.s,fl:api.dbg.fl!=null?api.dbg.fl:api.dbg.s?ps.fl*.2:0,land:0,flare:0})}
-  ps.lag=Math.min(.16,Math.abs(vx||0)*.00028);LAST={ps,W,art,t,key};const fx=QM.cur.wfx;
+  ps.lag=Math.min(.16,Math.abs(vx||0)*.00028);if(api.CYC)ps=api.CYC(ps,key,tier,t,mode,vy,W,o,art);LAST={ps,W,art,t,key};const fx=QM.cur.wfx;
   g.save();if(alpha!=null)g.globalAlpha*=alpha;const rx=cx,ry=cy-7;
   if(art.corona){const C=art.corona,s=(.55+.45*ease(ps.s))*(1+.03*Math.sin(t*1.6))*(1+ps.flare*.06),y=ry-art.L*.1;g.save();g.globalAlpha*=.6+.4*ease(ps.s);g.translate(rx,y);g.rotate(t*.05);g.drawImage(C.c,-C.o*s,-C.o*s,C.s*s,C.s*s);g.restore()}
+  if(api.PRE)api.PRE(g,art,ps,rx,ry,t,fx);
   for(let side=-1;side<=1;side+=2){const far=side*f<0,parts=art.alt&&side*f>0?art.alt:art.parts;
-   g.save();g.translate(rx+side*3,ry);g.scale(side*(far?.95:1),far?.97:1);if(far)g.globalAlpha*=.9;
-   for(const P of parts)DRAW[P.kind](g,P,ps,t,ph,fx,ps.flare);g.restore()}
-  g.restore();return ps.s}
+   g.save();g.translate(rx+side*3,ry);g.scale(side*(far?.95:1)*(ps.sx||1),far?.97:1);if(far)g.globalAlpha*=.9;
+   for(const P of parts)(DRAW[P.kind]||api.FAM[P.kind].draw)(g,P,ps,t,ph,fx,ps.flare);g.restore()}
+  if(api.POST)api.POST(g,art,ps,rx,ry,f,t,key,o,fx);
+  g.restore();return ps.open!=null?ps.open:ps.s}
  // extras that sit with the wings: halo, orbit ring, lightning arcs, rebirth flare, particles (only in the world)
  const RB=new Map();
  function extras(g,tier,cx,cy,t){const W=WINGS[tier];if(!W)return;const A=W.a,fx=QM.cur.wfx,ps=LAST&&LAST.W==W?LAST.ps:{s:1,flare:0},L=A.L;
@@ -261,4 +265,5 @@ const WingArt=(()=>{
   if(idx<0||!WINGS[idx]){if(st.last>=0&&WINGS[st.last]){st.fade+=dt/.45;if(st.fade>=1){st.last=-1;st.fade=0;return}draw(g,st.last,cx,cy,f,t,-1,vx,ph,1-ease(st.fade),key,vy)}return}
   if(idx!==st.last){const was=st.last;st.last=idx;st.fade=0;if(key=='me'&&was!==undefined&&typeof VFX!='undefined'&&typeof cam!='undefined'){try{const W=WINGS[idx];VFX.wave(cx+cam.x,cy+cam.y,W.pal[3],W.a.L*1.1,.6,.45);VFX.burst(cx+cam.x,cy+cam.y-10,[W.pal[1],W.pal[2],W.pal[3]],14,180,1,.8,12)}catch(_){}}}
   draw(g,idx,cx,cy,f,t,mode,vx,ph,null,key,vy);extras(g,idx,cx,cy,t)}
- const api={get,draw,drawChar,extras,idleFx,pose,STY:{},FL,dbg:null,cacheSize:()=>cache.size,get tiers(){return WINGS.length}};return api})();
+ // FAM/CYC/PRE/POST: hooks filled by 50-z-wings2.js (tier family, keyframed flight cycle, halo ring, trail particles)
+ const api={get,draw,drawChar,extras,idleFx,pose,STY:{},FL,dbg:null,FAM:{},CYC:null,PRE:null,POST:null,cacheSize:()=>cache.size,get tiers(){return WINGS.length}};return api})();

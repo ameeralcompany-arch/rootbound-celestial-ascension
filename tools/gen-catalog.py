@@ -118,10 +118,13 @@ for c in V8['charms']: add(id='charm_'+c['id'],cat='charms',n=c['n'],price=c['pr
 V9=json.load(open(os.path.join(R,'tools/play-v9.json')))
 for w in V9['weather']: add(id='obj_%d'%w['id'],cat='weather',n=w['n'],price=w['price'],rar=w['rar'],stack=1,ref=w['id'],lv=w['lv'],d=w['d'],how='store',new=1)
 for s in V9['seeds']: add(id='seed_%d'%s['id'],cat='seeds',n=s['n'],price=s['price'],rar=s['rar'],stack=1,ref=s['id'],lv=s['lv'],d=s['d'],how='store',new=1)
+# ---- v9 ascended wings (three-tier 'tier' family); shared with tools/wings-catalog.js
+WV9=json.load(open(os.path.join(R,'tools/wings-v9.json')))
+for w in WV9['wings']: add(id='wing_'+w['id'],cat='wings',n=w['n'],price=w['price'],rar=w['rar'],stack=0,ref=w['id'],lv=w['lv'],d=w['d'],how='store',new=1,excl=False)
 ids=[i['id'] for i in items]; assert len(ids)==len(set(ids)),'duplicate ids'
 for i in items:
     assert i['price']>0 and i['rar'] in('common','uncommon','rare','epic','legendary','mythic','exclusive'),i
-feat=['wing_galaxy','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder']
+feat=['wing_galaxy','wing_voidshroud','wing_haloseraph','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder']
 for i in items: i['feat']=1 if i['id'] in feat else 0
 json.dump({'v':1,'items':items},open(os.path.join(R,'server/catalog.json'),'w'),separators=(',',':'))
 print(len(items),'items')

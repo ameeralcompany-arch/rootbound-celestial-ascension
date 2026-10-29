@@ -1,0 +1,57 @@
+{
+ "frames": [
+  "F1 Flare",
+  "F2 Upstroke Peak",
+  "F3 Power Snap",
+  "F4 Max Extension",
+  "F5 Recovery Lift",
+  "F6 Hover",
+  "F7 Hover Billow",
+  "F8 Hover Settle"
+ ],
+ "scale": 2,
+ "cols": 4,
+ "rows": 2,
+ "header": 28,
+ "sheets": {
+  "haloseraph": {
+   "name": "Halo Seraph",
+   "width": 2048,
+   "height": 872,
+   "frame": [
+    512,
+    408
+   ],
+   "anchor": [
+    256,
+    270
+   ]
+  },
+  "voidshroud": {
+   "name": "Abyssal Shroud",
+   "width": 2528,
+   "height": 1048,
+   "frame": [
+    632,
+    496
+   ],
+   "anchor": [
+    316,
+    310
+   ]
+  },
+  "stormlance": {
+   "name": "Stormlance Wings",
+   "width": 2240,
+   "height": 952,
+   "frame": [
+    560,
+    448
+   ],
+   "anchor": [
+    280,
+    294
+   ]
+  }
+ }
+}
