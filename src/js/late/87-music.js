@@ -125,7 +125,9 @@ const MUS7=(()=>{
   else if(night>.6)m='night';else if(wxN=='cloud')m='cloud';
   let fight=false;try{if(BOSS6.active())fight=true}catch(_){}for(const k of mobs){if(Math.abs(k.x-P.x)<420&&Math.abs(k.y-P.y)<300){fight=true;break}}
   const now=performance.now();if(fight)holdUntil=now+7000;if(now<holdUntil)m='combat';want=m;if(m!=last){last=m;switchTo(m)}}catch(_){}}
- return{start,get mood(){return mood},get want(){return want},get on(){return on},get song(){return song&&song.id},get played(){return played.slice()},MOODS,detect,endSong,force(m){want=m;last=m;switchTo(m)},newSong,depthNow}})();
+ // a fight's music hold (7 s after the last monster) doesn't follow you into another world
+ {const _lw=loadWorld;loadWorld=function(){holdUntil=0;return _lw.apply(this,arguments)}}
+ return{calm(){holdUntil=0},start,get mood(){return mood},get want(){return want},get on(){return on},get song(){return song&&song.id},get played(){return played.slice()},MOODS,detect,endSong,force(m){want=m;last=m;switchTo(m)},newSong,depthNow}})();
 startBGM=function(){MUS7.start()};
 // ambience volume slider (0-100%), saved with the other options
 {const _au=ambUpdate;ambUpdate=function(){_au();try{if(ambG)ambG.gain.value*=OPT.av==null?1:OPT.av}catch(_){}};

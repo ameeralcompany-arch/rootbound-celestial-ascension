@@ -64,7 +64,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  const pet=await E(()=>{const o=document.createElement('canvas').getContext('2d'),r=[];for(const dy of[0,3,-3,6,-6]){COMP7.st.last=0;FX7.charmDraw(o,'mochi',P.x-cam.x,P.y-cam.y+dy,1,1);r.push(COMP7.st.last>0)}return r});
  ok('pets keep following you while the flight bob moves your sprite',pet.every(Boolean),pet);
  // underground music: 20 m+ = Echo Caves, 46 m+ = Ember Depths, back on the surface = the normal moods (fights still win)
- const mus=await E(()=>{const o={},x0=P.x,y0=P.y,tx=Math.floor(P.x/T);mobs.length=0;try{BOSS6.clear()}catch(_){}
+ const mus=await E(()=>{const o={},x0=P.x,y0=P.y,tx=Math.floor(P.x/T);mobs.length=0;try{BOSS6.clear()}catch(_){}MUS7.calm();
   for(const [k,d] of [['surface',0],['d25',25],['d50',50]]){const ty=sh(tx)+d;P.y=ty*T-P.h;MUS7.detect();o[k]=MUS7.want}
   P.x=x0;P.y=y0;MUS7.detect();o.back=MUS7.want;o.songs=['mine','deep'].map(m=>MUS7.MOODS[m].songs.length);return o});
  ok('underground music: Echo Caves below 20 m, Ember Depths below 46 m, normal music on the surface',mus.surface!='mine'&&mus.surface!='deep'&&mus.d25=='mine'&&mus.d50=='deep'&&mus.back!='mine'&&mus.back!='deep'&&mus.songs[0]==3&&mus.songs[1]==2,mus);
