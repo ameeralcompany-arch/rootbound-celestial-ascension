@@ -31,6 +31,10 @@ const R3D=(()=>{
    // ambient occlusion in inner corners where a tile meets two neighbours
    if(above&&SOLID6[above]&&left&&SOLID6[left]){const gr=g.createRadialGradient(px,py,0,px,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px,py,16,16)}
    if(above&&SOLID6[above]&&right&&SOLID6[right]){const gr=g.createRadialGradient(px+T,py,0,px+T,py,16);gr.addColorStop(0,'rgba(0,0,12,.22)');gr.addColorStop(1,'rgba(0,0,12,0)');g.fillStyle=gr;g.fillRect(px+T-16,py,16,16)}}}
+ // water sprites, painted once: the bright band under the surface and one light shaft (skewed per frame instead of a new gradient)
+ const SPR3={};{const mk=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));return c};
+  SPR3.band=mk(T+1,14,x=>{const gr=x.createLinearGradient(0,0,0,14);gr.addColorStop(0,'rgba(225,246,255,.5)');gr.addColorStop(1,'rgba(225,246,255,0)');x.fillStyle=gr;x.fillRect(0,0,T+1,14)});
+  SPR3.shaft=mk(40,T*4,x=>{const gr=x.createLinearGradient(0,0,0,T*4);gr.addColorStop(0,'rgba(210,245,255,.10)');gr.addColorStop(1,'rgba(210,245,255,0)');x.fillStyle=gr;x.beginPath();x.moveTo(0,0);x.lineTo(15,0);x.lineTo(36,T*4);x.lineTo(14,T*4);x.closePath();x.fill()})}
  function water(x0,x1,y0,y1,now){shade3D(x0,x1,y0,y1);const t=now/1000,nt=typeof night=='number'?night:0,dim=1-nt*.38,hq=QM.cur.wfx>=1;g.save();
   const dens=(typeof QM!='undefined'?QM.cur.vfx:1);
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,v=wl[k];if(!v||tiles[k])continue;
@@ -41,7 +45,7 @@ const R3D=(()=>{
    if(!above){ // wavy surface polygon, continuous across tiles because it depends on world x
     g.beginPath();g.moveTo(px,bot+1);const y0w=wave(x*T,t);g.lineTo(px,py0+y0w);for(let s=8;s<=T;s+=8){g.lineTo(px+s,py0+wave(x*T+s,t))}g.lineTo(px+T,bot+1);g.closePath();g.fill();
     // lighter band just under the surface, bright crest line
-    const gy=py0+wave(x*T+T/2,t),gr=g.createLinearGradient(0,gy,0,gy+14);gr.addColorStop(0,'rgba(225,246,255,'+(.5*dim).toFixed(2)+')');gr.addColorStop(1,'rgba(225,246,255,0)');g.fillStyle=gr;g.fillRect(px,gy,T+1,14);
+    const gy=py0+wave(x*T+T/2,t);g.globalAlpha=dim;g.drawImage(SPR3.band,px,gy,T+1,14);g.globalAlpha=1;// pre-rendered (was a new gradient per surface tile per frame)
     g.strokeStyle='rgba(255,255,255,'+(.85*dim).toFixed(2)+')';g.lineWidth=1.6;g.beginPath();g.moveTo(px,py0+wave(x*T,t));for(let s=8;s<=T;s+=8)g.lineTo(px+s,py0+wave(x*T+s,t));g.stroke();
     g.strokeStyle='rgba(190,232,255,.35)';g.lineWidth=1;g.beginPath();g.moveTo(px,py0+4+wave(x*T+60,t*1.2));for(let s=8;s<=T;s+=8)g.lineTo(px+s,py0+4+wave(x*T+s+60,t*1.2));g.stroke();
     // foam against walls
@@ -51,7 +55,7 @@ const R3D=(()=>{
    // caustics + light shafts + bubbles (additive)
    if(d<=5){g.globalCompositeOperation='lighter';const a=(.07*(1-d/6))*dim*Math.min(1,dens+.3);
     for(let c=0;c<2;c++){const cx=px+((Math.sin(t*.7+x*1.3+y*.8+c*2.1)*.5+.5)*(T-14))+4,cy=py0+8+((Math.cos(t*.6+x*.9+y*1.1+c*1.7)*.5+.5)*(h-16>0?h-16:1));g.fillStyle='rgba(200,250,255,'+a.toFixed(3)+')';g.beginPath();g.ellipse(cx,cy,9,3.2,Math.sin(t+c+x)*.6,0,6.3);g.fill()}
-    if(!above&&((x+((t*.25)|0))%3==0)){const sx=px+T*.5+Math.sin(t*.5+x)*6,gr=g.createLinearGradient(0,py0,0,py0+T*4);gr.addColorStop(0,'rgba(210,245,255,.10)');gr.addColorStop(1,'rgba(210,245,255,0)');g.fillStyle=gr;g.beginPath();g.moveTo(sx-6,py0);g.lineTo(sx+9,py0);g.lineTo(sx+30+Math.sin(t*.4+x)*8,py0+T*4);g.lineTo(sx+8,py0+T*4);g.closePath();g.fill()}
+    if(!above&&((x+((t*.25)|0))%3==0)){const sx=px+T*.5+Math.sin(t*.5+x)*6,sk=Math.sin(t*.4+x)*8/(T*4);g.save();g.transform(1,0,sk,1,sx,py0);g.drawImage(SPR3.shaft,-6,0);g.restore()}
     g.globalCompositeOperation='source-over'}
    if(d>=1&&((x*7+y*13)%9==0)){const u=((t*.18+(x*.37+y*.11))%1);g.strokeStyle='rgba(225,248,255,'+(.5*(1-u)).toFixed(2)+')';g.lineWidth=1;g.beginPath();g.arc(px+T*.5+Math.sin(u*9+x)*5,bot-u*T*1.2,2+u*1.5,0,6.3);g.stroke()}
    if(nt>.5&&!above&&((x*5+(t*3|0))%7==0)){g.fillStyle='rgba(255,255,255,'+((nt-.5)*1.1).toFixed(2)+')';g.fillRect(px+((x*37)%T),py0+2+wave(x*T,t),2,2)}

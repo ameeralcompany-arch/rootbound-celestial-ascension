@@ -17,16 +17,16 @@ const LIFE8=(()=>{
    for(let i=pass;i<6;i+=2){const h=hs(v*7+i,13),bx=ox+4+i*7.4+h*3,ht=5+h*8,sw=lean*(.7+h*.6);x.moveTo(bx,oy+GH-1);x.quadraticCurveTo(bx+sw*.3,oy+GH-1-ht*.6,bx+sw,oy+GH-1-ht)}x.stroke()}}
   fatlas=document.createElement('canvas');fatlas.width=16*FLW.length;fatlas.height=34;const y=fatlas.getContext('2d');
   FLW.forEach((c,i)=>{const cx=i*16+8;y.strokeStyle='#5d9a4a';y.lineWidth=1.3;y.beginPath();y.moveTo(cx,33);y.quadraticCurveTo(cx+1,20,cx,6);y.stroke();y.fillStyle=c;for(let j=0;j<5;j++){const a=j*1.2566;y.beginPath();y.arc(cx+Math.cos(a)*2.5,6+Math.sin(a)*2.5,2,0,6.3);y.fill()}y.fillStyle='#ffc94a';y.beginPath();y.arc(cx,6,1.4,0,6.3);y.fill()})}
- function flora(x0,x1,y0,y1,t){if(!atlas)mkAtlas();const wind=1.2+WX6.wind*3;flowers=[];tops=0;
+ function flora(x0,x1,y0,y1,t){if(!atlas)mkAtlas();const wind=1.2+WX6.wind*3;flowers.length=0;tops=0;let nf=0;/* flower records are pooled (no new arrays every frame) */
   const push=(bx,by)=>{const dx=bx-P.x,dy=Math.abs(P.y+P.h-by);if(dy>26||Math.abs(dx)>44)return 0;return Math.sign(dx||1)*(1-Math.abs(dx)/44)*(4+Math.min(3,Math.abs(P.vx)/80))};
   for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++){const k=y*W+x;if(tiles[k]!=2||tiles[k-W]||wl[k-W])continue;tops++;
    const lean=Math.sin(t*1.5+x*.6)*wind*.5+push(x*T+T/2,y*T),l=Math.max(0,Math.min(NL-1,Math.round(lean+(NL-1)/2))),v=(x*7+y)%3;
    g.drawImage(atlas,l*GW,v*GH,GW,GH,x*T-cam.x,y*T-cam.y-GH+2,GW,GH);
-   const h=hs(x,y*3+1);if(h<.2)flowers.push([x*T+10+h*120%28,y*T,(h*997|0)%FLW.length,h])}
+   const h=hs(x,y*3+1);if(h<.2){const f=FPOOL[nf]||(FPOOL[nf]=[0,0,0,0]);nf++;f[0]=x*T+10+h*120%28;f[1]=y*T;f[2]=(h*997|0)%FLW.length;f[3]=h;flowers.push(f)}}
   // flowers: one sprite each, rotated around the stem base as they sway / get brushed aside
   for(const f of flowers){const[fx,fy,ci,h]=f,a=(Math.sin(t*1.2+fx*.05)*wind*.05+push(fx,fy)*.07),s=.7+h*1.5,c=Math.cos(a),sn=Math.sin(a);g.setTransform(c*ZM*s,sn*ZM*s,-sn*ZM*s,c*ZM*s,(fx-cam.x)*ZM+ox0,(fy-cam.y+1)*ZM+oy0);g.drawImage(fatlas,ci*16,0,16,34,-8,-33,16,34)}
   g.setTransform(ZM,0,0,ZM,ox0,oy0)}
- let ox0=0,oy0=0;
+ let ox0=0,oy0=0;const FPOOL=[];
  // ---- butterflies: up to 3, near flowers, day + clear sky; they scatter when you come close
  function butterflies(dt,t,vw,vh){const want=day()&&clearSky()&&flowers.length&&!QM.reduce?Math.min(3,1+(flowers.length>>2)):0;
   if(bf.length<want&&R()<dt*.6){const f=flowers[R()*flowers.length|0];bf.push({x:f[0]+(R()-.5)*60,y:f[1]-30-R()*30,hx:f[0],hy:f[1]-22,p:R()*6.3,c:['#ffe27a','#ffb3d9','#bfe3ff','#fff'][R()*4|0],fl:0,a:0})}
@@ -57,7 +57,7 @@ const LIFE8=(()=>{
    const px=a.x*vw,py=a.y*vh;if(!cave){const s=surfY(Math.floor((px+cam.x)/T))-cam.y;if(py>s+4||py<s-T*3)continue}
    g.globalAlpha=cave?.16+.12*Math.sin(t*1.3+a.p):.22*a.s;const s=cave?7:5;g.drawImage(im,px-s/2,py-s/2,s,s)}g.restore()}
  drawAmbient=function(vw,vh,now,dt){const t=now/1000;if(!entered)return;const x0=Math.max(1,cam.x/T|0),x1=Math.min(W-2,(cam.x+vw)/T|0),y0=Math.max(1,cam.y/T|0),y1=Math.min(H-3,(cam.y+vh)/T|0);
-  try{const m=g.getTransform();ox0=m.e;oy0=m.f;if(OPT.q>=.3&&ZM>=.6)flora(x0,x1,y0,y1,t);else flowers=[];butterflies(dt,t,vw,vh);fishes(dt,vw,vh,x0,x1,y0,y1);fireflies(dt,t,vw,vh);motes(dt,t,vw,vh)}catch(e){if(!LIFE8.err){LIFE8.err=1;console.error('LIFE8',e)}}
+  try{const m=g.getTransform();ox0=m.e;oy0=m.f;if(OPT.q>=.3&&ZM>=.6)flora(x0,x1,y0,y1,t);else flowers.length=0;butterflies(dt,t,vw,vh);fishes(dt,vw,vh,x0,x1,y0,y1);fireflies(dt,t,vw,vh);motes(dt,t,vw,vh)}catch(e){if(!LIFE8.err){LIFE8.err=1;console.error('LIFE8',e)}}
   g.save();for(let i=pops2.length-1;i>=0;i--){const q=pops2[i],a=(now-q.t)/450;if(a<0)continue;if(a>=1){pops2.splice(i,1);continue}const px=q.x-cam.x,py=q.y-cam.y,r=3+a*7;g.strokeStyle='rgba(255,255,255,'+(1-a)+')';g.lineWidth=1.5;g.beginPath();g.moveTo(px-r,py);g.lineTo(px+r,py);g.moveTo(px,py-r);g.lineTo(px,py+r);g.stroke()}g.restore()};
  {const _dp=BOSS6.drawProj;BOSS6.drawProj=function(g2,cx,cy){_dp.apply(this,arguments);try{drawGlow(g2)}catch(_){}}}
  // ---- cursor highlight: green = the held tool breaks it quickly, amber = slow (another tool is better), cool grey = weapons can't dig

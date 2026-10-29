@@ -23,11 +23,12 @@ const WEV7=(()=>{
   try{say(NAMES[e.kind]+' has appeared in this world!');SFX7.tone(520,880,.4,'sine',.06);SFX7.tone(780,1320,.4,'sine',.05,.18)}catch(_){}}
  function reward(g,msg){if(!srv()&&g)gems+=g;try{say(msg+(g&&!srv()?'  +'+g+' gems':''));saveP()}catch(_){}}
  // ---- per frame
- function tick(dt){if(!entered||cur=='plaza'||creatorOn){ev=null;if(hud)hud.style.display='none';return}ensureHud();const now=Date.now();
+ function tick(dt){if(!entered||cur=='plaza'||creatorOn){ev=null;if(hud&&hud._on!==0){hud._on=0;hud.style.display='none'}return}ensureHud();const now=Date.now();
   if(now-lastCheck>500){lastCheck=now;const e=current(now);if((e&&e.id)!==(ev&&ev.id)){ev=e;if(e)start(e);else{riftMobs=[];meteors=[]}}}
-  if(ev&&now>ev.t1){ev=null;riftMobs=[];meteors=[]}if(!ev){hud.style.display='none';return}
+  if(ev&&now>ev.t1){ev=null;riftMobs=[];meteors=[]}if(!ev){if(hud._on!==0){hud._on=0;hud.style.display='none'}return}
   const left=ev.t1-now,dxp=ev.x-P.x,dir=Math.abs(dxp)<T*6?'here':dxp>0?'east →':'← west';
-  hud.style.display='block';hud.textContent=NAMES[ev.kind]+'  ·  '+fmt(left)+'  ·  '+(dir=='here'?'you are close':Math.round(Math.abs(dxp)/T)+' blocks '+dir);
+  /* touch the DOM only when the text changes: rewriting it every frame cost one style recalc + layout per frame */
+  if(hud._on!==1){hud._on=1;hud.style.display='block'}const txt=NAMES[ev.kind]+'  ·  '+fmt(left)+'  ·  '+(dir=='here'?'you are close':Math.round(Math.abs(dxp)/T)+' blocks '+dir);if(hud._t!==txt){hud._t=txt;hud.textContent=txt}
   if(ev.kind=='meteor')tickMeteor(now);else if(ev.kind=='rift')tickRift(dt,now)}
  function tickMeteor(now){for(const m of meteors){if(mDone.has(m.id)||now<m.at+m.dur)continue;mDone.add(m.id);const gy=groundY(Math.floor(m.x/T));
    try{burst(m.x,gy,'#ffb25a',26,260,6);burst(m.x,gy,'#fff',10,180,4,'p');rings.push({x:m.x,y:gy,c:'#ff9a3a',t:performance.now()});shake=Math.max(shake,.12);snd(70,.35,'sawtooth',.1,.4)}catch(_){}

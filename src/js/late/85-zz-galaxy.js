@@ -13,7 +13,8 @@ const GAL7=(()=>{
    x.fillStyle=q.s;for(let i=0;i<12;i++){x.globalAlpha=.4+R()*.6;const s=R()<.2?2:1;x.fillRect(R()*T|0,R()*T|0,s,s)}x.globalAlpha=1}
   x.strokeStyle='rgba(255,255,255,.22)';x.lineWidth=1.5;x.strokeRect(1.5,1.5,T-3,T-3);x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=1;x.strokeRect(.5,.5,T-1,T-1);return c}
  {const _bs=blockSprite;blockSprite=function(b,v){if(b>=66&&b<=69)return paint(b,v);return _bs(b,v)}}
- const sparks=[],smoke=[];let heal=0,warmT=0;
+ const sparks=[],smoke=[];let heal=0,warmT=0,fgc=null;
+ const fireGlow=()=>fgc||(fgc=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d'),gr=x.createRadialGradient(64,64,2,64,64,64);gr.addColorStop(0,'rgba(255,160,70,.42)');gr.addColorStop(1,'rgba(255,120,40,0)');x.fillStyle=gr;x.fillRect(0,0,128,128);return c})());
  const hash=(x,y,i)=>{let h=(x*374761393+y*668265263+i*2147483647)>>>0;h=(h^(h>>>13))*1274126177>>>0;return((h^(h>>>16))>>>0)/4294967295};
  let mk=-1,mb=0;function tick(dt){if(!tiles)return;if(cur=='plaza'&&(mk<0||tiles[mk]!=mb)){try{const r=decorate();mk=r.k;mb=r.b}catch(e){console.error('GAL7',e);mk=0;mb=0}}const tx0=Math.floor(P.x/T),ty0=Math.floor((P.y+P.h/2)/T);let near=false;
   for(let y=ty0-3;y<=ty0+3;y++)for(let x=tx0-4;x<=tx0+4;x++){if(x<0||y<0||x>=W||y>=H||tiles[y*W+x]!=69)continue;if(Math.hypot((x+.5)*T-P.x,(y+.5)*T-(P.y+P.h/2))<T*3.2)near=true}
@@ -22,7 +23,7 @@ const GAL7=(()=>{
   for(let i=smoke.length-1;i>=0;i--){const s=smoke[i];s.t+=dt;s.x+=s.vx*dt;s.y-=26*dt;s.vx+=Math.sin(s.t*3+s.ph)*14*dt;if(s.t>s.l)smoke.splice(i,1)}}
  function draw(g,cx,cy){if(!tiles)return;const t=performance.now()/1000,vw=cv.width/ZM,vh=cv.height/ZM,x0=Math.max(0,Math.floor(cx/T)),x1=Math.min(W-1,Math.floor((cx+vw)/T)),y0=Math.max(0,Math.floor(cy/T)),y1=Math.min(H-1,Math.floor((cy+vh)/T)),low=document.documentElement.classList.contains('lowfx');
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const b=tiles[y*W+x];if(b<66||b>69)continue;const px=x*T-cx,py=y*T-cy;
-   if(b==69){const fl=t*9+x;g.save();g.globalCompositeOperation='lighter';const gr=g.createRadialGradient(px+T/2,py+T*.7,2,px+T/2,py+T*.7,T*2.6);gr.addColorStop(0,'rgba(255,160,70,'+(.34+.08*Math.sin(fl*1.7))+')');gr.addColorStop(1,'rgba(255,120,40,0)');g.fillStyle=gr;g.fillRect(px-T*2.2,py-T*1.9,T*5.4,T*4.6);
+   if(b==69){const fl=t*9+x;g.save();g.globalCompositeOperation='lighter';/* pre-rendered glow (was a new radial gradient per campfire per frame) */g.globalAlpha=Math.min(1,(.34+.08*Math.sin(fl*1.7))/.42);g.drawImage(fireGlow(),px+T/2-T*2.6,py+T*.7-T*2.6,T*5.2,T*5.2);g.globalAlpha=1;
     for(let k=0;k<4;k++){const w=T*(.26-k*.04),h=T*(.62-k*.1)*(1+.14*Math.sin(fl*1.3+k*2)),sx=Math.sin(fl*.9+k*1.7)*3,cols=['rgba(255,80,20,.85)','rgba(255,150,30,.85)','rgba(255,215,90,.9)','rgba(255,250,200,.95)'];g.fillStyle=cols[k];g.beginPath();const bx=px+T/2+sx*.5,by=py+T-12;g.moveTo(bx-w,by);g.bezierCurveTo(bx-w*1.1,by-h*.5,bx-w*.2+sx,by-h*.7,bx+sx,by-h);g.bezierCurveTo(bx+w*.3+sx,by-h*.6,bx+w*1.1,by-h*.45,bx+w,by);g.closePath();g.fill()}g.restore();
     if(!low&&Math.random()<dt60()*5)sparks.push({x:px+cx+T/2+(Math.random()-.5)*10,y:py+cy+T-18,vx:(Math.random()-.5)*30,vy:-50-Math.random()*50,t:0,l:.8+Math.random()*.7,ph:Math.random()*6});if(Math.random()<dt60()*1.3)smoke.push({x:px+cx+T/2,y:py+cy+T*.3,vx:0,t:0,l:2+Math.random(),ph:Math.random()*6,r:5+Math.random()*4});continue}
    const q=PAL[b];g.save();g.beginPath();g.rect(px,py,T,T);g.clip();g.globalCompositeOperation='lighter';
