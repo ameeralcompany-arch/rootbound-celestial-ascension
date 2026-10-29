@@ -1,0 +1,12 @@
+{
+ "wings":[
+  {"id":"voidshroud","n":"Abyssal Shroud","rar":"mythic","price":4600,"lv":70,"d":"A cosmic shroud of living tendrils around a black-hole core. Its tips glow like distant stars. Needs level 70. Gives a double jump.","feat":1},
+  {"id":"haloseraph","n":"Halo Seraph","rar":"mythic","price":4400,"lv":60,"d":"Radiant white feathers in three tiers around a glowing halo ring, shedding petals of light. Needs level 60. Gives a double jump.","feat":1},
+  {"id":"stormlance","n":"Stormlance Wings","rar":"mythic","price":4200,"lv":55,"d":"Wings of raw blue lightning: three tiers of crackling energy that arc and spit sparks. Needs level 55. Gives a double jump.","feat":0},
+  {"id":"bonelight","n":"Ossuary Dawn","rar":"legendary","price":3600,"lv":50,"d":"Skeletal wings of curved bone; pale light drips from every joint like a melting dawn. Needs level 50. Gives a double jump.","feat":0},
+  {"id":"amethclaw","n":"Amethyst Talon Wings","rar":"legendary","price":3500,"lv":48,"d":"Translucent violet feathers that glow from within, crowned by curved talons at the wrist. Needs level 48. Gives a double jump.","feat":0},
+  {"id":"nightforge","n":"Nightforged Aegis","rar":"legendary","price":3400,"lv":45,"d":"Black armoured wing plates joined by violet glowing seams, layered in three hinged tiers. Needs level 45. Gives a double jump.","feat":0},
+  {"id":"eyemoth","n":"Oracle Moth Wings","rar":"legendary","price":3300,"lv":42,"d":"Vast dusky moth wings painted with watchful glowing eyes; they scatter luminous scales. Needs level 42. Gives a double jump.","feat":0},
+  {"id":"inkwraith","n":"Inkwraith Wings","rar":"legendary","price":3200,"lv":40,"d":"Brush-stroke wings of black ink that dissolve into drifting wisps, streaked with pale light. Needs level 40. Gives a double jump.","feat":0}
+ ]
+}

@@ -15,7 +15,7 @@ const FLY7=(()=>{
   if(can){
    if(!F.on){F.on=true;F.ph=0;F.last=-1;F.t0=performance.now()}
    WingArt.FL.on=true;WingArt.FL.rate=2*Math.PI*(2.9-.05*Math.min(8,F.tier))*(1.12-Math.min(.42,(w.a.L-34)/180));/* deeper strokes the harder you climb, and a quicker burst of beats right at take-off */const climbK=Math.max(0,Math.min(1,-P.vy/420)),boost=Math.max(0,1-(performance.now()-F.t0)/450);WingArt.FL.rate*=1+boost*.3;WingArt.FL.amp=(w.a.parts[0].s=='mech'?.32:.5)*(.85+climbK*.3+boost*.15);
-   F.ph+=dt*WingArt.FL.rate;const s=Math.sin(F.ph);F.sta=Math.max(0,F.sta-dt/maxT(F.tier));
+   F.ph+=dt*WingArt.FL.rate;WingArt.FL.ph=F.ph;/* the wing cycle reads this phase: F2 peak at s=0 (beat sound), F3 power snap at s=1 (max lift) */const s=Math.sin(F.ph);F.sta=Math.max(0,F.sta-dt/maxT(F.tier));
    if(s>=0&&F.last<0)flap(true);F.last=s>=0?1:-1;
    const climb=-(230+F.tier*12)*(.55+.45*s);
    if(down)P.vy=Math.min(P.vy+900*dt,160);else if(P.vy>climb)P.vy=climb+(P.vy-climb)*Math.exp(-dt*28);

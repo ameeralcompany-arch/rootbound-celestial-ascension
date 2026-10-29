@@ -84,8 +84,28 @@ const WINGS=[
  {id:'eternity',n:'Seraph of Eternity',fam:'feathered',rar:'exclusive',src:'excl',pal:['#7a84a4','#d6dbea','#ffffff','#ffe9a0'],sp:'#fff4c4',fxk:'glitter',d:'Three pairs of silver and gold wings that open slowly and majestically.',
   a:{L:100,halo:'#ffe9a0',slow:1,parts:[{s:'fan',off:38,sc:.52,tip:'point',rows:2,n:8,a:[-40,70],arm:-30,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',off:-38,sc:.62,tip:'point',rows:2,n:8,a:[-60,60],arm:-48,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',tip:'point',rows:3,n:13,a:[-54,82],arm:-40,att:.56,fw:.23,cov:'round'}]}},
  {id:'drakelord',n:'Dragon Sovereign',fam:'fantasy',rar:'exclusive',src:'excl',pal:['#120808','#3a1410','#d89a3a','#ff8a2a'],sp:'#ff8a2a',fxk:'embers',d:'Colossal obsidian dragon wings with five spiked fingers and molten veins.',
-  a:{L:112,parts:[{s:'mem',fingers:5,bone:'#2a1a12',claw:1,spikes:1,vein:1,glowVein:1}]}}
+  a:{L:112,parts:[{s:'mem',fingers:5,bone:'#2a1a12',claw:1,spikes:1,vein:1,glowVein:1}]}},
+ // ---- v9 ascended wings: 'tier' family (50-z-wings2.js): three overlapping tiers e = [primaries, secondaries, coverts] element
+ // painters, n = counts, len/wd = length/width ratios, pa = primary fan angles at the wrist, tip = emissive tip colour, trail = shed particles
+ {id:'voidshroud',n:'Abyssal Shroud',fam:'dark',rar:'mythic',src:'shop',lv:70,pal:['#030208','#150d28','#4c3c7c','#e6dcff'],sp:'#e6dcff',fxk:'stars',d:'A cosmic shroud of living tendrils around a black-hole core. Its tips glow like distant stars.',
+  a:{L:112,corona:{c:'#cfc0ff',r:.24},trail:['void','spark','dust'],parts:[{s:'tier',e:['tendril','tendril','shroud'],n:[9,9,7],len:[.7,.46,.22],wd:[.12,.14,.3],pa:[-16,104],arm:-30,glow:1}]}},
+ {id:'nightforge',n:'Nightforged Aegis',fam:'mechanical',rar:'legendary',src:'shop',lv:45,pal:['#05040a','#1d1a29','#4e4866','#c86bff'],sp:'#c86bff',fxk:'smoke',d:'Black armoured wing plates joined by violet glowing seams, layered in three hinged tiers.',
+  a:{L:100,trail:['spark','ember'],parts:[{s:'tier',e:['plate','plate','scale'],n:[8,7,6],len:[.6,.38,.2],wd:[.17,.2,.32],pa:[-12,92],arm:-36,tip:'#e9b8ff',orn:'gem',glow:1}]}},
+ {id:'haloseraph',n:'Halo Seraph',fam:'feathered',rar:'mythic',src:'shop',lv:60,pal:['#8c92c0','#e9edff','#ffffff','#d6b8ff'],sp:'#ffffff',fxk:'glitter',d:'Radiant white feathers in three tiers around a glowing halo ring, shedding petals of light.',
+  a:{L:108,ring:{c:'#e3d2ff',r:.2},trail:['petal','dust','feather'],parts:[{s:'tier',e:['feather','feather','covert'],n:[11,10,9],len:[.62,.4,.2],wd:[.17,.2,.34],pa:[-12,96],arm:-38,tip:'#cdb0ff',glow:1}]}},
+ {id:'inkwraith',n:'Inkwraith Wings',fam:'dark',rar:'legendary',src:'shop',lv:40,pal:['#040405','#16161b','#5c5c68','#f4f4ff'],sp:'#f4f4ff',fxk:'smoke',d:'Brush-stroke wings of black ink that dissolve into drifting wisps, streaked with pale light.',
+  a:{L:104,trail:['smoke','dust'],parts:[{s:'tier',e:['ink','ink','ink'],n:[8,7,6],len:[.64,.42,.22],wd:[.22,.24,.3],pa:[-16,100],arm:-30,glow:1}]}},
+ {id:'eyemoth',n:'Oracle Moth Wings',fam:'fantasy',rar:'legendary',src:'shop',lv:42,pal:['#0e080c','#35212d','#efc6cf','#ffd6e4'],sp:'#ffd6e4',fxk:'omen',d:'Vast dusky moth wings painted with watchful glowing eyes; they scatter luminous scales.',
+  a:{L:98,flutter:1,trail:['dust'],parts:[{s:'tier',e:['moth','mothhind','mothfur'],n:[1,1,1],la:.05,lh:0,len:[.95,.72,.16],wd:[.36,.5,.9],pa:[-22,0],ra:[[62,62],[40,40]],rp:[[.5,.5],[.2,.2]],arm:-24,glow:1}]}},
+ {id:'stormlance',n:'Stormlance Wings',fam:'elemental',rar:'mythic',src:'shop',lv:55,pal:['#04163f','#1866ff','#c4ecff','#7fdcff'],sp:'#c4ecff',fxk:'volt',d:'Wings of raw blue lightning: three tiers of crackling energy that arc and spit sparks.',
+  a:{L:116,arcs:'#bfe8ff',trail:['spark','dust'],parts:[{s:'tier',e:['bolt','bolt','arc'],n:[11,10,7],len:[.66,.42,.22],wd:[.1,.12,.14],pa:[-20,104],arm:-34,tip:'#ffffff',add:1,glow:1}]}},
+ {id:'bonelight',n:'Ossuary Dawn',fam:'fantasy',rar:'legendary',src:'shop',lv:50,pal:['#151012','#3a3034','#ece2dc','#ffe6f0'],sp:'#ffe6f0',fxk:'glitter',d:'Skeletal wings of curved bone; pale light drips from every joint like a melting dawn.',
+  a:{L:106,trail:['drip','dust'],parts:[{s:'tier',e:['bone','drip','boneplate'],n:[6,9,5],len:[.66,.42,.13],wd:[.085,.05,.45],pa:[-26,80],ra:[[95,80],[6,6]],rp:[[.15,1],[.05,.95]],arm:-32,glow:1}]}},
+ {id:'amethclaw',n:'Amethyst Talon Wings',fam:'feathered',rar:'legendary',src:'shop',lv:48,pal:['#26083f','#7b3fe0','#e6ccff','#c77dff'],sp:'#e6ccff',fxk:'glints',d:'Translucent violet feathers that glow from within, crowned by curved talons at the wrist.',
+  a:{L:102,trail:['feather','dust'],parts:[{s:'tier',e:['feather','feather','covert'],n:[10,9,8],len:[.62,.4,.2],wd:[.16,.19,.32],pa:[-10,96],arm:-40,tip:'#f0ddff',orn:'claw',al:.93,glow:1}]}}
 ];
+// v9: the older top-tier wings also shed trail particles from their tips during strokes (same system as the ascended wings)
+for(const[id,tr]of[['astral',['spark']],['eclipse',['ember']],['ascendant',['feather','dust']],['cosmic',['spark','dust']],['storm',['spark']],['mythic',['dust','spark']],['sovereign',['smoke','ember']],['monarch',['spark','dust']],['voidemp',['void','spark']],['phoenix',['ember']],['eternity',['feather','dust']],['drakelord',['ember']]]){const w=WINGS.find(x=>x.id==id);if(w)w.a.trail=tr}
 for(const w of WINGS){w.lvl=w.src=='level'?w.lvl:0;w.shop=w.src=='shop'?1:0;w.excl=w.src=='excl'?1:0;w.pw=Math.max(0,WRAR.indexOf(w.rar))+(w.a.L>90?1:0)}
 // Nameplates: a new tier every 15 levels. Names beyond the table continue automatically.
 const NP_NAMES=['Wanderer','Initiate','Pathfinder','Warden','Vanguard','Crystal Knight','Astral Sentinel','Eclipse Champion','Ascendant Paragon','Cosmic Overlord','Celestial Sovereign','Void Monarch','Starforged Regent','Eternal Ascendant'];

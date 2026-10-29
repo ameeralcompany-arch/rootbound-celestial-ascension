@@ -66,9 +66,11 @@ const AC6=(()=>{
   g.save();g.translate(0,-43+bob);g.scale(1.16,1.16);g.translate(0,43-bob);hairBack(g,HS[L.hs],-50+bob,L.hair,hs,t);if(GH)G7.hat(g,GH,-50+bob,t,'B',1.16);g.restore();
   // --- far arm
   const swing=sw>0?1-sw/.22:-1,armA=swing>=0?-2.1+3.5*swing:null;
-  limb(g,-5-ash,sh+3,-8-as*2.2,hip-3-as*.8,4.4,shade(ac,-.2));hand(-8-as*2.2,hip-2-as*.8,2.4);
+  // aura pose with wings (60-z-aurapose.js): pa = flight pose weight (arms spread, legs together and trailing), pg = grounded levitation (arms open)
+  const pz=o.pz,pa=pz?pz.air:0,pg=pz?pz.arms:0,lp=(a,b,k)=>a+(b-a)*k;let fax=-8-as*2.2,fay=hip-3-as*.8;if(pa||pg){fax=lp(lp(fax,-11.5,pg),-16,pa);fay=lp(lp(fay,hip-3.5,pg),sh+12,pa)}
+  limb(g,-5-ash,sh+3,fax,fay,4.4,shade(ac,-.2));hand(fax,fay+1,2.4);
   // --- legs
-  for(const s of[-1,1]){const lx=s*2.8,fx=lx+(air?s*3:s*ls*6),lift=air?-5:Math.max(0,s*ls)*5,fy=-2-lift;const pc=lc?shade(lc,s<0?-.2:0):of==2||of==5?shade(oc,-.15):shade(L.pants,s<0?-.2:0);
+  for(const s of[-1,1]){const lx=s*2.8,lift=air?-5:Math.max(0,s*ls)*5;let fx=lx+(air?s*3:s*ls*6),fy=-2-lift;if(pa){fx=lp(fx,s>0?-4.5:-7.8,pa);fy=lp(fy,s>0?-.5:-3.8,pa)}else if(pg)fx=lp(fx,lx*.55,pg*.7);const pc=lc?shade(lc,s<0?-.2:0):of==2||of==5?shade(oc,-.15):shade(L.pants,s<0?-.2:0);
    limb(g,lx,hip,fx,fy-5,5.6,pc);
    let done=false;if(GF)done=G7.boot(g,GF,lx,hip,fx,fy,t,run||air);else if(paw){G7.put(g,GB,'foot',fx,fy);done=true}
    if(!done){celf(g,()=>{g.beginPath();g.moveTo(fx-3,fy-6);g.lineTo(fx+3,fy-6);g.lineTo(fx+4.6,fy+2);g.lineTo(fx-3.4,fy+2);g.closePath()},boot,1);g.fillStyle=shade(trim,0);g.fillRect(fx-3,fy-6,6,1.1)}}
@@ -111,7 +113,7 @@ const AC6=(()=>{
   g.restore();
   // --- near arm (+ weapon)
   const hx=6+ash,hy2=sh+4;let hxp,hyp;
-  if(armA!=null&&fm){hxp=hx+Math.cos(armA)*15;hyp=hy2+Math.sin(armA)*15}else{hxp=9+as*2.2;hyp=hip-2+as*.8}
+  if(armA!=null&&fm){hxp=hx+Math.cos(armA)*15;hyp=hy2+Math.sin(armA)*15}else{hxp=9+as*2.2;hyp=hip-2+as*.8;if(pa||pg){hxp=lp(lp(hxp,11.5,pg),16,pa);hyp=lp(lp(hyp,hip-3,pg),sh+9,pa)}}
   if(wpn!='fist'&&!fm){g.save();g.translate(-6,sh+4);g.rotate(-2.35);g.scale(.58,.58);drawWeapon(g,wpn,44,0);g.restore()}
   limb(g,hx,hy2-1,hxp,hyp,4.6,ac);if(GB)G7.put(g,GB,'shoulder',0,sh);
   if(wpn!='fist'&&fm){g.save();g.translate(hxp,hyp);g.rotate(armA!=null?armA+.15:-.6+Math.sin(t*3)*.05);drawWeapon(g,wpn,WPN[wpn].k=='sword'?44:WPN[wpn].k=='scythe'?46:WPN[wpn].k=='glaive'?34:40,t);g.restore()}
@@ -129,28 +131,31 @@ const AC6=(()=>{
   wpn=WPN[wpn]?wpn:'fist';wr=wr||{};const local=q==='me',now=performance.now(),cxo=local?null:(q&&q.cx)||null;
   const L=info(lk,q,local),lvv=L.lv,wingIdx=local?(()=>{const w=wingShown(lvl);return w?WINGS.indexOf(w):-1})():(cxo&&cxo.w!=null?cxo.w:-1),aura=local?curAura(lvl):(cxo&&AURAS[cxo.a])||AURAS[0],tier=local?curPlateTier(lvl):(cxo&&cxo.t!=null?cxo.t:npTier(lvv));
   const feet=cy+54,mode=air?2:Math.abs(vx)>10?1:0;
+  // aura pose hook: visual-only lift (levitation px), lean and flight-pose weights; hitboxes and P are never touched
+  const pz=api.PZ&&wingIdx>=0?api.PZ(local?'me':'p:'+name,wingIdx,air,vx,sw,t,local):null,ly=pz?pz.lev:0;
   // aura circle under the feet (ground-projected)
   if(aura&&aura.id!='none'&&QM.cur.wfx>=0)Sigil.draw(g,aura,cx,feet-1,t,72,.8);
   // soft shadow
-  g.save();const sd=QM.cur.shadow;g.fillStyle='rgba(0,0,0,'+(sd?.32:.22)+')';g.beginPath();g.ellipse(cx,feet,15,4,0,0,6.3);g.fill();g.restore();
+  g.save();const sd=QM.cur.shadow;g.fillStyle='rgba(0,0,0,'+(sd?.32:.22)+')';g.beginPath();g.ellipse(cx,feet,15-ly*.7,4-ly*.12,0,0,6.3);g.fill();g.restore();
   // wings sit behind the body
   const hasLegacy=wr.wing&&WEAR[wr.wing];
-  if(!hasLegacy)WingArt.drawChar(g,wingIdx,cx,cy+24,f,t,mode,vx,local?0:(String(name).length%6),local?'me':'p:'+name,local?P.vy:null);
+  if(!hasLegacy)WingArt.drawChar(g,wingIdx,cx,cy+24-ly,f,t,mode,vx,local?0:(String(name).length%6),local?'me':'p:'+name,local?P.vy:null);
   else if(hasLegacy){g.save();g.translate(cx,feet);g.scale(1.1*f,1.1);try{drawWings(wr.wing,wr.wo!=null?wr.wo:wingOpen,wr.wo!=null?(wr.wo>.9?.3:0):wingFlap,t)}catch(_){}g.restore()}
-  g.save();g.translate(cx,feet);g.imageSmoothingEnabled=true;{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
+  if(pz&&api.PZG)api.PZG(g,pz,cx,feet-ly,t);
+  g.save();g.translate(cx,feet-ly);if(pz&&pz.lean){g.translate(0,-30);g.rotate(pz.lean*f);g.translate(0,30)}g.imageSmoothingEnabled=true;{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
-  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr})}finally{g.restore();FX7.ld=false}
+  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.05)WingArt.idleFx(WINGS[wingIdx],cx+cam.x,cy+cam.y+10+Math.random()*30,f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}
   // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
-  try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
+  try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy-ly,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
   // nameplate + bubble
-  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50,tier,nm,lvv,local?NPSKIN7.cur():null);
+  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50-ly,tier,nm,lvv,local?NPSKIN7.cur():null);
   if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-96,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-79);g.restore()}
  }
  function headFull(g,L,hy,t,air,wr){const h=HS[L.hs],GH=wr&&wr.hat&&WEAR[wr.hat]&&GEAR7.has(wr.hat,'hatF')?wr.hat:'';hairBack(g,h,hy,L.hair,0,t);if(GH){GEAR7.begin(g);GEAR7.hat(g,GH,hy,t,'B')}head(g,L,hy,t,air,false,0);hairFront(g,GH&&GEAR7.cover(GH)?HSN[L.hs]:h,hy,L.hair,0,t,air);if(GH)GEAR7.hat(g,GH,hy,t,'F')}
- return{draw,info,shade,head,headFull}})();
+ const api={draw,info,shade,head,headFull,PZ:null,PZG:null};return api})();
 // ===== GEAR7: equipment art shared by the item icons and the worn character (hats, armour, boots, gloves, the Sparkmouse costume).
 // Worn pieces are pre-rendered once per (item, part, scale bucket) on small offscreen canvases and blitted, so a fully geared character
 // costs a handful of drawImage calls per frame. Icons call the same vector parts at icon scale, so the icon and the worn look always match.
