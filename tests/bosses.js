@@ -27,7 +27,7 @@ const IDS=['warden','sovereign','eclipse','magma','tide','storm'];
   ok(id+': roar + name card mid-intro, barrier not formed yet',cd.card&&cd.name&&cd.arena==1,cd);
   await until(()=>!BOSS10.kind,null,6000);await W(200);
   const f=await E(s=>{const m=BOSS6.active(),A=ARENA7.arena,bb=document.getElementById('bb10');return{m:!!m,hp:P.hp>=s.hp,formed:A&&!A.pend,cam:window.CAMT?'arena':'player',fit:A&&A.fit,bar:!!document.querySelector('#bb10.on'),name:bb&&bb.querySelector('.bb10-h b').textContent,ticks:bb?[...bb.querySelectorAll('.bb10-tk')].map(e=>e.style.left):[],ph:bb&&bb.dataset.ph,cine:document.body.classList.contains('bb10c')}},s);
-  ok(id+': after the intro the arena forms and the camera returns',f.m&&f.formed&&f.cam==(f.fit?'arena':'player')&&!f.cine,f);
+  ok(id+': after the intro the arena forms and the camera frames the fight (the whole arena, or you + the boss inside it)',f.m&&f.formed&&f.cam=='arena'&&!f.cine,f);
   ok(id+': health bar with name and phase ticks at 66% / 33%',f.bar&&f.name&&f.ticks.join()=='66%,33%'&&f.ph=='1',f);
   ok(id+': player unharmed through the whole intro',f.hp,f);
   // ---- phases
