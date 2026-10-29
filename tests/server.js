@@ -102,7 +102,7 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
   const r3=await buy({id:'wing_dove',rid:'r3'});ok('owning a non-stackable item blocks a second purchase',!r3.ok&&r3.gems===after,r3.m);
   const r4=await buy({id:'blk_1',qty:5,rid:'r4'});ok('stackable items buy by quantity at catalog price',r4.ok&&r4.spent===P('blk_1')*5&&r4.owned===5);
   const r5=await buy({id:'blk_1',qty:-3,rid:'r5'});const r6=await buy({id:'blk_1',qty:1000,rid:'r6'});ok('negative / huge quantities rejected',!r5.ok&&!r6.ok);
-  const r7=await buy({id:'wing_moth',rid:'r7'});ok('too-expensive purchase rejected without charge',!r7.ok&&r7.gems===r4.gems,r7.m);
+  const r7=await buy({id:'wing_dragon',rid:'r7'});ok('too-expensive purchase rejected without charge',!r7.ok&&r7.gems===r4.gems,r7.m);
   const wl=await sc.rpc({t:'wallet'},m=>m.t=='wallet');ok('wallet view shows ownership',wl.owned.wing_dove===1&&wl.owned.blk_1===5&&wl.gems===r4.gems);
   await sleep(1700);await S.close();S=createServer({port,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});await S.listen();
   const SH2=await login(port,'shopper','shopper-pass-1');const wl2=await SH2.c.wait(m=>m.t=='wallet');ok('wallet and ownership survive a server restart',wl2.owned.wing_dove===1&&wl2.gems===r4.gems,JSON.stringify(wl2));
