@@ -53,6 +53,16 @@ for i,n,r,p,d in W: add(id='wpn_'+i,cat='weapons',n=n,price=p,rar=r,stack=0,ref=
 # ---- new building blocks (ids 42-59), data shared with the client through tools/new-blocks.json
 for b in json.load(open(os.path.join(R,'tools/new-blocks.json'))):
     add(id='blk_%d'%b['id'],cat='blocks',n=b['n'],price=b['p'],rar=rar_by_price(b['p']),stack=1,ref=b['id'],lv=b['lv'],d=b['d'],how='store',new=1)
+# ---- house-building blocks: tiles 100-114, inventory keys 400-414 (tile + 300; see src/js/late/70-zz-blocks2.js)
+HB=[(400,'Clay Brick',12,1,'Warm fired-clay bricks with soft mortar. The classic cottage wall.'),(401,'Half-Timber Wood Frame',16,2,'White plaster set in dark oak beams, like an old village house.'),(402,'Mossy Stone Brick',14,2,'Weathered stone bricks with moss in the cracks. Great for foundations.'),
+ (403,'Polished Wood Floor',12,1,'Honey-coloured floorboards with a soft polish.'),(404,'Slate Roof Tile',18,3,'Overlapping blue-grey slate shingles.'),(405,'Mossgreen Roof Tile',18,3,'Rounded clay roof tiles glazed forest green.'),(406,'Thatch Roof',10,1,'Bundled golden straw for a cosy cottage roof.'),
+ (407,'Framed Window',20,2,'A clear glass window in a wooden cross frame. You can see through it.'),(408,'Iron Lantern',35,3,'A little iron lantern with a warm flame. Lights up rooms at night.'),(409,'Wooden Bookshelf',28,3,'A dark wood shelf packed with colourful books.'),
+ (410,'Wooden Fence',8,1,'A picket fence for gardens and paths. You can walk past it.'),(411,'Woven Rug',14,2,'A soft patterned rug that lies flat on the floor.'),(412,'Marble Floor Tiles',26,4,'Polished checkered marble tiles.'),(413,'Flower Planter',16,2,'A wooden planter box full of bright flowers.'),(414,'Gravel Path',6,1,'Crunchy pebbles over packed earth. Makes a tidy village path.')]
+for k,n,p,lv,d in HB: add(id='blk_%d'%k,cat='blocks',n=n,price=p,rar=rar_by_price(p),stack=1,ref=k,lv=lv,d=d,how='store',new=1)
+# ---- background walls (item keys 320-328, placed into the wall layer; see src/js/late/70-zz-walls.js)
+WL=[(320,'Oak Panel Wall',6,1,'Warm vertical oak panelling for the inside of a house.'),(321,'Stone Brick Wall',6,1,'Grey stone bricks for cellars, towers and cosy cottages.'),(322,'Cream Floral Wallpaper',8,2,'Soft cream wallpaper with tiny flowers.'),(323,'Red Brick Wall',7,1,'Red bricks, set back as a background wall.'),
+ (324,'Whitewash Plaster Wall',6,1,'A bright limewashed plaster wall.'),(325,'Dark Timber Wall',7,2,'Dark stained planks, great for attics and taverns.'),(326,'Blue Striped Wallpaper',8,2,'Calm blue wallpaper with thin stripes.'),(327,'Mossy Stone Wall',7,2,'Old stones with moss growing between them.'),(328,'Cottage Window Wall',12,2,'A background wall with a bright window in it.')]
+for k,n,p,lv,d in WL: add(id='wall_%d'%k,cat='blocks',n=n,price=p,rar=rar_by_price(p),stack=1,ref=k,lv=lv,d=d,how='store',new=1)
 # ---- wings sold for gems (level + exclusive wings are never sold; see WINGS in src/js/late/20-data.js)
 WG=[('dove','Dove Wings','common',350,0,'Broad, rounded pearl-white feathers with luminous tips. Gives a double jump.'),
  ('blossom','Blossom Wings','common',380,0,'Soft petal wings that shed cherry-blossom petals as you move. Gives a double jump.'),

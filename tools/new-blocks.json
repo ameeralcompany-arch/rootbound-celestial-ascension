@@ -226,5 +226,14 @@
    150,
    60
   ]
+ },
+ {
+  "id": 95,
+  "n": "Wooden House Door",
+  "c": "#8a5a32",
+  "h": 3,
+  "p": 30,
+  "lv": 1,
+  "d": "A small house door (1 wide, 2 tall). It swings open when you walk up to it and closes behind you."
  }
 ]

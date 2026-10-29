@@ -1,6 +1,6 @@
 'use strict';
 // Server-side port of the game's validation rules. The client is NOT trusted: every world change is re-validated here.
-const W=256,H=128,MAXBLK=99;
+const W=256,H=128,MAXBLK=149;// tiles 100-149: extended block range (house blocks 100-114)
 const ODEF={20:{cat:'door',d:'Oak Door'},21:{cat:'door',d:'Stone Gate'},22:{cat:'door',d:'Steel Hatch'},23:{cat:'door',d:'Magic Portal'},24:{cat:'door',d:'Neon Gate'},25:{cat:'door',d:'Starlit Gate'},26:{cat:'door',d:'Sealed Gate',special:1},
  27:{cat:'cont',k:'chest',d:'Treasure Chest'},28:{cat:'misc',k:'sign',d:'Signpost'},29:{cat:'light',k:'lamp',d:'Lantern'},30:{cat:'dev',k:'switch',d:'Lever'},31:{cat:'dev',k:'plate',d:'Pressure Plate'},32:{cat:'tele',k:'tele',d:'Teleport Pad'},
  33:{cat:'station',d:'Crafting Table'},34:{cat:'cont',k:'crate',d:'Storage Crate'},35:{cat:'misc',d:'Training Dummy'},36:{cat:'misc',k:'waystone',d:'Waystone'},37:{cat:'deco',d:'Bench'},38:{cat:'deco',d:'Banner'},
