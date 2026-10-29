@@ -14,7 +14,7 @@ const ARENA7=(()=>{
   A={x0:L,x1:L+Math.min(w,(W-2)*T),y0:Tp,y1:Tp+Math.min(h,(H-1)*T),boss:m,c:colOf(m),t0:performance.now(),end:0,win:false};
   A.fit=A.x1-A.x0<=vw-T&&A.y1-A.y0<=vh-T;if(A.fit)window.CAMT={x:(A.x0+A.x1)/2,y:(A.y0+A.y1)/2};
   tone(55,110,.9,'sawtooth',.035);tone(880,1760,.6,'sine',.018,.3);try{say('A barrier seals you in with '+nameOf(m)+'!')}catch(_){}}
- {const _sp=BOSS6.spawn;BOSS6.spawn=function(id){const ok=_sp.apply(this,arguments);try{if(ok){const m=BOSS6.active();if(m)open(m)}}catch(e){console.error('ARENA7',e)}return ok}}
+ {const _sp=BOSS6.spawn;BOSS6.spawn=function(id){const ok=_sp.apply(this,arguments);try{if(ok){const m=BOSS6.active();if(m){open(m);try{CINE7.bossIntro(m,A)}catch(e){console.error('CINE7 intro',e)}}}}catch(e){console.error('ARENA7',e)}return ok}}   // the intro card (CINE7) plays while the barrier forms
  // ---- keep the player inside (runs after every physics step)
  function hold(o,w,h){if(!A||A.end)return;let hit=false;const l=A.x0+w/2,r=A.x1-w/2;if(o.x<l){o.x=l;hit=true;if(o.vx<0)o.vx=0}else if(o.x>r){o.x=r;hit=true;if(o.vx>0)o.vx=0}
   if(o.y<A.y0){o.y=A.y0;hit=true;if(o.vy<0)o.vy=0}else if(o.y+h>A.y1){o.y=A.y1-h;if(o.vy>0)o.vy=0}return hit}
@@ -26,7 +26,7 @@ const ARENA7=(()=>{
  function finish(win){if(!A||A.end)return;const m=A.boss;A.end=performance.now();A.win=win;
   if(win){// keep a copy of the boss to play its defeat animation after it leaves the fight
    G={m:Object.assign({},m,{hp:m.mhp,fl:0,dead:false,bs:'idle'}),t0:performance.now(),c:A.c};defeatSound()}
-  else{loseSound();try{BOSS6.clear()}catch(_){}try{UI6.say6('DEFEATED',nameOf(m).toUpperCase()+' VANISHED INTO THE DARK',3600)}catch(_){}}}
+  else{loseSound();try{BOSS6.clear()}catch(_){}try{CINE7.bossLose(nameOf(m))}catch(_){try{UI6.say6('DEFEATED',nameOf(m).toUpperCase()+' VANISHED INTO THE DARK',3600)}catch(_){}}}}
  // ---- watch the fight: it ends when the boss falls (win) or disappears because you were knocked out (lose)
  let lastCur='';
  {const _t=BOSS6.tick;BOSS6.tick=function(dt){_t.call(this,dt);try{

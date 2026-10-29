@@ -100,5 +100,6 @@ function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlg
 // persist edits made in the appearance editor into the active character slot
 {const _cs=celSave;celSave=function(){try{if(typeof SHOW7!='undefined'&&X6&&X6.sc&&!(X6.sc.act>0&&0)){X6.sc.looks[X6.sc.act|0]=sanAp(cel.ap);x6Save()}}catch(_){}_cs()}}
 // open at launch and via the HUD Home button / H key chord
-if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(creatorOn)return;clearInterval(iv);SHOW7.open()},300)}
+if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{const home=()=>{if(!creatorOn){SHOW7.open();return}let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(creatorOn)return;clearInterval(iv);SHOW7.open()},300)};
+ /* every launch: the story intro (CINE7) plays first, then fades into the home screen */try{CINE7.launch(home)}catch(e){console.error('CINE7',e);home()}}
 (()=>{const mkb=()=>{const g=document.querySelector('#hudbtns')||document.querySelector('#bmenu')?.parentElement;if(!g||document.getElementById('bhome'))return;const b=document.createElement('button');b.id='bhome';b.title='Home / characters';b.textContent='⌂';b.onclick=()=>{if(SHOW7.isOpen)SHOW7.close();else SHOW7.open()};g.insertBefore(b,g.firstChild)};setTimeout(mkb,400)})();
