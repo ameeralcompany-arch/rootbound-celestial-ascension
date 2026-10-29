@@ -1,0 +1,20 @@
+/* ===== v8 wardrobe: the mythic tier gets an obsidian card with a slow violet pulse (an opacity-only animation on one pseudo element,
+   so it composites cheaply), and the Male / Female body-type switch (home screen + hub Appearance tab). ===== */
+#store7 .card[data-rar=mythic],#inv7 .it7[data-rar=mythic]{background:radial-gradient(120% 90% at 50% 28%,#2c1a4c 0%,#140d22 58%,#07050c 100%)!important;border-color:#6d3cff!important;color:#efe6ff!important;box-shadow:0 0 0 1px rgba(138,76,255,.55),0 8px 24px -8px rgba(120,50,240,.75)!important}
+#store7 .card[data-rar=mythic] b,#store7 .card[data-rar=mythic] .pr{color:#f4ecff!important}
+#store7 .card[data-rar=mythic] img{background:radial-gradient(closest-side,rgba(120,60,230,.35),rgba(8,4,14,.6))!important}
+#store7 .card[data-rar=mythic]::before,#inv7 .it7[data-rar=mythic]::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;box-shadow:inset 0 0 0 1.5px #a070ff,inset 0 0 22px 2px rgba(150,80,255,.55);animation:g8pulse 2.6s ease-in-out infinite}
+#store7 .card[data-rar=mythic] .rtag,#store7 aside .rtag[data-rar=mythic]{background:linear-gradient(90deg,#2a1150,#7a2cff 60%,#b884ff)!important;color:#fff!important;border-color:transparent!important;text-shadow:0 0 6px rgba(200,160,255,.8)}
+#store7 aside[data-cat] .rtag[data-rar=mythic]{display:inline-block;padding:2px 8px;border-radius:99px}
+@keyframes g8pulse{0%,100%{opacity:.4}50%{opacity:1}}
+html[data-reduce=true] #store7 .card[data-rar=mythic]::before,html[data-reduce=true] #inv7 .it7[data-rar=mythic]::before{animation:none;opacity:.8}
+@media (prefers-reduced-motion:reduce){#store7 .card[data-rar=mythic]::before,#inv7 .it7[data-rar=mythic]::before{animation:none;opacity:.8}}
+/* body type switch */
+.gd8{display:inline-flex;gap:4px;padding:3px;border-radius:99px;border:1px solid var(--line,#3a3560);background:color-mix(in srgb,var(--ink,#fff) 4%,transparent);margin:10px 0 2px}
+.gd8 button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:99px;font:600 12.5px var(--font-ui,system-ui);letter-spacing:.04em;color:inherit;opacity:.7;transition:background .15s,opacity .15s}
+.gd8 button i{font-style:normal;font-size:13px}
+.gd8 button:hover{opacity:1}
+.gd8 button.on{opacity:1;background:var(--accent,#8a6bff);color:#fff}
+.gd8 button:focus-visible{outline:2px solid var(--accent,#8a6bff);outline-offset:2px}
+#hubbody .hrow .gd8{margin:0}
+#store7 .card[data-rar=mythic] .pr,#store7 .card[data-rar=mythic] .pr *,#store7 .card[data-rar=mythic] small{color:#e9dcff!important}

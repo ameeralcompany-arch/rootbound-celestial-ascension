@@ -100,10 +100,14 @@ CH=[('star','Star Charm','uncommon',250,'A small star that floats beside you.'),
  ('leaf','Leaf Charm','common',150,'A leaf that turns slowly.'),('chain','Spectral Chain Charm','rare',450,'A short chain of light that swings as you move.'),
  ('raven','Raven Companion','epic',1100,'A small raven that circles you.')]
 for i,n,r,p,d in CH: add(id='charm_'+i,cat='charms',n=n,price=p,rar=r,stack=0,ref=i,lv=0,d=d,how='store',new=1)
+# ---- v8 wardrobe (gear stays legacy: owned via ownW, stats in the WEAR table) + v8 charms; shared with tools/gear-catalog.js
+V8=json.load(open(os.path.join(R,'tools/gear-v8.json')))
+for g in V8['gear']: add(id='wear_'+g['id'],cat='gear',n=g['n'],price=g['price'],rar=g['rar'],stack=0,ref=g['id'],lv=g['lv'],d=g['d'],how='store',legacy=1,sub=g['sub'],new=1)
+for c in V8['charms']: add(id='charm_'+c['id'],cat='charms',n=c['n'],price=c['price'],rar=c['rar'],stack=0,ref=c['id'],lv=0,d=c['d'],how='store',new=1)
 ids=[i['id'] for i in items]; assert len(ids)==len(set(ids)),'duplicate ids'
 for i in items:
     assert i['price']>0 and i['rar'] in('common','uncommon','rare','epic','legendary','mythic','exclusive'),i
-feat=['wing_galaxy','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift']
+feat=['wing_galaxy','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder']
 for i in items: i['feat']=1 if i['id'] in feat else 0
 json.dump({'v':1,'items':items},open(os.path.join(R,'server/catalog.json'),'w'),separators=(',',':'))
 print(len(items),'items')

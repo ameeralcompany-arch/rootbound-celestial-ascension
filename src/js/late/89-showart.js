@@ -12,8 +12,10 @@ const SHOWART=(()=>{
   {len:30,flow:.1,top:3,th:28,fr:5,side:0,under:1},          // 4 undercut
   {len:330,flow:.9,top:3,th:30,fr:6,side:1,wind:1},          // 5 windblown long
   {len:28,flow:0,top:0,th:0,fr:6,side:0,crop:1},             // 6 short crop
-  {len:175,flow:.08,top:1,th:14,fr:6,side:1}];               // 7 shoulder
- function info(A){A=A||cel.ap;return{skin:A.skinCol,hair:A.hairCol,eye:AP.eyeCol[A.eyeCol|0]||'#35c9c0',out:A.outCol,trim:A.trimCol,hs:A.hair|0,es:A.eyes|0,of:A.outfit|0,acc:A.acc|0,cape:A.cape|0}}
+  {len:175,flow:.08,top:1,th:14,fr:6,side:1},                // 7 shoulder
+  {len:250,flow:.05,top:0,th:0,fr:6,side:1},                 // 8 long straight (v8)
+  {len:30,flow:.1,top:0,th:0,fr:6,side:1,twin:1}];           // 9 twin tails (v8)
+ function info(A){A=A||cel.ap;return{skin:A.skinCol,hair:A.hairCol,eye:AP.eyeCol[A.eyeCol|0]||'#35c9c0',out:A.outCol,trim:A.trimCol,hs:A.hair|0,es:A.eyes|0,of:A.outfit|0,acc:A.acc|0,cape:A.cape|0,gd:A.gd|0}}
  function bez(g,pts){g.moveTo(pts[0],pts[1]);for(let i=2;i<pts.length;i+=6)g.bezierCurveTo(pts[i],pts[i+1],pts[i+2],pts[i+3],pts[i+4],pts[i+5])}
 
  // ---------- shared drawing helpers ----------
@@ -43,6 +45,7 @@ const SHOWART=(()=>{
   g.fillStyle='rgba(30,10,40,.35)';g.fillRect(-w*1.1,-h*1.3,w*2.3,h*.5); // upper lid shadow
   g.restore();
   g.lineCap='round';g.strokeStyle=OL;g.lineWidth=5.2;g.beginPath();top();g.stroke();
+  if(L.gd==2){g.lineWidth=7;g.beginPath();g.moveTo(-w*.35,-h*1.02);g.bezierCurveTo(w*.2,-h*1.18,w*.7,-h*1.0,w*1.02,-h*(L.es==2?.0:.32));g.stroke();g.lineWidth=2.6;for(const[a,b,c,d]of[[w*1.0,-h*.34,w*1.5,-h*.86],[w*.78,-h*.78,w*1.16,-h*1.32],[w*.42,-h*1.06,w*.62,-h*1.56]]){g.beginPath();g.moveTo(a,b);g.quadraticCurveTo((a+c)/2+w*.08,(b+d)/2,c,d);g.stroke()}g.lineWidth=1.6;g.beginPath();g.moveTo(-w*.1,h*1.02);g.quadraticCurveTo(w*.4,h*.98,w*.82,h*.7);g.stroke()}
   g.lineWidth=2.4;g.beginPath();g.moveTo(w*1.0,-h*.3);g.quadraticCurveTo(w*1.2,-h*.45,w*1.34,-h*.62);g.stroke();
   g.beginPath();g.moveTo(-w*.95,-h*.1);g.quadraticCurveTo(-w*1.12,-h*.14,-w*1.22,-h*.3);g.stroke();
   g.restore()}
@@ -53,12 +56,13 @@ const SHOWART=(()=>{
   FACE(g);g.fillStyle=L.skin;g.fill();g.save();FACE(g);g.clip();
   const sg=g.createLinearGradient(236,0,386,0);sg.addColorStop(0,'rgba(255,255,255,.10)');sg.addColorStop(.6,'rgba(0,0,0,0)');sg.addColorStop(1,'rgba(120,60,70,.30)');g.fillStyle=sg;g.fillRect(230,130,160,210);
   g.fillStyle='rgba(110,60,66,.20)';g.beginPath();g.ellipse(310,166,112,34,0,0,6.3);g.fill();
-  g.fillStyle='rgba(255,110,128,.30)';g.beginPath();g.ellipse(264,276,20,8,0,0,6.3);g.fill();g.beginPath();g.ellipse(356,276,20,8,0,0,6.3);g.fill();
+  g.fillStyle=L.gd==1?'rgba(255,110,128,.14)':L.gd==2?'rgba(255,110,128,.4)':'rgba(255,110,128,.30)';g.beginPath();g.ellipse(264,276,20,8,0,0,6.3);g.fill();g.beginPath();g.ellipse(356,276,20,8,0,0,6.3);g.fill();
   g.restore();FACE(g);g.strokeStyle=OL;g.lineWidth=LW+.4;g.stroke();
-  g.strokeStyle=sh(L.hair,-.5);g.lineWidth=4;g.lineCap='round';g.beginPath();g.moveTo(248,208+(L.es==2?-5:0));g.quadraticCurveTo(272,196,298,206);g.stroke();g.beginPath();g.moveTo(322,206);g.quadraticCurveTo(348,196,372,208+(L.es==2?-5:0));g.stroke();
+  g.strokeStyle=sh(L.hair,-.5);g.lineWidth=L.gd==1?5.6:L.gd==2?3.2:4;g.lineCap='round';g.beginPath();g.moveTo(248,208+(L.es==2?-5:0));g.quadraticCurveTo(272,196,298,206);g.stroke();g.beginPath();g.moveTo(322,206);g.quadraticCurveTo(348,196,372,208+(L.es==2?-5:0));g.stroke();
   eye(g,276,240,L,blink,1);g.save();g.translate(620,0);g.scale(-1,1);eye(g,276,240,L,blink,-1);g.restore();
   g.strokeStyle='rgba(130,70,70,.75)';g.lineWidth=2;g.beginPath();g.moveTo(308,266);g.quadraticCurveTo(311,271,315,268);g.stroke();
-  g.strokeStyle='#7a2a36';g.lineWidth=3;g.beginPath();g.moveTo(297,292);g.quadraticCurveTo(310,299,323,292);g.stroke();g.strokeStyle='rgba(255,255,255,.4)';g.lineWidth=1.3;g.beginPath();g.moveTo(303,297);g.lineTo(317,297);g.stroke();
+  if(L.gd==2){g.fillStyle='rgba(214,80,104,.55)';g.beginPath();g.moveTo(299,293);g.quadraticCurveTo(310,304,321,293);g.quadraticCurveTo(310,297,299,293);g.fill()}
+  g.strokeStyle=L.gd==2?'#b8344c':'#7a2a36';g.lineWidth=3;g.beginPath();g.moveTo(297,292);g.quadraticCurveTo(310,299,323,292);g.stroke();g.strokeStyle='rgba(255,255,255,.4)';g.lineWidth=1.3;g.beginPath();g.moveTo(303,297);g.lineTo(317,297);g.stroke();
   g.restore()}
  // ---------- hair ----------
  function hairBack(g,L,t,H){const hc=L.hair,dark=sh(hc,-.5),mid=sh(hc,-.25),hl=sh(hc,.3),sw=Math.sin(t*1.2)*8*(.4+H.flow);
@@ -69,6 +73,7 @@ const SHOWART=(()=>{
   const gr=g.createLinearGradient(0,150,0,330+len);gr.addColorStop(0,sh(hc,-.35));gr.addColorStop(1,dark);g.fillStyle=gr;g.fill();g.strokeStyle=OL;g.lineWidth=LW;g.stroke();
   g.save();g.clip();for(let i=0;i<5;i++){const x=216+i*46;ribbon(g,[x,190,x+6+sw*.2,250+len*.4,x-4+sw*.4,290+len*.7,x+sw*.7+(i-2)*6,310+len],17,mid,{c0:mid,c1:dark,lw:1.2})}g.restore();
   if(H.tail){ribbon(g,[386,170,470+sw,200,500+sw*1.4,320,470+sw*1.8,470],34,mid,{c0:mid,c1:dark,hl:hl,lw:LW});ribbon(g,[394,190,520+sw,260,520+sw*1.6,430,490+sw*2,560],26,dark,{hl:hl,lw:LW});ribbon(g,[390,206,455+sw,300,455+sw*1.7,420,430+sw*2.2,520],20,mid,{hl:hl,lw:LW})}
+  if(H.twin){for(const s of[-1,1]){const x=s<0?236:384,w=Math.sin(t*1.3+s)*10;ribbon(g,[x,150,x+s*70,170,x+s*76+w*.5,330,x+s*40+w,520],40,mid,{c0:hc,c1:dark,hl:hl,lw:LW});ribbon(g,[x,160,x+s*40,220,x+s*50+w*.6,360,x+s*24+w,470],22,hc,{hl:hl,lw:1.4});g.fillStyle=sh(L.out||'#d9b46a',.1);g.beginPath();g.ellipse(x+s*10,158,14,10,s*.6,0,6.3);g.fill();g.strokeStyle=OL;g.lineWidth=LW;g.stroke()}}
   if(H.wind){for(let i=0;i<8;i++){const y0=172+i*20,wob=Math.sin(t*1.5+i*.8)*20;ribbon(g,[380,y0,470,y0-10+wob,560+wob,y0+70+i*14,660+wob*1.5,y0+140+i*30],17-(i%3)*2,i%2?dark:mid,{c0:i%2?mid:hc,c1:dark,hl:hl,lw:LW})}}
   g.restore()}
  function hairFront(g,L,t,H){const hc=L.hair,dark=sh(hc,-.5),mid=sh(hc,-.18),lit=sh(hc,.38),sw=Math.sin(t*1.7)*3;g.save();
@@ -95,9 +100,13 @@ const SHOWART=(()=>{
  function body(g,L,t){const out=L.out,tr=L.trim,dk=sh(out,-.45),br=Math.sin(t*1.5)*3;
   g.save();g.translate(0,br);
   if(L.cape){g.fillStyle=sh(out,-.6);g.beginPath();g.moveTo(190,404);g.bezierCurveTo(150,520,130,700,80,900);g.lineTo(540,900);g.bezierCurveTo(490,700,470,520,430,404);g.closePath();g.fill();g.strokeStyle=OL;g.lineWidth=LW;g.stroke()}
-  g.beginPath();g.moveTo(206,434);g.bezierCurveTo(218,392,262,380,292,376);g.lineTo(330,376);g.bezierCurveTo(360,380,404,392,416,434);g.bezierCurveTo(430,520,440,640,448,900);g.lineTo(172,900);g.bezierCurveTo(180,640,192,520,206,434);g.closePath();
+  // body type: 0 classic, 1 male (broad straight shoulders), 2 female (narrower shoulders, waist, softer chest line)
+  const gd=L.gd|0;g.beginPath();if(gd==1){g.moveTo(194,432);g.bezierCurveTo(204,388,258,378,292,376);g.lineTo(330,376);g.bezierCurveTo(364,378,416,388,426,432);g.bezierCurveTo(438,520,446,640,452,900);g.lineTo(168,900);g.bezierCurveTo(174,640,182,520,194,432)}
+  else if(gd==2){g.moveTo(216,440);g.bezierCurveTo(228,396,268,382,294,376);g.lineTo(326,376);g.bezierCurveTo(352,382,392,396,404,440);g.bezierCurveTo(412,520,394,600,398,664);g.bezierCurveTo(402,746,426,826,434,900);g.lineTo(186,900);g.bezierCurveTo(194,826,218,746,222,664);g.bezierCurveTo(226,600,208,520,216,440)}
+  else{g.moveTo(206,434);g.bezierCurveTo(218,392,262,380,292,376);g.lineTo(330,376);g.bezierCurveTo(360,380,404,392,416,434);g.bezierCurveTo(430,520,440,640,448,900);g.lineTo(172,900);g.bezierCurveTo(180,640,192,520,206,434)}g.closePath();
   const bg=g.createLinearGradient(190,0,430,0);bg.addColorStop(0,sh(out,.08));bg.addColorStop(.55,out);bg.addColorStop(1,sh(out,-.3));g.fillStyle=bg;g.fill();g.strokeStyle=OL;g.lineWidth=LW+.4;g.stroke();
   g.save();g.clip();
+  if(gd==2){g.strokeStyle='rgba(0,0,0,.2)';g.lineWidth=2.6;g.beginPath();g.moveTo(236,520);g.quadraticCurveTo(268,560,302,532);g.moveTo(318,532);g.quadraticCurveTo(352,560,384,520);g.stroke()}
   g.strokeStyle='rgba(0,0,0,.16)';g.lineWidth=2;for(const [a,b,c,d] of[[240,470,262,600],[372,470,356,620],[300,640,310,780],[220,660,236,820],[400,640,390,820]]){g.beginPath();g.moveTo(a,b);g.quadraticCurveTo((a+c)/2+10,(b+d)/2,c,d);g.stroke()}
   g.fillStyle=tr;g.strokeStyle=tr;g.lineWidth=5;const of=L.of;
   if(of==0){g.beginPath();g.moveTo(310,380);g.lineTo(310,900);g.stroke();for(let i=0;i<6;i++){g.beginPath();g.arc(298,480+i*70,4.5,0,6.3);g.fill()}}
@@ -162,17 +171,20 @@ const SHOWART=(()=>{
   const wg=o.wingIdx!=null?o.wingIdx:(()=>{const w=curWing(lvl);return w?WINGS.indexOf(w):-1})();
   if(wg>=0&&o.wings!==false)wings(g,t,wg,W,H);
   // equipment (only for the player's own active character; gallery presets pass no gear)
-  const G=o.gear||{},GB=G.body&&WEAR[G.body]?G.body:'',cover=G.hat&&typeof GEAR7!='undefined'&&GEAR7.cover(G.hat),Hh=cover?Object.assign({},H0,{top:0}):H0,Lb=GB?Object.assign({},L,{out:WEAR[GB].c,of:-1,trim:GB=='sparksuit'?GC:L.trim,cape:GB=='sparksuit'?0:L.cape}):L;
+  const G=o.gear||{},GB=G.body&&WEAR[G.body]?G.body:'',cover=G.hat&&typeof GEAR7!='undefined'&&GEAR7.cover(G.hat),Hh=cover?Object.assign({},H0,{top:0}):H0,Lb=GB?Object.assign({},L,{out:WEAR[GB].c,of:-1,trim:GB=='sparksuit'?GC:L.trim,cape:GB=='sparksuit'||(typeof GEAR8!='undefined'&&GEAR8.IDS.includes(GB))?0:L.cape}):L;
   const gl=G.glove&&WEAR[G.glove]?WEAR[G.glove].c:GB=='sparksuit'?GC:undefined;
+  if(EXT.back)try{EXT.back(g,G,t,L)}catch(_){}
   hairBack(g,L,t,H0);
   if(GB)gearBack(g,G,t);
-  body(g,Lb,t);if(GB)gearBody(g,G,t,Lb);
+  body(g,Lb,t);if(GB)gearBody(g,G,t,Lb);if(GB&&EXT.body)try{EXT.body(g,G,t,Lb)}catch(_){}
   g.save();g.translate(0,Math.sin(t*1.5)*3);
   drawFace(g,L,t,blink);accHead(g,L,t);hairFront(g,L,t,Hh);g.restore();gearHat(g,G,t);
-  drawWeaponLarge(g,wpnId,t,gl);
+  drawWeaponLarge(g,wpnId,t,gl);if(EXT.front)try{EXT.front(g,G,t,L)}catch(_){}
   g.restore()}
- return{draw,info}})();
+ // extension points for later modules (v8 wardrobe: 89-z-gearart.js): back(g,G,t,L) before the hair, body(g,G,t,Lb) over the outfit, front(g,G,t,L) last
+ const EXT={};
+ return{draw,info,EXT}})();
 
 // shared appearance sanitiser (also used for saved character slots)
 function sanAp(a){const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;a=a||{};
- return{hair:n(a.hair,0,0,AP.hair.length-1),eyes:n(a.eyes,0,0,AP.eyes.length-1),outfit:n(a.outfit,0,0,AP.outfit.length-1),acc:n(a.acc,0,0,AP.acc.length-1),cape:n(a.cape,0,0,AP.cape.length-1),eyeCol:n(a.eyeCol,0,0,AP.eyeCol.length-1),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}
+ return{hair:n(a.hair,0,0,AP.hair.length-1),eyes:n(a.eyes,0,0,AP.eyes.length-1),outfit:n(a.outfit,0,0,AP.outfit.length-1),acc:n(a.acc,0,0,AP.acc.length-1),cape:n(a.cape,0,0,AP.cape.length-1),eyeCol:n(a.eyeCol,0,0,AP.eyeCol.length-1),gd:n(a.gd,0,0,2),hairCol:col(a.hairCol,'#3a2a3a'),skinCol:col(a.skinCol,'#f1c9a0'),outCol:col(a.outCol,'#2d3f6b'),trimCol:col(a.trimCol,'#d9b46a')}}
