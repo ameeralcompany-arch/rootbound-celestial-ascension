@@ -476,7 +476,9 @@ hoodie:{s:'body',n:'Comfy Hoodie',c:'#8f8fa8',cost:240,lv:3,cd:30,d:'XP +8%, jum
 jacket:{s:'body',n:'Denim Jacket',c:'#3f6fb0',cost:320,lv:5,cd:35,d:'Damage taken -15%',sd:'Rally: +50% damage for 6s',b:{arm:.15}},
 sneakers:{s:'boot',n:'Cloud Runner Sneakers',c:'#f4f4ff',cost:300,lv:4,cd:12,d:'Speed +20%, jump +10%',sd:'Sprint: +40% speed for 5s',b:{spd:.2,jump:.1}},
 slippers:{s:'boot',n:'Fuzzy Slippers',c:'#ff9fc4',cost:130,lv:1,cd:14,d:'Slowly regenerate',sd:'Cozy Bounce: big hop',b:{regen:.8}},
-cowboy:{s:'boot',n:'Trail Boots',c:'#a06a3a',cost:280,lv:5,cd:9,d:'Damage -10%, speed +5%',sd:'Stomp: smash blocks below',b:{arm:.1,spd:.05}}};
+cowboy:{s:'boot',n:'Trail Boots',c:'#a06a3a',cost:280,lv:5,cd:9,d:'Damage -10%, speed +5%',sd:'Stomp: smash blocks below',b:{arm:.1,spd:.05}},
+sparkhood:{s:'hat',n:'Sparkmouse Hood',c:'#ffd23f',cost:900,lv:6,cd:25,d:'Speed +8%, light +60',sd:'Static Burst: zaps monsters around you',b:{spd:.08,light:60}},
+sparksuit:{s:'body',n:'Sparkmouse Suit',c:'#ffd23f',cost:1600,lv:8,cd:30,d:'Damage taken -10%, jump +12%',sd:'Thunder Hop: a charged high jump',b:{arm:.1,jump:.12}}};
 const SKK={hat:'Q',body:'R',wing:'Z',boot:'Shift',glove:'F'},SLOTS=['hat','body','wing','boot','glove'];
 const NPCS=[{id:'mira',n:'Mira',role:'Merchant',x:DX-7,c:'#e0903a',hat:'#7a4a2a',k:'shop'},{id:'oak',n:'Elder Oak',role:'Quest Giver',x:DX+7,c:'#5aa05a',hat:'#d8d8c0',k:'quest'},{id:'bram',n:'Bram',role:'Blacksmith',x:DX+13,c:'#8a8f9a',hat:'#333',k:'smith'}];
 const PRICE={1:2,2:2,3:4,5:7,6:9,7:12,8:3,9:40,10:80,11:5,12:12,13:20,14:10,15:6,17:500},LVREQ={9:5,10:9,12:3,13:3,17:2};
@@ -542,8 +544,8 @@ function seedIcon(x,n,S){burstBG(x,S);const G2=16,px=S/G2,cells=new Uint8Array(G
 function iconURL(k){if(ICON[k])return ICON[k];const S=48,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d');
  if(typeof k=='number'&&k<100)x.drawImage(spr(k,0,0),0,0,S,S);else if(typeof k=='number'&&k>=200)matIcon(x,k,S);else if(typeof k=='number')seedIcon(x,k-100,S);
  else if(k[0]=='w'){burstBG(x,S);const id=k.slice(2);if(id=='fist'){x.fillStyle='#ffd9a8';x.strokeStyle='#000';x.lineWidth=3;x.beginPath();x.arc(24,26,12,0,6.3);x.fill();x.stroke();x.lineWidth=2;for(let i=0;i<3;i++){x.beginPath();x.moveTo(18+i*6,16);x.lineTo(18+i*6,23);x.stroke()}}else if(WPN[id]){x.translate(22,27);x.rotate(-Math.PI/4);const L=WPN[id].k=='sword'?34:28;x.translate(-L*.4,0);drawWeapon(x,id,L,0)}}
- else{burstBG(x,S);drawWearIcon(x,k.slice(2),S)}ICONC[k]=c;return ICON[k]=c.toDataURL()}
-function drawWearIcon(x,id,S){const w=WEAR[id];if(!w)return;const c=w.c;x.save();x.translate(S/2,S/2+1);x.lineWidth=2;x.strokeStyle='#000';x.lineJoin='round';x.fillStyle=c;
+ else{const S2=96;c.width=c.height=S2;burstBG(x,S2);drawWearIcon(x,k.slice(2),S2)}ICONC[k]=c;return ICON[k]=c.toDataURL()}
+function drawWearIcon(x,id,S){const w=WEAR[id];if(!w)return;if(typeof GEAR7!='undefined'&&GEAR7.icon(x,id,S))return;const c=w.c;x.save();x.translate(S/2,S/2+1);x.lineWidth=2;x.strokeStyle='#000';x.lineJoin='round';x.fillStyle=c;
  if(id=='helmet'){x.beginPath();x.arc(0,3,13,Math.PI,0);x.lineTo(14,9);x.lineTo(-14,9);x.closePath();x.fill();x.stroke();x.fillStyle='#fff6b0';x.beginPath();x.arc(0,-6,4,0,6.3);x.fill();x.stroke()}
  else if(id=='clover'){for(let i=0;i<4;i++){x.save();x.rotate(i*Math.PI/2);x.beginPath();x.arc(6,0,6,0,6.3);x.fill();x.stroke();x.restore()}}
  else if(id=='sage'){x.beginPath();x.moveTo(-14,9);x.lineTo(0,-16);x.lineTo(14,9);x.closePath();x.fill();x.stroke();x.fillStyle='#ffd24a';x.fillRect(-16,8,32,4);x.strokeRect(-16,8,32,4)}

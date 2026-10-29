@@ -14,6 +14,23 @@ const DLG7=(()=>{
   box.querySelector('[data-ok]').onclick=()=>{const o={};for(const i of box.querySelectorAll('[data-k]'))o[i.dataset.k]=i.value;done(o)};const c=box.querySelector('[data-cancel]');if(c)c.onclick=()=>done(null);
   const f=box.querySelector('input,select');setTimeout(()=>{try{(f||box.querySelector('[data-ok]')).focus()}catch(_){}},30)})}
  return{open,confirm:(title,text,ok,danger)=>open({title,text,ok:ok||'Confirm',danger}).then(v=>!!v),alert:(title,text)=>open({title,text,cancel:'',ok:'OK'}),esc,get isOpen(){return !!cur}}})();
+// ===== MOTION7: helpers for the shared motion language (88-motion.css). Transform/opacity only; instant with reduced motion. =====
+// stagger(el,sel)  : items fade/rise in one after another (index in --i, capped), played once, then the class is dropped so hovers work normally
+// still(el)        : re-render without replaying the entrance
+// ind(nav,sel,mode): one sliding indicator per nav ('v' pill behind vertical tabs, 'u' underline under horizontal tabs); host keeps the last position across re-renders
+// tick(el,to,from) : numbers count to their new value (~0.4 s ease-out)
+const MOTION7=(()=>{
+ const reduce=()=>document.documentElement.getAttribute('data-reduce')=='true';
+ function stagger(el,sel,max){if(!el)return;const its=el.querySelectorAll(sel||':scope>*');let i=0;for(const k of its){k.classList.add('si');k.style.setProperty('--i',Math.min(i++,max||14))}el.classList.add('stg');clearTimeout(el._stg);el._stg=setTimeout(()=>el.classList.remove('stg'),1100)}
+ function still(el){if(el){clearTimeout(el._stg);el.classList.remove('stg')}}
+ function ind(nav,sel,mode,host){if(!nav)return;host=host||nav;mode=mode||'v';const on=nav.querySelector(sel||'.on');let b=nav.querySelector(':scope>.nind7');if(!b){b=document.createElement('i');b.className='nind7 '+mode;b.setAttribute('aria-hidden','true');nav.insertBefore(b,nav.firstChild)}
+  if(!on){b.style.opacity=0;host._ind=null;return}const r={x:on.offsetLeft,y:on.offsetTop,w:on.offsetWidth,h:on.offsetHeight},prev=host._ind;host._ind=r;
+  const set=q=>{if(mode=='u')b.style.transform='translate('+q.x+'px,'+(q.y+q.h-2)+'px) scaleX('+(q.w/100)+')';else{b.style.width=q.w+'px';b.style.height=q.h+'px';b.style.transform='translate('+q.x+'px,'+q.y+'px)'}};
+  const snap=q=>{b.style.transition='none';set(q);b.style.opacity=1;void b.offsetWidth;b.style.transition=''};
+  if(prev&&!reduce()&&(prev.x!=r.x||prev.y!=r.y)){snap(prev);set(r)}else snap(r)}
+ function tick(el,to,from){if(!el)return;to=Math.round(+to||0);const f=from!=null?+from:el._v!=null?el._v:to;el._v=to;cancelAnimationFrame(el._raf);if(reduce()||f===to||!isFinite(f)){el.textContent=to;return}
+  const t0=performance.now(),d=Math.min(700,320+Math.abs(to-f)*.6);el.textContent=Math.round(f);const step=now=>{const u=Math.min(1,(now-t0)/d),e=1-Math.pow(1-u,3);el.textContent=Math.round(f+(to-f)*e);if(u<1)el._raf=requestAnimationFrame(step)};el._raf=requestAnimationFrame(step)}
+ return{stagger,still,ind,tick,reduce}})();
 // ===== ITEM7: one item vocabulary for every screen. Category from the key, rarity from the catalog first (else by value), glyph + label so rarity never relies on colour alone =====
 const ITEM7=(()=>{
  const RAR=['common','uncommon','rare','epic','legendary','mythic'],RN=['Common','Uncommon','Rare','Epic','Legendary','Mythic'],GLY=['○','◇','◆','✦','★','✷'];

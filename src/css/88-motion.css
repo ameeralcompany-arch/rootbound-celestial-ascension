@@ -1,0 +1,125 @@
+/* ===================================================================
+   MOTION LANGUAGE v2: one calm, premium motion system for every panel.
+   - transform + opacity only (GPU-composited); 150-450 ms; arrive with a long ease-out, leave quicker with an ease-in
+   - entrances: fade + small rise/scale; lists cascade (--i set by MOTION7.stagger, capped) once per open / tab change
+   - exits where the code allows (class .out / removed .on before display:none)
+   - no infinite loops; html[data-reduce=true] collapses every duration (50-system) and the rules at the end switch them off
+   =================================================================== */
+html:root{--mo-in:.3s;--mo-out:.17s;--mo-fast:.16s;--mo-ease:cubic-bezier(.16,1,.3,1);--mo-ease-in:cubic-bezier(.5,0,.75,0);--mo-step:22ms}
+@keyframes mo-in{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes mo-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(8px) scale(.985)}}
+@keyframes mo-fade{from{opacity:0}to{opacity:1}}
+@keyframes mo-fadeout{from{opacity:1}to{opacity:0}}
+@keyframes mo-item{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes mo-tab{from{opacity:0;transform:translate(var(--mo-dx,0px),6px)}to{opacity:1;transform:none}}
+@keyframes mo-center{from{opacity:0;transform:translate(-50%,calc(-50% + 12px)) scale(.975)}to{opacity:1;transform:translate(-50%,-50%)}}
+@keyframes mo-center-out{from{opacity:1;transform:translate(-50%,-50%)}to{opacity:0;transform:translate(-50%,calc(-50% + 8px)) scale(.98)}}
+@keyframes mo-centerx{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes mo-centery{from{opacity:0;transform:translate(14px,-50%)}to{opacity:1;transform:translate(0,-50%)}}
+@keyframes mo-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes mo-sheen{from{transform:translateX(-140%) skewX(-18deg)}to{transform:translateX(330%) skewX(-18deg)}}
+@keyframes mo-tip{from{opacity:0;transform:translate(-50%,4px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes mo-banner{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+
+/* ---------- full-screen sheets ---------- */
+/* hub */
+#hub[style*=flex]{animation:mo-fade var(--mo-in) var(--mo-ease)}
+#hub[style*=flex] #hubc{animation:mo-in .36s var(--mo-ease)}
+#hub.out{animation:mo-fadeout var(--mo-out) var(--mo-ease-in) forwards;pointer-events:none}
+#hub.out #hubc{animation:mo-out var(--mo-out) var(--mo-ease-in) forwards}
+/* store: overlay fades, shell rises; removing .on plays it backwards before display:none */
+#store7{transition:opacity var(--mo-out) var(--mo-ease-in)!important}#store7.on{transition:opacity var(--mo-in) var(--mo-ease)!important}
+#store7 .shell{transform:translateY(16px) scale(.985);transition:transform var(--mo-out) var(--mo-ease-in)}
+#store7.on .shell{transform:none;transition:transform .38s var(--mo-ease)}
+/* inventory */
+#inv7{transition:opacity var(--mo-out) var(--mo-ease-in)}#inv7.show{transition:opacity var(--mo-in) var(--mo-ease)}
+#inv7 .sheet{transition:transform var(--mo-out) var(--mo-ease-in)}#inv7.show .sheet{transition:transform .38s var(--mo-ease)}
+/* shared modal + creator tools */
+#dlg7{transition:opacity var(--mo-out) var(--mo-ease-in)}#dlg7.on{transition:opacity .24s var(--mo-ease)}
+#dlg7 .box{transform:translateY(12px) scale(.97);transition:transform var(--mo-out) var(--mo-ease-in)}#dlg7.on .box{transform:none;transition:transform .34s var(--mo-ease)}
+#tools7 .sheet{transform:translateY(14px) scale(.985);transition:transform var(--mo-out) var(--mo-ease-in)}#tools7.on .sheet{transform:none;transition:transform .36s var(--mo-ease)}
+/* collection book */
+#book7[style*=block]{animation:mo-fade .24s var(--mo-ease)}#book7[style*=block] .shell{animation:mo-in .36s var(--mo-ease)}
+#book7.out{animation:mo-fadeout var(--mo-out) var(--mo-ease-in) forwards;pointer-events:none}#book7.out .shell{animation:mo-out var(--mo-out) var(--mo-ease-in) forwards}
+/* main menu card, its sub-screens, the character creator */
+#card{animation:mo-in .36s var(--mo-ease) both!important}
+#card>div:not(#logo):not(#tag){animation:mo-tab .28s var(--mo-ease) both}
+#creator{animation:mo-centery .34s var(--mo-ease) both!important}
+
+/* ---------- centred legacy panels (they sit on translate(-50%,-50%): keyframes keep the centring) ---------- */
+#dlg,#qm,#objui,.objpanel,#chestui{animation:mo-center var(--mo-in) var(--mo-ease) both}
+.objpanel.out{animation:mo-center-out var(--mo-out) var(--mo-ease-in) forwards;pointer-events:none}
+#prompt{animation:mo-centerx var(--mo-fast) var(--mo-ease) both}
+/* rows cascade once per open (class .fresh from 87-uisfx) */
+#dlg.fresh .rw,#dlg.fresh .tabs2,#qm.fresh>*{animation:mo-item .3s var(--mo-ease) both}
+#dlg.fresh .rw:nth-child(2),#qm.fresh>*:nth-child(2){animation-delay:22ms}#dlg.fresh .rw:nth-child(3),#qm.fresh>*:nth-child(3){animation-delay:44ms}
+#dlg.fresh .rw:nth-child(4),#qm.fresh>*:nth-child(4){animation-delay:66ms}#dlg.fresh .rw:nth-child(5),#qm.fresh>*:nth-child(5){animation-delay:88ms}
+#dlg.fresh .rw:nth-child(6){animation-delay:110ms}#dlg.fresh .rw:nth-child(7){animation-delay:132ms}#dlg.fresh .rw:nth-child(n+8),#qm.fresh>*:nth-child(n+6){animation-delay:150ms}
+
+/* ---------- lists: staggered entrance (MOTION7.stagger) ---------- */
+.stg .si{animation:mo-item .34s var(--mo-ease) both;animation-delay:calc(var(--i,0) * var(--mo-step))}
+#inv7 .stg .bar7 i,.stg .bar i,#hubbody.tabin .bar i,#hubbody.tabin .bar7 i{transform-origin:0 50%;animation:mo-fill .7s var(--mo-ease) .12s both}
+#craftui.stg .pg7 i{transform-origin:0 50%;animation:mo-fill .6s var(--mo-ease) .1s both}
+/* hub tab content: cross-fade and a short slide from the side of the new tab */
+#hubbody.tabin>*,#hubbody.tabin>*:nth-child(n){animation:mo-tab .32s var(--mo-ease) both;animation-delay:calc(var(--i,0) * 26ms)}
+/* detail panels: content settles in when the selection changes */
+#store7 aside>*,#inv7 aside>*{animation:mo-item .3s var(--mo-ease) both}
+#store7 aside>*:nth-child(2),#inv7 aside>*:nth-child(2){animation-delay:25ms}#store7 aside>*:nth-child(3),#inv7 aside>*:nth-child(3){animation-delay:50ms}
+#store7 aside>*:nth-child(4),#inv7 aside>*:nth-child(4){animation-delay:75ms}#store7 aside>*:nth-child(n+5),#inv7 aside>*:nth-child(n+5){animation-delay:95ms}
+
+/* ---------- navigation: one sliding indicator per nav (MOTION7.ind) ---------- */
+#hubnav,#store7 nav,#inv7 nav{position:relative}
+#hubnav>button,#store7 nav>button,#inv7 nav>button{position:relative;z-index:1}
+.nind7{position:absolute;left:0;top:0;z-index:0;pointer-events:none;opacity:0;transition:transform .36s var(--mo-ease),opacity .2s var(--mo-ease);will-change:transform}
+.nind7.v{border-radius:var(--rad-sm);background:var(--panel);border:1px solid var(--line-strong);box-shadow:var(--sh-1);box-sizing:border-box}
+.nind7.u{width:100px;height:2px;border-radius:2px;background:var(--accent);transform-origin:0 0}
+#hubnav button.on,#store7 nav button.on{background:transparent!important;box-shadow:none!important;border-color:transparent!important}
+#inv7 nav button.on,html[data-theme=dark] #inv7 nav button.on{background:transparent!important;color:var(--ink)!important}
+/* hover nudges use transform (the old padding shift re-flowed the whole nav on every hover) */
+#hubnav button{transition:background var(--mo-fast),color var(--mo-fast),transform var(--mo-fast) var(--mo-ease)!important}
+#hubnav button:hover{padding-left:10px!important}#hubnav button:hover:not(.on){transform:translateX(3px)}
+#store7 nav button{transition:background var(--mo-fast),color var(--mo-fast),transform var(--mo-fast) var(--mo-ease)!important}
+#store7 nav button:hover{padding-left:12px!important}#store7 nav button:hover:not(.on){transform:translateX(3px)}
+.snav7 button,.tabs2 button,#tools7 nav button{transition:background var(--mo-fast),color var(--mo-fast),border-color var(--mo-fast),transform var(--mo-fast) var(--mo-ease)!important}
+#show nav a{transition:color var(--mo-fast),transform var(--mo-fast) var(--mo-ease)}#show nav a:hover{transform:translateY(-1px)}
+
+/* ---------- hover / press ---------- */
+.hcard,#store7 .card,#inv7 .it7,#show .gt,#chestui .cs,.rc7,.rw{transition:transform .2s var(--mo-ease),box-shadow .2s var(--mo-ease),border-color .2s var(--mo-ease)!important}
+.hcard:hover{transform:translateY(-2px)}
+.hcard:active,#store7 .card:active,#inv7 .it7:active,#show .gt:active,#chestui .cs:active,#bar .hb:active{transform:translateY(0) scale(.975)!important;transition-duration:.08s!important}
+html body button:not(:disabled):active{transition-duration:.08s}
+html body .hbtn,html body button.pri,#inv7 .btn,#store7 aside button.pri,#show .btn{transition:transform var(--mo-fast) var(--mo-ease),filter var(--mo-fast),box-shadow .2s var(--mo-ease)!important}
+html body .hbtn:hover:not(:disabled),html body button.pri:hover:not(:disabled),#store7 aside button.pri:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.07)}
+#hudR button,#bhub,#bhome,#bstore{transition:transform var(--mo-fast) var(--mo-ease),background .2s!important}#hudR button:hover,#bhub:hover{transform:translateY(-1px)}
+/* rare and above: a single soft sheen crosses the card on hover / selection only (never idle) */
+:is(#inv7 .it7,#store7 .card,.gcard7):is([data-rar=rare],[data-rar=epic],[data-rar=legendary],[data-rar=mythic],[data-rar=exclusive]):not(.lock):is(:hover,.sel)::after{content:''!important;position:absolute;top:0;bottom:0;left:0;width:34%;opacity:.45!important;pointer-events:none;z-index:2;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);animation:mo-sheen 1.15s var(--mo-ease) 1 both!important}
+html[data-theme=dark] :is(#inv7 .it7,#store7 .card,.gcard7):not(.lock):is(:hover,.sel)::after{opacity:.22!important}
+
+/* ---------- toasts (87-uisfx) ---------- */
+#toast7{position:fixed;left:50%;bottom:calc(178px + env(safe-area-inset-bottom,0px));width:0;height:0;z-index:8500;pointer-events:none}
+#toast7 .t7{position:absolute;left:0;bottom:0;white-space:nowrap;max-width:min(640px,90vw);overflow:hidden;text-overflow:ellipsis;padding:9px 20px;border-radius:var(--rad-pill);background:var(--toast-bg);border:1px solid var(--toast-bd);color:var(--toast-tx);font:600 13.5px/1.3 var(--font-ui);letter-spacing:.01em;box-shadow:var(--sh-2);
+ opacity:0;transform:translate(-50%,14px) scale(.97);transition:opacity .26s var(--mo-ease),transform .42s var(--mo-ease)}
+#toast7 .t7.in{opacity:1;transform:translate(-50%,0)}
+#toast7 .t7.out{opacity:0;transform:translate(-50%,-10px) scale(.98);transition:opacity .2s var(--mo-ease-in),transform .24s var(--mo-ease-in)}
+
+/* ---------- tooltips + level banner (the old banner animated blur + letter-spacing, which re-laid out text every frame) ---------- */
+[data-tip]:hover::before{animation:mo-tip var(--mo-fast) var(--mo-ease) both!important}
+#banner{filter:none!important;transition:opacity .45s var(--mo-ease),transform .6s var(--mo-ease)!important}
+#banner b{animation:none!important}
+#banner.on b{animation:mo-banner .7s var(--mo-ease) both!important}#banner.on span{animation:mo-banner .7s var(--mo-ease) .12s both}
+
+/* ---------- equipment icons are drawn at 2x: smooth downscale instead of pixel snapping ---------- */
+#inv7 .it7[data-cat=wear] img,#inv7 aside .pic[data-cat=wear] img,.gcard7 .pl7 img,#skills img{image-rendering:auto!important}
+
+/* ---------- decluttering: redundant inner frames, numbering and duplicate labels ---------- */
+#hudL:before,#card:after,#dlg7 .box:before{display:none!important}
+#hubnav button:before,#store7 nav button:before{display:none!important}
+#hubnav button.on:after{display:none!important}
+#store7 header h2:after{content:none!important}
+.gcard7.sel:before{display:none!important}
+
+/* ---------- reduced motion: no entrance/exit choreography at all ---------- */
+html[data-reduce=true] .stg .si,html[data-reduce=true] #hubbody.tabin>*,html[data-reduce=true] #dlg,html[data-reduce=true] #qm,html[data-reduce=true] #objui,html[data-reduce=true] .objpanel,html[data-reduce=true] #chestui,html[data-reduce=true] #prompt,html[data-reduce=true] #card,html[data-reduce=true] #card>div,html[data-reduce=true] #creator,html[data-reduce=true] #hub,html[data-reduce=true] #hubc,html[data-reduce=true] #book7,html[data-reduce=true] #book7 .shell,html[data-reduce=true] .fresh *,html[data-reduce=true] #banner b,html[data-reduce=true] #banner span{animation:none!important}
+html[data-reduce=true] :is(#inv7 .it7,#store7 .card,.gcard7)::after{display:none!important}
+html[data-reduce=true] .nind7,html[data-reduce=true] #toast7 .t7{transition:none!important}
+@media(prefers-reduced-motion:reduce){.stg .si,#hubbody.tabin>*,#dlg,#qm,#objui,.objpanel,#chestui,#prompt,#card,#card>div,#creator,#hub,#hubc,#book7,#book7 .shell{animation:none!important}.nind7,#toast7 .t7{transition:none!important}}

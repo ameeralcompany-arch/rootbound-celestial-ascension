@@ -7,8 +7,8 @@ const UI6=(()=>{
  hl.insertBefore(tt,el('pname').nextSibling);hl.appendChild(hw);
  function withCtx(ctx,fn){const o=g;g=ctx;try{fn()}finally{g=o}}
  let pkey='';
- function portrait(){const A=cel.ap,dk=document.documentElement.dataset.theme=='dark',key=JSON.stringify(A)+dk;if(key==pkey)return;pkey=key;const x=pc.getContext('2d');x.clearRect(0,0,128,128);x.save();x.beginPath();x.arc(64,64,64,0,6.3);x.clip();const gr=x.createRadialGradient(64,44,6,64,64,72);gr.addColorStop(0,dk?'#4a3a78':'#ffffff');gr.addColorStop(.6,dk?'#2a2148':'#e6def6');gr.addColorStop(1,dk?'#181430':'#d6e2f4');x.fillStyle=gr;x.fillRect(0,0,128,128);
-  withCtx(x,()=>{x.save();x.translate(64,236);x.scale(3.4,3.4);const L=AC6.info(look,null,true);AC6.headFull(x,L,-50,0,0);x.restore()});x.restore()}
+ function portrait(){const A=cel.ap,dk=document.documentElement.dataset.theme=='dark',key=JSON.stringify(A)+dk+(wear.hat||'');if(key==pkey)return;pkey=key;const x=pc.getContext('2d');x.clearRect(0,0,128,128);x.save();x.beginPath();x.arc(64,64,64,0,6.3);x.clip();const gr=x.createRadialGradient(64,44,6,64,64,72);gr.addColorStop(0,dk?'#4a3a78':'#ffffff');gr.addColorStop(.6,dk?'#2a2148':'#e6def6');gr.addColorStop(1,dk?'#181430':'#d6e2f4');x.fillStyle=gr;x.fillRect(0,0,128,128);
+  withCtx(x,()=>{x.save();const hz=wear.hat&&WEAR[wear.hat]?1:0;x.translate(64,236-hz*8);x.scale(3.4-hz*.4,3.4-hz*.4);const L=AC6.info(look,null,true);AC6.headFull(x,L,-50,0,0,wear);x.restore()});x.restore()}
  function say6(t,s,ms){const b=el('banner');b.firstChild.textContent=t;b.lastChild.textContent=s||'';b.classList.add('on');clearTimeout(say6.t);say6.t=setTimeout(()=>b.classList.remove('on'),ms||3200)}
  // ---- minimap
  const mc=el('minic'),mx=mc.getContext('2d');let mmT=0;
@@ -28,7 +28,9 @@ const UI6=(()=>{
  // ---- hub
  const nav=el('hubnav'),body=el('hubbody');
  const EXT={};const TABS=[['profile','Profile'],['look','Appearance'],['wings','Wings & Aura'],['plates','Nameplates'],['skills','Skills'],['gear','Equipment'],['quests','Quests'],['settings','Settings'],['account','Save Data']];
- function open(t){hubOn=true;if(t)tab=t;el('hub').style.display='flex';render()}function close(){hubOn=false;el('hub').style.display='none'}
+ // open: overlay fades, sheet rises (CSS); close: a short exit (class .out) before display:none, so the hub never just blinks away
+ function open(t){hubOn=true;if(t)tab=t;const h=el('hub');clearTimeout(close.t);h.classList.remove('out');if(h.style.display!='flex')lastTab='';h.style.display='flex';render()}
+ function close(){if(!hubOn)return;hubOn=false;const h=el('hub');h.classList.add('out');clearTimeout(close.t);close.t=setTimeout(()=>{h.classList.remove('out');if(!hubOn)h.style.display='none'},MOTION7.reduce()?0:170)}
  el('hubx').onclick=close;el('hub').addEventListener('mousedown',e=>{if(e.target.id=='hub')close()});
  addEventListener('keydown',e=>{if(!entered||RB_SESS==null)return;const k=e.key.toLowerCase();if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;if(hubOn){e.stopPropagation();if(k=='escape'||k=='c')close();return}if(k=='c'&&menuEl.style.display=='none'&&!dlgOpen){open();e.stopPropagation()}},true);
  function canvasFor(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
@@ -37,9 +39,11 @@ const UI6=(()=>{
  const sel=(cond)=>cond?' sel':'';
  let lastTab='';
  function render(){nav.innerHTML='<h2>HUB</h2>'+TABS.map(t=>'<button data-t="'+t[0]+'" class="'+(t[0]==tab?'on':'')+'">'+t[1]+'</button>').join('');nav.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});body.scrollTop=0;
-  // content fades in only when the tab changes, not on every refresh inside a tab
-  if(tab!=lastTab){lastTab=tab;body.classList.remove('tabin');void body.offsetWidth;body.classList.add('tabin');clearTimeout(render.t);render.t=setTimeout(()=>body.classList.remove('tabin'),420)}
-  (EXT[tab]||({profile,look,wings,plates,skills,gear,quests,account})[tab]||profile)();try{EXT.post&&EXT.post(tab,body)}catch(e){console.error(e)}}
+  try{MOTION7.ind(nav,'button.on','v')}catch(_){}
+  // content fades in only when the tab changes, not on every refresh inside a tab; it slides from the side the new tab is on
+  const changed=tab!=lastTab;if(changed){const ix=k=>TABS.findIndex(t=>t[0]==k),d=lastTab?Math.sign(ix(tab)-ix(lastTab)):0;body.style.setProperty('--mo-dx',(d*12)+'px');lastTab=tab;body.classList.remove('tabin');void body.offsetWidth;body.classList.add('tabin');clearTimeout(render.t);render.t=setTimeout(()=>body.classList.remove('tabin'),700)}
+  (EXT[tab]||({profile,look,wings,plates,skills,gear,quests,account})[tab]||profile)();try{EXT.post&&EXT.post(tab,body)}catch(e){console.error(e)}
+  if(changed){let i=0;for(const c of body.children)c.style.setProperty('--i',Math.min(i++,8));body.querySelectorAll('.hgrid,.ach7').forEach(g=>MOTION7.stagger(g,':scope>*',12));body.querySelectorAll('.kv7 b').forEach(b=>{const v=+b.textContent;if(isFinite(v))MOTION7.tick(b,v,0)})}}
  function profile(){const t=npTier(lvl),w=curWing(lvl),nx=npRange(t)[1]+1,nw=WINGS.find(x=>!x.shop&&lvl<x.lvl),xpp=Math.min(100,xp/xpNeed(lvl)*100);
   body.innerHTML='<h3>Profile</h3><div class="prof"><canvas id="pv" width="220" height="286"></canvas><div><div class="psub7">✦ '+esc(npName(t))+' · Level '+lvl+'</div><div class="pname7">'+esc(myName)+'</div>'+
   '<div class="stat" style="margin-top:14px!important"><span>XP</span><div class="bar"><i style="width:'+xpp+'%"></i></div><small>'+Math.floor(xp)+' / '+xpNeed(lvl)+'</small></div>'+

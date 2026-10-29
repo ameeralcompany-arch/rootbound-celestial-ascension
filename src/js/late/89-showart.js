@@ -111,6 +111,30 @@ const SHOWART=(()=>{
   if(L.acc==5){g.fillStyle='#e9e9f2';g.beginPath();g.moveTo(190,430);g.quadraticCurveTo(310,364,432,430);g.lineTo(424,456);g.quadraticCurveTo(310,402,198,456);g.closePath();g.fill();g.strokeStyle=OL;g.lineWidth=LW;g.stroke();for(let i=0;i<14;i++){const x=198+i*16.5,y=438+Math.abs(Math.sin(i*1.3))*6;g.beginPath();g.moveTo(x-8,y);g.lineTo(x+1,y+16+Math.sin(i*2+t)*3);g.lineTo(x+9,y);g.closePath();g.fillStyle='#d7d7e4';g.fill();g.stroke()}}
   if(L.acc==1){g.fillStyle=L.trim;g.beginPath();g.moveTo(240,364);g.quadraticCurveTo(310,404,382,364);g.lineTo(378,392);g.quadraticCurveTo(310,430,244,392);g.closePath();g.fill();g.strokeStyle=OL;g.lineWidth=LW;g.stroke();g.beginPath();g.moveTo(346,398);g.lineTo(352,474+Math.sin(t*2)*4);g.lineTo(372,466);g.lineTo(366,392);g.closePath();g.fill();g.stroke()}
   g.restore()}
+ // ---------- worn equipment (front view, design space). Hats reuse GEAR7's vector art scaled onto the head; body pieces get a front-facing overlay ----------
+ const GY='#ffd23f',GC='#fff3c9',GT='#36d6e0',GG='#f2c14e';
+ function gstar(g,cx,cy,r1,r2,n,rot){g.beginPath();for(let i=0;i<n*2;i++){const a=(rot==null?-Math.PI/2:rot)+i*Math.PI/n,r=i%2?r2:r1;g.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}g.closePath()}
+ function gfill(g,c,lw){g.fillStyle=c;g.fill();g.strokeStyle=OL;g.lineWidth=lw||LW;g.stroke()}
+ function gearBack(g,G,t){const b=G.body;
+  if(b=='sparksuit'){const sw=Math.sin(t*2.4)*.06;g.save();g.translate(430,830);g.rotate(sw+.12);g.scale(1.15,1.15);g.beginPath();g.moveTo(-10,30);g.bezierCurveTo(60,20,118,-40,112,-140);g.bezierCurveTo(108,-200,80,-226,52,-232);g.lineTo(44,-196);g.bezierCurveTo(66,-188,80,-170,78,-140);g.bezierCurveTo(76,-70,40,-20,-20,-10);g.closePath();const gr=g.createLinearGradient(0,30,110,-230);gr.addColorStop(0,sh(GY,-.25));gr.addColorStop(1,GY);g.fillStyle=gr;g.fill();g.strokeStyle=OL;g.lineWidth=LW;g.stroke();
+   g.save();g.globalCompositeOperation='lighter';const gl=g.createRadialGradient(50,-236,4,50,-236,70);gl.addColorStop(0,'rgba(127,246,255,.55)');gl.addColorStop(1,'rgba(127,246,255,0)');g.fillStyle=gl;g.fillRect(-30,-310,160,150);g.restore();
+   gstar(g,50,-240,40,18,5,-1.75);gfill(g,GT);gstar(g,50,-240,20,9,5,-1.75);g.fillStyle='#bdfcff';g.fill();g.restore()}
+  if(b=='sparksuit'&&G.hat!='sparkhood'){g.beginPath();g.moveTo(232,400);g.bezierCurveTo(226,340,270,322,310,322);g.bezierCurveTo(350,322,394,340,388,400);g.closePath();gfill(g,sh(GY,-.12));for(const s of[-1,1]){g.save();g.translate(310+s*62,336);g.rotate(s*.7);g.beginPath();g.moveTo(-14,6);g.bezierCurveTo(-18,-20,-10,-44,0,-48);g.bezierCurveTo(10,-44,18,-20,14,6);g.closePath();gfill(g,GY,1.4);g.restore()}}
+  if(b=='hoodie'){g.beginPath();g.moveTo(236,404);g.bezierCurveTo(228,350,270,334,310,334);g.bezierCurveTo(350,334,392,350,384,404);g.closePath();gfill(g,sh('#8f8fa8',-.12))}}
+ function gearBody(g,G,t,L){const b=G.body;if(!b||!WEAR[b])return;const br=Math.sin(t*1.5)*3;g.save();g.translate(0,br);g.lineJoin='round';
+  if(b=='sparksuit'){g.beginPath();g.moveTo(310,540);g.bezierCurveTo(392,540,404,700,396,900);g.lineTo(224,900);g.bezierCurveTo(216,700,228,540,310,540);g.closePath();gfill(g,GC);gstar(g,310,690,38,16,5);gfill(g,GT,1.6);g.fillStyle='#e8ffff';g.beginPath();g.arc(300,676,6,0,6.3);g.fill();
+   g.strokeStyle='rgba(120,80,10,.55)';g.lineWidth=3;g.beginPath();g.moveTo(310,400);g.lineTo(310,540);g.stroke();gstar(g,322,452,13,4,4,0);g.fillStyle=GT;g.fill();g.fillStyle=GC;for(let i=0;i<7;i++){g.beginPath();g.arc(262+i*16,382+Math.abs(i-3)*-2,9,0,Math.PI);g.fill()}for(const[a,c]of[[236,500],[390,470]]){gstar(g,a,c,12,3.4,4,0);g.fillStyle=GT;g.fill()}}
+  else if(b=='plate'){const S='#c9d2e0';g.beginPath();g.moveTo(222,430);g.bezierCurveTo(260,400,360,400,398,430);g.lineTo(392,600);g.quadraticCurveTo(310,676,228,600);g.closePath();const gr=g.createLinearGradient(220,0,400,0);gr.addColorStop(0,'#f2f5fa');gr.addColorStop(.5,S);gr.addColorStop(1,sh(S,-.35));g.fillStyle=gr;g.fill();g.strokeStyle=OL;g.lineWidth=LW+.4;g.stroke();
+   g.strokeStyle=sh(S,-.5);g.lineWidth=2;g.beginPath();g.moveTo(310,410);g.lineTo(310,640);g.stroke();g.strokeStyle='#e2b54a';g.lineWidth=5;g.beginPath();g.moveTo(230,600);g.quadraticCurveTo(310,670,390,600);g.stroke();for(let i=0;i<2;i++){g.beginPath();g.moveTo(232,650+i*44);g.quadraticCurveTo(310,690+i*44,388,650+i*44);g.lineTo(390,684+i*44);g.quadraticCurveTo(310,724+i*44,230,684+i*44);g.closePath();gfill(g,sh(S,-.1-i*.06))}
+   g.save();g.globalCompositeOperation='lighter';const gl=g.createRadialGradient(310,500,2,310,500,50);gl.addColorStop(0,'rgba(127,230,255,.7)');gl.addColorStop(1,'rgba(127,230,255,0)');g.fillStyle=gl;g.fillRect(250,440,120,120);g.restore();g.beginPath();g.moveTo(310,480);g.lineTo(326,500);g.lineTo(310,520);g.lineTo(294,500);g.closePath();gfill(g,'#3fc4ff',2);
+   for(const s of[-1,1]){g.save();g.translate(310+s*104,442);g.rotate(s*.3);g.beginPath();g.ellipse(0,22,54,26,0,0,6.3);gfill(g,sh(S,-.14));g.beginPath();g.ellipse(0,0,60,40,0,Math.PI,0);g.quadraticCurveTo(0,30,-60,0);gfill(g,S);g.strokeStyle='#e2b54a';g.lineWidth=5;g.beginPath();g.moveTo(-56,12);g.quadraticCurveTo(0,36,56,12);g.stroke();g.restore()}}
+  else if(b=='robe'){g.strokeStyle=GG;g.lineWidth=8;g.beginPath();g.moveTo(262,382);g.lineTo(310,520);g.lineTo(358,382);g.stroke();g.fillStyle=sh(GG,-.1);g.fillRect(196,612,232,26);g.save();g.globalCompositeOperation='lighter';const gl=g.createRadialGradient(310,625,2,310,625,40);gl.addColorStop(0,'rgba(159,243,255,.8)');gl.addColorStop(1,'rgba(159,243,255,0)');g.fillStyle=gl;g.fillRect(260,575,100,100);g.restore();g.beginPath();g.moveTo(310,608);g.lineTo(324,625);g.lineTo(310,642);g.lineTo(296,625);g.closePath();gfill(g,'#5be0ff',2);for(const[a,c,r]of[[244,500,13],[376,540,11],[262,760,10],[372,800,12],[224,860,9]]){gstar(g,a,c,r,r*.3,4,0);g.fillStyle='#ffe9a8';g.fill()}}
+  else if(b=='vest'){g.fillStyle='#e9e4dc';g.beginPath();g.moveTo(286,380);g.lineTo(334,380);g.lineTo(326,900);g.lineTo(294,900);g.closePath();g.fill();for(const s of[-1,1]){g.fillStyle='#e7f05a';g.fillRect(s<0?200:330,640,90,30);g.fillStyle='#dfe4ee';g.fillRect(s<0?200:330,650,90,10);g.beginPath();g.rect(s<0?226:344,470,52,58);gfill(g,sh('#b5774a',-.08),1.4)}}
+  else if(b=='hoodie'){for(const s of[-1,1]){g.strokeStyle=OL;g.lineWidth=7;g.beginPath();g.moveTo(310+s*18,392);g.lineTo(310+s*24,500);g.stroke();g.strokeStyle='#f6f4fb';g.lineWidth=4;g.stroke()}g.beginPath();g.moveTo(240,700);g.lineTo(380,700);g.lineTo(400,820);g.lineTo(220,820);g.closePath();gfill(g,sh('#8f8fa8',-.08))}
+  else if(b=='jacket'){g.fillStyle='#f2f0ea';g.beginPath();g.moveTo(280,380);g.lineTo(340,380);g.lineTo(330,900);g.lineTo(290,900);g.closePath();g.fill();for(const s of[-1,1]){g.beginPath();g.moveTo(310+s*30,380);g.lineTo(310+s*104,392);g.lineTo(310+s*62,470);g.lineTo(310+s*26,440);g.closePath();gfill(g,sh('#3f6fb0',.1));g.beginPath();g.rect(s<0?228:340,520,52,46);gfill(g,sh('#3f6fb0',.06),1.4)}}
+  else if(b=='pajamas'){for(const s of[-1,1]){g.beginPath();g.moveTo(310,380);g.bezierCurveTo(310+s*20,430,310+s*70,430,310+s*80,384);g.closePath();gfill(g,'#f4f1ff')}g.fillStyle='#fff';for(let i=0;i<5;i++){g.beginPath();g.arc(318,480+i*80,7,0,6.3);g.fill()}for(const[a,c,r]of[[244,520,14],[380,600,12],[256,720,11],[370,780,13]]){gstar(g,a,c,r,r*.3,4,0);g.fillStyle='#ffe27a';g.fill()}}
+  g.restore()}
+ function gearHat(g,G,t){const h=G.hat;if(!h||!WEAR[h]||typeof GEAR7=='undefined'||!GEAR7.has(h,'hatF'))return;const cv=GEAR7.cover(h);g.save();g.translate(310,(cv?232:222)+Math.sin(t*1.5)*3);g.scale(cv?9.6:8.2,cv?8.6:8.2);try{GEAR7.front(g,h,t)}catch(_){}g.restore()}
  function hand(g,x,y,r,col){g.save();g.translate(x,y);g.rotate(r);g.fillStyle=col||'#2a2430';g.beginPath();g.moveTo(-26,-18);g.quadraticCurveTo(-30,0,-24,18);g.lineTo(18,22);g.quadraticCurveTo(30,0,18,-22);g.closePath();g.fill();g.strokeStyle=OL;g.lineWidth=LW+.6;g.stroke();g.strokeStyle='rgba(255,255,255,.2)';g.lineWidth=2;for(let i=-1;i<=1;i++){g.beginPath();g.moveTo(-16,i*11);g.lineTo(14,i*11);g.stroke()}g.restore()}
  // weapon art in local space: grip at origin, blade along +x
  function weaponLocal(g,id,t){const w=WPN[id],k=w.k,gc='rgb('+w.g.join(',')+')',lt=sh('#'+w.g.map(v=>('0'+Math.min(255,v).toString(16)).slice(-2)).join(''),.55),dk=sh('#'+w.g.map(v=>('0'+Math.min(255,v).toString(16)).slice(-2)).join(''),-.45);
@@ -127,8 +151,8 @@ const SHOWART=(()=>{
   else if(k=='glaive'){g.fillStyle='#3a3044';g.fillRect(-80,-6,500,12);g.strokeRect(-80,-6,500,12);for(const sgn of[-1,1]){g.fillStyle=steel(0,0,40);g.beginPath();g.moveTo(400,0);g.bezierCurveTo(440,sgn*70,520,sgn*100,600,sgn*30);g.bezierCurveTo(520,sgn*58,450,sgn*38,410,sgn*6);g.closePath();g.fill();g.stroke()}}
   else if(k=='pan'){g.fillStyle='#2a2430';g.fillRect(-60,-8,230,16);g.strokeRect(-60,-8,230,16);g.fillStyle=steel(0,0,60);g.beginPath();g.arc(240,0,78,0,6.3);g.fill();g.stroke();g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.arc(240,0,58,0,6.3);g.fill()}
   else{g.fillStyle='#3a3044';g.fillRect(-60,-6,500,12);g.strokeRect(-60,-6,500,12)}}
- function drawWeaponLarge(g,wpn,t){if(!wpn||wpn=='fist')return;const bob=Math.sin(t*1.1)*.012;g.save();g.translate(446,800);g.rotate(-1.2+bob);g.scale(1,1);try{weaponLocal(g,wpn,t)}catch(e){}g.restore();
-  hand(g,446,800,-1.2+bob);hand(g,416,716,-1.2+bob)}
+ function drawWeaponLarge(g,wpn,t,hc){if(!wpn||wpn=='fist')return;const bob=Math.sin(t*1.1)*.012;g.save();g.translate(446,800);g.rotate(-1.2+bob);g.scale(1,1);try{weaponLocal(g,wpn,t)}catch(e){}g.restore();
+  hand(g,446,800,-1.2+bob,hc);hand(g,416,716,-1.2+bob,hc)}
  function wings(g,t,idx){if(idx<0)return;g.save();g.translate(310,470);g.scale(2.7,2.7);g.globalAlpha=.92;try{WingArt.draw(g,idx,0,0,1,t,0,0,0,1);WingArt.extras&&WingArt.extras(g,idx,0,0,t)}catch(_){}g.restore()}
  // ---------- compose ----------
  // draws the portrait in a 620x860 design space scaled to fit (cover) the given canvas height; anchor bottom, figure left-centered
@@ -137,11 +161,15 @@ const SHOWART=(()=>{
   // wings (only when unlocked at this level)
   const wg=o.wingIdx!=null?o.wingIdx:(()=>{const w=curWing(lvl);return w?WINGS.indexOf(w):-1})();
   if(wg>=0&&o.wings!==false)wings(g,t,wg,W,H);
+  // equipment (only for the player's own active character; gallery presets pass no gear)
+  const G=o.gear||{},GB=G.body&&WEAR[G.body]?G.body:'',cover=G.hat&&typeof GEAR7!='undefined'&&GEAR7.cover(G.hat),Hh=cover?Object.assign({},H0,{top:0}):H0,Lb=GB?Object.assign({},L,{out:WEAR[GB].c,of:-1,trim:GB=='sparksuit'?GC:L.trim,cape:GB=='sparksuit'?0:L.cape}):L;
+  const gl=G.glove&&WEAR[G.glove]?WEAR[G.glove].c:GB=='sparksuit'?GC:undefined;
   hairBack(g,L,t,H0);
-  body(g,L,t);
+  if(GB)gearBack(g,G,t);
+  body(g,Lb,t);if(GB)gearBody(g,G,t,Lb);
   g.save();g.translate(0,Math.sin(t*1.5)*3);
-  drawFace(g,L,t,blink);accHead(g,L,t);hairFront(g,L,t,H0);g.restore();
-  drawWeaponLarge(g,wpnId,t);
+  drawFace(g,L,t,blink);accHead(g,L,t);hairFront(g,L,t,Hh);g.restore();gearHat(g,G,t);
+  drawWeaponLarge(g,wpnId,t,gl);
   g.restore()}
  return{draw,info}})();
 

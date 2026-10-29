@@ -59,7 +59,7 @@ const SHOW7=(()=>{
   if(!reduce()){cx.fillStyle=D?'rgba(230,220,255,.28)':'rgba(20,18,26,.18)';for(const d of dust){const x=((d.x+Math.sin(t*d.s*6+d.p)*.02)%1)*W,y=((d.y-t*d.s*.12)%1+1)%1*H;cx.beginPath();cx.arc(x,y,d.r*(W/900),0,6.3);cx.fill()}}
   const i=cur,L=SHOWART.info(apOf(i));const useL=unlocked(i)?L:grey(L);
   const wi=i==cur&&X6.sc.gal=='wings'&&galHover>=0?galHover:undefined;
-  try{SHOWART.draw(cx,W,H,{look:useL,t,wpn:unlocked(i)?(typeof wp!='undefined'?wp:'fist'):'fist',wings:unlocked(i),wingIdx:wi,ox:W*.5,zoom:1.02})}catch(e){if(!draw.e){draw.e=1;console.error(e)}}}
+  try{SHOWART.draw(cx,W,H,{look:useL,t,wpn:unlocked(i)?(typeof wp!='undefined'?wp:'fist'):'fist',wings:unlocked(i),wingIdx:wi,ox:W*.5,zoom:1.02,gear:i==X6.sc.act&&unlocked(i)&&typeof wear!='undefined'?wear:null})}catch(e){if(!draw.e){draw.e=1;console.error(e)}}}
  let galHover=-1;
  function loop(){cancelAnimationFrame(raf);t0=performance.now()-(t0?0:0);raf=requestAnimationFrame(draw)}
  function stop(){cancelAnimationFrame(raf)}

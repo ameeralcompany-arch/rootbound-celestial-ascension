@@ -20,5 +20,15 @@ const UIS=(()=>{let ctx=null,last={},master=null;const opt=()=>{try{return cel.o
  document.addEventListener('input',e=>{const t=e.target;if(t&&t.type=='range')play('tick')},true);
  document.addEventListener('change',e=>{const t=e.target;if(t&&t.tagName=='SELECT')play('select')},true);
  try{const _s=say;say=function(m){const r=_s.apply(this,arguments);try{play('pop')}catch(_){}return r}}catch(_){}
+ // ---- DOM toasts: say() messages slide up from below and settle, then lift away (the canvas toast is drawn with transparent colours, see 97-theme)
+ let th=null,tc=null,lm='',lt=0;
+ function toast(m){if(!th){th=document.createElement('div');th.id='toast7';th.setAttribute('role','status');th.setAttribute('aria-live','polite');document.body.appendChild(th)}
+  const gone=e=>{e.classList.remove('in');e.classList.add('out');setTimeout(()=>e.remove(),300)};if(tc)gone(tc);
+  const t=document.createElement('div');t.className='t7';t.textContent=m;th.appendChild(t);tc=t;requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('in')));
+  clearTimeout(toast.h);toast.h=setTimeout(()=>{if(tc===t){gone(t);tc=null}},Math.min(4200,2200+String(m).length*25))}
+ setInterval(()=>{try{if(typeof mt=='undefined')return;if(mt>lt+.05||(mt>0&&msg!==lm)){lm=msg;if(msg)toast(String(msg))}lt=mt}catch(_){}},60);
+ // ---- legacy panels shown with style.display (NPC dialog, quest journal, object panels): flag a fresh open so their rows cascade in once
+ try{const mo=new MutationObserver(ms=>{for(const m of ms){const t=m.target,on=!!t.style.display&&t.style.display!='none';if(on&&!t._on){t.classList.add('fresh');clearTimeout(t._fr);t._fr=setTimeout(()=>t.classList.remove('fresh'),800)}t._on=on}});
+  const watch=()=>{for(const id of['dlg','qm','objui','chestui']){const e=document.getElementById(id);if(e&&!e._mo){e._mo=1;mo.observe(e,{attributes:true,attributeFilter:['style']})}}};watch();setTimeout(watch,1500)}catch(_){}
  try{for(const k of['open','close']){const f=UI6[k];if(typeof f=='function')UI6[k]=function(){try{play(k)}catch(_){}return f.apply(this,arguments)}}}catch(_){}
  return{play,BANK,get vol(){return vol()}}})();
