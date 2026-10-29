@@ -66,12 +66,16 @@ const TOOLS8=(()=>{
    if(S.st=='bite'){catchIt();return}
    if(S.st=='wait'){tone(500,300,.1,'sine',.025);reset('Reeled in too early');return}
    reset()}
+  // the water tile under the bobber: looked up from the same point the landing check uses (y+4, so a bobber resting just above a
+  // surface on a tile edge still finds its lake), following the water down a few tiles if it drains, then up to the top of the column
+  function waterAt(x,y){const tx=Math.max(0,Math.min(W-1,Math.floor(x/T)));let ty=Math.floor((y+4)/T),n=0;while(n<4&&ty<H-1&&!(wl[ty*W+tx]>0&&!tiles[ty*W+tx])){if(tiles[ty*W+tx])return -1;ty++;n++}
+   if(!(wl[ty*W+tx]>0)||tiles[ty*W+tx])return -1;while(ty>0&&wl[(ty-1)*W+tx]>0&&!tiles[(ty-1)*W+tx])ty--;return ty*W+tx}
   function tick(dt){if(wp!='bubbles'){if(S.st!='idle')reset();return}
    if(S.st=='cast'){S.t-=dt;S.vy+=900*dt;S.x+=S.vx*dt;S.y+=S.vy*dt;
     if(inWater(S.x,S.y+4)){S.st='wait';const b=BAIT[S.bait];const wr=b?b.wait:[4,9];S.t=wr[0]+R()*(wr[1]-wr[0]);S.vx=S.vy=0;try{SFX7.bloop(.6)}catch(_){}if(S.bait)try{ft(S.x,S.y-16,MAT[S.bait].n,MAT[S.bait].c)}catch(_){}}
     else if(solidAt(Math.floor(S.x/T),Math.floor(S.y/T))||S.t<=0||S.y>H*T)reset('Missed the water - aim for a lake or pool')}
    else if(S.st=='wait'||S.st=='bite'){// keep the bobber floating on the surface
-    const tx=Math.floor(S.x/T);let ty=Math.floor(S.y/T);while(ty>0&&wl[(ty-1)*W+tx]>0&&!tiles[(ty-1)*W+tx])ty--;const k=ty*W+tx,lvlW=wl[k]||0;if(!lvlW){reset('The water is gone');return}
+    const k=waterAt(S.x,S.y);if(k<0){reset('The water is gone');return}const ty=k/W|0,lvlW=wl[k];
     S.y+=((ty+1)*T-lvlW/8*T+2-S.y)*Math.min(1,dt*6);
     if(Math.hypot(S.x-P.x,S.y-P.y)>T*10||P.sw){reset('The line snapped');return}
     S.t-=dt;if(S.st=='wait'){if(S.t<=0){S.st='bite';S.t=S.bait==252?1.2:.9;S.dip=1;tone(1400,1700,.06,'sine',.04);tone(1400,1700,.06,'sine',.04,.12);try{SFX7.splash(160)}catch(_){}}else if(R()<dt*.6){S.dip=.3;try{SFX7.plip()}catch(_){}}}

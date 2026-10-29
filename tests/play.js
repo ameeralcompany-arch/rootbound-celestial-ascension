@@ -47,6 +47,19 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  const cerr=[];p.on('console',m=>{if(m.type()=='error')cerr.push(m.text())});
  for(const id of['sparkhood','crown']){await E(id=>{own[id]=1;wear.hat=id;cdT.hat=0},id);await p.keyboard.press('q');await p.waitForTimeout(450);
   const z=await E(()=>{const m=g.getTransform();return{a:m.a,d:m.d,cd:cdT.hat>0}});ok('Q skill ('+id+') keeps the camera zoom steady',z.a==1&&z.d==1&&z.cd&&!cerr.length,{z,cerr})}
+ // fishing: cast into a dug-out pool of full water tiles (surface exactly on a tile edge), the bobber floats and a fish bites
+ const wp0=await E(()=>wp);const fish=await E(async()=>{const FISH=TOOLS8.FISH;const said=[],res={},watch=()=>{if(msg&&said[said.length-1]!==msg)said.push(String(msg))};
+  for(const tries of[0,1,2,3,4,5]){const px=Math.floor(P.x/T),gx=px+3+tries%2,gy=sh(gx);
+   for(let x=gx;x<gx+7;x++)for(let y=gy;y<gy+3;y++){const k=y*W+x;tiles[k]=0;wl[k]=8}for(let x=gx-1;x<gx+8;x++){const k=(gy+3)*W+x;if(!tiles[k])tiles[k]=2}for(const x of[gx-1,gx+7])for(let y=gy;y<gy+3;y++)tiles[y*W+x]=2;
+   P.sw=false;wp='bubbles';FISH.S.st='idle';said.length=0;msg='';FISH.click({x:(gx+3.5)*T,y:(gy+.5)*T});
+   const until=performance.now()+4000;while(performance.now()<until&&FISH.S.st=='cast'){watch();await new Promise(r=>setTimeout(r,30))}
+   for(let i=0;i<16;i++){watch();await new Promise(r=>setTimeout(r,30))}res[tries]={st:FISH.S.st,said:said.slice()};if(FISH.S.st!='wait'&&FISH.S.st!='bite')break}
+  return res});
+ const fishOk=Object.values(fish).every(r=>(r.st=='wait'||r.st=='bite')&&!r.said.some(m=>/water is gone/i.test(m)));ok('fishing: the bobber floats in a lake and waits for a bite (never "The water is gone")',fishOk,fish);
+ const caught=await E(async()=>{const F=TOOLS8.FISH,n0=Object.keys(F.FISHES).reduce((s,k)=>s+cnt(+k),0);F.S.t=.05;await new Promise(r=>setTimeout(r,300));const bit=F.S.st;F.click({x:F.S.x,y:F.S.y});
+  return{bit,after:F.S.st,gained:Object.keys(F.FISHES).reduce((s,k)=>s+cnt(+k),0)-n0}});
+ ok('fishing: a fish bites, and clicking reels it in',caught.bit=='bite'&&caught.after=='idle'&&caught.gained==1,caught);
+ await E(w=>{TOOLS8.FISH.S.st='idle';wp=w},wp0);
  // every weather state renders sky (cached) + weather layers, day and night, and the pooled counts stay capped
  const wx=await E(async()=>{const bad=[];let mx2=0;for(const st of WX_STATES)for(const d of[.08,.5]){WX6.force=st;for(const s of WX_STATES)WX6.I[s]=s==st?1:0;clock=()=>d;await new Promise(r=>setTimeout(r,120));try{const c=document.createElement('canvas');c.width=640;c.height=360;const o=g;g=c.getContext('2d');try{SKY6.draw(640,360,performance.now());WX6.draw(640,360,performance.now())}finally{g=o}}catch(e){bad.push(st+':'+e.message)}mx2=Math.max(mx2,VFX.count)}
   WX6.force=null;return{bad,lc:LIFE8.counts}});ok('all weather states render (sky + precipitation + fog + leaves + meteors), day and night',wx.bad.length==0,wx);
