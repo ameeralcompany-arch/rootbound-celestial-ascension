@@ -30,14 +30,15 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
   await p.waitForTimeout(3200);ok('world card cleans up',await p.evaluate(()=>!document.getElementById('cine7w')&&!document.body.classList.contains('c7w-on')));
   ok('visited worlds tracked in rbc7',await p.evaluate(()=>!!JSON.parse(localStorage.getItem('rbc7')).v.cinetest));
   const bi=await p.evaluate(()=>new Promise(res=>{mobs.length=0;BOSS6.clear();let okS=false;for(let i=0;i<4&&!okS;i++)okS=BOSS6.spawn('warden');const m=BOSS6.active();if(!m)return res({okS});const x0=m.x,hp0=P.hp;
-   setTimeout(()=>res({okS,card:!!document.querySelector('#cine7b .c7b-card b'),name:document.querySelector('#cine7b b').textContent,still:Math.abs(m.x-x0)<1,idle:m.bs=='idle',hp:P.hp>=hp0,zoom:cv.style.transform}),900)}));
+   setTimeout(()=>res({okS,card:!!document.querySelector('#cine7b.on .c7b-card b'),name:document.querySelector('#cine7b b').textContent,still:Math.abs(m.x-x0)<1,idle:m.bs=='idle',hp:P.hp>=hp0,zoom:cv.style.transform}),2900)}));   // BOSS10: the name card comes with the roar, ~2.5 s into the intro
   ok('boss intro: card, boss held still, player unharmed',bi.okS&&bi.card&&/warden/i.test(bi.name)&&bi.still&&bi.idle&&bi.hp,JSON.stringify(bi));
-  const bw=await p.evaluate(()=>{const m=BOSS6.active();hurtMob(m,1e6,WPN[wp],0);const c=document.querySelector('#cine7b.win');return{win:!!c,txt:c&&c.textContent,banner:document.getElementById('banner')&&document.getElementById('banner').classList.contains('on')&&/BOSS DEFEATED/.test(document.getElementById('banner').textContent),zoom:cv.style.transform}});
+  await p.waitForFunction(()=>!BOSS10.kind,null,{timeout:4000}).catch(()=>{});await p.evaluate(()=>{const m=BOSS6.active();hurtMob(m,1e6,WPN[wp],0)});await p.waitForTimeout(2300);   // BOSS10 outro: the defeat card follows the collapse (~1.95 s)
+  const bw=await p.evaluate(()=>{const c=document.querySelector('#cine7b.win');return{win:!!c,txt:c&&c.textContent,banner:document.getElementById('banner')&&document.getElementById('banner').classList.contains('on')&&/BOSS DEFEATED/.test(document.getElementById('banner').textContent),zoom:cv.style.transform}});
   ok('boss defeat: card with name + rewards replaces the old banner, zoom reset',bw.win&&/Verdant Warden/.test(bw.txt)&&/gems/.test(bw.txt)&&!bw.banner&&bw.zoom=='',JSON.stringify(bw));
-  await p.waitForTimeout(3800);ok('boss cards clean up',await p.evaluate(()=>!document.getElementById('cine7b')&&cv.style.transform==''));
+  await p.waitForTimeout(3300);ok('boss cards clean up',await p.evaluate(()=>!document.getElementById('cine7b')&&cv.style.transform==''));
   await p.evaluate(()=>{mobs.length=0;BOSS6.clear();for(let i=0;i<4&&!BOSS6.active();i++)BOSS6.spawn('sovereign')});await p.waitForTimeout(2900);await p.evaluate(()=>{mobs.length=0});await p.waitForTimeout(300);
   ok('boss loss: DEFEATED card',await p.evaluate(()=>!!document.querySelector('#cine7b.lose')&&/Defeated/i.test(document.querySelector('#cine7b.lose').textContent)));
   const r=await p.evaluate(()=>{const o={};for(const id of['warden','sovereign','eclipse','magma','tide','storm']){mobs.length=0;BOSS6.clear();o[id]=BOSS6.spawn(id);const m=BOSS6.active();if(m)hurtMob(m,1e6,WPN[wp],0)}return o});
-  await p.waitForTimeout(4200);ok('rapid spawn/kill of all six bosses leaves nothing behind',await p.evaluate(()=>!document.getElementById('cine7b')&&cv.style.transform==''&&!window.CAMT),JSON.stringify(r));
+  await p.waitForTimeout(6200);ok('rapid spawn/kill of all six bosses leaves nothing behind',await p.evaluate(()=>!document.getElementById('cine7b')&&cv.style.transform==''&&!window.CAMT),JSON.stringify(r));
   ok('in-game cinematics: no page errors',p.errs.length==0,p.errs.join('|'));await p.ctx.close()}
  await b.close();console.log(fails?'FAILURES '+fails:'all cine tests passed');process.exit(fails?1:0)})();

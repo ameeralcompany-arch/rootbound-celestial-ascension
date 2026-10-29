@@ -3,7 +3,7 @@
 //    Story beats: World Tree, lantern night, Eclipse, the fall, six guardians, a hundred years, awakening, first friend (gag), wings,
 //    a botched first flight (gag), practice (gag), the journey, struck down and rising (fight), campfire, montage, restoration, title
 // 2) world entry: portal iris opening + world title card (pointer-events:none, never blocks input)
-// 3) boss intro / defeat / loss cards, hooked from ARENA7 (85-zzz-arena.js) and BOSS6 (85-bosses.js)
+// 3) boss overlays (letterbox, name card, defeat / loss cards), slow motion and boss sounds, driven by BOSS10 (89-zz-bossfight.js)
 // Budget: static art is pre-rendered once into offscreen canvases (lazily, one asset per frame ahead of use); every rAF loop /
 // timer stops and every node is removed when a cinematic ends, so gameplay frames pay nothing while nothing plays.
 const CINE7=(()=>{
@@ -902,36 +902,62 @@ const CINE7=(()=>{
   W7.raf=requestAnimationFrame(fr)}
  {const _lw=loadWorld;loadWorld=function(n,e){const r=_lw.apply(this,arguments);try{killB();tS=1;slowD=0;onEnter(cur)}catch(err){console.error('CINE7 world',err)}return r}}
 
- // ================= BOSSES: intro card + camera focus, defeat card + slow motion, loss card =================
- let B7=null,tS=1,slowT0=0,slowD=0,SL=null;
+ // ================= BOSSES: letterbox + name card, defeat card, loss card, slow motion and synthesized boss sounds =================
+ // BOSS10 (89-zz-bossfight.js) directs the cinematics (camera, hold, entrance / collapse art, timing) and calls these for the overlay layer.
+ let B7=null,tS=1,slowT0=0,slowD=0,slowLo=.28,SL=null;
  function slCanvas(){if(SL)return SL;const w=Math.max(320,innerWidth*.5|0),h=Math.max(180,innerHeight*.5|0),c=mk(w,h),x=c.getContext('2d'),r=srnd(19);x.fillStyle='#fff';for(let i=0;i<150;i++){const a=r()*TAU,r0=Math.min(w,h)*(.42+r()*.2),L=Math.hypot(w,h),wd=.003+r()*.006;x.globalAlpha=.3+r()*.6;x.beginPath();x.moveTo(w/2+Math.cos(a)*r0,h/2+Math.sin(a)*r0*.8);x.lineTo(w/2+Math.cos(a-wd)*L,h/2+Math.sin(a-wd)*L);x.lineTo(w/2+Math.cos(a+wd)*L,h/2+Math.sin(a+wd)*L);x.closePath();x.fill()}SL=c;return c}
- function zoom(on){try{if(on){cv.style.transformOrigin='50% 50%';cv.style.transition='transform .55s cubic-bezier(.2,.8,.2,1)';cv.style.transform='scale(1.14)'}else{cv.style.transition='transform .6s cubic-bezier(.4,0,.2,1)';cv.style.transform=''}}catch(_){}}
- function killB(){if(!B7)return;B7.tms.forEach(clearTimeout);try{B7.w.remove()}catch(_){}if(B7.zoom){try{cv.style.transform='';cv.style.transition=''}catch(_){}}B7=null}
+ function killB(){if(!B7)return;B7.tms.forEach(clearTimeout);try{B7.w.remove()}catch(_){}B7=null}
  function shell(cls,c){const w=document.createElement('div');w.id='cine7b';w.className=cls;w.style.setProperty('--c',c);w.setAttribute('aria-hidden','true');return w}
  const later=(f,ms)=>{const b=B7;const h=setTimeout(()=>{if(B7===b)try{f()}catch(e){console.error('CINE7 boss',e)}},ms);b.tms.push(h)};
- function bossIntro(m,arena){killB();const id=String(m.k||'').replace('boss_',''),b=bdef(id)||{n:BNM[id]||'Boss',c:BC[id]||'#b58cff'},c=b.c||BC[id]||'#b58cff',red=reduce(),D=red?1.7:2.6;
-  const w=shell('c7b'+(red?' red':''),c);w.innerHTML='<i class="c7b-bar t"></i><i class="c7b-bar b"></i><div class="c7b-sl"></div><div class="c7b-card"><span class="c7b-stripe"></span><em>'+esc(EPI[id]||b.desc||'')+'</em><b>'+esc(b.n)+'</b><small>A boss appears</small></div>';
+ const nextF=(w,c)=>requestAnimationFrame(()=>requestAnimationFrame(()=>{if(B7&&B7.w===w)w.classList.add(c)}));
+ const BARS='<i class="c7b-bar t"></i><i class="c7b-bar b"></i>';
+ // intro overlay: letterbox now, the name card (+ speed lines) at o.card ms, card out at o.out, removed at o.end
+ function bossIntro(m,arena,o){killB();o=o||{};const id=String(m.k||'').replace('boss_',''),b=bdef(id)||{n:BNM[id]||'Boss',c:BC[id]||'#b58cff'},c=b.c||BC[id]||'#b58cff',red=reduce();
+  const card=o.card==null?400:o.card,out=o.out==null?card+1500:o.out,end=o.end==null?out+600:o.end;
+  const w=shell('c7b'+(red?' red':''),c);w.innerHTML=BARS+'<div class="c7b-sl"></div><div class="c7b-card"><span class="c7b-stripe"></span><em>'+esc(EPI[id]||b.desc||'')+'</em><b>'+esc(b.n)+'</b><small>A boss appears</small></div>';
   const sl=w.querySelector('.c7b-sl');if(!red)sl.appendChild(slCanvas());w.querySelector('.c7b-stripe').style.background='linear-gradient(90deg,transparent,'+rgba(c,.0)+' 4%,'+rgba(mix(c,'#000000',.45),.85)+' 22%,'+rgba(mix(c,'#000000',.45),.85)+' 78%,transparent)';
-  document.body.appendChild(w);B7={w,m,arena,end:performance.now()+D*1000,tms:[],hold:true,zoom:!red,kind:'in'};
-  try{window.CAMT={x:m.x,y:m.y+m.h/2}}catch(_){}if(!red)zoom(true);try{iT=Math.max(iT,D+.3)}catch(_){}
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{if(B7&&B7.w===w)w.classList.add('on')}));
-  sfx(t=>{boom(t,.32);taiko(t+.02,.2)});later(()=>sfx(t=>shing(t,.12)),D*130);
-  later(()=>{const A2=B7.arena;try{window.CAMT=A2&&A2.fit&&!A2.end?{x:(A2.x0+A2.x1)/2,y:(A2.y0+A2.y1)/2}:null}catch(_){}zoom(false)},D*580);
-  later(()=>{w.classList.add('off');B7.hold=false},D*850);later(()=>killB(),D*1000+450)}
- function bossWin(m,b,first){killB();const c=b.c||'#ffd36a',red=reduce(),D=red?2.4:3.4;if(!red){slowT0=performance.now();slowD=1150}
+  document.body.appendChild(w);B7={w,m,tms:[],kind:'in'};nextF(w,'bars');
+  later(()=>w.classList.add('on'),card);later(()=>w.classList.add('off'),out);later(()=>killB(),end)}
+ // skip: card and bars leave at once
+ function bossSkip(){if(!B7||B7.kind!='in')return;B7.tms.forEach(clearTimeout);B7.tms=[];B7.w.classList.add('off');later(()=>killB(),520)}
+ // outro start: letterbox only (the defeat card takes over without the bars sliding again)
+ function bossBars(c){killB();const w=shell('c7b out',c||'#ffd36a');w.innerHTML=BARS;document.body.appendChild(w);B7={w,tms:[],kind:'out'};nextF(w,'bars');later(()=>killB(),6000)}
+ // defeat card (o.cine: shown by BOSS10's outro, which already runs the slow motion and the flash)
+ function bossWin(m,b,first,o){const cine=!!(o&&o.cine),keep=cine&&B7&&B7.kind=='out';killB();const c=b.c||'#ffd36a',red=reduce(),D=cine?(red?2.4:3.0):(red?2.4:3.4);if(!red&&!cine)slow(1150);
   const rw='+'+(b.gems|0).toLocaleString()+' gems   ·   +'+(b.xp|0).toLocaleString()+' XP'+(first&&b.rn?'   ·   Relic: '+b.rn:'');
-  const w=shell('c7b win'+(red?' red':''),c);w.innerHTML='<i class="c7b-flash"></i><i class="c7b-bar t"></i><i class="c7b-bar b"></i><div class="c7b-card"><span class="c7b-stripe"></span><em>'+esc(b.n)+'</em><b>Boss Defeated</b><small>'+esc(rw)+'</small>'+(first&&b.rd?'<small class="c7b-rd">'+esc(b.rn+': '+b.rd)+'</small>':'')+'</div>';
+  const w=shell('c7b win'+(red?' red':'')+(cine?' nf':'')+(keep?' b0 bars':''),c);w.innerHTML='<i class="c7b-flash"></i>'+BARS+'<div class="c7b-card"><span class="c7b-stripe"></span><em>'+esc(b.n)+'</em><b>Boss Defeated</b><small>'+esc(rw)+'</small>'+(first&&b.rd?'<small class="c7b-rd">'+esc(b.rn+': '+b.rd)+'</small>':'')+'</div>';
   w.querySelector('.c7b-stripe').style.background='linear-gradient(90deg,transparent,'+rgba('#3a2a08',.85)+' 22%,'+rgba(mix(c,'#000000',.55),.85)+' 78%,transparent)';
-  document.body.appendChild(w);B7={w,m,end:0,tms:[],hold:false,zoom:false,kind:'win'};requestAnimationFrame(()=>requestAnimationFrame(()=>{if(B7&&B7.w===w)w.classList.add('on')}));
+  document.body.appendChild(w);B7={w,m,tms:[],kind:'win'};if(keep)requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('b0')));if(!keep)nextF(w,'bars');nextF(w,'on');
   later(()=>w.classList.add('off'),D*1000-650);later(()=>killB(),D*1000)}
  function bossLose(name){killB();const red=reduce(),D=red?1.8:2.4,w=shell('c7b lose'+(red?' red':''),'#ff4a5a');w.innerHTML='<i class="c7b-dim"></i><div class="c7b-card"><b>Defeated</b><small>'+esc(String(name||'The boss'))+' vanished into the dark</small></div>';
-  document.body.appendChild(w);B7={w,end:0,tms:[],hold:false,zoom:false,kind:'lose'};requestAnimationFrame(()=>requestAnimationFrame(()=>{if(B7&&B7.w===w)w.classList.add('on')}));later(()=>w.classList.add('off'),D*1000-600);later(()=>killB(),D*1000)}
- // slow motion after a boss falls (game time only; it always returns to 1 within ~1.2 s)
- const slowNow=()=>{if(!slowD)return 1;const k=(performance.now()-slowT0)/slowD;if(k>=1||k<0){slowD=0;return 1}return lerp(.28,1,ez(k))};
+  document.body.appendChild(w);B7={w,tms:[],kind:'lose'};nextF(w,'on');later(()=>w.classList.add('off'),D*1000-600);later(()=>killB(),D*1000)}
+ // slow motion (game time only): eases from lo back to 1 over d ms; slow(0) stops it at once
+ function slow(d,lo){if(!d){slowD=0;tS=1;return}slowT0=performance.now();slowD=d;slowLo=lo==null?.28:lo}
+ const slowNow=()=>{if(!slowD)return 1;const k=(performance.now()-slowT0)/slowD;if(k>=1||k<0){slowD=0;return 1}return lerp(slowLo,1,ez(k))};
  {const _u=update;update=function(dt){tS=slowNow();return _u.call(this,dt*tS)}}
  try{const _vu=VFX.update;VFX.update=function(dt){return _vu.call(this,dt*tS)}}catch(_){}
- // boss AI waits (and stays put) while its intro card plays
- {const _t=BOSS6.tick;BOSS6.tick=function(dt){try{if(B7&&B7.hold&&B7.m&&performance.now()<B7.end){const m=B7.m;if(mobs.includes(m)&&!m.dead){m.bt=Math.max(m.bt||0,.5);m.bs='idle';if(m.xt!=null)m.xt=Math.max(m.xt,.5);if(B7.lx==null){B7.lx=m.x;B7.ly=m.y}m.x=B7.lx;m.vx=0;if(MK[m.k]&&MK[m.k].fly){m.y=B7.ly;m.vy=0}}}}catch(_){}return _t.call(this,dt*tS)}}
- return{launch,intro,bossIntro,bossWin,bossLose,on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
+ {const _t=BOSS6.tick;BOSS6.tick=function(dt){return _t.call(this,dt*tS)}}
+ // ---- synthesized boss sounds (sfx bus with reverb): a roar per boss, entrance sounds, phase change, collapse + final burst, barrier
+ const RV={warden:[62,.9,520,1.5],sovereign:[98,1.25,1500,1.3],eclipse:[52,.8,700,1.7],magma:[44,.7,380,1.7],tide:[74,1.1,900,1.6],storm:[150,1.6,2400,1.2]};
+ function roar(t,id,v,d){const r=RV[id]||RV.warden,f=r[0],k=r[1],d2=d||r[3];
+  for(const det of[-14,0,13])o('s',f*1.5,f*.82,t,d2,'sawtooth',v*.07,.09,det,1);o('s',f*3*k,f*1.4*k,t,d2*.8,'square',v*.025,.12,0,1);
+  nz('s',t,d2*1.05,'bandpass',r[2],r[2]*.35,v*.5,.1,1.4,1);nz('s',t,d2*.6,'lowpass',420,90,v*.45,.06,0,1);boom(t,v*.6);
+  if(id=='sovereign')shing(t+.12,v*.5);else if(id=='storm')thunder(t+.05,v*.5);else if(id=='tide')o('s',420,180,t+.1,d2*.9,'sine',v*.1,.15,0,1);else if(id=='eclipse')o('s',f*4,f*8,t,d2,'sine',v*.04,.4,0,1)}
+ function bossSfx(k,id,v){v=v==null?1:v;sfx(t=>{
+  if(k=='roar')roar(t,id,v);else if(k=='phase'){roar(t+.05,id,v*.8,1);crash(t,v*.05)}
+  else if(k=='rumble'){nz('s',t,1.6,'lowpass',260,70,v*.32,.4,0,1);o('s',46,34,t,1.6,'sine',v*.25,.4)}
+  else if(k=='roots'){for(let i=0;i<6;i++)nz('s',t+i*.09,.18,'bandpass',900+R()*700,300,v*.14,.004,2);thunk(t,v*.25)}
+  else if(k=='shards'){riser(t,1.4,v*.12);shatter(t+1.35,v*.18)}
+  else if(k=='sun'){o('s',55,40,t,2.2,'sine',v*.22,.6,0,1);riser(t+.2,1.6,v*.08);o('s',880,440,t+.6,1.4,'sine',v*.03,.5,0,1)}
+  else if(k=='erupt'){boom(t,v*.45);nz('s',t,1.4,'lowpass',900,140,v*.35,.02,0,1);for(let i=0;i<5;i++)o('s',120+R()*80,60,t+.1+i*.12,.15,'sine',v*.12,.004)}
+  else if(k=='surge'){whoosh(t,1.1,v*.16);splash(t+.9,v*.35);nz('s',t+.9,.9,'lowpass',1600,240,v*.25,.01,0,1)}
+  else if(k=='thunder'){nz('s',t,.08,'highpass',3000,0,v*.3,.001);thunder(t+.02,v*.5)}
+  else if(k=='dive'){whoosh(t,.6,v*.2);o('s',1400,500,t,.6,'sawtooth',v*.03,.05,0,1)}
+  else if(k=='land'){boom(t,v*.35);thunk(t,v*.3)}
+  else if(k=='fall'){o('s',90,38,t,.6,'sawtooth',v*.08);o('s',62,30,t,.9,'sine',v*.12);o('s',260,68,t+.15,1.5,'sine',v*.06,.02,0,1);roar(t+.1,id,v*.5,1.2)}
+  else if(k=='crack'){for(let i=0;i<4;i++)nz('s',t+i*.21,.09,'highpass',2200+R()*2000,0,v*.12,.001);o('s',1200,600,t,.8,'sine',v*.03,.05,0,1)}
+  else if(k=='burst'){boom(t,v*.55);shatter(t+.02,v*.2);crash(t,v*.08);for(let i=0;i<7;i++)o('s',110+R()*90,50,t+.35+i*.15+R()*.05,.12,'triangle',v*.05,.003);[523,659,784,1047].forEach((f,i)=>o('s',f,f,t+1.1+i*.09,.6,'sine',v*.04,.004,0,1))}
+  else if(k=='vuln'){o('s',660,990,t,.18,'triangle',v*.05,.003);o('s',990,1320,t+.09,.22,'sine',v*.04,.003)}})}
+ return{launch,intro,bossIntro,bossSkip,bossBars,bossWin,bossLose,bossSfx,slow,get tS(){return tS},on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
   seek(u){if(!I)return;I.el=cl(u,0,ST)*I.k;I.u=I.el/I.k;I.evi=I.ev.findIndex(e=>e[0]>=I.u);if(I.evi<0)I.evi=I.ev.length;for(const s of NEED)for(const n of s)try{as(n)}catch(_){}},
   get state(){return I?{u:I.u,scene:STORY[I.si|0][0],total:ST,k:I.k}:null},STORY}})();
