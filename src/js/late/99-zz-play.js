@@ -1,5 +1,5 @@
-// ===== PLAY8: weapons fight, tools dig. X = swap between your last weapon and last tool. Keys 1-6 and the mouse wheel belong to
-// the 6-slot hotbar (HOTBAR, 99-zzz-hotbar.js), which replaces selBar / PLAY8.wheel and shows its own name pill (#sw8 is hidden). =====
+// ===== PLAY8: weapons fight, tools dig. X = swap between your last weapon and last tool. Keys 1-7 and the mouse wheel belong to
+// the 7-slot hotbar (HOTBAR, 99-zzz-hotbar.js), which replaces selBar / PLAY8.wheel and shows its own name pill (#sw8 is hidden). =====
 const PLAY8=(()=>{
  const TOOLS=['pip','pebble','glimmer','twiggy','bubbles'],PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpsw';
  const S={wpn:'fist',tool:'pip'};try{const o=JSON.parse(localStorage.getItem(PK())||'{}');if(o.w)S.wpn=o.w;if(o.t)S.tool=o.t}catch(_){}
@@ -14,7 +14,7 @@ const PLAY8=(()=>{
   if(now-G.tinkT>140){G.tinkT=now;try{for(let i=0;i<3;i++)VFX.add(1,'#e8eef8',px+(Math.random()-.5)*16,py+(Math.random()-.5)*16,(Math.random()-.5)*60,-20-Math.random()*40,.3,8,2,{a:.7})}catch(_){}try{SFX7.tone(260,220,.05,'triangle',.02)}catch(_){}}
   if(now-G.hintT<40000)return;// gentle: at most once every 40 s, never while fighting next to the cursor
   const cx=mx+cam.x,cy=my+cam.y;for(const m of mobs)if(!m.dead&&Math.hypot(m.x-cx,m.y+m.h/2-cy)<T*3)return;
-  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–6 / wheel) or press X')}catch(_){}}
+  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–7 / wheel) or press X')}catch(_){}}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&w.k=='tool')return _uw.apply(this,arguments);G.wpn++;try{return _uw.apply(this,arguments)}finally{G.wpn--}}}
  {const _ba=breakAt;breakAt=function(){if(G.wpn>0&&!G.allow)return false;return _ba.apply(this,arguments)}}
  // ---- switching

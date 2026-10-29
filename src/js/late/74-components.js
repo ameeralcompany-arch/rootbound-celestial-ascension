@@ -43,10 +43,15 @@ const ITEM7=(()=>{
   if((k>=20&&k<=41||k>=85&&k<=89)&&typeof ODEF!='undefined'&&ODEF[k])return ODEF[k].cat=='door'?'door':'obj';return'block'}
  function value(k){try{if(typeof k=='string'){if(k[0]=='a'){const w=WEAR[k.slice(2)];return w.cost+(w.lv|0)*40}if(k.startsWith('w:'))return WPN[k.slice(2)].cost|0;return 0}return MAT[k]?MAT[k].p*3:(PRICE[k%100]||10)*(k>=100?5:1)}catch(_){return 0}}
  const byValue=c=>c<30?0:c<110?1:c<320?2:c<800?3:c<2000?4:5;
- function tier(k){const r=idx()[String(k)];if(r){const t=RAR.indexOf(r);if(t>=0)return t}return byValue(value(k))}
+ function tier(k){if(typeof k=='string'&&k.startsWith('w:')&&typeof WPN!='undefined'){const wr=(WPN[k.slice(2)]||{}).rar,t=RAR.indexOf(wr=='exclusive'?'mythic':wr);if(t>=0)return t}const r=idx()[String(k)];if(r){const t=RAR.indexOf(r);if(t>=0)return t}return byValue(value(k))}
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  // attributes for any item element, and the small rarity label
  const attrs=k=>' data-cat="'+cat(k)+'" data-rar="'+RAR[tier(k)]+'"';
  const tag=k=>{const t=tier(k);return'<span class="rtag" data-rar="'+RAR[t]+'">'+RN[t]+'</span>'};
  const glyph=k=>{const t=tier(k);return'<i class="rp7" aria-hidden="true">'+GLY[t]+'</i>'};
- return{RAR,RN,GLY,CATN,CATG,cat,value,tier,rar:k=>RAR[tier(k)],label:k=>RN[tier(k)],attrs,tag,glyph,esc,catName:k=>CATN[cat(k)]||'Item'}})();
+ // weapon power: one number per weapon. window.WPOWER(id) (combat balance) when present, else damage per second from WPN (md / cd)
+ function power(k){const id=typeof k=='string'&&k.startsWith('w:')?k.slice(2):k;const w=typeof WPN!='undefined'&&WPN[id];if(!w)return 0;
+  try{if(typeof window.WPOWER=='function'){const v=+window.WPOWER(id);if(isFinite(v))return Math.round(v)}}catch(_){}return Math.round((+w.md||0)/Math.max(.08,+w.cd||.5))}
+ // weapons/tools order everywhere: rarity tier high -> low (mythic first), then power high -> low, then level requirement, then name
+ const wcmp=(a,b)=>tier(b)-tier(a)||power(b)-power(a)||((WPN[b.slice(2)]||{}).lv|0)-((WPN[a.slice(2)]||{}).lv|0)||String((WPN[a.slice(2)]||{}).n).localeCompare(String((WPN[b.slice(2)]||{}).n));
+ return{RAR,RN,GLY,CATN,CATG,cat,value,tier,power,wcmp,rar:k=>RAR[tier(k)],label:k=>RN[tier(k)],attrs,tag,glyph,esc,catName:k=>CATN[cat(k)]||'Item'}})();

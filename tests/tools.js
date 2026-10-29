@@ -92,7 +92,7 @@ async function boot(p,world){await p.goto(URL);await p.waitForTimeout(700);await
  await p.mouse.move(640,300);await p.keyboard.press('g');await sleep(450);
  const g1=await E(()=>{const b=UI6.body;return{on:UI6.on,tab:UI6.tab,tabs:UI6.TABS.map(t=>t[0]).includes('toolguide'),nav:[...b.querySelectorAll('.tg8nav [data-g]')].map(x=>x.dataset.g),txt:b.textContent}});
  ok('G opens the Tool Guide hub tab (when not beside an object)',!near&&g1.on&&g1.tab=='toolguide'&&g1.tabs,{near,on:g1.on,tab:g1.tab});
- ok('the guide lists every tool plus basics, levels & shine and where to dig',['pip','pebble','glimmer','twiggy','bubbles','basics','levels','dig'].every(k=>g1.nav.includes(k))&&/hotbar slot \(1–6\)/.test(g1.txt),g1.nav);
+ ok('the guide lists every tool plus basics, levels & shine and where to dig',['pip','pebble','glimmer','twiggy','bubbles','basics','levels','dig'].every(k=>g1.nav.includes(k))&&/hotbar slot \(1–7\)/.test(g1.txt),g1.nav);
  const pages=await E(async()=>{const out={};for(const id of TOOLLV.IDS){GUIDE8.go(id);await new Promise(r=>setTimeout(r,120));const b=UI6.body,c=b.querySelector('canvas.tg8cv');let lit=0;if(c){const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=3;i<d.length;i+=16)if(d[i]>20)lit++}
    out[id]={name:(b.querySelector('.tg8info h4')||{}).textContent==TOOLS8.TL[id].n,how:b.querySelectorAll('.tg8steps li').length,chips:b.querySelectorAll('.tg8chips .tg8c').length,levels:b.querySelectorAll('.tg8pl li').length,lit}}
   for(const pg of['basics','levels','dig']){GUIDE8.go(pg);await new Promise(r=>setTimeout(r,120));out[pg]={len:UI6.body.querySelector('.tg8pg').textContent.length,cv:UI6.body.querySelectorAll('canvas.tg8cv').length}}return out});

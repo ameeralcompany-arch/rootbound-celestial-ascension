@@ -1,14 +1,16 @@
-// ===== HOTBAR6: six slots on keys 1-6 (mouse wheel cycles them). Any item you own fits in any slot: blocks, seeds, objects,
+// ===== HOTBAR6 (v7): seven slots on keys 1-7 (mouse wheel cycles them). Any item you own fits in any slot: blocks, seeds, objects,
 // materials, weapons and guns, the five tools, wearables. Using the held slot does what the item does: blocks / seeds / objects place
 // (left or right click), weapons attack, tools dig, Bubbles fishes, a wearable slot puts it on / takes it off. Empty slot = fists.
-// Assign: drag an item from the inventory onto a slot, or select it and press 1-6 / click a slot / use the slot buttons in its details.
+// Assign: drag an item from the inventory onto a slot, or select it and press 1-7 / click a slot / use the slot buttons in its details.
 // Right-click a slot to clear it; drag slot onto slot to swap. A stack that runs out stays in its slot, greyed (never silently swapped).
-// Under-level weapons show locked and say why when used. Layout + selection are saved per profile (RB_PREFIX + 'rbphb').
+// Under-level weapons show locked and say why when used. Layout + selection are saved per profile (RB_PREFIX + 'rbphb', v2 = 7 slots).
+// Saves from the 6-slot bar (v1) keep every slot where it was; the new slot 7 gets Twiggy (the 5th tool, which never fit before) unless
+// Twiggy is already on the bar, then it starts empty. New saves: 1 weapon, 2 Pip, 3 Pebble, 4 Glimmer, 5 a block, 6 Bubbles, 7 Twiggy.
 // The bar is drawn once and patched only when something changes (barDirty / selection / level); slot icons all go through paint(),
 // which calls window.SLOTDECO(ctx,item,x,y,size) and TOOLLV.badge(ctx,id,x,y,size,t) when present (tool-level shine hook). =====
 const HOTBAR=(()=>{
- const N=6,PITCH=72,PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbphb';
- const S={s:[null,null,null,null,null,null],c:0},H={wp:null,st:null,lv:-1,drag:0,warnT:0,pillT:0};
+ const N=7,PITCH=72,PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbphb';
+ const S={s:Array(N).fill(null),c:0},H={wp:null,st:null,lv:-1,drag:0,warnT:0,pillT:0};
  const norm=k=>typeof k=='string'&&/^\d+$/.test(k)?+k:(k===0||k==='')?null:k;
  const okKey=k=>{if(k==null)return false;if(typeof k=='number')return Number.isInteger(k)&&k>0&&(k>=200?!!MAT[k]:k>=100?!!BLK[k-100]:!!BLK[k]);if(typeof k!='string')return false;
   if(k.startsWith('w:'))return!!WPN[k.slice(2)];if(k.startsWith('a:'))return!!WEAR[k.slice(2)];return false};
@@ -23,17 +25,19 @@ const HOTBAR=(()=>{
  const icon=k=>{try{return iconURL(k)}catch(_){return''}};
  const free=()=>entered&&!(typeof dlgOpen!='undefined'&&dlgOpen)&&!(typeof creatorOn!='undefined'&&creatorOn)&&menuEl.style.display=='none';
  const snd=n=>{try{UIS.play(n)}catch(_){}};
- // ---- default layout (new saves and saves from before the hotbar): 1 your weapon, 2-4 Pip / Pebble / Glimmer, 5 your block, 6 Bubbles
+ // ---- default layout (new saves and saves from before the hotbar): 1 your weapon, 2-4 Pip / Pebble / Glimmer, 5 your block, 6 Bubbles, 7 Twiggy
  function bestWeapon(){const ids=Object.keys(WPN).filter(id=>own[id]&&WPN[id].k!='tool'&&id!='fist'&&!locked('w:'+id));
   for(const id of[wp,typeof PLAY8!='undefined'?PLAY8.last.wpn:''])if(id&&ids.includes(id))return id;
   ids.sort((a,b)=>(WPN[b].md|0)-(WPN[a].md|0)||(WPN[b].lv|0)-(WPN[a].lv|0));return ids[0]||'fist'}
  function bestBlock(){const ok=k=>typeof k=='number'&&k>0&&k<200&&okKey(k)&&cnt(k)>0;if(ok(bar[sel]))return bar[sel];for(const k of bar)if(ok(k))return k;
   const ks=Object.keys(inv).map(Number).filter(k=>ok(k)&&k<100&&k!=17&&k!=4&&k!=16).sort((a,b)=>cnt(b)-cnt(a));return ks[0]||null}
- function defaults(){return['w:'+bestWeapon(),'w:pip','w:pebble','w:glimmer',bestBlock(),'w:bubbles'].map(k=>okKey(k)?k:null)}
+ function defaults(){return['w:'+bestWeapon(),'w:pip','w:pebble','w:glimmer',bestBlock(),'w:bubbles','w:twiggy'].map(k=>okKey(k)?k:null)}
+ // v1 (6 slots) -> v2 (7 slots): slots 1-6 stay as they were; slot 7 = Twiggy when it is not on the bar yet, else empty
  function load(){let o=null;try{o=JSON.parse(localStorage.getItem(PK())||'null')}catch(_){}
-  if(o&&Array.isArray(o.s)){const seen=new Set();for(let i=0;i<N;i++){const k=norm(o.s[i]);S.s[i]=okKey(k)&&!seen.has(k)?k:null;if(S.s[i]!=null)seen.add(k)}S.c=Number.isInteger(o.c)&&o.c>=-1&&o.c<N?o.c:0;return true}
+  if(o&&Array.isArray(o.s)){const seen=new Set(),old=!(o.v>=2);S.s=Array(N).fill(null);for(let i=0;i<N;i++){const k=norm(o.s[i]);S.s[i]=okKey(k)&&!seen.has(k)?k:null;if(S.s[i]!=null)seen.add(k)}
+   if(old&&S.s[6]==null&&!seen.has('w:twiggy')&&okKey('w:twiggy'))S.s[6]='w:twiggy';S.c=Number.isInteger(o.c)&&o.c>=-1&&o.c<N?o.c:0;if(old)H.mig=1;return true}
   S.s=defaults();const i=S.s.indexOf('w:'+wp);S.c=i>=0?i:0;return false}
- const save=()=>{try{localStorage.setItem(PK(),JSON.stringify({v:1,s:S.s,c:S.c}))}catch(_){}};
+ const save=()=>{try{localStorage.setItem(PK(),JSON.stringify({v:2,s:S.s,c:S.c}))}catch(_){}};
  // ---- holding: the selected slot decides what is in your hand (wp) and what a click places (bar[sel])
  function hold(){const k=S.c>=0?S.s[S.c]:null,t=kind(k),st=state(k);H.st=st;
   if(S.c>=0){bar[0]=typeof k=='number'?k:0;sel=0;let w='fist';if((t=='tool'||t=='weapon')&&st=='ok')w=wid(k);wp=w}H.wp=wp}
@@ -61,7 +65,7 @@ const HOTBAR=(()=>{
    if(t!='place'&&(st=='ok'||st=='empty'))return _u.apply(this,arguments);
    let fake=false;mdL=false;if(t=='place'&&st=='ok'){if(!mdR){mdR=true;fake=true}}else if(!showInv)warn(k,st);
    try{return _u.apply(this,arguments)}finally{if(fake)mdR=false;if(menuEl.style.display=='none')mdL=true}}}
- // ---- keys 1-6 (7-9 do nothing now); with the inventory open and an item selected, 1-6 put that item in the slot
+ // ---- keys 1-7 (8-9 do nothing); with the inventory open and an item selected, 1-7 put that item in the slot
  selBar=function(i){if(i<0||i>=N)return;if(typeof INV7!='undefined'&&INV7.isOpen){const k=INV7.selK;if(k!=null&&assignable(k)){set(i,k);try{INV7.render()}catch(_){}return}}if(free())pick(i)};
  let acc=0,lastW=0,lastStep=0;
  function wheel(e){if(!free())return;const now=performance.now(),dy=e.deltaY*(e.deltaMode==1?33:e.deltaMode==2?400:1);if(now-lastW>350)acc=0;lastW=now;acc+=dy;
@@ -101,7 +105,7 @@ const HOTBAR=(()=>{
   el.addEventListener('drop',e=>{const s=e.target.closest('.s6');if(!s)return;e.preventDefault();let d='';try{d=e.dataTransfer.getData('text/plain')}catch(_){}drop(+s.dataset.i,d);dragEnd()});
   return true}
  function drop(i,d){d=String(d||'');if(d.startsWith('rbslot:'))swap(+d.slice(7),i);else if(d.startsWith('rbitem:')){const k=norm(d.slice(7));if(assignable(k)){set(i,k);try{if(INV7.isOpen)INV7.render()}catch(_){}}}}
- function dragBegin(){H.drag=1;document.documentElement.classList.add('hbdrag');show('↓','Drop it on a hotbar slot','Slots 1–6 · if it is already on the bar the two slots swap','ok',60000)}
+ function dragBegin(){H.drag=1;document.documentElement.classList.add('hbdrag');show('↓','Drop it on a hotbar slot','Slots 1–7 · if it is already on the bar the two slots swap','ok',60000)}
  function dragEnd(){if(!H.drag)return;H.drag=0;document.documentElement.classList.remove('hbdrag');for(const o of slots)o.classList.remove('over');clearTimeout(H.pillT);H.pillT=setTimeout(()=>{if(pl)pl.classList.remove('on')},500)}
  document.addEventListener('dragend',dragEnd);
  function click(i){const inv7=typeof INV7!='undefined'&&INV7.isOpen;
@@ -117,13 +121,15 @@ const HOTBAR=(()=>{
  const anim=(el,kf,o)=>{try{if(el&&el.animate&&!MOTION7.reduce())el.animate(kf,o)}catch(_){}};
  function pop(i){const s=slots[i];if(s)anim(s._cv,[{transform:'scale(.72) rotate(-8deg)'},{transform:'scale(1.12) rotate(3deg)',offset:.6},{transform:'none'}],{duration:280,easing:'cubic-bezier(.2,.9,.3,1.2)'})}
  function bump(el){anim(el,[{transform:'scale(1.35)'},{transform:'none'}],{duration:220,easing:'ease-out'})}
- function pill(i,txt){const k=i>=0?S.s[i]:wp?'w:'+wp:null;show(i>=0?String(i+1):'✋',i>=0?nameOf(k):nameOf(k)+' (not on the hotbar)',txt||(i>=0?sub(k):'Drag it onto the hotbar, or press 1–6 to switch'),i>=0?state(k):'ok')}
+ function pill(i,txt){const k=i>=0?S.s[i]:wp?'w:'+wp:null;show(i>=0?String(i+1):'✋',i>=0?nameOf(k):nameOf(k)+' (not on the hotbar)',txt||(i>=0?sub(k):'Drag it onto the hotbar, or press 1–7 to switch'),i>=0?state(k):'ok')}
  function show(kb,ti,su,st,ms){if(!build())return;pl.querySelector('kbd').textContent=kb;pl.querySelector('b').textContent=ti;pl.querySelector('small').textContent=su;pl.dataset.st=st;
   if(pl.classList.contains('on'))anim(pl.querySelector('span'),[{transform:'translateY(5px)',opacity:.3},{transform:'none',opacity:1}],{duration:200,easing:'ease-out'});else pl.classList.add('on');
   clearTimeout(H.pillT);H.pillT=setTimeout(()=>pl.classList.remove('on'),ms||1700)}
  // ---- install: replace the old fixed bar, migrate, draw
  renderBar=function(){refresh()};renderW=function(){refresh()};
- try{const q=QUEST.find(q=>q[2]=='break');if(q)q[1]='Hold a tool from your hotbar (keys 1–6 or the mouse wheel), then left-click a block';const p=QUEST.find(q=>q[2]=='place');if(p)p[1]='Select a block on the hotbar, then click to place it'}catch(_){}
- const had=load();hold();if(!had)save();render();
- return{get slots(){return S.s.slice()},get cur(){return S.c},N,set,clear:i=>set(i,null),pick,step,swap,equip,equipSlot,assignable,state,kind,nameOf,render,repaint(){for(const s of slots){s._sig='';s._u=null}render()},paint,deco,defaults,load,dragBegin,dragEnd,drop,wheel,
+ try{const q=QUEST.find(q=>q[2]=='break');if(q)q[1]='Hold a tool from your hotbar (keys 1–7 or the mouse wheel), then left-click a block';const p=QUEST.find(q=>q[2]=='place');if(p)p[1]='Select a block on the hotbar, then click to place it'}catch(_){}
+ const had=load();hold();if(!had||H.mig)save();render();
+ // "put away": nothing in the hand (no slot selected, fists) until a slot is picked again
+ function unhold(){S.c=-1;bar[0]=0;wp='fist';H.wp=wp;H.st=null;save();render()}
+ return{get slots(){return S.s.slice()},get cur(){return S.c},N,set,clear:i=>set(i,null),pick,step,swap,equip,equipSlot,unhold,assignable,state,kind,nameOf,render,repaint(){for(const s of slots){s._sig='';s._u=null}render()},paint,deco,defaults,load,dragBegin,dragEnd,drop,wheel,
   slotOf:k=>S.s.indexOf(norm(k)),held:()=>S.c>=0?S.s[S.c]:null}})();
