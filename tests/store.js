@@ -56,6 +56,14 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   o.hud=!!document.getElementById('bstore');return o});
  ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==19&&r.effects>=15&&r.charms==9&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
+ // the Sparkmouse costume: real catalog gear, buyable + equippable, icons and cached worn art render
+ r=await p.evaluate(async()=>{const o={};const h=SHOP7.byId.get('wear_sparkhood'),s=SHOP7.byId.get('wear_sparksuit');
+  o.items=!!h&&!!s&&h.cat=='gear'&&s.cat=='gear'&&h.rar=='epic'&&s.rar=='legendary'&&WEAR.sparkhood.cost==h.price&&WEAR.sparksuit.cost==s.price&&WEAR.sparkhood.s=='hat'&&WEAR.sparksuit.s=='body';
+  const g0=gems;gems=5000;lvl=20;delete ownW.sparkhood;delete ownW.sparksuit;wear.hat='';wear.body='';const a=await SHOP7.buy('wear_sparkhood'),b2=await SHOP7.buy('wear_sparksuit');o.bought=a.ok&&b2.ok;o.charged=5000-gems;
+  o.eq=SHOP7.equip('wear_sparkhood')&&SHOP7.equip('wear_sparksuit')&&wear.hat=='sparkhood'&&wear.body=='sparksuit';
+  try{iconURL('a:sparkhood');iconURL('a:sparksuit');const c=document.createElement('canvas');c.width=c.height=200;const x=c.getContext('2d'),og=g;g=x;try{for(let i=0;i<4;i++)AC6.draw(100,80,1,0,'T',i*.3,i*60,i==3,'',wp,0,0,wear,false,look,null)}finally{g=og}o.art=GEAR7.size>0}catch(e){o.art='ERR '+e.message}
+  wear.hat='';wear.body='';gems=g0;return o});
+ ok('Sparkmouse Hood + Suit: epic/legendary catalog gear, buy, equip, icons + cached worn art',r.items&&r.bought&&r.charged==2500&&r.eq&&r.art===true,JSON.stringify(r));
  // buy through the UI with confirm dialog
  await p.evaluate(()=>{gems=5000;lvl=120;STORE7.setFilter({cat:'all',q:'Solar Fang'});STORE7.select('wpn_solarfang')});await p.waitForTimeout(300);
  await p.click('#store7 aside [data-a=buy]');await p.waitForTimeout(400);const dlg=await p.evaluate(()=>!!document.querySelector('#dlg7.on'));await p.click('#dlg7 [data-ok]');await p.waitForTimeout(600);
