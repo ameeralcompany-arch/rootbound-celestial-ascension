@@ -1,8 +1,10 @@
-// ===== Spirit Stone hunt: 7 hidden glowing stones in the Plaza (underwater, on the bridge, inside buildings, in the grove...) =====
+// ===== Spirit Stone hunt: 7 hidden glowing stones around the Plaza town: the pond bottom, the crypt's tombstones, the Astral Tower door,
+// under the windmill sails, behind the dojo sandbag, Ember Manor's far corner and the Sky Shrine at the end of the Sky Run. All reachable on foot,
+// by swimming or a jump (rows from PLZ7.S, DX-relative x). =====
 // Finding a stone gives gems once; finding all seven gives a bonus and the "Stone Seeker" title. Progress is saved on this device.
 // Gems are only paid in offline / guest play (a signed-in online account's wallet belongs to the server).
 const HUNT7=(()=>{
- const S=22,SPOTS=[[-47,S-1,'behind the left cherry tree'],[-41,S+4,'at the bottom of the pond'],[-41,S-3,'on top of the bridge'],[-32,S-2,'inside the cottage'],[30,S-2,'inside the teahouse'],[43,S-1,'deep in the bamboo grove'],[-14,S-2,'in the fountain']];
+ const S=PLZ7.S,hx_=(id,v)=>PLZ7.house(id).x0+v-DX,F=PLZ7.FIN,SPOTS=[[5-DX,S+PLZ7.POND.d,'at the bottom of the Moonlit Pond'],[hx_('hollow',1),S-2,'among the tombstones of the Lantern Crypt'],[hx_('seren',5),S-3,'above the glowing door of the Astral Tower'],[hx_('tobi',9),S-2,'under the windmill sails'],[hx_('pip',10),S-2,'behind the sandbag at the Iron Fist Dojo'],[hx_('vesper',12),S-1,'in the far corner behind Ember Manor'],[F.x0+1-DX,F.row-2,'at the Sky Shrine above the clouds']];
  let found={},title=false;try{const o=JSON.parse(localStorage.getItem('rbhunt')||'{}');found=o.f||{};title=!!o.t}catch(_){}
  const save=()=>{try{localStorage.setItem('rbhunt',JSON.stringify({f:found,t:title}))}catch(_){}};
  const count=()=>Object.keys(found).length,srv=()=>{try{return SHOP7.serverMode}catch(_){return false}};

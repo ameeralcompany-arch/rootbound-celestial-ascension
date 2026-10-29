@@ -1,5 +1,5 @@
 // ===== Galaxy blocks (66 Galaxy, 67 Aurora, 68 Starlight Marble) with animated nebula + twinkling stars, and the Campfire (69):
-// animated flames, sparks, smoke, warm light and gentle healing nearby. Also decorates the Plaza and adds soft drifting pollen there. =====
+// animated flames, sparks, smoke, warm light and gentle healing nearby. Adds soft drifting pollen in the Plaza (whose town decor is PLZ7's). =====
 const GAL7=(()=>{
  const rr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
  SOLID6[69]=0;
@@ -38,7 +38,7 @@ const GAL7=(()=>{
  const POL=Array.from({length:16},(_,i)=>({x:hash(i,1,1),y:hash(i,2,2),s:.4+hash(i,3,3),ph:hash(i,4,4)*6}));
  function pollen(g,t,vw,vh){if(document.documentElement.classList.contains('lowfx'))return;g.save();g.globalCompositeOperation='lighter';for(const p of POL){const x=((p.x*vw+t*8*p.s+Math.sin(t*.5+p.ph)*20)%vw+vw)%vw,y=((p.y*vh-t*5*p.s)%vh+vh)%vh,a=.18+.16*Math.sin(t*1.5+p.ph);const gr=g.createRadialGradient(x,y,0,x,y,7);gr.addColorStop(0,'rgba(255,244,200,'+a+')');gr.addColorStop(1,'rgba(255,244,200,0)');g.fillStyle=gr;g.fillRect(x-7,y-7,14,14)}g.restore()}
  {const _g=gen;gen=function(){_g.apply(this,arguments);if(cur!='plaza')return;try{decorate()}catch(e){console.error('GAL7',e)}}}
- function decorate(){const S=22,free=(x,n)=>{for(let y=S-n;y<S;y++)if(tiles[y*W+x])return false;return tiles[S*W+x]&&SOLID6[tiles[S*W+x]]},set=(x,y,b)=>{if(x>0&&x<W-1&&y>=0&&y<H-2){tiles[y*W+x]=b;hp[y*W+x]=BLK[b][2]}},col=(x,n)=>{for(let d=0;d<8;d++)for(const s of[1,-1]){const q=x+d*s;if(q>1&&q<W-2&&free(q,n))return q}return -1};
+ function decorate(){if(cur=='plaza')return{k:0,b:tiles[0]};/* the plaza town (PLZ7) has its own decor */const S=22,free=(x,n)=>{for(let y=S-n;y<S;y++)if(tiles[y*W+x])return false;return tiles[S*W+x]&&SOLID6[tiles[S*W+x]]},set=(x,y,b)=>{if(x>0&&x<W-1&&y>=0&&y<H-2){tiles[y*W+x]=b;hp[y*W+x]=BLK[b][2]}},col=(x,n)=>{for(let d=0;d<8;d++)for(const s of[1,-1]){const q=x+d*s;if(q>1&&q<W-2&&free(q,n))return q}return -1};
   const cx=Math.floor(W/2);for(const x of[cx-18,cx+18,cx-34,cx+34]){const q=col(x,5);if(q>0)set(q,S-1,69)}
   const pil=[[cx-8,4,66],[cx+8,4,67],[cx-12,2,68],[cx+12,2,68]].map(([x,h,b])=>[col(x,h+2),h,b]).filter(a=>a[0]>0);for(const [x,h,b] of pil)for(let i=1;i<=h;i++)set(x,S-i,b);return pil.length?{k:(S-1)*W+pil[0][0],b:pil[0][2]}:{k:0,b:0}}
  {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){console.error('GAL7',e)}};BOSS6.drawProj=function(g,cx,cy){_d.call(this,g,cx,cy);try{_l=performance.now();draw(g,cx,cy)}catch(e){console.error('GAL7d',e)}}}
