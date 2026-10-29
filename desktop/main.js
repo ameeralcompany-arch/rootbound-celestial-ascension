@@ -15,7 +15,8 @@ function create(){
  const show=()=>{if(OFF)w.showInactive();else{w.show();if(!SMOKE)w.setFullScreen(true)}};
  w.once('ready-to-show',show);setTimeout(()=>{if(!w.isDestroyed()&&!w.isVisible())show()},4000);
  w.webContents.on('console-message',(_e,lvl,msg)=>{if(lvl>=2)log('console: '+msg.slice(0,300))});
- w.webContents.on('did-fail-load',(_e,code,desc,url)=>{log('did-fail-load '+code+' '+desc+' '+url);/* -3 = load aborted by a reload/navigation: harmless */if(code!==-3&&!SMOKE&&!OFF)dialog.showErrorBox('Rootbound could not load','The game file failed to load ('+desc+').\nA log was written to:\n'+logf)});
+ // no error windows for the player: a failed load is logged and quietly retried (a file being replaced by an update can briefly fail)
+ let tries=0;w.webContents.on('did-fail-load',(_e,code,desc,url)=>{log('did-fail-load '+code+' '+desc+' '+url);/* -3 = load aborted by a reload/navigation: harmless */if(code!==-3&&!SMOKE&&!OFF&&tries<3){tries++;setTimeout(()=>{if(!w.isDestroyed())w.loadFile(path.join(__dirname,'index.html'))},1500*tries)}});
  w.webContents.on('render-process-gone',(_e,d)=>{log('render-process-gone '+JSON.stringify(d));if(!SMOKE&&!SAFE&&!OFF){app.relaunch({args:process.argv.slice(1).concat('--safe-mode')});app.exit(0)}});
  w.webContents.setWindowOpenHandler(()=>({action:'deny'}));
  // F11 toggles fullscreen (the app menu is hidden, so add it back by hand)

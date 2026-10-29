@@ -23,7 +23,9 @@ html[data-theme=dark] #rbboot i{color:#a59dbc}
 (function(){
 var D=window.RBDIAG={t0:Date.now(),stages:[],errors:[],assets:[],ready:false,
  stage:function(n,info){this.stages.push({n:n,ms:Date.now()-this.t0,i:info||''});},
- err:function(k,m){if(this.errors.length<40)this.errors.push({k:k,ms:Date.now()-this.t0,m:String(m).slice(0,400)});if(!this.ready)showDiag();},
+ /* errors are only recorded (quietly): the player never gets an error box. If the game really doesn't start, the 12 s watchdog
+    shows a calm "taking longer" panel; the technical report stays folded away behind "Details". */
+ err:function(k,m){if(this.errors.length<40)this.errors.push({k:k,ms:Date.now()-this.t0,m:String(m).slice(0,400)});try{console.warn('[rootbound] '+k+': '+String(m).slice(0,300))}catch(_){}},
  report:function(){
   var n=navigator,c=(function(){try{var cv=document.createElement('canvas');return{c2d:!!cv.getContext('2d'),webgl:!!(cv.getContext('webgl')||cv.getContext('experimental-webgl'))}}catch(e){return{err:String(e)}}})(),st='ok';
   try{localStorage.setItem('rbt','1');localStorage.removeItem('rbt')}catch(e){st='BLOCKED: '+e.name}
@@ -37,7 +39,8 @@ try{var th=window.localStorage.getItem('rbtheme');if(th=='auto')th=window.matchM
 try{window.localStorage.getItem('rbt')}catch(e){D.err('storage','localStorage unavailable: '+e.name+' - using in-memory fallback');var m={};try{Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:function(k){return Object.prototype.hasOwnProperty.call(m,k)?m[k]:null},setItem:function(k,v){m[k]=String(v)},removeItem:function(k){delete m[k]},clear:function(){m={}},key:function(i){return Object.keys(m)[i]||null},get length(){return Object.keys(m).length}}})}catch(_){}}
 window.addEventListener('error',function(e){if(e.target&&e.target!==window&&(e.target.src||e.target.href)){D.assets.push((e.target.tagName||'')+' '+(e.target.src||e.target.href));return}D.err('error',(e.message||'')+' @'+(e.filename||'').split('/').pop()+':'+e.lineno+':'+e.colno)},true);
 window.addEventListener('unhandledrejection',function(e){D.err('promise',e.reason&&e.reason.stack||e.reason)});
-function box(){var b=document.getElementById('rbboot');if(b||!document.body)return b;b=document.createElement('div');b.id='rbboot';b.innerHTML='<b>ROOTBOUND</b><i>CELESTIAL ASCENSION</i><div class="sp" id="rbsp"></div><div id="rbmsg">Loading…</div><div id="rbdiag"><h2>Rootbound could not finish starting</h2><p id="rbdp">Something stopped the game while it was loading. Copy the report below and send it to the developer.</p><pre id="rbpre"></pre><button class="p" id="rbretry">Retry</button><button id="rbcopy">Copy report</button><button id="rbcont">Keep waiting</button></div>';document.body.appendChild(b);
+function box(){var b=document.getElementById('rbboot');if(b||!document.body)return b;b=document.createElement('div');b.id='rbboot';b.innerHTML='<b>ROOTBOUND</b><i>CELESTIAL ASCENSION</i><div class="sp" id="rbsp"></div><div id="rbmsg">Loading…</div><div id="rbdiag"><h2>Taking a little longer than usual…</h2><p id="rbdp">Your computer may be busy. Rootbound will keep loading, or you can try again.</p><pre id="rbpre" style="display:none"></pre><button class="p" id="rbretry">Retry</button><button id="rbcont">Keep waiting</button><button id="rbdet">Details</button><button id="rbcopy" style="display:none">Copy report</button></div>';document.body.appendChild(b);
+ document.getElementById('rbdet').onclick=function(){document.getElementById('rbpre').style.display='block';document.getElementById('rbcopy').style.display='';this.style.display='none'};
  document.getElementById('rbretry').onclick=function(){location.reload()};
  document.getElementById('rbcopy').onclick=function(){var t=D.report(),pre=document.getElementById('rbpre');try{navigator.clipboard.writeText(t).then(function(){this.textContent='Copied'}.bind(this),function(){sel()}.bind(this))}catch(e){sel()}function sel(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r)}};
  document.getElementById('rbcont').onclick=function(){document.getElementById('rbdiag').style.display='none';document.getElementById('rbsp').style.display='';wd=setTimeout(function(){showDiag()},15000)};return b}
@@ -45,7 +48,7 @@ function showDiag(){var b=box();if(!b)return;document.getElementById('rbsp').sty
 var wd;
 D.done=function(){D.ready=true;D.stage('ready');clearTimeout(wd);var b=document.getElementById('rbboot');if(b){b.classList.add('off');setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},500)}};
 D.show=showDiag;
-function start(){box();wd=setTimeout(function(){if(!D.ready){D.err('watchdog','game did not report ready within 12s');}},12000)}
+function start(){box();wd=setTimeout(function(){if(!D.ready){D.err('watchdog','game did not report ready within 12s');showDiag()}},12000)}
 if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 /* the parser itself may be stalled by a slow network: show something as soon as a body exists */
 var mo=new MutationObserver(function(){if(document.body){mo.disconnect();start()}});mo.observe(document.documentElement,{childList:true});
