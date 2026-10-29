@@ -1,23 +1,24 @@
-// ===== CLASS7: weapon classes (Brawler, Knight, Samurai, Archer, Mage, Demon, Reaper, Elementalist, Stormcaller, Berserker, Ninja, Druid).
+// ===== CLASS7: weapon classes (Brawler, Knight, Samurai, Archer, Mage, Demon, Reaper, Elementalist, Stormcaller, Berserker, Ninja, Druid, Gunslinger).
 // Your class is the class of the weapon in your hand. Each class levels up on its own from hits and kills made with its weapons,
 // and every level makes that class's weapons stronger and its passive better. State: key rbc4 (account-namespaced). =====
 const CLASS7=(()=>{
  const MAX=100,need=l=>Math.round(40+l*l*22);
  const C={
-  brawler:{n:'Brawler',c:'#ffb27a',ic:'✊',ids:['fist','pan'],p:'Swift Fists: attacks recover up to 30% faster'},
-  knight:{n:'Knight',c:'#ffd86a',ic:'🛡',ids:['ember','frost','solarfang','skyspear'],p:'Valor: heavier knockback, hits sometimes stun'},
-  samurai:{n:'Samurai',c:'#ff7a9a',ic:'⚔',ids:['astralkat','frostbite'],p:'Iaido: up to 35% chance for a 1.6x critical cut'},
-  archer:{n:'Archer',c:'#8affc0',ic:'🏹',ids:['zephyrbow','crowbow','icebow'],p:'Eagle Eye: more damage the farther the target'},
-  mage:{n:'Mage',c:'#d08aff',ic:'✨',ids:['arcane','starwand','frostwand','chainwand','gravitystaff'],p:'Arcane Surge: +0.8% spell damage per level'},
+  brawler:{n:'Brawler',c:'#ffb27a',ic:'✊',ids:['fist','pan','emberfist'],p:'Swift Fists: attacks recover up to 30% faster'},
+  knight:{n:'Knight',c:'#ffd86a',ic:'🛡',ids:['ember','frost','solarfang','skyspear','tidecaller'],p:'Valor: heavier knockback, hits sometimes stun'},
+  samurai:{n:'Samurai',c:'#ff7a9a',ic:'⚔',ids:['astralkat','frostbite','sakurakat'],p:'Iaido: up to 35% chance for a 1.6x critical cut'},
+  archer:{n:'Archer',c:'#8affc0',ic:'🏹',ids:['zephyrbow','crowbow','icebow','raijinbow'],p:'Eagle Eye: more damage the farther the target'},
+  mage:{n:'Mage',c:'#d08aff',ic:'✨',ids:['arcane','starwand','frostwand','chainwand','gravitystaff','lumistaff'],p:'Arcane Surge: +0.8% spell damage per level'},
   demon:{n:'Demon',c:'#ff4a5a',ic:'😈',ids:['blood','voidwand','tendrilwand','umbra','umbra1','umbra2','umbra3'],p:'Hunger: hits steal life'},
   reaper:{n:'Reaper',c:'#9a7aff',ic:'💀',ids:['void','sickle','crimsonrift'],p:'Harvest Souls: big damage to weakened foes, kills heal you'},
   elementalist:{n:'Elementalist',c:'#7ad8ff',ic:'🔥',ids:['cinder','cinder1','cinder2','cinder3','rime','rime1','rime2','rime3'],p:'Attunement: burns, chills and freezes last longer'},
   stormcaller:{n:'Stormcaller',c:'#fff07a',ic:'⚡',ids:['spark','spark1','spark2','spark3','hammer','stormflail'],p:'Static: hits can stun, more often each level'},
-  berserker:{n:'Berserker',c:'#ff8a4a',ic:'🪓',ids:['titanmaul'],p:'Rage: the lower your health, the harder you hit'},
+  berserker:{n:'Berserker',c:'#ff8a4a',ic:'🪓',ids:['titanmaul','dragonaxe'],p:'Rage: the lower your health, the harder you hit'},
   ninja:{n:'Ninja',c:'#9adcff',ic:'🌀',ids:['galeshuriken','moonchakram','glaive'],p:'Shadowstep: faster attacks and the odd critical'},
-  druid:{n:'Druid',c:'#9aff7a',ic:'🌿',ids:['verdant','thornlash','venom'],p:'Grove: slowly regenerate health while holding a druid weapon'}
+  druid:{n:'Druid',c:'#9aff7a',ic:'🌿',ids:['verdant','thornlash','venom'],p:'Grove: slowly regenerate health while holding a druid weapon'},
+  gunslinger:{n:'Gunslinger',c:'#7ad8ff',ic:'🔫',ids:['popgun','revolver','shotgun','smg','moonpistol','sniper','rocket','prismcannon'],p:'Deadeye: faster trigger (up to 20%) and up to 30% chance for a 1.7x headshot'}
  };
- const BYK={fist:'brawler',pan:'brawler',sword:'knight',spear:'knight',bow:'archer',wand:'mage',staff:'mage',scythe:'reaper',sickle:'reaper',hammer:'stormcaller',maul:'berserker',flail:'berserker',shuriken:'ninja',chakram:'ninja',glaive:'ninja',whip:'druid'};
+ const BYK={fist:'brawler',knuckle:'brawler',pan:'brawler',sword:'knight',spear:'knight',bow:'archer',wand:'mage',staff:'mage',scythe:'reaper',sickle:'reaper',hammer:'stormcaller',maul:'berserker',flail:'berserker',shuriken:'ninja',chakram:'ninja',glaive:'ninja',whip:'druid',gun:'gunslinger'};
  const OF={};for(const k in C)for(const id of C[k].ids)OF[id]=k;
  const of=w=>w?(OF[w.id]||BYK[w.k]||null):null;
  const S={lv:{},xp:{}};for(const k in C){S.lv[k]=1;S.xp[k]=0}
@@ -38,6 +39,7 @@ const CLASS7=(()=>{
  {const _hm=hurtMob;hurtMob=function(m,d,w,ang){const k=of(w);if(!k||!(d>0))return _hm.apply(this,arguments);const L=lv(k),R=Math.random;let mul=1+(L-1)*.02;
    if(k=='samurai'&&R()<Math.min(.35,L*.005))mul*=1.6;
    if(k=='ninja'&&R()<Math.min(.2,L*.003))mul*=1.5;
+   if(k=='gunslinger'&&R()<Math.min(.3,L*.004))mul*=1.7;
    if(k=='archer'){const dd=Math.hypot(m.x-P.x,m.y-P.y)/T;if(dd>3)mul*=1+Math.min(.6,(dd-3)*L*.0025)}
    if(k=='mage')mul*=1+L*.008;
    if(k=='reaper'&&m.hp<(m.mhp||m.hp*3)*.3)mul*=1.5+L*.01;
@@ -54,7 +56,7 @@ const CLASS7=(()=>{
  // max-hp memo so Reaper knows what "weakened" means
  setInterval(()=>{try{for(const m of mobs)if(!m.mhp||m.hp>m.mhp)m.mhp=m.hp}catch(_){}},250);
  // attack-speed passives
- {const _uw=useWeapon;useWeapon=function(){const r=_uw.apply(this,arguments);try{const k=cur();if((k=='brawler'||k=='ninja')&&wcd>0)wcd*=1-Math.min(k=='brawler'?.3:.2,lv(k)*.004)}catch(_){}return r}}
+ {const _uw=useWeapon;useWeapon=function(){const r=_uw.apply(this,arguments);try{const k=cur();if((k=='brawler'||k=='ninja'||k=='gunslinger')&&wcd>0)wcd*=1-Math.min(k=='brawler'?.3:.2,lv(k)*.004)}catch(_){}return r}}
  // druid regen
  setInterval(()=>{try{if(entered&&cur()=='druid'&&P.hp>0&&P.hp<maxHP())P.hp=Math.min(maxHP(),P.hp+1+lv('druid')*.04)}catch(_){}},2000);
  // ---- HUD badge
