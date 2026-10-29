@@ -12,7 +12,7 @@ const CHEST7=(()=>{
  const near=()=>{let b=null,bd=T*1.7;for(const c of list){if(isOpen(c))continue;const d=Math.hypot((c.tx+.5)*T-P.x,(c.ty+.5)*T-(P.y+P.h/2));if(d<bd){bd=d;b=c}}return b};
  function loot(c){const t=tierOf(c.dp),R=Math.random,px=(c.tx+.5)*T,py=(c.ty+.2)*T;const gemsN=Math.round((60+c.dp*7)*(.7+R()*.6)*(1+t*.5));
   for(let i=0;i<5;i++)spawnDrop(px+(R()-.5)*30,py,'gem',Math.max(1,Math.round(gemsN/5)));
-  const pool=[];const deep=[60,61,62,63,64,65].filter((id,k)=>c.dp>8+k*5);for(const id of deep)pool.push([id,1+t,3]);for(const k in MAT)pool.push([+k,1,2+t]);for(const k of[1,3,5,8,9,10])pool.push([100+k,1,2]);pool.push([10,1,1+t],[9,1,2+t]);
+  const pool=[];const deep=[60,61,62,63,64,65].filter((id,k)=>c.dp>8+k*5);for(const id of deep)pool.push([id,1+t,3]);for(const k in MAT)if(!MAT[k].nochest)pool.push([+k,1,2+t]);for(const k of[1,3,5,8,9,10])pool.push([100+k,1,2]);pool.push([10,1,1+t],[9,1,2+t]);
   const n=3+t+(R()<.4?1:0),got=[];for(let i=0;i<n&&pool.length;i++){const p=pool[R()*pool.length|0],q=p[1]+Math.floor(R()*(p[2]-p[1]+1));spawnDrop(px+(R()-.5)*40,py-10,p[0],q);got.push(q+' '+(typeof iname=='function'?iname(p[0]):'item'))}
   xpGain('mine',20+c.dp*3);return{gemsN,got,t}}
  function open(c){if(!opened[cur])opened[cur]=[];opened[cur].push(c.i);save();c.t0=performance.now();const r=loot(c),px=(c.tx+.5)*T,py=(c.ty+.2)*T;
