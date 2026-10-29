@@ -67,5 +67,8 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  const br=await E(k=>{const x=k%W,y=k/W|0,o=OBJ[k];const ids=Object.keys(BLK).map(Number).filter(i=>i>1&&i<20&&i!=17).concat(Object.keys(MAT).map(Number)).slice(0,24);o.c.it=ids.map(i=>[i,60]);
   const before={};for(const i of ids)before[i]=cnt(i);drops.length=0;let n=0;while(tiles[k]&&n++<300)breakAt(x,y,50);const got={};for(const d of drops)got[d.k]=(got[d.k]||0)+d.n;let lost=0;for(const i of ids){const back=(got[i]||0)+cnt(i)-before[i];if(back!=60)lost++}return{broke:!tiles[k],lost,drops:drops.length}},kb);
  ok('breaking a full chest loses nothing (24 stacks: drops + backpack)',br.broke&&br.lost==0,br);
+ // a big title banner that arrives while the chest window is open waits (it used to cover the chest header), then shows on close
+ const kq=await place();await W8(150);const bq=await E(async k=>{const b=document.getElementById('banner');b.classList.remove('on');CHEST6.open(k);UI6.say6('QUEUED','banner test',1500);await new Promise(r=>setTimeout(r,300));const during=b.classList.contains('on');CHEST6.close();await new Promise(r=>setTimeout(r,450));return{during,after:b.classList.contains('on')&&/QUEUED/.test(b.textContent)}},kq);
+ ok('a title banner waits while the chest window is open, then shows when it closes',!bq.during&&bq.after,bq);
  ok('no page errors',errs.length==0,errs.join('|'));
  await b.close();console.log(fails?fails+' chest test(s) FAILED':'all chest tests passed');process.exit(fails?1:0)})();
