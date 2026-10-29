@@ -1,6 +1,6 @@
 // ===== WFX10: the 32 weapons that still shared the generic swing now each have their own move, VFX and sound.
 // Evolution lines keep one move that grows with every stage (more projectiles, bigger radius, a finisher at stage 4).
-// Trees and the block under the cursor still work like before, so every weapon can still dig. =====
+// Weapons still harvest trees, but they never break blocks: only the tiny tools (TOOLS8) do. Fists still open Tackle Boxes. =====
 const WFX10=(()=>{
  const R=Math.random,Q=[];
  const pos=()=>({x:P.x,y:P.y+23});
@@ -17,7 +17,7 @@ const WFX10=(()=>{
  const spark=(x,y,c,n,sp,l)=>{if(red())n=Math.ceil(n/3);for(let i=0;i<n;i++){const a=R()*6.28,v=(.3+R())*(sp||120);VFX.add(1,c,x,y,Math.cos(a)*v,Math.sin(a)*v,l||.45,9,2,{a:1})}};
  const mote=(x,y,c,s,l)=>{if(!red()||R()<.3)VFX.add(0,c,x,y,0,0,l||.3,s||12,2,{a:.7})};
  const bdOf=w=>w.bd+bonus().pow+(wUp[wp]|0)+Math.floor(prof.mine.l/6);
- const brk=(tx,ty,w)=>{try{if(tx>0&&ty>0&&tx<W-1&&ty<H-1)return breakAt(tx,ty,bdOf(w))}catch(_){}return false};
+ const brk=(tx,ty,w)=>false; // moves, projectiles and explosions no longer dig (only tools break blocks)
  const tone=(a,b,d,ty,v,dl,vib)=>{try{SFX7.tone(a,b,d,ty,v,dl,vib)}catch(_){}};
  const shk=v=>{shake=Math.max(shake,red()?0:v)};
  const st=w=>w.st||1;
@@ -93,7 +93,7 @@ const WFX10=(()=>{
  function use(w){const cdm=over>0?.5:1;wcd=w.cd*cdm/(1+bonus().atk);swing=.22;const c={x:mx+cam.x,y:my+cam.y},o=pos(),a=Math.atan2(c.y-o.y,c.x-o.x);P.f=Math.cos(a)>=0?1:-1;
   slashes.push({x:o.x,y:o.y,a,t:performance.now(),w});try{FX7.weaponAnim(w.id)}catch(_){}
   const tk=pickTree(c.x,c.y);if(tk>=0&&Math.hypot((tk%W)*T+T/2-P.x,(tk/W|0)*T+T/2-(P.y+P.h/2))<REACH+T){harvest(tk);return}
-  const tx=Math.floor(c.x/T),ty=Math.floor(c.y/T);if(Math.hypot(tx*T+T/2-P.x,ty*T+T/2-(P.y+P.h/2))<REACH&&brk(tx,ty,w))try{G('break')}catch(_){}
+  const tx=Math.floor(c.x/T),ty=Math.floor(c.y/T);if(Math.hypot(tx*T+T/2-P.x,ty*T+T/2-(P.y+P.h/2))<REACH)try{wTryBreak(tx,ty,w)}catch(_){}
   BEH[KIND[w.id]](w,a,o,c)}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&KIND[w.id]&&(own[w.id]||!w.cost)){use(w);return}return _uw.apply(this,arguments)}}
  function boom(x,y,r,w,k,col){for(const m of near(x,y,r))hit(m,w,k,Math.atan2(cy0(m)-y,m.x-x));Q.push({k:'blast',x,y,r,t:.4,t0:.4,c:col});spark(x,y,'rgb('+col+')',16,240);

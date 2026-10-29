@@ -11,7 +11,8 @@ const WFX8=(()=>{
  const segDist=(px,py,ax,ay,bx,by)=>{const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy||1;let t=((px-ax)*dx+(py-ay)*dy)/l;t=Math.max(0,Math.min(1,t));return Math.hypot(px-(ax+dx*t),py-(ay+dy*t))};
  const gyAt=(x,y0)=>{const tx=Math.max(1,Math.min(W-2,Math.floor(x/T)));let ty=Math.max(0,Math.floor(y0/T));for(let i=0;i<20&&ty<H-1;i++,ty++)if(solidAt(tx,ty))return ty*T;return y0};
  const spark=(x,y,c,n,sp)=>{if(QM&&QM.reduce)n=Math.ceil(n/3);for(let i=0;i<n;i++){const a=R()*6.28,v=(.3+R())*(sp||120);VFX.add(1,c,x,y,Math.cos(a)*v,Math.sin(a)*v,.45,9,2,{a:1})}};
- const breakLine=(o,a,len,bd)=>{for(let d=T*.5;d<=len;d+=T*.5){const tx=Math.floor((o.x+Math.cos(a)*d)/T),ty=Math.floor((o.y+Math.sin(a)*d)/T);if(solidAt(tx,ty)){try{breakAt(tx,ty,bd)}catch(_){}return d}}return len};
+ // weapons never break blocks (only tools do): the line just stops at the first solid block
+ const breakLine=(o,a,len,bd)=>{for(let d=T*.5;d<=len;d+=T*.5){const tx=Math.floor((o.x+Math.cos(a)*d)/T),ty=Math.floor((o.y+Math.sin(a)*d)/T);if(solidAt(tx,ty))return d}return len};
  const bdOf=w=>w.bd+bonus().pow+(wUp[wp]|0)+Math.floor(prof.mine.l/6);
  const SFX={skyspear:[[900,.1,'triangle',.05,.5],[1500,.06,'sine',.03,.6]],thornlash:[[300,.14,'sawtooth',.05,.4],[1800,.04,'square',.04,.8]],moonchakram:[[700,.25,'sine',.04,.6]],zephyrbow:[[260,.08,'triangle',.06,.5],[1100,.07,'sine',.03,.6]],
   stormflail:[[130,.3,'sawtooth',.06,.5]],gravitystaff:[[160,.25,'sine',.07,.4],[640,.2,'sine',.03,.5]],galeshuriken:[[1700,.08,'sine',.04,.5],[2100,.06,'sine',.03,.5]],titanmaul:[[70,.4,'square',.1,.4],[160,.2,'sawtooth',.05,.5]]};
@@ -45,15 +46,14 @@ const WFX8=(()=>{
   else if(p.k=='flail'){p.t-=dt;if(p.t<=0)dead=true;else{const el=1.5-p.t,r=T*(1.0+1.6*Math.min(1,el/.3))*(p.t<.35?p.t/.35:1)+8,tx=o.x+Math.cos(p.a)*r,ty=o.y+Math.sin(p.a)*r;p.a+=p.av*dt;p.av*=Math.max(0,1-.55*dt);
    p.vx+=((tx-p.x)*90-p.vx*7)*dt;p.vy+=((ty-p.y)*90-p.vy*7)*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;const sp=Math.hypot(p.vx,p.vy);
    if(sp>260)for(const m of mobs)if(live(m)&&Math.hypot(m.x-p.x,m.y+m.h/2-p.y)<rad(m)+16&&(p.cd.get(m)||0)<=el){p.cd.set(m,el+.3);hit(m,p.w,.8+Math.min(.6,sp/1400),Math.atan2(m.y-p.y,m.x-p.x));spark(p.x,p.y,'#fff0a0',8,170);shake=Math.max(shake,QM.reduce?0:.06)}
-   if(sp>300&&Math.random()<.7)VFX.add(0,'#ffe27a',p.x,p.y,0,0,.3,12,3,{a:.8});if(solidAt(Math.floor(p.x/T),Math.floor(p.y/T))&&sp>200&&R()<.12){try{breakAt(Math.floor(p.x/T),Math.floor(p.y/T),bdOf(p.w))}catch(_){}}}}
+   if(sp>300&&Math.random()<.7)VFX.add(0,'#ffe27a',p.x,p.y,0,0,.3,12,3,{a:.8});if(solidAt(Math.floor(p.x/T),Math.floor(p.y/T))&&sp>200&&R()<.12)spark(p.x,p.y,'#fff0a0',4,90)}}
   else if(p.k=='orb'){p.l-=dt;p.vy+=900*dt;let nx=p.x+p.vx*dt,ny=p.y+p.vy*dt,boom=false;
    if(solidAt(Math.floor(nx/T),Math.floor(p.y/T))){p.vx*=-.78;nx=p.x;p.b++;snd(180+p.b*60,.08,'sine',.06,.6);spark(p.x,p.y,'#e2b8ff',5,100)}
    if(solidAt(Math.floor(p.x/T),Math.floor(ny/T))){p.vy*=-.78;if(Math.abs(p.vy)<90)p.vy=-90;ny=p.y;p.b++;snd(180+p.b*60,.08,'sine',.06,.6);spark(p.x,p.y,'#e2b8ff',5,100)}
    p.x=nx;p.y=ny;if(Math.random()<.7)VFX.add(0,'#c690ff',p.x,p.y,0,0,.35,14,3,{a:.7});
    for(const m of mobs)if(live(m)&&Math.hypot(m.x-p.x,m.y+m.h/2-p.y)<rad(m)+p.r){boom=true;break}
    if(boom||p.b>=4||p.l<=0){dead=true;for(const m of mobs)if(live(m)&&Math.hypot(m.x-p.x,m.y+m.h/2-p.y)<T*2.3+rad(m)){hit(m,p.w,1.4,Math.atan2(m.y-p.y,m.x-p.x));m.vx+=(p.x-m.x)*3}
-    PR.push({k:'blast',x:p.x,y:p.y,t:.45,t0:.45,c:'190,120,255'});spark(p.x,p.y,'#d8a8ff',22,260);VFX.wave(p.x,p.y,'#b070ff',T*2.3,.5,.3);snd(90,.35,'sawtooth',.09,.4);snd(400,.2,'sine',.05,.5);shake=Math.max(shake,QM.reduce?0:.12);
-    try{const bx=Math.floor(p.x/T),by=Math.floor(p.y/T);for(const[dx,dy]of[[0,0],[1,0],[-1,0],[0,1],[0,-1]])breakAt(bx+dx,by+dy,bdOf(p.w))}catch(_){}}}
+    PR.push({k:'blast',x:p.x,y:p.y,t:.45,t0:.45,c:'190,120,255'});spark(p.x,p.y,'#d8a8ff',22,260);VFX.wave(p.x,p.y,'#b070ff',T*2.3,.5,.3);snd(90,.35,'sawtooth',.09,.4);snd(400,.2,'sine',.05,.5);shake=Math.max(shake,QM.reduce?0:.12);}}
   else if(p.k=='shur'){p.l-=dt;p.rot+=dt*30;let tg=null,bd=T*6;for(const m of mobs)if(live(m)){const d=Math.hypot(m.x-p.x,m.y+m.h/2-p.y);if(d<bd){bd=d;tg=m}}
    if(tg){const sp=Math.hypot(p.vx,p.vy),a0=Math.atan2(p.vy,p.vx),a1=Math.atan2(tg.y+tg.h/2-p.y,tg.x-p.x);let da=a1-a0;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;const na=a0+Math.max(-4.5*dt,Math.min(4.5*dt,da));p.vx=Math.cos(na)*sp;p.vy=Math.sin(na)*sp}
    let nx=p.x+p.vx*dt,ny=p.y+p.vy*dt;if(solidAt(Math.floor(nx/T),Math.floor(p.y/T))){if(p.rc-->0){p.vx*=-1;nx=p.x;spark(p.x,p.y,'#bff',5,100);snd(1500,.05,'sine',.04,.7)}else dead=true}if(solidAt(Math.floor(p.x/T),Math.floor(ny/T))){if(p.rc-->0){p.vy*=-1;ny=p.y;spark(p.x,p.y,'#bff',5,100)}else dead=true}
