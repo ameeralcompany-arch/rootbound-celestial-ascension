@@ -7,7 +7,7 @@ const STORE7=(()=>{
  const WX_COL={39:['#40204a','#ff9cc8','petal'],40:['#050a24','#9fc8ff','star'],41:['#1a0a40','#ff7fe0','star']};
  let el=null,cat='featured',q='',sort='feat',rar='all',ownedOnly=0,selId=null,pv=null,raf=0,parts=[],fxLast=0,busy=0;
  const st=()=>({gems:gems|0});
- const cache={};let missing=0;function thumb(it){if(cache[it.id])return cache[it.id];let u='';missing=0;try{const c=document.createElement('canvas');c.width=132;c.height=106;const x=c.getContext('2d');drawPrev(x,it,132,106,.8,.45,true);u=c.toDataURL()}catch(_){}if(missing)return u;return cache[it.id]=u}
+ const cache={};let missing=0;function thumb(it){if(cache[it.id])return cache[it.id];let u='';missing=0;try{const z=it.cat=='gear'?2:1,c=document.createElement('canvas');c.width=132*z;c.height=106*z;const x=c.getContext('2d');drawPrev(x,it,132*z,106*z,.8,.45,true);u=c.toDataURL()}catch(_){}if(missing)return u;return cache[it.id]=u}
  function silhouette(x,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='rgba(70,60,110,.55)';x.beginPath();x.arc(0,-34,11,0,6.3);x.fill();x.beginPath();x.moveTo(-13,-20);x.lineTo(13,-20);x.lineTo(10,22);x.lineTo(-10,22);x.closePath();x.fill();x.fillRect(-9,22,7,26);x.fillRect(2,22,7,26);x.restore()}
  function sparkle(x,px,py,c,r,a){x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;x.fillStyle=c;x.beginPath();x.arc(px,py,r,0,6.3);x.fill();x.restore()}
  function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
@@ -27,6 +27,10 @@ const STORE7=(()=>{
   else if(it.cat=='weather'){const c=WX_COL[ref]||['#222','#fff','star'];const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,c[0]);g.addColorStop(1,c[1]+'66');x.fillStyle=g;x.fillRect(0,0,W,H);
    if(still)for(let i=0;i<24;i++)sparkle(x,(i*53)%W,(i*37)%H,c[1],1.6+(i%3)*.6,.7);else if(Math.random()<.7)parts.push(c[2]=='petal'?{x:Math.random()*W,y:-4,vx:12,vy:26+Math.random()*20,l:H/30,c:c[1],r:3}:{x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,l:1.6,c:c[1],r:1.8});
    x.save();x.translate(cx,H*.72);x.fillStyle='#2a2f44';x.strokeStyle='#000';x.lineWidth=2;x.fillRect(-26,-18,52,36);x.strokeRect(-26,-18,52,36);x.fillStyle=c[1];x.beginPath();x.arc(0,-2,10,0,6.3);x.fill();x.restore()}
+  else if(it.cat=='gear'&&still&&typeof GEAR7!='undefined'&&typeof WEAR!='undefined'&&WEAR[ref]){const s=Math.min(W,H)*1.02;x.save();x.translate(cx-s/2,H/2-s/2);GEAR7.icon(x,ref,s);x.restore()} // card art: the gear itself, no plate-in-a-card
+  else if(it.cat=='gear'&&!still&&typeof WEAR!='undefined'&&WEAR[ref]&&typeof AC6!='undefined'){ // live try-on: your character wearing this piece over your current gear
+   const sl=WEAR[ref].s,wr=Object.assign({},typeof wear!='undefined'?wear:{},{wing:''});wr[sl]=ref;const s=k*(sl=='hat'?3.6:2.75);x.save();x.translate(cx,sl=='hat'?H*1.3:H*.93);x.scale(s,s);x.beginPath();x.rect(-70,-91,140,100);x.clip();
+   const o=g;g=x;try{AC6.draw(0,-54,1,0,'',t,0,false,'',typeof wp!='undefined'?wp:'fist',0,0,wr,false,typeof look!='undefined'?look:null,null)}finally{g=o}x.restore()}
   else{let u=null;const key=it.cat=='gear'?'a:'+ref:it.cat=='seeds'?+ref:+ref;try{u=iconURL(key)}catch(_){}
    if(u){let im=cache['i'+key];if(!im){im=cache['i'+key]=new Image();im.onload=()=>{try{delete cache[it.id];if(isOpen())render()}catch(_){}};im.src=u}if(!im.complete)missing=1;const s=Math.min(W,H)*.62,by=still?0:Math.sin(t*2)*4;if(im.complete)x.drawImage(im,cx-s/2,cy-s*.65+by,s,s)}}
   }catch(e){}
@@ -41,11 +45,13 @@ const STORE7=(()=>{
   const cmp={feat:(a,b)=>(b.feat|0)-(a.feat|0)||(b.new|0)-(a.new|0)||a.price-b.price,pa:(a,b)=>a.price-b.price,pd:(a,b)=>b.price-a.price,rar:(a,b)=>RO[b.rar]-RO[a.rar]||a.price-b.price,name:(a,b)=>a.n.localeCompare(b.n),neu:(a,b)=>(b.new|0)-(a.new|0)||a.price-b.price}[sort];L.sort(cmp);return L}
  function card(it){const s=stateOf(it),b=eqd(it)?'<span class="badge eq">EQUIPPED</span>':!it.stack&&has(it)?'<span class="badge own">OWNED</span>':SHOP7.isNew(it.id)?'<span class="badge new">NEW</span>':'';
   const lk=!SHOP7.lvOk(it);return'<button class="card'+(selId==it.id?' sel':'')+(lk?' lock':'')+'" data-id="'+it.id+'" data-rar="'+it.rar+'" data-cat="'+it.cat+'" aria-label="'+esc(it.n)+', '+it.rar+', '+it.price+' gems">'+b+'<img alt="" src="'+thumb(it)+'"><b>'+esc(it.n)+'</b><span class="rtag">'+esc(SHOP7.RN[it.rar])+'</span><span class="pr"><span><i class="gem"></i>'+it.price+'</span>'+(lk?'<small>Lv '+it.lv+'</small>':s&&!it.stack?'<small>✓</small>':'')+'</span></button>'}
- function render(){if(!el)return;el.querySelector('#s7g').textContent=gems|0;el.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.c==cat));
+ let lastKey='';
+ function render(){if(!el)return;MOTION7.tick(el.querySelector('#s7g'),gems|0);el.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.c==cat));try{MOTION7.ind(el.querySelector('nav'),'button.on','v')}catch(_){}
+  const key=cat+'|'+sort+'|'+rar+'|'+ownedOnly,anim=key!=lastKey;lastKey=key; // cards cascade in when the shelf changes, not on every refresh
   const g=el.querySelector('.grid');let h='';
   if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly){h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
   else{const L=list();h+=L.length?'<div class="cards">'+L.map(card).join('')+'</div>':'<div class="empty">Nothing matches. Try a different search or filter.</div>'}
-  g.innerHTML=h;g.querySelectorAll('.card').forEach(c=>c.onclick=()=>select(c.dataset.id));renderDetail()}
+  if(!anim)MOTION7.still(g);g.innerHTML=h;if(anim){g.scrollTop=0;MOTION7.stagger(g,'.card,h4',16)}g.querySelectorAll('.card').forEach(c=>c.onclick=()=>select(c.dataset.id));renderDetail()}
  function renderDetail(){const a=el.querySelector('aside');const it=selId&&SHOP7.byId.get(selId);if(!it){a.innerHTML='<h3>Pick an item</h3><p>Select anything to see a live preview, what it does, and how to get it.</p>';pv=null;return}
   const owned=!it.stack&&has(it),lk=!SHOP7.lvOk(it),can=gems>=it.price;let btn='';
   if(owned){btn=equipable(it)?(eqd(it)?'<button data-a="un">Unequip</button>':'<button class="pri" data-a="eq">Equip</button>'):'<button disabled>Owned</button>'}
@@ -71,7 +77,7 @@ const STORE7=(()=>{
   addEventListener('keydown',e=>{if(el.style.display!='none'&&el.style.display&&e.key=='Escape'&&!DLG7.isOpen){e.stopPropagation();close()}},true)}
  const isOpen=()=>!!el&&el.style.display=='flex';
  function loop(){if(!isOpen()){raf=0;return}const t=performance.now()/1000;if(pv&&selId){const it=SHOP7.byId.get(selId);if(it)drawPrev(pv.getContext('2d'),it,300,255,t,1,false)}raf=requestAnimationFrame(loop)}
- function open(o){mk();if(o&&o.cat)cat=o.cat;if(o&&o.item){const it=SHOP7.byId.get(o.item);if(it){cat='all';selId=it.id}}el.style.display='flex';requestAnimationFrame(()=>el.classList.add('on'));render();try{UIS.play('open')}catch(_){}if(!raf)raf=requestAnimationFrame(loop);try{keys&&Object.keys(keys).forEach(k=>keys[k]=0)}catch(_){}}
+ function open(o){mk();lastKey='';if(o&&o.cat)cat=o.cat;if(o&&o.item){const it=SHOP7.byId.get(o.item);if(it){cat='all';selId=it.id}}el.style.display='flex';requestAnimationFrame(()=>el.classList.add('on'));render();try{UIS.play('open')}catch(_){}if(!raf)raf=requestAnimationFrame(loop);try{keys&&Object.keys(keys).forEach(k=>keys[k]=0)}catch(_){}}
  function close(){if(!el)return;el.classList.remove('on');try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},200)}
  function btn(){if(document.getElementById('bstore'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bstore';b.className='pn';b.textContent='STORE';b.title='Open the item store';b.onclick=()=>isOpen()?close():open();hr.insertBefore(b,hr.firstChild)}
  btn();if(document.readyState!='complete')addEventListener('load',btn);

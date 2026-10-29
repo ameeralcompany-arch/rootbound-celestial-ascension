@@ -38,8 +38,8 @@ const CRAFT6=(()=>{let el=null,open=false;
    h+='<div class="rc rc7">'+out(r.out[0],r.out[1])+'<div class="nm7"><b>'+esc(nm(r.out[0]))+'</b><small>'+r.secs+'s · '+(lvl<r.lv?'needs level '+r.lv:'level '+r.lv)+'</small></div><div class="go7"><button class="pri" data-c="make:'+r.id+':1"'+(ok?'':' disabled')+'>Craft</button><button data-c="make:'+r.id+':5"'+(ok5?'':' disabled')+' title="Craft five">×5</button></div>'
     +'<div class="ings7">'+r.in.map(([i,n])=>'<span class="ing7 '+(cnt(i)>=n?'ok':'no')+'"><img src="'+ic(i)+'" alt="">'+n+'× '+esc(nm(i))+' <em>('+cnt(i)+')</em></span>').join('')+'</div></div>'}
   h+='<div class="row"><button data-c="close">Close</button></div>';el.innerHTML=h;el.style.display='block'}
- function openUI(){mk();open=true;for(const k of Object.keys(inv))if(cnt(+k)>0)X6.seen[k]=1;render()}
- function close(){open=false;if(el)el.style.display='none'}
+ function openUI(){mk();clearTimeout(close.t);el.classList.remove('out');open=true;for(const k of Object.keys(inv))if(cnt(+k)>0)X6.seen[k]=1;render();try{MOTION7.stagger(el,'.rc,.cq',10)}catch(_){}}
+ function close(){open=false;if(!el)return;el.classList.add('out');clearTimeout(close.t);close.t=setTimeout(()=>{el.classList.remove('out');if(!open)el.style.display='none'},MOTION7.reduce()?0:150)}
  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#craftui [data-c]');if(!b)return;const a=b.dataset.c.split(':');if(a[0]=='close')close();else if(a[0]=='collect')collect();else if(a[0]=='make')start(a[1],+a[2])});
  addEventListener('keydown',e=>{if(open&&e.key=='Escape')close()});
  let acc=0;function tick(dt){acc+=dt;if(acc<1)return;acc=0;if(open){if(!canStation()&&!(X6.q&&Date.now()>=X6.q.end))close();else render()}

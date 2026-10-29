@@ -4,7 +4,8 @@ const THEME7=(()=>{
  const eff=m=>m=='auto'?(mq&&mq.matches?'dark':'light'):(m=='dark'?'dark':'light');
  // extra interface options live in cel.opt (saved by celSave); celLoad only copies the original keys, so restore ours from the same save
  try{const o=(JSON.parse(localStorage.getItem('rbc')||'null')||{}).opt||{},O=cel.opt;O.hudOp=Math.max(.4,Math.min(1,+o.hudOp||1));O.hideQuest=o.hideQuest?1:0;O.hideMini=o.hideMini?1:0;O.contrast=o.contrast?1:0}catch(_){}
- function toastColors(){try{const c=getComputedStyle(document.documentElement);window.TK6={bg:c.getPropertyValue('--toast-bg').trim(),bd:c.getPropertyValue('--toast-bd').trim(),tx:c.getPropertyValue('--toast-tx').trim()}}catch(_){}}
+ // toasts are DOM elements now (87-uisfx, animated with the motion tokens); the legacy canvas toast keeps running but draws fully transparent
+ function toastColors(){window.TK6={bg:'rgba(0,0,0,0)',bd:'rgba(0,0,0,0)',tx:'rgba(0,0,0,0)'}}
  function apply(){const o=cel.opt||{},m=o.theme||'light',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);d.setAttribute('data-reduce',o.reduce||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
   d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
   toastColors();try{localStorage.setItem('rbtheme',m)}catch(_){}}
