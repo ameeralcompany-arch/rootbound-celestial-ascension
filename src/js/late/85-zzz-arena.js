@@ -51,7 +51,9 @@ const ARENA7=(()=>{
  function drawGhost(g,now){const k=(now-G.t0)/2100,m=G.m;if(k>=1)return;
   // 0-0.28: violent shake + rapid white flashes; then it sinks, squashes and dissolves upward into motes of its colour, with a rising ring
   const sh=k<.28?(1-k/.28)*12:0,dis=ease((k-.22)/.6);m.fl=k<.28&&Math.floor(now/55)%2?.15:0;
-  if(k>.18)for(let i=0;i<6;i++)VFX.add(R()<.5?0:1,R()<.65?G.c:'#fff',m.x+(R()-.5)*m.w*1.1,m.y+m.h*(1-dis*.8)*R(),(R()-.5)*70,-90-R()*200,1.1,8+R()*12,2,{a:.9});
+  // dissolve motes at ~55/s whatever the frame rate (6 per frame was ~860/s at 144 FPS: hundreds of additive glows, half-rate frames)
+  const ld=Math.min(.05,(now-(G.lt||now))/1000);G.lt=now;G.acc=(G.acc||0)+ld*55;const nE=k>.18?Math.min(8,Math.floor(G.acc)):0;G.acc-=nE;
+  for(let i=0;i<nE;i++)VFX.add(R()<.5?0:1,R()<.65?G.c:'#fff',m.x+(R()-.5)*m.w*1.1,m.y+m.h*(1-dis*.8)*R(),(R()-.5)*70,-90-R()*200,1.1,8+R()*12,2,{a:.9});
   g.save();g.globalCompositeOperation='source-over';g.globalAlpha=Math.max(0,1-dis*1.05);const ox=m.x+(R()-.5)*sh,oy=m.y+m.h;g.translate(ox-cam.x,oy-cam.y);g.scale(1+dis*.35,1-dis*.85);g.translate(-(ox-cam.x),-(oy-cam.y));
   const sx=m.x;m.x=ox;try{drawMob(m,now)}catch(_){}m.x=sx;g.restore();
   g.save();g.globalCompositeOperation='lighter';const cx=m.x-cam.x,cy=m.y+m.h/2-cam.y;

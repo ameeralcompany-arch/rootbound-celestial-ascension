@@ -37,8 +37,11 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},300000).unre
  const spawn=`(dx,dy)=>{mobs.length=0;const d=MK.slime,m={k:'slime',x:P.x+P.f*dx,y:P.y+P.h-d.h-(dy||0),w:d.w,h:d.h,vx:0,vy:0,hp:99999,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:false,wall:0,stun:99};mobs.push(m);mx=m.x-cam.x;my=m.y+m.h/2-cam.y;return m}`;
  const res={};
  for(const id of IDS){const r=await E(async([id,sp])=>{const mk=eval(sp);P.f=1;P.vx=0;wp=id;const melee=['emberfist','sakurakat','tidecaller','dragonaxe'].includes(id);const m=mk(melee?62:150,0);const h0=m.hp;
-   for(let i=0;i<3;i++){m.stun=99;m.x=P.x+(melee?62:150);wcd=0;useWeapon();await new Promise(r=>setTimeout(r,id=='lumistaff'?700:260))}
-   await new Promise(r=>setTimeout(r,500));return{d:Math.round(h0-m.hp),wp}},[id,spawn]);res[id]=r}
+   // keep the test slime the ONLY monster and re-aim before every shot: the world spawns its own monsters meanwhile, and auto-targeting
+   // weapons (the staff's wisps, homing moons, the prism's arcs) rightly hit a nearer wild one instead, which read as "no damage".
+   // Up to 3 attempts before calling it a miss.
+   for(let a=0;a<3&&!(h0-m.hp>0);a++){for(let i=0;i<3;i++){mobs.length=0;mobs.push(m);m.stun=99;m.vx=0;m.x=P.x+(melee?62:150);mx=m.x+m.w/2-cam.x;my=m.y+m.h/2-cam.y;wcd=0;useWeapon();await new Promise(r=>setTimeout(r,id=='lumistaff'?700:260))}
+    await new Promise(r=>setTimeout(r,500))}return{d:Math.round(h0-m.hp),wp}},[id,spawn]);res[id]=r}
  const miss=IDS.filter(id=>!(res[id].d>0)||res[id].wp!=id);
  ok('every new weapon equips at level 60, fires and damages a monster',miss.length==0,miss.length?miss.map(id=>id+':'+JSON.stringify(res[id])).join(' '):IDS.map(id=>id+' '+res[id].d).join(', '));
  // --- special mechanics
