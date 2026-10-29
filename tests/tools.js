@@ -66,8 +66,8 @@ async function boot(p,world){await p.goto(URL);await p.waitForTimeout(700);await
  const perk=await E(()=>{const s=TOOLLV.stats;return{pip10:TOOLLV.summary('pip',10),bub:[s.waitM(6),s.bite(3),s.luck(4),s.dbl(5)],wood:[s.wood(1),s.wood(3),s.wood(10)]}});
  ok('perk numbers match the cards (bites 30% sooner at 6, +0.2 s at 3, luck at 4, 6% double catch at 5, 2/3/6 extra wood)',Math.abs(perk.bub[0]-.7)<1e-9&&Math.abs(perk.bub[1]-.2)<1e-9&&perk.bub[2]>0&&Math.abs(perk.bub[3]-.06)<1e-9&&perk.wood.join()=='2,3,6',perk);
  // fishing XP: a catch through the rod's click gives Bubbles XP; luck is only lent during the catch
- const fish=await E(()=>{TOOLLV.set('bubbles',4,0);const F=TOOLS8.FISH;wp='bubbles';F.S.st='bite';F.S.x=P.x+40;F.S.y=P.y;F.S.bait=0;F.S.t=1;const x0=TOOLLV.S.bubbles.x;F.click({x:F.S.x,y:F.S.y});return{xp:TOOLLV.S.bubbles.x-x0,bait0:0 in TOOLS8.BAIT,st:F.S.st}});
- ok('a fish caught with Bubbles gives tool XP (luck is lent only during the catch)',fish.xp>=3&&!fish.bait0,fish);
+ const fish=await E(()=>{TOOLLV.set('bubbles',4,0);const F=TOOLS8.FISH;wp='bubbles';F.S.st='bite';F.S.x=P.x+40;F.S.y=P.y;F.S.bait=0;F.S.t=1;const x0=TOOLLV.S.bubbles.x;F.click({x:F.S.x,y:F.S.y});const reel=F.S.st,mid=TOOLLV.S.bubbles.x-x0;F.land();return{xp:TOOLLV.S.bubbles.x-x0,reel,mid,bait0:0 in TOOLS8.BAIT,st:F.S.st}});
+ ok('a fish caught with Bubbles gives tool XP (reel mini-game first, XP only when it is landed; luck is lent only during the catch)',fish.reel=='reel'&&fish.mid==0&&fish.xp>=3&&!fish.bait0&&fish.st=='idle',fish);
  const bite=await E(()=>{TOOLLV.set('bubbles',6,0);const F=TOOLS8.FISH;F.S.st='idle';TOOLLV.fishWatch();F.S.st='wait';F.S.t=10;TOOLLV.fishWatch();const t=F.S.t;F.S.st='idle';TOOLLV.fishWatch();return t});
  ok('perk: level 6 Bubbles fish bite 30% sooner',bite<7.2&&bite>6.5,bite);
  // ---- shine tiers: icons tagged per tier + CSS animation, in-hand glow grows, rainbow cycles colours

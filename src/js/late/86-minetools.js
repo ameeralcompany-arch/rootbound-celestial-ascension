@@ -7,7 +7,7 @@ const TOOLS8=(()=>{
   pebble:{n:'Pebble the Rock Tapper',g:[255,150,200],tool:'stone',d:'A little pink hammer. Cracks stone, cobble, brick, marble and deepslate in one tap.'},
   glimmer:{n:'Glimmer the Ore Pick',g:[150,240,255],tool:'ore',d:'A sparkly mini pickaxe made for ores. Mines the whole vein, finds bonus ore and makes nearby ores twinkle.'},
   twiggy:{n:'Twiggy the Tree Axe',g:[150,230,110],tool:'tree',d:'A leafy little axe. Chops trees for extra wood and splits wooden blocks.'},
-  bubbles:{n:'Bubbles the Fishing Rod',g:[120,200,255],tool:'rod',d:'A cute rod with a duck bobber. Click water to cast, click again when it bites! Bait from Tackle Boxes helps.'}};
+  bubbles:{n:'Bubbles the Fishing Rod',g:[120,200,255],tool:'rod',d:'A cute rod with a duck bobber. Click water to cast, click when it bites, then hold to keep the fish in the green zone and reel it in! Bait from Tackle Boxes helps.'}};
  for(const id in TL){const t=TL[id];WPN[id]={n:t.n,g:t.g,bd:1,md:0,cd:t.tool=='rod'?.25:.18,k:'tool',cost:0,fx:'',d:t.d,tool:t.tool,id};own[id]=1}
  // ---- what kind of block is it?
  const ORE=new Set([9,10,60,61,62,65,71,72,73,74,75,76]);
@@ -19,7 +19,7 @@ const TOOLS8=(()=>{
  function vein(tx,ty,id,n){const seen=new Set([ty*W+tx]),q=[[tx,ty]],out=[];while(q.length&&out.length<n){const[x,y]=q.shift();for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=ny*W+nx;if(nx<1||ny<1||nx>=W-1||ny>=H-1||seen.has(k))continue;seen.add(k);if(tiles[k]==id){out.push([nx,ny]);q.push([nx,ny])}}}return out}
  function use(w){wcd=w.cd/(1+bonus().atk*.5);swing=.15;const c={x:mx+cam.x,y:my+cam.y};P.f=c.x>=P.x?1:-1;
   if(w.tool=='rod'){FISH.click(c);return}
-  const tk=pickTree(c.x,c.y);if(tk>=0&&Math.hypot((tk%W)*T+T/2-P.x,(tk/W|0)*T+T/2-(P.y+P.h/2))<REACH+T){harvest(tk);if(w.tool=='tree'){const px=(tk%W)*T+T/2,py=(tk/W|0)*T;spawnDrop(px,py,5,2);ft(px,py-10,'+2 Wood','#d8ffb0')}tone(500,700,.08,'triangle',.04);return}
+  const tk=pickTree(c.x,c.y);if(tk>=0&&Math.hypot((tk%W)*T+T/2-P.x,(tk/W|0)*T+T/2-(P.y+P.h/2))<REACH+T){const crop=typeof FARM9!='undefined'&&FARM9.isCrop(trees.get(tk));harvest(tk);if(w.tool=='tree'&&!crop&&!trees.has(tk)){const px=(tk%W)*T+T/2,py=(tk/W|0)*T;spawnDrop(px,py,5,2);ft(px,py-10,'+2 Wood','#d8ffb0')}tone(500,700,.08,'triangle',.04);return}
   const tx=Math.floor(c.x/T),ty=Math.floor(c.y/T),k=ty*W+tx;if(!inReach(tx*T+T/2,ty*T+T/2)||tx<1||ty<1||tx>=W-1||ty>=H-1)return;const b=tiles[k];if(!b)return;
   const cat=catOf(b),good=fits(w.tool,cat),dmg=good?255:1;
   const r=breakAt(tx,ty,dmg),broken=r&&!tiles[k];const px=tx*T+T/2,py=ty*T+T/2;
@@ -41,7 +41,7 @@ const TOOLS8=(()=>{
    x.globalCompositeOperation='lighter';x.fillStyle='rgba(200,250,255,'+(.5+.5*Math.sin(t*6))+')';x.beginPath();for(let i=0;i<8;i++){const r=i%2?1.2:4,a=i*Math.PI/4;x.lineTo(L*.5+Math.cos(a)*r,-13+Math.sin(a)*r)}x.fill();x.globalCompositeOperation='source-over'},
   twiggy(x,L){x.fillStyle='#8a5a30';x.fillRect(-2,-2,L*.6,4);x.strokeRect(-2,-2,L*.6,4);x.fillStyle='#d8e0e8';x.beginPath();x.moveTo(L*.5,-2);x.quadraticCurveTo(L*.72,-12,L*.74,-2);x.lineTo(L*.74,4);x.quadraticCurveTo(L*.66,8,L*.5,4);x.closePath();x.fill();x.stroke();
    x.fillStyle='#7ad850';x.beginPath();x.ellipse(L*.46,-7,4,2.4,-.6,0,6.3);x.fill();x.stroke()},
-  bubbles(x,L,t){x.strokeStyle='#5a3a1a';x.lineWidth=3;x.beginPath();x.moveTo(-2,0);x.lineTo(L*.95,-L*.35);x.stroke();x.strokeStyle='#ffd34a';x.lineWidth=1.5;x.beginPath();x.moveTo(L*.1,-L*.04);x.lineTo(L*.22,-L*.08);x.stroke();
+  bubbles(x,L,t){const bd=FISH.S.st=='reel'&&typeof FISHGAME!='undefined'?.25+FISHGAME.G.ten*.6:0;x.strokeStyle='#5a3a1a';x.lineWidth=3;x.beginPath();x.moveTo(-2,0);if(bd)x.quadraticCurveTo(L*.6,-L*.42,L*.95,-L*.35+bd*L*.5);else x.lineTo(L*.95,-L*.35);x.stroke();x.strokeStyle='#ffd34a';x.lineWidth=1.5;x.beginPath();x.moveTo(L*.1,-L*.04);x.lineTo(L*.22,-L*.08);x.stroke();
    x.fillStyle='#9ad8ff';x.strokeStyle='#000';x.lineWidth=1.5;x.beginPath();x.arc(L*.12,1,3.5,0,6.3);x.fill();x.stroke();if(FISH.S.st=='idle'){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=1;x.beginPath();x.moveTo(L*.95,-L*.35);x.lineTo(L*.95,-L*.35+8+Math.sin(t*3)*2);x.stroke()}}};
  {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){if(TL[id]&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';x.strokeStyle='#000';x.lineWidth=1.6;try{MODEL[id](x,L,t||0)}finally{x.restore()}return}return _dw.apply(this,arguments)}}
  // ======================= FISHING =======================
@@ -53,17 +53,23 @@ const TOOLS8=(()=>{
  const FISH=(()=>{const S={st:'idle',x:0,y:0,vx:0,vy:0,t:0,bait:0,dip:0,tip:{x:0,y:0}};
   const best=()=>[252,251,250].find(k=>cnt(k)>0)||0;
   const tipPos=()=>({x:P.x+P.f*40,y:P.y+4});
-  function reset(msg){S.st='idle';S.dip=0;if(msg)try{say(msg)}catch(_){}}
+  function reset(msg){S.st='idle';S.dip=0;S.land=0;try{if(FISHGAME.G.on)FISHGAME.end()}catch(_){}if(msg)try{say(msg)}catch(_){}}
   function cast(c){const o=tipPos(),dx=Math.max(-T*7,Math.min(T*7,c.x-o.x)),flight=.55+Math.abs(dx)/(T*14);S.x=o.x;S.y=o.y;S.vx=dx/flight;S.vy=(c.y-o.y)/flight-.5*900*flight;S.vy=Math.max(-900,Math.min(200,S.vy));S.st='cast';S.t=2.5;S.bait=best();tone(700,400,.18,'sine',.03);try{SFX7.tone(1200,600,.12,'sine',.015,.05)}catch(_){}}
   function roll(){const b=BAIT[S.bait],luck=b?b.luck:0,ty=Math.floor(S.y/T),tx=Math.floor(S.x/T),dep=ty-sh(Math.max(0,Math.min(W-1,tx))),cave=dep>10,isNight=typeof night!='undefined'&&night>.5;
    const pool=[];for(const id in FISHES){const f=FISHES[id];let w=f.w;if(f.cave)w=cave?f.cave*(f.deep&&dep<35?0:1):0;if(f.night&&isNight)w+=f.night;if(f.junk)w=Math.max(1,w-luck*3);else if(f.p>=25)w*=1+luck*.8;if(w>0)pool.push([+id,w])}
    let tot=pool.reduce((s,q)=>s+q[1],0),r=R()*tot;for(const[id,w]of pool){if(r<w)return id;r-=w}return 240}
-  function catchIt(){const id=roll(),f=FISHES[id];if(S.bait&&cnt(S.bait)>0)addI(S.bait,-1);addI(id,1);
+  function catchIt(id0){const id=id0&&FISHES[id0]?id0:roll(),f=FISHES[id];if(S.bait&&cnt(S.bait)>0)addI(S.bait,-1);addI(id,1);
    try{ft(P.x,P.y-30,(f.junk?'':'Caught ')+f.n+'!',f.c)}catch(_){}try{xpGain('farm',f.junk?1:4+Math.round(f.p/3))}catch(_){}try{stat('fish',1)}catch(_){}
    Q.push({x:S.x,y:S.y,vx:(P.x-S.x)*1.6,vy:-520,t:0,c:f.c});try{SFX7.splash(380)}catch(_){}tone(660,990,.14,'sine',.04,.05);tone(990,1320,.18,'sine',.035,.15);if(f.p>=60){tone(1320,1760,.3,'triangle',.03,.3);try{UI6.say6('Rare catch!',f.n,2200)}catch(_){}}
-   reset()}
+   try{FISHGAME.show(id,1)}catch(_){}reset()}
+  // a bite + click starts the reeling mini-game (86-zz-fishgame.js) with the fish already chosen (Bubbles luck is lent around this click);
+  // a full catch meter calls click() again in the 'bite' state with S.land set, which lands exactly that fish through the normal path
+  function reel(){S.fid=roll();S.st='reel';S.dip=1;S.land=0;try{FISHGAME.start(S.fid,S.bait)}catch(e){console.error('FISHGAME',e);catchIt(S.fid)}}
+  function snap(){const b=S.bait&&cnt(S.bait)>0?S.bait:0;if(b)addI(b,-1);try{FISHGAME.show(S.fid,0)}catch(_){}try{SFX7.splash(220)}catch(_){}reset(b?'The line snapped! The fish took your '+MAT[b].n:'The line snapped! The fish got away')}
+  function land(){S.st='bite';S.land=1;FISH.click({x:S.x,y:S.y})}
   function click(c){if(S.st=='idle'){if(P.sw)return say('Get out of the water to fish');cast(c);return}
-   if(S.st=='bite'){catchIt();return}
+   if(S.st=='reel')return;
+   if(S.st=='bite'){if(S.land){S.land=0;catchIt(S.fid);return}if(typeof FISHGAME=='undefined'){catchIt();return}reel();return}
    if(S.st=='wait'){tone(500,300,.1,'sine',.025);reset('Reeled in too early');return}
    reset()}
   // the water tile under the bobber: looked up from the same point the landing check uses (y+4, so a bobber resting just above a
@@ -74,24 +80,26 @@ const TOOLS8=(()=>{
    if(S.st=='cast'){S.t-=dt;S.vy+=900*dt;S.x+=S.vx*dt;S.y+=S.vy*dt;
     if(inWater(S.x,S.y+4)){S.st='wait';const b=BAIT[S.bait];const wr=b?b.wait:[4,9];S.t=wr[0]+R()*(wr[1]-wr[0]);S.vx=S.vy=0;try{SFX7.bloop(.6)}catch(_){}if(S.bait)try{ft(S.x,S.y-16,MAT[S.bait].n,MAT[S.bait].c)}catch(_){}}
     else if(solidAt(Math.floor(S.x/T),Math.floor(S.y/T))||S.t<=0||S.y>H*T)reset('Missed the water - aim for a lake or pool')}
-   else if(S.st=='wait'||S.st=='bite'){// keep the bobber floating on the surface
+   else if(S.st=='wait'||S.st=='bite'||S.st=='reel'){// keep the bobber floating on the surface
     const k=waterAt(S.x,S.y);if(k<0){reset('The water is gone');return}const ty=k/W|0,lvlW=wl[k];
     S.y+=((ty+1)*T-lvlW/8*T+2-S.y)*Math.min(1,dt*6);
     if(Math.hypot(S.x-P.x,S.y-P.y)>T*10||P.sw){reset('The line snapped');return}
+    if(S.st=='reel'){S.dip=Math.max(.25,S.dip-dt*2);let r=0;try{r=FISHGAME.tick(dt)}catch(e){console.error('FISHGAME',e);r='land'}if(r=='land')land();else if(r=='snap')snap();return}
     S.t-=dt;if(S.st=='wait'){if(S.t<=0){S.st='bite';S.t=S.bait==252?1.2:.9;S.dip=1;tone(1400,1700,.06,'sine',.04);tone(1400,1700,.06,'sine',.04,.12);try{SFX7.splash(160)}catch(_){}}else if(R()<dt*.6){S.dip=.3;try{SFX7.plip()}catch(_){}}}
     else if(S.t<=0)reset('It got away...');S.dip=Math.max(0,S.dip-dt*2)}}
   // caught fish arc back to you
   const Q=[];function tickQ(dt){for(let i=Q.length-1;i>=0;i--){const q=Q[i];q.t+=dt;q.vy+=1200*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;if(q.t>.6)Q.splice(i,1)}}
   function draw(g,cx,cy){const t=performance.now()/1000;
    for(const q of Q){g.save();g.translate(q.x-cx,q.y-cy);g.rotate(q.t*12);g.fillStyle=q.c;g.strokeStyle='#000';g.lineWidth=1.5;g.beginPath();g.ellipse(0,0,10,5,0,0,6.3);g.fill();g.stroke();g.beginPath();g.moveTo(-9,0);g.lineTo(-15,-5);g.lineTo(-15,5);g.closePath();g.fill();g.stroke();g.restore()}
-   if(S.st=='idle'||wp!='bubbles')return;const o=tipPos(),bx=S.x-cx,by=S.y-cy+(S.dip*6)+(S.st=='wait'?Math.sin(t*2.4)*1.5:0);
-   g.save();g.strokeStyle='rgba(255,255,255,.75)';g.lineWidth=1.2;g.beginPath();g.moveTo(o.x-cx,o.y-cy);g.quadraticCurveTo((o.x+S.x)/2-cx,Math.max(o.y,S.y)-cy+(S.st=='cast'?0:22),bx,by-4);g.stroke();
+   if(S.st=='idle'||wp!='bubbles'){try{FISHGAME.draw(g,cx,cy)}catch(_){}return}const rl=S.st=='reel',FG=typeof FISHGAME!='undefined'?FISHGAME.G:null,o=tipPos(),bx=S.x-cx+(rl&&FG?(FG.fp-.5)*T*1.4:0),by=S.y-cy+(S.dip*6)+(S.st=='wait'?Math.sin(t*2.4)*1.5:rl?Math.sin(t*20)*1.5*(FG?.3+FG.ten:1):0);
+   g.save();g.strokeStyle='rgba(255,255,255,.75)';g.lineWidth=1.2;g.beginPath();g.moveTo(o.x-cx,o.y-cy);g.quadraticCurveTo((o.x+S.x)/2-cx,Math.max(o.y,S.y)-cy+(S.st=='cast'?0:rl&&FG?22*(1-FG.ten)*.6:22),bx,by-4);if(rl&&FG){g.strokeStyle=FG.ten>.7?'rgba(255,140,140,.95)':'rgba(255,255,255,.9)';g.lineWidth=1.6}g.stroke();
    // duck bobber
    g.fillStyle='#ffe04a';g.strokeStyle='#000';g.lineWidth=1.5;g.beginPath();g.ellipse(bx,by,7,5,0,0,6.3);g.fill();g.stroke();g.beginPath();g.arc(bx+4,by-6,3.6,0,6.3);g.fill();g.stroke();g.fillStyle='#ff8a2a';g.beginPath();g.moveTo(bx+7,by-6);g.lineTo(bx+11,by-5);g.lineTo(bx+7,by-4);g.fill();g.fillStyle='#000';g.beginPath();g.arc(bx+5,by-7,.9,0,6.3);g.fill();
    if(S.st=='bite'){const px=P.x-cx,py=P.y-cy-34-Math.abs(Math.sin(t*10))*4;g.fillStyle='#fff';g.beginPath();g.arc(px,py,10,0,6.3);g.fill();g.stroke();g.fillStyle='#ff3a3a';g.font='bold 15px '+FONT;g.textAlign='center';g.textBaseline='middle';g.fillText('!',px,py+1);
     g.strokeStyle='rgba(255,255,255,.8)';for(let i=0;i<2;i++){g.beginPath();g.arc(bx,by+3,8+((t*30+i*8)%16),0,6.3);g.stroke()}}
-   g.restore()}
-  return{S,click,tick,tickQ,draw,FISHES,BAIT}})();
+   if(rl){g.strokeStyle='rgba(220,240,255,.7)';g.lineWidth=1.2;for(let i=0;i<2;i++){g.beginPath();g.ellipse(bx,by+4,9+((t*42+i*9)%18),3+((t*14+i*3)%6),0,0,6.3);g.stroke()}}
+   g.restore();try{FISHGAME.draw(g,cx,cy)}catch(e){if(!draw.e){draw.e=1;console.error('FISHGAME draw',e)}}}
+  return{S,click,tick,tickQ,draw,FISHES,BAIT,roll,waterAt,land:()=>{if(S.st!='reel')return false;try{FISHGAME.end()}catch(_){}land();return true}/* finish the reel now (tests / accessibility) */}})();
  // icons for fish and bait
  {const _mi=matIcon;matIcon=function(x,k,S){const f=FISHES[k],b=BAIT[k];if(!f&&!b)return _mi.apply(this,arguments);try{burstBG(x,S)}catch(_){}x.save();x.scale(S/48,S/48);x.strokeStyle='#000';x.lineWidth=2;
    if(f&&k==249){x.fillStyle=f.c;x.beginPath();x.moveTo(14,12);x.lineTo(26,12);x.lineTo(26,28);x.lineTo(36,30);x.quadraticCurveTo(40,38,34,38);x.lineTo(14,38);x.closePath();x.fill();x.stroke()}

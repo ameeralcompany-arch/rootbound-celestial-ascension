@@ -1,11 +1,9 @@
 // ===== V7 Showcase: editorial character gallery home screen =====
+// v9: the old preset gallery characters (Yuzuki, Kaede, Ren, Sora, Mio) were removed - they showed outdated weapon art. Only your own
+// character is in the gallery now; saves that still hold preset slots are cleaned below (CHARMIG9) without touching your look or progress.
 const CHARS=[
- {id:'you',first:null,last:null,lv:1,stars:3,lore:'Your own character. Everything you change in the appearance editor is saved here, and your level, wings and nameplate follow you into every world.'},
- {id:'yuzuki',first:'Yuzuki',last:'Moonveil',title:'Moonlit Wanderer',lv:1,stars:4,lore:'A quiet traveller who maps the old moon roads at night. Silver hair, a black haori and an ember-red sash, always moving before the sun comes up.',ap:{hair:2,eyes:2,outfit:5,acc:5,cape:0,eyeCol:4,hairCol:'#e6e8f2',skinCol:'#f5d9c6',outCol:'#1d1b24',trimCol:'#9a1f2e'}},
- {id:'kaede',first:'Kaede',last:'Ashfall',title:'Crimson Thread',lv:5,stars:4,lore:'A courier who stitches broken worlds back together. She wears red thread on her wrists and never takes the same road twice.',ap:{gd:2,hair:5,eyes:2,outfit:3,acc:4,cape:0,eyeCol:2,hairCol:'#b3263a',skinCol:'#f1c9a0',outCol:'#2a1c1c',trimCol:'#c9a227'}},
- {id:'ren',first:'Ren',last:'Hoarfrost',title:'Frost Warden',lv:10,stars:5,lore:'Keeper of the northern gate. Calm, precise and a little cold, he guards doors that most people never learn exist.',ap:{gd:1,hair:4,eyes:1,outfit:1,acc:1,cape:2,eyeCol:1,hairCol:'#cfe4ff',skinCol:'#f3dcc8',outCol:'#2c4a7a',trimCol:'#e8ecff'}},
- {id:'sora',first:'Sora',last:'Skyward',title:'Cartographer of Clouds',lv:20,stars:5,lore:'Draws maps of places that have not been built yet. Her pencils are always sharpened and her pockets are full of seeds.',ap:{gd:2,hair:7,eyes:3,outfit:4,acc:2,cape:0,eyeCol:5,hairCol:'#5a8fe0',skinCol:'#f1c9a0',outCol:'#2f5d50',trimCol:'#f0d890'}},
- {id:'mio',first:'Mio',last:'Emberleaf',title:'Ember Courier',lv:35,stars:5,lore:'Carries warm bread and warmer news between distant worlds. Faster than she looks, and she looks fast.',ap:{gd:2,hair:1,eyes:3,outfit:0,acc:0,cape:1,eyeCol:3,hairCol:'#d9702b',skinCol:'#e9b98e',outCol:'#5a2e2e',trimCol:'#ffd36a'}}];
+ {id:'you',first:null,last:null,lv:1,stars:3,lore:'Your own character. Everything you change in the appearance editor is saved here, and your level, wings and nameplate follow you into every world.'}
+];
 const SHOW7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  let el,cv,cx,open=false,cur=0,raf=0,t0=0,lastDraw=0,busy=0,tiles={},dust=[],gpage=0;
@@ -50,7 +48,7 @@ const SHOW7=(()=>{
   if(k[0]=='c'){const i=+k.slice(1),L=SHOWART.info(apOf(i));g.save();g.beginPath();g.rect(0,0,160,100);g.clip();try{SHOWART.draw(g,160,230,{look:unlocked(i)?L:grey(L),t:0,wpn:'fist',wings:false,zoom:1.5,ox:80,dy:92})}catch(e){}g.restore()}
   else{const i=+k.slice(1);g.save();g.translate(80,60);g.scale(.62,.62);if(!wingOwned(WINGS[i]))g.globalAlpha=.35;try{WingArt.draw(g,i,0,0,1,1,0,0,0,1)}catch(e){}g.restore()}})}
  function render(){const box=el.querySelector('#sInfo');box.innerHTML=info();paintTiles();el.querySelector('#sIdx').textContent=String(cur+1).padStart(2,'0');el.querySelector('#sTot').textContent='/'+String(CHARS.length).padStart(2,'0');
-  el.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.n=='home'))}
+  el.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.n=='home'));const ar=el.querySelector('.idx .arrows');if(ar)ar.style.visibility=CHARS.length<2?'hidden':''}
  // ---- drawing
  let glow=null,glowK='';const dk=()=>document.documentElement.dataset.theme=='dark';
  function draw(now){if(!open)return;raf=requestAnimationFrame(draw);const fps=reduce()?6:36;if(now-lastDraw<1000/fps)return;lastDraw=now;fit();const W=cv.width,H=cv.height,t=reduce()?1.2:(now-t0)/1000,D=dk();cx.clearRect(0,0,W,H);
@@ -64,7 +62,7 @@ const SHOW7=(()=>{
  function loop(){cancelAnimationFrame(raf);t0=performance.now()-(t0?0:0);raf=requestAnimationFrame(draw)}
  function stop(){cancelAnimationFrame(raf)}
  // ---- actions
- function swap(d){if(busy)return;busy=1;const n=(cur+d+CHARS.length)%CHARS.length;el.classList.add('swap');UIS.play('char');setTimeout(()=>{cur=n;gpage=Math.floor(cur/4);render();el.classList.remove('swap');el.classList.add('swapin');setTimeout(()=>{el.classList.remove('swapin');busy=0},320)},200)}
+ function swap(d){if(busy||CHARS.length<2)return;busy=1;const n=(cur+d+CHARS.length)%CHARS.length;el.classList.add('swap');UIS.play('char');setTimeout(()=>{cur=n;gpage=Math.floor(cur/4);render();el.classList.remove('swap');el.classList.add('swapin');setTimeout(()=>{el.classList.remove('swapin');busy=0},320)},200)}
  function selectCur(){const i=cur;if(!unlocked(i))return false;X6.sc.act=i;Object.assign(cel.ap,apOf(i));try{celSave()}catch(_){}x6Save();UIS.play(CHARS[i].stars>=5?'rare':'select');say((i?CHARS[i].first:'Your look')+' is now active');return true}
  function ensureGame(cb){if(entered){cb();return}try{$('bp').click()}catch(_){}setTimeout(()=>{if(entered||creatorOn)cb()},60)}
  function close(){if(!open)return;open=false;window.RB_COVER=false;stop();el.classList.remove('in');setTimeout(()=>{if(!open)el.style.display='none'},260);UIS.play('close')}
@@ -103,3 +101,8 @@ function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlg
 if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{const home=()=>{if(!creatorOn){SHOW7.open();return}let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(creatorOn)return;clearInterval(iv);SHOW7.open()},300)};
  /* every launch: the story intro (CINE7) plays first, then fades into the home screen */try{CINE7.launch(home)}catch(e){console.error('CINE7',e);home()}}
 (()=>{const mkb=()=>{const g=document.querySelector('#hudbtns')||document.querySelector('#bmenu')?.parentElement;if(!g||document.getElementById('bhome'))return;const b=document.createElement('button');b.id='bhome';b.title='Home / characters';b.textContent='⌂';b.onclick=()=>{if(SHOW7.isOpen)SHOW7.close();else SHOW7.open()};g.insertBefore(b,g.firstChild)};setTimeout(mkb,400)})();
+// ---- CHARMIG9: remove the old preset character slots from every save (any computer). Keeps slot 0 (your own look), your level, gems,
+// inventory, gear and wings untouched; if a preset was the active character, your own saved look becomes active again.
+const CHARMIG9=(()=>{function run(){try{const sc=X6&&X6.sc;if(!sc)return false;const a=sc.act|0,own=Array.isArray(sc.looks)&&sc.looks[0]&&typeof sc.looks[0]=='object'?sc.looks[0]:null,had=a>0||(Array.isArray(sc.looks)&&sc.looks.length>1)||Object.keys(sc.fav||{}).some(k=>k!='0');
+  if(!had)return false;sc.act=0;if(a>0&&own){Object.assign(cel.ap,sanAp(own))}sc.looks=[own?sanAp(own):sanAp(cel.ap)];const f0=sc.fav&&sc.fav[0];sc.fav={};if(f0)sc.fav[0]=1;try{x6Save()}catch(_){}try{celSave()}catch(_){}try{localStorage.setItem('rbcharmig9','1')}catch(_){}return true}catch(e){console.error('CHARMIG9',e);return false}}
+ const did=run();return{run,did}})();

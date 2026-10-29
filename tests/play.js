@@ -56,9 +56,9 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
    for(let i=0;i<16;i++){watch();await new Promise(r=>setTimeout(r,30))}res[tries]={st:FISH.S.st,said:said.slice()};if(FISH.S.st!='wait'&&FISH.S.st!='bite')break}
   return res});
  const fishOk=Object.values(fish).every(r=>(r.st=='wait'||r.st=='bite')&&!r.said.some(m=>/water is gone/i.test(m)));ok('fishing: the bobber floats in a lake and waits for a bite (never "The water is gone")',fishOk,fish);
- const caught=await E(async()=>{const F=TOOLS8.FISH,n0=Object.keys(F.FISHES).reduce((s,k)=>s+cnt(+k),0);F.S.t=.05;await new Promise(r=>setTimeout(r,300));const bit=F.S.st;F.click({x:F.S.x,y:F.S.y});
-  return{bit,after:F.S.st,gained:Object.keys(F.FISHES).reduce((s,k)=>s+cnt(+k),0)-n0}});
- ok('fishing: a fish bites, and clicking reels it in',caught.bit=='bite'&&caught.after=='idle'&&caught.gained==1,caught);
+ const caught=await E(async()=>{const F=TOOLS8.FISH,n0=Object.keys(F.FISHES).reduce((s,k)=>s+cnt(+k),0);F.S.t=.05;await new Promise(r=>setTimeout(r,300));const bit=F.S.st;try{TOOLLV.set('bubbles',1,0)}catch(_){}F.click({x:F.S.x,y:F.S.y});const reel=F.S.st;const G=FISHGAME.G,t0=performance.now();while(F.S.st=='reel'&&performance.now()-t0<9000){G.fp=G.zp+G.zw/2;G.ft=G.fp;await new Promise(r=>setTimeout(r,16))}
+  return{bit,reel,after:F.S.st,gained:Object.keys(F.FISHES).reduce((s,k)=>s+cnt(+k),0)-n0}});
+ ok('fishing: a fish bites, clicking starts the reel mini-game and keeping it in the zone lands exactly one fish',caught.bit=='bite'&&caught.reel=='reel'&&caught.after=='idle'&&caught.gained==1,caught);
  await E(w=>{TOOLS8.FISH.S.st='idle';wp=w},wp0);
  // pets: flight draws the player a few px up/down each wingbeat; the pet must keep following (it used to snap to a fixed offset)
  const pet=await E(()=>{const o=document.createElement('canvas').getContext('2d'),r=[];for(const dy of[0,3,-3,6,-6]){COMP7.st.last=0;FX7.charmDraw(o,'mochi',P.x-cam.x,P.y-cam.y+dy,1,1);r.push(COMP7.st.last>0)}return r});
