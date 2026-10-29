@@ -1394,7 +1394,7 @@ function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=h
  g.save();g.scale(ZM,ZM);g.translate(sx,sy);const x0=Math.max(0,cam.x/T|0),x1=Math.min(W-1,(cam.x+vw)/T|0),y0=Math.max(0,cam.y/T|0),y1=Math.min(H-1,(cam.y+vh)/T|0);
  
  lampL.length=0;const dX=DX*T-cam.x,dY=sh(DX)*T-cam.y;g.fillStyle='#000';rr(dX+2,dY-T-16,T-4,T+16,10);g.fill();g.fillStyle='#6b4a2a';rr(dX+5,dY-T-13,T-10,T+13,8);g.fill();g.fillStyle='#fff6b0';g.beginPath();g.arc(dX+T-14,dY-T/2,3,0,6.3);g.fill();g.fillStyle='rgba(255,255,255,.18)';g.fillRect(dX+9,dY-T-9,6,T+6);
- for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])continue;if(b==13||(window.GLOW7&&GLOW7[b]))lampL.push(x*T+T/2-cam.x,y*T+T/2-cam.y);const px=x*T-cam.x,py=y*T-cam.y,pp=pop.get(k);let sc=1;if(pp){const a=(now-pp)/180;if(a>=1)pop.delete(k);else sc=1+.22*Math.sin(Math.min(1,a)*3.14)}
+ if(typeof TILE7!='undefined'&&TILE7.on)TILE7.draw(x0,x1,y0,y1,now);else for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])continue;if(b==13||(window.GLOW7&&GLOW7[b]))lampL.push(x*T+T/2-cam.x,y*T+T/2-cam.y);const px=x*T-cam.x,py=y*T-cam.y,pp=pop.get(k);let sc=1;if(pp){const a=(now-pp)/180;if(a>=1)pop.delete(k);else sc=1+.22*Math.sin(Math.min(1,a)*3.14)}
   if(sc!=1){g.save();g.translate(px+T/2,py+T/2);g.scale(sc,sc);g.drawImage(spr(b,x,y),-T/2,-T/2,T,T);g.restore()}else g.drawImage(spr(b,x,y),px,py,T,T);
   if(ZM>=.8){if(!tiles[k-W]&&y>0){g.fillStyle='rgba(255,255,255,.2)';g.fillRect(px,py,T,3)}if(!tiles[k+W]){g.fillStyle='rgba(0,0,0,.28)';g.fillRect(px,py+T-4,T,4)}}
   const mh=BLK[b][2];if(hp[k]<mh&&hp[k]>0){const r=1-hp[k]/mh;g.drawImage(CR[Math.min(3,1+(r*3|0))],px,py,T,T)}}
@@ -3119,6 +3119,31 @@ const POST6=(()=>{const bc=document.createElement('canvas'),bx=bc.getContext('2d
   if(q.bloom&&cel.opt.bloom&&ZM>=.7&&can&&entered){const bw=w>>2,bh=hh>>2;let fresh=false;if(bc.width!=bw||bc.height!=bh){bc.width=b2.width=bw;bc.height=b2.height=bh;fresh=true}if(fresh||(bf++&1)==0){bx.globalCompositeOperation='copy';bx.drawImage(cv,0,0,bw,bh);b2x.filter='brightness(.8) contrast(2.6) saturate(1.3) blur('+(q.bloom==2?5:3)+'px)';b2x.globalCompositeOperation='copy';b2x.drawImage(bc,0,0);b2x.filter='none'}g.save();g.globalCompositeOperation='lighter';g.globalAlpha=(q.bloom==2?.38:.22)*(QM.reduce?.6:1);g.drawImage(b2,0,0,w,hh);g.restore()}
   const tb=q.cine&&cel.opt.cine!==0?1:0;bars+=(tb-bars)*.08;if(bars>.01){const bh2=hh*.07*bars;g.fillStyle='#000';g.fillRect(0,0,w,bh2);g.fillRect(0,hh-bh2,w,bh2)}}}})();
 
+/* ========== LATE: 70-z-tilecache.js ========== */
+// ===== TILE7: the world's blocks are painted once per 8x8-tile chunk into a cached canvas (at the screen's real scale) and reused every
+// frame. A chunk is repainted only when a block in it, or right above/below it, changes, or when the zoom/quality changes. Drawing every
+// visible block one by one was the bulk of each frame at full HD. Hit "pop", cracks and the lamp list for lighting stay live. =====
+const TILE7=(()=>{
+ const CH=8,CW=CH*T,cache=new Map(),MAXC=72;let cKey='';
+ // tiles in the chunk plus the row above and below (the lit lip / dark edge depend on them)
+ function sig(cx,cy){let h=7;const x0=cx*CH,y0=cy*CH;for(let y=y0-1;y<=y0+CH;y++){if(y<0||y>=H)continue;for(let x=x0;x<x0+CH&&x<W;x++)h=(Math.imul(h,31)+tiles[y*W+x])|0}return h}
+ // the same look the per-block loop had: sprite, lit lip under air, dark edge above air
+ function paint(c,cx,cy,lips){for(let y=cy*CH;y<cy*CH+CH&&y<H;y++)for(let x=cx*CH;x<cx*CH+CH&&x<W;x++){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])continue;const px=(x-cx*CH)*T,py=(y-cy*CH)*T;
+   c.drawImage(spr(b,x,y),px,py,T,T);if(lips){if(!tiles[k-W]&&y>0){c.fillStyle='rgba(255,255,255,.2)';c.fillRect(px,py,T,3)}if(!tiles[k+W]){c.fillStyle='rgba(0,0,0,.28)';c.fillRect(px,py+T-4,T,4)}}}}
+ function draw(x0,x1,y0,y1,now){const m=g.getTransform(),sc=Math.min(4,Math.max(.25,Math.hypot(m.a,m.b))),lips=ZM>=.8,key=sc.toFixed(3)+'|'+lips+'|'+(typeof QM!='undefined'?QM.cur.id:'')+'|'+g.imageSmoothingEnabled;
+  if(key!==cKey){cKey=key;cache.clear()}const t=performance.now();
+  for(let cy=Math.floor(y0/CH);cy<=Math.floor(y1/CH);cy++)for(let cx=Math.floor(x0/CH);cx<=Math.floor(x1/CH);cx++){const id=cy*1024+cx,s=sig(cx,cy);let e=cache.get(id);
+   if(!e||e.s!==s){if(!e){e={c:document.createElement('canvas')};e.c.width=e.c.height=Math.ceil(CW*sc);cache.set(id,e)}e.s=s;const c=e.c.getContext('2d');
+    c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,e.c.width,e.c.height);c.imageSmoothingEnabled=g.imageSmoothingEnabled;c.setTransform(sc,0,0,sc,0,0);paint(c,cx,cy,lips)}
+   e.u=t;g.drawImage(e.c,cx*CW-cam.x,cy*CW-cam.y,CW,CW)}
+  if(cache.size>MAXC){const old=[...cache].sort((a,b)=>a[1].u-b[1].u).slice(0,cache.size-MAXC);for(const[k]of old)cache.delete(k)}
+  // live layer: lamps for the lighting pass, the hit "pop" and crack overlays
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,b=tiles[k];if(!b||!SOLID6[b])continue;if(b==13||(window.GLOW7&&GLOW7[b]))lampL.push(x*T+T/2-cam.x,y*T+T/2-cam.y);
+   const pp=pop.get(k),mh=BLK[b][2],dmg=hp[k]<mh&&hp[k]>0;if(!pp&&!dmg)continue;const px=x*T-cam.x,py=y*T-cam.y;
+   if(pp){const a=(now-pp)/180;if(a>=1)pop.delete(k);else{const s2=1+.22*Math.sin(Math.min(1,a)*3.14);g.save();g.translate(px+T/2,py+T/2);g.scale(s2,s2);g.drawImage(spr(b,x,y),-T/2,-T/2,T,T);g.restore()}}
+   if(dmg){const r=1-hp[k]/mh;g.drawImage(CR[Math.min(3,1+(r*3|0))],px,py,T,T)}}}
+ return{draw,cache,on:true}})();
+
 /* ========== LATE: 71-deep.js ========== */
 // ===== Deep-cave treasures (ids 60-65): ores, fossils, urns and glowshrooms hidden underground. Placed deterministically from the world seed. =====
 const DEEP7=(()=>{
@@ -4317,6 +4342,20 @@ nearNPC=function(){return NPC2.near()};
 // ===== NPCs live only in the Plaza. Other worlds (and creator worlds) have none: NPC2 draws and ticks them only when cur=='plaza'. =====
 {const _nn=nearNPC;nearNPC=function(){return cur=='plaza'?_nn():null};
  window.NPC_PLAZA_ONLY=1}
+
+/* ========== LATE: 77-zz-skycache.js ========== */
+// ===== SKYC7: the whole sky (gradient, sun/moon, god rays, parallax mountains/islands/hills, clouds, themed skies, plaza backdrop) is
+// painted into an offscreen canvas every 3rd frame and copied to the screen in between. All of it moves slowly (the nearest hills shift
+// ~1.5 px between updates while walking, the far layers much less), so 48 sky updates a second at 144 FPS look the same, and the sky was
+// the largest per-frame cost (full HD plaza: 90 -> 142 FPS together with the tile cache). =====
+const SKYC7=(()=>{
+ const c=document.createElement('canvas'),x=c.getContext('2d');let n=0,last='',on=true,every=3;
+ const _ds=drawSky;
+ drawSky=function(w,hh,now){if(!on)return _ds(w,hh,now);
+  const key=w+'x'+hh+'|'+cur+'|'+ZM;let fresh=false;if(key!==last){last=key;fresh=true;if(c.width!=w||c.height!=hh){c.width=w;c.height=hh}}
+  if(fresh||(n++%every)==0){const og=g;g=x;try{x.setTransform(1,0,0,1,0,0);x.globalAlpha=1;x.globalCompositeOperation='source-over';x.clearRect(0,0,w,hh);_ds(w,hh,now)}finally{g=og}}
+  g.drawImage(c,0,0)};
+ return{get on(){return on},set on(v){on=!!v},get every(){return every},set every(v){every=Math.max(1,v|0)}}})();
 
 /* ========== LATE: 78-weapons.js ========== */
 // ===== WFX7: shop weapons. Each new weapon has its own model (drawn here), swing trail, impact effect, swing sound, and stats in WPN. =====
