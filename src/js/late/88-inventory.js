@@ -1,4 +1,4 @@
-// ===== V7 inventory (editorial) + 3-slot hotbar: [Block 1] [Block 2] [Weapon] =====
+// ===== V7 inventory (editorial). The 6-slot hotbar lives in 99-zzz-hotbar.js (HOTBAR); here: slot buttons 1-6, drag source, assign mode =====
 const INV7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const FILT=[['all','All'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Objects'],['wear','Wearables'],['weapons','Weapons'],['fav','★ Favourites'],['stats','Stats']];
@@ -15,15 +15,19 @@ const INV7=(()=>{
  const nameOf=k=>typeof k=='string'?(k[0]=='a'?WEAR[k.slice(2)].n:WPN[k.slice(2)].n):iname(k);
  const iconOf=k=>{try{return iconURL(k)}catch(_){return ''}};
  const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Right-click to place it, left-click with a tool to break it.';if(t=='seeds')return 'Plant on a block with right-click. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. Used in crafting and sold at the market.';if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then press G beside it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Press E beside it to open.':'A world object. Press E beside it to use it.');return ''};
+ // "equipped" = the weapon in your hand: the held hotbar slot's weapon (holding a block means no weapon is equipped)
+ const heldW=id=>{const h=typeof HOTBAR!='undefined'?HOTBAR:null;return wp==id&&(!h||h.cur<0||h.held()==='w:'+id)};
  function items(){const out=[];
   const inv2=Object.keys(inv).map(Number).filter(k=>cnt(k)>0&&(MAT[k]||BLK[k%100]||BLK[k]));
   for(const k of inv2.sort((a,b)=>a-b)){const t=kind(k);if(k==17&&0)continue;out.push({k,t,n:cnt(k),own:1})}
   for(const id in WEAR){const w=WEAR[id];out.push({k:'a:'+id,t:'wear',own:!!ownW[id],lock:lvl<w.lv&&!ownW[id],worn:wear[w.s]==id})}
-  for(const id in WPN){const w=WPN[id];if(w.hid&&!own[id])continue;out.push({k:'w:'+id,t:'weapons',own:!!own[id],lock:lvl<(w.lv|0),worn:wp==id})}
+  for(const id in WPN){const w=WPN[id];if(w.hid&&!own[id])continue;out.push({k:'w:'+id,t:'weapons',own:!!own[id],lock:lvl<(w.lv|0),worn:heldW(id)})}
   return out}
  const mk=()=>{if(el)return;el=document.createElement('div');el.id='inv7';el.className='ed';el.innerHTML='<div class="sheet" role="dialog" aria-label="Inventory"></div>';document.body.appendChild(el);
   const ab=document.createElement('div');ab.className='assignbanner ed';ab.id='asb';document.body.appendChild(ab);
   el.addEventListener('mousedown',e=>{if(e.target===el)close()});el.addEventListener('click',onClick);
+  // drag an item onto a hotbar slot (the drop is handled by HOTBAR)
+  el.addEventListener('dragstart',e=>{const t=e.target.closest&&e.target.closest('.it7[draggable=true]');if(!t||!HB()){return}let k=t.dataset.k;try{e.dataTransfer.setData('text/plain','rbitem:'+k);e.dataTransfer.effectAllowed='copyMove';const im=t.querySelector('img');if(im)e.dataTransfer.setDragImage(im,24,24)}catch(_){}HB().dragBegin()});
   el.addEventListener('input',e=>{if(e.target.id=='inq7'){q=e.target.value;const p=e.target.selectionStart;render();const n=document.getElementById('inq7');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}}});
   el.addEventListener('change',e=>{if(e.target.id=='ins7'){sortBy=e.target.value;saveP();render()}});
   el.addEventListener('keydown',e=>{if(e.target.id=='inq7'){e.stopPropagation();if(e.key=='Escape'){if(q){q='';render()}else close()}}});
@@ -44,53 +48,46 @@ const INV7=(()=>{
   h+='<aside>'+detail(sel)+'</aside>';sh.innerHTML=h;
   // motion: sliding tab underline, gem count ticks, tiles cascade in only when the shelf changes (open / tab / sort), not on every click
   try{MOTION7.ind(sh.querySelector('nav'),'button.on','u',el);const gb=sh.querySelector('.gem7 b');MOTION7.tick(gb,gems,el._g!=null?el._g:gems);el._g=gems;const sk=filter+'|'+sortBy;if(sk!=el._sk){el._sk=sk;MOTION7.stagger(sh.querySelector('.grid7'),'.it7,.stat7 .s',18)}}catch(_){}
-  const ab=document.getElementById('asb');ab.style.display=assign>=0?'block':'none';ab.textContent='Choose a block for slot '+(assign+1)+' · Esc to cancel'}
+  const ab=document.getElementById('asb');ab.style.display=assign>=0?'block':'none';ab.textContent='Choose anything for hotbar slot '+(assign+1)+' · Esc to cancel'}
  // item tile: icon plate, quantity pill, rarity glyph (shape per tier) + label in the tooltip, state ribbon
- function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k);return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+(isNew(i)?' new':'')+'" data-k="'+esc(i.k)+'"'+ITEM7.attrs(i.k)+' title="'+esc(nm)+' · '+ITEM7.label(i.k)+' '+ITEM7.catName(i.k).toLowerCase()+(t=='weapons'&&WPN[i.k.slice(2)].lv?' · Lv '+WPN[i.k.slice(2)].lv+(i.lock?' required':''):'')+'">'+ITEM7.glyph(i.k)+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
- function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does and what you can do with it.</p><p style="margin-top:14px">Tip: <b>1</b> and <b>2</b> choose your block slots. <b>Mouse wheel</b> or <b>3</b> cycles weapons and tools, <b>4–8</b> pick a tool, <b>9</b> your weapon and <b>X</b> swaps weapon ⇄ tool. Only tools break blocks.</p>';
+ const HB=()=>typeof HOTBAR!='undefined'?HOTBAR:null,hbSlot=k=>{const h=HB();return h?h.slotOf(k):-1},hbOk=k=>{const h=HB();return!!h&&h.assignable(k)};
+ function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k),hs=hbSlot(i.k);return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+(isNew(i)?' new':'')+'" data-k="'+esc(i.k)+'"'+(hbOk(i.k)?' draggable="true"':'')+ITEM7.attrs(i.k)+' title="'+esc(nm)+' · '+ITEM7.label(i.k)+' '+ITEM7.catName(i.k).toLowerCase()+(t=='weapons'&&WPN[i.k.slice(2)].lv?' · Lv '+WPN[i.k.slice(2)].lv+(i.lock?' required':''):'')+'">'+ITEM7.glyph(i.k)+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(hs>=0?'<u class="hbn7" title="Hotbar slot '+(hs+1)+'">'+(hs+1)+'</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'?'WORN':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
+ function hbRow(k){const h=HB();if(!h||!h.assignable(k))return'';const s=h.slotOf(k);let b='';for(let i=0;i<6;i++)b+='<button class="btn ghost'+(i===s?' on':'')+'" data-a="hb'+i+'" title="'+(i===s?'Remove from slot ':'Put in slot ')+(i+1)+'" aria-label="'+(i===s?'Remove from hotbar slot ':'Put in hotbar slot ')+(i+1)+'">'+(i+1)+'</button>';
+  return'<div class="eyebrow" style="margin-top:12px">Hotbar slot</div><div class="hbrow7">'+b+'</div><p class="hbtip7">'+(s>=0?'In slot '+(s+1)+' (click it again to take it off the bar). ':'')+'Or press 1–6, or drag it onto the hotbar.</p>'}
+ function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does and what you can do with it.</p><p style="margin-top:14px">Tip: your hotbar has six slots, keys <b>1–6</b> or the <b>mouse wheel</b>. Put anything you own in any slot: select it and press <b>1–6</b>, or drag it onto the bar. Right-click a slot to clear it. <b>X</b> swaps weapon ⇄ tool. Only tools break blocks.</p>';
   const k=s.k,nm=nameOf(k),c=ITEM7.cat(k);let h='<div class="rbar7"><span class="catl7"><i>'+ITEM7.CATG[c]+'</i>'+ITEM7.CATN[c]+'</span>'+ITEM7.tag(k)+'</div><div class="pic"'+ITEM7.attrs(k)+'><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
   if(s.t=='wear'){const w=WEAR[k.slice(2)];h+='<p>'+esc(w.d)+'<br><b>'+esc(w.sd)+'</b></p>';h+='<div class="kv"><span>Slot</span>'+({hat:'Head',body:'Body',wing:'Wings',boot:'Boots',glove:'Gloves'})[w.s]+'</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+w.lv+'</div>':'');
-   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(s.own?'<button class="btn" data-a="wear">'+(s.worn?'Take off':'Wear')+'</button>':s.lock?'<button class="btn" disabled>Level '+w.lv+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')}
+   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(s.own?'<button class="btn" data-a="wear">'+(s.worn?'Take off':'Wear')+'</button>':s.lock?'<button class="btn" disabled>Level '+w.lv+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
   else if(s.t=='weapons'){const w=WPN[k.slice(2)],u=wUp[k.slice(2)]|0,lk=s.lock;h+='<p>'+esc(w.d)+'</p>'+(w.move?'<div class="kv"><span>Special</span>'+esc(w.move)+'</div>':'')+'<div class="kv"><span>Damage</span>'+w.md+'</div><div class="kv"><span>Speed</span>'+(1/w.cd).toFixed(1)+' / s</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+(lk?'<b style="color:#e0566a">'+w.lv+'</b>':w.lv+' ✓')+'</div>':'')+(w.ev?'<div class="kv"><span>Evolves</span>'+(wK[k.slice(2)]|0)+' / '+w.kn+' kills</div>':w.st?'<div class="kv"><span>Form</span>Final</div>':'');
-   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(lk?'<button class="btn" disabled>Reach level '+w.lv+'</button>':s.own?'<button class="btn" data-a="equip"'+(s.worn?' disabled':'')+'>'+(s.worn?'Equipped':'Equip')+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(lk?'<p>Unlocks at level '+w.lv+' (you are level '+lvl+').</p>':!s.own&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')}
+   h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div><div class="row7">'+(lk?'<button class="btn" disabled>Reach level '+w.lv+'</button>':s.own?'<button class="btn" data-a="equip"'+(s.worn?' disabled':'')+'>'+(s.worn?'Equipped':'Equip'+(HB()?' · slot '+(HB().equipSlot(k)+1):''))+'</button>':'<button class="btn" data-a="buy"'+(gems<w.cost?' disabled':'')+'>Buy · '+w.cost+' gems</button>')+'</div>'+(lk?'<p>Unlocks at level '+w.lv+' (you are level '+lvl+').</p>':!s.own&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
   else{h+='<p>'+esc(descOf(k))+'</p><div class="kv"><span>Owned</span>'+s.n+'</div><div class="kv"><span>Market value</span>'+(typeof sellP=='function'?sellP(k):'?')+' gems each</div>';
    h+='<div class="row7"><button class="btn ghost" data-a="fav">'+(favs[k]?'★ Favourited':'☆ Favourite')+'</button></div>';
-   if(s.t=='blocks'||s.t=='seeds'||s.t=='objects')h+='<div class="row7"><button class="btn" data-a="slot0">Slot 1</button><button class="btn ghost" data-a="slot1">Slot 2</button></div>'+(bar[0]==k?'<p>In slot 1.</p>':bar[1]==k?'<p>In slot 2.</p>':'')}
+   h+=hbRow(k)}
   return h}
  function stats(){const b=bonus(),bar2=(n,p,q)=>'<div class="s"><b class="ttl" style="font-size:13px">'+n+'</b><div class="bar7"><i style="width:'+Math.max(0,Math.min(100,p*100))+'%"></i></div><small style="color:var(--ed-mute)">'+q+'</small></div>';
   return'<div class="stat7">'+bar2('Level '+lvl,xp/xpNeed(lvl),Math.floor(xp)+' / '+xpNeed(lvl)+' XP')+bar2('Mining '+prof.mine.l,prof.mine.x/(xpNeed(prof.mine.l)*.7),'Break power +'+Math.floor(prof.mine.l/6))+bar2('Farming '+prof.farm.l,prof.farm.x/(xpNeed(prof.farm.l)*.7),'Gardening gear boosts this XP')+bar2('Combat '+prof.fight.l,prof.fight.x/(xpNeed(prof.fight.l)*.7),'Damage +'+Math.round(prof.fight.l*4)+'%')+(typeof LVL9!='undefined'?(i=>bar2('Level power',i.dmg/1.5,'All weapons +'+Math.round(i.dmg*100)+'% damage · Max HP +'+i.hp+' · Armor +'+Math.round(i.arm*100)+'%'))(LVL9.info()):'')+'<div class="s"><b class="ttl" style="font-size:13px">Active bonuses</b><br><small style="color:var(--ed-mute);line-height:1.8">Gems +'+Math.round(b.gem*100)+'% · Speed '+Math.round(b.spd*100)+'% · Jump +'+Math.round(b.jump*100)+'% · Armor '+Math.round(b.arm*100)+'% · XP +'+Math.round(b.xp*100)+'% · Light +'+Math.round(b.light)+'</small></div></div>'}
  function onClick(e){const f=e.target.closest('[data-f]');if(f){filter=f.dataset.f;selK=null;render();UIS&&UIS.play('tab');return}
   const t=e.target.closest('[data-k]');if(t){let k=t.dataset.k;if(/^\d+$/.test(k))k=+k;
-   if(assign>=0&&(kind(k)=='blocks'||kind(k)=='seeds'||kind(k)=='objects')){setSlot(assign,k);assign=-1;render();return}
+   if(assign>=0&&hbOk(k)){HB().set(assign,k);assign=-1;selK=k;render();return}
    selK=k;if(seen&&!seen[k]){seen[k]=1;saveP()}render();UIS&&UIS.play('select');return}
   const a=e.target.closest('[data-a]');if(!a)return;const act=a.dataset.a,k=selK;
   if(act=='close'){close();return}
   if(act=='fav'&&k!=null){if(favs[k])delete favs[k];else favs[k]=1;saveP();render();UIS&&UIS.play('select');return}
-  if(act=='slot0'||act=='slot1'){setSlot(+act[4],k);render();return}
+  if(/^hb[0-5]$/.test(act)&&k!=null&&HB()){const i=+act[2];HB().set(i,HB().slotOf(k)===i?null:k);render();return}
   if(typeof k=='string'&&k[0]=='a'){const id=k.slice(2),w=WEAR[id];
    if(act=='buy'){if(lvl<w.lv)return say('Reach level '+w.lv+' first');if(gems<w.cost){say('Need '+w.cost+' gems');UIS&&UIS.play('error');return}gems-=w.cost;ownW[id]=1;wear[w.s]=id;try{G('wear')}catch(_){}UIS&&UIS.play('buy');say(w.n+' purchased and worn');renderSkills();render();return}
    if(act=='wear'){wear[w.s]=wear[w.s]==id?'':id;if(wear[w.s])try{G('wear')}catch(_){}UIS&&UIS.play('select');renderSkills();render()}return}
   if(typeof k=='string'&&k[0]=='w'){const id=k.slice(2),w=WPN[id];
    if((act=='buy'||act=='equip')&&lvl<(w.lv|0)){say('Reach level '+w.lv+' to use '+w.n);UIS&&UIS.play('error');return}
-   if(act=='buy'){if(gems<w.cost){say('Need '+w.cost+' gems');UIS&&UIS.play('error');return}gems-=w.cost;own[id]=1;wp=id;try{G('forge')}catch(_){}UIS&&UIS.play('buy');say(w.n+' purchased and equipped');renderBar();render();return}
-   if(act=='equip'){wp=id;UIS&&UIS.play('select');renderBar();render()}return}}
- function setSlot(i,k){if(i<0||i>1)return;const o=bar[1-i];if(o==k)bar[1-i]=bar[i];bar[i]=k;sel=i;try{renderBar()}catch(_){}say((nameOf(k))+' → slot '+(i+1))}
- function open(f,slot){mk();el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');requestAnimationFrame(()=>el.classList.add('show'));render();try{G('bag')}catch(_){}UIS&&UIS.play('open')}
- function close(){if(!el)return;assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv)el.classList.remove('open')},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';UIS&&UIS.play('close')}
- return{open,close,render,get isOpen(){return showInv&&!!el&&el.classList.contains('open')},get filter(){return filter},set filter(v){filter=v}}})();
-// ---- legacy hooks: inventory toggle, bar, weapon slot
+   if(act=='buy'){if(gems<w.cost){say('Need '+w.cost+' gems');UIS&&UIS.play('error');return}gems-=w.cost;own[id]=1;if(HB())HB().equip(k);else wp=id;try{G('forge')}catch(_){}UIS&&UIS.play('buy');say(w.n+' purchased and equipped');renderBar();render();return}
+   if(act=='equip'){if(HB())HB().equip(k);else wp=id;UIS&&UIS.play('select');renderBar();render()}return}}
+ function open(f,slot){mk();document.documentElement.classList.add('inv6');el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');requestAnimationFrame(()=>el.classList.add('show'));render();try{G('bag')}catch(_){}UIS&&UIS.play('open')}
+ function close(){if(!el)return;assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv){el.classList.remove('open');document.documentElement.classList.remove('inv6')}},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';UIS&&UIS.play('close')}
+ return{open,close,render,get isOpen(){return showInv&&!!el&&el.classList.contains('open')},get filter(){return filter},set filter(v){filter=v},get selK(){return selK},set selK(v){selK=v},get assign(){return assign}}})();
+// ---- legacy hooks: inventory toggle (the bar is drawn by HOTBAR in 99-zzz-hotbar.js)
 setInv=function(v){if(v)INV7.open();else INV7.close()};
 renderInv=function(){if(INV7.isOpen)INV7.render()};
-renderBar=function(){const el=document.getElementById('bar');if(!el)return;el.innerHTML='';
- if(sel>1)sel=0;
- const blk=i=>{const k=bar[i],s=document.createElement('div');s.className='hb'+(i==sel?' on':'')+(k?'':' empty');s.tabIndex=0;s.title=k?iname(k)+' — click to select, click again to change':'Empty — click to choose a block';if(k){s.dataset.cat=ITEM7.cat(k);s.dataset.rar=ITEM7.rar(k)}
-  if(k){const im=new Image();im.src=iconURL(k);s.append(im);const b=document.createElement('b');b.textContent=cnt(k);s.append(b)}const n=document.createElement('i');n.textContent=i+1;s.append(n);const sm=document.createElement('small');sm.textContent=k?iname(k):'Block';if(!k)s.append(sm);
-  s.onclick=()=>{if(i==sel||!bar[i]){INV7.open('blocks',i)}else{sel=i;renderBar();try{UIS.play('select')}catch(_){}}};s.onkeydown=e=>{if(e.key=='Enter')s.onclick()};return s};
- el.append(blk(0),blk(1));
- const w=WPN[wp],s=document.createElement('div');s.className='hb wp';s.tabIndex=0;s.dataset.cat='weapon';s.dataset.rar=ITEM7.rar('w:'+wp);s.title=(w.k=='tool'?'Tool':'Weapon')+' — scroll or press 3 to switch, 4–8 tools, 9 weapon, X swaps weapon/tool; click to open weapons';const im=new Image();im.src=iconURL('w:'+wp);const d=document.createElement('div');d.innerHTML=esc3(w.n)+'<small>'+(w.k=='tool'?'Tool · breaks blocks':w.ev?'Evolves '+(wK[wp]|0)+'/'+w.kn+' kills':w.st?'Final form':'Weapon · scroll for tools')+'</small>';const n=document.createElement('i');n.textContent='3';s.append(im,d,n);s.onclick=()=>INV7.open('weapons');s.onkeydown=e=>{if(e.key=='Enter')s.onclick()};el.append(s)};
-const esc3=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 renderW=function(){renderBar()};
-selBar=function(i){if(i<=1){sel=i;renderBar()}else if(i==2){cycleWeapon()}};
 function cycleWeapon(){const ids=Object.keys(WPN).filter(id=>own[id]&&!(WPN[id].hid&&!own[id]));if(!ids.length)return;wp=ids[(ids.indexOf(wp)+1)%ids.length];renderBar();say(WPN[wp].n);try{UIS.play('select')}catch(_){}}
 (()=>{ // migrate old saves: make sure the two block slots are filled, then draw
  const fillable=Object.keys(inv).map(Number).filter(k=>cnt(k)>0&&k<20&&k!=17&&k!=4&&k!=16);

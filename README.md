@@ -202,3 +202,8 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - **Smooth titles** (blur-in, easing letter-spacing) and gently animated aurora backgrounds on hub/inventory panels.
 - **Wands and bows**: Star Wand, Frost Wand (ice eruption + snowflake ring), Void Wand (black hole + lightning), Crimson Tendril Wand, Spectral Chains, Murder Bow (crow flock), Glacier Bow (shattering arrow).
 - **Animated Galaxy, Aurora and Starlight Marble blocks** (66-68) and a **Campfire** (69, warms/heals nearby); decorated Plaza with soft drifting pollen.
+## Hotbar (6 slots)
+- **Keys 1-6 / mouse wheel** pick a hotbar slot (`src/js/late/99-zzz-hotbar.js`, `src/css/90-hotbar.css`). Any item you own fits in any slot: blocks, seeds, objects, materials, weapons, guns, the five tools, wearables.
+- **Assign**: drag an item from the inventory onto a slot, or select it and press 1-6, click a slot, or use the "Hotbar slot" buttons in its details. Right-click a slot to clear it; drag slot onto slot to swap.
+- **Use**: blocks/seeds/objects place (left or right click), weapons attack, tools dig, Bubbles fishes, a wearable slot puts it on/off. A used-up stack stays greyed in its slot; under-level weapons show locked and give the level message.
+- Saved per profile in `rbphb`. Saves from before get 1 = your weapon, 2-4 = Pip/Pebble/Glimmer, 5 = your selected block, 6 = Bubbles. Icon decoration hook: `window.SLOTDECO(ctx,item,x,y,size)` / `TOOLLV.badge(...)`. Tests: `tests/hotbar.js`.

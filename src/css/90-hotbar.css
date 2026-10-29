@@ -1,0 +1,57 @@
+/* HOTBAR6 (99-zzz-hotbar.js): six slots on keys 1-6. Only transform / opacity animate; the bar is patched, never rebuilt per frame. */
+#bar.hb6{gap:8px!important;padding:8px!important;align-items:flex-end;contain:layout style}
+html.inv6 #bar.hb6{z-index:67}
+#sw8{display:none!important}
+#bar.hb6 .s6{position:relative;z-index:2;flex:0 0 64px;width:64px;height:64px;box-sizing:border-box;display:grid;place-items:center;border-radius:var(--rad-md,14px);border:1px solid var(--line);
+ background:var(--rg,var(--surface-2))!important;box-shadow:var(--sh-1),inset 0 2px 0 -.5px var(--rc,transparent);color:var(--ink);cursor:pointer;outline:none;user-select:none;-webkit-user-select:none;
+ transition:transform .18s var(--ease,ease)}
+#bar.hb6 .s6:hover{transform:translateY(-2px)}
+#bar.hb6 .s6.on{transform:translateY(-4px)}
+#bar.hb6 .s6:active{transform:translateY(-1px) scale(.96)}
+#bar.hb6 .s6:focus-visible{box-shadow:0 0 0 2px var(--focus,var(--accent))}
+#bar.hb6 .s6 canvas{display:block;width:48px;height:48px;border-radius:8px;image-rendering:pixelated;pointer-events:none}
+#bar.hb6 .k6{position:absolute;left:6px;top:4px;z-index:2;font:800 9px/1 var(--font-ui);font-style:normal;color:var(--muted);letter-spacing:.04em;pointer-events:none}
+#bar.hb6 .s6.on .k6{color:var(--sel-bd)}
+#bar.hb6 .n6{position:absolute;right:-5px;bottom:-5px;z-index:3;min-width:18px;height:17px;padding:0 5px;box-sizing:border-box;display:grid;place-items:center;border-radius:var(--rad-pill,999px);
+ background:var(--ink);color:var(--surface-solid);font:800 10px/1 var(--font-ui);box-shadow:0 0 0 2px var(--surface-solid);pointer-events:none;white-space:nowrap}
+#bar.hb6 .n6:empty{display:none}
+#bar.hb6 .lk6{position:absolute;right:5px;top:4px;z-index:2;width:13px;height:13px;display:none;color:var(--accent);pointer-events:none;text-decoration:none}
+#bar.hb6 .lk6 svg{width:100%;height:100%;fill:currentColor;display:block}
+/* states: used-up stack / locked weapon / not owned any more stay in their slot, greyed */
+#bar.hb6 .st-out canvas,#bar.hb6 .st-lock canvas,#bar.hb6 .st-missing canvas{opacity:.36;filter:grayscale(1)}
+#bar.hb6 .st-out .n6,#bar.hb6 .st-lock .n6{background:var(--accent);color:#fff}
+#bar.hb6 .st-lock .lk6,#bar.hb6 .st-missing .lk6{display:block}
+#bar.hb6 .st-lock .n6{left:50%;right:auto;bottom:4px;transform:translateX(-50%);height:15px;font-size:9px;box-shadow:none}
+#bar.hb6 .st-empty{background:var(--sunken,rgba(0,0,0,.05))!important;border-style:dashed;box-shadow:none}
+#bar.hb6 .st-empty:after{content:'+';font:300 22px/1 var(--font-ui);color:var(--line-strong);pointer-events:none}
+#bar.hb6 .s6.worn:after{content:'';position:absolute;right:6px;top:6px;width:7px;height:7px;border-radius:50%;background:var(--accent-2,var(--accent));box-shadow:0 0 0 2px var(--surface-solid)}
+/* the selection ring slides between slots (transform only) */
+#bar.hb6 .ind6{position:absolute;left:5px;top:1px;width:70px;height:70px;box-sizing:border-box;z-index:1;pointer-events:none;border-radius:calc(var(--rad-md,14px) + 3px);
+ border:2px solid var(--sel-bd);box-shadow:0 10px 20px -12px var(--sel-bd);transition:transform .24s cubic-bezier(.3,1.35,.5,1),opacity .18s;will-change:transform}
+#bar.hb6 .ind6:after{content:'';position:absolute;left:50%;bottom:-8px;width:6px;height:6px;margin-left:-3px;transform:rotate(45deg);background:var(--sel-bd)}
+#bar.hb6 .ind6.off{opacity:0}
+/* drag & drop: every slot becomes a target */
+html.hbdrag #bar.hb6{z-index:67}
+html.hbdrag #bar.hb6 .s6{outline:2px dashed var(--accent-2,var(--accent));outline-offset:2px}
+html.hbdrag #bar.hb6 .s6.over{transform:translateY(-7px) scale(1.08)}
+/* name pill when the slot changes */
+#bar.hb6 .pill6{position:absolute;left:50%;bottom:calc(100% + 112px);z-index:5;display:flex;align-items:center;gap:10px;padding:5px 16px 5px 5px;border-radius:var(--rad-pill,999px);
+ background:var(--surface-solid);border:1px solid var(--line);box-shadow:var(--sh-2);color:var(--ink);white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,8px) scale(.96);
+ transition:transform .24s cubic-bezier(.2,.9,.3,1.25),opacity .2s}
+#bar.hb6 .pill6.on{opacity:1;transform:translate(-50%,0)}
+html.inv6 #bar.hb6 .pill6,html.hbdrag #bar.hb6 .pill6{bottom:calc(100% + 14px)}
+#bar.hb6 .pill6 kbd{width:28px;height:28px;flex:0 0 28px;display:grid;place-items:center;border-radius:50%;background:var(--ink);color:var(--surface-solid);font:800 12px/1 var(--font-ui)}
+#bar.hb6 .pill6[data-st=lock] kbd,#bar.hb6 .pill6[data-st=out] kbd,#bar.hb6 .pill6[data-st=missing] kbd{background:var(--accent);color:#fff}
+#bar.hb6 .pill6 span{display:flex;flex-direction:column;line-height:1.2}
+#bar.hb6 .pill6 b{font:700 13px var(--font-ui)}
+#bar.hb6 .pill6 small{font:600 11px var(--font-ui);color:var(--muted)}
+html[data-reduce=true] #bar.hb6 .s6,html[data-reduce=true] #bar.hb6 .ind6,html[data-reduce=true] #bar.hb6 .pill6{transition:none}
+@media (prefers-reduced-motion:reduce){#bar.hb6 .s6,#bar.hb6 .ind6,#bar.hb6 .pill6{transition:none}}
+@media (max-width:520px){#bar.hb6{gap:4px!important;padding:6px!important}#bar.hb6 .s6{flex-basis:52px;width:52px;height:52px}#bar.hb6 .s6 canvas{width:40px;height:40px}#bar.hb6 .ind6{display:none}#bar.hb6 .s6.on{box-shadow:0 0 0 2px var(--sel-bd)}}
+/* inventory: hotbar row in the details + which slot an item sits in */
+#inv7 .it7 .hbn7{position:absolute;right:6px;top:5px;z-index:2;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;display:grid;place-items:center;border-radius:5px;background:var(--ink);color:var(--surface-solid);font:800 9.5px/1 var(--font-ui);text-decoration:none;pointer-events:none}
+#inv7 .it7[draggable=true]{cursor:grab}
+#inv7 aside .hbrow7{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:4px}
+#inv7 aside .hbrow7 button{min-width:0;height:32px;padding:0!important;display:grid;place-items:center;font:800 12px var(--font-ui)!important;border-radius:9px!important}
+#inv7 aside .hbrow7 button.on{background:var(--ink)!important;color:var(--surface-solid)!important;border-color:var(--ink)!important}
+#inv7 aside .hbtip7{margin:6px 0 0;font-size:11px;color:var(--muted)}

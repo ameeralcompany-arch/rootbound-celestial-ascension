@@ -1,6 +1,5 @@
-// ===== PLAY8: weapons fight, tools dig. Faster switching: mouse wheel cycles weapons + tools (only over the game, throttled),
-// 3 = next, 4-8 = Pip / Pebble / Glimmer / Twiggy / Bubbles, 9 = your last weapon, X = swap between your last weapon and last tool.
-// A small animated pill above the hotbar shows the item you switched to with the previous / next names. =====
+// ===== PLAY8: weapons fight, tools dig. X = swap between your last weapon and last tool. Keys 1-6 and the mouse wheel belong to
+// the 6-slot hotbar (HOTBAR, 99-zzz-hotbar.js), which replaces selBar / PLAY8.wheel and shows its own name pill (#sw8 is hidden). =====
 const PLAY8=(()=>{
  const TOOLS=['pip','pebble','glimmer','twiggy','bubbles'],PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpsw';
  const S={wpn:'fist',tool:'pip'};try{const o=JSON.parse(localStorage.getItem(PK())||'{}');if(o.w)S.wpn=o.w;if(o.t)S.tool=o.t}catch(_){}
@@ -15,7 +14,7 @@ const PLAY8=(()=>{
   if(now-G.tinkT>140){G.tinkT=now;try{for(let i=0;i<3;i++)VFX.add(1,'#e8eef8',px+(Math.random()-.5)*16,py+(Math.random()-.5)*16,(Math.random()-.5)*60,-20-Math.random()*40,.3,8,2,{a:.7})}catch(_){}try{SFX7.tone(260,220,.05,'triangle',.02)}catch(_){}}
   if(now-G.hintT<40000)return;// gentle: at most once every 40 s, never while fighting next to the cursor
   const cx=mx+cam.x,cy=my+cam.y;for(const m of mobs)if(!m.dead&&Math.hypot(m.x-cx,m.y+m.h/2-cy)<T*3)return;
-  G.hintT=now;try{say('Use a tool to break blocks — scroll, 3 or X to switch')}catch(_){}}
+  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–6 / wheel) or press X')}catch(_){}}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&w.k=='tool')return _uw.apply(this,arguments);G.wpn++;try{return _uw.apply(this,arguments)}finally{G.wpn--}}}
  {const _ba=breakAt;breakAt=function(){if(G.wpn>0&&!G.allow)return false;return _ba.apply(this,arguments)}}
  // ---- switching
@@ -32,14 +31,13 @@ const PLAY8=(()=>{
   const bar=document.getElementById('bar');if(bar){const r=bar.getBoundingClientRect();if(r.height)el.style.bottom=Math.round(innerHeight-r.top+58)+'px'}
   el.style.opacity='1';const c=q('[data-c]');if(c.animate){c.animate([{transform:'scale(.9) translateY(4px)',opacity:.4},{transform:'scale(1)',opacity:1}],{duration:240,easing:'cubic-bezier(.2,.9,.3,1.25)'});if(dir)for(const s of['[data-p]','[data-x]'])q(s).animate([{transform:'translateX('+(dir*12)+'px)',opacity:0},{transform:'none',opacity:.75}],{duration:260,easing:'ease-out'})}
   clearTimeout(hideT);hideT=setTimeout(()=>{if(el)el.style.opacity='0'},1700)}catch(e){console.error('PLAY8 hud',e)}}
- function note(id){if(!WPN[id])return;if(isTool(id))S.tool=id;else S.wpn=id;save()}
- function set(id,dir){if(!ok(id)||!free())return false;if(id!=wp){wp=id;note(id);seen=id;try{renderBar()}catch(_){}try{UIS.play('select')}catch(_){}}show(dir||0);return true}
+ function note(id){if(!WPN[id]||id=='fist')return;/* fists = an empty hand (or a block held on the hotbar), never "your last weapon" */if(isTool(id))S.tool=id;else S.wpn=id;save()}
+ function set(id,dir){if(!ok(id)||!free())return false;if(id!=wp){wp=id;note(id);seen=id;try{renderBar()}catch(_){}try{UIS.play('select')}catch(_){}}if(typeof HOTBAR=='undefined')show(dir||0);/* the hotbar shows its own pill */return true}
  function step(d){const L=list();if(!L.length)return;const i=L.indexOf(wp);set(L[((i<0?0:i)+d+L.length)%L.length],d)}
  function swap(){if(isTool(wp))set(ok(S.wpn)?S.wpn:'fist',-1);else set(ok(S.tool)?S.tool:'pip',1)}
  function wheel(e){if(!free())return;const now=performance.now(),dy=e.deltaY*(e.deltaMode==1?33:e.deltaMode==2?400:1);if(now-lastW>350)acc=0;lastW=now;acc+=dy;
   if(Math.abs(acc)>=45&&now-lastStep>100){lastStep=now;step(acc>0?1:-1);acc=0}}
- // keys: 1-2 blocks, 3 next, 4-8 tools, 9 last weapon; X swaps weapon <-> tool
- selBar=function(i){if(i<=1){sel=i;renderBar();return}if(i==2){step(1);return}if(i>=3&&i<=7){set(TOOLS[i-3]);return}if(i==8)set(ok(S.wpn)?S.wpn:'fist')};
+ // number keys + wheel: HOTBAR (99-zzz-hotbar.js); X swaps weapon <-> tool
  cycleWeapon=function(){step(1)};cycleW=function(){step(1)};
  addEventListener('keydown',e=>{if(e.repeat||isTextEl(e.target)||e.ctrlKey||e.altKey||e.metaKey)return;if(e.key.toLowerCase()=='x'&&free())swap()});
  // remember the last weapon/tool whatever changed it (inventory, store, shop equip)

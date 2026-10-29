@@ -1,4 +1,4 @@
-// Gameplay controls: only tools break blocks (weapons never dig, fists still open Tackle Boxes), wheel / number keys / X switching,
+// Gameplay controls: only tools break blocks (weapons never dig, fists still open Tackle Boxes), hotbar wheel / number keys / X switching,
 // walking while the inventory is open, and the sky + weather layers render for every state. node tests/play.js
 const {chromium}=require('playwright');const path=require('path');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';
@@ -20,7 +20,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  ok('weapons never break blocks (fists, Cinder, Solarfang, direct breakAt inside a weapon use)',res.fist&&res.cinder&&res.solarfang&&res.direct,res);
  await p.mouse.down();await p.waitForTimeout(600);await p.mouse.up();ok('holding the mouse with a weapon on dirt leaves it',await E(k=>tiles[k]==1||tiles[k]==2,soft));
  ok('a gentle hint explains tools break blocks',await E(()=>/tool/i.test(msg)));
- await p.keyboard.press('4');await p.waitForTimeout(150);ok('key 4 picks Pip the shovel',await E(()=>wp=='pip'));
+ await p.keyboard.press('2');await p.waitForTimeout(150);ok('key 2 (hotbar slot 2 by default) picks Pip the shovel',await E(()=>wp=='pip'&&HOTBAR.cur==1));
  s=await scr(soft);await p.mouse.move(s.x,s.y);await p.mouse.down();await p.waitForTimeout(600);await p.mouse.up();ok('a tool breaks the block',await E(k=>!tiles[k],soft));
  ok('non-weapon systems can still break blocks (breakAt outside a weapon use)',await E(()=>{const x=Math.floor(P.x/T)+3,y=Math.floor((P.y+P.h+2)/T)+1,k=y*W+x;tiles[k]=1;hp[k]=1;breakAt(x,y,50);return!tiles[k]}));
  // fists still open Tackle Boxes (bait)
@@ -31,10 +31,10 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  await E(()=>{wp='pebble'});await p.waitForTimeout(80);await E(()=>{wp='cinder'});await p.waitForTimeout(80);
  await p.keyboard.press('x');await p.waitForTimeout(120);const a=await E(()=>wp);await p.keyboard.press('x');await p.waitForTimeout(120);const c=await E(()=>wp);
  ok('X swaps between the last weapon and the last tool',a=='pebble'&&c=='cinder',[a,c]);
- await p.keyboard.press('6');await p.waitForTimeout(80);await p.keyboard.press('9');await p.waitForTimeout(80);ok('9 returns to the last weapon',await E(()=>wp)=='cinder');
- await p.mouse.move(640,200);const w0=await E(()=>wp);await p.mouse.wheel(0,120);await p.waitForTimeout(200);const w1=await E(()=>wp);await p.mouse.wheel(0,-120);await p.waitForTimeout(200);const w2=await E(()=>wp);
- ok('mouse wheel cycles weapons/tools both ways',w1!=w0&&w2==w0,[w0,w1,w2]);
- ok('switching shows the item pill with previous / next names',await E(()=>{const e=document.getElementById('sw8');return !!e&&e.style.opacity=='1'&&/›/.test(e.textContent)}));
+ await p.keyboard.press('6');await p.waitForTimeout(80);await p.keyboard.press('9');await p.waitForTimeout(80);ok('6 picks hotbar slot 6 (Bubbles); 9 no longer switches',await E(()=>wp=='bubbles'&&HOTBAR.cur==5));
+ await p.mouse.move(640,200);const w0=await E(()=>[wp,HOTBAR.cur]);await p.mouse.wheel(0,120);await p.waitForTimeout(200);const w1=await E(()=>[wp,HOTBAR.cur]);await p.mouse.wheel(0,-120);await p.waitForTimeout(200);const w2=await E(()=>[wp,HOTBAR.cur]);
+ ok('mouse wheel cycles the hotbar slots both ways',w1[1]==0&&w1[0]!=w0[0]&&w2[1]==w0[1]&&w2[0]==w0[0],[w0,w1,w2]);
+ ok('switching shows the hotbar name pill',await E(()=>{const e=document.querySelector('#bar .pill6');return !!e&&e.classList.contains('on')&&e.textContent.length>3}));
  // inventory open: walking and jumping still work, wheel over the panel does not switch, focus is released on close
  await p.keyboard.press('i');await p.waitForTimeout(300);const x0=await E(()=>P.x);await p.keyboard.down('d');await p.waitForTimeout(600);await p.keyboard.up('d');const x1=await E(()=>P.x);
  ok('walking works with the inventory open',await E(()=>showInv)&&x1-x0>30,[x0,x1]);await p.waitForTimeout(400);
