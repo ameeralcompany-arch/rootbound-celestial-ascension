@@ -160,7 +160,9 @@ const SHOWART=(()=>{
   else if(k=='glaive'){g.fillStyle='#3a3044';g.fillRect(-80,-6,500,12);g.strokeRect(-80,-6,500,12);for(const sgn of[-1,1]){g.fillStyle=steel(0,0,40);g.beginPath();g.moveTo(400,0);g.bezierCurveTo(440,sgn*70,520,sgn*100,600,sgn*30);g.bezierCurveTo(520,sgn*58,450,sgn*38,410,sgn*6);g.closePath();g.fill();g.stroke()}}
   else if(k=='pan'){g.fillStyle='#2a2430';g.fillRect(-60,-8,230,16);g.strokeRect(-60,-8,230,16);g.fillStyle=steel(0,0,60);g.beginPath();g.arc(240,0,78,0,6.3);g.fill();g.stroke();g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.arc(240,0,58,0,6.3);g.fill()}
   else{g.fillStyle='#3a3044';g.fillRect(-60,-6,500,12);g.strokeRect(-60,-6,500,12)}}
- function drawWeaponLarge(g,wpn,t,hc){if(!wpn||wpn=='fist')return;const bob=Math.sin(t*1.1)*.012;g.save();g.translate(446,800);g.rotate(-1.2+bob);g.scale(1,1);try{weaponLocal(g,wpn,t)}catch(e){}g.restore();
+ // the portrait holds the REAL weapon art (the same drawWeapon models as in-game, scaled up); weaponLocal() above was the old generic
+ // sword / scythe / hammer art, kept only as a fallback if a weapon has no model
+ function drawWeaponLarge(g,wpn,t,hc){if(!wpn||wpn=='fist'||!WPN[wpn])return;const bob=Math.sin(t*1.1)*.012;g.save();g.translate(446,800);g.rotate(-1.2+bob);try{if(typeof drawWeapon=='function'){g.save();g.scale(2.5,2.5);g.translate(-14,0);drawWeapon(g,wpn,128,t);g.restore()}else weaponLocal(g,wpn,t)}catch(e){}g.restore();
   hand(g,446,800,-1.2+bob,hc);hand(g,416,716,-1.2+bob,hc)}
  function wings(g,t,idx){if(idx<0)return;g.save();g.translate(310,470);g.scale(2.7,2.7);g.globalAlpha=.92;try{WingArt.draw(g,idx,0,0,1,t,0,0,0,1);WingArt.extras&&WingArt.extras(g,idx,0,0,t)}catch(_){}g.restore()}
  // ---------- compose ----------

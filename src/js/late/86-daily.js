@@ -1,6 +1,6 @@
 // ===== V6 daily challenges (3 per local day, streak bonus). State lives in legacy `dly`, saved with the profile. =====
 const DAILY6=(()=>{
- const POOL=[['break','Break {n} blocks',[60,140],'break'],['kill','Defeat {n} monsters',[8,20],'kill'],['place','Place {n} blocks',[50,120],'place'],['gems','Earn {n} gems',[250,700],'gems'],['harvest','Harvest {n} trees',[6,14],'harvest'],['plant','Plant {n} seeds',[8,20],'plant']];
+ const POOL=[['break','Break {n} blocks',[60,140],'break'],['kill','Defeat {n} monsters',[8,20],'kill'],['place','Place {n} blocks',[50,120],'place'],['gems','Earn {n} gems',[250,700],'gems'],['harvest','Harvest {n} crops or trees',[6,14],'harvest'],['plant','Plant {n} seeds',[8,20],'plant']];
  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
  const yest=()=>{const d=new Date(Date.now()-864e5);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
  const sr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;

@@ -120,7 +120,7 @@ const MUS7=(()=>{
  const depthNow=()=>{try{const tx=Math.max(0,Math.min(W-1,Math.floor(P.x/T)));return Math.floor((P.y+P.h)/T)-sh(tx)}catch(_){return 0}};
  function detect(){try{if(!entered)return;let m='plaza';const e=ENV7.target,dep=depthNow();
   if(dep>=46)m='deep';else if(dep>=20)m='mine';
-  else if(e=='blossom'||e=='space'||e=='galaxy')m=e;
+  else if(e&&e!='default'&&MOODS[e])m=e;
   else if(wxN=='storm')m='storm';else if(wxN=='rain')m='rain';else if(wxN=='snow')m='snow';
   else if(night>.6)m='night';else if(wxN=='cloud')m='cloud';
   let fight=false;try{if(BOSS6.active())fight=true}catch(_){}for(const k of mobs){if(Math.abs(k.x-P.x)<420&&Math.abs(k.y-P.y)<300){fight=true;break}}

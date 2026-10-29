@@ -86,12 +86,14 @@ const ENV7=(()=>{
   x.globalCompositeOperation='lighter';for(let i=0;i<9;i++){const px=r()*LW*2,py=r()*LH*.8,s=18+r()*30;x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=1.2;x.beginPath();x.moveTo(px-s,py);x.lineTo(px+s,py);x.moveTo(px,py-s);x.lineTo(px,py+s);x.stroke();blob(x,px,py,s*.7,'rgba(255,230,250,A)',.5)}x.globalCompositeOperation='source-over';
   wrapX(LW*2,LW*.7,300,xx=>planet(x,xx,LH*.86,210,['#6a4aa8','#2e1f66','#0f0a2e'],{bands:6,bc:'255,170,230',rim:'rgba(255,170,230,.7)'}));
   wrapX(LW*2,LW*1.55,260,xx=>planet(x,xx,LH*.28,64,['#ffc2e6','#a45acf','#35185e'],{ring:['rgba(255,210,240,.65)','rgba(190,160,255,.45)'],bands:5,bc:'255,255,255',tilt:.3,rim:'rgba(255,220,250,.6)'}));L.mid=c;return L}
- const BUILD={blossom:buildBlossom,space:buildSpace,galaxy:buildGalaxy};
+ const BUILD={blossom:buildBlossom,space:buildSpace,galaxy:buildGalaxy},PAINT={},FORCE={};
+ // more environments register here (76-z-env2.js): {n:name, build()->layers, paint(g,L,o) custom painter, wx: forced weather state}
+ function reg(id,o){if(!LIST.includes(id))LIST.push(id);NAMES[id]=o.n;if(!(id in al))al[id]=0;BUILD[id]=o.build;if(o.paint)PAINT[id]=o.paint;if(o.wx)FORCE[id]=o.wx}
  function ensure(env){if(!cache[env]){try{cache[env]=BUILD[env]()}catch(e){console.error('ENV7 build',e);cache[env]=null;al[env]=0}}idle[env]=0;return cache[env]}
  // ---------------- API ----------------
  function set(wx,o){o=o||{};if(!LIST.includes(wx))wx='default';const ch=wx!=target;target=wx;if(wx!='default'){if(!order.includes(wx))order.push(wx);else{order=order.filter(e=>e!=wx);order.push(wx)}ensure(wx)}
   if(o.instant){for(const e of Object.keys(al))al[e]=e==wx?1:0}
-  try{WX6.force=wx=='default'?null:'clear'}catch(_){}
+  try{WX6.force=wx=='default'?null:FORCE[wx]||'clear'}catch(_){}
   if(ch&&!o.instant&&!o.quiet){try{say6(NAMES[wx],o.by?'Weather changed by '+o.by:'The world weather changed',3200);UIS.play('rare')}catch(_){}}
   try{if(typeof HUDWX7=='function')HUDWX7()}catch(_){}
   return ch}
@@ -102,8 +104,9 @@ const ENV7=(()=>{
  function paint(w,hh,now){const t=now/1000,s=Math.max(w/LW,hh/LH),still=(window.QM&&QM.reduce)||(typeof cel!='undefined'&&cel.opt&&cel.opt.reduce);const par=(window.QM&&QM.cur&&QM.cur.par)||4;
   for(const e of order){const a=al[e];if(a<=.004)continue;const L=cache[e]||ensure(e);if(!L)continue;g.save();g.globalAlpha=a;
    const ox=(w-LW*s)/2,oy=Math.min(0,(hh-LH*s)/2)+Math.max(-30,Math.min(30,(cam.y-(sh(W/2|0)*T))*-.012));
+   const tile=(img,k,yo,sc,dx)=>{const iw=img.width*s*(sc||1),px=(-(cam.x*k+(dx||0))%iw+iw)%iw;for(let x0=px-iw;x0<w;x0+=iw)g.drawImage(img,x0,yo||0,iw,img.height*s*(sc||1))};
+   if(PAINT[e]){try{PAINT[e](g,L,{w,hh,t,s,a,ox,oy,still,par,tile,gY:Math.max(hh*.25,Math.min(hh*.85,(sh(DX)*T-cam.y)*ZM)),LW,LH})}catch(err){if(!paint.err){paint.err=1;console.error('ENV7 paint',e,err)}}g.restore();continue}
    g.drawImage(L.sky,ox,oy,LW*s,LH*s);
-   const tile=(img,k,yo,sc)=>{const iw=img.width*s*(sc||1),px=(-(cam.x*k)%iw+iw)%iw;for(let x0=px-iw;x0<w;x0+=iw)g.drawImage(img,x0,yo||0,iw,img.height*s*(sc||1))};
    if(e=='galaxy'){const rot=still?0:t*.012,gs=LH*s*.95;g.save();g.globalAlpha=a*.95;g.translate(w*.74-cam.x*.01,hh*.3);g.rotate(rot);g.drawImage(L.gal,-gs/2,-gs/2,gs,gs);g.restore();g.save();g.globalAlpha=a*.7;g.translate(w*.16-cam.x*.02,hh*.52);g.rotate(-rot*1.4+.5);g.scale(1,.45);g.drawImage(L.gal2,-gs*.2,-gs*.2,gs*.4,gs*.4);g.restore()}
    const gY=Math.max(hh*.25,Math.min(hh*.85,(sh(DX)*T-cam.y)*ZM));
    if(L.far)tile(L.far,e=='blossom'?.05:.03,e=='blossom'?gY-LH*.66*s-12:0);
@@ -121,4 +124,4 @@ const ENV7=(()=>{
    g.globalAlpha=a*.1;g.fillStyle=e=='blossom'?'#7a3a5a':'#000';g.fillRect(0,hh*.55,w,hh*.45);
    g.restore()}}
  const _ds=drawSky;drawSky=function(w,hh,now){const cover=draw(w,hh,now);if(cover<.995)_ds(w,hh,now);if(cover>.004)paint(w,hh,now)};
- return{set,get target(){return target},get names(){return NAMES},LIST,get cached(){return Object.keys(cache).filter(k=>cache[k])},get alpha(){return al},reset(){set('default',{instant:true})}}})();
+ return{set,reg,get target(){return target},get names(){return NAMES},LIST,get cached(){return Object.keys(cache).filter(k=>cache[k])},get alpha(){return al},reset(){set('default',{instant:true})}}})();

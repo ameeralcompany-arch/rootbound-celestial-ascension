@@ -4,12 +4,15 @@ const W=256,H=128,MAXBLK=99;
 const ODEF={20:{cat:'door',d:'Oak Door'},21:{cat:'door',d:'Stone Gate'},22:{cat:'door',d:'Steel Hatch'},23:{cat:'door',d:'Magic Portal'},24:{cat:'door',d:'Neon Gate'},25:{cat:'door',d:'Starlit Gate'},26:{cat:'door',d:'Sealed Gate',special:1},
  27:{cat:'cont',k:'chest',d:'Treasure Chest'},28:{cat:'misc',k:'sign',d:'Signpost'},29:{cat:'light',k:'lamp',d:'Lantern'},30:{cat:'dev',k:'switch',d:'Lever'},31:{cat:'dev',k:'plate',d:'Pressure Plate'},32:{cat:'tele',k:'tele',d:'Teleport Pad'},
  33:{cat:'station',d:'Crafting Table'},34:{cat:'cont',k:'crate',d:'Storage Crate'},35:{cat:'misc',d:'Training Dummy'},36:{cat:'misc',k:'waystone',d:'Waystone'},37:{cat:'deco',d:'Bench'},38:{cat:'deco',d:'Banner'},
- 39:{cat:'wx',k:'wx_blossom',d:'Blossom Weather Machine',wx:'blossom'},40:{cat:'wx',k:'wx_space',d:'Space Weather Machine',wx:'space'},41:{cat:'wx',k:'wx_galaxy',d:'Galaxy Weather Machine',wx:'galaxy'}};
-const WEATHERS=['default','blossom','space','galaxy'];
-const isObjId=b=>b>=20&&b<=41&&!!ODEF[b];
+ 39:{cat:'wx',k:'wx_blossom',d:'Blossom Weather Machine',wx:'blossom'},40:{cat:'wx',k:'wx_space',d:'Space Weather Machine',wx:'space'},41:{cat:'wx',k:'wx_galaxy',d:'Galaxy Weather Machine',wx:'galaxy'},
+ 85:{cat:'wx',k:'wx_sunflower',d:'Sunflower Weather Machine',wx:'sunflower'},86:{cat:'wx',k:'wx_sakura',d:'Sakura Sunset Machine',wx:'sakura'},87:{cat:'wx',k:'wx_ocean',d:'Ocean Sunset Machine',wx:'ocean'},88:{cat:'wx',k:'wx_neon',d:'Neon Rain Machine',wx:'neon'},89:{cat:'wx',k:'wx_aurora',d:'Aurora Night Machine',wx:'aurora'}};
+const WEATHERS=['default','blossom','space','galaxy','sunflower','sakura','ocean','neon','aurora'];
+const isObjId=b=>(b>=20&&b<=41||b>=85&&b<=89)&&!!ODEF[b];
+// planted things: tree saplings use seed ids 1-16, v9 crops 80-84 (carrot, strawberry, wheat, pumpkin, moon melon)
+const okSeed=v=>i32(v)&&(v>=1&&v<=16||v>=80&&v<=84);
 const ROLE={BAN:-1,VIS:0,TRUST:1,BUILD:2,OWN:3};
 const i32=Number.isInteger;
-function validEdit(d){if(!d||!i32(d.k)||d.k<0||d.k>=W*H||!Array.isArray(d.a)||d.a.length<4)return false;const a=d.a;if(!i32(a[0])||a[0]<0||a[0]>MAXBLK)return false;if(a[1]){if(!i32(a[1])||!i32(a[2])||a[1]<1||a[1]>16||a[2]<1||a[2]>16||!isFinite(+a[3]))return false}return true}
+function validEdit(d){if(!d||!i32(d.k)||d.k<0||d.k>=W*H||!Array.isArray(d.a)||d.a.length<4)return false;const a=d.a;if(!i32(a[0])||a[0]<0||a[0]>MAXBLK)return false;if(a[1]){if(!okSeed(a[1])||!okSeed(a[2])||!isFinite(+a[3]))return false;if(a.length>4&&!(a.length==5&&isFinite(+a[4])))return false}return true}
 const id16=v=>String(v||'').slice(0,16).replace(/[^a-z0-9]/gi,'');
 function cleanMeta(m){if(m===null)return null;if(!m||typeof m!='object')return undefined;const x=m.x|0,y=m.y|0;if(x<1||x>=W-1||y<1||y>=H-1)return undefined;
  return{x,y,o:id16(m.o),on:String(m.on||'Player').slice(0,14),f:Array.isArray(m.f)?m.f.slice(0,32).map(id16).filter(Boolean):[],pub:m.pub?1:0,t:Array.isArray(m.t)?m.t.slice(0,32).map(id16).filter(Boolean):[],b:Array.isArray(m.b)?m.b.slice(0,32).map(id16).filter(Boolean):[],pr:m.pr?1:0,d:String(m.d||'').slice(0,80).replace(/[<>]/g,''),sp:(m.sp&&(m.sp.x|0)>=1&&(m.sp.x|0)<W-1&&(m.sp.y|0)>=1&&(m.sp.y|0)<H-1)?{x:m.sp.x|0,y:m.sp.y|0}:null}}

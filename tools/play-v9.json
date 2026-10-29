@@ -1,0 +1,16 @@
+{
+ "weather":[
+  {"id":85,"n":"Sunflower Weather Machine","price":1200,"rar":"rare","lv":10,"d":"Endless sunflower hills under a bright summer sky: drifting clouds, a turning windmill and birds."},
+  {"id":86,"n":"Sakura Sunset Machine","price":1400,"rar":"rare","lv":12,"d":"A huge striped anime sun sinks behind cherry trees and a pagoda while petals drift by."},
+  {"id":87,"n":"Ocean Sunset Machine","price":2000,"rar":"epic","lv":18,"d":"A golden sun melts into a rolling sea: waves, glittering light, gulls and a lighthouse."},
+  {"id":88,"n":"Neon Rain Machine","price":2400,"rar":"epic","lv":22,"d":"A rainy neon city skyline at night with flickering signs and flying car lights. Brings real rain (your crops love it)."},
+  {"id":89,"n":"Aurora Night Machine","price":3600,"rar":"legendary","lv":30,"d":"Dancing aurora ribbons over snowy peaks and pine forests, with twinkling stars and shooting stars."}
+ ],
+ "seeds":[
+  {"id":180,"n":"Carrot Seed","price":12,"rar":"common","lv":1,"d":"Crop. Grows in about 40 s (twice as fast when watered). Harvest when ripe: time it with the golden ring for a perfect harvest."},
+  {"id":181,"n":"Strawberry Seed","price":20,"rar":"common","lv":2,"d":"Crop. A berry bush that ripens in about a minute and gives several sweet strawberries."},
+  {"id":182,"n":"Wheat Seed","price":8,"rar":"common","lv":1,"d":"Crop. Fast golden wheat: ready in about 30 s."},
+  {"id":183,"n":"Pumpkin Seed","price":45,"rar":"uncommon","lv":4,"d":"Crop. A slow vine that grows one big, valuable pumpkin."},
+  {"id":184,"n":"Moon Melon Seed","price":90,"rar":"rare","lv":8,"d":"Crop. A glowing night melon. Slow, but worth a lot of gems at the market."}
+ ]
+}

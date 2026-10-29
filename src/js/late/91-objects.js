@@ -27,7 +27,7 @@ const ODEF={
 for(const id in ODEF){const d=ODEF[id];BLK[id]=[d.n,d.c,d.hard];PRICE[id]=d.price;SOLID6[id]=0}
 MAT[230]={n:'Gate Key',c:'#ffd36a',p:60};MAT[231]={n:'Star Shard',c:'#fff3a8',p:90};
 const OBJ={};const OBJ_IDS=Object.keys(ODEF).map(Number);
-const isObjId=b=>b>=20&&b<=41&&!!ODEF[b];
+const isObjId=b=>(b>=20&&b<=41||b>=85&&b<=89)&&!!ODEF[b]; // 85-89: the v9 weather machines (94-z-wxmachines.js)
 const ROLE={BAN:-1,VIS:0,TRUST:1,BUILD:2,OWN:3};
 function roleOf(uid){if(!meta)return ROLE.OWN;if(meta.b&&meta.b.includes(uid))return ROLE.BAN;if(meta.o==uid)return ROLE.OWN;if((meta.f||[]).includes(uid)||meta.pub)return ROLE.BUILD;if((meta.t||[]).includes(uid))return ROLE.TRUST;return ROLE.VIS}
 const myRole=()=>roleOf(myId);
@@ -54,7 +54,7 @@ const OBJ6=(()=>{
  const _pe=pushEdit;pushEdit=function(k){_pe(k);try{const ch=sync(k);if(ch&&isObjId(tiles[k]))VFX.wave(k%W*T+T/2,(k/W|0)*T+T,ODEF[tiles[k]].c,60,.4,.3)}catch(_){}};
  const _ae=applyEdit;applyEdit=function(k,a){_ae(k,a);try{const b=tiles[k];if(isObjId(b)){if(!OBJ[k]||OBJ[k].t!=b)OBJ[k]=objDefaults(b)}else if(OBJ[k])delete OBJ[k]}catch(_){}};
  const _lw=loadWorld;loadWorld=function(n,e){reset();try{DOORS6&&DOORS6.cancel()}catch(_){}_lw(n,e);try{sweepLate()}catch(_){}};
- function sweepLate(){const m=Object.keys(OBJ);for(const k of m)if(!isObjId(tiles[+k])||tiles[+k]!=OBJ[k].t)delete OBJ[k];for(let k=0;k<W*H;k++){const b=tiles[k];if(b>=20&&b<=41&&isObjId(b)&&!OBJ[k])OBJ[k]=objDefaults(b)}edits.o=OBJ;
+ function sweepLate(){const m=Object.keys(OBJ);for(const k of m)if(!isObjId(tiles[+k])||tiles[+k]!=OBJ[k].t)delete OBJ[k];for(let k=0;k<W*H;k++){const b=tiles[k];if(b>=20&&isObjId(b)&&!OBJ[k])OBJ[k]=objDefaults(b)}edits.o=OBJ;
   // world spawn: Waystone / meta spawn
   const sp=spawnPoint();if(sp&&cur!='plaza'){P.x=sp.x;P.y=sp.y}}
  function spawnPoint(){if(meta&&meta.sp){const x=meta.sp.x,y=meta.sp.y;return{x:x*T+T/2,y:y*T+T-P.h-1}}for(const k in OBJ)if(OBJ[k].t==36){const x=k%W,y=k/W|0;return{x:x*T+T/2,y:y*T+T-P.h-1}}return null}

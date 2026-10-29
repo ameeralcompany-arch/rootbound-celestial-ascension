@@ -104,6 +104,10 @@ for i,n,r,p,d in CH: add(id='charm_'+i,cat='charms',n=n,price=p,rar=r,stack=0,re
 V8=json.load(open(os.path.join(R,'tools/gear-v8.json')))
 for g in V8['gear']: add(id='wear_'+g['id'],cat='gear',n=g['n'],price=g['price'],rar=g['rar'],stack=0,ref=g['id'],lv=g['lv'],d=g['d'],how='store',legacy=1,sub=g['sub'],new=1)
 for c in V8['charms']: add(id='charm_'+c['id'],cat='charms',n=c['n'],price=c['price'],rar=c['rar'],stack=0,ref=c['id'],lv=0,d=c['d'],how='store',new=1)
+# ---- v9 play update: new weather machines + crop seeds; shared with tools/play-catalog.js
+V9=json.load(open(os.path.join(R,'tools/play-v9.json')))
+for w in V9['weather']: add(id='obj_%d'%w['id'],cat='weather',n=w['n'],price=w['price'],rar=w['rar'],stack=1,ref=w['id'],lv=w['lv'],d=w['d'],how='store',new=1)
+for s in V9['seeds']: add(id='seed_%d'%s['id'],cat='seeds',n=s['n'],price=s['price'],rar=s['rar'],stack=1,ref=s['id'],lv=s['lv'],d=s['d'],how='store',new=1)
 ids=[i['id'] for i in items]; assert len(ids)==len(set(ids)),'duplicate ids'
 for i in items:
     assert i['price']>0 and i['rar'] in('common','uncommon','rare','epic','legendary','mythic','exclusive'),i

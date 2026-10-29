@@ -54,7 +54,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   STORE7.setFilter({sort:'pd'});const pd=STORE7.list().map(i=>i.price);o.desc=pd.every((v,i)=>!i||pd[i-1]>=v);
   STORE7.setFilter({sort:'feat',rar:'legendary'});o.rar=STORE7.list().every(i=>i.rar=='legendary');STORE7.setFilter({rar:'all',owned:true});o.owned=STORE7.list().every(i=>SHOP7.has(i.id));STORE7.setFilter({owned:false,cat:'featured'});
   o.hud=!!document.getElementById('bstore');return o});
- ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==19&&r.effects>=15&&r.charms==15&&r.weather==3&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
+ ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==19&&r.effects>=15&&r.charms==15&&r.weather==8&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
  // the Sparkmouse costume: real catalog gear, buyable + equippable, icons and cached worn art render
  r=await p.evaluate(async()=>{const o={};const h=SHOP7.byId.get('wear_sparkhood'),s=SHOP7.byId.get('wear_sparksuit');
@@ -85,7 +85,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  // --- music moods + volume controls
  r=await p.evaluate(async()=>{startBGM();await new Promise(r=>setTimeout(r,300));const o={on:MUS7.on,moods:Object.keys(MUS7.MOODS)};ENV7.set('blossom',{instant:true});MUS7.detect();o.blossom=MUS7.want;ENV7.set('space',{instant:true});MUS7.detect();o.space=MUS7.want;ENV7.set('galaxy',{instant:true});MUS7.detect();o.galaxy=MUS7.want;ENV7.set('default',{instant:true});MUS7.detect();o.plaza=MUS7.want;o.moods2=Object.keys(MUS7.MOODS);o.songs=Object.values(MUS7.MOODS).map(m=>m.songs.length);
   o.slider=!!document.getElementById('oav')&&!!document.getElementById('ov')&&!!document.getElementById('os');return o});
- ok('music starts; every place/weather has its own mood with 2+ songs',r.on&&r.moods.length==12&&r.moods.includes('mine')&&r.moods.includes('deep')&&r.songs.every(n=>n>=2)&&r.blossom=='blossom'&&r.space=='space'&&r.galaxy=='galaxy'&&['plaza','night','cloud','rain','storm','snow'].includes(r.plaza)&&r.slider,JSON.stringify(r));
+ ok('music starts; every place/weather has its own mood with 2+ songs',r.on&&r.moods.length>=17&&['sunflower','sakura','ocean','neon','aurora'].every(m=>r.moods.includes(m))&&r.moods.includes('mine')&&r.moods.includes('deep')&&r.songs.every(n=>n>=2)&&r.blossom=='blossom'&&r.space=='space'&&r.galaxy=='galaxy'&&['plaza','night','cloud','rain','storm','snow'].includes(r.plaza)&&r.slider,JSON.stringify(r));
  r=await p.evaluate(()=>{const o={};MUS7.force('rain');MUS7.newSong('rain');const a=MUS7.played.slice(-1)[0];MUS7.newSong('rain');MUS7.newSong('rain');const pl=MUS7.played.slice(-3);o.noRepeat=pl[0]!=pl[1]&&pl[1]!=pl[2];return o});
  ok('songs never repeat back-to-back',r.noRepeat,JSON.stringify(r));
  r=await p.evaluate(()=>{const o={};o.blocks=[];for(let b=42;b<=59;b++){const s=spr(b,0,0);const d=s.getContext('2d').getImageData(0,0,48,48).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>200)n++;o.blocks.push(n>2000&&!!BLK[b]&&PRICE[b]>0)}
@@ -124,5 +124,18 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('world events: deterministic schedule, spirit heals once, trader sells, rift pays when cleared, meteors hurt monsters and drop loot',r.det&&r.rate&&r.spirit&&r.once&&r.trader&&r.rift&&r.riftPay&&r.meteorHurt&&r.meteorLoot,JSON.stringify(r));
  r=await p.evaluate(()=>{enterWorld('plaza');const o={};o.none=true;for(let k=0;k<400;k++){}WEV7.tick(.1);o.ev=WEV7.ev;return o});
  ok('no world events in the Plaza',r.ev===null,JSON.stringify(r));
+ // --- v9 weather machines: in the store, bought, placed, switched on (scene + music mood), saved with the world, survive a reload
+ r=await p.evaluate(async()=>{const o={};const ids=[85,86,87,88,89],wx=['sunflower','sakura','ocean','neon','aurora'];enterWorld('wxtest');await new Promise(r=>setTimeout(r,1500));gems=99999;lvl=40;
+  o.store=ids.every(id=>{const it=SHOP7.byId.get('obj_'+id);return it&&it.cat=='weather'&&it.price>0&&it.lv>0});o.bought=[];for(const id of ids){const c0=cnt(id);const res=await SHOP7.buy('obj_'+id,1);o.bought.push(!!res.ok&&cnt(id)==c0+1)}
+  const px=Math.floor(P.x/T),py=Math.floor((P.y+P.h-1)/T);o.used=[];o.mood=[];o.built=[];startBGM();mobs.length=0;for(let i=0;i<40;i++){mobs.length=0;MUS7.detect();if(MUS7.want!='combat')break;await new Promise(r=>setTimeout(r,250))}
+  for(let i=0;i<ids.length;i++){const k=py*W+px+1+i;tiles[k]=ids[i];pushEdit(k);await new Promise(r=>setTimeout(r,1300));WXM7.use(k);o.used.push(ENV7.target==wx[i]&&X6.wx[cur]==wx[i]&&!!OBJ[k]&&ODEF[OBJ[k].t].cat=='wx');mobs.length=0;MUS7.detect();o.mood.push(MUS7.want==wx[i]&&MUS7.MOODS[wx[i]].songs.length>=2);await new Promise(r=>setTimeout(r,200));o.built.push(ENV7.cached.includes(wx[i]));if(wx[i]=='neon')o.rain=WX6.force=='rain'}
+  o.names=ids.every((id,i)=>ENV7.names[wx[i]]&&iname(id)==ODEF[id].n);o.cat=ITEM7.cat(88)=='obj';
+  const sav=JSON.parse(localStorage.getItem('rbc2')||'{}');o.saved=sav.wx&&sav.wx.wxtest=='aurora';return o});
+ ok('5 new weather machines are in the Store and can be bought',r.store&&r.bought.every(Boolean),JSON.stringify(r));
+ ok('placing + using each machine switches the world to its animated scene (built into cached layers) with its own music mood',r.used.every(Boolean)&&r.built.every(Boolean)&&r.mood.every(Boolean)&&r.names&&r.cat,JSON.stringify(r));
+ ok('the Neon Rain machine brings real rain; the weather is saved with the world',r.saved&&r.rain,JSON.stringify(r));
+ {const q=await ctx.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));await q.goto(FILE);await q.waitForTimeout(1200);await q.getByText('START ADVENTURE',{exact:false}).first().click().catch(()=>{});await q.waitForTimeout(1200);
+  const o=await q.evaluate(async()=>{enterWorld('wxtest');await new Promise(r=>setTimeout(r,800));return{t:ENV7.target,x6:X6.wx.wxtest}});await q.close();
+  ok('a v9 weather scene is still on after a reload of the world',o.t=='aurora'&&o.x6=='aurora'&&!qe.length,JSON.stringify(o)+qe.join('|'))}
  ok('no page errors in the whole run',errs.length==0,errs.slice(0,3).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all store tests passed');process.exit(fails?1:0)})();

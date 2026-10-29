@@ -93,7 +93,7 @@ const TOOLLV=(()=>{
  {const _n=noise;noise=function(){if(Q.q>0)return;return _n.apply(this,arguments)}}
  {const _t=SFX7.tone;SFX7.tone=function(){if(U&&U.mute)return;return _t.apply(this,arguments)}}
  {const _G=G;G=function(){if(U)U.mute=false;return _G.apply(this,arguments)}}
- {const _h=harvest;harvest=function(k){const had=trees.has(k),r=_h.apply(this,arguments);if(U&&U.ph==1){if(had&&!trees.has(k))U.tree=k;U.mute=true}return r}}
+ {const _h=harvest;harvest=function(k){const had=trees.has(k),r=_h.apply(this,arguments);if(U&&U.ph==1){if(had&&!trees.has(k)&&!(typeof FARM9!='undefined'&&FARM9.lastCrop===k))U.tree=k;U.mute=true}return r}}
  {const _ba=breakAt;breakAt=function(x,y,dmg){const inb=x>=0&&y>=0&&x<W&&y<H,k=y*W+x,b=inb?tiles[k]:0,mine=!!(U&&U.ph==1&&!U.hit&&b),vb=!U&&!!VN&&b&&b==VN.b&&dmg>=100&&performance.now()<VN.until;
    if(!mine&&!vb)return _ba.apply(this,arguments);Q.q++;let r;try{r=_ba.apply(this,arguments)}finally{Q.q--}
    try{const broken=!!r&&!tiles[k];if(mine){const cat=catOf(b);U.hit={x,y,k,b,cat,good:fits(U.tool,cat),r:!!r,broken};U.mute=true;if(r&&!broken&&b==94&&U.tool=='ore'&&lvl(U.id)>=7)hp[k]=Math.min(hp[k],BLK[94][2]/3)}

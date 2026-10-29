@@ -40,7 +40,7 @@ const ITEM7=(()=>{
  const idx=()=>{if(map)return map;map={};try{for(const i of SHOP7.items)map[keyOf(i)]=i.rar=='exclusive'?'mythic':i.rar}catch(_){}return map};
  function cat(k){if(typeof k=='string'){if(/^\d+$/.test(k))k=+k;else return k[0]=='a'?'wear':k.startsWith('w:')?'weapon':k.startsWith('wing:')?'wing':'fx'}
   if(k>=250&&k<=252)return'bait';if(k>=240&&k<=249)return'fish';if(k>=200)return'mat';if(k>=100)return'seed';
-  if(k>=20&&k<=41&&typeof ODEF!='undefined'&&ODEF[k])return ODEF[k].cat=='door'?'door':'obj';return'block'}
+  if((k>=20&&k<=41||k>=85&&k<=89)&&typeof ODEF!='undefined'&&ODEF[k])return ODEF[k].cat=='door'?'door':'obj';return'block'}
  function value(k){try{if(typeof k=='string'){if(k[0]=='a'){const w=WEAR[k.slice(2)];return w.cost+(w.lv|0)*40}if(k.startsWith('w:'))return WPN[k.slice(2)].cost|0;return 0}return MAT[k]?MAT[k].p*3:(PRICE[k%100]||10)*(k>=100?5:1)}catch(_){return 0}}
  const byValue=c=>c<30?0:c<110?1:c<320?2:c<800?3:c<2000?4:5;
  function tier(k){const r=idx()[String(k)];if(r){const t=RAR.indexOf(r);if(t>=0)return t}return byValue(value(k))}
