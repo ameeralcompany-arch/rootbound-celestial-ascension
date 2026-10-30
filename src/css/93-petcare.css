@@ -1,0 +1,56 @@
+/* ===== PET10: the Pet UI (96-zz-petcare.js). Uses the theme tokens from 50-system.css so it follows light / dark. ===== */
+#petui{position:fixed;left:50%;top:46%;transform:translate(-50%,-50%);z-index:57;width:660px;max-width:calc(100vw - 32px);max-height:calc(100vh - 40px);overflow:auto;display:none;
+ background:var(--surface,#241a3e);border:1px solid var(--line,#5a4a8a);border-radius:var(--rad-md,14px);box-shadow:var(--sh-3,0 10px 40px #000a);color:var(--ink,#eee);font:13px var(--font-ui,system-ui,sans-serif);padding:12px 14px}
+#petui button{font:inherit;color:var(--btn-ink,#fff);background:var(--btn-bg,#3a2a66);border:1px solid var(--line,#5a4a8a);border-radius:var(--rad-sm,8px);cursor:pointer}
+#petui button:hover:not(:disabled){background:var(--btn-bg-hover,#5a3aa0);border-color:var(--line-strong,#a46bff)}
+#petui button:disabled{opacity:.45;cursor:default}
+#petui .hd10{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+#petui .tabs10{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+#petui .tb10{display:flex;align-items:center;gap:4px;padding:3px 10px 3px 4px;font-weight:700}
+#petui .tb10 img{width:30px;height:30px}
+#petui .tb10 em{font-style:normal;color:#fff;background:var(--accent,#e07a8f);border-radius:9px;padding:0 6px;font-size:11px}
+#petui .tb10.on{border-color:var(--accent-2,#a995ec);box-shadow:0 0 0 2px var(--accent-2,#a995ec) inset}
+#petui .tb10.add{padding:6px 12px;font-weight:600}
+#petui .x10{width:32px;height:32px;flex:none}
+#petui .main10{display:grid;grid-template-columns:300px 1fr;gap:14px}
+#petui .pv10{width:300px;height:190px;max-width:100%;display:block;box-sizing:border-box;border-radius:12px;border:1px solid var(--line,#5a4a8a);
+ background:linear-gradient(180deg,rgba(150,200,255,.18),rgba(255,180,210,.14) 70%,rgba(120,200,120,.22) 70%,rgba(120,200,120,.3))}
+#petui .fur10{display:flex;gap:6px;align-items:center;margin-top:8px}
+#petui .fur10 button{width:26px;height:26px;border-radius:50%;padding:0;background:linear-gradient(135deg,var(--a) 55%,var(--b) 55%)!important}
+#petui .fur10 button.on{box-shadow:0 0 0 2px var(--surface-solid,#241d3a),0 0 0 4px var(--accent-2,#a995ec)}
+#petui .fur10 small{color:var(--muted,#9d97b5);margin-left:4px}
+#petui .nm10{display:flex;gap:8px;align-items:center;font-weight:700}
+#petui .nm10 input{flex:1;min-width:0;font:600 15px var(--font-ui,system-ui,sans-serif);padding:6px 9px;border-radius:var(--rad-sm,8px);border:1px solid var(--line,#5a4a8a);background:var(--surface-solid,#1d1530);color:var(--ink,#fff)}
+#petui .wh10,#petui .st10{display:block;color:var(--muted,#9d97b5);margin:4px 0 8px}
+#petui .pb10{display:grid;grid-template-columns:38px 1fr;align-items:center;column-gap:8px;margin-bottom:6px}
+#petui .pb10 span{font-weight:700;font-size:12px}
+#petui .pb10 small{grid-column:2;color:var(--muted,#9d97b5);font-size:11.5px}
+#petui .m10{display:block;height:10px;border-radius:6px;background:rgba(128,120,160,.22);overflow:hidden}
+#petui .m10 b{display:block;height:100%;border-radius:6px;transition:width .4s}
+#petui .f10 b{background:linear-gradient(90deg,#ffb35a,#ffd36a)}#petui .j10 b{background:linear-gradient(90deg,#ff6f9c,#ffa0c4)}
+#petui .m10.low b{background:linear-gradient(90deg,#ff5a5a,#ff8a6a)}
+#petui .acts10{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#petui .acts10 button{padding:7px 11px;font-weight:700}
+#petui .acts10 small{font-weight:500;opacity:.75;margin-left:2px}
+#petui .pri10{background:var(--accent,#e07a8f)!important;color:#fff!important;border-color:transparent!important}
+#petui .clo10{margin-top:12px;border-top:1px solid var(--line,#5a4a8a);padding-top:8px}
+#petui h5{margin:0 0 6px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink,#fff)}
+#petui .row10{display:flex;gap:6px;align-items:stretch;margin-bottom:6px;padding:3px;border-radius:10px}
+#petui .row10.on{background:rgba(160,140,230,.14)}
+#petui .sl10{width:58px;flex:none;font-weight:700;font-size:12px}
+#petui .ch10{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:74px;min-height:58px;padding:2px}
+#petui .ch10 img{width:38px;height:38px}
+#petui .ch10 small{font-size:9.5px;line-height:1.1;color:var(--muted,#9d97b5);text-align:center}
+#petui .ch10.on{border-color:var(--accent-2,#a995ec);box-shadow:0 0 0 2px var(--accent-2,#a995ec) inset}
+#petui .ch10.lock img{opacity:.45;filter:grayscale(.6)}
+#petui .ch10 u{position:absolute;right:3px;top:2px;text-decoration:none;font-size:10px}
+#petui .cols10{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:30px;margin-top:4px}
+#petui .cols10 span{font-weight:700;font-size:12px;margin-right:4px}
+#petui .cols10 .dim10{font-weight:500;color:var(--muted,#9d97b5)}
+#petui .sw10{width:24px;height:24px;border-radius:50%;padding:0;background:var(--c)!important;border:2px solid rgba(255,255,255,.7)!important}
+#petui .sw10.on{box-shadow:0 0 0 2px var(--accent-2,#a995ec)}
+#petui .pk10 input{width:30px;height:26px;padding:0;border:none;background:none;cursor:pointer}
+#petui .empty10{text-align:center;padding:6px 10px 10px}
+#petui .empty10 .pv10{margin:0 auto 8px}
+#petui .empty10 button{padding:8px 16px;font-weight:700}
+@media(max-width:640px){#petui .main10{grid-template-columns:1fr}#petui .pv10{width:100%;height:auto;aspect-ratio:300/190}#petui .row10{flex-wrap:wrap}#petui .ch10{width:64px}}

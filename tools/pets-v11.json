@@ -1,0 +1,24 @@
+{
+ "pets":[
+  {"id":"cat","n":"Cat","price":600,"rar":"uncommon","d":"A cuddly chibi kitten. It naps, stretches, chases its tail and meows. Lives at your Pet Home; press E next to it to feed, pet, play and dress it."},
+  {"id":"rabbit","n":"Rabbit","price":500,"rar":"uncommon","d":"A fluffy bunny that hops around its Pet Home, squeaks and flops its ears. Press E next to it to feed, pet, play and dress it."},
+  {"id":"dog","n":"Dog","price":750,"rar":"rare","d":"A loyal little puppy that wags, barks and loves to fetch the ball. Press E next to it to feed, pet, play and dress it."},
+  {"id":"fox","n":"Fox","price":1200,"rar":"epic","d":"A fluffy fox with a big bushy tail. It yips, does flips when it is happy and follows you around. Press E next to it to feed, pet, play and dress it."}
+ ],
+ "clothes":[
+  {"id":"bow","n":"Pet Ribbon Bow","price":120,"rar":"common","d":"A cute ribbon bow for your pet's head. Pick any colour in the Pet UI."},
+  {"id":"bandana","n":"Pet Bandana","price":150,"rar":"common","d":"A polka-dot bandana tied around your pet's neck. Any colour."},
+  {"id":"collar","n":"Pet Bell Collar","price":180,"rar":"common","d":"A collar with a tiny golden bell. Any colour."},
+  {"id":"scarf","n":"Pet Cozy Scarf","price":220,"rar":"uncommon","d":"A striped knitted scarf for chilly days. Any colour."},
+  {"id":"hat","n":"Pet Tiny Top Hat","price":300,"rar":"uncommon","d":"A dapper little top hat. Any colour."},
+  {"id":"crown","n":"Pet Flower Crown","price":350,"rar":"uncommon","d":"A ring of little flowers. Any colour."},
+  {"id":"sweater","n":"Pet Knit Sweater","price":400,"rar":"rare","d":"A soft ribbed sweater with a heart button. Any colour."},
+  {"id":"cape","n":"Pet Hero Cape","price":450,"rar":"rare","d":"A tiny hero cape that flutters when your pet runs. Any colour."},
+  {"id":"wings","n":"Pet Fairy Wings","price":600,"rar":"epic","d":"Shimmering fairy wings for your pet's back. Any colour."}
+ ],
+ "care":[
+  {"id":"pet_home","ref":612,"n":"Pet Home","price":150,"rar":"common","d":"A little house for your pets. Hold it and click an empty spot with ground under it; your pets move in and wander around it. Hit it three times to pick it up."},
+  {"id":"pet_food","ref":610,"n":"Pet Food","price":12,"rar":"common","d":"A bowl of kibble. Pets get hungry 2 hours after a meal (hungry pets look sad and will not play). Also crafted from Wheat + Carrot."},
+  {"id":"pet_treat","ref":611,"n":"Pet Treat","price":30,"rar":"uncommon","d":"A fishy cookie. Counts as a meal and makes your pet very happy. Also crafted from a Minnow + Strawberry."}
+ ]
+}

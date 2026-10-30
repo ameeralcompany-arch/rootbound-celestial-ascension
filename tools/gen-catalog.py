@@ -127,10 +127,15 @@ for b in BV10['break']: add(id='fx_brk_'+b['id'],cat='effects',n=b['n'],price=b[
 # ---- v11 summer objects (sun lounger, deck chair, beach umbrella, sandcastle, beach ball); shared with tools/summer-catalog.js
 SV11=json.load(open(os.path.join(R,'tools/summer-v11.json')))
 for o in SV11['objects']: add(id='obj_%d'%o['id'],cat='objects',n=o['n'],price=o['price'],rar=o['rar'],stack=1,ref=o['id'],lv=o['lv'],d=o['d'],how='store',new=1)
+# ---- v11 pets (adopt), pet clothes and pet care items (store category 'pets'); shared with tools/pets-catalog.js
+PV11=json.load(open(os.path.join(R,'tools/pets-v11.json')))
+for p in PV11['pets']: add(id='pet_'+p['id'],cat='pets',n=p['n'],price=p['price'],rar=p['rar'],stack=0,ref=p['id'],lv=0,d=p['d'],how='store',new=1,sub='pet')
+for c in PV11['clothes']: add(id='petc_'+c['id'],cat='pets',n=c['n'],price=c['price'],rar=c['rar'],stack=0,ref=c['id'],lv=0,d=c['d'],how='store',new=1,sub='clothes')
+for c in PV11['care']: add(id=c['id'],cat='pets',n=c['n'],price=c['price'],rar=c['rar'],stack=1,ref=c['ref'],lv=0,d=c['d'],how='store',new=1,sub='care')
 ids=[i['id'] for i in items]; assert len(ids)==len(set(ids)),'duplicate ids'
 for i in items:
     assert i['price']>0 and i['rar'] in('common','uncommon','rare','epic','legendary','mythic','exclusive'),i
-feat=['wing_galaxy','wing_voidshroud','wing_haloseraph','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder','fx_brk_phantom']
+feat=['wing_galaxy','wing_voidshroud','wing_haloseraph','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder','fx_brk_phantom','pet_fox']
 for i in items: i['feat']=1 if i['id'] in feat else 0
 json.dump({'v':1,'items':items},open(os.path.join(R,'server/catalog.json'),'w'),separators=(',',':'))
 print(len(items),'items')
