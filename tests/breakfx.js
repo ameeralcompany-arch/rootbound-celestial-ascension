@@ -1,4 +1,4 @@
-// Block-break effects + softer mining sounds (85-zz-wisps.js, 86-zz-minesfx.js): the 10 store break effects are in the catalog (slot 'break'),
+// Block-break effects + softer mining sounds (85-zz-wisps.js, 86-zz-minesfx.js): the 18 store break effects are in the catalog (slot 'break'),
 // buying + equipping one switches the effect, every effect spawns, moves, draws and fades out without errors, the free ones still work and
 // picking one in Settings takes the store one off, the store card preview animates, fist / weapon hits now play the soft material sounds
 // (no old blip), and a quick FPS-safety check: many breaks stay within the particle cap. node tests/breakfx.js
@@ -14,7 +14,7 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
  await p.evaluate(()=>enterWorld('brkfx'));await p.waitForTimeout(900);const E=(f,a)=>p.evaluate(f,a);
  // catalog
  const cat=await E(()=>{const L=SHOP7.items.filter(i=>i.sub=='break');return{n:L.length,ids:L.map(i=>i.id),slot:SHOP7.SLOTS.includes('break'),shop:Object.keys(BRK7.SHOP).length,rar:[...new Set(L.map(i=>i.rar))]}});
- ok('10 break effects in the store, slot break',cat.n==10&&cat.slot&&cat.shop==10,cat);
+ ok('18 break effects in the store, slot break',cat.n==18&&cat.slot&&cat.shop==18,cat);
  ok('break effects span common to mythic',cat.rar.includes('common')&&cat.rar.includes('mythic'),cat.rar);
  ok('default break effect is the free soul wisps',await E(()=>BRK7.skin)=='souls');
  // buy + equip Heart Pop
@@ -34,7 +34,7 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
  // classic: nothing spawns
  ok('classic spawns nothing',await E(()=>{BRK7.L.length=0;BRK7.set('classic');const px=Math.floor(P.x/T)+2,py=Math.floor((P.y+P.h)/T)-1,q=py*W+px;tiles[q]=1;for(let i=0;i<40&&tiles[q];i++)breakAt(px,py,999);return BRK7.L.length==0}));
  // cap
- ok('particle cap holds under fast mining',await E(()=>{BRK7.set('blossom');BRK7.L.length=0;const px=Math.floor(P.x/T)+2,py=Math.floor((P.y+P.h)/T)-1,q=py*W+px;for(let j=0;j<60;j++){tiles[q]=1;for(let i=0;i<40&&tiles[q];i++)breakAt(px,py,999)}return BRK7.L.length<=70}));
+ ok('particle cap holds under fast mining',await E(()=>{BRK7.set('blossom');BRK7.L.length=0;const px=Math.floor(P.x/T)+2,py=Math.floor((P.y+P.h)/T)-1,q=py*W+px;for(let j=0;j<60;j++){tiles[q]=1;for(let i=0;i<40&&tiles[q];i++)breakAt(px,py,999)}return BRK7.L.length<=90}));
  // store card preview: animates on the preview canvas and the still thumbnail draws
  const pv=await E(async()=>{const c=document.createElement('canvas');c.width=300;c.height=255;const x=c.getContext('2d'),out={};for(const k of ['heart','phantom','galaxy','butterfly']){let t=performance.now()/1000;for(let i=0;i<60;i++){BRK7.preview(x,'brk_'+k,150,148,1,t+i/30,false)}
    const d=x.getImageData(0,0,300,255).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>0)n++;out[k]=n}

@@ -84,6 +84,10 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},300000).unre
    for(const id of GUN9.IDS){const im=new Image();im.src=iconURL('w:'+id);im.width=im.height=96;im.style.imageRendering='auto';d.appendChild(im)}for(const id of GUN9.IDS){const c=document.createElement('canvas');c.width=196;c.height=120;c.style.cssText='background:#f4f0fa;width:196px;height:120px';const x=c.getContext('2d');const bb=GUN9.B[id];x.translate(98-(bb[0]+bb[2])/2*1.5,60-(bb[1]+bb[3])/2*1.5);x.scale(.625,.625);drawWeapon(x,id,96,0);d.appendChild(c)}document.body.appendChild(d)});
   await p.setViewportSize({width:1280,height:1000});await p.waitForTimeout(300);await p.screenshot({path:path.join(SHOTS,'icons.png'),clip:{x:0,y:0,width:640,height:1000}});await E(()=>document.getElementById('icsheet').remove());await p.setViewportSize({width:1280,height:720});
   await E(()=>{STORE7.open({cat:'weapons'});STORE7.setFilter({cat:'weapons',q:'',sort:'pa'});STORE7.select('wpn_rocket')});await p.waitForTimeout(500);await p.screenshot({path:path.join(SHOTS,'store.png')});await E(()=>STORE7.close())}
+ // a sniper beam is an effect, not a projectile: it must fade even when nothing else is flying (beams used to stay on screen)
+ const beam=await E(async()=>{mobs.length=0;GUN9.WS.t=0;own.sniper=1;wp='sniper';for(let i=0;i<60&&GUN9.alive;i++)await new Promise(r=>setTimeout(r,100));lvl=Math.max(lvl,40);GUN9.SH.sn=1;GUN9.SH.ch=1;GUN9.SH.snW=WPN.sniper;mdL=false;
+   await new Promise(r=>setTimeout(r,120));const on0=GUN9.FXP.filter(f=>f.on&&f.k=='beam').length,alive=GUN9.alive;await new Promise(r=>setTimeout(r,1200));return{on0,alive,on1:GUN9.FXP.filter(f=>f.on).length}});
+ ok('sniper beam fades with no projectile alive',beam.on0>0&&beam.alive==0&&beam.on1==0,beam);
  ok('no page errors',errs.length==0,errs.join('|'));
  ok('no GUN9 / LVL9 console errors',!cerr.some(t=>/GUN9|LVL9/.test(t)),cerr.filter(t=>/GUN9|LVL9/.test(t)).join('|'));
  await b.close();console.log(fails?fails+' combat test(s) FAILED':'all combat tests passed');process.exit(fails?1:0)})();

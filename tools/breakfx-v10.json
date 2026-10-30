@@ -9,6 +9,14 @@
   {"id":"coin","n":"Gold Rush","price":1200,"rar":"epic","d":"Spinning gold coins burst out of the block and fly into your pocket."},
   {"id":"galaxy","n":"Galaxy Swirl","price":2200,"rar":"legendary","d":"A tiny ringed planet and its stars spiral out of the block like a small galaxy."},
   {"id":"royal","n":"Royal Ghosts","price":2600,"rar":"legendary","d":"Crowned little ghosts rise from the block, wave about, then float over to you."},
-  {"id":"phantom","n":"Shadow Phantoms","price":4400,"rar":"mythic","d":"Dark phantoms with glowing eyes circle the broken block, then dash into you in a violet flash."}
+  {"id":"phantom","n":"Shadow Phantoms","price":4400,"rar":"mythic","d":"Dark phantoms with glowing eyes circle the broken block, then dash into you in a violet flash."},
+  {"id":"confetti","n":"Confetti Party","price":300,"rar":"common","d":"Colourful confetti bursts out of every block and flutters down like a party."},
+  {"id":"leaf","n":"Leaf Swirl","price":350,"rar":"common","d":"Green and autumn leaves swirl out of the block in a little whirlwind."},
+  {"id":"notes","n":"Music Notes","price":500,"rar":"uncommon","d":"Happy music notes bob up out of the block and float away."},
+  {"id":"candy","n":"Candy Pop","price":550,"rar":"uncommon","d":"Striped wrapped candies pop out, bounce on the ground and roll to a stop."},
+  {"id":"paws","n":"Kitty Paws","price":700,"rar":"rare","d":"A trail of soft pink paw prints hops up out of the block, one step at a time."},
+  {"id":"ember","n":"Ember Sparks","price":900,"rar":"rare","d":"Glowing embers fly up from the block, flicker and cool from gold to red."},
+  {"id":"crystal","n":"Crystal Shards","price":1600,"rar":"epic","d":"The block shatters into shiny crystal shards with a bright glint."},
+  {"id":"rainbow","n":"Rainbow Burst","price":3200,"rar":"legendary","d":"A tiny rainbow rises out of the block with clouds on each end and rainbow stars."}
  ]
 }

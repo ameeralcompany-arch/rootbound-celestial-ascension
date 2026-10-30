@@ -78,7 +78,7 @@ const WX6=(()=>{
     g.fillStyle='rgba(225,240,255,.75)';for(const s of spl){if(s.a>.55||s.w)continue;const px=s.x-cam.x,py=s.y-cam.y,h=Math.sin(s.a/.55*Math.PI)*7;g.fillRect(px-2-s.a*9,py-h,1.6,1.6);g.fillRect(px+1+s.a*9,py-h*.8,1.6,1.6)}}
    g.restore()}
   // rain: three depth layers of pre-rendered streaks, slanted by the wind with one transform per layer
-  if(api.rain>.02&&open>.02){const N=Math.round(300*q*api.rain*(red?.4:1));while(drops.length<N)drops.push({x:R(),y:R(),L:R()<.45?0:R()<.6?1:2});if(drops.length>N)drops.length=N;
+  if(api.rain>.02&&open>.02){const N=Math.round(300*q*api.rain*(red?.4:1)*PERF7.k);while(drops.length<N)drops.push({x:R(),y:R(),L:R()<.45?0:R()<.6?1:2});if(drops.length>N)drops.length=N;
    const D=WXS8.drops,nd=1-night*.45;
    for(let L=0;L<3;L++){const im=D[L],sp=(780+L*420+api.rain*260)*sc,vx=wind*(.55+L*.3)*sc,c=vx/sp,iw=im.width*sc*1.3,ih=im.height*sc;g.save();g.transform(1,0,c,1,0,0);g.globalAlpha=Math.min(1,(.6+L*.22)*nd*open*Math.min(1,api.rain*1.6));
     for(const d of drops){if(d.L!=L)continue;d.y+=sp*dt/hh;d.x+=vx*dt/w;if(d.y>1.04){d.y-=1.1;d.x=R()}if(d.x>1.06)d.x-=1.12;else if(d.x<-.06)d.x+=1.12;const y=d.y*hh;g.drawImage(im,d.x*w-c*y,y-ih,iw,ih)}g.restore()}
@@ -86,7 +86,7 @@ const WX6=(()=>{
    if(entered&&open>.3){let n=api.rain*110*dt*q*(red?.4:1);while(n>0&&spl.length<70){if(n<1&&R()>n)break;n--;const wx=cam.x+R()*w/ZM,s=surf(wx);if(s)spl.push({x:wx,y:s.y,a:0,w:s.w})}}
    g.fillStyle='rgba(170,186,210,'+(.06*api.rain*open)+')';g.fillRect(0,0,w,hh)}else{if(drops.length)drops.length=0}
   // snow: soft flakes in three depths that sway as they fall
-  if(api.snow>.02&&open>.02){const N=Math.round((170*api.snow+120*I.blizzard)*q*(red?.4:1));while(flakes.length<N)flakes.push({x:R(),y:R(),z:R(),p:R()*6.3});if(flakes.length>N)flakes.length=N;
+  if(api.snow>.02&&open>.02){const N=Math.round((170*api.snow+120*I.blizzard)*q*(red?.4:1)*PERF7.k);while(flakes.length<N)flakes.push({x:R(),y:R(),z:R(),p:R()*6.3});if(flakes.length>N)flakes.length=N;
    const im=WXS8.flake,bz=1+I.blizzard*1.6;g.globalAlpha=1;
    for(const f of flakes){const vy=(26+f.z*52)*bz*sc,vx=(wind*(.25+f.z*.5)+Math.sin(t*(.5+f.z*.6)+f.p)*(10+f.z*14))*sc;f.y+=vy*dt/hh;f.x+=vx*dt/w;if(f.y>1.03){f.y=-.03;f.x=R()}if(f.x>1.03)f.x-=1.06;else if(f.x<-.03)f.x+=1.06;
     const s=(4+f.z*9)*sc;g.globalAlpha=(.5+f.z*.5)*open*Math.min(1,api.snow*1.5);g.drawImage(im,f.x*w-s/2,f.y*hh-s/2,s,s)}g.globalAlpha=1}else if(flakes.length)flakes.length=0;
