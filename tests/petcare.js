@@ -4,6 +4,7 @@
 // with their particles and soft sounds, clothes + colours change from the Pet UI (chips, swatches, colour picker) and persist, hunger rises
 // over (mocked) time and makes a pet sad / refuse to play, feeding resets it, the ball game works end to end, E opens / closes the UI,
 // picking up the home and placing it again re-homes the pets, bad saved data is cleaned, state survives a reload, no page errors.
+// Cute extras: walking up to a pet makes it wiggle with a heart, hops land with a squash, ear-twitch / wiggle poses draw.
 // Optional screenshots: SHOTS=<folder>. node tests/petcare.js
 const {chromium}=require('playwright');const path=require('path');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium',SHOTS=process.env.SHOTS||'';
@@ -72,6 +73,12 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  const fol=await E(async({hx,gy})=>{const r=PET10.RT.get('pcat');r.x=(hx+.5)*T;r.y=(gy-1)*T;P.x=(hx+3.6)*T;P.y=gy*T-P.h-1;P.vx=0;await _gw(.05);PET10.force('pcat','follow');r.tm=4;const x0=r.x;
   await _gw(1.6);const d=r.x-x0;P.x=(hx+9)*T+T/2;return{d:Math.round(d),st:r.st}},yard);
  ok('a happy pet follows you a little',fol.d>T0(),fol);
+ // cute extras: walking up to a pet makes it wiggle happily (a heart, it keeps its state); hops land with a squash; new poses exist
+ const cute=await E(async({hx,gy})=>{const r=PET10.RT.get('pcat');P.x=(hx+9)*T;P.y=gy*T-P.h-1;P.vx=0;r.x=(hx+.5)*T;r.y=gy*T;r.vx=r.vy=0;PET10.force('pcat','sit');r.tm=30;r.wigN=0;await _gw(.3);
+  PET10.PT.length=0;P.x=r.x+40;const o={fr:new Set(),hearts:0,st:new Set(),land:0};for(let i=0;i<8;i++){await _gw(.1);o.fr.add(r.fr);o.st.add(r.st);if(PET10.PT.some(q=>q.k=='heart'))o.hearts=1}
+  const f=PET10.RT.get('pfox');f.x=(hx-.5)*T;f.y=(gy-1)*T;f.vx=f.vy=0;await _gw(.1);PET10.force('pfox','hop');for(let i=0;i<30&&!o.land;i++){await _gw(.05);if(f.land>0)o.land=1}
+  P.x=(hx+9)*T+T/2;PET10.force('pcat','idle');o.fr=[...o.fr];o.st=[...o.st];o.poses=['wig0','wig1','twitch','sitt'].every(k=>PET10.FR[k]&&PET10.sprite('cat',0,k,'',{}).width>0);return o},yard);
+ ok('walking up to a pet makes it wiggle happily with a heart (it keeps sitting); a hop lands with a squash; twitch / wiggle poses draw',cute.fr.some(f=>f=='wig0'||f=='wig1')&&cute.hearts&&cute.st.join()=='sit'&&cute.land&&cute.poses,cute);
  // ---- Pet UI: E opens it, clothes + colours, locked items go to the store
  await E(async({hx,gy})=>{for(const c of Object.keys(PET10.CL))if(c!='wings')await SHOP7.buy('petc_'+c);const r=PET10.RT.get('pcat');PET10.force('pcat','sit');r.tm=30;r.x=(hx+1.5)*T;r.y=gy*T;r.vy=0;P.x=r.x+30;P.y=(gy)*T-P.h-1;P.vx=P.vy=0},yard);
  await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++)await new Promise(q=>setTimeout(q,50))});await p.keyboard.press('e');await W8(300);
