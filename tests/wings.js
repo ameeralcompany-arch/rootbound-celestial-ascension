@@ -79,10 +79,31 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
   const r0=await E(()=>({st:{...WTRAIL.st}}));await E(()=>{P.y-=30;P.vy=40;P.g=false;K[' ']=true});await W(ms);
   const r=await E(()=>({c:WTRAIL.counts(),st:{...WTRAIL.st},on:FLY7.F.on,tk:FLY7.F.tk}));await E(()=>{for(const k in K)K[k]=false});return{...r,dB:r.st.bursts-r0.st.bursts,dR:r.st.rings-r0.st.rings,dBeat:r.st.beats-r0.st.beats}};
  const fe=await flyFor('storm',600),fl=await flyFor('ascendant',700),fm=await flyFor('cosmic',700);
- ok('trail effects only for legendary / mythic: an epic wing gets none, legendary sheds a gold trail + feathers + take-off ring, mythic a prismatic ribbon + star motes + double ring',
+ ok('trail effects only for legendary / mythic: an epic wing gets none, legendary sheds its trail + flakes + take-off ring, mythic a denser trail + orbiting motes + double ring',
   fe.on&&fe.tk==0&&fe.c.trail==0&&fe.c.feathers==0&&fe.c.rings==0&&fe.dB==0&&fe.c.motes==0&&
   fl.on&&fl.tk==1&&fl.c.trail>=3&&fl.c.feathers>0&&fl.dB==1&&fl.dR==1&&fl.c.motes==0&&
   fm.on&&fm.tk==2&&fm.c.trail>=3&&fm.dB==1&&fm.dR==1&&fm.c.motes>.5,{epic:fe.c,leg:[fl.c,fl.dR],myth:[fm.c,fm.dR]});
+ // ---- themed trails: the trail follows the wing's own theme (dark wings: smoky wisps drawn source-over), never a generic rainbow
+ await E(async()=>{gems=1e9;lvl=150;await SHOP7.buy('wing_voidshroud')});
+ r=await E(()=>{const t=id=>WTRAIL.theme(id),o={};for(const id of['voidshroud','nightforge','inkwraith','bonelight','eyemoth','haloseraph','eternity','ascendant','phoenix','drakelord','stormlance','frost','amethclaw','cosmic','storm'])o[id]=t(id);
+  const sd=WTRAIL.set(wingById('voidshroud'),2),sl=WTRAIL.set(wingById('haloseraph'),2);return{o,obj:t(wingById('voidshroud')),dark:sd.T.main,light:sl.T.main,lacc:sl.T.acc,list:WTRAIL.themes}});
+ ok('theme classifier: dark / corrupted wings get the dark theme (smoke wisps), light wings the light theme (gold / starlight motes), fire, storm, ice and crystal wings their own',
+  ['voidshroud','nightforge','inkwraith','bonelight','eyemoth'].every(id=>r.o[id]=='dark')&&['haloseraph','eternity','ascendant'].every(id=>r.o[id]=='light')&&r.o.phoenix=='fire'&&r.o.drakelord=='fire'&&r.o.stormlance=='storm'&&r.o.frost=='ice'&&r.o.amethclaw=='crystal'&&r.o.cosmic=='cosmic'&&r.obj=='dark'&&r.dark=='smoke'&&r.light=='glow'&&r.lacc=='star',r);
+ // velocity + fade: fly right with a dark mythic wing, follow one trail particle by id
+ await E(()=>{wingEquip('voidshroud');const s=window.__shaft;for(const k in K)K[k]=false;P.x=s.cx*T+T/2-4*T;P.y=s.FL*T-P.h-1;P.vx=P.vy=0;FLY7.F.sta=1});await W(400);
+ await E(()=>{P.y-=30;P.vy=40;P.g=false;K[' ']=true;K.d=true});await W(450);
+ const p1=await E(()=>({p:WTRAIL.peek(),c:WTRAIL.counts(),vx:P.vx}));await W(250);const p2=await E(id=>({p:WTRAIL.peek(id),px:P.x}),p1.p&&p1.p.id);await W(150);const p3=await E(id=>({p:WTRAIL.peek(id),px:P.x}),p1.p&&p1.p.id);
+ await E(()=>{for(const k in K)K[k]=false});
+ ok('dark trail in flight: particles inherit the player\'s motion (vx > 0 flying right), keep moving but stream behind (slower than you), and fade out smoothly',
+  p1.c.theme=='dark'&&p1.c.trail>=3&&p1.p&&p1.vx>100&&p1.p.vx>20&&p2.p&&p3.p&&p3.p.x>p2.p.x&&(p3.p.x-p2.p.x)<(p3.px-p2.px)&&p3.p.age>p2.p.age&&p3.p.alpha<p2.p.alpha&&p2.p.alpha<.9,{p1,p2,p3});
+ // grounded float: only with legendary / mythic wings on the ground, visual only, gone when jumping
+ const stand=async id=>{await E(id=>{wingEquip(id);const s=window.__shaft;for(const k in K)K[k]=false;P.x=s.cx*T+T/2;P.y=s.FL*T-P.h-1;P.vx=P.vy=0},id);await W(1300);
+  // settle: if something bumped the player into the air, wait until it has stood on the floor for a while again
+  let o;for(let i=0;i<4;i++){o=await E(()=>({g:P.g,y:P.y,h:P.h,w:P.w,hover:WTRAIL.hover,go:(WING9.state('me')||{}).go||0}));if(o.g&&(id=='storm'||o.hover>3))break;await W(i?1000:1300)}return o};
+ const ge=await stand('storm'),gl=await stand('ascendant'),gm=await stand('voidshroud');
+ await E(()=>{P.vy=-520;P.g=false;P.y-=4});await W(250);const gj=await E(()=>({g:P.g,hover:WTRAIL.hover}));await W(900);
+ ok('grounded float: legendary / mythic wings hover a few px over the ground with half-open breathing wings; epic gets none; P.y and the hitbox never change; jumping blends it out',
+  ge.g&&ge.hover==0&&ge.go==0&&gl.g&&gl.hover>3&&gl.hover<=9&&gl.go>.5&&gm.g&&gm.hover>3&&gm.hover<=9&&Math.abs(gl.y-ge.y)<.01&&Math.abs(gm.y-ge.y)<.01&&gl.h==ge.h&&gl.w==ge.w&&!gj.g&&gj.hover<1,{ge,gl,gm,gj});
  r=await E(()=>{const o={};for(const id of['ascendant','cosmic','eternity'])o[id]=WTRAIL.bench(id,200);o.none=WTRAIL.bench('storm');let s=0;try{s=[WINGSFX.burst(1,wingById('ascendant')),WINGSFX.burst(2,wingById('cosmic'))].length}catch(e){s=-1}return{o,s}});
  ok('top-tier effects stay cheap: a full frame of effects (pools at their caps) costs < 2.5 ms on a software canvas; the burst sounds run without errors',r.o.none===null&&['ascendant','cosmic','eternity'].every(id=>r.o[id]&&r.o[id].ms<2.5)&&r.s==2,r);
  // climb: deterministic physics sim (1/120 s steps) in a tall cleared shaft, Space held from a standing hover

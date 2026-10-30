@@ -155,7 +155,9 @@ const WING9=(()=>{
   case'f':{out.set(KF[0]);const e=Math.exp(-st.ft*5);out[0]+=Math.sin(st.ft*16-j*.7)*.08*e;out[1]+=Math.sin(st.ft*16-j*.9-1)*.06*e*j;return out}
   case'p':return loop(out,FS,FT,st.c-LAG[j]);
   case'h':return loop(out,HS,HT,st.hc-LAG[j]*.6);
-  default:{loop(out,HS,HT,st.hc-LAG[j]*.6);const e=ease(ps.s);for(let i=0;i<9;i++)out[i]=FOLD[i]+(out[i]-FOLD[i])*e;out[0]+=(ps.land||0)*.35;out[8]*=.35;return out}}}
+  // ground: folded hover loop; st.go (0..1, the top-tier grounded float from 87-zz-wingtrail.js) keeps the wings half open in a slow
+  // breathing flap with brighter tips
+  default:{loop(out,HS,HT,st.hc-LAG[j]*.6);const go=st.go||0,e=Math.max(ease(ps.s),go*.55);for(let i=0;i<9;i++)out[i]=FOLD[i]+(out[i]-FOLD[i])*e;out[0]+=(ps.land||0)*.35+go*Math.sin(st.hc*TAU*1.4-j*.5)*.06;out[8]*=.35+go*.45;return out}}}
  function apply(ps,k0,k1,k2,air,cph,amp){ps.k0=k0;ps.k1=k1;ps.k2=k2;ps.open=ps.s;if(air){ps.s=cl(ps.s*k0[2],0,1);ps.fl=k0[0]*.6;ps.fll=k2[0]*.6;ps.sx=k0[4];if(cph!=null){ps.ph=cph;ps.amp=amp}}return ps}
  function cyc(ps,key,tier,t,mode,vy,W,o,art){
   if(o&&o.kf!=null){const i=cl(o.kf|0,0,7),k=[0,1,2].map(j=>kfVec(i,j,0));apply(ps,k[0],k[1],k[2],true,i*.8,.2);ps.open=1;ps.land=0;return ps}
@@ -170,6 +172,7 @@ const WING9=(()=>{
   if(np!==st.ph){for(let j=0;j<3;j++)st.fr[j].set(st.o[j]);st.fw=st.init?0:1;st.ph=np}st.init=1;
   if(fly&&me)st.c=((WingArt.FL.ph/TAU)%1+1)%1;else st.c+=dt*(15-big*5)/TAU;st.hc+=dt/(2.3+big*.9);
   st.fw=Math.min(1,st.fw+dt/(st.ph=='f'?.12:.2));const e=ease(st.fw);
+  st.go=me&&!air&&api9.gnd?api9.gnd():0;
   for(let j=0;j<3;j++){target(st,j,ps,tmp);const a=st.o[j],f=st.fr[j];for(let i=0;i<9;i++)a[i]=f[i]+(tmp[i]-f[i])*e}
   apply(ps,st.o[0],st.o[1],st.o[2],air,st.ph=='p'?st.c*TAU:st.hc*TAU,st.ph=='p'?.26:.07);
   if(me){if(WingArt.FL.on&&air)WingArt.FL.bob=st.o[0][6];else WingArt.FL.bob=0}
@@ -219,4 +222,5 @@ const WING9=(()=>{
     st.p.push({x:X+(Rn()-.5)*4,y:Y+(Rn()-.5)*4,vx:vx*.18+(Rn()-.5)*30,vy:vy*.18+(Rn()-.5)*30,l:0,m:K.l[0]+Rn()*(K.l[1]-K.l[0]),z:K.z[0]+Rn()*(K.z[1]-K.z[0]),r:Rn()*6.3,vr:(Rn()-.5)*5,k:kd})}}
   st.tp.set(TT);st.has=1;drawPts(g,art,st.p,dt,cam.x,cam.y,true)}
  WingArt.FAM.tier={build,draw:drawTier};WingArt.CYC=cyc;WingArt.PRE=pre;WingArt.POST=post;
- return{KF,NAMES,FOLD,kfVec,loop,tipsUser,state:k=>ST.get(k),parts:k=>{const s=TRS.get(k);return s?s.p.length:0},ST,TRS,PK}})();
+ // gnd: optional () => 0..1 for the local player's grounded float (set by 87-zz-wingtrail.js)
+ const api9={KF,NAMES,FOLD,kfVec,loop,tipsUser,state:k=>ST.get(k),parts:k=>{const s=TRS.get(k);return s?s.p.length:0},ST,TRS,PK,gnd:null};return api9})();
