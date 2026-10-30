@@ -1958,7 +1958,9 @@ const PSP={};function pspr(k,c,b){const key=k+c+(b|0);let s=PSP[key];if(s)return
  if(k=='f'){s.width=s.height=16;x.translate(8,8);x.rotate(b*Math.PI/8);x.fillStyle=c;x.beginPath();x.ellipse(0,0,6,2,0,0,6.3);x.fill()}
  else if(k=='p'){s.width=s.height=16;x.fillStyle=c;x.beginPath();x.arc(8,8,7,0,6.3);x.fill()}
  else{s.width=s.height=20;x.strokeStyle='rgba(220,245,255,.9)';x.lineWidth=1.5;x.beginPath();x.arc(10,10,8,0,6.3);x.stroke()}return s}
-function burst(x,y,c,n,sp=120,s=4,kind){let pk=1;try{pk=PERF7.k}catch(_){}n=Math.ceil(n*OPT.q*pk);if(parts.length>520)return;for(let i=0;i<n;i++){const a=Math.random()*6.28,v=Math.random()*sp;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-sp*.5,l:.5+Math.random()*.6,c,s:s*(.6+Math.random()*.8),r:Math.random()*6,k:kind||'d'})}}
+// burst particles are recycled through PPOOL (each lives ~1 s: long enough to be promoted to the old heap, which made the
+// collector run full, multi-ms GCs during busy fights); dead particles are swap-removed instead of spliced out
+const PPOOL=[];function burst(x,y,c,n,sp=120,s=4,kind){let pk=1;try{pk=PERF7.k}catch(_){}n=Math.ceil(n*OPT.q*pk);if(parts.length>520)return;for(let i=0;i<n;i++){const a=Math.random()*6.28,v=Math.random()*sp;const q=PPOOL.pop()||{_pb:1};q.x=x;q.y=y;q.vx=Math.cos(a)*v;q.vy=Math.sin(a)*v-sp*.5;q.l=.5+Math.random()*.6;q.c=c;q.s=s*(.6+Math.random()*.8);q.r=Math.random()*6;q.k=kind||'d';parts.push(q)}}
 const ft=(x,y,t,c)=>floats.push({x,y,t,c:c||'#fff',l:1});
 function G(k){if(done[k])return;done[k]=1;gems+=15;snd(880,.3,'triangle');say('Quest complete +15 gems');renderQuest()}
 const gemMul=()=>1+bonus().gem+(lucky>0?1:0)+(midas>0?1:0);
@@ -2101,7 +2103,7 @@ function update(dt){tm+=dt;mt-=dt;wcd-=dt;rcd-=dt;swing-=dt;iT-=dt;shake=Math.ma
   p.x+=p.vx*dt;p.y+=p.vy*dt;if(Math.random()<dt*40)burst(p.x,p.y,'rgb('+p.w.g+')',1,30,3,'p');const tx=Math.floor(p.x/T),ty=Math.floor(p.y/T),k=ty*W+tx;
   if(!p.boom&&solidAt(tx,ty))p.l=0;/* weapon projectiles stop at blocks, they never break them */
   for(const m of mobs)if(!p.done.has(m)&&Math.hypot(m.x-p.x,m.y+m.h/2-p.y)<m.w/2+14){p.done.add(m);hurtMob(m,dmgM(p.w),p.w,Math.atan2(p.vy,p.vx))}if(p.l<=0)projs.splice(i,1)}
- for(let i=parts.length-1;i>=0;i--){const q=parts[i];q.l-=dt;q.vy+=(q.k=='p'?-20:q.k=='b'?-30:q.k=='f'?50:900)*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.r+=dt*8;if(q.l<=0)parts.splice(i,1)}
+ for(let i=parts.length-1;i>=0;i--){const q=parts[i];q.l-=dt;q.vy+=(q.k=='p'?-20:q.k=='b'?-30:q.k=='f'?50:900)*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.r+=dt*8;if(q.l<=0){const z=parts.pop();if(i<parts.length)parts[i]=z;if(q._pb&&PPOOL.length<640)PPOOL.push(q)}}
  for(let i=floats.length-1;i>=0;i--){const f=floats[i];f.y-=36*dt;f.l-=dt;if(f.l<=0)floats.splice(i,1)}
  updSplash(dt,cv.width,cv.height);if(splashes.length>40)splashes.splice(0,10)}
 // ---------- input
@@ -2849,7 +2851,7 @@ const WX_NAMES={clear:'Clear',cloudy:'Overcast',fog:'Fog',drizzle:'Drizzle',rain
 
 // ---- celestial state, saved per account under key "rbc" (namespaced by the profile layer)
 const cel={v:CEL_VER,wing:'auto',wingsOn:1,aura:'auto',auraOn:1,plate:'auto',ap:{hair:0,eyes:0,outfit:0,acc:0,cape:1,eyeCol:0,hairCol:'#3a2a3a',skinCol:'#f1c9a0',outCol:'#2d3f6b',trimCol:'#d9b46a'},
- seenW:0,seenNp:0,opt:{qp:'auto',vfx:1,reduce:0,ui:1,bloom:1,wxOn:1,fpsShow:0,cine:0},tut:0};
+ seenW:0,seenNp:0,opt:{qp:'auto',vfx:1,reduce:0,ui:1,bloom:1,wxOn:1,still:1,fpsShow:0,cine:0},tut:0};
 function celSave(){try{localStorage.setItem('rbc',JSON.stringify(cel))}catch(_){}}
 function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'null')}catch(_){}if(!o||typeof o!='object')return;
  const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;
@@ -2858,7 +2860,7 @@ function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'nul
  cel.plate=o.plate=='auto'?'auto':n(o.plate,'auto',0,99);cel.seenW=n(o.seenW,0,0,99);cel.seenNp=n(o.seenNp,0,0,999);cel.tut=n(o.tut,0,0,9);
  const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);A.gd=n(a.gd,0,0,2);
  A.hairCol=col(a.hairCol,A.hairCol);A.skinCol=col(a.skinCol,A.skinCol);A.outCol=col(a.outCol,A.outCol);A.trimCol=col(a.trimCol,A.trimCol);
- const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['light','dark','auto'].includes(p.theme)?p.theme:'light'}
+ const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.still=p.still==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['light','dark','auto'].includes(p.theme)?p.theme:'light'}
 // ---- derived progression (single source of truth: character level)
 // ownership: level wings by level, shop wings by the catalog item, exclusive wings by their achievement record (WINGX)
 const wingOwned=(w,l)=>{if(!w)return false;if(w.src=='level')return (l==null?lvl:l)>=w.lvl;if(w.src=='excl'){try{return WINGX.has(w.id)}catch(_){return false}}try{return SHOP7.has('wing_'+w.id)}catch(_){return false}};
@@ -5902,7 +5904,7 @@ const ENV7=(()=>{
   for(const e of Object.keys(al)){const tg=e==target?1:0,d=tg-al[e];al[e]+=Math.abs(d)<.002?d:Math.sign(d)*Math.min(Math.abs(d),dt*.55);if(al[e]>cover)cover=al[e];
    if(al[e]<=0&&e!=target&&cache[e]){idle[e]=(idle[e]||0)+dt;if(idle[e]>14){cache[e]=null;delete idle[e];order=order.filter(x=>x!=e)}}}
   return cover}
- function paint(w,hh,now){const t=now/1000,s=Math.max(w/LW,hh/LH),still=(window.QM&&QM.reduce)||(typeof cel!='undefined'&&cel.opt&&cel.opt.reduce);const par=(window.QM&&QM.cur&&QM.cur.par)||4;
+ function paint(w,hh,now){const t=now/1000,s=Math.max(w/LW,hh/LH),still=(window.QM&&QM.reduce)||(typeof cel!='undefined'&&cel.opt&&(cel.opt.reduce||cel.opt.still!=0));const par=(window.QM&&QM.cur&&QM.cur.par)||4;
   for(const e of order){const a=al[e];if(a<=.004)continue;const L=cache[e]||ensure(e);if(!L)continue;g.save();g.globalAlpha=a;
    const ox=(w-LW*s)/2,oy=Math.min(0,(hh-LH*s)/2)+Math.max(-30,Math.min(30,(cam.y-(sh(W/2|0)*T))*-.012));
    const tile=(img,k,yo,sc,dx)=>{const iw=img.width*s*(sc||1),px=(-(cam.x*k+(dx||0))%iw+iw)%iw;for(let x0=px-iw;x0<w;x0+=iw)g.drawImage(img,x0,yo||0,iw,img.height*s*(sc||1))};
@@ -11413,10 +11415,10 @@ const CINE7=(()=>{
  // ---- narration timing. Every scene is at least as long as its spoken line plus a breath, so a line always finishes before the next
  // scene's line starts (lines used to overrun their scenes, pile up in the speech queue, and get cut off by the "RootBound" title call).
  // Studio voice-over (optional): if vo/<scene>.mp3 files sit next to index.html (tools/vo-elevenlabs.js renders them with ElevenLabs),
- // their real lengths drive the timing and they play instead of the system voice. vo/title.mp3 is probed first; only if it exists are
+ // their real lengths drive the timing and they play instead of the system voice. vo/title.mp3 is probed first (desktop app only); only if it exists are
  // the others loaded. If any clip is missing or broken the whole intro uses the system voice, so voices never mix.
  const VO={ok:false,el:{},n:0,bad:0,need:0};
- try{if(typeof Audio!='undefined'){const ids=STORY.filter(s=>s[2]).map(s=>s[0]).concat(['title']);VO.need=ids.length;
+ try{if(typeof Audio!='undefined'&&/Electron/.test(navigator.userAgent)){const ids=STORY.filter(s=>s[2]).map(s=>s[0]).concat(['title']);VO.need=ids.length;
   const probe=(id,then)=>{const a=new Audio();a.preload='auto';a.onloadedmetadata=()=>{if(isFinite(a.duration)&&a.duration>.25){VO.el[id]=a;VO.n++;VO.ok=VO.n==VO.need&&!VO.bad;then&&then()}else VO.bad++};a.onerror=()=>{VO.bad++};a.src='vo/'+id+'.mp3'};
   probe('title',()=>ids.forEach(id=>{if(id!='title')probe(id)}))}}catch(_){}
  const BREATH=.5;
@@ -12629,7 +12631,8 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('sb','Bloom & glow','Soft light around bright blocks and magic',tog('sb',o.bloom,'Bloom'))
-    +row('sw','Weather','Rain, snow, fog and their sounds',tog('sw',o.wxOn,'Weather'))
+    +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
+    +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
     +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars')),
    audio:row('smv','Music','Background music volume',rng('smv',0,100,num(OPT.mv,.5)*100))
     +row('ssv','Sound effects','Blocks, combat and world sounds',rng('ssv',0,100,num(OPT.sv,1)*100))
@@ -12660,7 +12663,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
   q('sv').oninput=e=>{o.vfx=e.target.value/100;lab('sv',e.target.value);try{QM.apply(QM.cur.id,true)}catch(_){}celSave()};
-  tg('sb',v=>o.bloom=v?1:0);tg('sw',v=>o.wxOn=v?1:0);tg('sci',v=>o.cine=v?1:0);
+  tg('sb',v=>o.bloom=v?1:0);tg('sw',v=>o.wxOn=v?1:0);tg('sst',v=>o.still=v?1:0);tg('sci',v=>o.cine=v?1:0);
   // audio: drive the original menu sliders so every listener (music engine, ambience) reacts exactly as before
   const drive=(id,v)=>{const m=el(id);if(m){m.value=v;m.dispatchEvent(new Event('input'))}};
   q('smv').oninput=e=>{lab('smv',e.target.value);if(el('ov'))drive('ov',e.target.value);else{OPT.mv=e.target.value/100;saveP()}};
@@ -15597,6 +15600,51 @@ const BFX12=(()=>{
 // the outermost breakAt hook: tile before vs after
 {const _ba=breakAt;breakAt=function(x,y){const inb=x>=0&&y>=0&&x<W&&y<H,k=y*W+x,b=inb?tiles[k]:0;const r=_ba.apply(this,arguments);
   try{if(b&&inb&&!tiles[k]){DEB12.spawn(x,y,b);try{BRK7.spawn(x,y,b)}catch(_){}try{BFX12.play(BRK7.skin,x)}catch(_){}}}catch(e){console.error('DEB12 hook',e)}return r}}
+
+/* ========== LATE: 99-zzzzzzzz-entgov.js ========== */
+// ===== ENT13: entity governor. Fixes the slow, compounding FPS slide in long busy fights.
+// A 5-minute soak (heavy mining, weapon spam, rain, pets, repeated boss fights) showed heap, DOM, timers and listeners flat, but the
+// monster count kept climbing (7 -> 140) because several spawners bypass the natural cap of ~14: boss minions, infection spawns, rifts,
+// depth guardians. Each monster costs ~0.02 ms a frame to draw, all of them drawn even far off screen, so frame time crept up for as
+// long as the fight lasted (114 -> 86 fps, p95 11.6 -> 26.7 ms).
+//  1. Hard ceiling on living monsters (36; 24 with reduced effects; 28 while the frame-time governor PERF7 is cutting effects).
+//     Ordinary spawns past the ceiling are skipped. Bosses, rift / vault / elite monsters always spawn; if that goes past the ceiling,
+//     the farthest ordinary monster quietly leaves to make room.
+//  2. Monsters outside the view (plus a margin for big ones) are not drawn. They still move, fight and count; only the drawing is skipped.
+// stats() reports the counts for the soak test (tests/perfsoak.js). =====
+const ENT13=(()=>{
+ const prot=m=>!!(m&&(m.boss||m.rift||m.vg||m.elite||m.ev));
+ const cap=()=>{let c=36;try{if(QM.reduce)c=24}catch(_){}try{if(PERF7.k<.6)c=Math.min(c,28)}catch(_){}return c};
+ const live=()=>{let n=0;for(let i=0;i<mobs.length;i++){const m=mobs[i];if(m&&!m.dead&&m.hp>0)n++}return n};
+ let skipped=0,evicted=0,culled=0;
+ function farthest(){let best=-1,bd=-1;for(let i=0;i<mobs.length;i++){const m=mobs[i];if(!m||prot(m)||m.dead)continue;const d=Math.abs(m.x-P.x)+Math.abs(m.y-P.y);if(d>bd){bd=d;best=i}}return best}
+ const base=Array.prototype.push;
+ function push(){const c=cap();let n=live();for(let a=0;a<arguments.length;a++){const m=arguments[a];
+   if(n<c||!m){base.call(mobs,m);n++;continue}
+   if(prot(m)){const i=farthest();if(i>=0){mobs.splice(i,1);evicted++}base.call(mobs,m);continue}
+   skipped++}
+  return mobs.length}
+ const install=()=>{try{if(mobs.push!==push)mobs.push=push}catch(_){}};install();
+ // drawing: skip monsters that are well outside the view
+ const vis=m=>{try{const M=Math.max(m.w||32,m.h||32)*1.5+160,vw=cv.width/ZM,vh=cv.height/ZM,px=m.x-cam.x,py=m.y-cam.y;return px>-M&&px<vw+M&&py>-M&&py<vh+M}catch(_){return true}};
+ {const _dm=drawMob;drawMob=function(m){if(!m.boss&&!vis(m)){culled++;return}return _dm.apply(this,arguments)}}
+ {const _u=updMobs;updMobs=function(){install();return _u.apply(this,arguments)}}
+ return{cap,live,vis,stats:()=>({live:live(),cap:cap(),skipped,evicted,culled,parts:typeof parts!='undefined'?parts.length:-1,pool:typeof PPOOL!='undefined'?PPOOL.length:-1})}})();
+
+/* ========== LATE: 99-zzzzzzzz-still.js ========== */
+// ===== STILL13: "Still background" (Settings > Graphics, on by default). The sky stays still: clouds, birds, sun rays, twinkling stars
+// and the weather-machine scenery (Blossom, Space, Galaxy, Sakura Sunset...) are drawn frozen in place, and there is no weather at all:
+// no rain, snow, fog, storms, lightning or tumbling leaves, and weather machines can no longer start any (their scenery still shows, still).
+// How: every sky / scenery layer animates from the frame time it is given, so drawSky gets one fixed time while this is on (day and night
+// still follow the game clock, and the layers still shift with the camera as you walk, so the world keeps its depth). The weather manager
+// is held on 'clear' and the precipitation / fog / leaves layer is not drawn. Switching it off restores everything as it was. =====
+const STILL13=(()=>{
+ const on=()=>{try{return cel.opt.still!=0}catch(_){return true}};
+ let frozen=null;
+ {const _ds=drawSky;drawSky=function(w,hh,now){if(on()){if(frozen==null)frozen=now;return _ds.call(this,w,hh,frozen)}frozen=null;return _ds.apply(this,arguments)}}
+ {const _dp=drawPrecip;drawPrecip=function(){if(on())return;return _dp.apply(this,arguments)}}
+ try{const _u=WX6.update;WX6.update=function(dt){if(!on())return _u.apply(this,arguments);const f=WX6.force;WX6.force='clear';try{return _u.apply(this,arguments)}finally{WX6.force=f}}}catch(_){}
+ return{on,get frozen(){return frozen}}})();
 
 
 </script></body></html>

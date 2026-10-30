@@ -101,7 +101,7 @@ const ENV7=(()=>{
   for(const e of Object.keys(al)){const tg=e==target?1:0,d=tg-al[e];al[e]+=Math.abs(d)<.002?d:Math.sign(d)*Math.min(Math.abs(d),dt*.55);if(al[e]>cover)cover=al[e];
    if(al[e]<=0&&e!=target&&cache[e]){idle[e]=(idle[e]||0)+dt;if(idle[e]>14){cache[e]=null;delete idle[e];order=order.filter(x=>x!=e)}}}
   return cover}
- function paint(w,hh,now){const t=now/1000,s=Math.max(w/LW,hh/LH),still=(window.QM&&QM.reduce)||(typeof cel!='undefined'&&cel.opt&&cel.opt.reduce);const par=(window.QM&&QM.cur&&QM.cur.par)||4;
+ function paint(w,hh,now){const t=now/1000,s=Math.max(w/LW,hh/LH),still=(window.QM&&QM.reduce)||(typeof cel!='undefined'&&cel.opt&&(cel.opt.reduce||cel.opt.still!=0));const par=(window.QM&&QM.cur&&QM.cur.par)||4;
   for(const e of order){const a=al[e];if(a<=.004)continue;const L=cache[e]||ensure(e);if(!L)continue;g.save();g.globalAlpha=a;
    const ox=(w-LW*s)/2,oy=Math.min(0,(hh-LH*s)/2)+Math.max(-30,Math.min(30,(cam.y-(sh(W/2|0)*T))*-.012));
    const tile=(img,k,yo,sc,dx)=>{const iw=img.width*s*(sc||1),px=(-(cam.x*k+(dx||0))%iw+iw)%iw;for(let x0=px-iw;x0<w;x0+=iw)g.drawImage(img,x0,yo||0,iw,img.height*s*(sc||1))};

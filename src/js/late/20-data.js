@@ -142,7 +142,7 @@ const WX_NAMES={clear:'Clear',cloudy:'Overcast',fog:'Fog',drizzle:'Drizzle',rain
 
 // ---- celestial state, saved per account under key "rbc" (namespaced by the profile layer)
 const cel={v:CEL_VER,wing:'auto',wingsOn:1,aura:'auto',auraOn:1,plate:'auto',ap:{hair:0,eyes:0,outfit:0,acc:0,cape:1,eyeCol:0,hairCol:'#3a2a3a',skinCol:'#f1c9a0',outCol:'#2d3f6b',trimCol:'#d9b46a'},
- seenW:0,seenNp:0,opt:{qp:'auto',vfx:1,reduce:0,ui:1,bloom:1,wxOn:1,fpsShow:0,cine:0},tut:0};
+ seenW:0,seenNp:0,opt:{qp:'auto',vfx:1,reduce:0,ui:1,bloom:1,wxOn:1,still:1,fpsShow:0,cine:0},tut:0};
 function celSave(){try{localStorage.setItem('rbc',JSON.stringify(cel))}catch(_){}}
 function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'null')}catch(_){}if(!o||typeof o!='object')return;
  const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;
@@ -151,7 +151,7 @@ function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'nul
  cel.plate=o.plate=='auto'?'auto':n(o.plate,'auto',0,99);cel.seenW=n(o.seenW,0,0,99);cel.seenNp=n(o.seenNp,0,0,999);cel.tut=n(o.tut,0,0,9);
  const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);A.gd=n(a.gd,0,0,2);
  A.hairCol=col(a.hairCol,A.hairCol);A.skinCol=col(a.skinCol,A.skinCol);A.outCol=col(a.outCol,A.outCol);A.trimCol=col(a.trimCol,A.trimCol);
- const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['light','dark','auto'].includes(p.theme)?p.theme:'light'}
+ const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.still=p.still==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['light','dark','auto'].includes(p.theme)?p.theme:'light'}
 // ---- derived progression (single source of truth: character level)
 // ownership: level wings by level, shop wings by the catalog item, exclusive wings by their achievement record (WINGX)
 const wingOwned=(w,l)=>{if(!w)return false;if(w.src=='level')return (l==null?lvl:l)>=w.lvl;if(w.src=='excl'){try{return WINGX.has(w.id)}catch(_){return false}}try{return SHOP7.has('wing_'+w.id)}catch(_){return false}};

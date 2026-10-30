@@ -278,10 +278,10 @@ const CINE7=(()=>{
  // ---- narration timing. Every scene is at least as long as its spoken line plus a breath, so a line always finishes before the next
  // scene's line starts (lines used to overrun their scenes, pile up in the speech queue, and get cut off by the "RootBound" title call).
  // Studio voice-over (optional): if vo/<scene>.mp3 files sit next to index.html (tools/vo-elevenlabs.js renders them with ElevenLabs),
- // their real lengths drive the timing and they play instead of the system voice. vo/title.mp3 is probed first; only if it exists are
+ // their real lengths drive the timing and they play instead of the system voice. vo/title.mp3 is probed first (desktop app only); only if it exists are
  // the others loaded. If any clip is missing or broken the whole intro uses the system voice, so voices never mix.
  const VO={ok:false,el:{},n:0,bad:0,need:0};
- try{if(typeof Audio!='undefined'){const ids=STORY.filter(s=>s[2]).map(s=>s[0]).concat(['title']);VO.need=ids.length;
+ try{if(typeof Audio!='undefined'&&/Electron/.test(navigator.userAgent)){const ids=STORY.filter(s=>s[2]).map(s=>s[0]).concat(['title']);VO.need=ids.length;
   const probe=(id,then)=>{const a=new Audio();a.preload='auto';a.onloadedmetadata=()=>{if(isFinite(a.duration)&&a.duration>.25){VO.el[id]=a;VO.n++;VO.ok=VO.n==VO.need&&!VO.bad;then&&then()}else VO.bad++};a.onerror=()=>{VO.bad++};a.src='vo/'+id+'.mp3'};
   probe('title',()=>ids.forEach(id=>{if(id!='title')probe(id)}))}}catch(_){}
  const BREATH=.5;

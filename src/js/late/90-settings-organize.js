@@ -17,7 +17,8 @@
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('sb','Bloom & glow','Soft light around bright blocks and magic',tog('sb',o.bloom,'Bloom'))
-    +row('sw','Weather','Rain, snow, fog and their sounds',tog('sw',o.wxOn,'Weather'))
+    +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
+    +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
     +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars')),
    audio:row('smv','Music','Background music volume',rng('smv',0,100,num(OPT.mv,.5)*100))
     +row('ssv','Sound effects','Blocks, combat and world sounds',rng('ssv',0,100,num(OPT.sv,1)*100))
@@ -48,7 +49,7 @@
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
   q('sv').oninput=e=>{o.vfx=e.target.value/100;lab('sv',e.target.value);try{QM.apply(QM.cur.id,true)}catch(_){}celSave()};
-  tg('sb',v=>o.bloom=v?1:0);tg('sw',v=>o.wxOn=v?1:0);tg('sci',v=>o.cine=v?1:0);
+  tg('sb',v=>o.bloom=v?1:0);tg('sw',v=>o.wxOn=v?1:0);tg('sst',v=>o.still=v?1:0);tg('sci',v=>o.cine=v?1:0);
   // audio: drive the original menu sliders so every listener (music engine, ambience) reacts exactly as before
   const drive=(id,v)=>{const m=el(id);if(m){m.value=v;m.dispatchEvent(new Event('input'))}};
   q('smv').oninput=e=>{lab('smv',e.target.value);if(el('ov'))drive('ov',e.target.value);else{OPT.mv=e.target.value/100;saveP()}};

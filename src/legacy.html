@@ -232,7 +232,9 @@ const PSP={};function pspr(k,c,b){const key=k+c+(b|0);let s=PSP[key];if(s)return
  if(k=='f'){s.width=s.height=16;x.translate(8,8);x.rotate(b*Math.PI/8);x.fillStyle=c;x.beginPath();x.ellipse(0,0,6,2,0,0,6.3);x.fill()}
  else if(k=='p'){s.width=s.height=16;x.fillStyle=c;x.beginPath();x.arc(8,8,7,0,6.3);x.fill()}
  else{s.width=s.height=20;x.strokeStyle='rgba(220,245,255,.9)';x.lineWidth=1.5;x.beginPath();x.arc(10,10,8,0,6.3);x.stroke()}return s}
-function burst(x,y,c,n,sp=120,s=4,kind){let pk=1;try{pk=PERF7.k}catch(_){}n=Math.ceil(n*OPT.q*pk);if(parts.length>520)return;for(let i=0;i<n;i++){const a=Math.random()*6.28,v=Math.random()*sp;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-sp*.5,l:.5+Math.random()*.6,c,s:s*(.6+Math.random()*.8),r:Math.random()*6,k:kind||'d'})}}
+// burst particles are recycled through PPOOL (each lives ~1 s: long enough to be promoted to the old heap, which made the
+// collector run full, multi-ms GCs during busy fights); dead particles are swap-removed instead of spliced out
+const PPOOL=[];function burst(x,y,c,n,sp=120,s=4,kind){let pk=1;try{pk=PERF7.k}catch(_){}n=Math.ceil(n*OPT.q*pk);if(parts.length>520)return;for(let i=0;i<n;i++){const a=Math.random()*6.28,v=Math.random()*sp;const q=PPOOL.pop()||{_pb:1};q.x=x;q.y=y;q.vx=Math.cos(a)*v;q.vy=Math.sin(a)*v-sp*.5;q.l=.5+Math.random()*.6;q.c=c;q.s=s*(.6+Math.random()*.8);q.r=Math.random()*6;q.k=kind||'d';parts.push(q)}}
 const ft=(x,y,t,c)=>floats.push({x,y,t,c:c||'#fff',l:1});
 function G(k){if(done[k])return;done[k]=1;gems+=15;snd(880,.3,'triangle');say('Quest complete +15 gems');renderQuest()}
 const gemMul=()=>1+bonus().gem+(lucky>0?1:0)+(midas>0?1:0);
@@ -375,7 +377,7 @@ function update(dt){tm+=dt;mt-=dt;wcd-=dt;rcd-=dt;swing-=dt;iT-=dt;shake=Math.ma
   p.x+=p.vx*dt;p.y+=p.vy*dt;if(Math.random()<dt*40)burst(p.x,p.y,'rgb('+p.w.g+')',1,30,3,'p');const tx=Math.floor(p.x/T),ty=Math.floor(p.y/T),k=ty*W+tx;
   if(!p.boom&&solidAt(tx,ty))p.l=0;/* weapon projectiles stop at blocks, they never break them */
   for(const m of mobs)if(!p.done.has(m)&&Math.hypot(m.x-p.x,m.y+m.h/2-p.y)<m.w/2+14){p.done.add(m);hurtMob(m,dmgM(p.w),p.w,Math.atan2(p.vy,p.vx))}if(p.l<=0)projs.splice(i,1)}
- for(let i=parts.length-1;i>=0;i--){const q=parts[i];q.l-=dt;q.vy+=(q.k=='p'?-20:q.k=='b'?-30:q.k=='f'?50:900)*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.r+=dt*8;if(q.l<=0)parts.splice(i,1)}
+ for(let i=parts.length-1;i>=0;i--){const q=parts[i];q.l-=dt;q.vy+=(q.k=='p'?-20:q.k=='b'?-30:q.k=='f'?50:900)*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.r+=dt*8;if(q.l<=0){const z=parts.pop();if(i<parts.length)parts[i]=z;if(q._pb&&PPOOL.length<640)PPOOL.push(q)}}
  for(let i=floats.length-1;i>=0;i--){const f=floats[i];f.y-=36*dt;f.l-=dt;if(f.l<=0)floats.splice(i,1)}
  updSplash(dt,cv.width,cv.height);if(splashes.length>40)splashes.splice(0,10)}
 // ---------- input
