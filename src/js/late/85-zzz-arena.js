@@ -55,7 +55,9 @@ const ARENA7=(()=>{
   const mx=(A.boss.x||((A.x0+A.x1)/2)),my=(A.boss.y||((A.y0+A.y1)/2)),x0=mx+(A.x0-mx)*grow-cx,x1=mx+(A.x1-mx)*grow-cx,y0=my+(A.y0-my)*grow-cy,y1=my+(A.y1-my)*grow-cy,col=A.end&&A.win?'#ffd86a':A.c;
   g.save();g.globalCompositeOperation='source-over';g.setLineDash([]);
   // dim everything outside the barrier
-  if(!A.end||!A.win){g.globalAlpha=.32*fade*grow;g.fillStyle='#0a0614';g.beginPath();g.rect(-cx+cam.x-50,-cy+cam.y-50,cv.width/ZM+100,cv.height/ZM+100);g.rect(x1,y0,x0-x1,y1-y0);g.fill('evenodd')}
+  // (four plain rectangles around the barrier: same look as the old full-screen "evenodd" path with a hole, much cheaper on the GPU)
+  if(!A.end||!A.win){g.globalAlpha=.32*fade*grow;g.fillStyle='#0a0614';const L=-cx+cam.x-50,Tp=-cy+cam.y-50,R=L+cv.width/ZM+100,B=Tp+cv.height/ZM+100,ax0=Math.min(x0,x1),ax1=Math.max(x0,x1),ay0=Math.min(y0,y1),ay1=Math.max(y0,y1);
+   if(ay0>Tp)g.fillRect(L,Tp,R-L,ay0-Tp);if(B>ay1)g.fillRect(L,ay1,R-L,B-ay1);if(ax0>L)g.fillRect(L,ay0,ax0-L,ay1-ay0);if(R>ax1)g.fillRect(ax1,ay0,R-ax1,ay1-ay0)}
   // the barrier: soft outer glow, bright inner line, runes travelling along the edge, spinning corner sigils
   g.globalCompositeOperation='lighter';const pulse=.75+.25*Math.sin(now/240),flash=A.end&&A.win&&now>=A.fz?Math.max(0,1-(now-A.fz)/500):0;
   g.globalAlpha=fade*(.22+flash*.5)*pulse;g.strokeStyle=col;g.lineWidth=14;g.strokeRect(x0,y0,x1-x0,y1-y0);

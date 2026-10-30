@@ -34,7 +34,9 @@ const R3D=(()=>{
  // water sprites, painted once: the bright band under the surface and one light shaft (skewed per frame instead of a new gradient)
  const SPR3={};{const mk=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));return c};
   SPR3.band=mk(T+1,14,x=>{const gr=x.createLinearGradient(0,0,0,14);gr.addColorStop(0,'rgba(225,246,255,.5)');gr.addColorStop(1,'rgba(225,246,255,0)');x.fillStyle=gr;x.fillRect(0,0,T+1,14)});
-  SPR3.shaft=mk(40,T*4,x=>{const gr=x.createLinearGradient(0,0,0,T*4);gr.addColorStop(0,'rgba(210,245,255,.10)');gr.addColorStop(1,'rgba(210,245,255,0)');x.fillStyle=gr;x.beginPath();x.moveTo(0,0);x.lineTo(15,0);x.lineTo(36,T*4);x.lineTo(14,T*4);x.closePath();x.fill()})}
+  SPR3.shaft=mk(40,T*4,x=>{const gr=x.createLinearGradient(0,0,0,T*4);gr.addColorStop(0,'rgba(210,245,255,.10)');gr.addColorStop(1,'rgba(210,245,255,0)');x.fillStyle=gr;x.beginPath();x.moveTo(0,0);x.lineTo(15,0);x.lineTo(36,T*4);x.lineTo(14,T*4);x.closePath();x.fill()});
+  // caustic light flecks: one solid ellipse pre-drawn at 7 tilts (-.6..+.6 rad); drawn with globalAlpha instead of a new path + colour string per fleck
+  SPR3.caus=[];for(let i=0;i<7;i++){const r=-.6+i*.2;SPR3.caus.push(mk(22,22,x=>{x.fillStyle='rgb(200,250,255)';x.beginPath();x.ellipse(11,11,9,3.2,r,0,6.3);x.fill()}))}}
  function water(x0,x1,y0,y1,now){shade3D(x0,x1,y0,y1);const t=now/1000,nt=typeof night=='number'?night:0,dim=1-nt*.38,hq=QM.cur.wfx>=1;g.save();
   const dens=(typeof QM!='undefined'?QM.cur.vfx:1);
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,v=wl[k];if(!v||tiles[k])continue;
@@ -54,7 +56,7 @@ const R3D=(()=>{
    if(!hq)continue;
    // caustics + light shafts + bubbles (additive)
    if(d<=5){g.globalCompositeOperation='lighter';const a=(.07*(1-d/6))*dim*Math.min(1,dens+.3);
-    for(let c=0;c<2;c++){const cx=px+((Math.sin(t*.7+x*1.3+y*.8+c*2.1)*.5+.5)*(T-14))+4,cy=py0+8+((Math.cos(t*.6+x*.9+y*1.1+c*1.7)*.5+.5)*(h-16>0?h-16:1));g.fillStyle='rgba(200,250,255,'+a.toFixed(3)+')';g.beginPath();g.ellipse(cx,cy,9,3.2,Math.sin(t+c+x)*.6,0,6.3);g.fill()}
+    g.globalAlpha=a;for(let c=0;c<2;c++){const cx=px+((Math.sin(t*.7+x*1.3+y*.8+c*2.1)*.5+.5)*(T-14))+4,cy=py0+8+((Math.cos(t*.6+x*.9+y*1.1+c*1.7)*.5+.5)*(h-16>0?h-16:1));g.drawImage(SPR3.caus[Math.round((Math.sin(t+c+x)+1)*3)],cx-11,cy-11)}g.globalAlpha=1;
     if(!above&&((x+((t*.25)|0))%3==0)){const sx=px+T*.5+Math.sin(t*.5+x)*6,sk=Math.sin(t*.4+x)*8/(T*4);g.save();g.transform(1,0,sk,1,sx,py0);g.drawImage(SPR3.shaft,-6,0);g.restore()}
     g.globalCompositeOperation='source-over'}
    if(d>=1&&((x*7+y*13)%9==0)){const u=((t*.18+(x*.37+y*.11))%1);g.strokeStyle='rgba(225,248,255,'+(.5*(1-u)).toFixed(2)+')';g.lineWidth=1;g.beginPath();g.arc(px+T*.5+Math.sin(u*9+x)*5,bot-u*T*1.2,2+u*1.5,0,6.3);g.stroke()}
