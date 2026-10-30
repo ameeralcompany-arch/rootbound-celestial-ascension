@@ -136,6 +136,8 @@ const BOSSX=(()=>{
 
  // ---- art for the three new bosses (feet at the origin after translate)
  const NEWART={magma:1,tide:1,storm:1},OL='#0e0818';
+ // feather gradients are made once per (length, colours) and reused every frame (they live in the feather's rotated local space)
+ const FGC={},fgr=(len,c1,c2)=>{const L=Math.round(len),k=L+c1+c2;let gr=FGC[k];if(!gr){if(FGC.n>240)for(const q in FGC)delete FGC[q];gr=FGC[k]=g.createLinearGradient(0,0,L,0);gr.addColorStop(0,c1);gr.addColorStop(1,c2);FGC.n=(FGC.n|0)+1}return gr};
  function artNew(m,now,b){const px=m.x-cam.x,py=m.y-cam.y+m.h,t=now/1000,fl=m.fl>0,enr=m.phase==2,f=(P.x>m.x)?1:-1,w=m.w,h=m.h;g.save();g.translate(px,py);g.lineJoin='round';g.lineCap='round';
   if(b=='magma'){const mv=Math.abs(m.vx)>10?1:.15,sw=Math.sin(t*4)*mv,pulse=.55+.45*Math.sin(t*3),rock=fl?'#fff':'#3a2e3c',rock2=fl?'#ddd':'#1d1624';g.scale(f,1);
    // legs
@@ -160,7 +162,7 @@ const BOSSX=(()=>{
    g.globalCompositeOperation='lighter';g.drawImage(BOSS6.glo('#6ae8ff'),hx+r0*.2-16,hy2-r0*1.15-16,32,32);g.strokeStyle='rgba(120,220,255,.6)';g.lineWidth=2;g.beginPath();g.moveTo(hx+r0*.1,hy2-r0*.7);g.quadraticCurveTo(hx+r0*.1,hy2-r0*1.1,hx+r0*.2,hy2-r0*1.15);g.stroke();g.globalCompositeOperation='source-over';
    if(!QM.reduce&&Math.random()<(window.FDT||.016)*24)VFX.add(0,'#bfe6ff',m.x+(Math.random()-.5)*w,m.y+h*Math.random(),0,-30,.9,12,4,{a:.5})}
   else{g.scale(f,1);const bob=Math.sin(t*2.2)*5,fl2=Math.sin(t*(m.bs=='tele'?14:6)),cy=-h*.5+bob;g.translate(0,cy);
-   const feather=(a0,len,wid,c1,c2)=>{g.save();g.rotate(a0);const gr=g.createLinearGradient(0,0,len,0);gr.addColorStop(0,c1);gr.addColorStop(1,c2);g.fillStyle=gr;g.strokeStyle=OL;g.lineWidth=2;g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(len*.5,-wid,len,-wid*.15);g.quadraticCurveTo(len*.55,wid*.7,0,0);g.fill();g.stroke();g.restore()};
+   const feather=(a0,len,wid,c1,c2)=>{g.save();g.rotate(a0);g.fillStyle=fgr(len,c1,c2);g.strokeStyle=OL;g.lineWidth=2;g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(len*.5,-wid,len,-wid*.15);g.quadraticCurveTo(len*.55,wid*.7,0,0);g.fill();g.stroke();g.restore()};
    const c1=fl?'#fff':'#e8c438',c2=fl?'#eee':'#fff4b0';
    // far wing, tail, body, near wing
    for(const side of[0,1]){if(side==1){g.fillStyle=fl?'#fff':'#f7d84a';g.strokeStyle=OL;g.lineWidth=3;g.beginPath();g.ellipse(0,0,w*.3,h*.3,0,0,6.3);g.fill();g.stroke();g.fillStyle=fl?'#fff':'#fff8d0';g.beginPath();g.ellipse(w*.02,h*.1,w*.2,h*.18,0,0,6.3);g.fill();

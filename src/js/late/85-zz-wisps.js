@@ -1,7 +1,8 @@
 // ===== BRK7: block-break effects. Free: soul wisps (the default), star sparkles, petals and classic (none). In the store (Effects, slot
 // 'break', one equipped at a time): Bubble Pop, Heart Pop, Sakura Bloom, Snowfall, Fireflies, Butterflies, Gold Rush, Galaxy Swirl, Royal
 // Ghosts and Shadow Phantoms (tools/breakfx-v10.json). Every shape is drawn once into a small sprite and stamped with drawImage (no per-frame
-// gradients or paths), at most 70 alive. Picked in the store or in Hub > Settings > Break effect (free ones plus the ones you own).
+// gradients or paths), at most 56 alive; rotated / scaled sprites are placed with one setTransform from the frame's base matrix (no
+// save/restore per particle), and while many are alive new bursts are smaller, so fast mining stays cheap. Picked in the store or in Hub > Settings > Break effect (free ones plus the ones you own).
 // preview() draws the store card: a little grass block that breaks on a loop. =====
 const BRK7=(()=>{
  const FREE=[['souls','Soul wisps'],['sparkle','Star sparkles'],['petals','Petals'],['classic','Classic (none)']];
@@ -9,7 +10,7 @@ const BRK7=(()=>{
  const shopId=k=>'fx_brk_'+k;
  const K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpbrk';let free='souls';try{free=localStorage.getItem(K())||'souls'}catch(_){}if(!FREE.some(f=>f[0]==free))free='souls';
  function skin(){try{const r=SHOP7.eqRef('break');if(r&&SHOP[r.slice(4)])return r.slice(4)}catch(_){}return free}
- const R=Math.random,L=[],MAX=70,pick=a=>a[(R()*a.length)|0];
+ const R=Math.random,L=[],MAX=56,pick=a=>a[(R()*a.length)|0];
  // ---- sprites (made on first use, then cached)
  const SP={};const sp=(key,w,h,f)=>{if(SP[key])return SP[key];const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));return SP[key]=c};
  const glow=c=>sp('g'+c,48,48,x=>{const g=x.createRadialGradient(24,24,1,24,24,24);g.addColorStop(0,c);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,48,48)});
@@ -50,8 +51,8 @@ const BRK7=(()=>{
  const lite=c=>'rgb('+c.map(v=>Math.min(255,(v|0)+80)).join(',')+')';
  // ---- particles
  const PAL={heart:['#ff5c8a','#ff8fb8','#ff3d6e','#e08cff'],blossom:['#ffb7d0','#ffd6e6','#ff9ec4'],butterfly:['#6ec8ff','#ff9ad5','#ffb347','#b48cff','#7dffb0'],galaxy:[['#9fd0ff','#ffe08a'],['#ff9ad5','#c9b8ff'],['#ffb36a','#ffffff']]};
- const add=(list,o)=>{if(list.length<MAX)list.push(Object.assign({t:0,vx:0,vy:0,ph:R()*6.3,tr:null,life:1.4,sz:1},o))};
- function burst(list,k,x,y,col){const j=s=>(R()-.5)*s,TT=typeof T=='number'?T:32;
+ let thin=0;const add=(list,o)=>{if(list.length<MAX&&!(thin&&R()<thin))list.push(Object.assign({t:0,vx:0,vy:0,ph:R()*6.3,tr:null,life:1.4,sz:1},o))};
+ function burst(list,k,x,y,col){const j=s=>(R()-.5)*s,TT=typeof T=='number'?T:32;thin=list.length>36?.6:list.length>20?.35:0;
   if(k=='souls')for(let i=0,n=2+(R()<.5);i<n;i++)add(list,{k,x:x+j(TT*.6),y:y+j(TT*.4),vx:j(80),vy:-50-R()*50,life:1.3+R()*.6,sz:.75+R()*.3,tr:[]});
   else if(k=='royal')for(let i=0;i<2;i++)add(list,{k,x:x+j(TT*.6),y:y+j(TT*.4),vx:j(90),vy:-70-R()*40,life:1.6+R()*.5,sz:1+R()*.2,tr:[]});
   else if(k=='phantom')for(let i=0;i<2;i++)add(list,{k,x,y,ox:x,oy:y,a:R()*6.3+i*Math.PI,life:1.8+R()*.4,sz:1.05+R()*.2,tr:[]});
@@ -85,18 +86,21 @@ const BRK7=(()=>{
    else if(k=='butterfly'){w.vy+=(-28+Math.sin(w.t*3.2+w.ph)*70-w.vy)*2*dt;w.vx+=((w.vx<0?-1:1)*45-w.vx)*dt}
    if(mv){w.x+=w.vx*dt;w.y+=w.vy*dt}
    if(w.tr){w.tr.push(w.x,w.y);if(w.tr.length>14)w.tr.splice(0,2)}}}
- function stamp(g,img,x,y,s,rot,sx){const w=img.width*s,h=img.height*s;if(!rot&&sx==null){g.drawImage(img,x-w/2,y-h/2,w,h);return}g.save();g.translate(x,y);if(rot)g.rotate(rot);if(sx!=null)g.scale(sx,1);g.drawImage(img,-w/2,-h/2,w,h);g.restore()}
+ // B: the frame's base matrix (set in draw); a rotated / squashed stamp sets base * translate * rotate * scale directly, then the base again
+ let B=null;
+ function xf(g,x,y,rot,sx,sy){const c=rot?Math.cos(rot):1,s=rot?Math.sin(rot):0,a=c*sx,b=s*sx,cc=-s*sy,d=c*sy;g.setTransform(B.a*a+B.c*b,B.b*a+B.d*b,B.a*cc+B.c*d,B.b*cc+B.d*d,B.a*x+B.c*y+B.e,B.b*x+B.d*y+B.f)}
+ function stamp(g,img,x,y,s,rot,sx){const w=img.width*s,h=img.height*s;if(!rot&&sx==null||!B){g.drawImage(img,x-w/2,y-h/2,w,h);return}xf(g,x,y,rot||0,sx==null?1:sx,1);g.drawImage(img,-w/2,-h/2,w,h);g.setTransform(B)}
  const GLOW={souls:['rgba(220,240,255,.5)',.28],royal:['rgba(200,160,255,.55)',.32],phantom:['rgba(140,60,255,.5)',.34],coin:['rgba(255,220,90,.45)',.7],planet:['rgba(160,140,255,.45)',1.4],gstar:['rgba(255,255,255,.35)',.7]};
  const TRC={souls:'rgba(190,225,255,.5)',royal:'rgba(210,180,255,.5)',phantom:'rgba(120,50,220,.6)'};
- function draw(g,list,ox,oy){if(!list.length)return;g.save();
+ function draw(g,list,ox,oy){if(!list.length)return;g.save();B=g.getTransform();
   g.globalCompositeOperation='lighter'; // pass 1: glows and trails
   for(const w of list){const u=w.t/w.life,al=Math.min(1,w.t*5)*(1-u*u*u),x=w.x-ox,y=w.y-oy,k=w.k,r=9*w.sz;
    if(k=='firefly'){g.globalAlpha=al*(.55+.45*Math.sin(w.t*8+w.ph));stamp(g,glow('rgba(215,255,120,.95)'),x,y,.55);continue}
-   if(w.tr){const im=glow(TRC[k]),tr=w.tr;for(let j=0;j<tr.length;j+=2){const f=j/tr.length;g.globalAlpha=al*.5*f;stamp(g,im,tr[j]-ox,tr[j+1]-oy,r*.035*f+.02)}}
-   const gl=GLOW[k];if(gl){g.globalAlpha=al;stamp(g,glow(gl[0]),x,y,k=='souls'||k=='royal'||k=='phantom'?r*gl[1]/2.4:gl[1]*w.sz)}}
+   if(w.tr){const im=glow(TRC[k]),tr=w.tr;for(let j=2;j<tr.length;j+=4){const f=j/tr.length;g.globalAlpha=al*.6*f;stamp(g,im,tr[j]-ox,tr[j+1]-oy,r*.04*f+.02)}}
+   const gl=k=='gstar'&&w.sz<.6?null:GLOW[k];if(gl){g.globalAlpha=al;stamp(g,glow(gl[0]),x,y,k=='souls'||k=='royal'||k=='phantom'?r*gl[1]/2.4:gl[1]*w.sz)}}
   g.globalCompositeOperation='source-over'; // pass 2: the shapes
   for(const w of list){const u=w.t/w.life,al=Math.min(1,w.t*5)*(1-u*u*u),x=w.x-ox,y=w.y-oy,k=w.k;g.globalAlpha=al;
-   if(k=='souls'||k=='royal'||k=='phantom'){const s=9*w.sz/15,b=Math.sin(w.t*8+w.ph)*.05,im=ghost(k);g.save();g.translate(x,y);g.scale(s*(1-b),s*(1+b));g.drawImage(im,-32,-GY(k));g.restore()}
+   if(k=='souls'||k=='royal'||k=='phantom'){const s=9*w.sz/15,b=Math.sin(w.t*8+w.ph)*.05,im=ghost(k);xf(g,x,y,0,s*(1-b),s*(1+b));g.drawImage(im,-32,-GY(k));g.setTransform(B)}
    else if(k=='firefly')stamp(g,dot('#fbffd0'),x,y,.6);
    else if(k=='sparkle')stamp(g,star(w.c),x,y,.5*w.sz,w.t*3+w.ph);
    else if(k=='petals')stamp(g,petal(w.c),x,y,.9*w.sz,w.t*4+w.ph);
@@ -104,12 +108,12 @@ const BRK7=(()=>{
    else if(k=='blossom'){const bl=1-Math.pow(1-Math.min(1,w.t*2.2),3);stamp(g,flower(w.c),x,y,w.sz*(.2+.8*bl),w.t*w.spin+w.ph)}
    else if(k=='bubble'){if(u<.88)stamp(g,bubble(),x,y,w.sz*(1+Math.sin(w.t*6+w.ph)*.04));else{const p=(u-.88)/.12;g.globalAlpha=al*(1-p);stamp(g,ring(),x,y,w.sz*(1+p*.9))}}
    else if(k=='snow')stamp(g,flake(),x,y,w.sz,w.t*w.spin+w.ph);
-   else if(k=='butterfly'){const f=Math.abs(Math.sin(w.t*16+w.ph))*.85+.15,im=wing(w.c);g.save();g.translate(x,y);g.rotate(Math.max(-.5,Math.min(.5,w.vx/200)));g.scale(w.sz,w.sz);
-    g.save();g.scale(f,1);g.drawImage(im,0,-17);g.restore();g.scale(-f,1);g.drawImage(im,0,-17);g.restore();g.fillStyle='#2a1a3a';g.fillRect(x-1.3*w.sz,y-8*w.sz,2.6*w.sz,15*w.sz)}
+   else if(k=='butterfly'){const f=Math.abs(Math.sin(w.t*16+w.ph))*.85+.15,im=wing(w.c),rt=Math.max(-.5,Math.min(.5,w.vx/200));xf(g,x,y,rt,w.sz*f,w.sz);g.drawImage(im,0,-17);xf(g,x,y,rt,-w.sz*f,w.sz);g.drawImage(im,0,-17);
+    xf(g,x,y,rt,w.sz,w.sz);g.fillStyle='#2a1a3a';g.fillRect(-1.3,-8,2.6,15);g.setTransform(B)}
    else if(k=='coin')stamp(g,coin(),x,y,w.sz,0,Math.cos(w.t*9+w.ph));
    else if(k=='planet')stamp(g,planet(w.c[0],w.c[1]),x,y,w.sz);
    else if(k=='gstar')stamp(g,star(w.c),x,y,w.sz*(.7+.3*Math.sin(w.t*10+w.ph)),w.t*2)}
-  g.restore()}
+  B=null;g.restore()}
  // ---- in the world
  function hex(c){c=(c||'#9cf').replace('#','');if(c.length==3)c=c.replace(/./g,'$&$&');const n=parseInt(c,16)||0;return[n>>16&255,n>>8&255,n&255]}
  function spawn(tx,ty,id){const k=skin();if(k=='classic'||(typeof QM!='undefined'&&QM.reduce))return;const b=BLK[id];burst(L,k,(tx+.5)*T,(ty+.5)*T,b&&b[1]?hex(b[1]):[150,200,255])}

@@ -42,7 +42,7 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  ok('a Pet Home is placed by clicking with it held (not into solid ground), uses one item and all 4 pets move in',pl.inSolid==0&&pl.n==1&&pl.at[0]==yard.hx&&pl.at[1]==yard.gy-1&&pl.used==1&&pl.moved,pl);
  await E(({hx,gy})=>{P.x=(hx+9)*T+T/2;P.y=gy*T-P.h-1;P.vx=P.vy=0},yard);
  // ---- wander: within range, on the ground, never inside a block, never in the pit
- const wan=await E(async({hx,gy})=>{const out={bad:[],minx:1e9,maxx:-1e9,grounded:0,samples:0,states:{},moved:{}};const x0={};
+ const wan=await E(async({hx,gy})=>{const out={bad:[],minx:1e9,maxx:-1e9,grounded:0,samples:0,states:{},moved:{}};const x0={};await _gw(.2);for(const p of PET10.S.pets)PET10.force(p.id,'walk');   // start them walking: a pet that naps the whole window is not a failure
   for(let i=0;i<48;i++){await _gw(.25);mobs.length=0;P.vx=0;for(const p of PET10.S.pets){const r=PET10.RT.get(p.id);if(!r){out.bad.push('no rt '+p.sp);continue}if(x0[p.id]==null)x0[p.id]=r.x;out.moved[p.sp]=Math.max(out.moved[p.sp]||0,Math.abs(r.x-x0[p.id]));
     const tx=r.x/T-hx-.5;out.minx=Math.min(out.minx,tx);out.maxx=Math.max(out.maxx,tx);out.samples++;if(r.g)out.grounded++;out.states[r.st]=1;
     if(solidAt(Math.floor(r.x/T),Math.floor((r.y-4)/T)))out.bad.push(p.sp+' inside a block');if(r.y>gy*T+2)out.bad.push(p.sp+' fell into the pit '+(r.y/T).toFixed(2))}}
@@ -138,7 +138,8 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
   const c=PET10.S.pets[0];const o={res,c:c&&{fur:c.fur,nm:c.nm,clo:c.clo,fed:Number.isFinite(c.fed),hap:c.hap},home:PET10.S.homes.w1&&PET10.S.homes.w1[0]};localStorage.setItem(K,keep);PET10.load();o.restored=PET10.S.pets.length;return o});
  ok('garbage / hostile saved data is cleaned (bad species, colours, slots, numbers, names, homes)',bad.res.slice(0,4).every(r=>r=='0:0')&&bad.res[4]=='1:1'&&bad.c.fur==3&&!/[<>]/.test(bad.c.nm)&&bad.c.nm.length<=14&&JSON.stringify(bad.c.clo)=='{"neck":["collar","#d8344a"],"body":["sweater","#abcdef"]}'&&bad.c.fed&&bad.c.hap==100&&bad.home.x==10&&bad.home.id=='x'&&bad.restored==4,bad);
  // ---- cost: far pets do not run physics; the sprite cache stays small
- const cost=await E(async()=>{const r=PET10.RT.get('pcat');P.x=Math.min(W*T-200,P.x+T*60);await _gw(1.2);const x0=r.x,f=r.far;await _gw(.5);return{far:f,still:r.x==x0,cache:PET10.CACHE.size,pt:PET10.PT.length}});
+ const cost=await E(async()=>{for(let i=0;i<40&&!PET10.RT.get('pcat');i++)await new Promise(q=>requestAnimationFrame(q));   // runtime state is rebuilt on the next tick after a load
+  const r=PET10.RT.get('pcat');P.x=Math.min(W*T-200,P.x+T*60);await _gw(1.2);const x0=r.x,f=r.far;await _gw(.5);return{far:f,still:r.x==x0,cache:PET10.CACHE.size,pt:PET10.PT.length}});
  ok('off-screen pets only keep their timers (no physics) and caches stay bounded',cost.far==1&&cost.still&&cost.cache<300&&cost.pt<=40,cost);
  ok('no page errors',errs.length==0,errs.slice(0,4));
  console.log(fails?fails+' FAILED':'all petcare tests passed');await b.close();process.exit(fails?1:0)})().catch(e=>{console.error(e);process.exit(1)});

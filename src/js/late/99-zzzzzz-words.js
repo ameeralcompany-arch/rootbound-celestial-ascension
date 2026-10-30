@@ -44,7 +44,8 @@ const WORD9=(()=>{
  function place(){L=[];WORD='';if(!hasWord(cur))return;const R0=rr((h32(cur)^0x1e77e2)>>>0);WORD=wordFor(cur);const n=WORD.length;
   const sc=[...WORD];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[sc[i],sc[j]]=[sc[j],sc[i]]}if(sc.join('')==WORD)sc.push(sc.shift());
   const x0=6,x1=W-7,seg=(x1-x0)/n,segs=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]]}
-  const used=new Set(),off=Math.floor(R0()*3),okX=x=>Math.abs(x-DX)>5,rx=(a,b)=>a+Math.floor(R0()*Math.max(1,b-a));
+  const used=new Set(),off=Math.floor(R0()*3),rx=(a,b)=>a+Math.floor(R0()*Math.max(1,b-a));
+  const deco=x=>{try{return SUMMER9.LAND.some(d=>x>=d.c0-1&&x<=d.c1+1)}catch(_){return false}},okX=x=>Math.abs(x-DX)>5&&!deco(x);   // not at the spawn door, not on poolside decor (92-zz-summer.js)
   const KIND={surf(a,b){for(let t=0;t<40;t++){const x=rx(a,b);if(!okX(x))continue;const s=sh(x),k=(s-1)*W+x;if(s<3||tiles[k]||wl[k]||wl[k-W]||trees.has(k)||used.has(k))continue;const gb=tiles[s*W+x];if(gb&&SOLID6[gb])return k}return -1},
    cave(a,b){for(let t=0;t<80;t++){const x=rx(a,b),s=sh(x),y=s+8+Math.floor(R0()*Math.max(1,H-s-14)),k=y*W+x;if(y>=H-4||tiles[k]||wl[k]||used.has(k))continue;const gb=tiles[k+W];if(gb&&SOLID6[gb])return k}return -1},
    deep(a,b){for(let t=0;t<80;t++){const x=rx(a,b),s=sh(x),y=s+12+Math.floor(R0()*Math.max(1,H-s-17)),k=y*W+x;if(y>=H-3||used.has(k))continue;const b0=tiles[k];if(b0==3||b0==77||b0==1)return k}return -1}};
