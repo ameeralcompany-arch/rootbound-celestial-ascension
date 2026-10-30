@@ -53,7 +53,8 @@ const AC6=(()=>{
   // jaw shade
   g.fillStyle='rgba(60,30,70,.12)';g.beginPath();g.moveTo(-8,hy+4);g.quadraticCurveTo(-4,hy+10,1,hy+10.8);g.lineTo(-3,hy+7);g.closePath();g.fill()}
  function drawBody(g,L,o){
-  const {t,vx,air,f,sw,wpn,fm,wr}=o,run=Math.abs(vx)>10,ph=t*(run?14:2.4),ls=run?Math.sin(ph):0,as=run?Math.sin(ph+3.1):0,breath=run?0:Math.sin(t*2.2)*.5,bob=(run?Math.abs(Math.sin(ph))*-2.7:breath*.8)+(air?-1:0);
+  const {t,vx,air,f,sw,wpn,fm,wr}=o,so=o.sit,sd=so?Math.max(0,21-so.h/.9):0,sl=so&&so.lean||0;if(sd)g.translate(0,sd);if(sl){g.translate(0,-21);g.rotate(-sl);g.translate(0,21)}// sitting (92-zz-summer.js): body lowered onto the seat (h = seat height) and leaned back on loungers (lean); legs bent down, or straight out when reclining
+  const run=Math.abs(vx)>10,ph=t*(run?14:2.4),ls=run?Math.sin(ph):0,as=run?Math.sin(ph+3.1):0,breath=run?0:Math.sin(t*2.2)*.5,bob=(run?Math.abs(Math.sin(ph))*-2.7:breath*.8)+(air?-1:0);
   const hs=clamp(-vx*.018,-6,6)+Math.sin(t*2.6)*1.1+(air?-2:0),blink=(t%4.2)<.13,out=L.out,trim=L.trim,sh=-37+bob,hip=-21+bob*.5;
   const boot=wr.boot&&WEAR[wr.boot]?WEAR[wr.boot].c:'#2a2030',glove=wr.glove&&WEAR[wr.glove]?WEAR[wr.glove].c:L.skin,bodyW=wr.body&&WEAR[wr.body]?WEAR[wr.body].c:null,oc=bodyW||out;
   // equipment art (GEAR7): a worn body piece replaces the outfit's own details; hats, boots and gloves draw from cached sprites
@@ -71,8 +72,8 @@ const AC6=(()=>{
   limb(g,-5-ash,sh+3,fax,fay,4.4,shade(ac,-.2));hand(fax,fay+1,2.4);
   // --- legs
   for(const s of[-1,1]){const lx=s*2.8,lift=air?-5:Math.max(0,s*ls)*5;let fx=lx+(air?s*3:s*ls*6),fy=-2-lift;if(pa){fx=lp(fx,s>0?-4.5:-7.8,pa);fy=lp(fy,s>0?-.5:-3.8,pa)}else if(pg)fx=lp(fx,lx*.55,pg*.7);const pc=lc?shade(lc,s<0?-.2:0):of==2||of==5?shade(oc,-.15):shade(L.pants,s<0?-.2:0);
-   limb(g,lx,hip,fx,fy-5,5.6,pc);
-   let done=false;if(GF)done=G7.boot(g,GF,lx,hip,fx,fy,t,run||air);else if(paw){G7.put(g,GB,'foot',fx,fy);done=true}
+   if(so){const c=Math.cos(sl),sn=Math.sin(sl),kx=sl?lx+10*c:lx+9.5,ky=sl?hip+10*sn:hip+.6;fx=sl?lx+20*c:lx+11.5;fy=sl?hip+20*sn+5:-2-sd;limb(g,lx,hip,kx,ky,5.8,pc);limb(g,kx,ky,fx,fy-5,5.6,pc)}else limb(g,lx,hip,fx,fy-5,5.6,pc);
+   let done=false;if(GF)done=G7.boot(g,GF,so?(sl?lx+10*Math.cos(sl):lx+9.5):lx,so?(sl?hip+10*Math.sin(sl):hip+.6):hip,fx,fy,t,run||air);else if(paw){G7.put(g,GB,'foot',fx,fy);done=true}
    if(!done){celf(g,()=>{g.beginPath();g.moveTo(fx-3,fy-6);g.lineTo(fx+3,fy-6);g.lineTo(fx+4.6,fy+2);g.lineTo(fx-3.4,fy+2);g.closePath()},boot,1);g.fillStyle=shade(trim,0);g.fillRect(fx-3,fy-6,6,1.1)}}
   // --- coat tails / robe skirt (behind torso)
   const sway=clamp(-vx*.02,-5,5)+Math.sin(t*2.8)*.8;
@@ -144,7 +145,7 @@ const AC6=(()=>{
   if(pz&&api.PZG)api.PZG(g,pz,cx,feet-ly,t);
   g.save();g.translate(cx,feet-ly);if(pz&&pz.lean){g.translate(0,-30);g.rotate(pz.lean*f);g.translate(0,30)}g.imageSmoothingEnabled=true;{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
-  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz})}finally{g.restore();FX7.ld=false}
+  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.05)WingArt.idleFx(WINGS[wingIdx],cx+cam.x,cy+cam.y+10+Math.random()*30,f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}

@@ -29,7 +29,7 @@ MAT[230]={n:'Gate Key',c:'#ffd36a',p:60};MAT[231]={n:'Star Shard',c:'#fff3a8',p:
 // storage chest colours (CHEST6 settings): [name, body, lid]
 const CHCOL=[['Oak','#8a5a28','#a8743f'],['Ruby','#7a2230','#b8404f'],['Sky','#25507e','#4a86c0'],['Moss','#33602a','#5a9644'],['Plum','#4e2678','#8248b8'],['Gold','#80601a','#d0a038']];
 const OBJ={};const OBJ_IDS=Object.keys(ODEF).map(Number);
-const isObjId=b=>(b>=20&&b<=41||b>=85&&b<=89)&&!!ODEF[b]; // 85-89: the v9 weather machines (94-z-wxmachines.js)
+const isObjId=b=>(b>=20&&b<=41||b>=85&&b<=98)&&!!ODEF[b]; // 85-89: the v9 weather machines (94-z-wxmachines.js); 90-92, 97, 98: summer objects (92-zz-summer.js)
 const ROLE={BAN:-1,VIS:0,TRUST:1,BUILD:2,OWN:3};
 function roleOf(uid){if(!meta)return ROLE.OWN;if(meta.b&&meta.b.includes(uid))return ROLE.BAN;if(meta.o==uid)return ROLE.OWN;if((meta.f||[]).includes(uid)||meta.pub)return ROLE.BUILD;if((meta.t||[]).includes(uid))return ROLE.TRUST;return ROLE.VIS}
 const myRole=()=>roleOf(myId);
