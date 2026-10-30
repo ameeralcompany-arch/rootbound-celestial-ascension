@@ -121,10 +121,13 @@ for s in V9['seeds']: add(id='seed_%d'%s['id'],cat='seeds',n=s['n'],price=s['pri
 # ---- v9 ascended wings (three-tier 'tier' family); shared with tools/wings-catalog.js
 WV9=json.load(open(os.path.join(R,'tools/wings-v9.json')))
 for w in WV9['wings']: add(id='wing_'+w['id'],cat='wings',n=w['n'],price=w['price'],rar=w['rar'],stack=0,ref=w['id'],lv=w['lv'],d=w['d'],how='store',new=1,excl=False)
+# ---- v10 break effects (effect slot 'break'); shared with tools/breakfx-catalog.js
+BV10=json.load(open(os.path.join(R,'tools/breakfx-v10.json')))
+for b in BV10['break']: add(id='fx_brk_'+b['id'],cat='effects',n=b['n'],price=b['price'],rar=b['rar'],stack=0,ref='brk_'+b['id'],lv=0,d=b['d'],how='store',new=1,sub='break')
 ids=[i['id'] for i in items]; assert len(ids)==len(set(ids)),'duplicate ids'
 for i in items:
     assert i['price']>0 and i['rar'] in('common','uncommon','rare','epic','legendary','mythic','exclusive'),i
-feat=['wing_galaxy','wing_voidshroud','wing_haloseraph','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder']
+feat=['wing_galaxy','wing_voidshroud','wing_haloseraph','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder','fx_brk_phantom']
 for i in items: i['feat']=1 if i['id'] in feat else 0
 json.dump({'v':1,'items':items},open(os.path.join(R,'server/catalog.json'),'w'),separators=(',',':'))
 print(len(items),'items')

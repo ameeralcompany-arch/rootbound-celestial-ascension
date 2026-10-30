@@ -6,7 +6,7 @@ const SHOP7=(()=>{
  const items=CATALOG7.items,byId=new Map(items.map(i=>[i.id,i])),RAR=['common','uncommon','rare','epic','legendary','mythic','exclusive'];
  const RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive'};
  const CATS=[['featured','Featured'],['weapons','Weapons'],['wings','Wings'],['effects','Effects'],['charms','Charms'],['weather','Weather'],['gear','Gear'],['blocks','Blocks'],['seeds','Seeds'],['objects','Objects']];
- const SLOTS=['aura','trail','spawn','victory','wtrail','wskin']; // effect sub-types, one equipped at a time each (+ 'charm')
+ const SLOTS=['aura','trail','spawn','victory','wtrail','wskin','break']; // effect sub-types, one equipped at a time each (+ 'charm')
  const st={own:{},eq:{},seen:{},pend:0,first:1};
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
  function load(){try{const o=JSON.parse(lsGet('rbc3')||'{}');if(o.own&&typeof o.own=='object')for(const k of Object.keys(o.own).slice(0,400)){const it=byId.get(k);if(it&&o.own[k]>0)st.own[k]=Math.min(9999,o.own[k]|0)}

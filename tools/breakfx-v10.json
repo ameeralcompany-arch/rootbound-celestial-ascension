@@ -1,0 +1,14 @@
+{
+ "break":[
+  {"id":"bubble","n":"Bubble Pop","price":250,"rar":"common","d":"Broken blocks puff out shiny soap bubbles that wobble up and pop into rings."},
+  {"id":"heart","n":"Heart Pop","price":400,"rar":"uncommon","d":"Little pink and red hearts float up out of every block you break, then pop."},
+  {"id":"blossom","n":"Sakura Bloom","price":450,"rar":"uncommon","d":"Cherry blossoms bloom open as the block breaks and drift away with loose petals."},
+  {"id":"snow","n":"Snowfall","price":600,"rar":"rare","d":"Sparkling snowflakes spin out of the block and fall softly."},
+  {"id":"firefly","n":"Fireflies","price":650,"rar":"rare","d":"Glowing fireflies wake up inside the block and wander off, blinking."},
+  {"id":"butterfly","n":"Butterflies","price":800,"rar":"rare","d":"Colourful butterflies flutter out of every broken block."},
+  {"id":"coin","n":"Gold Rush","price":1200,"rar":"epic","d":"Spinning gold coins burst out of the block and fly into your pocket."},
+  {"id":"galaxy","n":"Galaxy Swirl","price":2200,"rar":"legendary","d":"A tiny ringed planet and its stars spiral out of the block like a small galaxy."},
+  {"id":"royal","n":"Royal Ghosts","price":2600,"rar":"legendary","d":"Crowned little ghosts rise from the block, wave about, then float over to you."},
+  {"id":"phantom","n":"Shadow Phantoms","price":4400,"rar":"mythic","d":"Dark phantoms with glowing eyes circle the broken block, then dash into you in a violet flash."}
+ ]
+}
