@@ -8750,6 +8750,8 @@ const GUN9=(()=>{
   if(WS.t>0){if(wp!='lumistaff')WS.t=0;else{WS.t-=dt;WS.ang+=dt*2.4;for(let i=0;i<3;i++){WS.cd[i]-=dt;const an=WS.ang+i*TAU/3,x=P.x+Math.cos(an)*T*1.1,y=P.y+20+Math.sin(an)*T*.5;
      if(vok()&&R()<.25)VFX.add(0,'#fff6b0',x,y,0,-10,.35,12,3,OF);
      if(WS.cd[i]<=0){const m=nearest(x,y,T*7);WS.cd[i]=m?.6:.2;if(m){const p=shoot('wbolt',x,y,Math.atan2(cy0(m)-y,m.x-x),600,1.2,WS.w||WPN.lumistaff,.55,6);if(p)p.home=7;S('wisp')}}}}}
+  // effects (beams, bolts, flashes) fade even when no projectile is flying (the sniper beam is an effect, not a projectile)
+  for(let i=0;i<NF;i++){const f=FXP[i];if(f.on){f.t-=dt;if(f.t<=0)f.on=0}}
   if(!nAlive)return;
   for(let i=0;i<NP;i++){const p=POOL[i];if(!p.on)continue;p.l-=dt;p.t+=dt;
    if(p.k=='axe'){p.u+=dt/p.TT;if(p.u>=1){kill(p);continue}if(p.u>.5&&!p.half){p.half=1;p.nh=0}const s=p.u,al=p.D*(1-Math.cos(TAU*s))/2,pe=T*.9*p.d*Math.sin(TAU*s),ca=Math.cos(p.a),sa=Math.sin(p.a),ox=P.x,oy=P.y+23;
@@ -8770,8 +8772,7 @@ const GUN9=(()=>{
    // monsters
    for(let j=0;j<mobs.length;j++){const m=mobs[j];if(!live(m)||hasHit(p,m))continue;const dx=m.x-p.x,dy=(p.k=='wave'?m.y+m.h-p.gy:cy0(m)-p.y),rr=rad(m)+p.r;
     if(p.k=='wave'?(Math.abs(dx)<T*.8+m.w/2&&Math.abs(dy)<T*1.3):dx*dx+dy*dy<rr*rr){addHit(p,m);onHit(p,m);if(p.prc>0||p.k=='axe'){if(p.k!='axe')p.prc--}else{burst(p);kill(p);break}}}
-   if(p.on&&p.l<=0){if(p.spl||p.bolt)burst(p);kill(p)}}
-  for(let i=0;i<NF;i++){const f=FXP[i];if(f.on){f.t-=dt;if(f.t<=0)f.on=0}}}
+   if(p.on&&p.l<=0){if(p.spl||p.bolt)burst(p);kill(p)}}}
  // ---- sprites (drawn once, then blitted)
  const SPR={};
  const OL='#2a1830';
