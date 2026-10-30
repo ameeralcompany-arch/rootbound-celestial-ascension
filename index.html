@@ -9398,9 +9398,13 @@ const CJOB=(()=>{
 /* ========== LATE: 86-z-depths.js ========== */
 // ===== DEPTH8: things to do underground. Three depth bands, measured in tiles below the surface (sh(x)):
 //   Glowroot Hollows (8-25 m)  - glowcap groves (walk / jump through the floating spores to harvest; regrows) + Buried Caches (block 93, dig with Pip)
-//   Crystal Caverns  (26-45 m) - Crystal Geodes (block 94, crack with a tool: Glimmer cracks one in 3 taps) + Resonance Shrines (E to listen,
-//                                then strike the crystal pillars in the same order)
-//   Emberdeep        (46 m +)  - Ancient Shrines (E: a 2-minute blessing) + Relic Vaults (3 guardians wake; beat them, then open the relic chest)
+//                                + Mole Rush (E: moles pop out of 5 burrows for 20 s; bonk 12 points' worth by striking them or pressing E)
+//   Crystal Caverns  (26-45 m) - Crystal Geodes (block 94, crack with a tool: Glimmer cracks one in 3 taps) + Singing Crystals (E to listen,
+//                                then strike the crystal pillars in the same order) + Crystal Gallery (E: hit 15 floating crystals in 25 s)
+//   Emberdeep        (46 m +)  - Ember Forges (E: strike when the needle is in the gold, 5 times; the zone shrinks and the needle speeds up)
+//                                + Relic Vaults (3 guardians wake; beat them, then open the relic chest)
+// There are no shrines underground any more: the Ember Forges sit in the rooms where the Ancient Shrines were (same place, same seed).
+// The mini games pay on a short cooldown per site and keep your best score; losing just lets you try again.
 // plus depth records (milestones every 15 m) and a first-visit reward per zone. Each band has its own mood: a soft colour vignette, pooled motes
 // (spores / crystal glints / embers) and quiet synthesized ambience. Entering a band shows a small animated indicator (name, depth, what is found).
 // Sites are placed from the world seed while the world is generated. A room is only carved where the saved world has no edits nearby, and that
@@ -9410,9 +9414,9 @@ const DEPTH8=(()=>{
  const R0=Math.random,rr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
  const RW=()=>typeof REW8!='undefined'?REW8:null,tone=(a,b,d,ty,v,dl)=>{try{SFX7.tone(a,b,d,ty,v,dl)}catch(_){}};
  const hx=h=>{h=String(h).replace('#','');return[parseInt(h.slice(0,2),16)|0,parseInt(h.slice(2,4),16)|0,parseInt(h.slice(4,6),16)|0]};
- const BANDS=[{id:'hollow',n:'Glowroot Hollows',d0:8,d1:26,c:'#3fd8b4',h:'Catch the floating spores to harvest glowcap groves · dig Buried Caches with Pip (4)'},
-  {id:'crystal',n:'Crystal Caverns',d0:26,d1:46,c:'#9a7bff',h:'Crack Crystal Geodes with Glimmer (6) · repeat the song at Resonance Shrines'},
-  {id:'magma',n:'Emberdeep',d0:46,d1:999,c:'#ff6a2a',h:'Pray at Ancient Shrines for a blessing · Relic Vaults are guarded'}];
+ const BANDS=[{id:'hollow',n:'Glowroot Hollows',d0:8,d1:26,c:'#3fd8b4',h:'Catch spores at glowcap groves · dig Buried Caches with Pip (4) · bonk moles at Mole Rush'},
+  {id:'crystal',n:'Crystal Caverns',d0:26,d1:46,c:'#9a7bff',h:'Crack Crystal Geodes with Glimmer (6) · repeat the Singing Crystals · hit floating crystals at a Crystal Gallery'},
+  {id:'magma',n:'Emberdeep',d0:46,d1:999,c:'#ff6a2a',h:'Strike in rhythm at Ember Forges · Relic Vaults are guarded'}];
  // ---- blocks: Buried Cache (93), Crystal Geode (94). Both render through the normal sprite path (TILE7 chunk cache, shadows)
  const CACHE=93,GEODE=94;BLK[CACHE]=['Buried Cache','#c8913a',5];BLK[GEODE]=['Crystal Geode','#9a7bff',14];
  for(const id of[CACHE,GEODE]){PRICE[id]=id==CACHE?40:90;LVREQ[id]=0;SOLID6[id]=1}GLOW7[GEODE]=[170,130,255];
@@ -9435,19 +9439,25 @@ const DEPTH8=(()=>{
    if(k==268){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=1.5;x.beginPath();x.arc(24,24,18,-.6,.6);x.stroke();x.beginPath();x.arc(24,24,18,2.5,3.7);x.stroke()}if(k==269){x.fillStyle='#ffe08a';x.beginPath();x.arc(24,24,4,0,6.3);x.fill()}x.restore()}}
  // ---- save (per profile)
  const K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbdepth';let db={};
- function load(){try{db=JSON.parse(localStorage.getItem(K())||'{}')||{}}catch(_){db={}}if(!db.w||typeof db.w!='object')db.w={};db.best=+db.best||0;db.ms=db.ms||{};db.zone=db.zone||{};db.tot=db.tot||{};if(db.buff&&!(db.buff.end>Date.now()))db.buff=null}load();
+ function load(){try{db=JSON.parse(localStorage.getItem(K())||'{}')||{}}catch(_){db={}}if(!db.w||typeof db.w!='object')db.w={};db.best=+db.best||0;db.ms=db.ms||{};db.zone=db.zone||{};db.tot=db.tot||{};db.hi=db.hi||{};delete db.buff/* old shrine blessing */}load();
  const save=()=>{try{localStorage.setItem(K(),JSON.stringify(db))}catch(_){}};
- const wr=()=>{const w=db.w[cur]||(db.w[cur]={});w.g=w.g||{};w.gd=w.gd||{};w.cb=w.cb||[];w.gb=w.gb||[];w.p=w.p||{};w.s=w.s||{};w.v=w.v||{};return w};
+ const wr=()=>{const w=db.w[cur]||(db.w[cur]={});w.g=w.g||{};w.gd=w.gd||{};w.cb=w.cb||[];w.gb=w.gb||[];w.p=w.p||{};w.v=w.v||{};w.mg=w.mg||{};delete w.s/* old shrine cooldowns */;return w};
  const tot=k=>{db.tot[k]=(db.tot[k]|0)+1};
  // ---- generation (inside genBase, before the saved edits are applied)
  let S=[],CA=[],GE=[],pendE=null;
  {const _lw=loadWorld;loadWorld=function(n,e){pendE=e||null;try{return _lw.apply(this,arguments)}finally{pendE=null}}}
  function editKeys(){const s=new Set();let e=pendE;if(!e){try{e=JSON.parse(localStorage.getItem('rbw_'+cur)||'null')}catch(_){e=null}}if(!e||typeof e!='object')return s;
   for(const k in e){const n=+k;if(Number.isInteger(n))s.add(n)}if(e.o&&typeof e.o=='object')for(const k in e.o){const n=+k;if(Number.isInteger(n))s.add(n)}if(e.m&&e.m.x!=null)s.add((e.m.y|0)*W+(e.m.x|0));return s}
- function gen(){S=[];CA=[];GE=[];if(cur=='plaza')return;const R=rr((5153+Math.floor(ws*92821))>>>0),w=wr(),decide=!Array.isArray(w.ok),ek=decide?editKeys():null,ok=decide?[]:w.ok;
+ // every room id is decided once per world (carve it only where the save has no edits nearby). w.sn lists the ids already decided; worlds
+ // saved before the mini games existed decided exactly OLD_IDS, so rooms added later are decided on their first load and the old ones never move
+ const OLD_IDS=['g0','g1','g2','g3','g4','p0','p1','s0','s1','v0','v1'];
+ function gen(){S=[];CA=[];GE=[];if(cur=='plaza')return;const R=rr((5153+Math.floor(ws*92821))>>>0),w=wr(),fresh=!Array.isArray(w.ok),ok=fresh?[]:w.ok,seen=Array.isArray(w.sn)?w.sn:fresh?[]:OLD_IDS.slice();
+  let ek=null,dirty=fresh||!Array.isArray(w.sn);
   const inb=(x,y)=>x>2&&x<W-3&&y>3&&y<H-4;
-  function room(id,cx,dep,rw,rh,minD){const s=sh(cx);dep=Math.min(dep,H-6-s);if(dep<minD||cx-rw<3||cx+rw>W-4)return null;const fy=s+dep;if(fy-rh<s+5)return null;
-   if(decide){let bad=false;for(let y=fy-rh-2;y<=fy+2&&!bad;y++)for(let x=cx-rw-2;x<=cx+rw+2;x++)if(ek.has(y*W+x)){bad=true;break}if(!bad)ok.push(id)}
+  // avoid: skip the spot if it would overlap a room already placed (used by the later mini game rooms)
+  function room(id,cx,dep,rw,rh,minD,avoid){const s=sh(cx);dep=Math.min(dep,H-6-s);if(dep<minD||cx-rw<3||cx+rw>W-4)return null;const fy=s+dep;if(fy-rh<s+5)return null;
+   if(avoid&&S.some(r=>Math.abs(r.x-cx)<r.rw+rw+3&&fy-rh-3<r.fy+2&&r.fy-r.rh-3<fy+2))return null;
+   if(!seen.includes(id)){ek=ek||editKeys();let bad=false;for(let y=fy-rh-2;y<=fy+2&&!bad;y++)for(let x=cx-rw-2;x<=cx+rw+2;x++)if(ek.has(y*W+x)){bad=true;break}if(!bad)ok.push(id);seen.push(id);dirty=true}
    if(!ok.includes(id))return null;
    for(let dx=-rw;dx<=rw;dx++){const x=cx+dx,top=fy-Math.max(1,Math.round(rh*Math.sqrt(Math.max(0,1-(dx/(rw+.6))**2))));for(let y=top;y<fy;y++){const k=y*W+x;tiles[k]=0;hp[k]=0;wl[k]=0}
     const kf=fy*W+x;if(!tiles[kf]||!SOLID6[tiles[kf]]){tiles[kf]=dep>44?77:3;hp[kf]=BLK[tiles[kf]][2];wl[kf]=0}}
@@ -9456,27 +9466,46 @@ const DEPTH8=(()=>{
   const seg=(i,n)=>Math.floor(12+(i+.5)*(W-24)/n+(R()-.5)*((W-24)/n-18));
   for(let i=0;i<5;i++){const cx=seg(i,5),dep=12+Math.floor(R()*9),caps=[];for(let j=0;j<5;j++)caps.push({o:(j-2)*1.75+(R()-.5)*.5,sz:.8+R()*.45,hue:j%3,ph:R()*6});const r=room('g'+i,cx,dep,5,4,10);if(r){r.k='grove';r.caps=caps.map(c=>({x:(r.x+.5+c.o)*T,sz:c.sz,hue:c.hue,ph:c.ph}));S.push(r)}}
   for(let i=0;i<2;i++){const cx=seg(i*2+1,4),dep=29+Math.floor(R()*9),len=4+i,seq=[];for(let j=0;j<len;j++)seq.push(Math.floor(R()*4));const r=room('p'+i,cx,dep,7,4,28);if(r){r.k='reso';r.seq=seq;deco(r,9,6);S.push(r)}}
-  for(let i=0;i<2;i++){const cx=seg(i*2,4),dep=50+Math.floor(R()*10),r=room('s'+i,cx,dep,4,3,48);if(r){r.k='shrine';deco(r,62,5);S.push(r)}}
+  for(let i=0;i<2;i++){const cx=seg(i*2,4),dep=50+Math.floor(R()*10),r=room('s'+i,cx,dep,4,3,48);if(r){r.k='forge';deco(r,62,5);S.push(r)}}   // the old shrine rooms (ids s0 / s1): same spots, now forges
   for(let i=0;i<2;i++){const cx=seg(i*2+1,4),dep=55+Math.floor(R()*12),r=room('v'+i,cx,dep,8,4,50);if(r){r.k='vault';deco(r,62,9);S.push(r)}}
   const scatter=(arr,id,n,d0,d1)=>{for(let t=0;t<n*40&&arr.length<n;t++){const x=4+Math.floor(R()*(W-8)),y=sh(x)+d0+Math.floor(R()*(d1-d0));if(!inb(x,y))continue;const k=y*W+x,b=tiles[k];if(b!=3&&b!=1&&b!=77)continue;
    if(!(tiles[k-1]==0||tiles[k+1]==0||tiles[k-W]==0||tiles[k+W]==0))continue;if(arr.some(q=>Math.abs(q%W-x)<7&&Math.abs((q/W|0)-y)<6))continue;tiles[k]=id;hp[k]=BLK[id][2];arr.push(k)}};
   scatter(CA,CACHE,10,9,25);scatter(GE,GEODE,12,27,45);
-  if(decide){w.ok=ok;save()}}
+  // mini game rooms come last, so everything placed before them (and the random numbers it used) stays exactly where it was
+  // each one tries 6 spots (drawn up front, so the random sequence never depends on which spot fits) and takes the first that is clear
+  const place=(id,i,n,d0,dr,rw,rh,minD)=>{const c=[];for(let t=0;t<6;t++)c.push([seg(i,n)+Math.round((R()-.5)*((W-24)/n*.6)),d0+Math.floor(R()*dr)]);for(const[cx,dep]of c){const r=room(id,cx,dep,rw,rh,minD,true);if(r)return r;if(seen.includes(id)&&!ok.includes(id))return null}return null};
+  for(let i=0;i<3;i++){const r=place('m'+i,i,3,13,10,6,3,11);if(r){r.k='mole';r.mo=[0,1,2,3,4].map(()=>({u:0,l:0,gold:0,bonk:0}));S.push(r)}}
+  for(let i=0;i<3;i++){const r=place('c'+i,i,3,31,11,7,5,29);if(r){r.k='gal';r.tg=[];deco(r,9,5);S.push(r)}}
+  CA=CA.filter(k=>tiles[k]==CACHE);GE=GE.filter(k=>tiles[k]==GEODE);
+  if(dirty){w.ok=ok;w.sn=seen;save()}}
  {const _gb=genBase;genBase=function(){const r=_gb.apply(this,arguments);try{gen()}catch(e){console.error('DEPTH8 gen',e)}return r}}
  // ---- sprites (pre-rendered once)
  const mk=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));return c};
  const GLC={},GL=c=>GLC[c]||(GLC[c]=mk(64,64,x=>{const[r,g2,b]=hx(c),gr=x.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.22,'rgba('+r+','+g2+','+b+',.7)');gr.addColorStop(1,'rgba('+r+','+g2+','+b+',0)');x.fillStyle=gr;x.fillRect(0,0,64,64)}));
- const CAPC=['#4fe3c1','#6fb8ff','#b48cff'],PC=['#7fe9ff','#b48cff','#ff8fd0','#ffd36a'],NOTE=[523,659,784,988];
+ const CAPC=['#4fe3c1','#6fb8ff','#b48cff'],PC=['#7fe9ff','#b48cff','#ff8fd0','#ffd36a'],NOTE=[523,659,784,988],PENT5=[1047,1175,1319,1568,1760,2093];
  const CAPS=CAPC.map(c=>mk(44,52,x=>{x.lineJoin='round';x.strokeStyle='#14202a';x.lineWidth=2;x.fillStyle='#e8fff6';x.beginPath();x.moveTo(18,50);x.quadraticCurveTo(16,34,19,24);x.lineTo(25,24);x.quadraticCurveTo(28,34,26,50);x.closePath();x.fill();x.stroke();
   const gr=x.createRadialGradient(18,12,2,22,18,22);gr.addColorStop(0,'#ffffff');gr.addColorStop(.35,c);gr.addColorStop(1,mixc(c,.55));x.fillStyle=gr;x.beginPath();x.moveTo(2,26);x.quadraticCurveTo(4,4,22,3);x.quadraticCurveTo(40,4,42,26);x.quadraticCurveTo(22,20,2,26);x.closePath();x.fill();x.stroke();
   x.fillStyle='rgba(255,255,255,.85)';for(const[a,b,r]of[[12,13,2.6],[24,9,2],[32,16,2.4],[19,19,1.6]]){x.beginPath();x.arc(a,b,r,0,6.3);x.fill()}}));
  const PIL=PC.map(c=>mk(36,100,x=>{x.lineJoin='round';x.strokeStyle='#1a1430';x.lineWidth=2;x.fillStyle='#5a5470';x.beginPath();x.roundRect(2,86,32,13,3);x.fill();x.stroke();
   const gr=x.createLinearGradient(6,0,30,0);gr.addColorStop(0,mixc(c,.6));gr.addColorStop(.45,'#ffffff');gr.addColorStop(.6,c);gr.addColorStop(1,mixc(c,.5));x.fillStyle=gr;x.beginPath();x.moveTo(18,4);x.lineTo(29,22);x.lineTo(27,86);x.lineTo(9,86);x.lineTo(7,22);x.closePath();x.fill();x.stroke();
   x.strokeStyle='rgba(255,255,255,.6)';x.lineWidth=1.2;x.beginPath();x.moveTo(18,6);x.lineTo(18,84);x.moveTo(7,22);x.lineTo(29,22);x.stroke();x.fillStyle=mixc(c,.8);x.strokeStyle='#1a1430';x.lineWidth=1.6;x.beginPath();x.moveTo(29,86);x.lineTo(34,60);x.lineTo(27,67);x.closePath();x.fill();x.stroke()}));
- const SHR=mk(100,84,x=>{x.lineJoin='round';x.strokeStyle='#1a1018';x.lineWidth=2;x.fillStyle='#4a3a3e';x.beginPath();x.roundRect(4,70,92,13,3);x.fill();x.stroke();x.fillStyle='#5e4a4c';x.beginPath();x.roundRect(14,58,72,13,3);x.fill();x.stroke();
-  const gr=x.createLinearGradient(30,0,70,0);gr.addColorStop(0,'#3a2c30');gr.addColorStop(.5,'#7a6266');gr.addColorStop(1,'#3a2c30');x.fillStyle=gr;x.beginPath();x.moveTo(34,58);x.lineTo(38,24);x.lineTo(62,24);x.lineTo(66,58);x.closePath();x.fill();x.stroke();
-  x.strokeStyle='#ff9a4a';x.lineWidth=2;x.beginPath();x.arc(50,42,8,0,6.3);x.moveTo(50,32);x.lineTo(50,52);x.moveTo(42,42);x.lineTo(58,42);x.stroke();
-  x.strokeStyle='#1a1018';x.fillStyle='#8a6a3a';x.beginPath();x.moveTo(30,24);x.quadraticCurveTo(50,34,70,24);x.lineTo(66,16);x.lineTo(34,16);x.closePath();x.fill();x.stroke();x.fillStyle='#ffd36a';x.fillRect(34,15,32,3)});
+ // Ember Forge: a brick hearth with glowing coals and an anvil holding a hot ingot (anvil face centre at x 89)
+ const FRG=mk(120,84,x=>{x.lineJoin='round';x.strokeStyle='#160c0c';x.lineWidth=2;x.fillStyle='#4e3a3a';x.beginPath();x.moveTo(4,84);x.lineTo(4,30);x.quadraticCurveTo(28,8,52,30);x.lineTo(52,84);x.closePath();x.fill();x.stroke();
+  x.fillStyle='#1a0c08';x.beginPath();x.moveTo(14,84);x.lineTo(14,46);x.quadraticCurveTo(28,32,42,46);x.lineTo(42,84);x.closePath();x.fill();
+  const gc=x.createLinearGradient(0,66,0,84);gc.addColorStop(0,'#ffd36a');gc.addColorStop(1,'#ff4a1a');x.fillStyle=gc;x.beginPath();x.ellipse(28,79,13,6,0,0,6.3);x.fill();
+  x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=1.5;for(let i=0;i<4;i++){x.beginPath();x.moveTo(5,40+i*11);x.lineTo(13,40+i*11);x.moveTo(43,40+i*11);x.lineTo(51,40+i*11);x.stroke()}
+  x.strokeStyle='#0c0c12';x.lineWidth=2;x.fillStyle='#3a3c48';x.beginPath();x.roundRect(76,70,30,14,2);x.fill();x.stroke();x.beginPath();x.moveTo(82,70);x.lineTo(86,56);x.lineTo(96,56);x.lineTo(100,70);x.closePath();x.fill();x.stroke();
+  const ga=x.createLinearGradient(0,44,0,58);ga.addColorStop(0,'#9a9cac');ga.addColorStop(1,'#4a4c5a');x.fillStyle=ga;x.beginPath();x.moveTo(62,46);x.lineTo(116,44);x.lineTo(112,56);x.lineTo(72,56);x.quadraticCurveTo(64,52,62,46);x.closePath();x.fill();x.stroke();
+  x.fillStyle='#ff9a3a';x.strokeStyle='#5a1a08';x.beginPath();x.roundRect(78,38,22,6,2);x.fill();x.stroke();x.fillStyle='#ffe08a';x.fillRect(81,39,10,2)});
+ // Mole Rush: a mole (plain or golden with a crown) and the dirt mound it pops out of
+ const MOL=gold=>mk(40,44,x=>{x.translate(0,4);x.lineJoin='round';x.strokeStyle='#1a1008';x.lineWidth=2;x.fillStyle=gold?'#e8b83a':'#6a4a36';x.beginPath();x.moveTo(5,40);x.quadraticCurveTo(4,6,20,5);x.quadraticCurveTo(36,6,35,40);x.closePath();x.fill();x.stroke();
+  x.fillStyle=gold?'#fff0b0':'#c8a088';x.beginPath();x.ellipse(20,24,9,8,0,0,6.3);x.fill();x.fillStyle='#ff8aa8';x.beginPath();x.ellipse(20,20,4,3,0,0,6.3);x.fill();x.stroke();
+  x.fillStyle='#120a06';for(const ex of[13,27]){x.beginPath();x.arc(ex,14,2.4,0,6.3);x.fill()}x.fillStyle='#fff';for(const ex of[13.8,27.8]){x.beginPath();x.arc(ex,13.2,.9,0,6.3);x.fill()}
+  x.fillRect(17,27,3,4);x.fillRect(20.5,27,3,4);x.fillStyle=gold?'#c89020':'#4a3020';for(const px of[8,32]){x.beginPath();x.ellipse(px,33,5,3.5,0,0,6.3);x.fill();x.stroke()}
+  if(gold){x.fillStyle='#ffd36a';x.strokeStyle='#7a4a08';x.lineWidth=1.5;x.beginPath();x.moveTo(12,7);x.lineTo(12,-2);x.lineTo(16,2);x.lineTo(20,-4);x.lineTo(24,2);x.lineTo(28,-2);x.lineTo(28,7);x.closePath();x.fill();x.stroke()}});
+ const MOLS=[MOL(0),MOL(1)];
+ const MND=mk(56,22,x=>{x.lineJoin='round';x.fillStyle='#5a3e26';x.strokeStyle='#22140a';x.lineWidth=2;x.beginPath();x.moveTo(1,22);x.quadraticCurveTo(6,8,16,9);x.quadraticCurveTo(28,3,40,9);x.quadraticCurveTo(50,8,55,22);x.closePath();x.fill();x.stroke();
+  x.fillStyle='#1a0f08';x.beginPath();x.ellipse(28,15,13,4,0,0,6.3);x.fill();x.fillStyle='#8a6a48';for(const[a,b]of[[10,18],[45,17],[20,20],[37,20]]){x.beginPath();x.arc(a,b,1.8,0,6.3);x.fill()}});
  const chest=op=>mk(70,64,x=>{x.lineJoin='round';x.strokeStyle='#160a08';x.lineWidth=2.5;x.translate(3,14);
   if(op){x.fillStyle='#2a1418';x.beginPath();x.roundRect(4,-12,56,20,[8,8,2,2]);x.fill();x.stroke();x.fillStyle='#e8b83a';x.fillRect(4,-6,56,3)}
   x.fillStyle='#3a2026';x.beginPath();x.roundRect(2,20,60,28,4);x.fill();x.stroke();x.fillStyle='#e8b83a';x.fillRect(2,30,60,4);
@@ -9494,8 +9523,9 @@ const DEPTH8=(()=>{
  const near=(r,dx,dy)=>Math.abs(P.x-ctr(r))<dx&&Math.abs(P.y+P.h/2-(r.fy-1)*T)<dy;
  const pay=(g,xp,kind)=>{if(g>0){gems+=g;try{stat('gems',g)}catch(_){}}if(xp>0)try{xpGain(kind||'mine',xp)}catch(_){}};
  const REGROW=15*60000;
- const BUFFS={might:{n:'Ember Might',d:'+35% damage · +10% crit',c:'#ff6a2a',fx:{dmg:.35,crit:.1}},stone:{n:'Stoneskin',d:'+25% armour · regeneration',c:'#c8a27a',fx:{arm:.25,regen:2}},
-  lumen:{n:'Lumen Blessing',d:'bigger light · +12% speed',c:'#ffd36a',fx:{light:180,spd:.12}},fortune:{n:"Fortune's Ember",d:'+50% gems · +30% XP',c:'#ff9ad8',fx:{gem:.5,xp:.3}}};
+ // mini games: length (s), goal, reward cooldown per site
+ const MG={mole:{t:20,goal:12,cd:3*60000,c:'#ffd36a'},gal:{t:25,goal:15,cd:3*60000,c:'#b48cff'},forge:{n:5,goal:5,cd:4*60000,c:'#ff8a3a'}};
+ const holeX=(r,j)=>(r.x+.5+(j-2)*2.2)*T,mgs=r=>{const w=wr();return w.mg[r.id]||(w.mg[r.id]={cd:0,won:0})};
  const TBL=[[262,45],[263,28],[264,15],[265,8],[266,3.5],[267,.5]];
  function roll(luck){let tt=0;const wv=TBL.map(([,p],i)=>{const v=p*(i>=2?1+luck*.6:1);tt+=v;return v});let r=R0()*tt;for(let i=0;i<wv.length;i++){if(r<wv[i])return i;r-=wv[i]}return 0}
  const luck=()=>{try{return bonus().luck||0}catch(_){return 0}};
@@ -9516,9 +9546,43 @@ const DEPTH8=(()=>{
   if(r.seq[r.step]==j){r.step++;if(r.step>=r.seq.length){r.st='win';r.tm=.5}}else{r.st='fail';r.tm=1.4;r.bad=.7;tone(220,150,.35,'sawtooth',.03);tone(233,160,.35,'sawtooth',.02,.02);try{say('The song breaks. Press E to listen again')}catch(_){}}}
  function solve(r){const w=wr();w.p[r.id]=1;tot('reso');save();r.st='solved';const g=80+r.seq.length*10,xp=150,x=ctr(r),y=r.fy*T;addI(268,1);pay(g,xp);[523,659,784,988,1319].forEach((f,i)=>tone(f,f,1.2,'triangle',.03,i*.05));
   const q=RW();if(q){q.celebrate(x,y,'#9fe0ff',{d:2,s:1.2,n:36,w:220});q.fly(x,y-60,g);q.card({kind:'reso',kick:'Resonance restored',title:'The crystal song is whole',gems:g,xp,items:[[268,1]],tier:3})}}
- function pray(r){const w=wr(),now=Date.now();if((w.s[r.id]||0)>now){try{say('The shrine is gathering embers · '+fmt(w.s[r.id]-now))}catch(_){}return}const first=!(r.id in w.s);w.s[r.id]=now+240000;
-  const keys=Object.keys(BUFFS);let k=keys[R0()*keys.length|0];if(db.buff&&db.buff.k==k&&db.buff.end>now)k=keys[(keys.indexOf(k)+1)%keys.length];db.buff={k,end:now+120000};tot('shrine');save();const B=BUFFS[k],x=ctr(r),y=r.fy*T,xp=first?60:15;pay(0,xp);
-  const q=RW();if(q){q.celebrate(x,y,B.c,{d:1.8,s:1.1,n:24});q.fan('discover');q.card({kind:'shrine',kick:first?'Ancient shrine discovered':'Ancient shrine',title:B.n,sub:B.d+' · 2 minutes',xp,tier:3})}}
+ // ---- mini games. A win pays gems / XP / items unless that site paid in the last few minutes (you can always replay for a best score)
+ function win(r,kind,kick,title,g,xp,items){const s=mgs(r),now=Date.now(),x=ctr(r),y=r.fy*T,paid=now>=s.cd,first=!s.won;s.won++;
+  if(paid){s.cd=now+MG[kind].cd;for(const[i,n]of items)addI(i,n);pay(g,xp,kind=='forge'?'craft':'mine')}save();[523,659,784,1047].forEach((f,i)=>tone(f,f,.5,'triangle',.03,i*.07));
+  const q=RW();if(q){q.celebrate(x,y,MG[kind].c,{d:1.6,s:1,n:26});if(paid){q.fly(x,y-40,g);q.fan('discover')}
+   q.card(paid?{kind,kick:first?kick+' · first clear':kick,title,gems:g,xp,items,tier:first?3:2}:{kind,kick,title,sub:'Rewards again in '+fmt(s.cd-now),tier:1})}}
+ function lose(r,txt){save();tone(392,370,.3,'triangle',.03);tone(330,320,.4,'triangle',.025,.16);try{say(txt+' · press E to try again')}catch(_){}}
+ // Mole Rush: moles pop out of 5 burrows; bonk them (strike with any weapon / tool, or press E standing at the burrow). Golden moles are worth 3
+ function startMole(r){r.st='play';r.tm=MG.mole.t;r.sc=0;r.nx=.7;for(const m of r.mo){m.u=0;m.l=0;m.bonk=0}tone(523,530,.16,'triangle',.04);tone(784,790,.2,'triangle',.035,.12);try{say('Mole Rush! Bonk '+MG.mole.goal+' points of moles!')}catch(_){}}
+ function bonk(r,j){const m=r.mo[j];if(!m||r.st!='play'||m.l<=0||m.bonk>0)return false;m.bonk=.4;m.l=Math.min(m.l,.4);const pts=m.gold?3:1;r.sc+=pts;const x=holeX(r,j),y=r.fy*T-26;
+  tone(m.gold?1319:880,m.gold?1330:885,.14,'triangle',.045);tone(m.gold?1976:1319,m.gold?1990:1325,.1,'sine',.015,.03);try{const q=RW();if(q)q.sparkle(x,y,m.gold?'#ffd36a':'#e8c8a0',m.gold?14:8,160)}catch(_){}try{ft(x,y-18,'+'+pts,m.gold?'#ffe08a':'#ffffff')}catch(_){}return true}
+ function moleTick(r,dt){for(const m of r.mo){if(r.st=='play'&&m.l>0){m.l-=dt;m.u=Math.min(1,m.u+dt*7)}else m.u=Math.max(0,m.u-dt*6);m.bonk=Math.max(0,m.bonk-dt)}if(r.st!='play')return;
+  r.tm-=dt;const pg=1-Math.max(0,r.tm)/MG.mole.t;r.nx-=dt;
+  if(r.nx<=0&&r.tm>.6){r.nx=.72-pg*.32+R0()*.25;const free=[];r.mo.forEach((m,j)=>{if(m.l<=0&&m.u<.05)free.push(j)});if(free.length){const m=r.mo[free[R0()*free.length|0]];m.l=1.3-pg*.45;m.gold=R0()<.12?1:0;m.bonk=0;tone(520+R0()*80,540,.06,'sine',.01)}}
+  if(r.tm<=0){r.st='idle';const sc=r.sc,best=db.hi.mole|0;if(sc>best)db.hi.mole=sc;tot('mole');
+   if(sc<MG.mole.goal)lose(r,'The moles got away · '+sc+' / '+MG.mole.goal);else win(r,'mole','Mole Rush cleared','Bonked '+sc+' points'+(sc>best?' · new best!':''),25+sc*3,60+sc*4,[[260,2]])}}
+ // Crystal Gallery: crystals drift through the cave; hit them (aim with the mouse and attack). Rainbow prisms are faster and worth 3
+ const tgPos=c=>({x:c.x0+Math.sin(c.t*c.f+c.ph)*c.ax,y:c.y0+Math.cos(c.t*c.f*1.3+c.ph)*c.ay});
+ function startGal(r){r.st='play';r.tm=MG.gal.t;r.sc=0;r.nx=.3;r.tg.length=0;[784,988,1175].forEach((f,i)=>tone(f,f,.3,'triangle',.03,i*.08));try{say('Crystal Gallery! Hit '+MG.gal.goal+' floating crystals!')}catch(_){}}
+ function shoot(r,wx,wy){if(r.st!='play')return false;for(const c of r.tg){if(c.pop>0)continue;const p=tgPos(c);if(Math.hypot(wx-p.x,wy-p.y)<28){c.pop=.3;const pts=c.pr?3:1;r.sc+=pts;const f=PENT5[(r.sc+c.hue)%PENT5.length];
+    tone(f,f*1.002,.4,'triangle',.035);tone(f*2,f*2,.25,'sine',.012,.02);try{VFX.shatter(p.x,p.y,c.pr?['#ff9ad8','#ffd36a','#9dff8a','#7fe9ff']:[PC[c.hue],'#ffffff'],c.pr?14:8)}catch(_){}try{ft(p.x,p.y-16,'+'+pts,c.pr?'#ffe08a':PC[c.hue])}catch(_){}return true}}return false}
+ function galTick(r,dt){for(let i=r.tg.length-1;i>=0;i--){const c=r.tg[i];c.t+=dt;if(c.pop>0){c.pop-=dt;if(c.pop<=0)r.tg.splice(i,1)}else if(c.t>=c.life)r.tg.splice(i,1)}if(r.st!='play')return;
+  r.tm-=dt;const pg=1-Math.max(0,r.tm)/MG.gal.t;r.nx-=dt;
+  if(r.nx<=0&&r.tm>.5&&r.tg.length<5){r.nx=.6-pg*.2+R0()*.2;const pr=R0()<.1,sp=r.rw-2.5;r.tg.push({x0:(r.x+.5+(R0()*2-1)*sp)*T,y0:(r.fy-1.6-R0()*(r.rh-2.6))*T,ax:16+R0()*26,ay:8+R0()*12,f:(pr?2.4:1.2)+R0()*.6,ph:R0()*6,t:0,life:pr?1.9:2.7-pg*.5,pr,pop:0,hue:R0()*4|0})}
+  if(r.tm<=0){r.st='idle';r.tg.length=0;const sc=r.sc,best=db.hi.gal|0;if(sc>best)db.hi.gal=sc;tot('gal');
+   if(sc<MG.gal.goal)lose(r,'The crystals faded · '+sc+' / '+MG.gal.goal);else{const t=Math.min(3,roll(luck()));win(r,'gal','Crystal Gallery cleared','Hit '+sc+' crystals'+(sc>best?' · new best!':''),30+sc*3,70+sc*4,[[TBL[t][0],1]])}}}
+ // Ember Forge: the needle swings across the bar; strike (E or attack) while it is in the gold. 5 strikes, the gold shrinks and the needle speeds up
+ const needle=r=>(1-Math.cos(r.ph))/2;
+ function zone(r){r.wz=Math.max(.1,.26-r.n*.035);r.zc=.12+r.wz/2+R0()*(.76-r.wz)}
+ function startForge(r){r.st='play';r.n=0;r.res=[];r.ph=0;r.sp=.9;r.idle=0;zone(r);tone(196,200,.5,'triangle',.03);tone(294,298,.5,'triangle',.02,.1);try{say('Ember Forge! Strike when the needle is in the gold (E)')}catch(_){}}
+ function hammer(r){if(r.st!='play')return false;const now=performance.now();if(now-(r.lh||0)<220)return true;r.lh=now;r.idle=0;const d=Math.abs(needle(r)-r.zc),res=d<r.wz*.18?2:d<r.wz/2?1:0;r.res.push(res);r.n++;r.fl=.3;r.lr=res;const x=ctr(r)+29,y=r.fy*T-44;
+  if(res){const f=res==2?1568:1175;tone(f,f*1.001,.6,'triangle',.045);tone(f*1.5,f*1.5,.35,'sine',.015,.015);try{VFX.burst(x,y,['#ffd36a','#ff9a3a','#ffffff'],res==2?18:10,240,0,.6,10)}catch(_){}}
+  else{tone(330,320,.3,'triangle',.03);try{VFX.burst(x,y,['#888','#555'],5,120,0,.4,6)}catch(_){}}
+  try{ft(x,y-26,res==2?'Perfect!':res?'Good':'Miss',res==2?'#ffe08a':res?'#ffffff':'#ff8080')}catch(_){}
+  r.sp=Math.min(2.1,r.sp+.25);zone(r);
+  if(r.n>=MG.forge.n){r.st='idle';const sc=r.res.reduce((a,b)=>a+b,0),pf=r.res.filter(v=>v==2).length,best=db.hi.forge|0;if(sc>best)db.hi.forge=sc;tot('forge');
+   if(sc<MG.forge.goal)lose(r,'The blade cracked · '+sc+' / 10');else win(r,'forge','Ember Forge',(pf>=5?'A flawless forging':'A fine forging')+' · '+sc+' / 10',40+sc*10,80+sc*12,[[pf>=5?265:sc>=8?264:263,1]])}return true}
+ function forgeTick(r,dt){r.fl=Math.max(0,(r.fl||0)-dt);if(r.st!='play')return;r.ph+=dt*r.sp*Math.PI;r.idle+=dt;if(r.idle>12){r.st='idle';try{say('The forge cools down · press E to start again')}catch(_){}}}
  function awaken(r){const kinds=['magma','golem','shade'];for(let i=r.killed;i<3;i++){const k=kinds[i%3],d=MK[k];if(!d)continue;const x=(r.x+.5+(i-1)*4)*T,y=r.fy*T-d.h-2-(d.fly?T*1.5:0),hpv=Math.round(d.hp*(2.4+(lvl|0)*.05));
    const m={k,x,y,w:d.w,h:d.h,vx:0,vy:-140,hp:hpv,mhp:hpv,fl:0,burn:0,slow:0,ph:R0()*6,t:1,dir:1,fade:0,g:false,wall:0,vg:r.id,elite:1};mobs.push(m);r.gs.push(m);try{VFX.burst(x,y+d.h/2,['#ff6a2a','#ffd36a'],14,220,0,.8,14)}catch(_){}}
   try{VFX.wave(ctr(r),r.fy*T,'#ff4a2a',260,.9,.3);shake=Math.max(shake,QM.reduce?0:.12)}catch(_){}tone(70,45,1.2,'sawtooth',.06);tone(140,90,.6,'square',.02,.1);try{say('The vault guardians awaken!')}catch(_){}}
@@ -9530,11 +9594,17 @@ const DEPTH8=(()=>{
  function use(){for(const r of S){
    if(r.k=='reso'&&near(r,(r.rw+1)*T,T*3)){if(r.st=='input'){let bj=-1,bd=T*.9;for(let j=0;j<4;j++){const d=Math.abs(P.x-pillX(r,j));if(d<bd){bd=d;bj=j}}if(bj>=0)hit(r,bj);else try{say('Stand at a crystal and press E, or strike it')}catch(_){}return true}
     if(wr().p[r.id]){try{say('The crystals hum in harmony.')}catch(_){}return true}if(r.st=='idle'||r.st=='fail'){listen(r);return true}return true}
-   if(r.k=='shrine'&&near(r,T*2.2,T*2.5)){pray(r);return true}
+   if(r.k=='mole'&&near(r,(r.rw+1)*T,T*3)){if(r.st=='play'){let bj=-1,bd=T*1.3;for(let j=0;j<5;j++){const m=r.mo[j],d=Math.abs(P.x-holeX(r,j));if(d<bd&&m.l>0&&!m.bonk){bd=d;bj=j}}if(bj>=0)bonk(r,bj);return true}startMole(r);return true}
+   if(r.k=='gal'&&near(r,(r.rw+1)*T,T*4)){if(r.st=='play')try{say('Aim at the floating crystals and attack!')}catch(_){}else startGal(r);return true}
+   if(r.k=='forge'&&near(r,T*2.8,T*2.5)){if(r.st=='play')hammer(r);else startForge(r);return true}
    if(r.k=='vault'&&near(r,T*2,T*2.5)){const w=wr();if(w.v[r.id]){try{say('The relic chest is empty.')}catch(_){}return true}if(r.killed>=3){openVault(r);return true}try{say('The vault is sealed. Defeat its guardians ('+r.killed+'/3).')}catch(_){}return true}}
   return false}
  {const _i=interact;interact=function(){if(!dlgOpen&&!creatorOn&&!showInv&&menuEl.style.display=='none'&&entered&&cur!='plaza'){try{if(use())return}catch(e){console.error('DEPTH8',e)}}return _i.apply(this,arguments)}}
- function strike(wx,wy){for(const r of S){if(r.k!='reso')continue;for(let j=0;j<4;j++){const px=pillX(r,j);if(Math.abs(wx-px)<T*.6&&wy>r.fy*T-T*2.15&&wy<r.fy*T+4&&Math.hypot(px-P.x,r.fy*T-T-(P.y+P.h/2))<REACH+T){hit(r,j);return true}}}return false}
+ function strike(wx,wy){for(const r of S){
+   if(r.k=='mole'){if(r.st=='play'&&near(r,(r.rw+3)*T,T*4))for(let j=0;j<5;j++){if(Math.abs(wx-holeX(r,j))<T*.8&&wy>r.fy*T-T*1.8&&wy<r.fy*T+6&&bonk(r,j))return true}continue}
+   if(r.k=='gal'){if(r.st=='play'&&near(r,(r.rw+4)*T,T*6)&&shoot(r,wx,wy))return true;continue}
+   if(r.k=='forge'){if(r.st=='play'&&near(r,T*4,T*3)){hammer(r);return true}continue}
+   if(r.k!='reso')continue;for(let j=0;j<4;j++){const px=pillX(r,j);if(Math.abs(wx-px)<T*.6&&wy>r.fy*T-T*2.15&&wy<r.fy*T+4&&Math.hypot(px-P.x,r.fy*T-T-(P.y+P.h/2))<REACH+T){hit(r,j);return true}}}return false}
  {const _uw=useWeapon;useWeapon=function(){try{if(entered&&S.length&&typeof mx!='undefined')strike(mx+cam.x,my+cam.y)}catch(_){}return _uw.apply(this,arguments)}}
  // ---- blocks: geodes take several cracks (3 with Glimmer); caches dig out. Only the generated ones pay (placed copies are plain blocks)
  {const _ba=breakAt;breakAt=function(x,y,dmg){const inb=x>=0&&y>=0&&x<W&&y<H,k=y*W+x,b=inb?tiles[k]:0;
@@ -9542,21 +9612,19 @@ const DEPTH8=(()=>{
      tone(820+pr*900,1250+pr*900,.14,'triangle',.04);try{VFX.shatter(px,py,['#d6c6ff','#7fe9ff','#ffffff'],4+(pr*6|0))}catch(_){}shake=Math.max(shake,.03);return true}}
    const nat=inb&&(b==GEODE||b==CACHE)&&!(edits[k]&&edits[k][0]==b)&&(b==GEODE?GE:CA).includes(k),nd=drops.length;const r=_ba.apply(this,arguments);
    if(r&&inb&&(b==GEODE||b==CACHE)&&!tiles[k]){for(let i=drops.length-1;i>=nd;i--)if(drops[i].k===b)drops.splice(i,1);if(nat)try{b==GEODE?crack(x,y,k):dig(x,y,k)}catch(e){console.error('DEPTH8',e)}}return r}}
- // ---- blessings from the shrines
- {const _b=bonus;bonus=function(){const r=_b.apply(this,arguments);try{const bf=db.buff;if(bf&&Date.now()<bf.end){const B=BUFFS[bf.k];if(B)for(const k in B.fx)r[k]=(r[k]||0)+B.fx[k]}}catch(_){}return r}}
  // ---- indicator
  let el=null,elT=0,band=null,blend=0,tintB=null,amb=0,ambS=2,uiT=0,hintT=0,depth=0,dropT=0;
- function ui(){if(el&&el.isConnected)return el;el=document.createElement('div');el.id='dz8';el.setAttribute('role','status');el.innerHTML='<i class="dz8i" aria-hidden="true"></i><div><small></small><b></b><em></em><span class="dz8h"></span></div><span class="dz8bf"></span>';document.body.appendChild(el);return el}
+ function ui(){if(el&&el.isConnected)return el;el=document.createElement('div');el.id='dz8';el.setAttribute('role','status');el.innerHTML='<i class="dz8i" aria-hidden="true"></i><div><small></small><b></b><em></em><span class="dz8h"></span></div>';document.body.appendChild(el);return el}
  function counts(b){const w=wr();let f=0,n=0;const has=k=>S.some(r=>r.k==k);
-  if(b.id=='hollow'){const gs=S.filter(r=>r.k=='grove');n=gs.length+CA.length;f=gs.filter(r=>w.gd[r.id]).length+w.cb.filter(k=>CA.includes(k)).length}
-  else if(b.id=='crystal'){const ps=S.filter(r=>r.k=='reso');n=ps.length+GE.length;f=ps.filter(r=>w.p[r.id]).length+w.gb.filter(k=>GE.includes(k)).length}
-  else{const ss=S.filter(r=>r.k=='shrine'),vs=S.filter(r=>r.k=='vault');n=ss.length+vs.length;f=ss.filter(r=>r.id in w.s).length+vs.filter(r=>w.v[r.id]).length}return{f,n,has}}
+  const games=k=>{const a=S.filter(r=>r.k==k);n+=a.length;f+=a.filter(r=>w.mg[r.id]&&w.mg[r.id].won).length};
+  if(b.id=='hollow'){const gs=S.filter(r=>r.k=='grove');n=gs.length+CA.length;f=gs.filter(r=>w.gd[r.id]).length+w.cb.filter(k=>CA.includes(k)).length;games('mole')}
+  else if(b.id=='crystal'){const ps=S.filter(r=>r.k=='reso');n=ps.length+GE.length;f=ps.filter(r=>w.p[r.id]).length+w.gb.filter(k=>GE.includes(k)).length;games('gal')}
+  else{const vs=S.filter(r=>r.k=='vault');n=vs.length;f=vs.filter(r=>w.v[r.id]).length;games('forge')}return{f,n,has}}
  // DOM writes only when a value changed (this runs 5 times a second)
  const tx2=(e,s,v)=>{const q=e.querySelector(s);if(q&&q.textContent!==v)q.textContent=v},cv2=(e,k,v)=>{if(e.style.getPropertyValue(k)!==v)e.style.setProperty(k,v)};
- function render(){const e=ui(),now=performance.now(),bf=db.buff&&db.buff.end>Date.now()?db.buff:null,B=bf&&BUFFS[bf.k];
+ function render(){const e=ui(),now=performance.now();
   if(band){const c=counts(band);cv2(e,'--dz',band.c);tx2(e,'small','Entering');tx2(e,'b',band.n);tx2(e,'em',(depth|0)+' m deep · '+c.f+'/'+c.n+' found');tx2(e,'.dz8h',band.h);e.classList.toggle('mini',now>elT);e.classList.add('on')}
-  else if(B){cv2(e,'--dz',B.c);tx2(e,'b',B.n);tx2(e,'em','');e.classList.add('mini','on')}else e.classList.remove('on');
-  e.classList.toggle('buff',!!B);if(B){const bfe=e.querySelector('.dz8bf');cv2(bfe,'--bf',B.c);tx2(e,'.dz8bf',(band?B.n+' ':'')+fmt(bf.end-Date.now()))}}
+  else e.classList.remove('on')}
  function enter(b){elT=performance.now()+4200;try{const e=ui();e.classList.remove('mini','on');void e.offsetWidth}catch(_){}tone(392,392*1.5,.5,'sine',.025);tone(588,588,.7,'sine',.015,.12);
   if(!db.zone[b.id]){db.zone[b.id]=1;save();pay(0,40);const q=RW();if(q){q.fan('discover');q.card({kind:'zone',kick:'New zone discovered',title:b.n,xp:40,tier:2,ms:3600})}}render()}
  function ambient(dt,b){if(!b||OPT.q<.3||typeof VFX=='undefined')return;const vw=cv.width/ZM,vh=cv.height/ZM,red=QM.reduce;amb+=dt*(b.id=='magma'?7:b.id=='crystal'?4.5:5)*Math.min(1.2,QM.vfxK)*(red?.3:1);
@@ -9577,7 +9645,8 @@ const DEPTH8=(()=>{
   const d=Math.floor(depth);if(d>db.best){db.best=d;let m=0,g=0;for(const q of[15,30,45,60,75])if(d>=q&&!db.ms[q]){db.ms[q]=1;m=q;g+=q*2}/* a long fall past several marks pays them all in one card */
    if(m){const xp=Math.round(g*1.5),tr=m>=60?3:m>=30?2:1;pay(g,xp);save();const q=RW();if(q){q.celebrate(P.x,P.y+P.h,q.RC[tr],{d:1.4,s:.9,n:20});q.fly(P.x,P.y,g);q.fan('ach');q.card({kind:'depth',kick:'New depth record',title:m+' m below the surface',gems:g,xp,tier:tr})}}else if(!(d%5))save()}
   const t=performance.now()/1000;
-  for(const r of S){if(Math.abs(ctr(r)-P.x)>T*30)continue;
+  for(const r of S){if(Math.abs(ctr(r)-P.x)>T*30){if(r.st=='play')r.st='idle';continue}   // walking away ends a mini game
+   if(r.k=='mole')moleTick(r,dt);else if(r.k=='gal')galTick(r,dt);else if(r.k=='forge')forgeTick(r,dt);
    if(r.k=='grove'&&ready(r)){const cy=P.y+P.h/2;for(let j=0;j<r.caps.length;j++){if(r.got.has(j))continue;const p=spore(r,j,t);if(Math.abs(p.x-P.x)<28&&p.y>P.y-20&&p.y<P.y+P.h+12)collect(r,j,p)}}
    else if(r.k=='reso'){for(let j=0;j<4;j++)r.lit[j]=Math.max(0,r.lit[j]-dt);r.bad=Math.max(0,r.bad-dt);
     if(r.st=='show'){r.tm-=dt;if(r.tm<=0){if(r.i<r.seq.length){const j=r.seq[r.i++];r.lit[j]=.42;note(j);r.tm=.64}else{r.st='input';r.step=0;r.idle=0}}}
@@ -9594,11 +9663,24 @@ const DEPTH8=(()=>{
   for(const r of S){const cx=ctr(r)-cam.x,by=r.fy*T-cam.y;if(cx<-(r.rw+3)*T||cx>vw+(r.rw+3)*T||by<-160||by>vh+220)continue;
    if(r.k=='grove'){for(const c of r.caps){const s=c.sz,wd=44*s,h=52*s;g.save();g.translate(c.x-cam.x,by);g.rotate(Math.sin(t*.8+c.ph)*.04);g.drawImage(CAPS[c.hue],-wd/2,-h,wd,h);g.restore()}lamps.push(cx,by-30)}
    else if(r.k=='reso'){for(let j=0;j<4;j++)g.drawImage(PIL[j],pillX(r,j)-cam.x-18,by-100,36,100);lamps.push(cx,by-50)}
-   else if(r.k=='shrine'){g.drawImage(SHR,cx-50,by-84);lamps.push(cx,by-70)}
+   else if(r.k=='forge'){g.drawImage(FRG,cx-60,by-84);lamps.push(cx-32,by-14,cx+29,by-46)}
+   else if(r.k=='mole'){for(let j=0;j<5;j++){const x=holeX(r,j)-cam.x,m=r.mo[j],u=m.u;if(u>.02){const sq=m.bonk>0?.7:1,h=44*u*sq;g.drawImage(MOLS[m.gold],0,0,40,44*u,x-20*(2-sq),by-8-h,40*(2-sq),h)}g.drawImage(MND,x-28,by-22)}lamps.push(cx,by-30)}
+   else if(r.k=='gal'){for(const s of[-1,1])for(let j=0;j<2;j++)g.drawImage(PIL[(j*2+(s>0?1:0))%4],cx+s*(r.rw-1.2-j*.9)*T-11,by-62+j*16,22,62-j*16);lamps.push(cx,by-80)}
    else if(r.k=='vault'){for(const s of[-5,5])g.drawImage(COL,cx+s*T-22,by-128);g.drawImage(w.v[r.id]?CHO:CHC,cx-35,by-64);lamps.push(cx,by-40,cx-5*T,by-110,cx+5*T,by-110)}}
   if(lamps.length)lampL.unshift(...lamps.slice(0,10))}
  {const _dn=drawNPCs;drawNPCs=function(now){try{drawBack(now)}catch(e){if(!drawBack.e){drawBack.e=1;console.error('DEPTH8 draw',e)}}return _dn(now)}}
  function label(g2,x,y,txt,c){g2.font='700 12px '+(typeof FONT!='undefined'?FONT:'system-ui');g2.textAlign='center';const tw=g2.measureText(txt).width+18;g2.fillStyle='rgba(20,16,32,.8)';g2.beginPath();g2.roundRect(x-tw/2,y-14,tw,20,10);g2.fill();if(c){g2.strokeStyle=c;g2.lineWidth=1.2;g2.stroke()}g2.fillStyle='#fff';g2.fillText(txt,x,y+1)}
+ // a floating gallery crystal: a faceted shard (a rainbow prism is bigger), fading in and out, bursting when hit
+ function drawCrystal(g2,c,ccx,ccy){const p=tgPos(c),a=c.pop>0?c.pop/.3:Math.min(1,c.t/.25,(c.life-c.t)/.3);if(a<=0)return;const s=(c.pr?15:11)*(c.pop>0?1.5-c.pop:1),col=c.pr?'#ffffff':PC[c.hue];
+  g2.save();g2.globalAlpha=a;g2.translate(p.x-ccx,p.y-ccy);g2.rotate(Math.sin(c.t*2+c.ph)*.25);g2.lineJoin='round';g2.strokeStyle='#1a1430';g2.lineWidth=2;
+  const gr=g2.createLinearGradient(-s,-s,s,s);if(c.pr){['#ff9ad8','#ffd36a','#9dff8a','#7fe9ff','#b48cff'].forEach((q,i)=>gr.addColorStop(i/4,q))}else{gr.addColorStop(0,'#ffffff');gr.addColorStop(.4,col);gr.addColorStop(1,mixc(col,.55))}
+  g2.fillStyle=gr;g2.beginPath();g2.moveTo(0,-s*1.5);g2.lineTo(s*.8,-s*.3);g2.lineTo(s*.5,s*1.1);g2.lineTo(-s*.5,s*1.1);g2.lineTo(-s*.8,-s*.3);g2.closePath();g2.fill();g2.stroke();
+  g2.strokeStyle='rgba(255,255,255,.7)';g2.lineWidth=1.2;g2.beginPath();g2.moveTo(0,-s*1.4);g2.lineTo(0,s);g2.moveTo(-s*.75,-s*.3);g2.lineTo(s*.75,-s*.3);g2.stroke();g2.restore()}
+ // the forge bar: the gold zone (a brighter perfect strip in its middle), the swinging needle, and one dot per strike
+ function forgeBar(g2,r,cx,y){const bw=170,x0=cx-bw/2;g2.save();g2.fillStyle='rgba(20,12,10,.85)';g2.strokeStyle='#ff8a3a';g2.lineWidth=1.5;g2.beginPath();g2.roundRect(x0-8,y-14,bw+16,40,10);g2.fill();g2.stroke();
+  g2.fillStyle='#3a2420';g2.fillRect(x0,y-6,bw,12);g2.fillStyle='#e8a83a';g2.fillRect(x0+(r.zc-r.wz/2)*bw,y-6,r.wz*bw,12);g2.fillStyle='#fff3b0';g2.fillRect(x0+(r.zc-r.wz*.18)*bw,y-6,r.wz*.36*bw,12);
+  const nx=x0+needle(r)*bw;g2.fillStyle='#ffffff';g2.fillRect(nx-1.5,y-10,3,20);g2.beginPath();g2.moveTo(nx-5,y-12);g2.lineTo(nx+5,y-12);g2.lineTo(nx,y-6);g2.closePath();g2.fill();
+  for(let i=0;i<MG.forge.n;i++){const v=r.res[i];g2.fillStyle=v==null?'#5a4a44':v==2?'#ffe08a':v?'#ffffff':'#ff6a6a';g2.beginPath();g2.arc(cx+(i-2)*16,y+17,4,0,6.3);g2.fill()}g2.restore()}
  function drawTop(g2,ccx,ccy){if(!entered||cur=='plaza')return;const now=performance.now(),t=now/1000,vw=cv.width/ZM,vh=cv.height/ZM;
   if(blend>.01&&tintB){g2.save();g2.globalAlpha=Math.min(1,blend)*.8;g2.drawImage(vig(tintB),0,0,vw,vh);g2.restore()}
   if(!S.length)return;const w=wr(),vis=[];for(const r of S){const cx=ctr(r)-ccx,by=r.fy*T-ccy;if(cx>-(r.rw+3)*T&&cx<vw+(r.rw+3)*T&&by>-160&&by<vh+220)vis.push([r,cx,by])}if(!vis.length)return;
@@ -9607,19 +9689,29 @@ const DEPTH8=(()=>{
    if(r.k=='grove'){const rd=ready(r);for(let j=0;j<r.caps.length;j++){const c=r.caps[j],x=c.x-ccx,cc=CAPC[c.hue];g2.globalAlpha=(rd?.4:.18)+.12*Math.sin(t*2+c.ph);g2.drawImage(GL(cc),x-30*c.sz,by-50*c.sz-14,60*c.sz,40*c.sz);
      if(rd&&!r.got.has(j)){const p=spore(r,j,t),s=20+4*Math.sin(t*3+j);g2.globalAlpha=.85;g2.drawImage(GL(cc),p.x-ccx-s,p.y-ccy-s,s*2,s*2);g2.globalAlpha=1;g2.drawImage(GL('#ffffff'),p.x-ccx-6,p.y-ccy-6,12,12)}}}
    else if(r.k=='reso'){const sv=w.p[r.id];for(let j=0;j<4;j++){const x=pillX(r,j)-ccx,l=r.lit[j]>0?Math.min(1,r.lit[j]/.2):0;g2.globalAlpha=sv?.5+.15*Math.sin(t*2+j):.16+l*.84;const s=46+l*44;g2.drawImage(GL(r.bad>0?'#ff4a5a':PC[j]),x-s,by-62-s,s*2,s*2)}}
-   else if(r.k=='shrine'){const rd=(w.s[r.id]||0)<=Date.now(),f=.82+.14*Math.sin(t*9)+.06*Math.sin(t*23);g2.globalAlpha=(rd?.95:.35)*f;g2.drawImage(GL('#ff8a3a'),cx-36,by-118,72,70);g2.globalAlpha=(rd?.85:.3)*f;g2.drawImage(GL('#ffe08a'),cx-15,by-104,30,32)}
+   else if(r.k=='forge'){const f=.8+.14*Math.sin(t*9)+.06*Math.sin(t*23),hot=r.st=='play'?1:.6;g2.globalAlpha=.9*f*hot;g2.drawImage(GL('#ff6a2a'),cx-62,by-40,60,44);g2.globalAlpha=.7*f*hot;g2.drawImage(GL('#ff9a3a'),cx+10,by-60,38,26);
+    if(r.fl>0){g2.globalAlpha=Math.min(1,r.fl/.15);const s=40+(r.lr||0)*30;g2.drawImage(GL(r.lr==2?'#ffe08a':r.lr?'#ffb060':'#a0a0a0'),cx+29-s,by-44-s,s*2,s*2)}}
+   else if(r.k=='mole'){for(let j=0;j<5;j++){const m=r.mo[j];if(m.gold&&m.u>.2){g2.globalAlpha=.6*m.u;g2.drawImage(GL('#ffd36a'),holeX(r,j)-ccx-34,by-70,68,64)}}}
+   else if(r.k=='gal'){for(const c of r.tg){const p=tgPos(c),a=c.pop>0?c.pop/.3:Math.min(1,c.t/.25,(c.life-c.t)/.3),s=(c.pr?34:26)*(c.pop>0?1.6-c.pop:1);g2.globalAlpha=.7*a;g2.drawImage(GL(c.pr?'#ffffff':PC[c.hue]),p.x-ccx-s,p.y-ccy-s,s*2,s*2)}}
    else if(r.k=='vault'){const f=.8+.2*Math.sin(t*8);for(const s of[-5,5]){g2.globalAlpha=.7*f;g2.drawImage(GL('#ff7a3a'),cx+s*T-30,by-148,60,60)}const op=w.v[r.id];if(!op&&r.killed>=3){g2.globalAlpha=.6+.3*Math.sin(t*4);g2.drawImage(GL('#ffd36a'),cx-60,by-90,120,90)}
     for(const m of r.gs){if(m.hp<=0)continue;g2.globalAlpha=.55+.25*Math.sin(t*6);g2.strokeStyle='#ff5a2a';g2.lineWidth=3;g2.beginPath();g2.ellipse(m.x-ccx,m.y+m.h-ccy,m.w*.75,m.w*.22,0,0,6.3);g2.stroke()}}}
   g2.restore();
   for(const[r,cx,by]of vis){const nr=Math.abs(P.x-ctr(r))<T*(r.rw+4)&&Math.abs(P.y-(r.fy-2)*T)<T*6;
    if(r.k=='vault'&&!w.v[r.id]&&r.killed<3){g2.save();g2.strokeStyle='#c9c6d8';g2.lineWidth=3;g2.setLineDash([6,4]);g2.beginPath();g2.moveTo(cx-30,by-52);g2.lineTo(cx+30,by-14);g2.moveTo(cx+30,by-52);g2.lineTo(cx-30,by-14);g2.stroke();g2.setLineDash([]);g2.fillStyle='#e8b83a';g2.strokeStyle='#160a08';g2.lineWidth=2;g2.beginPath();g2.roundRect(cx-8,by-40,16,14,3);g2.fill();g2.stroke();g2.restore()}
+   if(r.k=='gal')for(const c of r.tg)drawCrystal(g2,c,ccx,ccy);
+   if(r.st=='play'){const bob=Math.sin(t*4)*2;
+    if(r.k=='mole'){label(g2,cx,by-96+bob,'Bonk!  '+r.sc+' / '+MG.mole.goal+'   ·   '+Math.ceil(Math.max(0,r.tm))+' s',MG.mole.c);continue}
+    if(r.k=='gal'){label(g2,cx,by-(r.rh+.4)*T+bob,'Crystals  '+r.sc+' / '+MG.gal.goal+'   ·   '+Math.ceil(Math.max(0,r.tm))+' s',MG.gal.c);continue}
+    if(r.k=='forge'){forgeBar(g2,r,cx,by-162);continue}}
    if(!nr)continue;const bob=Math.sin(t*4)*2;
    if(r.k=='reso'){const sv=w.p[r.id];label(g2,cx,by-150+bob,sv?'Resonance restored':r.st=='show'?'Listen...':r.st=='input'?'Strike the crystals in order  '+r.step+' / '+r.seq.length:r.st=='fail'?'Wrong note!':'Press E: listen to the crystals',sv?'#9fe0ff':PC[1])}
-   else if(r.k=='shrine'){const left=(w.s[r.id]||0)-Date.now();label(g2,cx,by-132+bob,left>0?'Gathering embers  '+fmt(left):'Press E: pray',BUFFS.might.c)}
+   else if(r.k=='mole'||r.k=='gal'||r.k=='forge'){const G=MG[r.k],s=w.mg[r.id],hi=db.hi[r.k]|0,cd=s&&s.cd>Date.now()?'   ·   rewards in '+fmt(s.cd-Date.now()):'',
+     nm=r.k=='mole'?'Mole Rush: bonk '+G.goal+' points':r.k=='gal'?'Crystal Gallery: hit '+G.goal+' crystals':'Ember Forge: strike in the gold';
+     label(g2,cx,by-(r.k=='mole'?96:r.k=='gal'?(r.rh+.4)*T:150)+bob,'Press E: '+nm+(hi?'   ·   best '+hi:'')+cd,G.c)}
    else if(r.k=='vault'){label(g2,cx,by-92+bob,w.v[r.id]?'Relic vault (empty)':r.killed>=3?'Press E: open the relic chest':r.gs.length?'Defeat the guardians  '+r.killed+' / 3':'A sealed relic vault','#ff7a3a')}
    else if(r.k=='grove'&&!ready(r))label(g2,cx,by-108+bob,'Regrowing  '+fmt((w.g[r.id]||0)-Date.now()),CAPC[0])}}
  {const _dp=BOSS6.drawProj;BOSS6.drawProj=function(g2,cx,cy){try{drawTop(g2,cx,cy)}catch(e){if(!drawTop.e){drawTop.e=1;console.error('DEPTH8 top',e)}}return _dp.apply(this,arguments)}}
- return{BANDS,BUFFS,MATS,CACHE,GEODE,sites:()=>S,caches:()=>CA,geodes:()=>GE,get band(){return band&&band.id},get depth(){return depth},get db(){return db},wr,save,reload:load,spore,pillX,hit,listen,use,counts,el:()=>el,
+ return{BANDS,MG,MATS,holeX,bonk,tgPos,shoot,needle,hammer,startMole,startGal,startForge,strike,CACHE,GEODE,sites:()=>S,caches:()=>CA,geodes:()=>GE,get band(){return band&&band.id},get depth(){return depth},get db(){return db},wr,save,reload:load,spore,pillX,hit,listen,use,counts,el:()=>el,
   find:k=>S.find(r=>r.k==k)}})();
 
 /* ========== LATE: 86-z-levelscale.js ========== */
@@ -9927,14 +10019,17 @@ const FISHGAME=(()=>{
 
 /* ========== LATE: 86-zz-minesfx.js ========== */
 // ===== MSFX8: mining sounds. Every tool hit and break gets a synthesized sound for its material: soft dirt / sand / grass (a crumbly "shff"
-// with a soft thump), leaves (a rustle), glass (a tinkly shatter), wood (a hollow knock + splinter), stone (a sharp crack, a low thud and a gravel
+// and settling grains), leaves (a rustle), glass (a tinkly shatter), wood (a woody crack + splinter), stone (a crunchy crack and a gravel
 // tail with pebble ticks), ore (a crunchy rock crack plus a bright crystalline "ting" and sparkles, pitched up the rarer the ore), Crystal Geodes
-// (an even longer rising shimmer), Twiggy's tree chop (knock + creak + leaves), a cascade of rising tings when Glimmer mines a whole vein, a dull
+// (an even longer rising shimmer), Twiggy's tree chop (chop + creak + leaves), a cascade of rising tings when Glimmer mines a whole vein, a dull
 // muffled "tok" when the tool is wrong for the block, and a shiny chime for tool level-ups. WebAudio only: one shared noise buffer and a few short
 // oscillators per sound, small random pitch variation, a soft compressor on its own bus, follows the "Sound effects" slider (OPT.sv), and a voice
 // budget + per-sound gap so fast mining never piles up. MSFX8.log keeps the last sounds asked for (tests read it).
 // Tuned to be easy on the ears: soft 8-10 ms attacks (no clicks), the bright crack bands moved down to a rounder ~2 kHz "tok", a gentle
-// treble shelf and lowpass on the bus, a short warm room tail, and repeated hits play quieter than the final break. =====
+// treble shelf and lowpass on the bus, a short warm room tail, and repeated hits play quieter than the final break.
+// Smooth, not drum-like: there are no low sine "kicks" with a falling pitch any more (that is what made every hit and break sound like a
+// drum). Bodies are band-limited noise with 12-15 ms swells, so a break is a crumble / crunch / splinter and a hit is a soft brushed "shk";
+// the only pitched parts are the quiet, steady chimes of glass, ore and geodes. =====
 const MSFX8=(()=>{
  const R=Math.random;let mul=1;const vol=()=>(typeof OPT=='undefined'||OPT.sv==null?1:+OPT.sv)*mul;
  const ok=()=>{try{ac()}catch(_){}return typeof AC!='undefined'&&!!AC&&AC.state!='closed'&&vol()>0};
@@ -9949,8 +10044,8 @@ const MSFX8=(()=>{
   try{const cv=AC.createConvolver(),wet=AC.createGain();cv.buffer=room();wet.gain.value=.16;lp.connect(cv);cv.connect(wet);wet.connect(cp)}catch(_){}
   return bus};
  // filtered noise burst: d seconds, filter type, f0 -> f1, Q, volume, delay
- function nz(d,ty,f0,f1,q,v,dl){const t=AC.currentTime+(dl||0)+.004,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=buf();f.type=ty;f.Q.value=q||1;f.frequency.setValueAtTime(f0,t);if(f1!=f0)f.frequency.exponentialRampToValueAtTime(Math.max(40,f1),t+d);
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+Math.min(.01,d*.25));g.gain.exponentialRampToValueAtTime(.0004,t+d);s.connect(f);f.connect(g);g.connect(out());s.start(t,R()*.75,d+.05);s.stop(t+d+.06)}
+ function nz(d,ty,f0,f1,q,v,dl,at){const t=AC.currentTime+(dl||0)+.004,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=buf();f.type=ty;f.Q.value=q||1;f.frequency.setValueAtTime(f0,t);if(f1!=f0)f.frequency.exponentialRampToValueAtTime(Math.max(40,f1),t+d);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+(at||Math.min(.01,d*.25)));g.gain.exponentialRampToValueAtTime(.0004,t+d);s.connect(f);f.connect(g);g.connect(out());s.start(t,R()*.75,d+.05);s.stop(t+d+.06)}
  // oscillator with a pitch glide and a fast attack / exponential decay
  function os(ty,f0,f1,d,v,dl,at){const t=AC.currentTime+(dl||0)+.004,o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f0,t);if(f1!=f0)o.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t+d*.9);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+(at||Math.min(.008,d*.2)));g.gain.exponentialRampToValueAtTime(.0004,t+d);o.connect(g);g.connect(out());o.start(t);o.stop(t+d+.05)}
@@ -9964,41 +10059,40 @@ const MSFX8=(()=>{
  const p=()=>.96+R()*.08;
  const vari=b=>{const n=((typeof BLK!='undefined'&&BLK[b])||[''])[0];return b==93?'cache':/Glass|Ice/.test(n)?'glass':/Leaf|Leaves|Hedge|Moss|Vine/.test(n)?'leaf':/Sand|Snow/.test(n)?'sand':/Grass/.test(n)?'grass':'dirt'};
  const rar=b=>{try{const pr=(typeof PRICE!='undefined'&&PRICE[b])||0;return pr>=150?5:pr>=90?4:pr>=60?3:pr>=25?2:pr>=12?1:0}catch(_){return 1}};
- // ---- material voices
+ // little grains of rubble settling after a break: short, soft bandpassed noise ticks (not pitched)
+ const grains=(n,f0,f1,v,dl)=>{for(let i=0;i<n;i++){const f=f0+R()*(f1-f0);nz(.035,'bandpass',f,f*.85,2.2,v,dl+i*.045+R()*.025,.006)}};
+ // ---- material voices (breaks; hits share one voice below)
  const V={
-  soft(b,brk,q){const v=vari(b);if(v=='glass'){if(brk){for(let i=0;i<4;i++){const f=2600+R()*2600;os('sine',f,f*.96,.06+R()*.08,.05,i*.03+R()*.02)}nz(.18,'highpass',4200,3000,.7,.06)}else{os('sine',2600*q,2500*q,.08,.05);nz(.05,'highpass',4200,3400,.7,.035)}return}
-   if(v=='leaf'){nz(brk?.24:.12,'bandpass',3200*q,2100,1.4,brk?.15:.09);nz(brk?.14:.08,'bandpass',2200*q,1600,1.8,.08,.05);if(brk)os('sine',170*q,90,.07,.08);return}
-   const hi=v=='sand'?1.6:v=='grass'?1.15:1;
-   if(brk){nz(.17,'lowpass',2300*hi*q,420,.7,.24);nz(.08,'bandpass',950*hi*q,620,1.2,.13,.01);os('sine',150*q,68,.1,.17);if(v=='grass')nz(.09,'highpass',4200,3000,.7,.05,.02);if(v=='cache'){os('triangle',520*q,300,.08,.08,.04);ting(1568*q,.3,.05,.08)}}
-   else{nz(.07,'lowpass',1600*hi*q,600,.7,.15);os('sine',190*q,120,.05,.09)}},
-  wood(b,brk,q){if(brk){os('triangle',380*q,190,.09,.15);os('sine',225*q,118,.13,.15);nz(.1,'bandpass',1250*q,820,2.5,.16);os('triangle',310*q,165,.07,.08,.05);nz(.06,'highpass',2600,1800,.8,.06,.03)}
-   else{os('sine',430*q,260,.07,.12);nz(.05,'bandpass',1300*q,1000,2,.07)}},
-  stone(b,brk,q){if(brk){nz(.08,'bandpass',1900*q,950,1,.2);os('sine',122*q,52,.2,.22);nz(.32,'lowpass',1200*q,260,.6,.12,.02);for(let i=0;i<3;i++){const f=1300+R()*700;os('sine',f,f*.82,.04,.03,.07+i*.05+R()*.03)}}
-   else{nz(.06,'bandpass',1800*q,1150,1,.12);os('sine',240*q,150,.07,.1)}},
+  soft(b,brk,q){const v=vari(b);if(v=='glass'){for(let i=0;i<4;i++){const f=2600+R()*2600;os('sine',f,f*.98,.06+R()*.08,.04,i*.03+R()*.02,.006)}nz(.2,'highpass',4200,3000,.7,.05,0,.012);return}
+   if(v=='leaf'){nz(.26,'bandpass',3000*q,2000,1.2,.14,0,.02);nz(.16,'bandpass',2100*q,1500,1.6,.08,.05,.02);return}
+   const hi=v=='sand'?1.5:v=='grass'?1.15:1;
+   nz(.26,'lowpass',1900*hi*q,480,.6,.24,0,.015);nz(.14,'bandpass',780*hi*q,560,.8,.13,.015,.015);grains(3,1800*hi,3000*hi,.035,.06);
+   if(v=='grass')nz(.1,'highpass',4000,3000,.7,.045,.02,.015);if(v=='cache')ting(1568*q,.3,.05,.08)},
+  wood(b,brk,q){nz(.13,'bandpass',880*q,760,3,.2,0,.012);nz(.18,'bandpass',1550*q,1150,1.4,.1,.02,.015);os('triangle',600*q,590*q,.14,.03,0,.015);nz(.09,'highpass',2600,1800,.8,.055,.045,.012)},
+  stone(b,brk,q){nz(.11,'bandpass',1650*q,1100,.9,.17,0,.012);nz(.38,'lowpass',1100*q,320,.6,.14,.02,.02);grains(3,1900,3100,.04,.08)},
   ore(b,brk,q){const r=b==94?5:rar(b),f=PENT[3+r]*q;
-   if(brk){nz(.08,'bandpass',1900*q,950,1,.21);os('sine',112*q,50,.2,.22);nz(.28,'lowpass',1300*q,280,.6,.1,.02);ting(f,.55+r*.06,.085,.03);
-    for(let i=0,n=2+(r>>1);i<n;i++){const s=PENT[5+((R()*7)|0)];os('sine',s,s*1.02,.06,.03,.08+i*.045+R()*.02)}}
-   else{nz(.06,'bandpass',1850*q,1200,1,.11);os('sine',230*q,150,.06,.08);ting(f*.75,.18,.04,.01)}},
-  geode(b,brk,q,pr){if(brk){V.ore(94,true,q);[1047,1319,1568,2093,2637,3136,4186].forEach((f,i)=>os('sine',f*q,f*q*1.004,.3,.045,.1+i*.055));os('sine',4186,4180,1.3,.014,.45);nz(.55,'highpass',6500,5200,.6,.03,.12)}
-   else{nz(.07,'bandpass',1900*q,1100,1,.15);os('sine',130*q,60,.12,.14);const f=PENT[2+Math.round((pr||0)*5)];os('sine',f,f,.22,.035,.03)}}};
+   nz(.11,'bandpass',1700*q,1100,.9,.17,0,.012);nz(.32,'lowpass',1200*q,340,.6,.12,.02,.02);ting(f,.55+r*.06,.08,.03);grains(2,2000,3000,.03,.07);
+   for(let i=0,n=2+(r>>1);i<n;i++){const s=PENT[5+((R()*7)|0)];os('sine',s,s*1.01,.08,.025,.1+i*.045+R()*.02,.008)}},
+  geode(b,brk,q){V.ore(94,true,q);[1047,1319,1568,2093,2637,3136,4186].forEach((f,i)=>os('sine',f*q,f*q*1.004,.3,.04,.1+i*.055,.01));os('sine',4186,4180,1.3,.012,.45);nz(.55,'highpass',6500,5200,.6,.03,.12)}};
  const SZ={soft:6,wood:6,stone:9,ore:14,geode:24};
- // ---- hits: one smooth voice for every material (the sound you hear several times a second while mining): a rounded sine "thock" with a short
- // pitch drop and a lowpassed puff of noise for texture; ores and geodes add a quiet, slow-attack sine chime instead of a bright ting. Pitch
- // follows the material and climbs a little over a run of hits on a block; a fast run also gets slightly quieter so mining never gets harsh.
- const HM={soft:[175,900,.1],dirt:[175,900,.1],leaf:[240,1400,.07],sand:[205,1100,.09],grass:[185,1000,.1],glass:[520,1800,.05],cache:[200,950,.1],wood:[300,1100,.09],stone:[150,1000,.1],ore:[160,1050,.1],geode:[170,1100,.1]};
+ // ---- hits: one smooth voice for every material (the sound you hear several times a second while mining): a soft brushed "shk" of
+ // bandpassed noise in the material's colour with a little lowpassed grit under it, both swelling in over ~12 ms. No pitched thump.
+ // Ores and geodes add a quiet, slow-attack sine chime. The colour climbs a little over a run of hits on a block, and a fast run gets
+ // slightly quieter so mining never gets harsh.
+ const HM={soft:[900,700,.15],dirt:[900,700,.15],leaf:[2300,1500,.1],sand:[1350,1050,.13],grass:[1150,880,.14],glass:[3000,2000,.07],cache:[950,740,.14],wood:[1050,800,.14],stone:[1450,900,.14],ore:[1550,980,.14],geode:[1650,1050,.14]};
  let lastHit=0,run=0;
  function hit(c,b,pr){const v0=c=='soft'?vari(b):c,h=HM[v0]||HM.soft,now=performance.now();run=now-lastHit<300?Math.min(run+1,6):0;lastHit=now;
-  const dk=1-run*.05,q=.985+R()*.03,up=1+run*.015+(pr||0)*.06,f0=h[0]*q*up;
-  os('sine',f0*1.6,f0,.11,.1*dk);nz(.07,'lowpass',h[1]*q,h[1]*.55,.7,h[2]*.7*dk);
-  if(v0=='wood')os('sine',f0*2.1,f0*1.6,.06,.05*dk,.004);
-  if(v0=='glass')os('sine',f0*3,f0*2.95,.12,.03*dk,0,.012);
+  const dk=1-run*.05,q=.985+R()*.03,up=1+run*.02+(pr||0)*.08,f0=h[0]*q*up;
+  nz(.1,'bandpass',f0,f0*.82,.8,h[2]*dk,0,.012);nz(.08,'lowpass',h[1]*q,h[1]*.6,.6,h[2]*.55*dk,.008,.015);
+  if(v0=='wood')nz(.06,'bandpass',f0*.85,f0*.8,3,h[2]*.45*dk,.004,.01);
+  if(v0=='glass')os('sine',2600*q,2580*q,.12,.03*dk,0,.012);
   if(c=='ore'||c=='geode'){const f=PENT[1+(c=='geode'?4:rar(b))]*q*up;os('sine',f,f,.24,.026*dk,.01,.03)}}
  function play(kind,cat,b,o){o=o||{};const c=cat=='ore'&&b==94?'geode':cat;if(!V[c])return false;const tag=kind+':'+c,brk=kind=='break';if(!gate(tag,brk?SZ[c]||8:4,brk?28:45))return false;note(kind,c);if(!ok())return true;
   mul=brk?1:.8;try{if(brk)V[c](b,true,p(),o.pr);else hit(c,b,o.pr)}catch(_){}finally{mul=1}return true}
  // ---- specials
- function wrong(cat){if(!gate('wrong',3,70))return false;note('wrong',cat||'');if(!ok())return true;const q=p();try{os('sine',205*q,140,.08,.13);nz(.05,'lowpass',700*q,320,.8,.11);if(cat=='ore')nz(.04,'bandpass',3600,3000,2,.03,.02)}catch(_){}return true}
- function tree(){if(!gate('tree',12,60))return false;note('break','tree');if(!ok())return true;const q=p();try{os('triangle',300*q,150,.11,.16);os('sine',170*q,92,.16,.17);nz(.11,'bandpass',1100*q,700,2.4,.16);
-  nz(.32,'bandpass',3000*q,2000,1.2,.11,.06);os('triangle',165*q,128,.24,.035,.09,.05);os('triangle',300*q,170,.07,.07,.06)}catch(_){}return true}
+ function wrong(cat){if(!gate('wrong',3,70))return false;note('wrong',cat||'');if(!ok())return true;const q=p();try{nz(.08,'lowpass',650*q,380,.7,.17,0,.012);nz(.05,'bandpass',900*q,700,1.5,.06,.005,.01);if(cat=='ore')nz(.04,'bandpass',3600,3000,2,.03,.02)}catch(_){}return true}
+ function tree(){if(!gate('tree',12,60))return false;note('break','tree');if(!ok())return true;const q=p();try{nz(.13,'bandpass',880*q,740,3,.2,0,.012);nz(.16,'bandpass',1500*q,1100,1.4,.1,.02,.015);
+  nz(.32,'bandpass',3000*q,2000,1.2,.11,.06,.02);os('triangle',150*q,168*q,.3,.025,.09,.06)}catch(_){}return true}
  // one step of a vein cascade: a crunchy little crack and the next note up the scale; the last block lands a sparkly chord
  function vein(i,n,b){if(!gate('vein',6,20))return false;note('vein','ore');if(!ok())return true;const q=.985+R()*.03,r=rar(b),f=PENT[Math.min(PENT.length-1,(i+r)%PENT.length)]*q;
   try{nz(.05,'bandpass',2400*q,1300,1.2,.13);ting(f,.32,.075);if(i>=n-1){[0,2,4].forEach((s,j)=>ting(PENT[Math.min(PENT.length-1,(i+r+s)%PENT.length)]*q,.6,.05,.07+j*.05));nz(.4,'highpass',6800,5600,.6,.025,.12)}}catch(_){}return true}

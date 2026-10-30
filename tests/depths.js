@@ -19,11 +19,11 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  // ---- generation + blocks
  const gen=await E(()=>{const S=DEPTH8.sites(),kinds=[...new Set(S.map(r=>r.k))];const s93=spr(93,1,1),s94=spr(94,1,1);const px=c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i])n++;return n};
   return{kinds,n:S.length,ca:DEPTH8.caches().filter(k=>tiles[k]==93).length,ge:DEPTH8.geodes().filter(k=>tiles[k]==94).length,spr:px(s93)>1000&&px(s94)>1000,names:[BLK[93][0],BLK[94][0]],tile7:TILE7.on,glow:!!GLOW7[94],cat:TOOLS8.catOf(94)+'/'+TOOLS8.catOf(93),valid:validEdit({k:5,a:[94,0,0,0]}),ok:DEPTH8.wr().ok.length}});
- ok('world generation places every site kind (groves, resonance shrines, ancient shrines, relic vaults)',['grove','reso','shrine','vault'].every(k=>gen.kinds.includes(k)),gen);
+ ok('world generation places every site kind (groves, singing crystals, Mole Rush, Crystal Gallery, Ember Forges, relic vaults) and no shrines',['grove','reso','mole','gal','forge','vault'].every(k=>gen.kinds.includes(k))&&!gen.kinds.includes('shrine'),gen);
  ok('Buried Caches (93) and Crystal Geodes (94) are placed and render through the block sprite path',gen.ca>=6&&gen.ge>=8&&gen.spr&&gen.tile7&&gen.glow&&gen.valid,gen);
  ok('tool categories: geodes are ore (Glimmer), caches are soft (Pip)',gen.cat=='ore/soft',gen.cat);
  // ---- bands + indicator
- for(const[k,id,nm]of[['grove','hollow','Glowroot Hollows'],['reso','crystal','Crystal Caverns'],['shrine','magma','Emberdeep']]){await E(k=>TP(k),k);await sleep(450);
+ for(const[k,id,nm]of[['grove','hollow','Glowroot Hollows'],['reso','crystal','Crystal Caverns'],['forge','magma','Emberdeep']]){await E(k=>TP(k),k);await sleep(450);
   const r=await E(()=>{const e=document.getElementById('dz8');return{band:DEPTH8.band,on:!!e&&e.classList.contains('on'),txt:e&&e.textContent,depth:Math.round(DEPTH8.depth)}});
   ok('band '+id+' is detected and its indicator shows name + depth',r.band==id&&r.on&&r.txt.includes(nm)&&/\d+ m deep/.test(r.txt),r)}
  const zone=await E(()=>({z:DEPTH8.db.zone,cards:CARDS().filter(c=>c.k=='zone').length}));ok('first visit to each zone is rewarded once',zone.z.hollow&&zone.z.crystal&&zone.z.magma,zone);
@@ -55,10 +55,29 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  const rs=await E(async()=>{const r=DEPTH8.find('reso'),s0=cnt(268),g0=gems;for(let i=r.step;i<r.seq.length;i++)DEPTH8.hit(r,r.seq[i]);await new Promise(q=>setTimeout(q,900));return{solved:!!DEPTH8.wr().p[r.id],shard:cnt(268)-s0,gems:gems-g0,st:r.st,card:CARDS().some(c=>c.k=='reso')}});
  ok('resonance: striking a crystal with a weapon counts as a note',strike==1,strike);
  ok('resonance: repeating the melody solves it (gems, Resonant Shard, card)',rs.solved&&rs.shard==1&&rs.gems>=80&&rs.card,rs);
- // ---- ancient shrine blessing
- const sh1=await E(()=>{TP('shrine',0);const d0=bonus();interact();const d1=bonus(),bf=DEPTH8.db.buff;const B=bf&&DEPTH8.BUFFS[bf.k];const k=B&&Object.keys(B.fx)[0];return{bf:!!bf,up:!!k&&d1[k]>d0[k],card:CARDS().some(c=>c.k=='shrine'),cd:(DEPTH8.wr().s[DEPTH8.find('shrine').id]||0)>Date.now()}});
- const sh2=await E(()=>{const e0=DEPTH8.db.buff.end;interact();return DEPTH8.db.buff.end==e0&&/gathering embers/i.test(msg)});
- ok('ancient shrine: E grants a timed blessing that raises your stats',sh1.bf&&sh1.up&&sh1.card&&sh1.cd,sh1);ok('ancient shrine: it then recharges (no stacking)',sh2);
+ // ---- Mole Rush: losing pays nothing; bonking enough moles (by striking and by E) clears it
+ const ml=await E(()=>{const r=DEPTH8.find('mole');TP('mole',0);const g0=gems;interact();const st=r.st;r.tm=.01;return new Promise(q=>setTimeout(()=>q({st,end:r.st,gems:gems-g0,msg:/try again/i.test(msg),won:(DEPTH8.wr().mg[r.id]||{}).won|0}),300))});
+ ok('Mole Rush: E starts it; running out of time ends it without a reward',ml.st=='play'&&ml.end=='idle'&&ml.gems==0&&ml.msg&&ml.won==0,ml);
+ const mo=await E(async()=>{const r=DEPTH8.find('mole');TP('mole',0);interact();const st=r.st,g0=gems;let byWeapon=false,byE=false;const t0=performance.now();
+  while(r.st=='play'&&performance.now()-t0<26000){await new Promise(q=>setTimeout(q,50));for(let j=0;j<5;j++){const m=r.mo[j];if(!(m.l>0&&!m.bonk&&m.u>.5)||r.st!='play')continue;const hx=DEPTH8.holeX(r,j),s0=r.sc;
+    if(!byWeapon){P.x=hx-T*1.2;P.y=r.fy*T-P.h-1;wp='fist';wcd=0;mx=hx-cam.x;my=r.fy*T-T*.6-cam.y;useWeapon();byWeapon=r.sc>s0}else if(!byE){P.x=hx;P.y=r.fy*T-P.h-1;interact();byE=r.sc>s0}else DEPTH8.bonk(r,j)}
+   if(r.sc>=DEPTH8.MG.mole.goal&&byE)r.tm=Math.min(r.tm,.01)}
+  await new Promise(q=>setTimeout(q,300));const s=DEPTH8.wr().mg[r.id]||{};return{st,end:r.st,sc:r.sc,byWeapon,byE,won:s.won,cd:s.cd>Date.now(),gems:gems-g0,best:DEPTH8.db.hi.mole,card:CARDS().some(c=>c.k=='mole')}});
+ ok('Mole Rush: moles pop up, a weapon strike or E bonks them, reaching the goal clears it (gems, card, best score, reward cooldown)',mo.st=='play'&&mo.end=='idle'&&mo.byWeapon&&mo.byE&&mo.sc>=12&&mo.won==1&&mo.cd&&mo.gems>=25&&mo.best==mo.sc&&mo.card,mo);
+ // ---- Crystal Gallery: crystals float in; hitting them (aim + attack) scores; the goal clears it
+ const ga=await E(async()=>{const r=DEPTH8.find('gal');TP('gal',0);interact();const st=r.st,g0=gems;let byWeapon=false,seen=0;const t0=performance.now();
+  while(r.st=='play'&&performance.now()-t0<32000){await new Promise(q=>setTimeout(q,50));seen=Math.max(seen,r.tg.length);for(const c of r.tg){if(c.pop>0||c.t<.3||r.st!='play')continue;const p=DEPTH8.tgPos(c),s0=r.sc;
+    if(!byWeapon){wp='fist';wcd=0;mx=p.x-cam.x;my=p.y-cam.y;useWeapon();byWeapon=r.sc>s0}else DEPTH8.shoot(r,p.x,p.y)}
+   if(r.sc>=DEPTH8.MG.gal.goal)r.tm=Math.min(r.tm,.01)}
+  await new Promise(q=>setTimeout(q,300));const s=DEPTH8.wr().mg[r.id]||{};return{st,end:r.st,sc:r.sc,seen,byWeapon,won:s.won,gems:gems-g0,best:DEPTH8.db.hi.gal,card:CARDS().some(c=>c.k=='gal')}});
+ ok('Crystal Gallery: crystals float in, aiming and attacking hits them, the goal clears it (gems, a gem, card, best score)',ga.st=='play'&&ga.seen>0&&ga.byWeapon&&ga.end=='idle'&&ga.sc>=15&&ga.won==1&&ga.gems>=30&&ga.best==ga.sc&&ga.card,ga);
+ // ---- Ember Forge (where the shrines were): 5 strikes in the gold forge a material; all misses crack the blade
+ const fo=await E(()=>{const r=DEPTH8.find('forge');TP('forge',0);const g0=gems,c0=[263,264,265].map(cnt);interact();const st=r.st,aim=()=>{r.ph=Math.acos(1-2*r.zc);r.lh=0};
+  aim();wp='fist';wcd=0;mx=P.x-cam.x;my=P.y-cam.y;useWeapon();const byWeapon=r.res.length==1;for(let i=1;i<5;i++){aim();interact()}const s=DEPTH8.wr().mg[r.id]||{};
+  return{st,byWeapon,res:r.res.slice(),end:r.st,won:s.won,cd:s.cd>Date.now(),gems:gems-g0,flawless:cnt(265)>c0[2],card:CARDS().some(c=>c.k=='forge')}});
+ ok('Ember Forge: E starts it, striking in the gold (E or attack) scores, five perfect strikes forge a flawless reward',fo.st=='play'&&fo.byWeapon&&fo.res.length==5&&fo.res.every(v=>v==2)&&fo.end=='idle'&&fo.won==1&&fo.cd&&fo.gems>=90&&fo.flawless&&fo.card,fo);
+ const fm=await E(()=>{const r=DEPTH8.find('forge');const g0=gems;interact();for(let i=0;i<5;i++){r.ph=r.zc>.5?0:Math.PI;r.lh=0;interact()}return{res:r.res.slice(),end:r.st,gems:gems-g0,msg:/try again/i.test(msg)}});
+ ok('Ember Forge: striking outside the gold misses and cracks the blade (no reward)',fm.res.length==5&&fm.res.every(v=>v==0)&&fm.end=='idle'&&fm.gems==0&&fm.msg,fm);
  // ---- relic vault: guardians, unseal, open
  await E(()=>TP('vault',-2));await sleep(500);
  const v1=await E(()=>{const r=DEPTH8.find('vault');return{gs:r.gs.length,elite:r.gs.every(m=>m.elite&&mobs.includes(m)&&m.hp>MK[m.k].hp)}});
@@ -100,5 +119,14 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   localStorage.setItem('rbw_savedbuild',JSON.stringify({W,[k]:[7,0,0,0],[5*W+3]:[11,0,0,0]}));enterWorld('savedbuild');const ids=DEPTH8.sites().map(r=>r.id);
   const r={brick:tiles[k]==7,far:tiles[5*W+3]==11,skipped:!ids.includes(g0.id),others:ids.length>=8,ok:DEPTH8.wr().ok.slice()};enterWorld('depthtest');enterWorld('savedbuild');r.stable=JSON.stringify(DEPTH8.sites().map(x=>x.id))==JSON.stringify(ids);return r});
  ok('a save with a build where a room would go: the build is kept, that room is skipped, the rest appear, layout stays stable',sb.brick&&sb.far&&sb.skipped&&sb.others&&sb.stable&&!sb.ok.includes('g0'),sb);
+ // a world first saved before the mini games: its old rooms, caches and geodes stay exactly where they were and the new rooms are added
+ const mg=await E(()=>{const OLD=/^[gpsv]d$/,pos=()=>DEPTH8.sites().filter(r=>OLD.test(r.id)).map(r=>r.id+'@'+r.x+','+r.fy).join(' '),re=()=>{enterWorld('depthtest');enterWorld('migrate')};
+  enterWorld('migrate');const p0=pos(),w=DEPTH8.wr(),all=w.sn.slice();
+  // as the old version had it: only the old rooms (the new ids marked decided-but-skipped, so they stay out): the full cache / geode lists
+  w.ok=w.ok.filter(id=>OLD.test(id));w.sn=all;DEPTH8.save();re();const ca=DEPTH8.caches().map(String),ge=DEPTH8.geodes().map(String),p1=pos(),none=!DEPTH8.sites().some(r=>r.k=='mole'||r.k=='gal');
+  // the old save format (no w.sn): the new rooms are decided now and added
+  const w2=DEPTH8.wr();delete w2.sn;w2.ok=w2.ok.filter(id=>OLD.test(id));DEPTH8.save();re();const kinds=DEPTH8.sites().map(r=>r.k);
+  return{same:p1==p0&&pos()==p0,none,caches:DEPTH8.caches().every(k=>ca.includes(String(k))),geodes:DEPTH8.geodes().every(k=>ge.includes(String(k))),mole:kinds.includes('mole'),gal:kinds.includes('gal'),sn:(DEPTH8.wr().sn||[]).length}});
+ ok('an older world keeps its rooms, caches and geodes where they were and gains the new mini game rooms',mg.same&&mg.none&&mg.caches&&mg.geodes&&mg.mole&&mg.gal&&mg.sn>=11,mg);
  ok('no page errors',errs.length==0,errs.join(' | '));
  await b.close();console.log(fails?fails+' depth test(s) FAILED':'all depth tests passed');process.exit(fails?1:0)})();
