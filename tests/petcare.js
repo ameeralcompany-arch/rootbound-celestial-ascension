@@ -5,6 +5,7 @@
 // over (mocked) time and makes a pet sad / refuse to play, feeding resets it, the ball game works end to end, E opens / closes the UI,
 // picking up the home and placing it again re-homes the pets, bad saved data is cleaned, state survives a reload, no page errors.
 // Cute extras: walking up to a pet makes it wiggle with a heart, hops land with a squash, ear-twitch / wiggle poses draw.
+// Voices (VOX): per-species sets, state picks happy / soft / sleep variants, +-5% pitch jitter, rate limits, panning / off-screen / SFX volume.
 // Optional screenshots: SHOTS=<folder>. node tests/petcare.js
 const {chromium}=require('playwright');const path=require('path');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium',SHOTS=process.env.SHOTS||'';
@@ -60,16 +61,16 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  ok('a walking pet hops up a 1-block step',walk.step==1&&walk.cmax>1.6,walk);
  ok('walking pets (incl. the hopping rabbit) turn at a cliff instead of falling in',walk.pit==0&&walk.dturn&&walk.rturn&&walk.dmin>-2.6,walk);
  // ---- behaviours: frames, particles, sounds
- const beh=await E(async({hx,gy})=>{const tl=[];const _t=SFX7.tone;SFX7.tone=function(){tl.push(arguments[0]);return _t.apply(this,arguments)};const r=PET10.RT.get('pfox');r.x=(hx+.5)*T;r.y=(gy-1)*T;r.vx=r.vy=0;
+ const beh=await E(async({hx,gy})=>{const V=PET10.VOX,seq=()=>V.log.length?V.log[V.log.length-1].seq:0;V.reset();for(const id of['pcat','pdog','prabbit']){PET10.force(id,'sit');PET10.RT.get(id).tm=99}const r=PET10.RT.get('pfox');r.x=(hx+.5)*T;r.y=(gy-1)*T;r.vx=r.vy=0;
   const res={};const want={sit:['sit','sitb'],talk:['talk'],sleep:['sleep0','sleep1'],stretch:['stretch'],happy:['happy','jump'],eat:['eat0','eat1'],spin:['walk0','walk1','walk2','walk3','jump','idle0']};
-  for(const s of['sit','talk','sleep','stretch','happy','eat','spin','hop','flip']){PET10.PT.length=0;const n0=tl.length;PET10.force('pfox',s);r.tm=Math.max(r.tm,2);const fr=new Set(),dirs=new Set(),pk=new Set(PET10.PT.map(q=>q.k));let air=0,rot=0;
+  for(const s of['sit','talk','sleep','stretch','happy','eat','spin','hop','flip']){PET10.PT.length=0;const n0=seq();PET10.force('pfox',s);r.tm=Math.max(r.tm,2);const fr=new Set(),dirs=new Set(),pk=new Set(PET10.PT.map(q=>q.k));let air=0,rot=0;
    for(let i=0;i<14;i++){await _gw(.1);fr.add(r.fr);dirs.add(r.dir);if(!r.g)air=1;if(r.rot>0)rot=1;for(const q of PET10.PT)pk.add(q.k)}
-   res[s]={st:r.st==s||s=='hop'||s=='flip'||s=='happy',fr:[...fr],ok:want[s]?[...fr].some(f=>want[s].includes(f)):true,pt:[...pk],snd:tl.length-n0,air,rot,dirs:dirs.size}}
-  SFX7.tone=_t;PET10.force('pfox','idle');return res},yard);
+   res[s]={st:r.st==s||s=='hop'||s=='flip'||s=='happy',fr:[...fr],ok:want[s]?[...fr].some(f=>want[s].includes(f)):true,pt:[...pk],snd:V.log.filter(q=>q.seq>n0&&q.id=='pfox').map(q=>q.mood+':'+q.v),air,rot,dirs:dirs.size}}
+  PET10.force('pfox','idle');for(const id of['pcat','pdog','prabbit'])PET10.force(id,'idle');return res},yard);
  const bf=Object.keys(beh).filter(k=>!beh[k].ok);ok('behaviour frames: sit, talk, sleep, stretch, happy, eat, spin show their poses',bf.length==0,bf.map(k=>k+':'+beh[k].fr.join('/')).join(' ')||'all');
  ok('hop and flip leave the ground (the flip spins), spin turns around',beh.hop.air&&beh.flip.air&&beh.flip.rot&&beh.spin.dirs==2,{hop:beh.hop.air,flip:[beh.flip.air,beh.flip.rot],spin:beh.spin.dirs});
  ok('particles: zzz while sleeping, a note when it talks, hearts when happy, crumbs when eating',beh.sleep.pt.includes('z')&&beh.talk.pt.includes('note')&&beh.happy.pt.includes('heart')&&beh.eat.pt.includes('crumb'),{sleep:beh.sleep.pt,talk:beh.talk.pt,happy:beh.happy.pt,eat:beh.eat.pt});
- ok('soft synthesized voices: talk (yip), flip, eating play tones',beh.talk.snd>=2&&beh.flip.snd>=1&&beh.eat.snd>=3,{talk:beh.talk.snd,flip:beh.flip.snd,eat:beh.eat.snd});
+ ok('state-aware voices: its talk turn speaks, a flip is a happy fox sound, eating munches, sleeping only breathes / snores',beh.talk.snd.some(x=>/^(soft|happy):fox./.test(x))&&beh.flip.snd.some(x=>/^happy:fox./.test(x))&&beh.eat.snd.includes('happy:munch')&&beh.sleep.snd.length>=1&&beh.sleep.snd.every(x=>/^sleep:fox.(breath|snore)$/.test(x)),{talk:beh.talk.snd,flip:beh.flip.snd,eat:beh.eat.snd,sleep:beh.sleep.snd});
  const fol=await E(async({hx,gy})=>{const r=PET10.RT.get('pcat');r.x=(hx+.5)*T;r.y=(gy-1)*T;P.x=(hx+3.6)*T;P.y=gy*T-P.h-1;P.vx=0;await _gw(.05);PET10.force('pcat','follow');r.tm=4;const x0=r.x;
   await _gw(1.6);const d=r.x-x0;P.x=(hx+9)*T+T/2;return{d:Math.round(d),st:r.st}},yard);
  ok('a happy pet follows you a little',fol.d>T0(),fol);
@@ -79,6 +80,30 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
   const f=PET10.RT.get('pfox');f.x=(hx-.5)*T;f.y=(gy-1)*T;f.vx=f.vy=0;await _gw(.1);PET10.force('pfox','hop');for(let i=0;i<30&&!o.land;i++){await _gw(.05);if(f.land>0)o.land=1}
   P.x=(hx+9)*T+T/2;PET10.force('pcat','idle');o.fr=[...o.fr];o.st=[...o.st];o.poses=['wig0','wig1','twitch','sitt'].every(k=>PET10.FR[k]&&PET10.sprite('cat',0,k,'',{}).width>0);return o},yard);
  ok('walking up to a pet makes it wiggle happily with a heart (it keeps sitting); a hop lands with a squash; twitch / wiggle poses draw',cute.fr.some(f=>f=='wig0'||f=='wig1')&&cute.hearts&&cute.st.join()=='sit'&&cute.land&&cute.poses,cute);
+ // ---- voices: per-species sets, state picks happy / soft / sleep, +-5% pitch jitter, rate limits, mixing (pan, distance, off-screen, SFX volume)
+ const vx=await E(async({hx,gy})=>{const V=PET10.VOX,o={};const M=['happy','soft','sleep'];
+  o.sets=PET10.SPECIES.filter(sp=>!M.every(m=>Array.isArray(V.SETS[sp][m])&&V.SETS[sp][m].length>=2&&V.SETS[sp][m].every(id=>id.startsWith(sp+'.')&&typeof V.FN[id]=='function')));
+  const all=PET10.SPECIES.flatMap(sp=>M.flatMap(m=>V.SETS[sp][m]));o.unique=new Set(all).size==all.length&&typeof V.FN[V.SETS.cat.purr]=='function';
+  o.synth=[];try{ac()}catch(_){}if(typeof AC!='undefined'&&AC){const g=AC.createGain();g.gain.value=0;g.connect(AC.destination);for(const id in V.FN){try{const d=V.FN[id]({t:AC.currentTime+.01,o:g,f:1,v:.0001});if(!(d>0))o.synth.push(id+' len')}catch(e){o.synth.push(id+' '+e.message)}}}else o.synth.push('no audio');
+  P.x=(hx+1)*T;P.y=gy*T-P.h-1;P.vx=P.vy=0;const L={};PET10.S.pets.forEach(p=>{const r=PET10.RT.get(p.id),i=PET10.SPECIES.indexOf(p.sp);r.x=(hx+[-.2,.4,2,2.6][i])*T;r.y=gy*T;r.vx=r.vy=0;PET10.force(p.id,'sit');r.tm=60;L[p.sp]=[p,r]});await _gw(.3);V.reset();
+  const[cp,cr]=L.cat,[dp,dr]=L.dog,[bp,br]=L.rabbit,[fp,fr]=L.fox;
+  o.mood={fetch:V.moodOf(cp,{st:'fetch',x:cr.x,y:cr.y}),flip:V.moodOf(dp,{st:'flip',x:dr.x,y:dr.y}),petted:V.moodOf(cp,cr,'purr'),fed:V.moodOf(dp,dr,'eat'),wiggle:V.moodOf(bp,{st:'sit',wig:1,x:br.x,y:br.y}),idleFar:V.moodOf(fp,{st:'idle',x:P.x+T*8,y:gy*T}),asleep:V.moodOf(fp,{st:'sleep',x:fr.x,y:fr.y})};
+  PET10.timeShift(3*3600e3);o.mood.hungryPlay=V.moodOf(dp,{st:'fetch',x:dr.x,y:dr.y},'happy');o.mood.hungryTalk=V.moodOf(fp,fr,'talk');PET10.timeShift(0);
+  const a=V.say(cp,cr,'happy');o.happy=a&&{mood:a.mood,inSet:V.SETS.cat.happy.includes(a.v),played:a.played||typeof AC=='undefined'||!AC,pan:a.pan,vol:a.vol};
+  o.gap=V.say(cp,cr,'happy')===null&&V.why;const b=V.say(dp,dr,'happy');o.second=!!b;o.busy=V.say(bp,br,'happy')===null&&V.why;o.busyChat=V.say(fp,fr,'chat')===null&&V.why;o.talking=V.talking().length;
+  V.reset();PET10.timeShift(3*3600e3);const c=V.say(fp,fr,'talk');PET10.timeShift(0);o.sad=c&&{mood:c.mood,inSet:V.SETS.fox.soft.includes(c.v),vol:c.vol,pan:c.pan};
+  V.reset();PET10.force('prabbit','sleep');const z=V.say(bp,br,'sleep');o.sleep=z&&{mood:z.mood,inSet:V.SETS.rabbit.sleep.includes(z.v),vol:z.vol};PET10.force('prabbit','sit');
+  const J=[];for(let i=0;i<2000;i++)J.push(V.jit());o.jit=[Math.min(...J),Math.max(...J)].map(x=>+x.toFixed(4));o.logJit=V.log.every(q=>q.j>=.95&&q.j<=1.05);
+  V.reset();const sv=OPT.sv;OPT.sv=0;o.muted=V.say(dp,dr,'happy')===null&&V.why;OPT.sv=sv;
+  V.reset();const x0=dr.x;dr.x=P.x+T*70;o.off=V.say(dp,dr,'happy')===null&&V.why;dr.x=x0;
+  V.reset();const vs=[];for(let i=0;i<40;i++){const q=V.say(cp,cr,'happy');if(q)vs.push(q.v);V.reset()}o.variety=new Set(vs).size;
+  for(const p of PET10.S.pets)PET10.force(p.id,'idle');P.x=(hx+9)*T+T/2;V.reset();return o},yard);
+ ok('every species has its own voice set (happy / soft / sleep, 2-3 variants each, a cat purr) and every variant synthesizes',vx.sets.length==0&&vx.unique&&vx.synth.length==0,{sets:vx.sets,unique:vx.unique,synth:vx.synth.slice(0,4)});
+ ok('the pet state picks the voice: playing / petted / fed / wiggling = happy, idle far away or hungry = soft, asleep = sleep',vx.mood.fetch=='happy'&&vx.mood.flip=='happy'&&vx.mood.petted=='happy'&&vx.mood.fed=='happy'&&vx.mood.wiggle=='happy'&&vx.mood.idleFar=='soft'&&vx.mood.asleep=='sleep'&&vx.mood.hungryPlay=='soft'&&vx.mood.hungryTalk=='soft'
+  &&vx.happy&&vx.happy.mood=='happy'&&vx.happy.inSet&&vx.happy.played&&vx.sad&&vx.sad.mood=='soft'&&vx.sad.inSet&&vx.sleep&&vx.sleep.mood=='sleep'&&vx.sleep.inSet&&vx.sleep.vol<vx.happy.vol*.5&&vx.variety>=2,{mood:vx.mood,happy:vx.happy,sad:vx.sad,sleep:vx.sleep,variety:vx.variety});
+ ok('pitch jitter stays within +-5% (and uses the range)',vx.jit[0]>=.95&&vx.jit[1]<=1.05&&vx.jit[0]<.96&&vx.jit[1]>1.04&&vx.logJit,vx.jit);
+ ok('rate limits: one reaction per pet every 1.5 s, never more than 2 pets talking (idle chatter waits too)',vx.gap=='gap'&&vx.second&&vx.busy=='busy'&&vx.busyChat=='busy'&&vx.talking==2,{gap:vx.gap,second:vx.second,busy:vx.busy,chat:vx.busyChat,talking:vx.talking});
+ ok('mixing: panned by screen position (left of you = left), silent off-screen and with the SFX volume at 0',vx.happy.pan<0&&vx.sad.pan>0&&vx.off=='off'&&vx.muted=='muted',{pan:[vx.happy.pan,vx.sad.pan],off:vx.off,muted:vx.muted});
  // ---- Pet UI: E opens it, clothes + colours, locked items go to the store
  await E(async({hx,gy})=>{for(const c of Object.keys(PET10.CL))if(c!='wings')await SHOP7.buy('petc_'+c);const r=PET10.RT.get('pcat');PET10.force('pcat','sit');r.tm=30;r.x=(hx+1.5)*T;r.y=gy*T;r.vy=0;P.x=r.x+30;P.y=(gy)*T-P.h-1;P.vx=P.vy=0},yard);
  await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++){const r=PET10.RT.get('pcat');P.x=r.x+20;P.y=r.y-P.h-1;P.vx=P.vy=0;await new Promise(q=>setTimeout(q,50))}});await p.keyboard.press('e');await W8(300);
