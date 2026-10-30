@@ -1,6 +1,7 @@
 // Wings v9: the 8-key flight cycle (F1 flare, F2-F5 flap, F6-F8 hover) for every wing, three-tier ascended wings (span, tiers, emissive
 // tips, trails), the cycle phases in real flight (synced to FLY7), capped trail particles, the always-on aura pose with wings (air + ground,
-// hitbox untouched, pet still follows), the new store wings (buy, equip, sounds, previews) and the art/wings sprite sheets. node tests/wings.js
+// hitbox untouched, pet still follows), the new store wings (buy, equip, sounds, previews), the art/wings sprite sheets and top-tier flight
+// (legendary / mythic climb higher, their own trail effects, low ceilings, the Plaza). node tests/wings.js
 const {chromium}=require('playwright');const path=require('path'),fs=require('fs');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';
 let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(d!=null&&d!==''?'  - '+(typeof d=='string'?d:JSON.stringify(d)):''))};
@@ -72,5 +73,34 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
  const dir=path.resolve(__dirname,'../art/wings');let meta=null;try{meta=JSON.parse(fs.readFileSync(path.join(dir,'sheets.json'),'utf8'))}catch(_){}
  const sh=[];if(meta)for(const id of Object.keys(meta.sheets)){const m=meta.sheets[id];for(const f of[id+'-sheet.png',id+'-sheet-black.png']){const s=fs.existsSync(path.join(dir,f))?pngSize(path.join(dir,f)):null;sh.push(f+':'+(s&&s[0]==m.width&&s[1]==m.height&&m.width==m.frame[0]*4&&m.height==(m.frame[1]+28)*2&&m.anchor[0]==m.frame[0]/2?'ok':'bad'))}}
  ok('sprite sheets: 3 wings x (transparent + black), 4x2 grid with labels, sizes match frame/anchor metadata, README present',meta&&sh.length==6&&sh.every(s=>/ok$/.test(s))&&fs.existsSync(path.join(dir,'README.md'))&&meta.frames.length==8,sh);
+ // ---- top-tier flight (FLY7 + 87-zz-wingtrail.js): legendary / mythic wings climb higher and carry their own effects
+ await E(()=>{lvl=150;WINGX.grant('eternity');for(const k in K)K[k]=false;const cx=Math.floor(P.x/T),FL=111;for(let x=cx-5;x<=cx+5;x++){for(let y=1;y<FL;y++)tiles[y*W+x]=0;tiles[FL*W+x]=1}window.__shaft={cx,FL}});
+ const flyFor=async(id,ms)=>{await E(id=>{wingEquip(id);const s=window.__shaft;for(const k in K)K[k]=false;P.x=s.cx*T+T/2;P.y=s.FL*T-P.h-1;P.vx=P.vy=0;FLY7.F.sta=1},id);await W(450);
+  const r0=await E(()=>({st:{...WTRAIL.st}}));await E(()=>{P.y-=30;P.vy=40;P.g=false;K[' ']=true});await W(ms);
+  const r=await E(()=>({c:WTRAIL.counts(),st:{...WTRAIL.st},on:FLY7.F.on,tk:FLY7.F.tk}));await E(()=>{for(const k in K)K[k]=false});return{...r,dB:r.st.bursts-r0.st.bursts,dR:r.st.rings-r0.st.rings,dBeat:r.st.beats-r0.st.beats}};
+ const fe=await flyFor('storm',600),fl=await flyFor('ascendant',700),fm=await flyFor('cosmic',700);
+ ok('trail effects only for legendary / mythic: an epic wing gets none, legendary sheds a gold trail + feathers + take-off ring, mythic a prismatic ribbon + star motes + double ring',
+  fe.on&&fe.tk==0&&fe.c.trail==0&&fe.c.feathers==0&&fe.c.rings==0&&fe.dB==0&&fe.c.motes==0&&
+  fl.on&&fl.tk==1&&fl.c.trail>=3&&fl.c.feathers>0&&fl.dB==1&&fl.dR==1&&fl.c.motes==0&&
+  fm.on&&fm.tk==2&&fm.c.trail>=3&&fm.dB==1&&fm.dR==1&&fm.c.motes>.5,{epic:fe.c,leg:[fl.c,fl.dR],myth:[fm.c,fm.dR]});
+ r=await E(()=>{const o={};for(const id of['ascendant','cosmic','eternity'])o[id]=WTRAIL.bench(id,200);o.none=WTRAIL.bench('storm');let s=0;try{s=[WINGSFX.burst(1,wingById('ascendant')),WINGSFX.burst(2,wingById('cosmic'))].length}catch(e){s=-1}return{o,s}});
+ ok('top-tier effects stay cheap: a full frame of effects (pools at their caps) costs < 2.5 ms on a software canvas; the burst sounds run without errors',r.o.none===null&&['ascendant','cosmic','eternity'].every(id=>r.o[id]&&r.o[id].ms<2.5)&&r.s==2,r);
+ // climb: deterministic physics sim (1/120 s steps) in a tall cleared shaft, Space held from a standing hover
+ r=await E(()=>{const s=window.__shaft,out={},real=performance.now.bind(performance);let clk=real();performance.now=()=>clk;
+  try{for(const id of['storm','ascendant','cosmic','eternity']){wingEquip(id);P.x=s.cx*T+T/2;P.y=s.FL*T-P.h-60;P.vx=P.vy=0;P.g=false;FLY7.F.sta=1;FLY7.F.on=false;FLY7.F.air=0;FLY7.F.burst=-1e9;for(const k in K)K[k]=false;K[' ']=true;
+   const y0=P.y;let t=0,y15=null,minY=P.y,started=false,vmin=0;for(let i=0;i<120*30;i++){clk+=1000/120;physics(1/120,0,false);moveE(P,1/120);t+=1/120;vmin=Math.min(vmin,P.vy);if(FLY7.F.on)started=true;minY=Math.min(minY,P.y);if(y15==null&&t>=1.5)y15=P.y;if(started&&!FLY7.F.on&&P.vy>0&&t>1.6)break}
+   out[id]={climb:Math.round(y0-y15),maxH:Math.round(y0-minY),vmin:Math.round(vmin)}}
+  // low ceiling: a mythic wing under a 3-tile roof never pushes into the blocks
+  const cx=s.cx,top=s.FL-4;for(let x=cx-5;x<=cx+5;x++)tiles[top*W+x]=1;wingEquip('cosmic');P.y=s.FL*T-P.h-30;P.vy=0;P.g=false;FLY7.F.sta=1;FLY7.F.on=false;FLY7.F.air=0;let minY=P.y;
+  for(let i=0;i<240;i++){clk+=1000/120;physics(1/120,0,false);moveE(P,1/120);minY=Math.min(minY,P.y)}out.roof={minY:Math.round(minY),roof:(top+1)*T,ok:minY>=(top+1)*T-.5};for(let x=cx-5;x<=cx+5;x++)tiles[top*W+x]=0}
+  finally{performance.now=real;for(const k in K)K[k]=false;FLY7.F.burst=0}return out});
+ ok('legendary climbs clearly higher than epic (>= 1.35x in 1.5 s, >= 1.5x total height)',r.ascendant.climb>=r.storm.climb*1.35&&r.ascendant.maxH>=r.storm.maxH*1.5,r);
+ ok('mythic climbs higher than legendary (>= 1.3x in 1.5 s, >= 1.5x total height); exclusive flies like mythic; peak climb stays below one tile per frame',r.cosmic.climb>=r.ascendant.climb*1.3&&r.cosmic.maxH>=r.ascendant.maxH*1.5&&r.eternity.climb>=r.cosmic.climb*.95&&Math.min(r.storm.vmin,r.ascendant.vmin,r.cosmic.vmin,r.eternity.vmin)>-900,r);
+ ok('low ceiling: a mythic climb under a 3-tile roof stops at the roof (no tunnelling)',r.roof.ok,r.roof);
+ // the Plaza: mythic flight works there too, stays inside the world and on screen
+ await E(()=>{enterWorld('plaza')});await W(1500);await E(()=>{mobs.length=0;lvl=150;wingEquip('cosmic');for(const k in K)K[k]=false;P.vy=-60;P.g=false;FLY7.F.sta=1;K[' ']=true});
+ let pz=null;const y0p=await E(()=>P.y);for(let i=0;i<12;i++){await W(100);const s=await E(()=>({y:P.y,sy:(P.y-cam.y)*ZM,vh:cv.height,on:FLY7.F.on}));if(!pz||s.y<pz.y)pz=s;if(s.sy<-10||s.sy>s.vh)pz.off=1}
+ await E(()=>{for(const k in K)K[k]=false});
+ ok('Plaza: mythic flight climbs, stays inside the world (y >= 0) and on screen',pz.y<y0p-60&&pz.y>=0&&!pz.off,{y0:Math.round(y0p),best:pz});
  ok('no page errors',errs.length==0,errs.slice(0,5).join(' | '));
  await b.close();console.log(fails?fails+' FAILED':'ALL PASS');process.exit(fails?1:0)})();

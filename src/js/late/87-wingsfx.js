@@ -76,6 +76,11 @@ const WINGSFX=(()=>{
  function play(kind,w,s){w=w||wingNow();if(!w||!ok()||window.RB_COVER)return;try{prof(w)[kind](s)}catch(_){}}
  const jump=()=>{if(gate('j',90))play('j')};
  const flap=s=>{if(gate('f',110))play('f',null,s)};
+ // top-tier take-off accent (87-zz-wingtrail.js): legendary = a warm golden bell swell, mythic = a soft shimmering rising arpeggio over a low
+ // pad. Slow attacks, lowpassed, quiet; tuned a fifth up/down by the wing's own register so it sits with the wing's beat sound.
+ const BST={1(k){air(.55,480,1300,.7,.03,0,.14);tn(392*k,394*k,.9,'sine',.014,0,.05,1200);chord([784*k,1175*k,1568*k],.9,'sine',.009,.05,.03);sparkle(2,2000,2900,.005,.08)},
+  2(k){air(.75,380,1700,.6,.03,0,.26);tn(131*k,132*k,1.1,'sine',.018,0,.14,520);[523,659,784,1047,1319].forEach((f,i)=>{f*=k;tn(f,f*1.003,.75,'sine',.009,.02+i*.05,.025,3000);tn(f*1.005,f*1.008,.75,'sine',.005,.03+i*.05,.025,3000)});sparkle(4,2200,3400,.006,.07)}};
+ const burst=(tk,w)=>{w=w||wingNow();if(!w||!BST[tk]||!ok()||window.RB_COVER||!gate('b',600))return false;const lo=/dark|mechanical/.test(w.fam)||(w.pal&&parseInt(String(w.pal[1]).slice(1,3),16)<40);try{BST[tk](lo?.75:1)}catch(_){}return true};
  // glide start + equip changes are detected each physics step
  let gl=false,prevId=null,ready=false;
  function step(busy){const w=wingNow(),id=w?w.id:null;
@@ -83,4 +88,4 @@ const WINGSFX=(()=>{
   const hold=!busy&&(K.w||K[' ']||K.arrowup),g=!!w&&!P.g&&!P.sw&&hold&&P.vy>0&&!(typeof FLY7!='undefined'&&FLY7.F.on);
   if(g&&!gl&&gate('g',1200))play('g',w);gl=g}
  {const _p=physics;physics=function(dt,ax,busy){const r=_p.apply(this,arguments);try{step(busy)}catch(_){}return r}}
- return{jump,flap,play,P7}})();
+ return{jump,flap,play,burst,P7}})();
