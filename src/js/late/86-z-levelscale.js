@@ -14,11 +14,12 @@ const LVL9=(()=>{
  const scaleBoss=m=>{if(!m||!m.boss||m.lvS)return;m.lvS=1;upd();const k=bossB(cL);m.hp=Math.round(m.hp*k);m.mhp=Math.round((m.mhp||m.hp/k)*k)};
  {const _sp=BOSS6.spawn;BOSS6.spawn=function(){const r=_sp.apply(this,arguments);try{scaleBoss(BOSS6.active())}catch(_){}return r}}
  {const _t=BOSS6.tick;BOSS6.tick=function(dt){_t.call(this,dt);try{for(let i=0;i<mobs.length;i++){const m=mobs[i];if(m.boss&&!m.lvS&&m.hp>0)scaleBoss(m)}}catch(_){}}}
- // ---- level-gated weapons: blocked when used, swapped back to your last allowed weapon if equipped any other way
- const okW=id=>{const w=WPN[id];return !w||(w.lv|0)<=(lvl|0)};
+ // ---- level-gated weapons: blocked when used, swapped back to your last allowed weapon if equipped any other way (also weapons of another
+ // class than yours, see CJOB in 86-z-classjob.js)
+ const okW=id=>{const w=WPN[id];return !w||((w.lv|0)<=(lvl|0)&&!CJOB.blocks(id))};
  let lastOk='fist',warnT=0;
- function gate(){if(!WPN[wp])return true;if(okW(wp)){lastOk=wp;return true}const w=WPN[wp];wp=own[lastOk]&&okW(lastOk)&&WPN[lastOk]?lastOk:'fist';
-  const n=performance.now();if(n-warnT>1200){warnT=n;try{say('Reach level '+w.lv+' to use '+w.n)}catch(_){}try{UIS.play('error')}catch(_){}}try{renderBar()}catch(_){}return false}
+ function gate(){if(!WPN[wp])return true;if(okW(wp)){lastOk=wp;return true}const w=WPN[wp],wp0=wp;wp=own[lastOk]&&okW(lastOk)&&WPN[lastOk]?lastOk:'fist';
+  const n=performance.now();if(n-warnT>1200){warnT=n;try{say((w.lv|0)>(lvl|0)?'Reach level '+w.lv+' to use '+w.n:CJOB.why(wp0))}catch(_){}try{UIS.play('error')}catch(_){}}try{renderBar()}catch(_){}return false}
  {const _u=update;update=function(dt){gate();const r=_u.apply(this,arguments);gate();return r}}
  {const _uw=useWeapon;useWeapon=function(){if(!gate())return;return _uw.apply(this,arguments)}}
  // ---- level up: a floating "power up", plus a banner when new weapons unlock

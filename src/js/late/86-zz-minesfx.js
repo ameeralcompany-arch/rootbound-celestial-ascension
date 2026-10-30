@@ -54,7 +54,19 @@ const MSFX8=(()=>{
   geode(b,brk,q,pr){if(brk){V.ore(94,true,q);[1047,1319,1568,2093,2637,3136,4186].forEach((f,i)=>os('sine',f*q,f*q*1.004,.3,.045,.1+i*.055));os('sine',4186,4180,1.3,.014,.45);nz(.55,'highpass',6500,5200,.6,.03,.12)}
    else{nz(.07,'bandpass',1900*q,1100,1,.15);os('sine',130*q,60,.12,.14);const f=PENT[2+Math.round((pr||0)*5)];os('sine',f,f,.22,.035,.03)}}};
  const SZ={soft:6,wood:6,stone:9,ore:14,geode:24};
- function play(kind,cat,b,o){o=o||{};const c=cat=='ore'&&b==94?'geode':cat;if(!V[c])return false;const tag=kind+':'+c;if(!gate(tag,kind=='break'?SZ[c]||8:4))return false;note(kind,c);if(!ok())return true;mul=kind=='break'?1:.72;try{V[c](b,kind=='break',p(),o.pr)}catch(_){}finally{mul=1}return true}
+ // ---- hits: one smooth voice for every material (the sound you hear several times a second while mining): a rounded sine "thock" with a short
+ // pitch drop and a lowpassed puff of noise for texture; ores and geodes add a quiet, slow-attack sine chime instead of a bright ting. Pitch
+ // follows the material and climbs a little over a run of hits on a block; a fast run also gets slightly quieter so mining never gets harsh.
+ const HM={soft:[175,900,.1],dirt:[175,900,.1],leaf:[240,1400,.07],sand:[205,1100,.09],grass:[185,1000,.1],glass:[520,1800,.05],cache:[200,950,.1],wood:[300,1100,.09],stone:[150,1000,.1],ore:[160,1050,.1],geode:[170,1100,.1]};
+ let lastHit=0,run=0;
+ function hit(c,b,pr){const v0=c=='soft'?vari(b):c,h=HM[v0]||HM.soft,now=performance.now();run=now-lastHit<300?Math.min(run+1,6):0;lastHit=now;
+  const dk=1-run*.05,q=.985+R()*.03,up=1+run*.015+(pr||0)*.06,f0=h[0]*q*up;
+  os('sine',f0*1.6,f0,.11,.1*dk);nz(.07,'lowpass',h[1]*q,h[1]*.55,.7,h[2]*.7*dk);
+  if(v0=='wood')os('sine',f0*2.1,f0*1.6,.06,.05*dk,.004);
+  if(v0=='glass')os('sine',f0*3,f0*2.95,.12,.03*dk,0,.012);
+  if(c=='ore'||c=='geode'){const f=PENT[1+(c=='geode'?4:rar(b))]*q*up;os('sine',f,f,.24,.026*dk,.01,.03)}}
+ function play(kind,cat,b,o){o=o||{};const c=cat=='ore'&&b==94?'geode':cat;if(!V[c])return false;const tag=kind+':'+c,brk=kind=='break';if(!gate(tag,brk?SZ[c]||8:4,brk?28:45))return false;note(kind,c);if(!ok())return true;
+  mul=brk?1:.8;try{if(brk)V[c](b,true,p(),o.pr);else hit(c,b,o.pr)}catch(_){}finally{mul=1}return true}
  // ---- specials
  function wrong(cat){if(!gate('wrong',3,70))return false;note('wrong',cat||'');if(!ok())return true;const q=p();try{os('sine',205*q,140,.08,.13);nz(.05,'lowpass',700*q,320,.8,.11);if(cat=='ore')nz(.04,'bandpass',3600,3000,2,.03,.02)}catch(_){}return true}
  function tree(){if(!gate('tree',12,60))return false;note('break','tree');if(!ok())return true;const q=p();try{os('triangle',300*q,150,.11,.16);os('sine',170*q,92,.16,.17);nz(.11,'bandpass',1100*q,700,2.4,.16);

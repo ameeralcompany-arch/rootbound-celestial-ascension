@@ -17,7 +17,7 @@ const HOTBAR=(()=>{
  const wid=k=>typeof k=='string'&&k.startsWith('w:')?k.slice(2):'';
  const kind=k=>k==null?'empty':typeof k=='number'?(k<200?'place':'mat'):k[0]=='a'?'wear':(WPN[wid(k)]||{}).k=='tool'?'tool':'weapon';
  const owned=k=>{if(k==null)return false;if(typeof k=='number')return cnt(k)>0;const id=k.slice(2);return k[0]=='a'?!!ownW[id]:!!own[id]};
- const locked=k=>{const w=WPN[wid(k)];return!!w&&(w.lv|0)>(lvl|0)};
+ const locked=k=>{const w=WPN[wid(k)];return!!w&&((w.lv|0)>(lvl|0)||CJOB.blocks(wid(k)))};   // under level, or another class's weapon (CJOB)
  const state=k=>k==null?'empty':typeof k=='number'?(cnt(k)>0?'ok':'out'):!owned(k)?'missing':locked(k)?'lock':'ok';
  const assignable=k=>{k=norm(k);return okKey(k)&&(typeof k=='number'?cnt(k)>0:owned(k))};
  const nameOf=k=>{try{if(k==null)return'Empty';if(typeof k=='number')return iname(k);return k[0]=='a'?WEAR[k.slice(2)].n:WPN[k.slice(2)].n}catch(_){return String(k)}};
@@ -59,7 +59,7 @@ const HOTBAR=(()=>{
  const equipSlot=k=>{k=norm(k);const j=S.s.indexOf(k);if(j>=0)return j;const e=S.s.indexOf(null);return e>=0?e:S.c>=0?S.c:0};
  function equip(k){k=norm(k);if(!assignable(k))return false;const i=equipSlot(k);if(S.s[i]!==k)set(i,k,{quiet:1});pick(i);return true}
  function warn(k,st){const n=performance.now(),wk=st+'|'+k;if(n-H.warnT<1200&&H.wk===wk)return;H.warnT=n;H.wk=wk;const w=WPN[wid(k)];
-  try{say(st=='lock'?'Reach level '+w.lv+' to use '+w.n:st=='out'?'Out of '+nameOf(k)+' — break or buy more':'You do not own '+nameOf(k)+' any more')}catch(_){}snd('error')}
+  try{say(st=='lock'?((w.lv|0)>(lvl|0)?'Reach level '+w.lv+' to use '+w.n:CJOB.why(wid(k))):st=='out'?'Out of '+nameOf(k)+' — break or buy more':'You do not own '+nameOf(k)+' any more')}catch(_){}snd('error')}
  // ---- input: the left button places a held block (same rules as right-click) or explains a locked / used-up slot instead of punching
  {const _u=update;update=function(dt){sync();if((lvl|0)!==H.lv){H.lv=lvl|0;refresh()}
    if(!mdL||S.c<0)return _u.apply(this,arguments);const k=S.s[S.c],t=kind(k),st=state(k);

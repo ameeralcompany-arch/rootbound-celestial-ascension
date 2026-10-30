@@ -52,7 +52,8 @@ const CLASS7=(()=>{
    try{VFX.levelUp(P.x,P.y+20)}catch(_){try{burst(P.x,P.y+20,C[k].c,20,200,4,'p')}catch(__){}}
    try{SFX7.tone(523,523,.18,'triangle',.04);SFX7.tone(784,784,.22,'triangle',.04,.1);SFX7.tone(1047,1047,.3,'sine',.04,.2)}catch(_){}}
   if(S.lv[k]>=MAX)S.xp[k]=0}
- const cur=()=>{try{return of(WPN[wp])}catch(_){return null}};
+ // the class of the weapon in your hand; with bare fists or a tool it is the class you chose at a class master (CJOB), if any
+ const cur=()=>{try{const w=WPN[wp];if((!w||wp=='fist'||w.k=='tool')&&typeof CJOB!='undefined'&&CJOB.cur)return CJOB.cur;return of(w)}catch(_){return null}};
  // ---- damage + passives: one wrapper on hurtMob sees every weapon hit
  const BC={};const bonC=(k,L)=>{const c=BC[k];if(c&&c.L===L)return c.o;const o=bon(k,L);BC[k]={L,o};return o};
  {const _hm=hurtMob;hurtMob=function(m,d,w,ang){const k=of(w);if(!k||!(d>0))return _hm.apply(this,arguments);const L=lv(k),R=Math.random,o=bonC(k,L);let mul=o.dmg;
