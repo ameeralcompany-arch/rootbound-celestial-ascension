@@ -1,0 +1,37 @@
+/* ===== WORD9: hidden-word HUD strip, the flying letter and the Word Gate modal (same look as the shared #dlg7 dialogs) ===== */
+#wl9{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;position:fixed;left:50%;transform:translateX(-50%);top:calc(74px + env(safe-area-inset-top,0px));z-index:7;display:flex;align-items:center;gap:10px;padding:6px 14px!important;cursor:pointer;user-select:none;font-family:var(--font-ui);color:var(--ink);opacity:var(--hud-op,1);transition:opacity var(--t-med,.2s)}
+#wl9:hover{opacity:1}
+#wl9 .t{font:700 9.5px var(--font-ui);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+#wl9 .sl{display:flex;gap:4px}
+#wl9 i{width:22px;height:26px;display:grid;place-items:center;border-radius:6px;font:900 15px var(--font-ui);font-style:normal;border:1px dashed var(--line-strong,var(--line));color:transparent;background:rgba(127,127,160,.08)}
+#wl9 i.on{border:1px solid rgba(255,226,122,.75);background:linear-gradient(160deg,#40287a,#160c30);color:transparent;box-shadow:0 0 10px rgba(255,214,120,.35)}
+#wl9 i.on{background-image:linear-gradient(90deg,#ff6a8a,#ffb84a,#ffe86a,#6aff9a,#5ad0ff,#b07aff,#ff6a8a),linear-gradient(160deg,#40287a,#160c30);background-size:300% 100%,100% 100%;-webkit-background-clip:text,padding-box;background-clip:text,padding-box;animation:wl9rb 3s linear infinite}
+#wl9 em{font:700 10px var(--font-ui);font-style:normal;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
+#wl9 em.go{color:#c98a12;animation:wl9pulse 1.6s ease-in-out infinite}#wl9 em.ok{color:#2f9a5a}
+#wl9.full{box-shadow:0 0 0 1px rgba(255,214,120,.55),0 0 18px rgba(255,200,90,.35),var(--sh-2)!important}
+#wl9.inf .t{color:#e2552a}
+#wl9.nudge{animation:wl9shake .4s ease}
+@keyframes wl9rb{to{background-position:300% 0,0 0}}
+@keyframes wl9pulse{50%{opacity:.55}}
+@keyframes wl9shake{0%,100%{transform:translateX(-50%)}25%{transform:translateX(calc(-50% - 6px))}75%{transform:translateX(calc(-50% + 6px))}}
+.wl9f{position:fixed;z-index:61;pointer-events:none;margin:-16px 0 0 -14px;width:28px;height:32px;display:grid;place-items:center;border-radius:7px;font:900 20px var(--font-ui);color:#fff6c0;background:linear-gradient(160deg,#5a3aa0,#1c1040);border:1px solid #ffe27a;box-shadow:0 0 16px rgba(255,214,120,.7);transition:transform .7s cubic-bezier(.5,0,.3,1),opacity .7s ease-in}
+/* the Word Gate */
+#wg9{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;background:var(--overlay,rgba(7,6,13,.55));opacity:0;transition:opacity var(--t-med,.2s) var(--ease,ease)}#wg9.on{opacity:1}
+#wg9 .box{position:relative;width:min(420px,92vw);box-sizing:border-box;background:var(--panel,var(--surface));border:1px solid var(--line);border-radius:var(--rad-lg,14px);box-shadow:var(--panel-hl,0 0 0 transparent),var(--sh-3,0 18px 50px rgba(0,0,0,.5));padding:24px 26px 20px;font-family:var(--font-ui);color:var(--ink);transform:translateY(12px) scale(.97);transition:transform .34s var(--mo-ease,ease)}
+#wg9.on .box{transform:none}
+#wg9 .box:after{content:'✦';position:absolute;left:50%;top:-1px;transform:translate(-50%,-50%);width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--surface-solid,var(--surface));border:1px solid var(--line-strong,var(--line));color:var(--accent-2,#d9b46a);font-size:12px}
+#wg9 h3{font-family:var(--font-display,var(--font-ui));font-style:italic;font-weight:700;font-size:23px;text-align:center;margin:4px 0 8px}
+#wg9 p{margin:0 0 12px;font-size:13px;line-height:1.55;color:var(--ink-2,var(--ink));text-align:center}
+#wg9 p.err{min-height:1.2em;margin:6px 0 0;color:#c2334a;font-weight:700}#wg9 p.hint{margin:8px 0 0;color:#b07a10}
+#wg9 .rw{letter-spacing:.14em}
+#wg9 .tl{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
+#wg9 .tl i{width:34px;height:40px;display:grid;place-items:center;border-radius:8px;font:900 22px var(--font-ui);font-style:normal;color:transparent;border:1px solid rgba(255,226,122,.8);box-shadow:0 0 12px rgba(255,214,120,.35);background-image:linear-gradient(90deg,#ff6a8a,#ffb84a,#ffe86a,#6aff9a,#5ad0ff,#b07aff,#ff6a8a),linear-gradient(160deg,#40287a,#160c30);background-size:300% 100%,100% 100%;-webkit-background-clip:text,padding-box;background-clip:text,padding-box;animation:wl9rb 3s linear infinite}
+#wg9 label{display:block;margin:12px 0 0;font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#wg9 label input{display:block;width:100%;box-sizing:border-box;margin-top:5px;padding:10px 12px;font:800 18px var(--font-ui);letter-spacing:.22em;text-transform:uppercase;text-align:center}
+#wg9 .acts{display:flex;gap:10px;justify-content:center;margin-top:16px}#wg9 button{min-width:110px;padding:10px 18px;border-radius:var(--rad-pill,999px)}
+#wg9 button.pri{background:var(--btn-primary);color:var(--btn-primary-ink);border:0}
+#wg9 .box.shake{animation:wg9shake .42s ease}
+@keyframes wg9shake{0%,100%{translate:0}20%{translate:-9px}40%{translate:8px}60%{translate:-6px}80%{translate:4px}}
+@media(prefers-reduced-motion:reduce){#wl9 i.on,#wg9 .tl i,#wl9 em.go{animation:none}#wg9 .box.shake{animation:none}.wl9f{display:none}}
+html[data-reduce=true] #wl9 i.on,html[data-reduce=true] #wg9 .tl i,html[data-reduce=true] #wl9 em.go{animation:none}
+body.bb10c #wl9{opacity:0!important;transition:opacity .35s;pointer-events:none}
