@@ -81,7 +81,7 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  ok('walking up to a pet makes it wiggle happily with a heart (it keeps sitting); a hop lands with a squash; twitch / wiggle poses draw',cute.fr.some(f=>f=='wig0'||f=='wig1')&&cute.hearts&&cute.st.join()=='sit'&&cute.land&&cute.poses,cute);
  // ---- Pet UI: E opens it, clothes + colours, locked items go to the store
  await E(async({hx,gy})=>{for(const c of Object.keys(PET10.CL))if(c!='wings')await SHOP7.buy('petc_'+c);const r=PET10.RT.get('pcat');PET10.force('pcat','sit');r.tm=30;r.x=(hx+1.5)*T;r.y=gy*T;r.vy=0;P.x=r.x+30;P.y=(gy)*T-P.h-1;P.vx=P.vy=0},yard);
- await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++)await new Promise(q=>setTimeout(q,50))});await p.keyboard.press('e');await W8(300);
+ await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++){const r=PET10.RT.get('pcat');P.x=r.x+20;P.y=r.y-P.h-1;P.vx=P.vy=0;await new Promise(q=>setTimeout(q,50))}});await p.keyboard.press('e');await W8(300);
  const ui=await E(()=>({on:PET10.ui.on,vis:document.getElementById('petui').style.display,pid:PET10.ui.pid,tabs:document.querySelectorAll('#petui .tb10').length,chips:document.querySelectorAll('#petui .ch10').length}));
  ok('E next to a pet opens its Pet UI (4 pet tabs + store, every clothing chip)',ui.on&&ui.vis=='block'&&ui.tabs==5&&ui.chips==13,ui);
  await p.click('#petui .tb10[data-id=pcat]');await W8(120);
