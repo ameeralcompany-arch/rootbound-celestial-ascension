@@ -1,6 +1,6 @@
 // ===== PET10: cute pets. Cat, Dog, Rabbit and Fox (4 fur colours each) live at a Pet Home you place in the world and wander a few tiles
 // left and right of it (cheap physics: gravity, tile ground, hop up 1-block steps, turn at walls / cliffs / the edge of their range, no
-// pathfinding). Timed behaviours: walk, sit, hop, stretch, chase their tail, flips, sleep (zzz), meow / bark / squeak / yip, and a happy pet
+// pathfinding). Timed behaviours: walk, sit, hop, stretch, chase their tail, flips, sleep (zzz), state-aware voices (VOX, below), and a happy pet
 // follows you a little. Care: hungry again 2 h after a meal (real time via Date.now, so it carries across sessions; a hungry pet looks sad
 // and will not play or do tricks, it never dies), happiness from petting, treats and fetch (throw a ball, it runs after it and brings it
 // back). Clothes: bow, top hat, flower crown, bandana, scarf, bell collar, sweater, cape, fairy wings, each in any colour (Pet UI: press E
@@ -227,23 +227,113 @@ const PET10=(()=>{
   r={x:(h.h.x+.5)*T+(R()-.5)*T*.6,y:(h.h.y+1)*T,vx:0,vy:0,g:0,dir:R()<.5?-1:1,st:'idle',t:0,tm:1+R()*2,at:R()*9,dist:0,rot:0,fr:'idle0',w:cur,home:p.home,snd:0,nt:0,ph:R()*9,wig:0,wigN:2,cl:0,land:0};RT.set(p.id,r);return r}
  const homePos=p=>{const h=homeById(p.home);return h?{x:(h.h.x+.5)*T,y:(h.h.y+1)*T,h:h.h}:null};
  function puff(k,x,y,n){for(let i=0;i<(n||1)&&PT.length<MAXP;i++)PT.push({k,x:x+(R()-.5)*10,y,vx:(R()-.5)*30,vy:k=='z'?-18:k=='crumb'?-60-R()*40:-40-R()*20,t:0,life:k=='z'?1.8:k=='crumb'?.6:1.2,ph:R()*6})}
- function voice(sp,kind,x,y){if(typeof SFX7=='undefined')return;const d=Math.hypot(x-P.x,y-P.y);if(d>T*14)return;const a=Math.max(.3,1-d/(T*14)),v=.045*a,t=SFX7.tone,j=.94+R()*.12;
-  if(kind=='eat'){for(let i=0;i<3;i++)t(1500*j,1100,.035,'triangle',v*.5,i*.13);return}
-  if(kind=='purr'){t(150,140,.5,'triangle',v*.8,0,1);t(160,150,.45,'triangle',v*.7,.45,1);return}
-  if(kind=='yay'){t(660*j,990*j,.1,'sine',v*.8);t(880*j,1320*j,.12,'sine',v*.7,.09);return}
-  const sad=kind=='sad';
-  if(sp=='cat'){if(sad)t(700*j,420*j,.45,'sine',v,0,1);else{t(560*j,900*j,.12,'triangle',v*.8);t(900*j,600*j,.24,'sine',v,.1,1)}}
-  else if(sp=='dog'){if(sad)t(900*j,620*j,.35,'sine',v*.8,0,1);else{t(430*j,250*j,.08,'triangle',v*1.1);t(460*j,270*j,.09,'triangle',v,.17)}}
-  else if(sp=='rabbit'){t(1500*j,2100*j,.06,'sine',v*.6);t(1700*j,2300*j,.06,'sine',v*.6,.1);if(sad)t(1300*j,900*j,.2,'sine',v*.5,.22)}
-  else{if(sad)t(1000*j,600*j,.4,'sine',v*.8,0,1);else{t(880*j,1350*j,.07,'triangle',v*.8);t(1350*j,820*j,.13,'sine',v*.8,.07)}}}
+ // ==== voices (VOX): every species has its own synthesized vocalizations (WebAudio only, no files), picked by what the pet is doing:
+ // happy / playing (fetch, tricks, wiggle, petting, fed) -> bright, playful chirps and purrs; sad, hungry or idle -> soft, low, slower and
+ // quieter; asleep -> near-silent breathing and a rare tiny snore. Cat: a formant "meow~" (band-passed sawtooth, pitch rising then falling,
+ // the vowel sliding "ee" -> "ow", a vibrato tail), a "mrrp" trill and a purr (25 Hz amplitude-modulated noise + a low tone). Dog: "boof",
+ // "arf-arf", a happy whine. Rabbit: tiny squeaks and nose snuffles. Fox: a yip and an "ack-ack" giggle. 2-3 variants per mood (never the
+ // same twice in a row), pitch jittered by up to +-5% each time. Mixing: all voices go through one bus (lowpass 6.5 kHz -> soft compressor),
+ // each is panned by the pet's screen position relative to you, quieter with distance, silent off-screen, scaled by the SFX volume (OPT.sv).
+ // Limits: a pet reacts to you (petting, feeding, tricks, its talk turn) at most every 1.5 s, chatters by itself at most every 8 s, and never
+ // more than 2 pets talk at once (a reaction can cut off another pet's idle chatter instead). VOX.log keeps the last utterances (tests read it).
+ const VOX=(()=>{
+  const vol=()=>(typeof OPT=='undefined'||OPT.sv==null?1:Math.max(0,+OPT.sv||0)),ok=()=>{try{ac()}catch(_){}return typeof AC!='undefined'&&!!AC&&AC.state!='closed'};
+  let bus=null,nb=null;
+  const out=()=>{if(bus&&bus.context===AC)return bus;bus=AC.createGain();bus.gain.value=1;const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=6500;lp.Q.value=.6;
+   const cp=AC.createDynamicsCompressor();cp.threshold.value=-22;cp.knee.value=16;cp.ratio.value=3.5;cp.attack.value=.005;cp.release.value=.2;bus.connect(lp);lp.connect(cp);cp.connect(AC.destination);return bus};
+  const noiseB=()=>{if(nb&&nb.sampleRate==AC.sampleRate)return nb;const b=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;return nb=b};
+  // envelope on a gain: quick attack, hold, exponential release (or a slow swell for breaths)
+  function env(g,t,d,pk,at,swell){const G=g.gain;G.setValueAtTime(0,t);if(swell){G.linearRampToValueAtTime(pk,t+d*.45);G.linearRampToValueAtTime(.0001,t+d);return}
+   G.linearRampToValueAtTime(pk,t+at);G.linearRampToValueAtTime(pk*.8,t+Math.max(at+.005,d*.6));G.exponentialRampToValueAtTime(.0005,t+d)}
+  // amplitude modulation (purr rumble, trills): returns the node to feed and the node to take from
+  function am(t,d,rate,depth){const m=AC.createGain();m.gain.value=1-depth;const l=AC.createOscillator(),lg=AC.createGain();l.frequency.value=rate;lg.gain.value=depth;l.connect(lg);lg.connect(m.gain);l.start(t);l.stop(t+d+.05);return m}
+  // a voiced sound: oscillator with a pitch contour p [[0..1, Hz]], through moving formant band-passes fm [[from,to]], optional vibrato tail + AM
+  function vo(U,o){const t=U.t+(o.dl||0),d=o.d,s=AC.createOscillator(),P2=o.p;s.type=o.w||'sawtooth';s.frequency.setValueAtTime(P2[0][1]*U.f,t);
+   for(let i=1;i<P2.length;i++)s.frequency.exponentialRampToValueAtTime(Math.max(20,P2[i][1]*U.f),t+P2[i][0]*d);
+   if(o.vib){const l=AC.createOscillator(),lg=AC.createGain();l.frequency.value=o.vib[0];lg.gain.setValueAtTime(0,t);lg.gain.setValueAtTime(0,t+d*o.vib[2]);lg.gain.linearRampToValueAtTime(P2[0][1]*U.f*o.vib[1],t+d);l.connect(lg);lg.connect(s.frequency);l.start(t);l.stop(t+d+.05)}
+   const g=AC.createGain();env(g,t,d,(o.a||1)*U.v,o.at||.03,o.sw);let dst=g;if(o.am){const m=am(t,d,o.am[0],o.am[1]);m.connect(g);dst=m}
+   if(o.fm){o.fm.forEach((F,i)=>{const b=AC.createBiquadFilter(),k=AC.createGain();b.type='bandpass';b.Q.value=o.q||5;b.frequency.setValueAtTime(F[0],t);b.frequency.linearRampToValueAtTime(F[1],t+d*(o.fs||.6));k.gain.value=(i?1.2:2.4);s.connect(b);b.connect(k);k.connect(dst)});
+    const lp=AC.createBiquadFilter(),k=AC.createGain();lp.type='lowpass';lp.frequency.value=Math.min(1600,P2[0][1]*2.2);k.gain.value=.35;s.connect(lp);lp.connect(k);k.connect(dst)}
+   else s.connect(dst);g.connect(U.o);s.start(t);s.stop(t+d+.05);return(o.dl||0)+d}
+  // filtered noise: breaths, snuffles, puffs, munches, the purr rumble
+  function nz(U,o){const t=U.t+(o.dl||0),d=o.d,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseB();f.type=o.ty||'bandpass';f.Q.value=o.q||1;
+   f.frequency.setValueAtTime(o.f[0],t);if(o.f[1]!=o.f[0])f.frequency.exponentialRampToValueAtTime(o.f[1],t+d);env(g,t,d,(o.a||1)*U.v,o.at||Math.min(.012,d*.3),o.sw);
+   s.connect(f);if(o.am){const m=am(t,d,o.am[0],o.am[1]);f.connect(m);m.connect(g)}else f.connect(g);g.connect(U.o);s.start(t,R()*1.4,d+.05);s.stop(t+d+.06);return(o.dl||0)+d}
+  const mx=(...a)=>Math.max(...a);
+  const breath=(U,a)=>mx(nz(U,{d:.9,ty:'lowpass',f:[700,500],q:.5,a:.28*(a||1),sw:1}),nz(U,{d:1.1,dl:1,ty:'lowpass',f:[600,380],q:.5,a:.22*(a||1),sw:1}));
+  const purr=(U,a)=>{a=a||1;let e=0;for(const[dl,d,r,k]of[[0,.85,27,.8],[.9,1.05,25,1]]){e=mx(e,nz(U,{dl,d,ty:'lowpass',f:[420,330],q:.7,a:.9*k*a,sw:1,am:[r,.48]}),vo(U,{dl,d,w:'triangle',p:[[0,52],[1,47]],a:.55*k*a,sw:1,am:[r,.45]}))}return e};
+  const munch=U=>{let e=0;for(let i=0;i<3;i++)e=mx(e,nz(U,{dl:i*.14+R()*.03,d:.05,f:[1900,1200],q:1.4,a:.55}));return e};
+  // variants: id -> synth(U) returning its length in seconds. Frequencies are the species' own; U.f carries the +-5% jitter.
+  const FN={
+   'cat.meow':U=>vo(U,{d:.55,p:[[0,560],[.3,760],[.75,640],[1,480]],fm:[[520,1000],[2900,1500]],q:6,vib:[6.5,.025,.55],at:.04}),
+   'cat.mrrp':U=>vo(U,{d:.3,p:[[0,430],[.5,620],[1,700]],fm:[[600,900],[2000,1700]],q:5,am:[28,.5],at:.02}),
+   'cat.mew':U=>vo(U,{d:.26,p:[[0,820],[.35,980],[1,700]],fm:[[700,950],[3200,2400]],q:7,at:.02,a:.85}),
+   'cat.purr':U=>purr(U),
+   'cat.meowlow':U=>vo(U,{d:.85,p:[[0,420],[.35,500],[1,330]],fm:[[450,850],[2600,1300]],q:6,vib:[5,.03,.4],at:.08,a:.8}),
+   'cat.mrrw':U=>vo(U,{d:.5,p:[[0,300],[.4,360],[1,290]],fm:[[350,700],[1200,1000]],q:5,am:[22,.35],at:.06,a:.75}),
+   'cat.sigh':U=>mx(vo(U,{d:.45,p:[[0,560],[.3,600],[1,440]],fm:[[500,800],[2800,1800]],q:6,at:.05,a:.6}),nz(U,{d:.5,dl:.05,ty:'lowpass',f:[900,400],a:.25,sw:1})),
+   'cat.breath':U=>breath(U),'cat.snore':U=>purr(U,.35),
+   'dog.boof':U=>mx(vo(U,{d:.16,p:[[0,260],[.3,300],[1,190]],fm:[[500,420],[1100,900]],q:4,at:.01}),nz(U,{d:.1,ty:'lowpass',f:[900,400],a:.5})),
+   'dog.arf':U=>{let e=0;for(const[dl,k]of[[0,1],[.2,.95]])e=mx(e,vo(U,{dl,d:.13,p:[[0,520*k],[.25,600*k],[1,380*k]],fm:[[800,650],[1600,1300]],q:5,at:.008}),nz(U,{dl,d:.06,f:[1200,900],q:1.5,a:.35}));return e},
+   'dog.whine':U=>vo(U,{d:.6,w:'triangle',p:[[0,900],[.4,1250],[1,1050]],fm:[[1300,1500]],q:3,vib:[7,.03,.1],a:.6,at:.04}),
+   'dog.whimper':U=>vo(U,{d:.75,w:'triangle',p:[[0,760],[.5,820],[1,560]],fm:[[1100,900]],q:3,vib:[5.5,.035,.2],a:.5,at:.08}),
+   'dog.huff':U=>mx(nz(U,{d:.55,ty:'lowpass',f:[700,300],a:.5,sw:1}),vo(U,{d:.3,w:'sine',p:[[0,180],[1,140]],a:.25,at:.05})),
+   'dog.mmf':U=>vo(U,{d:.2,p:[[0,170],[1,130]],fm:[[400,350]],q:3,a:.6,at:.03}),
+   'dog.breath':U=>breath(U,1.1),'dog.snore':U=>mx(vo(U,{d:.7,p:[[0,70],[1,85]],fm:[[300,350]],q:2,a:.35,sw:1}),nz(U,{d:.7,ty:'lowpass',f:[400,300],a:.25,sw:1})),
+   'rabbit.squeak':U=>mx(vo(U,{d:.06,w:'sine',p:[[0,1700],[1,2500]],a:.55,at:.006}),vo(U,{dl:.1,d:.06,w:'sine',p:[[0,1900],[1,2800]],a:.5,at:.006})),
+   'rabbit.snuffle':U=>{let e=0;for(let i=0;i<6;i++)e=mx(e,nz(U,{dl:i*.085,d:.03,f:[3600,3200],q:2.2,a:.6}));return e},
+   'rabbit.binky':U=>{let e=vo(U,{d:.06,w:'sine',p:[[0,1800],[1,2600]],a:.5,at:.006});for(let i=0;i<3;i++)e=mx(e,nz(U,{dl:.12+i*.08,d:.03,f:[3600,3300],q:2,a:.5}));return mx(e,vo(U,{dl:.42,d:.08,w:'sine',p:[[0,2000],[1,2900]],a:.5,at:.006}))},
+   'rabbit.softsqueak':U=>vo(U,{d:.14,w:'sine',p:[[0,1300],[1,1050]],a:.45,at:.02}),
+   'rabbit.sniff':U=>mx(nz(U,{d:.08,f:[3000,2700],q:2,a:.45}),nz(U,{dl:.36,d:.08,f:[3000,2700],q:2,a:.4})),
+   'rabbit.grunt':U=>mx(nz(U,{d:.09,ty:'lowpass',f:[500,300],a:.5}),vo(U,{d:.09,w:'sine',p:[[0,220],[1,180]],a:.25})),
+   'rabbit.breath':U=>breath(U,.7),'rabbit.snore':U=>{let e=0;for(let i=0;i<3;i++)e=mx(e,nz(U,{dl:i*.16,d:.03,f:[3200,3000],q:2,a:.25}));return e},
+   'fox.yip':U=>{const two=R()<.5;let e=vo(U,{d:.1,p:[[0,900],[.4,1500],[1,1100]],fm:[[1600,1900],[3000,2800]],q:5,at:.008});if(two)e=mx(e,vo(U,{dl:.16,d:.09,p:[[0,950],[.4,1550],[1,1150]],fm:[[1600,1900],[3000,2800]],q:5,at:.008,a:.85}));return e},
+   'fox.ackack':U=>{let e=0;for(let i=0;i<5;i++)e=mx(e,vo(U,{dl:i*.11,d:.07,p:[[0,700+i*30],[.5,820+i*30],[1,640]],fm:[[1200,1100]],q:4,at:.006,a:.85}),nz(U,{dl:i*.11,d:.04,f:[2000,1800],q:1.5,a:.3}));return e},
+   'fox.chirp':U=>vo(U,{d:.18,w:'sine',p:[[0,1100],[.6,1600],[1,1400]],vib:[9,.04,.3],a:.7,at:.01}),
+   'fox.whine':U=>vo(U,{d:.65,w:'triangle',p:[[0,820],[.5,860],[1,600]],fm:[[1300,1100]],q:3,vib:[5,.03,.2],a:.5,at:.07}),
+   'fox.gekker':U=>{let e=0;for(let i=0;i<3;i++)e=mx(e,vo(U,{dl:i*.22,d:.08,p:[[0,450],[1,380]],fm:[[900,800]],q:4,a:.5,at:.01}));return e},
+   'fox.sigh':U=>mx(nz(U,{d:.6,ty:'lowpass',f:[900,350],a:.45,sw:1}),vo(U,{d:.3,w:'sine',p:[[0,500],[1,380]],a:.2,at:.05})),
+   'fox.breath':U=>breath(U,.9),'fox.snore':U=>mx(vo(U,{d:.6,p:[[0,90],[1,100]],fm:[[350,400]],q:2,a:.3,sw:1}),nz(U,{d:.6,ty:'lowpass',f:[450,320],a:.2,sw:1})),
+   munch:U=>munch(U)};
+  const SETS={cat:{happy:['cat.meow','cat.mrrp','cat.mew'],soft:['cat.meowlow','cat.mrrw','cat.sigh'],sleep:['cat.breath','cat.snore'],purr:'cat.purr'},
+   dog:{happy:['dog.boof','dog.arf','dog.whine'],soft:['dog.whimper','dog.huff','dog.mmf'],sleep:['dog.breath','dog.snore']},
+   rabbit:{happy:['rabbit.squeak','rabbit.snuffle','rabbit.binky'],soft:['rabbit.softsqueak','rabbit.sniff','rabbit.grunt'],sleep:['rabbit.breath','rabbit.snore']},
+   fox:{happy:['fox.yip','fox.ackack','fox.chirp'],soft:['fox.whine','fox.gekker','fox.sigh'],sleep:['fox.breath','fox.snore']}};
+  const MV={happy:1,soft:.55,sleep:.22},PLAY={happy:1,fetch:1,ret:1,flip:1,spin:1,hop:1,follow:1,eat:1};
+  const near=(r,n)=>Math.abs(P.x-r.x)<T*n&&Math.abs(P.y+P.h-r.y)<T*3;
+  // the pet's mood for a sound: kind = 'talk' | 'chat' (idle chatter) | 'sleep' | 'happy' | 'yay' | 'purr' | 'eat' | 'sad'
+  function moodOf(p,r,kind){if(r.st=='sleep'||kind=='sleep')return'sleep';const hun=hungry(p);if(kind=='eat')return'happy';if(kind=='sad'||hun)return'soft';
+   if(kind=='yay'||kind=='happy'||kind=='purr'||PLAY[r.st]||r.wig>0)return'happy';return happy(p)>=65&&near(r,3)?'happy':'soft'}
+  const jit=()=>1+(R()*2-1)*.05,PS2=new Map(),talk=[],log=[];let seq=0;const V={log,SETS,FN,moodOf,jit,drop:{},why:'',ambient:true};
+  const per=id=>{let s=PS2.get(id);if(!s)PS2.set(id,s={last:-99,ev:-99,zz:-99,lv:''});return s};
+  function stop(q){try{const t=AC.currentTime;q.g.gain.cancelScheduledValues(t);q.g.gain.setTargetAtTime(0,t,.02)}catch(_){}const i=talk.indexOf(q);if(i>=0)talk.splice(i,1)}
+  function say(p,r,kind){kind=kind||'talk';const no=w=>{V.why=w;V.drop[w]=(V.drop[w]||0)+1;return null};if(!p||!r)return no('none');
+   const t=performance.now()/1000,mood=moodOf(p,r,kind),amb=kind=='chat'||kind=='sleep',s=per(p.id);
+   if(!(vol()>0))return no('muted');
+   const vw=cv.width/ZM,vh=cv.height/ZM;if(r.x<cam.x-T||r.x>cam.x+vw+T||r.y<cam.y-T||r.y>cam.y+vh+T*2)return no('off');
+   const dist=Math.hypot(r.x-P.x,r.y-(P.y+P.h*.6)),fall=1-dist/(T*15);if(fall<.05)return no('far');
+   if(mood=='sleep'){if(t-s.zz<3)return no('gap')}else if(amb){if(t-s.last<8)return no('gap')}else if(t-s.ev<1.5)return no('gap');
+   for(let i=talk.length-1;i>=0;i--)if(talk[i].end<=t)talk.splice(i,1);
+   if(mood!='sleep'){const mine=talk.find(q=>q.id==p.id);if(mine){if(amb)return no('busy');stop(mine)}const others=talk.filter(q=>q.id!=p.id);
+    if(others.length>=2){if(amb)return no('busy');const vic=others.find(q=>q.amb);if(!vic)return no('busy');stop(vic)}}
+   const set=SETS[p.sp]||SETS.cat;let id;
+   if(kind=='eat')id='munch';else if(set.purr&&mood=='happy'&&(kind=='purr'||kind=='chat'&&near(r,2.5)&&R()<.6))id=set.purr;
+   else{const L=set[mood];if(mood=='sleep')id=R()<.15?L[1]:L[0];else{const c=L.filter(x=>x!=s.lv);id=c[R()*c.length|0]}}
+   const j=jit(),gain=.085*MV[mood]*Math.max(0,Math.min(1,fall))*vol(),pan=Math.max(-.85,Math.min(.85,(r.x-P.x)/(vw*.5)));let dur=.5,played=false,g=null;
+   if(ok()){try{if(AC.state=='suspended')AC.resume();g=AC.createGain();g.gain.value=1;let o=g;if(AC.createStereoPanner){const pn=AC.createStereoPanner();pn.pan.value=pan;g.connect(pn);pn.connect(out())}else g.connect(out());
+     dur=FN[id]({t:AC.currentTime+.01,o,f:j,v:gain})||.5;played=true}catch(e){if(!say.e){say.e=1;console.warn('pet voice',e)}}}
+   if(mood=='sleep')s.zz=t;else{s.last=t;if(!amb)s.ev=t;talk.push({id:p.id,end:t+dur,amb,g:g||{gain:{cancelScheduledValues(){},setTargetAtTime(){}}}})}if(id!='munch'&&id!=set.purr)s.lv=id;
+   const rec={seq:++seq,id:p.id,sp:p.sp,kind,mood,v:id,j,vol:gain,pan,dur,played,st:r.st};log.push(rec);if(log.length>60)log.shift();V.why='';return rec}
+  V.say=say;V.talking=()=>{const t=performance.now()/1000;return talk.filter(q=>q.end>t).map(q=>q.id)};V.reset=()=>{PS2.clear();talk.length=0;V.drop={}};return V})();
+ function voice(p,r,kind){try{return VOX.say(p,r,kind)}catch(e){if(!voice.e){voice.e=1;console.warn('PET10 voice',e)}return null}}
  const DUR={idle:[2,2],walk:[2,3],sit:[3,4],talk:[1.3,0],sleep:[8,8],hop:[.9,0],stretch:[1.7,0],spin:[1.8,0],flip:[1.2,0],eat:[2.6,0],happy:[1.6,0],follow:[4,3],fetch:[15,0],ret:[15,0]};
  function setSt(p,r,st){r.st=st;r.t=0;const d=DUR[st]||[2,0];r.tm=d[0]+R()*d[1];r.rot=0;const hp=homePos(p);
   if(st=='walk'){r.dir=hp&&Math.abs(r.x-hp.x)>RANGE*T*.5?Math.sign(hp.x-r.x):R()<.5?-1:1}
   else if(st=='hop'&&r.g){r.vy=-330;r.g=0;r.vx=0}
-  else if(st=='flip'&&r.g){r.vy=-460;r.g=0;r.vx=0;voice(p.sp,'yay',r.x,r.y)}
-  else if(st=='talk'){voice(p.sp,hungry(p)?'sad':'talk',r.x,r.y);puff('note',r.x+r.dir*10,r.y-38)}
+  else if(st=='flip'&&r.g){r.vy=-460;r.g=0;r.vx=0;voice(p,r,'yay')}
+  else if(st=='talk'){voice(p,r,'talk');puff('note',r.x+r.dir*10,r.y-38)}
   else if(st=='happy'){if(r.g){r.vy=-220;r.g=0;r.vx=0}puff('heart',r.x,r.y-36,3)}
-  else if(st=='eat')voice(p.sp,'eat',r.x,r.y)}
+  else if(st=='eat')voice(p,r,'eat')}
  function think(p,r){const hun=hungry(p),hp=happy(p),near=Math.abs(P.x-r.x)<T*4&&Math.abs(P.y+P.h-r.y)<T*3;
   const w=hun?[['walk',1.5],['sit',4],['sleep',2],['talk',2]]:[['walk',4],['idle',2],['sit',1.5],['hop',1],['stretch',.6],['spin',.6],['talk',.9],['sleep',.5]];
   if(!hun&&near&&hp>=60)w.push(['follow',2.2],['flip',.7],['spin',.5]);let tot=0;for(const e of w)tot+=e[1];let q=R()*tot,st='idle';for(const e of w){q-=e[1];if(q<=0){st=e[0];break}}setSt(p,r,st)}
@@ -262,14 +352,14 @@ const PET10=(()=>{
   if(r.lost>4||Math.abs(r.x-hp.x)>T*24||r.y>hp.y+T*14||r.y>H*T){r.x=hp.x;r.y=hp.y;r.vx=r.vy=0;r.lost=0;puff('spark',r.x,r.y-20,4);setSt(p,r,'idle')}
   const st=r.st;
   // happy wiggle when you walk up to it (once per approach, as soon as it can: not while hungry, asleep, busy or in the air; it keeps its state and timers)
-  const cl=Math.abs(P.x-r.x)<T*2.2&&Math.abs(P.y+P.h-r.y)<T*2;if(!cl)r.cl=0;else if(!r.cl&&!hun&&r.g&&r.at>r.wigN&&(st=='idle'||st=='sit'||st=='walk')){r.cl=1;r.wig=1.2;r.wigN=r.at+9;r.dir=P.x<r.x?-1:1;puff('heart',r.x+r.dir*6,r.y-34,1)}
+  const cl=Math.abs(P.x-r.x)<T*2.2&&Math.abs(P.y+P.h-r.y)<T*2;if(!cl)r.cl=0;else if(!r.cl&&!hun&&r.g&&r.at>r.wigN&&(st=='idle'||st=='sit'||st=='walk')){r.cl=1;r.wig=1.2;r.wigN=r.at+9;r.dir=P.x<r.x?-1:1;puff('heart',r.x+r.dir*6,r.y-34,1);voice(p,r,'happy')}
   if(r.wig>0)r.wig=Math.max(0,r.wig-dt);
   if(st=='walk'){if((r.x-hp.x)*r.dir>rng)r.dir=-r.dir;want=r.wig>0?0:r.dir*spd}
   else if(st=='follow'){const dx=P.x-r.x;if(Math.abs(dx)>T*1.1&&Math.abs(P.y+P.h-r.y)<T*4){r.dir=Math.sign(dx);want=r.dir*spd*1.35;if((r.x-hp.x)*r.dir>rng+T*3)want=0}}
   else if(st=='spin'){if((r.t*5|0)!=(r.t*5-dt*5|0))r.dir=-r.dir;want=r.dir*20}
   else if(st=='fetch'){if(!ball||ball.pet!==p.id){setSt(p,r,'idle')}else{const dx=ball.x-r.x;r.dir=dx<0?-1:1;if(Math.abs(dx)>8&&(r.x-hp.x)*r.dir<rng+T*8)want=r.dir*spd*1.6;
     if(Math.abs(dx)<12&&Math.abs(ball.y-(r.y-4))<T*.7||r.t>6){ball.st='held';setSt(p,r,'ret');r.tm=15}}} // out of reach for 6 s: it bounces back to the pet
-  else if(st=='ret'){const pn=Math.abs(P.x-r.x)<T*12&&Math.abs(P.y+P.h-r.y)<T*6,tx=pn?P.x:hp.x,dx=tx-r.x;r.dir=dx<0?-1:1;if(Math.abs(dx)>T*.9&&r.t<8)want=r.dir*spd*1.4;else{ball=null;p.n.plays++;addHap(p,15);setSt(p,r,'happy');voice(p.sp,'talk',r.x,r.y);try{say(p.nm+' brought the ball back! ♥')}catch(_){}}}
+  else if(st=='ret'){const pn=Math.abs(P.x-r.x)<T*12&&Math.abs(P.y+P.h-r.y)<T*6,tx=pn?P.x:hp.x,dx=tx-r.x;r.dir=dx<0?-1:1;if(Math.abs(dx)>T*.9&&r.t<8)want=r.dir*spd*1.4;else{ball=null;p.n.plays++;addHap(p,15);setSt(p,r,'happy');voice(p,r,'yay');try{say(p.nm+' brought the ball back! ♥')}catch(_){}}}
   if(busy(st)&&r.t>r.tm){if(ball&&ball.pet===p.id)ball=null;setSt(p,r,'idle')}
   // ledges and water: walking never steps down more than one block or into water (rabbits look further ahead: they hop)
   if(want&&r.g){const fx=Math.floor((r.x+Math.sign(want)*(HW+(p.sp=='rabbit'?24:4)))/T),gy=Math.floor(r.y/T);if(wet(fx,gy-1)||wet(fx,gy)||!solid(fx,gy)&&!solid(fx,gy+1)&&!solid(fx,gy-1)){if(st=='walk')r.dir=-r.dir;want=0}}
@@ -279,6 +369,9 @@ const PET10=(()=>{
   r.land=Math.max(0,r.land-dt);if(r.g&&!wasG&&vy0>160)r.land=.2;   // squash on landing (applied when drawn)
   if(st=='flip'&&!r.g)r.rot=Math.min(1,r.t/.62)*TAU;else r.rot=0;
   if(st=='sleep'&&r.at-r.nt>1.1){r.nt=r.at;puff('z',r.x+r.dir*8,r.y-26)}
+  // little sounds by itself: soft breathing / a rare snore asleep; now and then a chirp, purr or murmur while you are around
+  if(r.vn==null){r.vn=r.at+4+R()*8;r.vz=r.at+1}
+  if(st=='sleep'){if(r.at>r.vz){r.vz=r.at+3+R()*3;voice(p,r,'sleep')}}else if(r.at>r.vn){r.vn=r.at+7+R()*9;if(VOX.ambient&&(st=='idle'||st=='sit'||st=='walk'||st=='follow')&&Math.abs(P.x-r.x)<T*6)voice(p,r,'chat')}
   if(st=='eat'&&r.at-r.nt>.3){r.nt=r.at;puff('crumb',r.x+r.dir*12,r.y-4,2)}
   if(r.t>=r.tm&&!busy(st))think(p,r);
   // frame
@@ -356,10 +449,10 @@ const PET10=(()=>{
   if(!treat&&hunger(p)<.15)return{ok:0,m:p.nm+' is full right now'};addI(it,-1);p.fed=now();p.n.meals++;addHap(p,treat?20:8);save();try{barDirty=1;renderBar()}catch(_){}
   const r=rt(p);if(r){setSt(p,r,'eat');puff('heart',r.x,r.y-34,treat?3:2)}return{ok:1,m:p.nm+(treat?' loved the treat!':' ate happily. Next meal in 2 hours.')}}
  function pet(id){const p=byId(id);if(!p)return{ok:0};const t=performance.now();if(t-(p._pt||0)<1200)return{ok:0,m:''};p._pt=t;p.n.pets++;addHap(p,hungry(p)?2:6);const r=rt(p);
-  if(r){setSt(p,r,'happy');puff('heart',r.x,r.y-36,2);voice(p.sp,p.sp=='cat'?'purr':'talk',r.x,r.y)}later();return{ok:1,m:hungry(p)?p.nm+' leans into your hand, but looks hungry':p.nm+' loves that! ♥'}}
+  if(r){setSt(p,r,'happy');puff('heart',r.x,r.y-36,2);voice(p,r,'purr')}later();return{ok:1,m:hungry(p)?p.nm+' leans into your hand, but looks hungry':p.nm+' loves that! ♥'}}
  function play(id){const p=byId(id);if(!p)return{ok:0,m:'No pet'};if(hungry(p))return{ok:0,m:p.nm+' is too hungry to play. Feed them first.'};const r=rt(p);if(!r)return{ok:0,m:p.nm+' is not in this world'};
   if(ball)return{ok:0,m:'The ball is already out'};const hp=homePos(p),d=Math.abs(P.x-hp.x)>T*2?Math.sign(hp.x-P.x):(P.f||1);
-  ball={x:P.x+d*10,y:P.y+P.h*.35,vx:d*(140+R()*70),vy:-360,st:'fly',t:0,pet:p.id,w:cur};setSt(p,r,'fetch');r.tm=15;voice(p.sp,'talk',r.x,r.y);try{UIS.play('click')}catch(_){}return{ok:1,m:'You threw the ball for '+p.nm+'!'}}
+  ball={x:P.x+d*10,y:P.y+P.h*.35,vx:d*(140+R()*70),vy:-360,st:'fly',t:0,pet:p.id,w:cur};setSt(p,r,'fetch');r.tm=15;voice(p,r,'happy');try{UIS.play('click')}catch(_){}return{ok:1,m:'You threw the ball for '+p.nm+'!'}}
  function moveTo(id,hid){const p=byId(id),h=homeById(hid);if(!p||!h)return false;if(petsAt(hid).length>=MAXH&&p.home!=hid)return false;p.home=hid;RT.delete(p.id);save();return true}
  function force(id,st){const p=byId(id),r=p&&rt(p);if(!r)return false;setSt(p,r,st);return true}
  // ==== Pet UI =============================================================================================================
@@ -429,5 +522,5 @@ const PET10=(()=>{
   X.restore()}
  // ---- crafting: kibble from crops, treats from fish (at the Crafting Table)
  try{for(const r of[{id:'petfood',n:'Pet Food',out:[FOOD,3],in:[[282,1],[280,1]],secs:4,lv:1},{id:'pettreat',n:'Pet Treat',out:[TREAT,2],in:[[240,1],[281,1]],secs:6,lv:2}])if(!RECIPES.some(q=>q.id==r.id))RECIPES.push(r)}catch(_){}
- return{S,SP,CL,SLOTS,PAL,FR,SPECIES,FOOD,TREAT,HOME,FEED_MS,RANGE,RT,PT,get ball(){return ball},set ball(v){ball=v},hunger,hungry,happy,addHap,ensure,settle,place,remove,feed,pet,play,moveTo,force,rt,sprite,preview,
+ return{VOX,S,SP,CL,SLOTS,PAL,FR,SPECIES,FOOD,TREAT,HOME,FEED_MS,RANGE,RT,PT,get ball(){return ball},set ball(v){ball=v},hunger,hungry,happy,addHap,ensure,settle,place,remove,feed,pet,play,moveTo,force,rt,sprite,preview,
   open:openUI,close:closeUI,render,get ui(){return UI},nearest,save,load(){load();RT.clear()},timeShift(ms){S.off=+ms||0},get clock(){return S.clk},CACHE,homesHere,homeById,petsAt,clothIcon}})();
