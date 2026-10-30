@@ -48,5 +48,16 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
   await new Promise(r=>setTimeout(r,60));for(let i=0;i<60&&tiles[q];i++)breakAt(px,py,999);await new Promise(r=>setTimeout(r,40));const b=MSFX8.log.slice(n0).map(e=>e.k+':'+e.c);return{a,b}});
  ok('non-tool hits play the soft material sound',(snd.a.includes('hit:stone')||snd.a.includes('break:stone'))&&snd.b.includes('break:stone'),snd);
  const bus=await E(()=>{try{ac()}catch(_){}MSFX8.play('break','ore',73);return typeof AC!='undefined'&&!!AC});ok('sound bus builds (shelf + lowpass + room) without errors',bus&&!errs.length,errs.slice(0,3));
+ // block debris (DEB12): texture fragments + dust by material, always (even with classic), from a pool that reuses slots; effect sounds (BFX12)
+ const deb=await E(async()=>{BRK7.set('classic');DEB12.clear();const out={},want={dirt:/^Dirt$/,stone:/^Stone$/,ore:/Ore/,wood:/^Wood$/,glass:/^Glass$/,sand:/^Sand$/};
+  for(const k in want){let id=0;for(const b in BLK)if(want[k].test(BLK[b][0])){id=+b;break}if(!id)continue;DEB12.clear();const px=Math.floor(P.x/T)+2,py=Math.floor((P.y+P.h)/T)-1,q=py*W+px;tiles[q]=id;for(let i=0;i<60&&tiles[q];i++)breakAt(px,py,999);
+   out[k]={id,m:DEB12.mat(id),n:DEB12.count,frag:DEB12.art(id).f.length}}
+  DEB12.clear();const cap0=DEB12.cap;for(let j=0;j<120;j++){const px=Math.floor(P.x/T)+2,py=Math.floor((P.y+P.h)/T)-1,q=py*W+px;tiles[q]=3;for(let i=0;i<60&&tiles[q];i++)breakAt(px,py,999)}
+  const peak=DEB12.count,cap1=DEB12.cap;await new Promise(r=>setTimeout(r,2200));
+  const kinds=BRK7.FREE.map(f=>f[0]).filter(k=>k!='classic').concat(Object.keys(BRK7.SHOP));
+  return{out,peak,cap0,cap1,left:DEB12.count,mapped:kinds.filter(k=>!BFX12.MAP[k]),heart:(()=>{try{BFX12.MAP.heart(AC.destination);return true}catch(e){return e.message}})()}});
+ ok('breaking blocks always throws debris cut from the block texture, by material (even with the classic effect)',Object.values(deb.out).every(o=>o.n>0&&o.frag==8)&&deb.out.stone.m=='stone'&&deb.out.wood.m=='wood'&&deb.out.glass.m=='glass'&&deb.out.sand.m=='sand',JSON.stringify(deb.out));
+ ok('debris pool grows instead of dropping, stays capped, and empties after',deb.cap1>=deb.cap0&&deb.cap1<=1024&&deb.peak<=deb.cap1&&deb.left==0,JSON.stringify({peak:deb.peak,cap0:deb.cap0,cap1:deb.cap1,left:deb.left}));
+ ok('every break effect has its own sound layer; Heart Pop plays its warm chime',deb.mapped.length==0&&deb.heart===true,JSON.stringify({missing:deb.mapped,heart:deb.heart}));
  ok('no page errors',errs.length==0,errs.slice(0,4));
  console.log(fails?fails+' FAILED':'all breakfx tests passed');await b.close();process.exit(fails?1:0)})().catch(e=>{console.error(e);process.exit(1)});

@@ -25,13 +25,15 @@ const CINE7=(()=>{
  const bdef=id=>{try{return BOSSES.find(b=>b.id==id)||null}catch(_){return null}};
 
  // ================= AUDIO: music bus (OPT.mv, mute) + sfx bus (OPT.sv), each with a soft reverb send =================
- let AX=null,NB=null;
- function vol(){if(!AX)return;try{const mu=typeof mute!='undefined'&&mute;AX.m.gain.value=mu?0:(OPT.mv==null?.5:+OPT.mv);AX.s.gain.value=OPT.sv==null?1:+OPT.sv}catch(_){}}
+ let AX=null,NB=null,DUCK=1;
+ function vol(){if(!AX)return;try{const mu=typeof mute!='undefined'&&mute,t=AX.a.currentTime;AX.m.gain.setTargetAtTime(mu?0:(OPT.mv==null?.5:+OPT.mv)*DUCK,t,.12);AX.s.gain.value=OPT.sv==null?1:+OPT.sv}catch(_){}}
  function au(){try{ac();if(!AC||AC.state=='closed')return null;if(AC.state=='suspended'){AC.resume().catch(()=>{});return null}
    if(!AX||AX.a!==AC){const a=AC,m=a.createGain(),s=a.createGain(),mi=a.createGain(),si=a.createGain(),comp=a.createDynamicsCompressor(),len=a.sampleRate*2.4|0,b=a.createBuffer(2,len,a.sampleRate);
     for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(R()*2-1)*Math.pow(1-i/len,2.6)}
     const rv=a.createConvolver(),rv2=a.createConvolver(),wm=a.createGain(),ws=a.createGain(),sx=a.createGain();rv.buffer=b;rv2.buffer=b;wm.gain.value=.4;ws.gain.value=.3;
-    comp.threshold.value=-12;comp.ratio.value=3.5;mi.connect(m);mi.connect(rv);rv.connect(wm);wm.connect(m);si.connect(s);sx.connect(rv2);rv2.connect(ws);ws.connect(s);m.connect(comp);s.connect(comp);comp.connect(a.destination);
+    comp.threshold.value=-16;comp.knee.value=14;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.3;mi.connect(m);mi.connect(rv);rv.connect(wm);wm.connect(m);si.connect(s);sx.connect(rv2);rv2.connect(ws);ws.connect(s);
+    // calm score: soften the treble and cut piercing highs before the compressor (long-listen ear comfort)
+    const hs=a.createBiquadFilter(),lpf=a.createBiquadFilter();hs.type='highshelf';hs.frequency.value=3000;hs.gain.value=-6;lpf.type='lowpass';lpf.frequency.value=8500;lpf.Q.value=.5;m.connect(hs);hs.connect(lpf);lpf.connect(comp);s.connect(comp);comp.connect(a.destination);
     AX={a,m,s,mi,si,sx}}
    vol();return AX}catch(_){return null}}
  const nbuf=a=>NB&&NB.sampleRate==a.sampleRate?NB:(NB=(()=>{const b=a.createBuffer(1,a.sampleRate*2,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;return b})());
@@ -807,6 +809,7 @@ const CINE7=(()=>{
  // ---- frame: background scene, then flash / letterbox / caption in screen space
  function draw(){const g=I.g,u=I.u;g.setTransform(1,0,0,1,0,0);A(g,1);g.fillStyle='#000';g.fillRect(0,0,I.cw,I.ch);I.fl=0;I.dk=0;I.sa=0;I.shx=I.shy=0;
   let si=0;while(si<STORY.length-1&&u>=STORY[si+1][3])si++;const S=STORY[si],t=u-S[3];I.si=si;
+  if(!I.prep&&I.vsi!==si){I.vsi=si;if(S[2])narr(S[2],I.red);if(S[0]=='title'&&!I.vt){I.vt=1;setTimeout(()=>narr('RootBound.',true,true),Math.max(0,(.5-t)*1000))}}
   // shake is decided by the scene's first lines; compute it with a dry pass of the timings
   const pre=SCN[S[0]];I.sa=0;
   if(!I.red){const sa=shakeAt(S[0],t);if(sa>0){I.shx=(R()-.5)*2*sa*I.s/2;I.shy=(R()-.5)*2*sa*I.s/2}}
@@ -855,7 +858,12 @@ const CINE7=(()=>{
   if(I.el>=ST*I.k+.05)end()}
  function blockKey(e){if(!I)return;try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}if(/^F\d+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault()}
  function resume(){try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}}
- function end(){if(!I)return;cancelAnimationFrame(I.raf);removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
+ // ---- narrator (VOX12): deep, calm and clean; darker characters get a deeper, more commanding read. The score ducks under the voice.
+ let talking=0;
+ function narr(text,cut,title){try{const p=VOX12.params();VOX12.say(text,{cancel:!!cut,pitch:title?Math.max(.5,p.pitch-.08):p.pitch,rate:title?.62:p.rate,
+   onstart(){talking++;DUCK=.5;vol()},onend(){talking=Math.max(0,talking-1);if(!talking){DUCK=1;vol()}}});
+  if(title){try{const A=au();if(A){const t0=A.a.currentTime+.05;o('m',65.4,65.4,t0,3.2,'sine',.09,.06);o('m',98,98,t0,3,'sine',.05,.08);o('m',130.8,130.8,t0+.05,2.6,'triangle',.025,.1,0,1)}}catch(_){}}}catch(_){}}
+ function end(){if(!I)return;cancelAnimationFrame(I.raf);setTimeout(()=>{try{if(!I)VOX12.stop()}catch(_){}DUCK=1;talking=0;vol()},2500);removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
   try{if(!(typeof SHOW7!='undefined'&&SHOW7.isOpen))window.RB_COVER=false}catch(_){window.RB_COVER=false}try{startBGM()}catch(_){}/* the game's music takes over (it was held back during the story) */}
  function intro(done){if(I)return false;const red=reduce(),cv=mk(1,1);cv.id='cine7';cv.setAttribute('role','img');cv.setAttribute('aria-label','Story intro: Rootbound, Celestial Ascension');document.body.appendChild(cv);
   I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);

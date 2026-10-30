@@ -1,8 +1,8 @@
 // ===== HERO12: your character shines. On the home screen the portrait stands in an anime aura: flame tongues and slow light rays behind,
 // a glow that hugs the silhouette, a light sweep across the figure, rising sparkles and an eye glint now and then. The first time the home
 // screen opens after launch it plays a hero reveal (~4.6 s, click to skip): the screen darkens, speed lines rush in, the aura erupts with a
-// flash and a shockwave, the eyes glint, your name slams in, and a deep voice line is spoken (Web Speech with the deepest voice found, low
-// pitch, plus a soft sub-bass rumble; subtitles always show). Click the portrait for another line. In worlds your character gets a soft
+// flash and a shockwave, the eyes glint, your name slams in, and a deep voice line is spoken (VOX12: the deepest clear voice, deeper still
+// for dark-aligned characters, plus a soft sub-bass rumble; subtitles always show). Click the portrait for another line. In worlds your character gets a soft
 // glow and a few twinkles. Colours follow your level tier. Every sprite is drawn once; the silhouette glow is a quarter-size blurred copy.
 // Reduced motion: no shake, zoom or speed lines (the aura stays). =====
 const HERO12=(()=>{
@@ -26,13 +26,10 @@ const HERO12=(()=>{
  // ---- voice: the deepest voice available, low pitch, a little slower; subtitles always show
  const LINES=['The roots remember me. Now... I rise.','No matter how far I fall, I always rise again.','This power... was always mine.','Watch closely. This is my ascension.','The sky is not my limit. It is my home.','Stand back. I am just getting started.'];
  let li=-1,sub='',subT=0;
- function voice(){try{const v=speechSynthesis.getVoices();if(!v||!v.length)return null;const en=v.filter(x=>/^en/i.test(x.lang)),pool=en.length?en:v;
-  return pool.find(x=>/David|Guy|Mark|George|Ryan|Daniel|Fred|Christopher|Eric|Roger|Brian|Male/i.test(x.name))||pool[0]}catch(_){return null}}
- try{speechSynthesis.getVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',()=>{})}catch(_){}
  function rumble(){try{snd(46,2.4,'sine',.16,.8);snd(92,1.6,'sine',.05,.7)}catch(_){}}
  function speak(line){li=(li+1+(R()*(LINES.length-1)|0))%LINES.length;line=line||LINES[li];sub=line;subT=performance.now();
   const vol=Math.min(1,typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1);if(!(vol>0))return line;rumble();
-  try{if(!('speechSynthesis' in window))return line;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(line),v=voice();if(v)u.voice=v;u.pitch=.2;u.rate=.8;u.volume=vol;speechSynthesis.speak(u)}catch(_){}return line}
+  try{VOX12.say(line,{cancel:true})}catch(_){}return line}
  // ---- home portrait
  const S={rv:0,skip:0,pulse:-9,glint:-9,nextGlint:3,parts:[],last:0,done:false};
  // full-screen overlay for the reveal: dark veil, speed lines rushing to the face, the white flash at the eruption; removed when done

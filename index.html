@@ -2979,6 +2979,30 @@ const PERF7=(()=>{
  {const _a=VFX.add;VFX.add=function(){if(k<1&&Math.random()>k)return;return _a.apply(this,arguments)}}
  return{get k(){return k},get ema(){return ema},get best(){return best}}})();
 
+/* ========== LATE: 41-z-voice.js ========== */
+// ===== VOX12: the narrator / hero voice (Web Speech, no audio files). Picks the deepest clear voice installed (prefers English male voices
+// such as Microsoft David / Guy / Mark), speaks low and calm but never so low that it smears: pitch .74, rate .9. If your character reads as
+// dark / corrupted (dark-themed wings, a void / shadow / phantom / eclipse aura, skin or trail, or a very dark outfit) the voice shifts deeper,
+// slower and more commanding (pitch .58, rate .82), still clean. Follows the Sound effects slider; say() returns the utterance (or null) and
+// calls onstart / onend so callers can duck music and time subtitles. =====
+const VOX12=(()=>{
+ const has=()=>typeof speechSynthesis!='undefined'&&typeof SpeechSynthesisUtterance!='undefined';
+ let V=null;
+ function pick(){if(!has())return null;let v=[];try{v=speechSynthesis.getVoices()||[]}catch(_){}if(!v.length)return null;const en=v.filter(x=>/^en/i.test(x.lang)),pool=en.length?en:v;
+  return pool.find(x=>/David|Guy|Mark|George|Ryan|Christopher|Eric|Roger|Brian|Daniel|Fred|Male/i.test(x.name))||pool.find(x=>!/Zira|Hazel|Susan|Female|Aria|Jenny|Sonia|Libby/i.test(x.name))||pool[0]}
+ try{if(has()){speechSynthesis.getVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',()=>{V=pick()})}}catch(_){}
+ const DARK=/void|shadow|phantom|eclipse|obsidian|abyss|night|crow|raven|bone|dark|corrupt|shroud|umbra|demon|nether|cursed/i;
+ function dark(){try{const w=curWing(lvl);if(w){try{if(typeof WTRAIL!='undefined'&&WTRAIL.theme&&WTRAIL.theme(w)=='dark')return true}catch(_){}if(DARK.test((w.id||'')+' '+(w.n||'')))return true}}catch(_){}
+  try{for(const s of ['aura','skin','trail']){const r=SHOP7.st.eq[s];if(r&&DARK.test(r))return true}}catch(_){}
+  try{const c=String(cel.ap.out||'');if(/^#[0-9a-f]{6}$/i.test(c)){const n=parseInt(c.slice(1),16),l=((n>>16)*.3+(n>>8&255)*.59+(n&255)*.11)/255;if(l<.13)return true}}catch(_){}return false}
+ function params(o){const d=o&&o.dark!=null?o.dark:dark();return d?{pitch:.58,rate:.82,dark:true}:{pitch:.74,rate:.9,dark:false}}
+ const vol=()=>Math.min(1,typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1);
+ const log=[];
+ function say(text,o){o=o||{};if(text){log.push(text);if(log.length>40)log.shift()}if(!has()||!text||!(vol()>0))return null;try{if(o.cancel)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text),p=params(o);V=V||pick();if(V)u.voice=V;
+   u.pitch=o.pitch!=null?o.pitch:p.pitch;u.rate=o.rate!=null?o.rate:p.rate;u.volume=vol()*(o.vol||1);if(o.onstart)u.onstart=o.onstart;if(o.onend){u.onend=o.onend;u.onerror=o.onend}speechSynthesis.speak(u);return u}catch(_){return null}}
+ function stop(){try{if(has())speechSynthesis.cancel()}catch(_){}}
+ return{say,stop,dark,params,pick,log,get voice(){return V||pick()}}})();
+
 /* ========== LATE: 50-wings.js ========== */
 // ===== Wing renderer v8: shape families painted procedurally from the WINGS art specs (20-data.js) =====
 // fan  = rows of elements (feathers, petals, shards, blades, crescents, flames...) pre-rendered per row; rows unfurl like a fan,
@@ -8210,8 +8234,7 @@ const WFX9=(()=>{
 // ===== BRK7: block-break effects. Free: soul wisps (the default), star sparkles, petals and classic (none). In the store (Effects, slot
 // 'break', one equipped at a time): Bubble Pop, Heart Pop, Sakura Bloom, Snowfall, Fireflies, Butterflies, Gold Rush, Galaxy Swirl, Royal
 // Ghosts and Shadow Phantoms (tools/breakfx-v10.json), then Confetti Party, Leaf Swirl, Music Notes, Candy Pop, Kitty Paws, Ember Sparks, Crystal
-// Shards and Rainbow Burst (v12). Every break (except classic) also pops a few chunks of the block's own colour and a quick ring, so you can see
-// it even behind big auras. Every shape is drawn once into a small sprite and stamped with drawImage (no per-frame
+// Shards and Rainbow Burst (v12). Every break (except classic) also pops a quick ring; the block debris itself comes from DEB12 (99-zzzzzzz-debris.js). Every shape is drawn once into a small sprite and stamped with drawImage (no per-frame
 // gradients or paths), at most 90 alive; rotated / scaled sprites are placed with one setTransform from the frame's base matrix (no
 // save/restore per particle), and while many are alive new bursts are smaller, so fast mining stays cheap. Picked in the store or in Hub > Settings > Break effect (free ones plus the ones you own).
 // preview() draws the store card: a little grass block that breaks on a loop. =====
@@ -8385,8 +8408,8 @@ const BRK7=(()=>{
   B=null;g.restore()}
  // ---- in the world
  function hex(c){c=(c||'#9cf').replace('#','');if(c.length==3)c=c.replace(/./g,'$&$&');const n=parseInt(c,16)||0;return[n>>16&255,n>>8&255,n&255]}
- function spawn(tx,ty,id){const k=skin();if(k=='classic'||(typeof QM!='undefined'&&QM.reduce))return;const b=BLK[id],c=b&&b[1]?hex(b[1]):[150,200,255],x=(tx+.5)*T,y=(ty+.5)*T;impact(L,x,y,c);burst(L,k,x,y,c)}
- {const _b=breakAt;breakAt=function(x,y){const id=tiles[y*W+x];const r=_b.apply(this,arguments);try{if(r&&id&&!tiles[y*W+x])spawn(x,y,id)}catch(_){}return r}}
+ function spawn(tx,ty,id){const k=skin();if(k=='classic'||(typeof QM!='undefined'&&QM.reduce))return;const b=BLK[id],c=b&&b[1]?hex(b[1]):[150,200,255],x=(tx+.5)*T,y=(ty+.5)*T;add(L,{k:'puff',x,y,life:.32,sz:.6});burst(L,k,x,y,c)}
+ // spawn() is called from the outermost breakAt hook in 99-zzzzzzz-debris.js (with the block debris and the effect's sound)
  {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(L,dt,P.x,P.y+P.h*.4,true)}catch(e){console.error('BRK7',e)}};BOSS6.drawProj=function(g,cx,cy){_d.call(this,g,cx,cy);try{draw(g,L,cx,cy)}catch(e){console.error('BRK7d',e)}}}
  // equipping one in the store shows it once at your feet
  {const _e=FX7.onEquip;FX7.onEquip=function(slot,id){const r=_e.apply(this,arguments);try{if(slot=='break'&&id){const k=skin();if(k!='classic')burst(L,k,P.x,P.y+P.h*.6,[150,200,255])}}catch(_){}return r}}
@@ -10127,6 +10150,7 @@ const TOOLLV=(()=>{
 // All synthesised with WebAudio (no audio files). Instruments: Rhodes-style keys, soft bass, music-box melody, brushed drums, vinyl crackle, soft pad.
 // A song = chord progression + scale + tempo + feel. Melodies are generated from a short motif that mutates every phrase, so a long listen never loops.
 // startBGM() is replaced so the existing music volume / mute code keeps working: bgm.m is the music master gain.
+// v12: the master goes through a treble shelf, a gentle lowpass and a soft compressor (calm, no piercing highs or sharp drum transients).
 const MUS7=(()=>{
  const Q={maj7:[0,4,7,11],maj9:[0,4,7,11,14],m7:[0,3,7,10],m9:[0,3,7,10,14],d9:[0,4,7,10,14],sus:[0,5,7,10,14],add9:[0,4,7,14],m6:[0,3,7,9,14],m11:[0,3,7,10,17]};
  const SC={maj:[0,2,4,7,9],min:[0,3,5,7,10],hira:[0,2,3,7,8],lyd:[0,2,4,6,7,9,11],dor:[0,2,3,5,7,9,10]};
@@ -10231,7 +10255,10 @@ const MUS7=(()=>{
  function fadeIn(){const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(0,t);mg.gain.linearRampToValueAtTime(1,t+2.2)}
  function crackle(){if(!on||!ctx)return;const t=ctx.currentTime;if(R()<.7)nz(t,.012+R()*.02,2500+R()*4000,'bandpass',.004+R()*.006);if(R()<.04)nz(t,.05,900,'bandpass',.008)}
  function start(){ac();if(on||!AC)return;ctx=AC;master=ctx.createGain();master.gain.value=mute?0:(OPT.mv==null?.5:OPT.mv);mg=ctx.createGain();mg.gain.value=1;lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;lp.Q.value=.4;
-  wet=ctx.createGain();wet.gain.value=.34;const rv=mkReverb();lp.connect(mg);lp.connect(rv);rv.connect(wet);wet.connect(mg);mg.connect(master);master.connect(ctx.destination);
+  wet=ctx.createGain();wet.gain.value=.34;const rv=mkReverb();lp.connect(mg);lp.connect(rv);rv.connect(wet);wet.connect(mg);mg.connect(master);
+  // calm master: a treble shelf and a gentle lowpass take the edge off bright notes and crackle, and a slow soft compressor rounds drum transients
+  {const hs=ctx.createBiquadFilter(),lp2=ctx.createBiquadFilter(),cp=ctx.createDynamicsCompressor();hs.type='highshelf';hs.frequency.value=2200;hs.gain.value=-5;lp2.type='lowpass';lp2.frequency.value=7000;lp2.Q.value=.5;
+   cp.threshold.value=-20;cp.knee.value=16;cp.ratio.value=2.5;cp.attack.value=.012;cp.release.value=.35;master.connect(hs);hs.connect(lp2);lp2.connect(cp);cp.connect(ctx.destination)}
   // the cave echo (a dotted-eighth delay with feedback): marimba and drops go through it; underground moods also send the whole mix in
   cave=ctx.createGain();cave.gain.value=1;const dl=ctx.createDelay(1),fb=ctx.createGain(),dlp=ctx.createBiquadFilter();dl.delayTime.value=.33;fb.gain.value=.38;dlp.type='lowpass';dlp.frequency.value=1800;
   cave.connect(lp);cave.connect(dl);dl.connect(dlp);dlp.connect(fb);fb.connect(dl);dlp.connect(wet);caveSend=ctx.createGain();caveSend.gain.value=0;lp.connect(caveSend);caveSend.connect(dl);
@@ -11055,13 +11082,15 @@ const CINE7=(()=>{
  const bdef=id=>{try{return BOSSES.find(b=>b.id==id)||null}catch(_){return null}};
 
  // ================= AUDIO: music bus (OPT.mv, mute) + sfx bus (OPT.sv), each with a soft reverb send =================
- let AX=null,NB=null;
- function vol(){if(!AX)return;try{const mu=typeof mute!='undefined'&&mute;AX.m.gain.value=mu?0:(OPT.mv==null?.5:+OPT.mv);AX.s.gain.value=OPT.sv==null?1:+OPT.sv}catch(_){}}
+ let AX=null,NB=null,DUCK=1;
+ function vol(){if(!AX)return;try{const mu=typeof mute!='undefined'&&mute,t=AX.a.currentTime;AX.m.gain.setTargetAtTime(mu?0:(OPT.mv==null?.5:+OPT.mv)*DUCK,t,.12);AX.s.gain.value=OPT.sv==null?1:+OPT.sv}catch(_){}}
  function au(){try{ac();if(!AC||AC.state=='closed')return null;if(AC.state=='suspended'){AC.resume().catch(()=>{});return null}
    if(!AX||AX.a!==AC){const a=AC,m=a.createGain(),s=a.createGain(),mi=a.createGain(),si=a.createGain(),comp=a.createDynamicsCompressor(),len=a.sampleRate*2.4|0,b=a.createBuffer(2,len,a.sampleRate);
     for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(R()*2-1)*Math.pow(1-i/len,2.6)}
     const rv=a.createConvolver(),rv2=a.createConvolver(),wm=a.createGain(),ws=a.createGain(),sx=a.createGain();rv.buffer=b;rv2.buffer=b;wm.gain.value=.4;ws.gain.value=.3;
-    comp.threshold.value=-12;comp.ratio.value=3.5;mi.connect(m);mi.connect(rv);rv.connect(wm);wm.connect(m);si.connect(s);sx.connect(rv2);rv2.connect(ws);ws.connect(s);m.connect(comp);s.connect(comp);comp.connect(a.destination);
+    comp.threshold.value=-16;comp.knee.value=14;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.3;mi.connect(m);mi.connect(rv);rv.connect(wm);wm.connect(m);si.connect(s);sx.connect(rv2);rv2.connect(ws);ws.connect(s);
+    // calm score: soften the treble and cut piercing highs before the compressor (long-listen ear comfort)
+    const hs=a.createBiquadFilter(),lpf=a.createBiquadFilter();hs.type='highshelf';hs.frequency.value=3000;hs.gain.value=-6;lpf.type='lowpass';lpf.frequency.value=8500;lpf.Q.value=.5;m.connect(hs);hs.connect(lpf);lpf.connect(comp);s.connect(comp);comp.connect(a.destination);
     AX={a,m,s,mi,si,sx}}
    vol();return AX}catch(_){return null}}
  const nbuf=a=>NB&&NB.sampleRate==a.sampleRate?NB:(NB=(()=>{const b=a.createBuffer(1,a.sampleRate*2,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;return b})());
@@ -11837,6 +11866,7 @@ const CINE7=(()=>{
  // ---- frame: background scene, then flash / letterbox / caption in screen space
  function draw(){const g=I.g,u=I.u;g.setTransform(1,0,0,1,0,0);A(g,1);g.fillStyle='#000';g.fillRect(0,0,I.cw,I.ch);I.fl=0;I.dk=0;I.sa=0;I.shx=I.shy=0;
   let si=0;while(si<STORY.length-1&&u>=STORY[si+1][3])si++;const S=STORY[si],t=u-S[3];I.si=si;
+  if(!I.prep&&I.vsi!==si){I.vsi=si;if(S[2])narr(S[2],I.red);if(S[0]=='title'&&!I.vt){I.vt=1;setTimeout(()=>narr('RootBound.',true,true),Math.max(0,(.5-t)*1000))}}
   // shake is decided by the scene's first lines; compute it with a dry pass of the timings
   const pre=SCN[S[0]];I.sa=0;
   if(!I.red){const sa=shakeAt(S[0],t);if(sa>0){I.shx=(R()-.5)*2*sa*I.s/2;I.shy=(R()-.5)*2*sa*I.s/2}}
@@ -11885,7 +11915,12 @@ const CINE7=(()=>{
   if(I.el>=ST*I.k+.05)end()}
  function blockKey(e){if(!I)return;try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}if(/^F\d+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault()}
  function resume(){try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}}
- function end(){if(!I)return;cancelAnimationFrame(I.raf);removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
+ // ---- narrator (VOX12): deep, calm and clean; darker characters get a deeper, more commanding read. The score ducks under the voice.
+ let talking=0;
+ function narr(text,cut,title){try{const p=VOX12.params();VOX12.say(text,{cancel:!!cut,pitch:title?Math.max(.5,p.pitch-.08):p.pitch,rate:title?.62:p.rate,
+   onstart(){talking++;DUCK=.5;vol()},onend(){talking=Math.max(0,talking-1);if(!talking){DUCK=1;vol()}}});
+  if(title){try{const A=au();if(A){const t0=A.a.currentTime+.05;o('m',65.4,65.4,t0,3.2,'sine',.09,.06);o('m',98,98,t0,3,'sine',.05,.08);o('m',130.8,130.8,t0+.05,2.6,'triangle',.025,.1,0,1)}}catch(_){}}}catch(_){}}
+ function end(){if(!I)return;cancelAnimationFrame(I.raf);setTimeout(()=>{try{if(!I)VOX12.stop()}catch(_){}DUCK=1;talking=0;vol()},2500);removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
   try{if(!(typeof SHOW7!='undefined'&&SHOW7.isOpen))window.RB_COVER=false}catch(_){window.RB_COVER=false}try{startBGM()}catch(_){}/* the game's music takes over (it was held back during the story) */}
  function intro(done){if(I)return false;const red=reduce(),cv=mk(1,1);cv.id='cine7';cv.setAttribute('role','img');cv.setAttribute('aria-label','Story intro: Rootbound, Celestial Ascension');document.body.appendChild(cv);
   I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);
@@ -14173,8 +14208,8 @@ const CHARMIG9=(()=>{function run(){try{const sc=X6&&X6.sc;if(!sc)return false;c
 // ===== HERO12: your character shines. On the home screen the portrait stands in an anime aura: flame tongues and slow light rays behind,
 // a glow that hugs the silhouette, a light sweep across the figure, rising sparkles and an eye glint now and then. The first time the home
 // screen opens after launch it plays a hero reveal (~4.6 s, click to skip): the screen darkens, speed lines rush in, the aura erupts with a
-// flash and a shockwave, the eyes glint, your name slams in, and a deep voice line is spoken (Web Speech with the deepest voice found, low
-// pitch, plus a soft sub-bass rumble; subtitles always show). Click the portrait for another line. In worlds your character gets a soft
+// flash and a shockwave, the eyes glint, your name slams in, and a deep voice line is spoken (VOX12: the deepest clear voice, deeper still
+// for dark-aligned characters, plus a soft sub-bass rumble; subtitles always show). Click the portrait for another line. In worlds your character gets a soft
 // glow and a few twinkles. Colours follow your level tier. Every sprite is drawn once; the silhouette glow is a quarter-size blurred copy.
 // Reduced motion: no shake, zoom or speed lines (the aura stays). =====
 const HERO12=(()=>{
@@ -14198,13 +14233,10 @@ const HERO12=(()=>{
  // ---- voice: the deepest voice available, low pitch, a little slower; subtitles always show
  const LINES=['The roots remember me. Now... I rise.','No matter how far I fall, I always rise again.','This power... was always mine.','Watch closely. This is my ascension.','The sky is not my limit. It is my home.','Stand back. I am just getting started.'];
  let li=-1,sub='',subT=0;
- function voice(){try{const v=speechSynthesis.getVoices();if(!v||!v.length)return null;const en=v.filter(x=>/^en/i.test(x.lang)),pool=en.length?en:v;
-  return pool.find(x=>/David|Guy|Mark|George|Ryan|Daniel|Fred|Christopher|Eric|Roger|Brian|Male/i.test(x.name))||pool[0]}catch(_){return null}}
- try{speechSynthesis.getVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',()=>{})}catch(_){}
  function rumble(){try{snd(46,2.4,'sine',.16,.8);snd(92,1.6,'sine',.05,.7)}catch(_){}}
  function speak(line){li=(li+1+(R()*(LINES.length-1)|0))%LINES.length;line=line||LINES[li];sub=line;subT=performance.now();
   const vol=Math.min(1,typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1);if(!(vol>0))return line;rumble();
-  try{if(!('speechSynthesis' in window))return line;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(line),v=voice();if(v)u.voice=v;u.pitch=.2;u.rate=.8;u.volume=vol;speechSynthesis.speak(u)}catch(_){}return line}
+  try{VOX12.say(line,{cancel:true})}catch(_){}return line}
  // ---- home portrait
  const S={rv:0,skip:0,pulse:-9,glint:-9,nextGlint:3,parts:[],last:0,done:false};
  // full-screen overlay for the reveal: dark veil, speed lines rushing to the face, the white flash at the eruption; removed when done
@@ -14931,6 +14963,126 @@ const WORD9=(()=>{
   Object.defineProperty(el,'textContent',{configurable:true,get(){return d.get.call(this)},set(v){if(INF&&entered)v=label(cur);d.set.call(this,v)}})}catch(e){console.error('WORD9 hud',e)}
  return{LETTER,ASH,BASALT,MAGMA,OBSID,SCORCH,LV,WORDS,IM,get letters(){return L.map(l=>({k:l.k,x:l.k%W,y:l.k/W|0,ch:l.ch,i:l.i}))},get word(){return WORD},get inf(){return INF},get state(){return S},
   wordFor,isInf,infName,baseOf,label,hasWord,collect:i=>collect(L.find(l=>l.i==i)),open,close,submit,travel,isOpen,spawnAt,strip,get fireballs(){return FB.length},get thrown(){return thrown},get embers(){return EM.length}}})();
+
+/* ========== LATE: 99-zzzzzzz-debris.js ========== */
+// ===== DEB12 + BFX12: block-break feedback, hooked as the OUTERMOST breakAt wrapper (it loads last), so every path that removes a block
+// through breakAt (tools, vein mining, fists, blasts) is caught by comparing the tile before and after, whatever the inner wrappers return.
+// DEB12: debris cut from the block's own texture (irregular fragments of its sprite, made once per block) plus dust in the block's average
+// colour, with behaviour by material: dirt/sand/grass clumps that thud and roll, sand grains, stone chips that bounce, ore chips with glints in
+// the ore colour, wood splinters that spin, leaves that flutter, glass/ice shards that glint (no dust). It always plays (even with the
+// "classic" break effect or reduced effects, then smaller), on top of the chosen break effect (BRK7). Particles live in a struct-of-arrays
+// pool (typed arrays, no objects per particle, no garbage while mass-harvesting) that starts at 192 and doubles up to 1024 when full.
+// BFX12: each break effect has its own soft sound layer over the material sound (Heart Pop: a warm chime with a gentle magical pulse; Bubble
+// Pop: soft pops; Snowfall: crystalline twinkles; ...), from one mapping table, panned by where the block is and balanced on its own gentle bus
+// (treble shelf, lowpass, soft compressor), following the Sound effects slider. =====
+const DEB12=(()=>{
+ const R=Math.random,TAU=Math.PI*2;
+ // ---- pool (struct of arrays)
+ let N=192,n=0;const MAXN=1024;
+ let X,Y,VX,VY,RO,VR,TT,LF,SZ,GV,BN,KD,BC;const IM=[];
+ function alloc(sz){const f=()=>new Float32Array(sz),o={X,Y,VX,VY,RO,VR,TT,LF,SZ,GV,BN};X=f();Y=f();VX=f();VY=f();RO=f();VR=f();TT=f();LF=f();SZ=f();GV=f();BN=f();const k=new Uint8Array(sz),b=new Uint8Array(sz);
+  if(o.X){X.set(o.X);Y.set(o.Y);VX.set(o.VX);VY.set(o.VY);RO.set(o.RO);VR.set(o.VR);TT.set(o.TT);LF.set(o.LF);SZ.set(o.SZ);GV.set(o.GV);BN.set(o.BN);k.set(KD);b.set(BC)}KD=k;BC=b;IM.length=sz;N=sz}
+ alloc(N);
+ // kinds: 0 fragment (rotates, bounces), 1 dust (grows, fades, drifts up), 2 glint (star twinkle), 3 grain (tiny, falls), 4 leaf (flutters)
+ function add(k,img,x,y,vx,vy,life,sz,grav,bounce,vr){if(n>=N){if(N<MAXN)alloc(Math.min(MAXN,N*2));else return}const i=n++;KD[i]=k;IM[i]=img;X[i]=x;Y[i]=y;VX[i]=vx;VY[i]=vy;TT[i]=0;LF[i]=life;SZ[i]=sz;GV[i]=grav;BN[i]=bounce;RO[i]=R()*TAU;VR[i]=vr||0;BC[i]=0}
+ function kill(i){const j=--n;if(i!==j){KD[i]=KD[j];IM[i]=IM[j];X[i]=X[j];Y[i]=Y[j];VX[i]=VX[j];VY[i]=VY[j];TT[i]=TT[j];LF[i]=LF[j];SZ[i]=SZ[j];GV[i]=GV[j];BN[i]=BN[j];RO[i]=RO[j];VR[i]=VR[j];BC[i]=BC[j]}IM[j]=null}
+ // ---- per-block art: fragments of its sprite, average colour, material
+ const mk=(w,h)=>{const c=document.createElement('canvas');c.width=Math.max(1,w|0);c.height=Math.max(1,h|0);return c};
+ const ART=new Map();
+ function mat(b){const nm=(BLK[b]||[''])[0]||'';if(/Glass|Ice|Crystal Block|Window/.test(nm))return'glass';if(/Leaf|Leaves|Hedge|Moss|Vine/.test(nm))return'leaf';
+  let c='soft';try{c=TOOLS8.catOf(b)}catch(_){}if(c=='soft'&&/Sand|Gravel/.test(nm))return'sand';if(c=='soft'&&/Snow/.test(nm))return'snow';return c||'soft'}
+ function art(b){let a=ART.get(b);if(a)return a;let src=null;try{src=spr(b,0,0)}catch(_){}const S=src&&src.width||32;a={m:mat(b),f:[],dust:null,col:[150,130,110],glint:null};
+  try{const one=mk(1,1),o=one.getContext('2d');o.drawImage(src,0,0,1,1);const d=o.getImageData(0,0,1,1).data;if(d[3]>10)a.col=[d[0],d[1],d[2]]}catch(_){const c=BLK[b]&&BLK[b][1];if(c){const v=parseInt(String(c).replace('#',''),16);a.col=[v>>16&255,v>>8&255,v&255]}}
+  const C='rgb('+a.col.join(',')+')',dark='rgba(0,0,0,.45)';
+  // 8 irregular fragments; wood gets long splinters
+  for(let i=0;i<8;i++){const wood=a.m=='wood',fw=wood?S*(.5+R()*.3):S*(.26+R()*.16),fh=wood?S*(.1+R()*.08):S*(.24+R()*.16),sx=R()*(S-fw),sy=R()*(S-fh),c=mk(fw+2,fh+2),x=c.getContext('2d');
+   x.beginPath();const pts=wood?4:5+(R()*2|0);for(let p=0;p<pts;p++){const an=p/pts*TAU+R()*.5,rx=(fw/2)*(.75+R()*.25),ry=(fh/2)*(.75+R()*.25);x.lineTo(1+fw/2+Math.cos(an)*rx,1+fh/2+Math.sin(an)*ry)}x.closePath();
+   x.save();x.clip();if(src)x.drawImage(src,sx,sy,fw,fh,1,1,fw,fh);else{x.fillStyle=C;x.fillRect(0,0,fw+2,fh+2)}x.restore();x.strokeStyle=a.m=='glass'?'rgba(255,255,255,.8)':dark;x.lineWidth=1;x.stroke();a.f.push(c)}
+  a.dust=mk(32,32);{const x=a.dust.getContext('2d'),g=x.createRadialGradient(16,16,0,16,16,16),l=a.col.map(v=>Math.min(255,v+40)).join(',');g.addColorStop(0,'rgba('+l+',.75)');g.addColorStop(.6,'rgba('+l+',.35)');g.addColorStop(1,'rgba('+l+',0)');x.fillStyle=g;x.fillRect(0,0,32,32)}
+  a.grain=mk(4,4);{const x=a.grain.getContext('2d');x.fillStyle=C;x.fillRect(0,0,4,4);x.fillStyle='rgba(255,255,255,.3)';x.fillRect(0,0,4,1.5)}
+  if(a.m=='ore'||a.m=='glass'){a.glint=mk(24,24);const x=a.glint.getContext('2d'),l='rgb('+a.col.map(v=>Math.min(255,v+110)).join(',')+')';x.translate(12,12);x.fillStyle=l;x.beginPath();for(let i=0;i<8;i++){const r=i%2?2:11,an=i*Math.PI/4;x.lineTo(Math.cos(an)*r,Math.sin(an)*r)}x.closePath();x.fill();x.fillStyle='#fff';x.beginPath();x.arc(0,0,2,0,TAU);x.fill()}
+  ART.set(b,a);return a}
+ // ---- spawn for one broken block
+ function spawn(tx,ty,b){const a=art(b),TT0=typeof T=='number'?T:32,cx=(tx+.5)*TT0,cy=(ty+.5)*TT0,j=s=>(R()-.5)*s;let k=1;try{k=Math.max(.5,PERF7.k)}catch(_){}try{if(QM.reduce)k*=.5}catch(_){}
+  const m=a.m,F=a.f,nf=Math.max(2,Math.round((m=='wood'?5:m=='glass'?7:m=='leaf'?5:6)*k));
+  for(let i=0;i<nf;i++){const an=-Math.PI/2+j(2.6),v=(m=='stone'||m=='ore'?150:m=='glass'?170:120)+R()*130;
+   if(m=='leaf')add(4,F[i%F.length],cx+j(TT0*.6),cy+j(TT0*.6),j(90),-60-R()*90,1.3+R()*.5,.8+R()*.4,120,0,j(4));
+   else add(0,F[i%F.length],cx+j(TT0*.5),cy+j(TT0*.5),Math.cos(an)*v,Math.sin(an)*v,.9+R()*.5,.75+R()*.4,1100,m=='stone'||m=='ore'?.38:m=='glass'?.3:.18,j(m=='wood'?22:12))}
+  if(m!='glass'){const nd=Math.max(1,Math.round((m=='soft'||m=='sand'||m=='snow'?3:2)*k));for(let i=0;i<nd;i++)add(1,a.dust,cx+j(TT0*.7),cy+j(TT0*.4),j(30),-12-R()*20,.55+R()*.35,(m=='snow'?1.3:1)*(.8+R()*.5),0,0,0)}
+  if(m=='sand'||m=='soft'){const ng=Math.round((m=='sand'?8:4)*k);for(let i=0;i<ng;i++)add(3,a.grain,cx+j(TT0*.7),cy+j(TT0*.5),j(110),-40-R()*120,.6+R()*.4,.6+R()*.5,900,0,0)}
+  if(a.glint){const ng=Math.round((m=='ore'?3:2)*k);for(let i=0;i<ng;i++)add(2,a.glint,cx+j(TT0*.8),cy+j(TT0*.8),j(30),-20-R()*30,.5+R()*.3,.6+R()*.5,0,0,j(3))}}
+ // ---- physics: gravity, one or two bounces on solid tiles, then settle and fade
+ const solid=(x,y)=>{try{return solidAt(Math.floor(x/T),Math.floor(y/T))}catch(_){return false}};
+ function tick(dt){for(let i=n-1;i>=0;i--){TT[i]+=dt;if(TT[i]>=LF[i]){kill(i);continue}const k=KD[i];
+   if(k==1){X[i]+=VX[i]*dt;Y[i]+=VY[i]*dt;VX[i]*=1-2*dt;continue}
+   if(k==2){Y[i]+=VY[i]*dt;RO[i]+=VR[i]*dt;continue}
+   if(k==4){VY[i]+=(40-VY[i])*1.6*dt;VX[i]+=(Math.sin(TT[i]*5+i)*80-VX[i])*1.5*dt;RO[i]+=VR[i]*dt}
+   else VY[i]+=GV[i]*dt;
+   const nx=X[i]+VX[i]*dt,ny=Y[i]+VY[i]*dt;
+   if(VY[i]>0&&k!=4&&solid(nx,ny+2)){if(BC[i]<2&&BN[i]>0&&VY[i]>90){VY[i]*=-BN[i];VX[i]*=.6;VR[i]*=.5;BC[i]++}else{VY[i]=0;VX[i]*=1-6*dt;VR[i]*=1-6*dt;if(TT[i]<LF[i]-.35)TT[i]=LF[i]-.35}}else Y[i]=ny;
+   if(solid(nx,Y[i]))VX[i]*=-.4;else X[i]=nx;RO[i]+=VR[i]*dt}}
+ // ---- draw (world space): one drawImage per particle, rotation by setTransform from the frame's base matrix
+ function draw(g,ox,oy){if(!n)return;g.save();const B=g.getTransform();
+  for(let i=0;i<n;i++){const k=KD[i],im=IM[i];if(!im)continue;const u=TT[i]/LF[i],x=X[i]-ox,y=Y[i]-oy;
+   if(k==1){g.globalAlpha=.55*(1-u);const s=im.width*SZ[i]*(.7+u*1.2);g.setTransform(B);g.drawImage(im,x-s/2,y-s/2,s,s);continue}
+   g.globalAlpha=k==2?Math.sin(u*Math.PI):u>.7?(1-u)/.3:1;const s=SZ[i]*(k==2?1+.3*Math.sin(TT[i]*20):1),c=Math.cos(RO[i])*s,sn=Math.sin(RO[i])*s;
+   g.setTransform(B.a*c+B.c*sn,B.b*c+B.d*sn,-B.a*sn+B.c*c,-B.b*sn+B.d*c,B.a*x+B.c*y+B.e,B.b*x+B.d*y+B.f);g.drawImage(im,-im.width/2,-im.height/2)}
+  g.restore()}
+ {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){if(!tick.e){tick.e=1;console.error('DEB12',e)}}};
+  BOSS6.drawProj=function(g,cx,cy){_d.call(this,g,cx,cy);try{draw(g,cx,cy)}catch(e){if(!draw.e){draw.e=1;console.error('DEB12 draw',e)}}}}
+ return{spawn,tick,draw,art,mat,get count(){return n},get cap(){return N},clear(){for(let i=0;i<n;i++)IM[i]=null;n=0}}})();
+
+const BFX12=(()=>{
+ const R=Math.random;let bus=null,nb=null;const log=[];
+ const vol=()=>typeof OPT=='undefined'||OPT.sv==null?1:+OPT.sv;
+ const ok=()=>{try{ac()}catch(_){}return typeof AC!='undefined'&&!!AC&&AC.state!='closed'&&vol()>0};
+ function out(){if(bus&&bus.context===AC)return bus;bus=AC.createGain();bus.gain.value=.9;const sh=AC.createBiquadFilter();sh.type='highshelf';sh.frequency.value=3500;sh.gain.value=-7;const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=6500;lp.Q.value=.5;
+  const cp=AC.createDynamicsCompressor();cp.threshold.value=-22;cp.knee.value=20;cp.ratio.value=3;cp.attack.value=.006;cp.release.value=.25;bus.connect(sh);sh.connect(lp);lp.connect(cp);cp.connect(AC.destination);return bus}
+ const buf=()=>{if(nb&&nb.sampleRate==AC.sampleRate)return nb;const b=AC.createBuffer(1,AC.sampleRate,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=R()*2-1;return nb=b};
+ let PAN=null;
+ // voices go through a stereo panner set per break (where the block is relative to you)
+ function dest(){const p=AC.createStereoPanner?AC.createStereoPanner():null;if(p){p.pan.value=PAN||0;p.connect(out());return p}return out()}
+ function os(ty,f0,f1,d,v,dl,at,dst){const t=AC.currentTime+(dl||0)+.005,o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f0,t);if(f1!=f0)o.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t+d*.9);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+(at||.012));g.gain.exponentialRampToValueAtTime(.0004,t+d);o.connect(g);g.connect(dst);o.start(t);o.stop(t+d+.05)}
+ function nz(d,ty,f0,f1,q,v,dl,dst){const t=AC.currentTime+(dl||0)+.005,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=buf();f.type=ty;f.Q.value=q||1;f.frequency.setValueAtTime(f0,t);if(f1!=f0)f.frequency.exponentialRampToValueAtTime(Math.max(40,f1),t+d);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+Math.min(.015,d*.3));g.gain.exponentialRampToValueAtTime(.0004,t+d);s.connect(f);f.connect(g);g.connect(dst);s.start(t,R()*.7,d+.05);s.stop(t+d+.06)}
+ // a soft tremolo pad (the "magical pulse"): triangle through a lowpass, gain pulsing a few times
+ function pulse(f,d,v,rate,dl,dst){const t=AC.currentTime+(dl||0)+.005,o=AC.createOscillator(),lp=AC.createBiquadFilter(),g=AC.createGain(),lfo=AC.createOscillator(),lg=AC.createGain();o.type='triangle';o.frequency.value=f;lp.type='lowpass';lp.frequency.setValueAtTime(600,t);lp.frequency.linearRampToValueAtTime(1400,t+d*.4);lp.frequency.linearRampToValueAtTime(700,t+d);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+.08);g.gain.exponentialRampToValueAtTime(.0004,t+d);lfo.frequency.value=rate;lg.gain.value=v*vol()*.45;lfo.connect(lg);lg.connect(g.gain);o.connect(lp);lp.connect(g);g.connect(dst);o.start(t);lfo.start(t);o.stop(t+d+.05);lfo.stop(t+d+.05)}
+ const bell=(f,d,v,dl,dst)=>{os('sine',f,f,d,v,dl,.015,dst);os('sine',f*2,f*2,d*.5,v*.25,dl,.015,dst);os('sine',f*3.01,f*3,d*.25,v*.08,dl,.015,dst)};
+ const J=()=>1+(R()-.5)*.06; // small pitch variation so repeats never sound identical
+ // the mapping: break effect id -> its sound layer (quiet, under the material sound)
+ const MAP={
+  souls(d){const j=J();nz(.5,'bandpass',500*j,1100*j,2,.05,0,d);os('sine',392*j,523*j,.6,.025,.02,.08,d)},
+  sparkle(d){const j=J();bell(1568*j,.35,.03,0,d);bell(2093*j,.3,.022,.07,d)},
+  petals(d){const j=J();nz(.6,'bandpass',900*j,1400*j,1.5,.04,0,d);bell(1175*j,.4,.018,.05,d)},
+  bubble(d){for(let i=0;i<3;i++){const f=(500+R()*400)*J();os('sine',f,f*1.9,.07,.05,i*.07+R()*.03,.004,d)}},
+  heart(d){const j=J();bell(523.25*j,1.1,.05,0,d);bell(659.25*j,1,.035,.06,d);bell(783.99*j,1,.03,.12,d);pulse(261.6*j,.9,.03,5,.02,d);os('sine',130.8*j,130.8*j,.5,.035,0,.03,d)},
+  blossom(d){const j=J();bell(880*j,.7,.03,0,d);bell(1318.5*j,.6,.022,.1,d);nz(.5,'bandpass',1000,1600,1.2,.025,0,d)},
+  snow(d){for(let i=0;i<4;i++)bell((2093+R()*700)*J(),.4,.016,i*.06,d)},
+  firefly(d){const j=J();os('sine',880*j,1046*j,.5,.02,0,.05,d);os('sine',1318*j,1568*j,.45,.014,.12,.05,d)},
+  butterfly(d){const j=J();nz(.25,'bandpass',1800,1200,2,.03,0,d);nz(.25,'bandpass',1800,1200,2,.025,.12,d);bell(1046*j,.4,.016,.05,d)},
+  coin(d){const j=J();bell(1975*j,.45,.04,0,d);bell(2637*j,.5,.035,.08,d)},
+  galaxy(d){const j=J();pulse(220*j,1.2,.03,3,0,d);bell(1318*j,.9,.02,.1,d);bell(1760*j,.9,.016,.25,d)},
+  royal(d){const j=J();bell(587*j,.8,.035,0,d);bell(880*j,.8,.03,.1,d);bell(1174*j,.8,.022,.2,d)},
+  phantom(d){const j=J();nz(.7,'lowpass',900,200,.8,.08,0,d);os('sine',98*j,65*j,.8,.05,0,.06,d);pulse(146.8*j,.8,.02,6,.05,d)},
+  confetti(d){const j=J();nz(.08,'highpass',2500,2500,.7,.05,0,d);for(let i=0;i<3;i++)bell((1318+i*330)*j,.25,.018,.05+i*.05,d)},
+  leaf(d){nz(.7,'bandpass',700,1300,1.2,.05,0,d);nz(.5,'bandpass',1100,800,1.2,.03,.2,d)},
+  notes(d){const j=J(),s=[523.25,659.25,783.99,1046.5];s.forEach((f,i)=>bell(f*j,.5,.03,i*.08,d))},
+  candy(d){const j=J();os('sine',700*j,1200*j,.09,.045,0,.004,d);bell(1568*j,.35,.02,.06,d)},
+  paws(d){for(let i=0;i<3;i++){const f=(600+i*80)*J();os('sine',f,f*1.3,.06,.035,i*.11,.006,d)}},
+  ember(d){for(let i=0;i<5;i++)nz(.03,'bandpass',2000+R()*1500,1500,3,.04,i*.05+R()*.04,d);os('sine',110,90,.5,.03,0,.05,d)},
+  crystal(d){const j=J();bell(1760*j,.8,.035,0,d);bell(2637*j,.7,.025,.04,d);bell(3520*j,.6,.012,.08,d)},
+  rainbow(d){const j=J(),s=[523.25,587.33,659.25,783.99,880,1046.5];s.forEach((f,i)=>bell(f*j,.6,.022,i*.05,d))}};
+ let last=0;
+ function play(kind,tx){if(!MAP[kind]||!ok())return false;const now=performance.now();if(now-last<70)return false;last=now;
+  try{const sx=((tx+.5)*T-P.x)/Math.max(200,innerWidth/(typeof ZM=='number'?ZM:1)/2);PAN=Math.max(-.6,Math.min(.6,sx*.6))}catch(_){PAN=0}
+  try{MAP[kind](dest())}catch(e){return false}log.push(kind);if(log.length>20)log.shift();return true}
+ return{play,MAP,log}})();
+
+// the outermost breakAt hook: tile before vs after
+{const _ba=breakAt;breakAt=function(x,y){const inb=x>=0&&y>=0&&x<W&&y<H,k=y*W+x,b=inb?tiles[k]:0;const r=_ba.apply(this,arguments);
+  try{if(b&&inb&&!tiles[k]){DEB12.spawn(x,y,b);try{BRK7.spawn(x,y,b)}catch(_){}try{BFX12.play(BRK7.skin,x)}catch(_){}}}catch(e){console.error('DEB12 hook',e)}return r}}
 
 
 </script></body></html>

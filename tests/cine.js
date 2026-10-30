@@ -18,6 +18,8 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
   await p.evaluate(()=>CINE7.seek(CINE7.state.total-.8));await p.waitForTimeout(2200);
   const e=await p.evaluate(()=>({gone:!document.getElementById('cine7'),playing:CINE7.playing,home:SHOW7.isOpen,cover:window.RB_COVER}));
   ok('intro ends into the home screen and removes its canvas',e.gone&&!e.playing&&e.home&&e.cover===true,JSON.stringify(e));
+  const vo=await p.evaluate(()=>({log:VOX12.log.slice(),caps:CINE7.STORY.filter(s=>s[2]).map(s=>s[2]),p:VOX12.params({dark:false}),d:VOX12.params({dark:true})}));
+  ok('narrator reads the story lines and ends on "RootBound"; dark characters get a deeper, slower read that stays clear',vo.caps.every(c=>vo.log.includes(c))&&vo.log.lastIndexOf('RootBound.')>vo.log.lastIndexOf(vo.caps[vo.caps.length-1])&&vo.d.pitch<vo.p.pitch&&vo.d.rate<vo.p.rate&&vo.d.pitch>=.5,JSON.stringify({n:vo.log.length,tail:vo.log.slice(-2),p:vo.p,d:vo.d}));
   ok('intro: no page errors',p.errs.length==0,p.errs.join('|'));await p.ctx.close()}
  // 3. reduced motion shortens (does not remove) the story
  {const p=await page({force:true,rm:'reduce'});await p.waitForFunction(()=>CINE7.playing,null,{timeout:15000});const st=await p.evaluate(()=>CINE7.state);ok('reduced motion: same story, shorter',st.k<1&&st.total*st.k>=50&&st.total*st.k<=58,JSON.stringify(st));await p.ctx.close()}

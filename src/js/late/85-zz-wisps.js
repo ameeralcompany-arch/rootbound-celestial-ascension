@@ -1,8 +1,7 @@
 // ===== BRK7: block-break effects. Free: soul wisps (the default), star sparkles, petals and classic (none). In the store (Effects, slot
 // 'break', one equipped at a time): Bubble Pop, Heart Pop, Sakura Bloom, Snowfall, Fireflies, Butterflies, Gold Rush, Galaxy Swirl, Royal
 // Ghosts and Shadow Phantoms (tools/breakfx-v10.json), then Confetti Party, Leaf Swirl, Music Notes, Candy Pop, Kitty Paws, Ember Sparks, Crystal
-// Shards and Rainbow Burst (v12). Every break (except classic) also pops a few chunks of the block's own colour and a quick ring, so you can see
-// it even behind big auras. Every shape is drawn once into a small sprite and stamped with drawImage (no per-frame
+// Shards and Rainbow Burst (v12). Every break (except classic) also pops a quick ring; the block debris itself comes from DEB12 (99-zzzzzzz-debris.js). Every shape is drawn once into a small sprite and stamped with drawImage (no per-frame
 // gradients or paths), at most 90 alive; rotated / scaled sprites are placed with one setTransform from the frame's base matrix (no
 // save/restore per particle), and while many are alive new bursts are smaller, so fast mining stays cheap. Picked in the store or in Hub > Settings > Break effect (free ones plus the ones you own).
 // preview() draws the store card: a little grass block that breaks on a loop. =====
@@ -176,8 +175,8 @@ const BRK7=(()=>{
   B=null;g.restore()}
  // ---- in the world
  function hex(c){c=(c||'#9cf').replace('#','');if(c.length==3)c=c.replace(/./g,'$&$&');const n=parseInt(c,16)||0;return[n>>16&255,n>>8&255,n&255]}
- function spawn(tx,ty,id){const k=skin();if(k=='classic'||(typeof QM!='undefined'&&QM.reduce))return;const b=BLK[id],c=b&&b[1]?hex(b[1]):[150,200,255],x=(tx+.5)*T,y=(ty+.5)*T;impact(L,x,y,c);burst(L,k,x,y,c)}
- {const _b=breakAt;breakAt=function(x,y){const id=tiles[y*W+x];const r=_b.apply(this,arguments);try{if(r&&id&&!tiles[y*W+x])spawn(x,y,id)}catch(_){}return r}}
+ function spawn(tx,ty,id){const k=skin();if(k=='classic'||(typeof QM!='undefined'&&QM.reduce))return;const b=BLK[id],c=b&&b[1]?hex(b[1]):[150,200,255],x=(tx+.5)*T,y=(ty+.5)*T;add(L,{k:'puff',x,y,life:.32,sz:.6});burst(L,k,x,y,c)}
+ // spawn() is called from the outermost breakAt hook in 99-zzzzzzz-debris.js (with the block debris and the effect's sound)
  {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(L,dt,P.x,P.y+P.h*.4,true)}catch(e){console.error('BRK7',e)}};BOSS6.drawProj=function(g,cx,cy){_d.call(this,g,cx,cy);try{draw(g,L,cx,cy)}catch(e){console.error('BRK7d',e)}}}
  // equipping one in the store shows it once at your feet
  {const _e=FX7.onEquip;FX7.onEquip=function(slot,id){const r=_e.apply(this,arguments);try{if(slot=='break'&&id){const k=skin();if(k!='classic')burst(L,k,P.x,P.y+P.h*.6,[150,200,255])}}catch(_){}return r}}
