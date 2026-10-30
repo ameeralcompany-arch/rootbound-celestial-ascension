@@ -3,13 +3,13 @@ const {chromium}=require('playwright');const path=require('path');let fails=0;co
 const URL='file://'+path.resolve(__dirname,'../index.html');
 setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},180000).unref();
 (async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});
- const page=async(o={})=>{const ctx=await b.newContext({viewport:{width:1280,height:720},reducedMotion:o.rm||'no-preference'});if(o.force)await ctx.addInitScript(()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}});const p=await ctx.newPage();p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/CINE7/.test(m.text()))p.errs.push(m.text())});p.ctx=ctx;await p.goto(URL);return p};
+ const page=async(o={})=>{const ctx=await b.newContext({viewport:{width:1280,height:720},reducedMotion:o.rm||'no-preference'});if(o.force)await ctx.addInitScript(()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}let n=0;window.p0spoke=()=>n;try{const sp=speechSynthesis.speak.bind(speechSynthesis);speechSynthesis.speak=u=>{n++;return sp(u)}}catch(_){}});const p=await ctx.newPage();p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/CINE7/.test(m.text()))p.errs.push(m.text())});p.ctx=ctx;await p.goto(URL);return p};
  // 1. automated browsers skip the intro (tests keep working)
  {const p=await page();await p.waitForTimeout(900);ok('webdriver skips the launch intro',await p.evaluate(()=>!CINE7.playing&&!document.getElementById('cine7')&&!SHOW7.isOpen));await p.ctx.close()}
  // 2. forced launch: the story plays, pauses the game, swallows keys, then hands over to the home screen and cleans up
  {const p=await page({force:true});await p.waitForFunction(()=>CINE7.playing,null,{timeout:15000});
   const s=await p.evaluate(()=>({cover:window.RB_COVER,st:CINE7.state,z:+getComputedStyle(document.getElementById('cine7')).zIndex,home:SHOW7.isOpen}));
-  ok('intro plays at launch over everything, game paused',s.cover===true&&s.z>2147483000&&!s.home&&s.st.total>=92&&s.st.total<=112,JSON.stringify(s));
+  ok('intro plays at launch over everything, game paused',s.cover===true&&s.z>2147483000&&!s.home&&s.st.total>=88&&s.st.total<=92,JSON.stringify(s));
   const keyed=await p.evaluate(()=>{let got=0;const h=()=>got++;addEventListener('keydown',h);dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));dispatchEvent(new KeyboardEvent('keydown',{key:'e'}));removeEventListener('keydown',h);return got});
   ok('intro cannot be skipped by keys (game handlers do not see them)',keyed==0&&await p.evaluate(()=>CINE7.playing));
   await p.waitForTimeout(1200);const sc=[];for(const u of await p.evaluate(()=>CINE7.STORY.map(s=>s[3]+s[1]*.5))){await p.evaluate(u=>CINE7.seek(u),u);await p.waitForTimeout(60);sc.push(await p.evaluate(()=>CINE7.state.scene))}
@@ -18,11 +18,11 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
   await p.evaluate(()=>CINE7.seek(CINE7.state.total-.8));await p.waitForTimeout(2200);
   const e=await p.evaluate(()=>({gone:!document.getElementById('cine7'),playing:CINE7.playing,home:SHOW7.isOpen,cover:window.RB_COVER}));
   ok('intro ends into the home screen and removes its canvas',e.gone&&!e.playing&&e.home&&e.cover===true,JSON.stringify(e));
-  const vo=await p.evaluate(()=>({log:VOX12.log.slice(),caps:CINE7.STORY.filter(s=>s[2]).map(s=>s[2]),p:VOX12.params({dark:false}),d:VOX12.params({dark:true})}));
-  ok('narrator reads the story lines and ends on "RootBound"; dark characters get a deeper, slower read that stays clear',vo.caps.every(c=>vo.log.includes(c))&&vo.log.lastIndexOf('RootBound.')>vo.log.lastIndexOf(vo.caps[vo.caps.length-1])&&vo.d.pitch<vo.p.pitch&&vo.d.rate<vo.p.rate&&vo.d.pitch>=.5,JSON.stringify({n:vo.log.length,tail:vo.log.slice(-2),p:vo.p,d:vo.d}));
+  const vo=await p.evaluate(()=>({log:VOX12.log.length,spoke:p0spoke(),caps:CINE7.STORY.filter(s=>s[2]).length,lens:CINE7.STORY.every(s=>s[1]==s[4])}));
+  ok('the intro is silent (no narrator); the story lines still show as captions and every scene keeps its designed length',vo.log==0&&vo.spoke==0&&vo.caps>=15&&vo.lens,JSON.stringify(vo));
   ok('intro: no page errors',p.errs.length==0,p.errs.join('|'));await p.ctx.close()}
  // 3. reduced motion shortens (does not remove) the story
- {const p=await page({force:true,rm:'reduce'});await p.waitForFunction(()=>CINE7.playing,null,{timeout:15000});const st=await p.evaluate(()=>Object.assign({need:CINE7.STORY.reduce((a,s)=>a+(s[2]?VOX12.est(s[2],VOX12.params().rate):0),0)},CINE7.state));ok('reduced motion: same story, quicker visuals, never shorter than the narration needs',st.k<1&&st.total*st.k>=st.need&&st.total*st.k<=112,JSON.stringify(st));await p.ctx.close()}
+ {const p=await page({force:true,rm:'reduce'});await p.waitForFunction(()=>CINE7.playing,null,{timeout:15000});const st=await p.evaluate(()=>CINE7.state);ok('reduced motion: same story, quicker visuals',st.k<1&&st.total>=88&&st.total<=92,JSON.stringify(st));await p.ctx.close()}
  // 4. world entry card + boss cinematics inside the game
  {const p=await page();await p.waitForTimeout(700);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}lvl=40});await p.waitForTimeout(400);
   await p.evaluate(()=>enterWorld('cinetest'));await p.waitForTimeout(150);

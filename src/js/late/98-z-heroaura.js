@@ -1,7 +1,7 @@
 // ===== HERO12: your character shines. On the home screen the portrait stands in an anime aura: flame tongues and slow light rays behind,
 // a glow that hugs the silhouette, a light sweep across the figure, rising sparkles and an eye glint now and then. The first time the home
 // screen opens after launch it plays a hero reveal (~4.6 s, click to skip): the screen darkens, speed lines rush in, the aura erupts with a
-// flash and a shockwave, the eyes glint, your name slams in, and a deep voice line is spoken (VOX12: the deepest clear voice, deeper still
+// flash and a shockwave, the eyes glint, your name slams in, and a line shows as a subtitle (silent). Clicking the portrait speaks a line (VOX12: the deepest clear voice, deeper still
 // for dark-aligned characters, plus a soft sub-bass rumble; subtitles always show). Click the portrait for another line. In worlds your character gets a soft
 // glow and a few twinkles. Colours follow your level tier. Every sprite is drawn once; the silhouette glow is a quarter-size blurred copy.
 // Reduced motion: no shake, zoom or speed lines (the aura stays). =====
@@ -27,7 +27,7 @@ const HERO12=(()=>{
  const LINES=['The roots remember me. Now... I rise.','No matter how far I fall, I always rise again.','This power... was always mine.','Watch closely. This is my ascension.','The sky is not my limit. It is my home.','Stand back. I am just getting started.'];
  let li=-1,sub='',subT=0;
  function rumble(){try{snd(46,2.4,'sine',.16,.8);snd(92,1.6,'sine',.05,.7)}catch(_){}}
- function speak(line){li=(li+1+(R()*(LINES.length-1)|0))%LINES.length;line=line||LINES[li];sub=line;subT=performance.now();
+ function speak(line,quiet){li=(li+1+(R()*(LINES.length-1)|0))%LINES.length;line=line||LINES[li];sub=line;subT=performance.now();if(quiet)return line;   // quiet: subtitle only (the launch reveal is silent, like the intro)
   const vol=Math.min(1,typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1);if(!(vol>0))return line;rumble();
   try{VOX12.say(line,{cancel:true})}catch(_){}return line}
  // ---- home portrait
@@ -91,7 +91,7 @@ const HERO12=(()=>{
  function reveal(){if(revealed)return;revealed=true;S.rv=H0();S.skip=0;S.gl1=0;S.done=false;const el=document.getElementById('show');if(el){el.classList.add('h12rev');el.addEventListener('pointerdown',()=>{if(S.rv&&H0()-S.rv<4.6)S.skip=1},{once:true})}
   const at=(ms,f)=>setTimeout(()=>{if(!S.skip)try{f()}catch(_){}},ms);
   at(420,()=>{try{noise(1,900,.5);snd(52,1.3,'sine',.3,.45);snd(104,.8,'triangle',.06,.5)}catch(_){}});
-  at(1250,()=>speak());at(1900,()=>{try{snd(70,.7,'triangle',.22,.4);noise(.35,2200,.25)}catch(_){}});
+  at(1250,()=>speak(null,true));at(1900,()=>{try{snd(70,.7,'triangle',.22,.4);noise(.35,2200,.25)}catch(_){}});
   setTimeout(()=>{try{document.getElementById('show').classList.remove('h12rev')}catch(_){}},2400)}
  {const _o=SHOW7.open;SHOW7.open=function(){const r=_o.apply(this,arguments);try{reveal();const c=document.getElementById('showCv');if(c&&!c._h12){c._h12=1;c.addEventListener('click',()=>{if(S.rv&&H0()-S.rv<4.6&&!S.skip)return;if(H0()-S.pulse<3)return;S.pulse=H0();speak();try{noise(.5,700,.3)}catch(_){}})}}catch(e){console.error('HERO12 open',e)}return r}}
  {const st=document.createElement('style');st.textContent='#show.h12rev header,#show.h12rev .info,#show.h12rev .idx{opacity:0;transform:translateX(24px)}#show header,#show .info,#show .idx{transition:opacity .6s ease,transform .6s ease}#showCv{cursor:pointer}';document.head.appendChild(st)}

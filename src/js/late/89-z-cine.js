@@ -280,12 +280,15 @@ const CINE7=(()=>{
  // Studio voice-over (optional): if vo/<scene>.mp3 files sit next to index.html (tools/vo-elevenlabs.js renders them with ElevenLabs),
  // their real lengths drive the timing and they play instead of the system voice. vo/title.mp3 is probed first (desktop app only); only if it exists are
  // the others loaded. If any clip is missing or broken the whole intro uses the system voice, so voices never mix.
+ // SPEAK=false: the intro is silent (no narrator, no voice-over clips); the story lines still type on screen and every scene keeps its
+ // designed length. Set it to true to bring the narration back.
+ const SPEAK=false;
  const VO={ok:false,el:{},n:0,bad:0,need:0};
- try{if(typeof Audio!='undefined'&&/Electron/.test(navigator.userAgent)){const ids=STORY.filter(s=>s[2]).map(s=>s[0]).concat(['title']);VO.need=ids.length;
+ try{if(SPEAK&&typeof Audio!='undefined'&&/Electron/.test(navigator.userAgent)){const ids=STORY.filter(s=>s[2]).map(s=>s[0]).concat(['title']);VO.need=ids.length;
   const probe=(id,then)=>{const a=new Audio();a.preload='auto';a.onloadedmetadata=()=>{if(isFinite(a.duration)&&a.duration>.25){VO.el[id]=a;VO.n++;VO.ok=VO.n==VO.need&&!VO.bad;then&&then()}else VO.bad++};a.onerror=()=>{VO.bad++};a.src='vo/'+id+'.mp3'};
   probe('title',()=>ids.forEach(id=>{if(id!='title')probe(id)}))}}catch(_){}
  const BREATH=.5;
- function retime(k){k=k||1;const p=VOX12.params();for(const s of STORY){let need=0;if(s[2])need=(VO.ok&&VO.el[s[0]]?VO.el[s[0]].duration:VOX12.est(s[2],p.rate))+BREATH+.15;s[1]=Math.max(s[4],Math.round(need/k*10)/10)}
+ function retime(k){k=k||1;const p=VOX12.params();for(const s of STORY){let need=0;if(s[2]&&SPEAK)need=(VO.ok&&VO.el[s[0]]?VO.el[s[0]].duration:VOX12.est(s[2],p.rate))+BREATH+.15;s[1]=Math.max(s[4],Math.round(need/k*10)/10)}
   stime();mcut(STORY.find(s=>s[0]=='montage')[1])}
  let I=null;const AB={};
  const as=n=>I.as[n]||(I.as[n]=AB[n]());
@@ -959,7 +962,7 @@ const CINE7=(()=>{
  const duck=on=>{if(on){talking++;DUCK=.45}else{talking=Math.max(0,talking-1);if(!talking)DUCK=1}vol()};
  // one narration line. vpend counts lines not yet finished: the story clock eases into slow motion at the end of a scene while it is > 0.
  // A safety timer releases a line whose end event never comes (no voices installed, speech service hiccup).
- function narr(text,id,title){try{const p=VOX12.params();let fin=false,dk=false,tm=0;const on=()=>{if(!dk){dk=true;duck(true)}},
+ function narr(text,id,title){if(!SPEAK)return;try{const p=VOX12.params();let fin=false,dk=false,tm=0;const on=()=>{if(!dk){dk=true;duck(true)}},
     done=()=>{if(fin)return;fin=true;clearTimeout(tm);vpend=Math.max(0,vpend-1);if(dk){dk=false;duck(false)}};
    vpend++;tm=setTimeout(done,(VOX12.est(text,p.rate)*1.6+3)*1000);
    const a=VO.ok&&VO.el[id];

@@ -25,10 +25,10 @@ if(vp[0]==1280){
  ok('showcase follows the dark theme',await p.evaluate(()=>getComputedStyle(document.getElementById('show')).backgroundImage.includes('29, 22, 49')&&getComputedStyle(document.querySelector('#show .name')).color!='rgb(20, 18, 26)'));
  await p.evaluate(()=>{cel.opt.theme='light';celSave()});
 }
-// hero reveal (HERO12): plays once on the first open, speaks a line with a subtitle, the full-screen veil goes away, clicking the portrait speaks again
+// hero reveal (HERO12): plays once on the first open, shows a line as a subtitle (silent), the full-screen veil goes away, clicking the portrait speaks again
 if(vp[0]==1280){const h=await p.evaluate(async()=>{const a={rv:HERO12.S.rv>0,sub1:HERO12.sub,veil:!!document.getElementById('h12veil')};await new Promise(r=>setTimeout(r,4200));
   a.sub=HERO12.sub;a.veilGone=!document.getElementById('h12veil');a.panel=!document.getElementById('show').classList.contains('h12rev');const s0=HERO12.sub;await new Promise(r=>setTimeout(r,3200));document.getElementById('showCv').click();a.click=HERO12.sub&&HERO12.LINES.includes(HERO12.sub);return a});
- ok('hero reveal plays on open, speaks a deep line (subtitle), veil + hidden panel are gone after; clicking the portrait speaks again'+tag,h.rv&&h.sub&&HERO12_LINES_OK(h)&&h.veilGone&&h.panel&&h.click,JSON.stringify(h))}
+ ok('hero reveal plays on open, shows a line (subtitle), veil + hidden panel are gone after; clicking the portrait speaks again'+tag,h.rv&&h.sub&&HERO12_LINES_OK(h)&&h.veilGone&&h.panel&&h.click,JSON.stringify(h))}
 ok('no page errors'+tag,e.length==0,e.join('|'));await p.close()}
 // ---- migration: a save made with a preset character active (and preset slots / favourites) is cleaned on load; your own look, level,
 // gems, inventory and gear stay exactly as they were
