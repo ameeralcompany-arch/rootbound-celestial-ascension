@@ -2981,10 +2981,17 @@ const PERF7=(()=>{
 
 /* ========== LATE: 41-z-voice.js ========== */
 // ===== VOX12: the narrator / hero voice (Web Speech, no audio files). Picks the deepest clear voice installed (prefers English male voices
-// such as Microsoft David / Guy / Mark), speaks low and calm but never so low that it smears: pitch .74, rate .9. If your character reads as
-// dark / corrupted (dark-themed wings, a void / shadow / phantom / eclipse aura, skin or trail, or a very dark outfit) the voice shifts deeper,
-// slower and more commanding (pitch .58, rate .82), still clean. Follows the Sound effects slider; say() returns the utterance (or null) and
-// calls onstart / onend so callers can duck music and time subtitles. =====
+// such as Microsoft David / Guy / Mark). Why it no longer sounds robotic or gets cut off:
+//  - pitch stays close to the voice's own (.88). Windows voices are pitch-shifted by resampling, and anything under ~.8 turns metallic
+//    and smeared; David is already deep, so a small drop keeps him warm. Rate .96 gives a calm, unhurried read.
+//  - every sentence is its own utterance, queued back to back. Long utterances are where Chromium stalls or drops the tail, and
+//    a sentence boundary is a natural breath anyway.
+//  - every queued utterance is kept referenced until it ends: Chromium garbage-collects live utterances, which silently cuts speech off
+//    mid-sentence and never fires onend.
+//  - nothing cancels a line in flight unless the caller asks (cancel:true is only used for click-to-skip style interruptions).
+// Dark / corrupted characters (dark-themed wings, a void / shadow / phantom / eclipse aura, skin or trail, or a very dark outfit) get a
+// deeper, slower, more commanding read (pitch .8, rate .88), still clean. Follows the Sound effects slider; say() returns the first
+// utterance (or null) and calls onstart (first sentence) / onend (last sentence) so callers can duck music and time scenes. =====
 const VOX12=(()=>{
  const has=()=>typeof speechSynthesis!='undefined'&&typeof SpeechSynthesisUtterance!='undefined';
  let V=null;
@@ -2995,13 +3002,26 @@ const VOX12=(()=>{
  function dark(){try{const w=curWing(lvl);if(w){try{if(typeof WTRAIL!='undefined'&&WTRAIL.theme&&WTRAIL.theme(w)=='dark')return true}catch(_){}if(DARK.test((w.id||'')+' '+(w.n||'')))return true}}catch(_){}
   try{for(const s of ['aura','skin','trail']){const r=SHOP7.st.eq[s];if(r&&DARK.test(r))return true}}catch(_){}
   try{const c=String(cel.ap.out||'');if(/^#[0-9a-f]{6}$/i.test(c)){const n=parseInt(c.slice(1),16),l=((n>>16)*.3+(n>>8&255)*.59+(n&255)*.11)/255;if(l<.13)return true}}catch(_){}return false}
- function params(o){const d=o&&o.dark!=null?o.dark:dark();return d?{pitch:.58,rate:.82,dark:true}:{pitch:.74,rate:.9,dark:false}}
+ function params(o){const d=o&&o.dark!=null?o.dark:dark();return d?{pitch:.8,rate:.88,dark:true}:{pitch:.88,rate:.96,dark:false}}
  const vol=()=>Math.min(1,typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1);
- const log=[];
- function say(text,o){o=o||{};if(text){log.push(text);if(log.length>40)log.shift()}if(!has()||!text||!(vol()>0))return null;try{if(o.cancel)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text),p=params(o);V=V||pick();if(V)u.voice=V;
-   u.pitch=o.pitch!=null?o.pitch:p.pitch;u.rate=o.rate!=null?o.rate:p.rate;u.volume=vol()*(o.vol||1);if(o.onstart)u.onstart=o.onstart;if(o.onend){u.onend=o.onend;u.onerror=o.onend}speechSynthesis.speak(u);return u}catch(_){return null}}
- function stop(){try{if(has())speechSynthesis.cancel()}catch(_){}}
- return{say,stop,dark,params,pick,log,get voice(){return V||pick()}}})();
+ // split into sentences, keeping the punctuation (it drives the voice's falling intonation and the pause after it)
+ function sentences(text){const m=String(text).match(/[^.!?…]+(?:\.\.\.|[.!?…]+)?["')\]]*\s*/g)||[text];const out=[];
+  for(const s of m){const t=s.trim();if(!t)continue;if(out.length&&t.length<4)out[out.length-1]+=' '+t;else out.push(t)}return out.length?out:[String(text)]}
+ // spoken length in seconds, fitted to Microsoft David measured off-screen at rate .93: ~0.3 s a word, ~0.95 s per sentence (each
+ // sentence is its own utterance: falling tone, pause, hand-over) and ~0.3 s per comma. Slower rates stretch it proportionally.
+ function est(text,rate){const s=String(text||''),w=(s.match(/\S+/g)||[]).length,c=(s.match(/[,;:—–]/g)||[]).length,n=sentences(s).length;return (w*.3+n*.95+c*.3)*(.93/(rate||.93))}
+ const live=new Set(),log=[];
+ function say(text,o){o=o||{};if(text){log.push(text);if(log.length>40)log.shift()}if(!has()||!text||!(vol()>0))return null;
+  try{if(o.cancel){speechSynthesis.cancel();live.clear()}const p=params(o),parts=sentences(text);V=V||pick();let first=null,done=false;
+   const fin=()=>{if(done)return;done=true;try{o.onend&&o.onend()}catch(_){}};
+   parts.forEach((s,i)=>{const u=new SpeechSynthesisUtterance(s);if(V)u.voice=V;u.pitch=o.pitch!=null?o.pitch:p.pitch;u.rate=o.rate!=null?o.rate:p.rate;u.volume=vol()*(o.vol||1);
+    const last=i==parts.length-1,drop=()=>{live.delete(u);if(last)fin()};
+    if(i==0&&o.onstart)u.onstart=o.onstart;u.onend=drop;u.onerror=e=>{live.delete(u);if(last||(e&&e.error=='canceled'||e&&e.error=='interrupted'))fin()};
+    live.add(u);speechSynthesis.speak(u);if(!first)first=u});
+   return first}catch(_){return null}}
+ function stop(){try{if(has())speechSynthesis.cancel()}catch(_){}live.clear()}
+ const busy=()=>{try{return has()&&(speechSynthesis.speaking||speechSynthesis.pending)}catch(_){return false}};
+ return{say,stop,dark,params,pick,log,sentences,est,busy,get voice(){return V||pick()}}})();
 
 /* ========== LATE: 50-wings.js ========== */
 // ===== Wing renderer v8: shape families painted procedurally from the WINGS art specs (20-data.js) =====
@@ -11340,12 +11360,12 @@ const CINE7=(()=>{
   for(let x=CP+.2,i=0;x<CP+5.3;x+=.45,i++)at(x,t=>o('s',i%3==2?260:200,i%3==2?220:170,t,.09,'sine',.022,.003));   // a soft hand-drum groove by the fire
   // 8 Montage: the theme returns at full strength over the beat, plus each cut's own sounds (and a sad trombone for the boot)
   const cut=i=>MO+MCUT[i][0];
-  beat(MO,RS-.1,1.1);bassline([[cut(0),38],[cut(1),46],[cut(2),48],[cut(2)+.8,45],[cut(3),50]],RS-.1);melody(MO,RS-.15,.055);
-  chords([[cut(0),[50,57,62,65]],[cut(1),[46,53,58,62]],[cut(2),[48,55,60,64]],[cut(2)+.8,[45,52,57,61]],[cut(3),[50,57,62,65]]],.85,.024);
+  beat(MO,RS-.1,1.1);bassline([[cut(0),38],[cut(1),46],[cut(2),48],[cut(2)+FPRE+.8,45],[cut(3),50]],RS-.1);melody(MO,RS-.15,.055);
+  chords([[cut(0),[50,57,62,65]],[cut(1),[46,53,58,62]],[cut(2),[48,55,60,64]],[cut(2)+FPRE+.8,[45,52,57,61]],[cut(3),[50,57,62,65]]],.85,.024);
   for(let i=0;i<4;i++)at(cut(i),t=>{crash(t,.04);whoosh(t,.3,.04)});
   for(let i=0;i<18;i++)at(cut(0)+.04+i*.042,t=>thunk(t,.07));
   at(cut(1)+.3,t=>clink(t,.14));at(cut(1)+.58,t=>{clink(t,.16);nz('s',t,.3,'lowpass',900,200,.08)});
-  at(cut(2)+.22,t=>splash(t,.1));at(cut(2)+.48,t=>wahwah(t,.045));at(cut(2)+.9,t=>splash(t,.12));at(cut(2)+1.45,t=>splash(t,.07));
+  {const F=cut(2)+FPRE;at(cut(2)+.3,t=>splash(t,.025));at(F+.22,t=>splash(t,.1));at(F+.48,t=>wahwah(t,.045));at(F+.9,t=>splash(t,.12));at(F+1.22,t=>splash(t,.06));at(F+1.45,t=>splash(t,.07))}
   at(cut(3),t=>whoosh(t,.4,.05));at(cut(3)+.45,t=>whoosh(t,.4,.05));
   // 8b Restoration: a hush, the seed sinks in, then the light bursts out (choir, brass, cascading bells) and the theme
   //    comes back in MAJOR over the full beat as the islands rise; a riser into the title
@@ -11370,24 +11390,38 @@ const CINE7=(()=>{
 
  // ================= LAUNCH STORY INTRO =================
  const STORY=[['tree',7.0,'Long ago, the World Tree held up the sky, its roots binding every island to the stars.'],
-  ['village',6.5,'Islanders built their homes in its branches. Every night, they sent lanterns up to the stars.'],
-  ['eclipse',4.2,'Then the Eclipse came. The sky shattered, and the roots fell silent.'],
-  ['fall',5.5,'Islands tumbled from the sky. Homes were lost. One by one, the roots went dark.'],
+  ['village',6.5,'Islanders built their homes in its branches. And every night, they sent lanterns up to the stars.'],
+  ['eclipse',4.2,'Then the Eclipse came. The sky shattered... and the roots fell silent.'],
+  ['fall',5.5,'Islands tumbled from the sky, and one by one, the roots went dark.'],
   ['bosses',4.8,'Six guardians, twisted by the dark, broke loose upon the world.'],
-  ['ages',5.0,'For a hundred years, the world waited in the dark for someone to wake.'],
-  ['wake',4.0,'Deep beneath the roots, a lone wanderer awoke.'],
+  ['ages',5.0,'For a hundred years, the world waited... for someone to wake.'],
+  ['wake',4.0,'Then, deep beneath the roots, a lone wanderer awoke.'],
   ['meet',5.0,'Their first friend was a sprout. A small, very loud sprout.'],
   ['wings',3.8,'A spark of fallen starlight became their wings.'],
-  ['oops',3.4,'Their very first flight went... about as well as you would expect.'],
+  ['oops',3.4,'Their first flight went... about as well as you would expect.'],
   ['training',6.0,'So they practised. And practised. And practised some more.'],
   ['journey',6.0,'They crossed the shattered islands, from crystal caves to burning peaks.'],
-  ['clash',5.0,'The dark struck them down. Again, and again. But every single time, they stood back up.'],
+  ['clash',5.0,'The dark struck them down, again and again. But every time, they stood back up.'],
   ['camp',5.5,'And they never had to face the dark alone.'],
-  ['montage',4.3,'Build. Mine. Fish. Climb. Mend the roots, and raise the sky again.'],
+  ['montage',4.9,'Build. Mine. Fish. Climb. And mend the roots.'],
   ['restore',6.5,'Root by root, the light came back, and the islands rose to meet the sky.'],
   ['title',7.5,'']];   // 90 s in all
- let ST=0;for(const s of STORY){s[3]=ST;ST+=s[1]}const TI0=STORY[STORY.length-1][3];
- const MCUT=[[0,.9],[.9,.9],[1.8,1.6],[3.4,.9]];   // montage cuts: start, length (the fishing cut is longer: it needs room for the boot)
+ for(const s of STORY)s[4]=s[1];   // s[4]: the designed length. s[1] may grow so the narration fits (retime)
+ let ST=0,TI0=0;function stime(){ST=0;for(const s of STORY){s[3]=ST;ST+=s[1]}TI0=STORY[STORY.length-1][3]}stime();
+ const MCUT=[[0,.9],[.9,.9],[1.8,2.2],[4.0,.9]];   // montage cuts: start, length (the fishing cut is longest: the still lake, then the boot, then the koi)
+ function mcut(d){const e=Math.max(0,d-4.9),b=.9+e*.2,m=.9+e*.2,f=2.2+e*.25;MCUT[0]=[0,b];MCUT[1]=[b,m];MCUT[2]=[b+m,f];MCUT[3]=[b+m+f,Math.max(.9,d-(b+m+f))]}
+ // ---- narration timing. Every scene is at least as long as its spoken line plus a breath, so a line always finishes before the next
+ // scene's line starts (lines used to overrun their scenes, pile up in the speech queue, and get cut off by the "RootBound" title call).
+ // Studio voice-over (optional): if vo/<scene>.mp3 files sit next to index.html (tools/vo-elevenlabs.js renders them with ElevenLabs),
+ // their real lengths drive the timing and they play instead of the system voice. vo/title.mp3 is probed first; only if it exists are
+ // the others loaded. If any clip is missing or broken the whole intro uses the system voice, so voices never mix.
+ const VO={ok:false,el:{},n:0,bad:0,need:0};
+ try{if(typeof Audio!='undefined'){const ids=STORY.filter(s=>s[2]).map(s=>s[0]).concat(['title']);VO.need=ids.length;
+  const probe=(id,then)=>{const a=new Audio();a.preload='auto';a.onloadedmetadata=()=>{if(isFinite(a.duration)&&a.duration>.25){VO.el[id]=a;VO.n++;VO.ok=VO.n==VO.need&&!VO.bad;then&&then()}else VO.bad++};a.onerror=()=>{VO.bad++};a.src='vo/'+id+'.mp3'};
+  probe('title',()=>ids.forEach(id=>{if(id!='title')probe(id)}))}}catch(_){}
+ const BREATH=.5;
+ function retime(k){k=k||1;const p=VOX12.params();for(const s of STORY){let need=0;if(s[2])need=(VO.ok&&VO.el[s[0]]?VO.el[s[0]].duration:VOX12.est(s[2],p.rate))+BREATH+.15;s[1]=Math.max(s[4],Math.round(need/k*10)/10)}
+  stime();mcut(STORY.find(s=>s[0]=='montage')[1])}
  let I=null;const AB={};
  const as=n=>I.as[n]||(I.as[n]=AB[n]());
  function art(w,h,qf,fn){const q=I.q*(qf||1),c=mk(w*q,h*q),x=c.getContext('2d');x.scale(c.width/w,c.height/h);x.lineJoin='round';x.lineCap='round';fn(x,w,h);return{c,w,h}}
@@ -11531,10 +11565,15 @@ const CINE7=(()=>{
   px(3,'#9fdcf0','#e8fbff','#6aaed0',()=>{x.fillStyle='rgba(255,255,255,.75)';x.fillRect(12,10,6,22);x.fillRect(22,10,4,10)});
   px(4,'#c0394e','#e86a78','#8a2232',()=>{x.fillStyle='#a02a3e';for(let k=0;k<3;k++)x.fillRect(0,k*18+12,T,3)});
   px(5,'#6b4426','#8a5a34','#4a2c16',()=>{x.fillStyle='#ffd36a';x.fillRect(16,14,22,18);x.fillStyle='#fff3c0';x.fillRect(20,18,7,7)})});
- function blk(g,i,x,y,w,h){const s=as('blk'),q=s.c.width/324;g.drawImage(s.c,i*54*q,0,54*q,54*q,x,y,w,h==null?w:h)}
+ const BID=[2,5,3,6,7,10];   // grass, planks, stone, glass, brick, gold: the game's own painted block sprites (BART9), so the story matches the world
+ function blk(g,i,x,y,w,h){h=h==null?w:h;let c=null;try{if(typeof spr=='function'&&typeof BLK!='undefined'&&BLK[BID[i]])c=spr(BID[i],(x/64|0)&7,(y/64|0)&7)}catch(_){}
+  if(c){g.drawImage(c,x,y,w,h);return}const s=as('blk'),q=s.c.width/324;g.drawImage(s.c,i*54*q,0,54*q,54*q,x,y,w,h)}
  AB.m1=()=>art(1600,900,.35,x=>{const gr=x.createLinearGradient(0,0,0,900);gr.addColorStop(0,'#3a2f86');gr.addColorStop(.45,'#c0609a');gr.addColorStop(.75,'#ff9f78');gr.addColorStop(1,'#ffd9a0');x.fillStyle=gr;x.fillRect(0,0,1600,900);const s=x.createRadialGradient(1200,560,20,1200,560,420);s.addColorStop(0,'rgba(255,250,220,1)');s.addColorStop(.12,'rgba(255,230,170,.8)');s.addColorStop(1,'rgba(255,200,150,0)');x.fillStyle=s;x.fillRect(0,0,1600,900);
   x.fillStyle='rgba(90,50,110,.55)';for(const i of[[180,330,140],[420,250,90],[1430,300,120],[1000,200,70]]){x.beginPath();x.moveTo(i[0]-i[2],i[1]);x.lineTo(i[0]+i[2],i[1]);x.lineTo(i[0]+i[2]*.3,i[1]+i[2]*.9);x.lineTo(i[0]-i[2]*.4,i[1]+i[2]*.7);x.closePath();x.fill()}});
- AB.m2=()=>art(1600,900,.7,x=>{const T=108,r=srnd(61);for(let gy=-T/2;gy<900;gy+=T)for(let gx=-20;gx<1600;gx+=T){const v=r();x.fillStyle=mix('#3a3d4f','#5a5d70',v);x.fillRect(gx,gy,T,T);x.fillStyle='rgba(255,255,255,.08)';x.fillRect(gx,gy,T,8);x.fillStyle='rgba(0,0,0,.35)';x.fillRect(gx,gy+T-8,T,8);x.fillRect(gx+T-6,gy,6,T);
+ AB.m2=()=>art(1600,900,.7,x=>{const T=108,r=srnd(61);let st=null,ores=[];try{if(typeof spr=='function'&&typeof BLK!='undefined'&&BLK[3]){st=b=>spr(b,(r()*8)|0,0);ores=Object.keys(BLK).filter(b=>/Ore/i.test(BLK[b][0])&&!/Deep|Nether|Void/i.test(BLK[b][0])).map(Number)}}catch(_){}
+  // the world's own painted stone and ore blocks (BART9), dimmed to cave light; the flat fallback below if sprites are unavailable
+  if(st){for(let gy=-T/2;gy<900;gy+=T)for(let gx=-20;gx<1600;gx+=T){const o=ores.length&&r()<.15?ores[(r()*ores.length)|0]:3;x.drawImage(st(o),gx,gy,T,T)}x.fillStyle='rgba(8,10,28,.42)';x.fillRect(0,0,1600,900)}
+  else for(let gy=-T/2;gy<900;gy+=T)for(let gx=-20;gx<1600;gx+=T){const v=r();x.fillStyle=mix('#3a3d4f','#5a5d70',v);x.fillRect(gx,gy,T,T);x.fillStyle='rgba(255,255,255,.08)';x.fillRect(gx,gy,T,8);x.fillStyle='rgba(0,0,0,.35)';x.fillRect(gx,gy+T-8,T,8);x.fillRect(gx+T-6,gy,6,T);
    x.fillStyle='rgba(0,0,0,.25)';x.fillRect(gx+20+v*30,gy+30,24,16);x.fillRect(gx+60-v*20,gy+66,30,14);
    if(r()<.18){const c=r()<.6?'#7ff6ff':'#ffd36a';x.fillStyle=c;x.shadowColor=c;x.shadowBlur=14;for(let k=0;k<4;k++){const ox=gx+20+r()*68,oy=gy+20+r()*68;x.beginPath();x.moveTo(ox,oy-10);x.lineTo(ox+7,oy);x.lineTo(ox,oy+10);x.lineTo(ox-7,oy);x.closePath();x.fill()}x.shadowBlur=0}}
   const v=x.createRadialGradient(800,430,100,800,450,900);v.addColorStop(0,'rgba(255,190,120,.18)');v.addColorStop(.5,'rgba(0,0,0,.2)');v.addColorStop(1,'rgba(0,0,0,.85)');x.fillStyle=v;x.fillRect(0,0,1600,900)});
@@ -11544,6 +11583,22 @@ const CINE7=(()=>{
   const wg=x.createLinearGradient(0,520,0,900);wg.addColorStop(0,'#18234f');wg.addColorStop(1,'#050816');x.fillStyle=wg;x.fillRect(0,520,1600,380);x.fillStyle='rgba(230,240,255,.5)';for(let y=530;y<900;y+=9){const w=30+(y-520)*.5*r();x.globalAlpha=.15+.5*(1-(y-520)/380);x.fillRect(1180-w/2+(r()-.5)*20,y,w,2.2)}x.globalAlpha=1});
  AB.koi=()=>art(240,120,1,x=>{x.translate(120,60);x.shadowColor='#ffb84a';x.shadowBlur=22;const gr=x.createLinearGradient(-80,0,80,0);gr.addColorStop(0,'#ff7a3a');gr.addColorStop(.6,'#ffd36a');gr.addColorStop(1,'#fff3c8');x.fillStyle=gr;x.beginPath();x.ellipse(10,0,66,24,0,0,TAU);x.fill();x.beginPath();x.moveTo(-50,0);x.lineTo(-104,-30);x.quadraticCurveTo(-88,0,-104,30);x.closePath();x.fill();
   x.shadowBlur=0;x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.moveTo(0,-22);x.quadraticCurveTo(20,-44,40,-20);x.closePath();x.fill();x.fillStyle='#1a1020';x.beginPath();x.arc(56,-6,4.5,0,TAU);x.fill();x.fillStyle='rgba(255,90,60,.6)';for(const s of[[-10,-6],[14,8],[30,-10]]){x.beginPath();x.arc(s[0],s[1],8,0,TAU);x.fill()}});
+ // ---- art: the lake's mirror image (sky, moon and treeline flipped, cooled and softened), a caustic light-net tile, a wet boot
+ AB.m3r=()=>{const s=as('m3'),q=s.c.width/1600,c=mk(800,260),x=c.getContext('2d');x.translate(0,260);x.scale(1,-1);try{x.filter='blur(1.2px)'}catch(_){}
+  x.drawImage(s.c,0,0,s.c.width,520*q,0,0,800,260);x.setTransform(1,0,0,1,0,0);x.filter='none';x.globalCompositeOperation='multiply';x.fillStyle='#8aa4d8';x.fillRect(0,0,800,260);
+  x.globalCompositeOperation='source-over';const g=x.createLinearGradient(0,0,0,260);g.addColorStop(0,'rgba(150,175,235,.18)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,800,260);return{c,w:1600,h:520}};
+ AB.caus=()=>{const N=256,c=mk(N,N),x=c.getContext('2d'),d=x.createImageData(N,N),K=TAU/N;
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const u=i*K,v=j*K,a=Math.sin(u*3+1.3*Math.sin(v*2)),b=Math.sin(v*3+1.1*Math.sin(u*2+.5)),e=Math.sin((u-v)*2+.9*Math.sin(u+v*2)),
+   l=Math.pow(cl(1-Math.abs(a+b+e)/1.1,0,1),5),o=(j*N+i)*4;d.data[o]=170;d.data[o+1]=228;d.data[o+2]=255;d.data[o+3]=l*255|0}x.putImageData(d,0,0);return{c,w:N,h:N}};
+ AB.bootW=()=>art(150,150,1,x=>{x.translate(44,80);   // hook point at (40,10), same shape as boot()
+  x.fillStyle='#6a4426';x.strokeStyle='#1a0f0a';x.lineWidth=5;x.beginPath();x.moveTo(-26,-70);x.lineTo(18,-70);x.lineTo(20,-8);x.quadraticCurveTo(70,-6,74,14);x.lineTo(74,26);x.lineTo(-30,26);x.closePath();x.fill();x.stroke();
+  x.fillStyle='#2a1a10';x.fillRect(-32,18,108,12);x.fillStyle='#8a5c36';x.fillRect(-26,-70,44,12);x.strokeStyle='#d8c090';x.lineWidth=3;for(let i=0;i<3;i++){x.beginPath();x.moveTo(-2,-50+i*14);x.lineTo(14,-44+i*14);x.stroke()}
+  // night grade (moonlit, soaked leather is darker), a cool moon rim on the right, glossy wet streaks, weed caught on the heel
+  x.globalCompositeOperation='source-atop';x.fillStyle='rgba(16,26,66,.42)';x.fillRect(-60,-90,200,160);
+  const rg=x.createLinearGradient(30,0,80,0);rg.addColorStop(0,'rgba(190,220,255,0)');rg.addColorStop(1,'rgba(190,220,255,.6)');x.fillStyle=rg;x.fillRect(-60,-90,200,160);
+  const tg=x.createLinearGradient(0,-72,0,-50);tg.addColorStop(0,'rgba(200,225,255,.35)');tg.addColorStop(1,'rgba(200,225,255,0)');x.fillStyle=tg;x.fillRect(-60,-90,200,40);
+  x.fillStyle='rgba(235,245,255,.55)';for(const s of[[-17,-58,3,38],[9,-54,2,26],[34,-1,24,2.4],[56,6,10,2]]){x.beginPath();x.ellipse(s[0],s[1],s[2],s[3]/2+s[3]%1,0,0,TAU);x.fill()}
+  x.globalCompositeOperation='source-over';x.strokeStyle='#2f6a3a';x.lineWidth=3;x.beginPath();x.moveTo(-30,22);x.quadraticCurveTo(-44,34,-38,52);x.moveTo(-26,24);x.quadraticCurveTo(-30,40,-22,50);x.stroke()});
  AB.vig=()=>{const c=mk(320,180),x=c.getContext('2d'),r=x.createRadialGradient(160,90,40,160,90,190);r.addColorStop(0,'rgba(0,0,0,0)');r.addColorStop(.7,'rgba(0,0,0,.25)');r.addColorStop(1,'rgba(0,0,0,.75)');x.fillStyle=r;x.fillRect(0,0,320,180);return{c,w:320,h:180}};
  // ---- art: title letters
  AB.title=()=>{const txt='ROOTBOUND',F='700 210px '+SERIF,tc=mk(10,10).getContext('2d');tc.font=F;const ws=[...txt].map(ch=>tc.measureText(ch).width),gap=10,tot=ws.reduce((a,b)=>a+b,0)+gap*(txt.length-1);let cx=-tot/2;
@@ -11561,7 +11616,7 @@ const CINE7=(()=>{
   x.fillStyle='rgba(160,120,230,.13)';for(let i=0;i<10;i++){x.beginPath();x.ellipse(r()*1600,795+r()*90,60+r()*150,5+r()*8,0,0,TAU);x.fill()}});
  AB.grain=()=>{const c=mk(256,256),x=c.getContext('2d'),d=x.createImageData(256,256);for(let i=0;i<d.data.length;i+=4){const v=R()*255|0;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);return{c,w:256,h:256}};
  // which assets each scene needs (pre-built one per frame, a scene ahead of time)
- const NEED=[['sky1','spark','aurora','clouds','tree','treeG','isl2','isl3','isl4','isl0','isl1','fg','grain'],[],['sun','corona','crk'],['sky3'],['sil_warden','pbg_warden','pnl_warden','sil_sovereign','pbg_sovereign','pnl_sovereign','sil_eclipse','pbg_eclipse','pnl_eclipse','sil_magma','pbg_magma','pnl_magma','sil_tide','pbg_tide','pnl_tide','sil_storm','pbg_storm','pnl_storm'],[],['cave','face','bust','bustD'],['m1','blk','bustL'],['wing','rays','speed','vlines','flyer'],['sky7'],['m3'],[],['storm'],[],['m2','koi','treeY'],[],['title','band']];
+ const NEED=[['sky1','spark','aurora','clouds','tree','treeG','isl2','isl3','isl4','isl0','isl1','fg','grain'],[],['sun','corona','crk'],['sky3'],['sil_warden','pbg_warden','pnl_warden','sil_sovereign','pbg_sovereign','pnl_sovereign','sil_eclipse','pbg_eclipse','pnl_eclipse','sil_magma','pbg_magma','pnl_magma','sil_tide','pbg_tide','pnl_tide','sil_storm','pbg_storm','pnl_storm'],[],['cave','face','bust','bustD'],['m1','blk','bustL'],['wing','rays','speed','vlines','flyer'],['sky7'],['m3','m3r','caus','bootW'],[],['storm'],[],['m2','koi','treeY'],[],['title','band']];
  // ---- camera: (cx,cy) of the 1600x900 stage at zoom z, with parallax depth p
  function cam(g,cx,cy,z,p){p=p==null?1:p;const Z=1+(z-1)*p,X=800+(cx-800)*p,Y=450+(cy-450)*p,s=I.s*Z;g.setTransform(s,0,0,s,I.cw/2-X*s+I.shx,I.ch/2-Y*s+I.shy)}
  const stage=g=>cam(g,800,450,1,1);
@@ -11652,27 +11707,86 @@ const CINE7=(()=>{
  const WORDS=['BUILD','MINE','FISH','CLIMB'],ACC=['#ffb84a','#7ff6ff','#ffd36a','#ff9ad8'];
  const HOUSE=[[0,0,2],[1,0,2],[2,0,5],[3,0,2],[4,0,2],[0,1,1],[1,1,3],[2,1,1],[3,1,3],[4,1,1],[0,2,1],[1,2,1],[2,2,1],[3,2,1],[4,2,1],[0,3,4],[1,3,4],[2,3,4],[3,3,4],[4,3,4],[1,4,4],[2,4,4],[3,4,4],[2,5,4]];
  function mBuild(g,tc){cam(g,800,450,1.02+.04*tc,1);put(g,as('m1'),-40,-30,1680,960);const S=64,gx=800-2.5*S,gy=760;for(let x=-S;x<1700;x+=S){blk(g,0,x,gy,S);blk(g,2,x,gy+S,S)}
+  // grounding: the house casts a long soft shadow away from the low sun (right), and each falling block's shadow sharpens as it lands
+  {let hgt=0;HOUSE.forEach((b,i)=>{if(tc>=.03+i*.03)hgt=Math.max(hgt,b[1]+1)});if(hgt){g.fillStyle='rgba(40,12,44,.3)';g.beginPath();g.moveTo(gx-6,gy+2);g.lineTo(gx+5*S+6,gy+2);g.lineTo(gx+5*S-10-hgt*S*.9,gy+16);g.lineTo(gx-30-hgt*S*.9,gy+16);g.closePath();g.fill()}}
+  HOUSE.forEach((b,i)=>{const L=.03+i*.03,f=(tc-(L-.12))/.12;if(f<0||f>=1)return;const x=gx+b[0]*S,ty=gy-(b[1]+1)*S;g.fillStyle='rgba(30,8,36,'+(.4*f*f)+')';g.beginPath();g.ellipse(x+S/2,ty+S,S*(.3+.25*f),S*(.05+.06*f),0,0,TAU);g.fill()});
   HOUSE.forEach((b,i)=>{const L=.03+i*.03,f=(tc-(L-.12))/.12;if(f<0)return;const x=gx+b[0]*S,ty=gy-(b[1]+1)*S,y=f<1?ty-380*(1-f*f):ty,sq=f>=1&&tc-L<.08?1-.18*Math.sin((tc-L)/.08*PI):1;blk(g,b[2],x+S*(1-1/sq)/2*0,y+S*(1-sq),S,S*sq);
    if(f>=1&&tc-L<.25){const v=(tc-L)/.25;g.fillStyle='rgba(255,240,220,'+(.6*(1-v))+')';for(const s of[-1,1]){g.beginPath();g.arc(x+S/2+s*(S*.5+v*40),ty+S-4-v*10,6+v*8,0,TAU);g.fill()}}});
+  // warm sunset rim light on the sun-facing edges, then one soft-light grade so the sprites sit in the scene's light
+  A(g,1,'lighter');HOUSE.forEach((b,i)=>{if(tc<.03+i*.03)return;const x=gx+b[0]*S,y=gy-(b[1]+1)*S;g.fillStyle='rgba(255,170,110,.22)';g.fillRect(x+S-6,y+3,5,S-6);g.fillStyle='rgba(255,210,160,.16)';g.fillRect(x+3,y+1,S-6,4)});
+  A(g,1,'soft-light');{const gr=g.createLinearGradient(1500,300,200,900);gr.addColorStop(0,'rgba(255,170,110,.85)');gr.addColorStop(1,'rgba(70,30,120,.7)');g.fillStyle=gr;g.fillRect(-60,-40,1720,980)}A(g,1);
   const nx=HOUSE.findIndex((b,i)=>tc<.03+i*.03);if(nx>=0){const b=HOUSE[nx];g.strokeStyle='rgba(255,255,255,'+(.6+.4*Math.sin(tc*40))+')';g.lineWidth=3;g.strokeRect(gx+b[0]*S+2,gy-(b[1]+1)*S+2,S-4,S-4)}}
  function mMine(g,tc){cam(g,800,450,1.04+.06*tc,1);put(g,as('m2'),-40,-30,1680,960);const bx=800-54,by=430-54,hit1=.3,hit2=.58;
   if(tc<hit2){if(tc>hit1){g.strokeStyle='#14121c';g.lineWidth=4;g.beginPath();g.moveTo(bx+54,by+54);g.lineTo(bx+20,by+18);g.moveTo(bx+54,by+54);g.lineTo(bx+96,by+30);g.moveTo(bx+54,by+54);g.lineTo(bx+70,by+100);g.moveTo(bx+54,by+54);g.lineTo(bx+12,by+80);g.stroke()}}
-  else{g.fillStyle='#07060c';g.fillRect(bx,by,108,108);const tt=tc-hit2,r=srnd(3);for(let i=0;i<10;i++){const a=r()*TAU,sp=300+r()*500,s=(16+r()*26)*(1+tt*2.2),x=bx+54+Math.cos(a)*sp*tt,y=by+54+Math.sin(a)*sp*tt+600*tt*tt;g.fillStyle=i%3?'#6a6d80':'#8d8f9e';g.fillRect(x-s/2,y-s/2,s,s);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(x-s/2,y+s*.2,s,s*.3)}
+  else{g.fillStyle='#07060c';g.fillRect(bx,by,108,108);const tt=tc-hit2,r=srnd(3);for(let i=0;i<10;i++){const a=r()*TAU,sp=300+r()*500,s=(16+r()*26)*(1+tt*2.2),x=bx+54+Math.cos(a)*sp*tt,y=by+54+Math.sin(a)*sp*tt+600*tt*tt;let sc=null;try{sc=typeof spr=='function'?spr(3,i,0):null}catch(_){}if(sc){g.save();g.translate(x,y);g.rotate(tt*(i%2?7:-6)+i);g.drawImage(sc,(i*11)%24,(i*7)%24,24,24,-s/2,-s/2,s,s);g.fillStyle='rgba(0,0,0,.3)';g.fillRect(-s/2,s*.15,s,s*.35);g.restore()}
+    else{g.fillStyle=i%3?'#6a6d80':'#8d8f9e';g.fillRect(x-s/2,y-s/2,s,s);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(x-s/2,y+s*.2,s,s*.3)}}
    A(g,1,'lighter');for(let i=0;i<3;i++){const x=bx+54+(i-1)*70*tt*4,y=by+54-200*tt+400*tt*tt;putc(g,glow('#7ff6ff'),x,y,.8);putc(g,as('spark'),x,y,1.1)}A(g,1)}
   for(const h of[hit1,hit2]){const u=(tc-h)/.14;if(u<0||u>1)continue;A(g,1-u,'lighter');g.strokeStyle='#fff3c0';g.lineWidth=4;for(let i=0;i<14;i++){const a=i/14*TAU+h*9,r0=30+u*60,r1=r0+40+u*90;g.beginPath();g.moveTo(800+Math.cos(a)*r0,430+Math.sin(a)*r0);g.lineTo(800+Math.cos(a)*r1,430+Math.sin(a)*r1);g.stroke()}putc(g,glow('#ffe7a0'),800,430,2.2*(1-u));A(g,1);I.sa=Math.max(I.sa,(1-u)*10)}
   const sw=tc<.2?lerp(1.1,1.62,ez(tc/.2)):tc<hit1?lerp(1.62,.715,ei((tc-.2)/.1)):tc<.48?lerp(.715,1.55,eo((tc-hit1)/.18)):tc<hit2?lerp(1.55,.715,ei((tc-.48)/.1)):lerp(.715,1.0,eo((tc-hit2)/.3));
   g.save();g.translate(1250,830);g.rotate(sw);g.fillStyle='#5a3a24';g.fillRect(-560,-12,560,24);g.fillStyle='#7a5234';g.fillRect(-560,-12,560,7);g.translate(-560,0);g.fillStyle='#b8c0d0';g.strokeStyle='#1a1424';g.lineWidth=5;g.beginPath();g.moveTo(-10,-150);g.quadraticCurveTo(40,-40,24,0);g.quadraticCurveTo(40,40,-10,150);g.quadraticCurveTo(70,40,70,0);g.quadraticCurveTo(70,-40,-10,-150);g.closePath();g.fill();g.stroke();g.fillStyle='#fff';g.fillRect(40,-50,8,100);g.restore()}
- function mFish(g,tc){cam(g,800,450,1.02+.03*tc,1);put(g,as('m3'),-40,-30,1680,960);const r=srnd(5);g.fillStyle='rgba(220,235,255,.5)';for(let i=0;i<14;i++){const y=560+r()*320,x=r()*1600+Math.sin(tc*3+i)*30;g.globalAlpha=.25+.25*Math.sin(tc*6+i);g.fillRect(x,y,40+r()*80,2)}g.globalAlpha=1;
+ // ---- the lake (stage coords; m3 is drawn at -40,-30 x1.05). HZ: the far shore, WL: the near water plane the float / boot / koi touch
+ const HZ=524.7,WL=652,MX=1199,FPRE=.6;
+ function lake(g,t){const r=as('m3r'),rh=r.c.height/r.h;
+  // 1. mirror reflection of sky, moon and treeline, in thin strips that sway more the nearer they are (calm far, choppy near)
+  for(let y=HZ;y<935;y+=5){const d=y-HZ,k=d/410,sy=d/.82;if(sy>r.h-7)break;const sw=Math.sin(t*1.7+d*.09)*(1+d*.045)+Math.sin(t*.9+d*.031)*d*.02;
+   g.globalAlpha=.8-.5*k;g.drawImage(r.c,0,sy*rh,r.c.width,6.4*rh,-40+sw,y,1680,5.8)}
+  // 2. fresnel: bright and mirror-like toward the horizon, deep blue-black and see-through up close
+  g.globalAlpha=1;const dg=g.createLinearGradient(0,HZ,0,935);dg.addColorStop(0,'rgba(140,165,230,.16)');dg.addColorStop(.3,'rgba(10,26,64,.12)');dg.addColorStop(1,'rgba(2,8,24,.6)');g.fillStyle=dg;g.fillRect(-60,HZ,1720,420);
+  // 3. caustic light-net in the shallows, two layers drifting against each other, squashed by perspective
+  A(g,1,'lighter');const pat=I.cpat||(I.cpat=g.createPattern(as('caus').c,'repeat'));
+  for(const L of[[790,.05],[835,.08],[880,.12]])for(const m of[[1,0],[-1,97]]){g.save();g.beginPath();g.rect(-60,L[0],1720,45+(L[0]==880?20:0));g.clip();g.translate(m[1]+t*16*m[0],L[0]);g.scale(1.4,.42);g.globalAlpha=L[1];g.fillStyle=pat;g.fillRect(-400,-10,1800,260);g.restore()}
+  // 4. moonlight glitter: anime sparkle dashes in the moon's path, plus a few four-point glints
+  for(let i=0;i<46;i++){const h=(i*.618)%1,d=8+i*8.6,y=HZ+d,k=d/410,fl=Math.sin(t*(4+h*7)+i*2.1);if(fl<.15)continue;const w=(8+k*64)*(.5+h)*fl,xx=MX+Math.sin(i*12.9898)*(12+k*130)+Math.sin(t*1.3+i)*6*k;
+   g.globalAlpha=.55*fl*(1-k*.35);g.fillStyle='#eaf3ff';g.fillRect(xx-w/2,y,w,1.2+k*2.6)}
+  for(let i=0;i<6;i++){const ph=(t*.8+i*.37)%1,a=Math.sin(ph*PI);if(a<.05)continue;const d=30+(i*97)%330,xx=MX+Math.sin(i*7.3)*(20+d*.25),y=HZ+d,s=(5+d*.05)*a;
+   g.globalAlpha=a*.9;g.fillStyle='#fff';g.fillRect(xx-s*2.2,y-.7,s*4.4,1.4);g.fillRect(xx-.7,y-s,1.4,s*2);g.globalAlpha=a*.6;putc(g,glow('#cfe4ff'),xx,y,s*.05)}
+  A(g,1);
+  // 5. wind crests: thin curved highlights that grow with nearness and drift with the breeze
+  g.strokeStyle='#dfeaff';g.lineCap='round';for(let i=0;i<34;i++){const hh=(i*.754877)%1,d=20+hh*390,k=d/410,y=HZ+d,xx=((i*911.9+t*(10+k*30))%1760)-80,ph=Math.sin(t*1.8+i*1.7);if(ph<0)continue;
+   g.globalAlpha=ph*(.16+.3*k);g.lineWidth=1+k*2.2;const w=10+k*70;g.beginPath();g.moveTo(xx-w,y);g.quadraticCurveTo(xx,y-2-k*5,xx+w,y);g.stroke()}
+  // 6. a broken foam line where the water meets the far shore
+  g.globalAlpha=.32;g.fillStyle='#cfe0ff';for(let x=-40;x<1640;x+=22){const a=Math.sin(x*.05+t*1.4);if(a>.2)g.fillRect(x,HZ-1+Math.sin(x*.13)*1.2,10+a*12,1.4)}g.globalAlpha=1}
+ // ripples where something touches the water: a perspective ring with a bright leading edge, a dark trailing edge and a faint second ring
+ function wRing(g,x,y,u,s){if(!(u>0&&u<1))return;s=s||1;const k=eo(u);for(let j=0;j<3;j++){const v=k-j*.16;if(v<=0)continue;const rx=(14+v*170)*s,ry=rx*.2,a=(1-u)*(1-j*.3);
+   g.lineWidth=(2.6-j*.6)*s;g.globalAlpha=a*.85;g.strokeStyle='#eef6ff';g.beginPath();g.ellipse(x,y,rx,ry,0,PI,TAU);g.stroke();g.globalAlpha=a*.45;g.strokeStyle='#04102a';g.beginPath();g.ellipse(x,y+1.5*s,rx,ry,0,0,PI);g.stroke();
+   g.globalAlpha=a*.55;g.strokeStyle='#bcd2ff';g.beginPath();g.ellipse(x,y,rx*.96,ry*.88,0,0,PI);g.stroke()}g.globalAlpha=1}
+ // a splash: a white crown that rises and falls back, beaded droplets on ballistic arcs, and a foam patch that spreads and thins
+ function wSplash(g,x,y,u,s){if(!(u>0&&u<1))return;s=s||1;const r=srnd(((x*13+y)|0)+7),h=Math.sin(Math.min(1,u*1.7)*PI)*140*s;
+  if(h>2){g.globalAlpha=1-u*.5;g.fillStyle='rgba(236,246,255,.92)';for(let i=0;i<9;i++){const ox=(i-4)*10*s*(1+u*1.4),hh=h*(1-Math.abs(i-4)/5.5)*(.7+r()*.5),w=(4+r()*4)*s;
+    g.beginPath();g.moveTo(x+ox-w,y);g.quadraticCurveTo(x+ox*1.1,y-hh*.6,x+ox*1.3,y-hh);g.quadraticCurveTo(x+ox*1.05,y-hh*.5,x+ox+w,y);g.closePath();g.fill()}}
+  for(let i=0;i<18;i++){const a=PI*(.15+r()*.7),sp=(220+r()*260)*s,sg=r()<.5?-1:1,rr=(2+r()*3.5)*s,tt=u*.9,dx=Math.cos(a)*sp*tt*sg,dy=-Math.sin(a)*sp*tt+620*s*tt*tt;if(dy>4)continue;
+   g.globalAlpha=1-u*.7;g.fillStyle='#d8ebff';g.beginPath();g.arc(x+dx,y+dy,rr,0,TAU);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(x+dx-rr*.3,y+dy-rr*.3,rr*.4,0,TAU);g.fill()}
+  g.globalAlpha=(1-u)*.7;g.fillStyle='#f2f8ff';for(let i=0;i<12;i++){const a=r()*TAU,rd=(10+u*90)*s*(.5+r()*.6),fw=(6+r()*10)*s*(1-u*.5),fh=(1.5+r()*2)*s;g.beginPath();g.ellipse(x+Math.cos(a)*rd,y+Math.sin(a)*rd*.2,fw,fh,0,0,TAU);g.fill()}
+  g.globalAlpha=1}
+ // a dimmer, wavier mirror copy of whatever fn() draws, below the water plane wl
+ function reflect(g,wl,t,fn){g.save();g.beginPath();g.rect(-60,wl,1720,400);g.clip();g.translate(Math.sin(t*6)*3,wl*2);g.scale(1,-1);g.globalAlpha=.3;try{fn()}catch(_){}g.restore();g.globalAlpha=1}
+ function bootW(g,x,y,a){g.save();g.translate(x,y);g.rotate(a);g.drawImage(as('bootW').c,-40,-10,150,150);g.restore()}
+ // water dripping off the boot's sole, each drop leaving a tiny ring where it lands
+ function drips(g,hx,hy,a,tc){const ca=Math.cos(a),sa=Math.sin(a),sx=hx+ca*25-sa*96,sy=hy+sa*25+ca*96;if(sy>WL-12)return;
+  for(let i=0;i<5;i++){const ph=(tc*2.4+i*.2)%1,ox=(i-2)*9,x0=sx+ca*ox,y0=sy+sa*ox,y=y0+ph*ph*(WL-y0);g.globalAlpha=.85;g.fillStyle='#cfe6ff';g.beginPath();g.ellipse(x0,y,2.2,3.4+ph*3,0,0,TAU);g.fill();g.fillStyle='#fff';g.fillRect(x0-1,y-2,1.2,1.2);
+   if(ph<.15){const q=ph/.15;g.globalAlpha=(1-q)*.6;g.strokeStyle='#e6f2ff';g.lineWidth=1.2;g.beginPath();g.ellipse(x0,WL,4+q*16,1+q*3.5,0,0,TAU);g.stroke()}}g.globalAlpha=1}
+ // the float sits IN the water: red top above the line, the white half seen dimly through it, a meniscus ring, its reflection
+ function float(g,x,y){const cy=y-8;g.globalAlpha=.28;g.fillStyle='#ff4a5a';g.beginPath();g.ellipse(x,cy+7,9,6,0,0,PI);g.fill();g.globalAlpha=.38;g.fillStyle='#e8f0ff';g.beginPath();g.arc(x,cy,10,0,PI);g.fill();
+  g.globalAlpha=1;g.fillStyle='#ff4a5a';g.beginPath();g.arc(x,cy,10,PI,TAU);g.fill();g.fillStyle='rgba(255,255,255,.75)';g.beginPath();g.arc(x-4,cy-5,2.6,0,TAU);g.fill();
+  g.globalAlpha=.8;g.strokeStyle='#eaf4ff';g.lineWidth=1.6;g.beginPath();g.ellipse(x,cy,14,3,0,0,TAU);g.stroke();g.globalAlpha=1}
+ function mFish(g,tc0){const tc=tc0-FPRE,t=I.u;cam(g,800,450,1.0+.035*tc0,1);put(g,as('m3'),-40,-30,1680,960);lake(g,t);
+  wRing(g,560,600,tc0/1.2,.55);   // the still lake: a fish rises far out before anything happens
   // first bite: up comes... an old boot (it dangles, everyone stares, it drops). Second bite: the golden koi.
-  const bob=tc<.2?Math.sin(tc*14)*5:tc<.24?18:Math.sin(tc*10)*3,bx=880,by=640+bob,bu=(tc-.22)/.22,hang=tc>.22&&tc<.86;
+  const bob=tc<0?Math.sin(tc0*3)*2:tc<.2?Math.sin(tc*14)*5:tc<.24?18:Math.sin(tc*10)*3,bx=880,by=640+bob,bu=(tc-.22)/.22,hang=tc>.22&&tc<.86;
   let hx=bx,hy=by-12;if(hang){const k=eo(bu);hx=lerp(900,830,k)+Math.sin((tc-.44)*9)*22*(tc>.44?1:0);hy=lerp(650,300,k)}
+  for(const sp of[[.22,bx,.5],[.9,960,1],[1.22,866,.75],[1.45,1340,.9]])wRing(g,sp[1],WL,(tc-sp[0])/1,sp[2]);
+  if(tc<.22){const q=(tc0%1.3)/1.3;g.globalAlpha=(1-q)*.5;g.strokeStyle='#e6f2ff';g.lineWidth=1.2;g.beginPath();g.ellipse(bx,WL-8,12+q*30,2.5+q*6,0,0,TAU);g.stroke();g.globalAlpha=1}
   g.strokeStyle='#0a0614';g.lineWidth=9;g.beginPath();g.moveTo(-20,360);g.lineTo(260,110);g.stroke();g.strokeStyle='rgba(240,240,255,.7)';g.lineWidth=1.6;g.beginPath();g.moveTo(260,110);g.quadraticCurveTo(hang?560:600,hang?180:300,hx,hy);g.stroke();
-  if(hang)boot(g,hx,hy,Math.sin((tc-.44)*9)*.25*(tc>.44?1:0)+(1-cl(bu,0,1))*.6);
-  else{g.fillStyle='#ff4a5a';g.beginPath();g.arc(bx,by-8,10,PI,TAU);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(bx,by-8,10,0,PI);g.fill()}
-  if(tc>=.86&&tc<1.3){const v=(tc-.86)/.44;boot(g,830+v*40,300+v*v*520,.4+v*3)}
+  if(hang){const a=Math.sin((tc-.44)*9)*.25*(tc>.44?1:0)+(1-cl(bu,0,1))*.6;reflect(g,WL,t,()=>bootW(g,hx,hy,a));bootW(g,hx,hy,a);drips(g,hx,hy,a,tc)}
+  else float(g,bx,by);
+  if(tc>=.86&&tc<1.3){const v=(tc-.86)/.44,x=830+v*40,y=300+v*v*520,a=.4+v*3;reflect(g,WL,t,()=>bootW(g,x,y,a));g.save();g.beginPath();g.rect(-60,-200,1720,WL+204);g.clip();bootW(g,x,y,a);g.restore()}
   if(tc>.42&&tc<.98){const a=cl((tc-.42)/.06,0,1)*cl((.98-tc)/.08,0,1);bubble(g,1080,250,'...a boot.',38,-1,a);for(let i=0;i<3;i++){g.globalAlpha=a*.8;g.fillStyle='#bfe8ff';g.beginPath();g.ellipse(835+i*16-16,232-((tc*90+i*13)%26),4,6,0,0,TAU);g.fill()}g.globalAlpha=1}
-  for(const sp of[[.22,920],[.9,960],[1.45,1340]]){const u=(tc-sp[0])/.4;if(u<0||u>1)continue;g.strokeStyle='rgba(220,240,255,'+(1-u)+')';g.lineWidth=3;const sx=sp[1];g.beginPath();g.ellipse(sx,652,30+u*160,6+u*28,0,0,TAU);g.stroke();g.fillStyle='rgba(230,245,255,'+(1-u)+')';for(let i=0;i<9;i++){const a=PI+i/8*PI,x=sx+Math.cos(a)*u*160,y=650-Math.sin(i/8*PI)*(u*200-u*u*240);g.beginPath();g.arc(x,y,4,0,TAU);g.fill()}}
-  const u=(tc-.9)/.55;if(u>0&&u<1){const x=lerp(960,1340,u),y=650-Math.sin(u*PI)*340,ang=Math.atan2(-Math.cos(u*PI)*340*PI,380);A(g,1,'lighter');for(let i=1;i<7;i++){const v=u-i*.035;if(v<0)break;putc(g,glow('#ffd36a'),lerp(960,1340,v),650-Math.sin(v*PI)*340,.5-i*.06)}A(g,1);g.save();g.translate(x,y);g.rotate(ang);putc(g,as('koi'),0,0,1.35);g.restore()}}
+  const u=(tc-.9)/.55;if(u>0&&u<1){const P0=v=>[lerp(960,1340,v),WL-2-Math.sin(v*PI)*340],p=P0(u),ang=Math.atan2(-Math.cos(u*PI)*340*PI,380),kd=()=>{g.save();g.translate(p[0],p[1]);g.rotate(ang);putc(g,as('koi'),0,0,1.35);g.restore()};
+   reflect(g,WL,t,kd);A(g,1,'lighter');for(let i=1;i<7;i++){const v=u-i*.035;if(v<0)break;const q=P0(v);putc(g,glow('#ffd36a'),q[0],q[1],.5-i*.06)}A(g,1);
+   // water streaming off the koi: drops shed along its arc fall away under gravity
+   for(let i=1;i<10;i++){const v=u-i*.045;if(v<0)break;const q=P0(v),dt=(u-v)*.55,y=q[1]+900*dt*dt;if(y>WL)continue;g.globalAlpha=.8-i*.06;g.fillStyle='#d8ecff';g.beginPath();g.arc(q[0]+(i%2?6:-6),y,2.4,0,TAU);g.fill()}g.globalAlpha=1;
+   kd();A(g,.5,'lighter');putc(g,glow('#cfe4ff'),p[0]+10,p[1]-12,.45);A(g,1)}
+  for(const sp of[[.22,bx,.45],[.9,960,1],[1.22,866,.7],[1.45,1340,.85]])wSplash(g,sp[1],WL,(tc-sp[0])/.55,sp[2])}
  // a soggy old boot hanging from the hook by its top (hook point at x,y)
  function boot(g,x,y,a){g.save();g.translate(x,y);g.rotate(a);g.translate(4,70);g.fillStyle='#6a4426';g.strokeStyle='#1a0f0a';g.lineWidth=5;g.beginPath();g.moveTo(-26,-70);g.lineTo(18,-70);g.lineTo(20,-8);g.quadraticCurveTo(70,-6,74,14);g.lineTo(74,26);g.lineTo(-30,26);g.closePath();g.fill();g.stroke();
   g.fillStyle='#2a1a10';g.fillRect(-32,18,108,12);g.fillStyle='#8a5c36';g.fillRect(-26,-70,44,12);g.strokeStyle='#d8c090';g.lineWidth=3;for(let i=0;i<3;i++){g.beginPath();g.moveTo(-2,-50+i*14);g.lineTo(14,-44+i*14);g.stroke()}
@@ -11857,10 +11971,9 @@ const CINE7=(()=>{
    const a=Math.min(tc,1.05)*8,rr=170;let fx=800+Math.cos(a)*rr*1.3,fy=380+Math.sin(a)*rr*.8;if(tc>1.05)fy+=(tc-1.05)**2*3000;
    A(g,1,'lighter');for(let i=1;i<10;i++){const b=Math.max(0,Math.min(tc,1.05)-i*.03)*8;putc(g,glow('#ffe7c0'),800+Math.cos(b)*rr*1.3,380+Math.sin(b)*rr*.8,.7-i*.06)}A(g,1);
    fly(fx,fy,a+PI/2,.8);if(tc>.8){g.fillStyle='#ffe27a';g.strokeStyle='#120a1e';g.lineWidth=3;for(let i=0;i<3;i++){const b=t*7+i*TAU/3;star5(g,fx+Math.cos(b)*40,fy-60+Math.sin(b)*12,10,t*4)}}}
-  else if(n==1){cam(g,800,450,1.02,1);put(g,as('m3'),-40,-30,1680,960);const dv=Math.min(1,tc/.68);if(tc<.68)fly(lerp(300,900,dv),lerp(-80,640,dv*dv),2.3,.8);
-   if(tc>.68){const u=Math.min(1,(tc-.68)/.6);g.strokeStyle='rgba(220,240,255,'+(1-u)+')';g.lineWidth=4;g.beginPath();g.ellipse(900,652,40+u*240,8+u*40,0,0,TAU);g.stroke();g.fillStyle='rgba(230,245,255,'+(1-u*.8)+')';for(let i=0;i<16;i++){const a=PI+i/15*PI;g.beginPath();g.arc(900+Math.cos(a)*u*260,650-Math.sin(i/15*PI)*(u*420-u*u*380),6,0,TAU);g.fill()}
-    if(tc>.95){g.fillStyle='#07050d';g.fillRect(885,628,8,22);g.fillRect(905,624,8,26)}}
-   g.fillStyle='#2f8a5a';g.beginPath();g.ellipse(380,690,70,16,0,0,TAU);g.fill();sprig(g,380,690,1.2,t,0);if(tc>.9)card(g,380,520,'2/10')}
+  else if(n==1){cam(g,800,450,1.02,1);put(g,as('m3'),-40,-30,1680,960);lake(g,I.u);const dv=Math.min(1,tc/.68);if(tc<.68){const x=lerp(300,900,dv),y=lerp(-80,640,dv*dv);if(dv>.6)reflect(g,WL,I.u,()=>fly(x,y,2.3,.8));fly(x,y,2.3,.8)}
+   if(tc>.68){wRing(g,900,WL,(tc-.68)/.82,1.5);if(tc>.95){g.fillStyle='#07050d';g.fillRect(885,628,8,22);g.fillRect(905,624,8,26);wRing(g,899,WL,((tc-.95)%.5)/.5,.35)}wSplash(g,900,WL,(tc-.68)/.6,1.5)}
+   g.fillStyle='rgba(2,8,22,.45)';g.beginPath();g.ellipse(386,697,74,17,0,0,TAU);g.fill();g.fillStyle='#2f8a5a';g.beginPath();g.ellipse(380,690,70,16,0,0,TAU);g.fill();g.strokeStyle='rgba(190,230,200,.45)';g.lineWidth=2;g.beginPath();g.ellipse(380,689,68,14,0,PI*1.05,PI*1.95);g.stroke();sprig(g,380,690,1.2,t,0);if(tc>.9)card(g,380,520,'2/10')}
   else if(n==2){cam(g,800,450,1,.25);put(g,as('sky7'),-100,-300);cam(g,800,450,1,.5);put(g,as('clouds'),-200,600);stage(g);const ia=as('isl1');put(g,ia,800-ia.w,-300,ia.w*2,ia.h*2);
    const HIT=.52,fx=760;let fy=lerp(1000,330,ez(Math.min(1,tc/HIT)));if(tc>.95)fy=330+(tc-.95)**2*2600;fly(fx,fy,tc<HIT?-.1:PI+(tc<.95?.3*Math.sin(t*30):0),.8);
    if(tc>HIT&&tc<HIT+.6)burstTxt(g,600,260,120,bo((tc-HIT)/.15),-.15,'CLONK!','#7fd8ff');
@@ -11924,7 +12037,7 @@ const CINE7=(()=>{
  // ---- frame: background scene, then flash / letterbox / caption in screen space
  function draw(){const g=I.g,u=I.u;g.setTransform(1,0,0,1,0,0);A(g,1);g.fillStyle='#000';g.fillRect(0,0,I.cw,I.ch);I.fl=0;I.dk=0;I.sa=0;I.shx=I.shy=0;
   let si=0;while(si<STORY.length-1&&u>=STORY[si+1][3])si++;const S=STORY[si],t=u-S[3];I.si=si;
-  if(!I.prep&&I.vsi!==si){I.vsi=si;if(S[2])narr(S[2],I.red);if(S[0]=='title'&&!I.vt){I.vt=1;setTimeout(()=>narr('RootBound.',true,true),Math.max(0,(.5-t)*1000))}}
+  if(!I.prep&&I.vsi!==si){I.vsi=si;if(S[2])narr(S[2],S[0]);if(S[0]=='title'&&!I.vt){I.vt=1;setTimeout(()=>narr('RootBound.','title',true),Math.max(0,(.5-t)*1000))}}
   // shake is decided by the scene's first lines; compute it with a dry pass of the timings
   const pre=SCN[S[0]];I.sa=0;
   if(!I.red){const sa=shakeAt(S[0],t);if(sa>0){I.shx=(R()-.5)*2*sa*I.s/2;I.shy=(R()-.5)*2*sa*I.s/2}}
@@ -11965,7 +12078,10 @@ const CINE7=(()=>{
     while(I.warm.length&&performance.now()-f0<12){I.u=I.warm.shift();try{draw()}catch(e){console.error('CINE7 warm',e)}}}
    if((I.q2.length||I.warm.length||!AX)&&now-I.prep<6000){const g=I.g;g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.fillStyle='#000';g.fillRect(0,0,I.cw,I.ch);return}
    I.prep=0;I.u=0;I.trc=null;I.isy=0;I.last=now}
-  const dt=Math.min(.1,(now-I.last)/1000);I.last=now;I.el+=dt;I.u=Math.min(ST,I.el/I.k);
+  const dt=Math.min(.1,(now-I.last)/1000);I.last=now;
+  {let si=0;while(si<STORY.length-1&&I.u>=STORY[si+1][3])si++;const S=STORY[si];if(si!==I.hsi){I.hsi=si;I.hold=0}
+   let r=1;if(vpend>0&&si<STORY.length-1&&I.u>S[3]+S[1]-.5&&I.hold<3){r=.15;I.hold+=dt}I.rate=r;I.el+=dt*r}
+  I.u=Math.min(ST,I.el/I.k);
   sched();draw();
   // build upcoming art while there is time left in this frame
   if(I.q2.length&&performance.now()-f0<7){const n=I.q2.shift();try{as(n)}catch(e){console.error('CINE7 art',n,e)}}
@@ -11974,13 +12090,20 @@ const CINE7=(()=>{
  function blockKey(e){if(!I)return;try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}if(/^F\d+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault()}
  function resume(){try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}}
  // ---- narrator (VOX12): deep, calm and clean; darker characters get a deeper, more commanding read. The score ducks under the voice.
- let talking=0;
- function narr(text,cut,title){try{const p=VOX12.params();VOX12.say(text,{cancel:!!cut,pitch:title?Math.max(.5,p.pitch-.08):p.pitch,rate:title?.62:p.rate,
-   onstart(){talking++;DUCK=.5;vol()},onend(){talking=Math.max(0,talking-1);if(!talking){DUCK=1;vol()}}});
+ let talking=0,vpend=0;
+ const duck=on=>{if(on){talking++;DUCK=.45}else{talking=Math.max(0,talking-1);if(!talking)DUCK=1}vol()};
+ // one narration line. vpend counts lines not yet finished: the story clock eases into slow motion at the end of a scene while it is > 0.
+ // A safety timer releases a line whose end event never comes (no voices installed, speech service hiccup).
+ function narr(text,id,title){try{const p=VOX12.params();let fin=false,dk=false,tm=0;const on=()=>{if(!dk){dk=true;duck(true)}},
+    done=()=>{if(fin)return;fin=true;clearTimeout(tm);vpend=Math.max(0,vpend-1);if(dk){dk=false;duck(false)}};
+   vpend++;tm=setTimeout(done,(VOX12.est(text,p.rate)*1.6+3)*1000);
+   const a=VO.ok&&VO.el[id];
+   if(a){VOX12.log.push(text);try{a.currentTime=0;a.volume=Math.min(1,OPT.sv==null?1:+OPT.sv);a.onplay=on;a.onended=done;a.onerror=done;const pr=a.play();if(pr&&pr.catch)pr.catch(done)}catch(_){done()}}
+   else if(!VOX12.say(text,{pitch:title?Math.max(.74,p.pitch-.06):p.pitch,rate:title?.74:p.rate,onstart:on,onend:done}))done();
   if(title){try{const A=au();if(A){const t0=A.a.currentTime+.05;o('m',65.4,65.4,t0,3.2,'sine',.09,.06);o('m',98,98,t0,3,'sine',.05,.08);o('m',130.8,130.8,t0+.05,2.6,'triangle',.025,.1,0,1)}}catch(_){}}}catch(_){}}
- function end(){if(!I)return;cancelAnimationFrame(I.raf);setTimeout(()=>{try{if(!I)VOX12.stop()}catch(_){}DUCK=1;talking=0;vol()},2500);removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
+ function end(){if(!I)return;cancelAnimationFrame(I.raf);{const t0=Date.now(),w=()=>{if(I)return;if(vpend>0&&Date.now()-t0<9000){setTimeout(w,250);return}try{VOX12.stop()}catch(_){}DUCK=1;talking=0;vpend=0;vol()};setTimeout(w,400)}removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
   try{if(!(typeof SHOW7!='undefined'&&SHOW7.isOpen))window.RB_COVER=false}catch(_){window.RB_COVER=false}try{startBGM()}catch(_){}/* the game's music takes over (it was held back during the story) */}
- function intro(done){if(I)return false;const red=reduce(),cv=mk(1,1);cv.id='cine7';cv.setAttribute('role','img');cv.setAttribute('aria-label','Story intro: Rootbound, Celestial Ascension');document.body.appendChild(cv);
+ function intro(done){if(I)return false;try{retime(reduce()?.6:1)}catch(e){console.error('CINE7 retime',e)}const red=reduce(),cv=mk(1,1);cv.id='cine7';cv.setAttribute('role','img');cv.setAttribute('aria-label','Story intro: Rootbound, Celestial Ascension');document.body.appendChild(cv);
   I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);
   const r=srnd(99);I.stars=[];for(let i=0;i<260;i++)I.stars.push({x:-100+r()*1800,y:-300+r()*950,r:r()<.85?1.2+r()*1.3:2.4+r()*1.5,b:.4+r()*.6,sp:1+r()*3,ph:r()*6});I.big=[];for(let i=0;i<14;i++)I.big.push({x:-50+r()*1700,y:-280+r()*700,r:18+r()*26,ph:r()*6});
   I.motes=[];for(let i=0;i<64;i++)I.motes.push({x:r()*1600,y:r()*900,v:14+r()*36,r:5+r()*13,ph:r()*6,c:r()<.7?'#9ff6ff':'#ffe08a'});
@@ -12083,7 +12206,7 @@ const CINE7=(()=>{
   else if(k=='vuln'){o('s',660,990,t,.18,'triangle',v*.05,.003);o('s',990,1320,t+.09,.22,'sine',v*.04,.003)}})}
  return{launch,intro,bossIntro,bossSkip,bossBars,bossWin,bossLose,bossSfx,slow,get tS(){return tS},on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
   seek(u){if(!I)return;I.el=cl(u,0,ST)*I.k;I.u=I.el/I.k;I.evi=I.ev.findIndex(e=>e[0]>=I.u);if(I.evi<0)I.evi=I.ev.length;for(const s of NEED)for(const n of s)try{as(n)}catch(_){}},
-  get state(){return I?{u:I.u,scene:STORY[I.si|0][0],total:ST,k:I.k}:null},STORY}})();
+  get state(){return I?{u:I.u,scene:STORY[I.si|0][0],total:ST,k:I.k,rate:I.rate||1,vpend}:null},get VO(){return VO},retime,lake:()=>!!AB.m3r,STORY}})();
 
 /* ========== LATE: 89-z-gearart.js ========== */
 // ===== v8 wardrobe in the large portrait (SHOWART, 620x860 design space, front view): the Anonymous dark aura (same cached sprites as

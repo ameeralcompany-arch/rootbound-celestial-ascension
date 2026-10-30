@@ -1,0 +1,25 @@
+{
+  "_about": "Studio voice-over for the launch intro. tools/vo-elevenlabs.js renders each line to desktop/vo/<id>.mp3; the game plays them instead of the system voice and times every scene to its clip. 'say' is what the voice reads (it may carry <break> tags and phonetic spellings); the on-screen caption stays the line in src/js/late/89-z-cine.js. Keep every id matching a scene id there.",
+  "model_id": "eleven_multilingual_v2",
+  "output_format": "mp3_44100_128",
+  "voice_settings": { "stability": 0.5, "similarity_boost": 0.78, "style": 0.18, "use_speaker_boost": true, "speed": 0.93 },
+  "lines": [
+    { "id": "tree",     "say": "Long ago, the World Tree held up the sky... its roots binding every island to the stars." },
+    { "id": "village",  "say": "Islanders built their homes in its branches. <break time=\"0.3s\" /> And every night, they sent lanterns up to the stars." },
+    { "id": "eclipse",  "say": "Then the Eclipse came. <break time=\"0.4s\" /> The sky shattered... and the roots fell silent.", "voice_settings": { "stability": 0.42, "style": 0.3 } },
+    { "id": "fall",     "say": "Islands tumbled from the sky, and one by one, the roots went dark." },
+    { "id": "bosses",   "say": "Six guardians, twisted by the dark, broke loose upon the world.", "voice_settings": { "stability": 0.45, "style": 0.28 } },
+    { "id": "ages",     "say": "For a hundred years, the world waited... <break time=\"0.4s\" /> for someone to wake.", "voice_settings": { "stability": 0.58, "speed": 0.88 } },
+    { "id": "wake",     "say": "Then, deep beneath the roots, a lone wanderer awoke.", "voice_settings": { "stability": 0.55, "speed": 0.9 } },
+    { "id": "meet",     "say": "Their first friend was a sprout. <break time=\"0.35s\" /> A small... very loud sprout.", "voice_settings": { "style": 0.32 } },
+    { "id": "wings",    "say": "A spark of fallen starlight became their wings." },
+    { "id": "oops",     "say": "Their first flight went... <break time=\"0.5s\" /> about as well as you would expect.", "voice_settings": { "style": 0.35 } },
+    { "id": "training", "say": "So they practised. And practised. <break time=\"0.25s\" /> And practised some more.", "voice_settings": { "style": 0.3 } },
+    { "id": "journey",  "say": "They crossed the shattered islands, from crystal caves to burning peaks." },
+    { "id": "clash",    "say": "The dark struck them down, again and again. <break time=\"0.45s\" /> But every time, they stood back up.", "voice_settings": { "stability": 0.42, "style": 0.32 } },
+    { "id": "camp",     "say": "And they never had to face the dark alone.", "voice_settings": { "stability": 0.6, "speed": 0.9 } },
+    { "id": "montage",  "say": "Build. <break time=\"0.2s\" /> Mine. <break time=\"0.2s\" /> Fish. <break time=\"0.2s\" /> Climb. <break time=\"0.3s\" /> And mend the roots.", "voice_settings": { "style": 0.3, "speed": 0.98 } },
+    { "id": "restore",  "say": "Root by root, the light came back, and the islands rose to meet the sky." },
+    { "id": "title",    "say": "Root... bound.", "voice_settings": { "stability": 0.62, "style": 0.22, "speed": 0.85 } }
+  ]
+}
