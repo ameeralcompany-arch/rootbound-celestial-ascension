@@ -90,6 +90,16 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   return{n,fell,lf,gone:!trees.has(rk),after:TREE9.fell.length,kinds:[5,50,15,8,3].map(TREE9.kind)}});
  ok('trees render at all 7 sizes for oak, cherry, hedge, palm and pine',tr.n==35,tr);
  ok('harvesting: the tree shrinks away (no one-frame pop) and sheds falling leaves',tr.fell==1&&tr.lf>=6&&tr.gone&&tr.after==0,tr);
+ // ---- 6b. block art (99-zzzzzzz-blockart.js): every block sprite renders at T x T without errors; the natural and building blocks use the
+ // soft-3D BART9 art (opaque, different per block and per variant) and that is what the sprite cache and the tile cache draw
+ const ba=await E(()=>{const bad=[],old=[];let n=0;for(const k of Object.keys(BLK)){const b=+k;for(let v=0;v<3;v++){let c;try{c=blockSprite(b,v)}catch(e){bad.push(b+':'+e.message);continue}if(!c||c.width!=T||c.height!=T)bad.push(b+' size');else n++}}
+  const need=[1,2,3,4,5,7,8,9,10,11,12,15,42,43,50,55,57,60,61,62,65,68,71,72,73,74,75,76,77,78,94,100,102,103,112];for(const b of need)for(let v=0;v<3;v++)if(!blockSprite(b,v).bart9)old.push(b+'/'+v);
+  const sig=c=>{const d=c.getContext('2d').getImageData(0,0,T,T).data;let o=0,h=0;for(let i=0;i<d.length;i+=4){if(d[i+3]>250)o++;h=(h*31+d[i]+d[i+1]*3+d[i+2]*7)>>>0}return{o,h}};
+  const s=need.map(b=>sig(spr(b,0,0))),opaque=s.every(q=>q.o==T*T),distinct=new Set(s.map(q=>q.h)).size==need.length;
+  const variants=[1,3,5,10,74,75].every(b=>new Set([0,1,2].map(v=>sig(blockSprite(b,v)).h)).size==3);
+  TILE7.cache.clear();for(const b of need)for(let v=0;v<3;v++)delete SPR[b*4+v];const y=sh(DX),k=(y+1)*W+DX;tiles[k]=74;g.save();g.setTransform(1,0,0,1,0,0);TILE7.draw(DX-2,DX+2,y-2,y+3,performance.now());g.restore();
+  return{n,bad,old,covered:BART9.IDS.length,opaque,distinct,variants,cached:!!(SPR[74*4+(DX*7+(y+1)*13)%3]||{}).bart9,errs:BART9.errs}});
+ ok('every block sprite renders at T x T without errors; dirt, grass, stone, wood, sand, gold, gem ores, moss, marble and the stone family use the new soft-3D art',ba.bad.length==0&&ba.old.length==0&&ba.covered>=35&&ba.opaque&&ba.distinct&&ba.variants&&ba.cached&&!ba.errs.length,ba);
  // ---- 7. no forced layout every frame while idle
  const cdp=await ctx.newCDPSession(p);await cdp.send('Performance.enable');await E(()=>{window._fc=0;const f=()=>{window._fc++;requestAnimationFrame(f)};requestAnimationFrame(f)});
  const m0=(await cdp.send('Performance.getMetrics')).metrics.find(m=>m.name=='LayoutCount').value;await sleep(2000);const m1=(await cdp.send('Performance.getMetrics')).metrics.find(m=>m.name=='LayoutCount').value;const fc=await E(()=>window._fc);
