@@ -5,9 +5,10 @@ const ODEF={20:{cat:'door',d:'Oak Door'},21:{cat:'door',d:'Stone Gate'},22:{cat:
  27:{cat:'cont',k:'chest',d:'Treasure Chest'},28:{cat:'misc',k:'sign',d:'Signpost'},29:{cat:'light',k:'lamp',d:'Lantern'},30:{cat:'dev',k:'switch',d:'Lever'},31:{cat:'dev',k:'plate',d:'Pressure Plate'},32:{cat:'tele',k:'tele',d:'Teleport Pad'},
  33:{cat:'station',d:'Crafting Table'},34:{cat:'cont',k:'crate',d:'Storage Crate'},35:{cat:'misc',d:'Training Dummy'},36:{cat:'misc',k:'waystone',d:'Waystone'},37:{cat:'deco',d:'Bench'},38:{cat:'deco',d:'Banner'},
  39:{cat:'wx',k:'wx_blossom',d:'Blossom Weather Machine',wx:'blossom'},40:{cat:'wx',k:'wx_space',d:'Space Weather Machine',wx:'space'},41:{cat:'wx',k:'wx_galaxy',d:'Galaxy Weather Machine',wx:'galaxy'},
- 85:{cat:'wx',k:'wx_sunflower',d:'Sunflower Weather Machine',wx:'sunflower'},86:{cat:'wx',k:'wx_sakura',d:'Sakura Sunset Machine',wx:'sakura'},87:{cat:'wx',k:'wx_ocean',d:'Ocean Sunset Machine',wx:'ocean'},88:{cat:'wx',k:'wx_neon',d:'Neon Rain Machine',wx:'neon'},89:{cat:'wx',k:'wx_aurora',d:'Aurora Night Machine',wx:'aurora'}};
+ 85:{cat:'wx',k:'wx_sunflower',d:'Sunflower Weather Machine',wx:'sunflower'},86:{cat:'wx',k:'wx_sakura',d:'Sakura Sunset Machine',wx:'sakura'},87:{cat:'wx',k:'wx_ocean',d:'Ocean Sunset Machine',wx:'ocean'},88:{cat:'wx',k:'wx_neon',d:'Neon Rain Machine',wx:'neon'},89:{cat:'wx',k:'wx_aurora',d:'Aurora Night Machine',wx:'aurora'},
+ 90:{cat:'deco',d:'Sun Lounger'},91:{cat:'deco',d:'Deck Chair'},92:{cat:'deco',d:'Beach Umbrella'},97:{cat:'deco',d:'Sandcastle'},98:{cat:'deco',d:'Beach Ball'}};
 const WEATHERS=['default','blossom','space','galaxy','sunflower','sakura','ocean','neon','aurora'];
-const isObjId=b=>(b>=20&&b<=41||b>=85&&b<=89)&&!!ODEF[b];
+const isObjId=b=>(b>=20&&b<=41||b>=85&&b<=98)&&!!ODEF[b];
 // planted things: tree saplings use seed ids 1-16, v9 crops 80-84 (carrot, strawberry, wheat, pumpkin, moon melon)
 const okSeed=v=>i32(v)&&(v>=1&&v<=16||v>=80&&v<=84);
 const ROLE={BAN:-1,VIS:0,TRUST:1,BUILD:2,OWN:3};

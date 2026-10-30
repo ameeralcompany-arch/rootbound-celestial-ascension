@@ -1,0 +1,9 @@
+{
+ "objects":[
+  {"id":90,"n":"Sun Lounger","price":180,"rar":"uncommon","lv":3,"d":"A striped beach lounger. Press E beside it to sit down and watch the water."},
+  {"id":91,"n":"Deck Chair","price":120,"rar":"common","lv":2,"d":"A folding wooden deck chair with a striped canvas seat. Press E to sit."},
+  {"id":92,"n":"Beach Umbrella","price":150,"rar":"common","lv":2,"d":"A big striped parasol for summer shade by the pool."},
+  {"id":97,"n":"Sandcastle","price":60,"rar":"common","lv":1,"d":"A little sandcastle with three towers and a pink flag."},
+  {"id":98,"n":"Beach Ball","price":40,"rar":"common","lv":1,"d":"A bright beach ball for your summer spot."}
+ ]
+}

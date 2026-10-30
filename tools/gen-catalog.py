@@ -124,6 +124,9 @@ for w in WV9['wings']: add(id='wing_'+w['id'],cat='wings',n=w['n'],price=w['pric
 # ---- v10 break effects (effect slot 'break'); shared with tools/breakfx-catalog.js
 BV10=json.load(open(os.path.join(R,'tools/breakfx-v10.json')))
 for b in BV10['break']: add(id='fx_brk_'+b['id'],cat='effects',n=b['n'],price=b['price'],rar=b['rar'],stack=0,ref='brk_'+b['id'],lv=0,d=b['d'],how='store',new=1,sub='break')
+# ---- v11 summer objects (sun lounger, deck chair, beach umbrella, sandcastle, beach ball); shared with tools/summer-catalog.js
+SV11=json.load(open(os.path.join(R,'tools/summer-v11.json')))
+for o in SV11['objects']: add(id='obj_%d'%o['id'],cat='objects',n=o['n'],price=o['price'],rar=o['rar'],stack=1,ref=o['id'],lv=o['lv'],d=o['d'],how='store',new=1)
 ids=[i['id'] for i in items]; assert len(ids)==len(set(ids)),'duplicate ids'
 for i in items:
     assert i['price']>0 and i['rar'] in('common','uncommon','rare','epic','legendary','mythic','exclusive'),i
