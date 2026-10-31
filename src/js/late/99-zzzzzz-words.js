@@ -56,7 +56,7 @@ const WORD9=(()=>{
  function sync(){if(!L.length)return;const st=peek(cur);for(const l of L){const got=st.got.includes(l.i);if(!got&&tiles[l.k]!=LETTER){tiles[l.k]=LETTER;hp[l.k]=BLK[LETTER][2];wl[l.k]=0;trees.delete(l.k)}else if(got&&tiles[l.k]==LETTER){tiles[l.k]=0;hp[l.k]=0}}}
  const gotN=()=>{const st=peek(cur);return L.filter(l=>st.got.includes(l.i)).length};
  const NOTE=[523,587,659,784,880,988,1047];
- function collect(l){if(!l||!hasWord(cur))return false;const st=stOf(cur);if(st.got.includes(l.i))return false;st.got.push(l.i);save();
+ function collect(l){if(!l||!hasWord(cur))return false;const st=stOf(cur);if(st.got.includes(l.i))return false;if(typeof GUARD16!='undefined'&&GUARD16.blocks(cur,l))return false;st.got.push(l.i);save();
   if(tiles[l.k]==LETTER){tiles[l.k]=0;hp[l.k]=0;try{pushEdit(l.k)}catch(_){}}
   const x=(l.k%W+.5)*T,y=((l.k/W|0)+.5)*T,n=gotN();
   try{VFX.burst(x,y,['#ff6a8a','#ffb84a','#ffe86a','#6aff9a','#5ad0ff','#b07aff'],26,320,1,.9,14);VFX.wave(x,y,'#fff6c0',70,.5,1)}catch(_){}try{burst(x,y,'#ffe27a',10,160,4,'p');rings.push({x,y,c:'#ffe27a',t:performance.now()})}catch(_){}

@@ -8,23 +8,24 @@
 const MYUI=(()=>{
  const A=MYART,TH=A.TH,TAU=Math.PI*2,R=Math.random,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const red=()=>{try{return !!(cel.opt.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(_){return false}};
- const UNL=['Forged: the three-move combo','The first cut also fires a crescent','The finisher throws the scythe; it swings back','Hits echo with small bursts','A doubled finisher that heals you on hit'];
+ const UNL=['Forged: the three-move combo','The first move hits 30% harder and wider','The finisher throws the scythe; it swings back','Hits echo with small bursts','A doubled finisher that heals you on hit','Mythic Awakening: every effect 20% larger and stronger'];
  const CROWN_Y=150,CROWN_S=6.2;   // where the crown piece sits on the hero portrait (SHOWART design space)
  const FXN={crescent:'◐',pillar:'▮',vortex:'◉',chains:'∞',flock:'≋',splash:'✺',bolts:'ϟ',stars:'✦',shards:'▲',ring:'◎'};
  // ---- the Mythic card
  function section(k){const th=TH[k],t=MYTH.tier(k),nx=MYTH.next(k),ck=MYTH.check(k),RN=MYTH.RN;
-  const pips=[1,2,3,4,5].map(i=>'<i class="'+(i<=t?'on':'')+'">'+RN[i]+'</i>').join('');
+  const pips=[1,2,3,4,5,6].map(i=>'<i class="'+(i<=t?'on':'')+'">'+RN[i]+'</i>').join('');
   const mv=th.mv.map((m,i)=>'<li><span class="mvi" aria-hidden="true">'+(FXN[m[1]]||'✦')+'</span><div><b>'+(i+1)+' · '+esc(m[0])+'</b><small>'+esc(m[2])+'</small></div></li>').join('');
-  const pf=MYTH.prof(k),U=UNL.slice();U[2]=pf.thr?'The finisher throws the '+th.noun+'; it flies back':pf.ranged?'The finisher fires three shots at once':'The finisher also fires a crescent';
-  const un=U.map((u,i)=>'<li class="'+(t>=i+1?'got':'')+'"><b>'+RN[i+1]+'</b><span>'+esc(u)+(i?' · +'+(22*i)+'% damage':'')+'</span></li>').join('');
+  const pf=MYTH.prof(k),U=UNL.slice();U[2]=pf.thr?'The finisher throws the '+th.noun+'; it flies back':'The finisher strikes a second time';
+  const un=U.map((u,i)=>'<li class="'+(t>=i+1?'got':'')+'"><b>'+RN[i+1]+'</b><span>'+esc(u)+(i?' · +'+Math.round(MYTH.DMG*100*i)+'% damage':'')+'</span></li>').join('');
   let req='';if(nx){const rows=[];const free=typeof RB_CREATIVE!='undefined'&&!!RB_CREATIVE,ac=MYTH.access(k);if(ac)rows.push([ac,false]);
-   if(!free){rows.push([CLASS7.C[k].n+' level '+nx.lv+' (now '+CLASS7.lv(k)+')',CLASS7.lv(k)>=nx.lv]);if(nx.gems)rows.push([nx.gems+' gems (you have '+(gems|0)+')',(gems|0)>=nx.gems]);for(const[id,n]of nx.mats)rows.push([n+' × '+iname(id)+' ('+cnt(id)+')',cnt(id)>=n])}
-   req='<ul class="c9req">'+rows.map(r=>'<li class="'+(r[1]?'ok':'no')+'">'+esc(r[0])+'</li>').join('')+'</ul>'+(nx.mats.length?'<p class="dim">Materials come from the depths: groves, caches, geodes, the Singing Crystals and the relic vaults.</p>':'')}
+   if(!free)for(const r of MYTH.reqs(k))rows.push([r.label+'  '+Math.min(r.have,r.need).toLocaleString()+' / '+r.need.toLocaleString(),r.ok]);
+   req='<ul class="c9req">'+rows.map(r=>'<li class="'+(r[1]?'ok':'no')+'">'+esc(r[0])+'</li>').join('')+'</ul>'+(nx.mats.length?'<p class="dim">Materials come from the depths: groves, caches, geodes, the Singing Crystals and the relic vaults (two of each per world).</p>':'')}
   const lab=!nx?'Fully ascended':t==0?'Forge '+th.n:'Ascend to Tier '+RN[nx.n];
   return'<section class="c9card c9my" id="c9-my"><div class="c9myh"><div><h4>Mythic '+esc(th.noun)+'</h4><h3>'+esc(th.n)+'</h3><small>'+esc(th.ep)+'</small></div><div class="c9pips" title="Tier '+(t?RN[t]:'— (not forged)')+'">'+pips+'</div></div>'+
    '<blockquote>“'+esc(th.q)+'”</blockquote><h4>Combo</h4><ul class="c9mv">'+mv+'</ul><h4>Ascension</h4><ol class="c9un">'+un+'</ol>'+
-   (nx?'<h4>'+(t==0?'To forge':'Next ascension')+'</h4>'+req:'')+
+   (nx?'<h4>'+(t==0?'To forge (class level 50)':'Next ascension · Tier '+RN[nx.n]+' at class level '+nx.lv)+'</h4>'+(t>0?'<p class="dim">Slain monsters and bosses count from your last ascension, with this class\'s weapons.</p>':'')+req:'')+
    '<div class="c9myb"><button class="c9asc" data-a="my:asc"'+(ck.ok?'':' aria-disabled="true"')+(ck.miss&&ck.miss.length?' title="Needs: '+esc(ck.miss.join(', '))+'"':'')+'>'+esc(lab)+'</button>'+
+   (t>=1?(wp===MYTH.ID(k)?'<button class="c9eq on" aria-disabled="true">Equipped</button>':'<button class="c9eq big" data-a="eq:'+MYTH.ID(k)+'">Equip '+esc(th.noun)+'</button>'):'')+
    (t>=1?'<button class="c9tog" data-a="my:out" aria-pressed="'+(MYTH.outfit?'true':'false')+'">Mythic outfit · '+(MYTH.outfit?'On':'Off')+'</button>':'')+'</div></section>'}
  function act(a,k){if(a=='asc')return MYTH.ascend(k);if(a=='out'){MYTH.setOutfit(!MYTH.outfit);return true}return false}
  // ---- live canvases on the Classes screen

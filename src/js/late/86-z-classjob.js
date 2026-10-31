@@ -14,12 +14,19 @@ const CJOB=(()=>{
  const clsOf=id=>{const w=WPN[id];return w?CLASS7.of(w):null};
  const pw=id=>{try{return typeof WPOWER=='function'?+WPOWER(id)||0:WPN[id].md|0}catch(_){return 0}};
  // true when your class keeps you from using this weapon
- function blocks(id){if(!S.cur||free()||!id||id=='fist')return false;const w=WPN[id];if(!w||w.k=='tool')return false;const k=clsOf(id);return !!k&&k!==S.cur}
+ // class level needed to wield a class weapon, by its rarity (the mythic weapons have their own forge requirement)
+ const CREQ={common:1,uncommon:8,rare:18,epic:30,legendary:42,mythic:50};
+ // counted up from the class's lowest rarity, so every class has weapons it can use at class level 1
+ const rarOf=id=>{let r='common';try{r=(typeof WPNRAR=='function'?WPNRAR(id):WPN[id].rar)||'common'}catch(_){}return r=='exclusive'?'mythic':r},minR={};
+ function creq(id){const w=WPN[id];if(!w||w.myth||w.k=='tool'||id=='fist')return 0;const k=clsOf(id);if(!k)return 0;
+  if(minR[k]==null){let m=99;for(const q of Object.keys(WPN))if(clsOf(q)==k&&!WPN[q].myth&&WPN[q].k!='tool'&&!WPN[q].hid)m=Math.min(m,CREQ[rarOf(q)]||1);minR[k]=m==99?1:m}
+  return Math.max(1,(CREQ[rarOf(id)]||1)-minR[k]+1)}
+ function blocks(id){if(!S.cur||free()||!id||id=='fist')return false;const w=WPN[id];if(!w||w.k=='tool')return false;const k=clsOf(id);if(!k)return false;if(k!==S.cur)return true;return CLASS7.lv(k)<creq(id)}
  const master=k=>{try{const n=NPC2.list().find(n=>n.cls==k);return n?n.n:'its class master'}catch(_){return'its class master'}};
- function why(id){const k=clsOf(id),w=WPN[id]||{n:'That weapon'},c=C[k];return w.n+' is a '+(c?c.n:'other')+' weapon. You are a '+C[S.cur].n+(S.learned.includes(k)?' (switch to '+c.n+' at '+master(k)+' or in Classes (K))':'')}
+ function why(id){const k=clsOf(id),w=WPN[id]||{n:'That weapon'},c=C[k];if(k&&k===S.cur&&CLASS7.lv(k)<creq(id))return w.n+' needs '+c.n+' level '+creq(id)+' (you are level '+CLASS7.lv(k)+')';return w.n+' is a '+(c?c.n:'other')+' weapon. You are a '+C[S.cur].n+(S.learned.includes(k)?' (switch to '+c.n+' at '+master(k)+' or in Classes (K))':'')}
  const canLearn=()=>!S.cur||CLASS7.lv(S.cur)>=NEED;
  // the best weapon of class k you own and can use; a starter weapon of the class if you own none
- function weaponFor(k){const ids=Object.keys(WPN).filter(id=>clsOf(id)==k&&WPN[id].k!='tool'&&id!='fist'),ok=id=>(WPN[id].lv|0)<=(lvl|0);let gift=null;
+ function weaponFor(k){const ids=Object.keys(WPN).filter(id=>clsOf(id)==k&&WPN[id].k!='tool'&&id!='fist'&&!WPN[id].myth),ok=id=>(WPN[id].lv|0)<=(lvl|0)&&CLASS7.lv(k)>=creq(id);let gift=null;
   if(!ids.some(id=>own[id])){const st=ids.filter(ok).sort((a,b)=>(WPN[a].lv|0)-(WPN[b].lv|0)||pw(a)-pw(b))[0]||ids.slice().sort((a,b)=>(WPN[a].lv|0)-(WPN[b].lv|0))[0];
    if(st){own[st]=1;gift=st;try{const it=SHOP7.items.find(i=>i.cat=='weapons'&&i.ref==st);if(it){SHOP7.st.own[it.id]=1;SHOP7.save()}}catch(_){}}}
   const mine=ids.filter(id=>own[id]&&ok(id)).sort((a,b)=>pw(b)-pw(a));return{id:mine[0]||'fist',gift}}
@@ -47,4 +54,4 @@ const CJOB=(()=>{
    if(a=='close'&&n)n.jc=0;return _da.apply(this,arguments)}}
  // ---- one quiet hint (a toast, not a banner), the first time you are in the Plaza without a class and nothing is open
  setInterval(()=>{try{if(S.hint||S.cur||free()||!entered||cur!='plaza'||dlgOpen||(typeof showInv!='undefined'&&showInv)||(typeof INV7!='undefined'&&INV7.isOpen))return;S.hint=1;save();say('Choose your class: talk to a class master in the Plaza (each house teaches its class)')}catch(_){}},4000);
- return{S,NEED,blocks,why,become,canLearn,row,weaponFor,get cur(){return S.cur},get learned(){return S.learned.slice()}}})();
+ return{S,NEED,CREQ,creq,blocks,why,become,canLearn,row,weaponFor,get cur(){return S.cur},get learned(){return S.learned.slice()}}})();

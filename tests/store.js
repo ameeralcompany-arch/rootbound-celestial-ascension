@@ -24,7 +24,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('27 shop wings render, each visually distinct',r.n==27&&r.bad.length==0,JSON.stringify(r));
  // --- purchase rules (offline/local)
  r=await p.evaluate(async()=>{gems=1000;lvl=1;const o={};const g0=gems;o.noMoney=await SHOP7.buy('wpn_astralkat');o.gemsAfterFail=gems==g0;o.has0=SHOP7.has('wpn_astralkat');
-  gems=5000;const a=await SHOP7.buy('wpn_astralkat');o.buy=a.ok;o.gems=gems;const dup=await SHOP7.buy('wpn_astralkat');o.dup=dup.ok;o.gems2=gems;
+  o.price=SHOP7.byId.get('wpn_astralkat').price;gems=o.price+3500;const a=await SHOP7.buy('wpn_astralkat');o.buy=a.ok;o.gems=gems;const dup=await SHOP7.buy('wpn_astralkat');o.dup=dup.ok;o.gems2=gems;
   o.lvLock=(await SHOP7.buy('wing_moth')).ok;o.nope=(await SHOP7.buy('does_not_exist')).ok;
   const n0=cnt(101);const s=await SHOP7.buy('seed_101',5);o.seed=s.ok&&cnt(101)==n0+5;o.eq=SHOP7.equip('wpn_astralkat')&&wp=='astralkat';SHOP7.unequip('wpn_astralkat');o.un=wp=='fist';return o});
  ok('insufficient gems: refused and not charged',r.noMoney==false||r.noMoney.ok==0,JSON.stringify(r));ok('affordable buy charges exactly the price',r.buy==1&&r.gems==3500);ok('buying twice is refused and not charged',r.dup==0&&r.gems2==3500);
@@ -36,13 +36,13 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('ownership + equipped cosmetics survive a reload',r.dragon&&r.aura&&r.eqA&&r.wing=='dragon'&&r.kat,JSON.stringify(r));await q.close();
  // --- wing equip state: one source of truth; unequipping never brings wings back; buying equips; previews never save
  r=await p.evaluate(async()=>{gems=9000;lvl=60;const o={},id=()=>{const w=curWing(lvl);return w?w.id:null};wingUnequip();cel.wing='auto';o.auto=id();
-  const g0=gems;o.buy=(await SHOP7.buy('wing_eagle')).ok;o.charged=g0-gems;o.afterBuy=id();o.dup=(await SHOP7.buy('wing_eagle')).ok;o.charged2=g0-gems;
+  const g0=gems;o.wprice=SHOP7.byId.get('wing_eagle').price;o.buy=(await SHOP7.buy('wing_eagle')).ok;o.charged=g0-gems;o.afterBuy=id();o.dup=(await SHOP7.buy('wing_eagle')).ok;o.charged2=g0-gems;
   SHOP7.unequip('wing_dragon');o.otherUn=id();SHOP7.unequip('wing_eagle');o.afterUn=id();o.on=cel.wingsOn;lvl=61;await new Promise(r=>setTimeout(r,300));o.afterLvl=id();
   o.storeShows=SHOP7.equipped('wing_eagle');cel.wing='dove';o.notOwned=id();cel.wingsOn=0;o.legacyOff=id()+'|'+cel.wing;cel.wingsOn=1;o.legacyOn=id();
   o.eqLevel=wingEquip('frost');o.cur=id();o.lockedEq=wingEquip('cosmic');o.cur2=id();o.exclBuy=(await SHOP7.buy('wing_sovereign')).ok;o.exclEq=wingEquip('sovereign');
   WPREV.id='cosmic';WPREV.until=performance.now()+5000;o.prev=wingShown(lvl).id;o.prevSaved=id();WPREV.id=null;o.dj=maxAir();wingUnequip();o.dj0=maxAir();return o});
  ok('wing equip/unequip: one state, unequip sticks through level-ups, buy equips once, locked/exclusive cannot be forced, preview is not saved',
-  r.auto=='aegis'&&r.buy==1&&r.charged==800&&r.afterBuy=='eagle'&&r.dup==0&&r.charged2==800&&r.otherUn=='eagle'&&r.afterUn===null&&r.on==0&&r.afterLvl===null&&!r.storeShows&&r.notOwned===null&&r.legacyOff=='null|none'&&r.legacyOn=='aegis'&&r.eqLevel&&r.cur=='frost'&&!r.lockedEq&&r.cur2=='frost'&&r.exclBuy==0&&!r.exclEq&&r.prev=='cosmic'&&r.prevSaved=='frost'&&r.dj==1&&r.dj0==0,JSON.stringify(r));
+  r.auto=='aegis'&&r.buy==1&&r.charged==r.wprice&&r.afterBuy=='eagle'&&r.dup==0&&r.charged2==r.wprice&&r.otherUn=='eagle'&&r.afterUn===null&&r.on==0&&r.afterLvl===null&&!r.storeShows&&r.notOwned===null&&r.legacyOff=='null|none'&&r.legacyOn=='aegis'&&r.eqLevel&&r.cur=='frost'&&!r.lockedEq&&r.cur2=='frost'&&r.exclBuy==0&&!r.exclEq&&r.prev=='cosmic'&&r.prevSaved=='frost'&&r.dj==1&&r.dj0==0,JSON.stringify(r));
  {const q2=await ctx.newPage();q2.on('pageerror',e=>errs.push(e.message));await q2.goto(FILE);await q2.waitForTimeout(1500);r=await q2.evaluate(()=>({w:cel.wing,on:cel.wingsOn,cur:curWing(lvl)}));
   ok('unequipped wings stay unequipped after a reload',r.w=='none'&&r.on==0&&r.cur===null,JSON.stringify(r));await q2.close()}
  // --- store UI
@@ -59,13 +59,13 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  // the Sparkmouse costume: real catalog gear, buyable + equippable, icons and cached worn art render
  r=await p.evaluate(async()=>{const o={};const h=SHOP7.byId.get('wear_sparkhood'),s=SHOP7.byId.get('wear_sparksuit');
   o.items=!!h&&!!s&&h.cat=='gear'&&s.cat=='gear'&&h.rar=='epic'&&s.rar=='legendary'&&WEAR.sparkhood.cost==h.price&&WEAR.sparksuit.cost==s.price&&WEAR.sparkhood.s=='hat'&&WEAR.sparksuit.s=='body';
-  const g0=gems;gems=5000;lvl=20;delete ownW.sparkhood;delete ownW.sparksuit;wear.hat='';wear.body='';const a=await SHOP7.buy('wear_sparkhood'),b2=await SHOP7.buy('wear_sparksuit');o.bought=a.ok&&b2.ok;o.charged=5000-gems;
+  const g0=gems;gems=50000;lvl=20;o.sum=h.price+s.price;delete ownW.sparkhood;delete ownW.sparksuit;wear.hat='';wear.body='';const a=await SHOP7.buy('wear_sparkhood'),b2=await SHOP7.buy('wear_sparksuit');o.bought=a.ok&&b2.ok;o.charged=50000-gems;
   o.eq=SHOP7.equip('wear_sparkhood')&&SHOP7.equip('wear_sparksuit')&&wear.hat=='sparkhood'&&wear.body=='sparksuit';
   try{iconURL('a:sparkhood');iconURL('a:sparksuit');const c=document.createElement('canvas');c.width=c.height=200;const x=c.getContext('2d'),og=g;g=x;try{for(let i=0;i<4;i++)AC6.draw(100,80,1,0,'T',i*.3,i*60,i==3,'',wp,0,0,wear,false,look,null)}finally{g=og}o.art=GEAR7.size>0}catch(e){o.art='ERR '+e.message}
   wear.hat='';wear.body='';gems=g0;return o});
- ok('Sparkmouse Hood + Suit: epic/legendary catalog gear, buy, equip, icons + cached worn art',r.items&&r.bought&&r.charged==2500&&r.eq&&r.art===true,JSON.stringify(r));
+ ok('Sparkmouse Hood + Suit: epic/legendary catalog gear, buy, equip, icons + cached worn art',r.items&&r.bought&&r.charged==r.sum&&r.eq&&r.art===true,JSON.stringify(r));
  // buy through the UI with confirm dialog
- await p.evaluate(()=>{gems=5000;lvl=120;STORE7.setFilter({cat:'all',q:'Solar Fang'});STORE7.select('wpn_solarfang')});await p.waitForTimeout(300);
+ await p.evaluate(()=>{window._sfp=SHOP7.byId.get('wpn_solarfang').price;gems=window._sfp+3800;lvl=120;STORE7.setFilter({cat:'all',q:'Solar Fang'});STORE7.select('wpn_solarfang')});await p.waitForTimeout(300);
  await p.click('#store7 aside [data-a=buy]');await p.waitForTimeout(400);const dlg=await p.evaluate(()=>!!document.querySelector('#dlg7.on'));await p.click('#dlg7 [data-ok]');await p.waitForTimeout(600);
  r=await p.evaluate(()=>({has:SHOP7.has('wpn_solarfang'),gems}));ok('UI purchase asks to confirm, then buys',dlg&&r.has&&r.gems==3800,JSON.stringify(r));
  await p.evaluate(()=>STORE7.close());

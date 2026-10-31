@@ -25,7 +25,7 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
   const wings=WINGS.filter(x=>!wingOwned(x)).map(x=>x.id);const gear=SHOP7.items.filter(i=>i.cat=='gear').sort((a,b)=>(b.lv|0)-(a.lv|0))[0];const ge=SHOP7.equip(gear.id);
   const top=SHOP7.items.filter(i=>i.cat=='weapons').sort((a,b)=>(b.lv|0)-(a.lv|0))[0];const we=SHOP7.equip(top.id);
   const fx=SHOP7.items.filter(i=>i.cat=='effects'||i.cat=='charms').every(i=>SHOP7.has(i.id));const we2=wingEquip(w);
-  const cls=Object.keys(CLASS7.C).every(k=>CLASS7.S.lv[k]>=100),tools=TOOLLV.IDS.every(id=>TOOLLV.lvl(id)==TOOLLV.MAX);
+  const cls=Object.keys(CLASS7.C).every(k=>CLASS7.S.lv[k]>=CLASS7.MAX),tools=TOOLLV.IDS.every(id=>TOOLLV.lvl(id)==TOOLLV.MAX);
   const stack=SHOP7.items.filter(i=>i.stack&&+i.ref>0);const full=stack.every(i=>cnt(+i.ref)>=999);addI(1,-600);await new Promise(r=>setTimeout(r,1800));
   const badge=document.getElementById('crv8b');return{on:CRV8.on,lvl,gems,hp:[hp0,hp1,mh],wings,ge,gearLv:gear.lv,we,topLv:top.lv,fx,we2,cls,tools,full,n:stack.length,refill:cnt(1),badge:!!badge&&getComputedStyle(badge).display!='none',
    btn:(document.getElementById('bcr')||{}).textContent,stash:!!localStorage.getItem('rbcr_stash')}},base.wing);

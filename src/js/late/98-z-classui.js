@@ -18,22 +18,26 @@ const CLS9=(()=>{
  let MX=null;const maxes=()=>MX||(MX=(()=>{let d=1,s=1,p=1;for(const id in WPN){const w=WPN[id];if(!w||w.k=='tool'||w.hid)continue;d=Math.max(d,+w.md||0);s=Math.max(s,1/Math.max(.08,+w.cd||.5));p=Math.max(p,ITEM7.power('w:'+id))}return{d,s,p}})());
  function status(k){if(free())return{t:'free',lab:'Open',sub:'creative mode'};const cj=job();
   if(cj===k)return{t:'active',lab:'Active',sub:'your class'};
-  if(learned(k))return{t:'switch',lab:'Switch',sub:'learned · tap to use'};
-  if(!cj||CJOB.canLearn())return{t:'learn',lab:'Learn',sub:'talk to '+(master(k)||'its master')};
+  if(learned(k))return{t:'switch',lab:'Equip',sub:'equip this class'};
+  if(!cj||CJOB.canLearn())return{t:'learn',lab:'Learn',sub:'learn & equip it now'};
   return{t:'locked',lab:'Locked',sub:C[cj].n+' level '+CJOB.NEED+' first'}}
  const ring=f=>{const r=44,c=2*Math.PI*r;return'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="'+r+'" class="trk"/><circle cx="50" cy="50" r="'+r+'" class="val" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+(c*(1-f)).toFixed(1)+'"/></svg>'};
  const bar=(lab,v,max,txt)=>'<div class="sb"><label>'+lab+'</label><span><i style="width:'+Math.max(4,Math.min(100,Math.round(100*v/max)))+'%"></i></span><em>'+txt+'</em></div>';
  function wcard(id){const w=WPN[id],k='w:'+id,M=maxes(),sp=1/Math.max(.08,+w.cd||.5),pw=ITEM7.power(k),lv=w.lv|0,mine=!!own[id],low=lv>(lvl|0);let pic='';try{pic=iconURL(k)}catch(_){}
-  const tags=[ITEM7.label(k),KIND[w.k]||w.k,lv?'Lv '+lv:'',FX[w.fx]||'',w.ev?'Evolves':''].filter(Boolean);
+  const cq=(typeof CJOB!='undefined'&&CJOB.creq)?CJOB.creq(id):0,tags=[ITEM7.label(k),KIND[w.k]||w.k,lv?'Lv '+lv:'',cq>1?'Class Lv '+cq:'',FX[w.fx]||'',w.ev?'Evolves':''].filter(Boolean);
   return'<article class="c9w'+(mine?' own':'')+'" data-rar="'+ITEM7.rar(k)+'"><div class="pic">'+(pic?'<img src="'+pic+'" alt="">':'')+'</div><div class="tx"><b>'+esc(w.n)+'</b>'+
    '<span class="tags">'+tags.map((t,i)=>'<i'+(i?'':' class="rt"')+'>'+esc(t)+'</i>').join('')+'</span>'+
    bar('DMG',+w.md||0,M.d,Math.round(+w.md||0))+bar('SPD',sp,M.s,sp.toFixed(1)+'/s')+bar('PWR',pw,M.p,pw)+
-   '<p class="mv">'+esc(w.move||w.d||'')+'</p><span class="own">'+(mine?'Owned':low?'Reach level '+lv:'In the Store')+'</span></div></article>'}
+   '<p class="mv">'+esc(w.move||w.d||'')+'</p><div class="wfoot"><span class="own">'+(mine?'Owned':low?'Reach level '+lv:'In the Store')+'</span>'+eqBtn(id)+'</div></div></article>'}
+ // the Equip button of a weapon card: equipped / equip / why it cannot be equipped yet
+ function eqBtn(id){if(!own[id])return'';const w=WPN[id];if(wp===id)return'<button class="c9eq on" aria-disabled="true">Equipped</button>';if((w.lv|0)>(lvl|0))return'<button class="c9eq" aria-disabled="true" title="Reach level '+w.lv+'">Lv '+w.lv+'</button>';
+  let blk=false,why='';try{blk=CJOB.blocks(id);why=blk?CJOB.why(id):''}catch(_){}if(blk)return'<button class="c9eq" aria-disabled="true" title="'+esc(why)+'">'+(/level \d+/.test(why)?esc(why.match(/level \d+/)[0].replace('level','Class Lv')):'Class locked')+'</button>';return'<button class="c9eq" data-a="eq:'+id+'">Equip</button>'}
+ function equip(id){if(!own[id]||!WPN[id])return false;try{if(CJOB.blocks(id)||(WPN[id].lv|0)>(lvl|0))return false;if(typeof HOTBAR!='undefined'&&HOTBAR.equip)HOTBAR.equip('w:'+id);else wp=id;renderW();renderBar()}catch(_){wp=id}try{UIS.play('confirm')}catch(_){}return true}
  // ---- the screen
  let el=null,sel=null;
- function html(){const k=sel,c=C[k],i=KEYS.indexOf(k),L=CLASS7.lv(k),need=CLASS7.need(L),xp=CLASS7.S.xp[k]||0,f=L>=100?1:Math.min(1,xp/need),st=status(k),ws=weapons(k),cj=job(),mn=master(k);
+ function html(){const k=sel,c=C[k],i=KEYS.indexOf(k),L=CLASS7.lv(k),need=CLASS7.need(L),xp=CLASS7.S.xp[k]||0,f=L>=CLASS7.MAX?1:Math.min(1,xp/need),st=status(k),ws=weapons(k),cj=job(),mn=master(k);
   const pname=(c.p.split(':')[0]||c.n).trim(),hand=(()=>{try{return CLASS7.cur()===k}catch(_){return false}})();
-  const ms=[10,25,50,100].map(m=>'<li class="'+(L>=m?'got':'')+'"><b>Lv '+m+'</b><span>'+esc(CLASS7.perk(k,m))+'</span></li>').join('');
+  const ms=[10,25,50,CLASS7.MAX||75].map(m=>'<li class="'+(L>=m?'got':'')+'"><b>Lv '+m+'</b><span>'+esc(CLASS7.perk(k,m))+'</span></li>').join('');
   const rules=free()?'Creative mode: every weapon works, whatever your class.':!cj?'You have no class yet, so every weapon works. Choose one by talking to its master.':
    'You can only fight with your class\'s weapons (fists and tools always work). Reach level '+CJOB.NEED+' in the class you use to learn another; learned classes keep their levels.';
   return'<div class="c9bg" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>'+
@@ -43,16 +47,16 @@ const CLS9=(()=>{
    '<div class="c9art" aria-hidden="true"><canvas class="c9heroc"></canvas></div>'+
    '<section class="c9hero"><div class="c9eye"><span>'+pad(i+1)+'</span><span>'+ws.length+' weapons</span><span>'+(hand?'in your hand':st.t=='active'?'your class':'')+'</span></div>'+
    '<h1 class="c9title">'+esc(c.n)+'<em>.</em></h1><p class="c9sub">'+esc(pname.toLowerCase())+' edition</p></section>'+
-   '<aside class="c9side"><div class="c9orb c9lv" title="'+(L>=100?'Max level':Math.floor(xp)+' / '+need+' XP to the next level')+'">'+ring(f)+'<b>'+L+'</b><small>Level · '+(L>=100?'max':Math.floor(f*100)+'%')+'</small></div>'+
-   '<button class="c9orb c9st" data-a="st" data-st="'+st.t+'"'+(st.t=='switch'?'':' aria-disabled="true"')+'><b>'+st.lab+'</b><small>'+esc(st.sub)+'</small></button></aside>'+
+   '<aside class="c9side"><div class="c9orb c9lv" title="'+(L>=CLASS7.MAX?'Max level':Math.floor(xp)+' / '+need+' XP to the next level')+'">'+ring(f)+'<b>'+L+'</b><small>Level · '+(L>=CLASS7.MAX?'max':Math.floor(f*100)+'%')+'</small></div>'+
+   '<button class="c9orb c9st" data-a="st" data-st="'+st.t+'"'+(st.t=='switch'||st.t=='learn'?'':' aria-disabled="true"')+'><b>'+st.lab+'</b><small>'+esc(st.sub)+'</small></button></aside>'+
    '<main class="c9body"><div class="c9col">'+(typeof MYUI!='undefined'?MYUI.section(k):'')+
     '<section class="c9card" id="c9-ov"><h4>Passive</h4><p class="pk">'+esc(CLASS7.perk(k,L))+'</p>'+
      '<h4>Milestones</h4><ol class="c9ms">'+ms+'</ol><h4>How to play</h4><p>'+esc(tip(k))+'</p><p class="dim">Levels come from the hits and kills you make with '+esc(c.n)+' weapons.</p></section>'+
     '<section class="c9card" id="c9-ms"><h4>Master</h4><p><b>'+esc(mn||'A class master')+'</b> teaches '+esc(c.n)+' at their house in the Plaza.</p><p class="dim">'+esc(rules)+'</p>'+
-     (st.t=='switch'?'<button class="c9go" data-a="st">Switch to '+esc(c.n)+'</button>':'')+'</section></div>'+
+     (st.t=='switch'||st.t=='learn'?'<button class="c9go" data-a="st">'+(st.t=='learn'?'Learn & equip ':'Equip ')+esc(c.n)+'</button>':'')+'</section></div>'+
    '<section class="c9card c9wp" id="c9-wp"><h4>Weapons <small>'+ws.length+'</small></h4><div class="c9ws">'+ws.map(wcard).join('')+'</div></section></main>'+
    '<footer class="c9foot"><div class="c9logo">ROOTBOUND<em>.</em><small>← → browse · Enter switch · Esc close</small></div><div class="c9rail" role="tablist" aria-label="Classes">'+
-    KEYS.map((q,n)=>'<button class="c9c'+(q==k?' on':'')+(learned(q)?' ln':'')+(cj==q?' act':'')+'" role="tab" aria-selected="'+(q==k)+'" data-k="'+q+'"><small>'+pad(n+1)+'</small><b>'+esc(C[q].n)+'</b><em>Lv '+CLASS7.lv(q)+'</em></button>').join('')+'</div></footer>'}
+    KEYS.map((q,n)=>'<button class="c9c'+(q==k?' on':'')+(learned(q)?' ln':'')+(cj==q?' act':'')+'" role="tab" aria-selected="'+(q==k)+'" data-k="'+q+'">'+(typeof MYART!='undefined'&&MYART.emblem?'<img class="c9ce" src="'+MYART.emblem(q,48)+'" alt="">':'')+'<small>'+pad(n+1)+'</small><b>'+esc(C[q].n)+'</b><em>Lv '+CLASS7.lv(q)+'</em></button>').join('')+'</div></footer>'}
  function render(){if(!el)return;const rail=el.querySelector('.c9rail'),sl=rail?rail.scrollLeft:0,bd=el.querySelector('.c9body'),st=bd?bd.scrollTop:0;el.style.setProperty('--cc',C[sel].c);
   let wrap=el.querySelector('.c9wrap');if(!wrap){el.innerHTML='<canvas class="c9fx" aria-hidden="true"></canvas><div class="c9wrap"></div>';wrap=el.querySelector('.c9wrap')}wrap.innerHTML=html();
   const b2=el.querySelector('.c9body');if(b2&&render.keep)b2.scrollTop=st;render.keep=false;
@@ -60,10 +64,11 @@ const CLS9=(()=>{
   const t=el.querySelector('.c9title');if(t){t.classList.add('in')}try{(typeof MYUI!='undefined'?MYUI.after(el,sel):0)}catch(e){console.error('CLS9 mythic',e)}}
  function pick(k){if(!C[k]||k===sel)return;sel=k;render();try{UIS.play('tab')}catch(_){}}
  function step(d){const i=KEYS.indexOf(sel);pick(KEYS[(i+d+KEYS.length)%KEYS.length])}
- function act(){const st=status(sel);if(st.t!='switch')return false;let ok=false;try{ok=CJOB.become(sel)}catch(_){}if(ok){try{UIS.play('confirm')}catch(_){}render()}return ok}
+ function act(){const st=status(sel);if(st.t!='switch'&&st.t!='learn')return false;let ok=false;try{ok=CJOB.become(sel)}catch(_){}if(ok){try{UIS.play('confirm')}catch(_){}render()}return ok}
  function build(){if(el)return el;el=document.createElement('div');el.id='cls9';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Classes');document.body.appendChild(el);
-  el.addEventListener('click',e=>{const b=e.target.closest('[data-k],[data-a],[data-go]');if(b&&b.getAttribute('aria-disabled')=='true'&&b.dataset.a&&b.dataset.a.startsWith('my:'))return;if(!b)return;
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-k],[data-a],[data-go]');if(b&&b.getAttribute('aria-disabled')=='true')return;if(!b)return;
    if(b.dataset.k)pick(b.dataset.k);else if(b.dataset.a=='close')close();else if(b.dataset.a=='st')act();
+   else if(b.dataset.a&&b.dataset.a.startsWith('eq:')){if(equip(b.dataset.a.slice(3))){render.keep=true;render()}}
    else if(b.dataset.a&&b.dataset.a.startsWith('my:')){try{if(MYUI.act(b.dataset.a.slice(3),sel)){render.keep=true;render()}}catch(e){console.error('CLS9 mythic',e)}}
    else if(b.dataset.go){const s=el.querySelector('#c9-'+b.dataset.go);if(s)s.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}});
   el.addEventListener('wheel',e=>{const r=e.target.closest('.c9rail');if(r&&Math.abs(e.deltaY)>Math.abs(e.deltaX)){r.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
@@ -83,4 +88,4 @@ const CLS9=(()=>{
  function btn(){if(document.getElementById('bcls'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bcls';b.className='pn';b.textContent='CLASSES';b.title='Classes (K)';
   b.onclick=()=>isOpen()?close():open();const s=document.getElementById('bstore');s&&s.nextSibling?hr.insertBefore(b,s.nextSibling):hr.insertBefore(b,hr.firstChild)}
  btn();if(document.readyState!='complete')addEventListener('load',btn);setTimeout(btn,1500);
- return{open,close,isOpen,pick,step,act,status,weapons,refresh(){render.keep=true;render()},get sel(){return sel},el:()=>el}})();
+ return{open,close,isOpen,pick,step,act,status,weapons,equip,refresh(){render.keep=true;render()},get sel(){return sel},el:()=>el}})();

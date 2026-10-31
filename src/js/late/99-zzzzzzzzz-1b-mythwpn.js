@@ -7,10 +7,7 @@
  const WT={brawler:['gauntlet','gauntlets'],knight:['greatsword','greatsword'],samurai:['katana','katana'],archer:['bow','bow'],mage:['staff','staff'],demon:['blade','blade'],
   reaper:['scythe','scythe'],elementalist:['spear','spear'],stormcaller:['hammer','hammer'],berserker:['axe','axe'],ninja:['chakram','chakram'],druid:['branch','staff'],gunslinger:['gun','pistol']};
  for(const k in TH){const n=WT[k][1];TH[k].type=WT[k][0];TH[k].noun=n;TH[k].ep=TH[k].ep.replace(/^Scythe/,n[0].toUpperCase()+n.slice(1))}
- // move texts that described a scythe spin, for the classes that now shoot or cast
- const MV={archer:[null,null,'A sky volley that rains falling stars onto the field'],mage:[null,null,'A final cast opens a black hole that swallows foes'],druid:[null,null,'A final cast blooms a ring of petals and thorns'],
-  gunslinger:['A shot that flies as a crescent',null,null],brawler:[null,null,'An uppercut that drives a pillar of fire up from the ground'],ninja:[null,null,'The chakram spins out and splashes slashing ink']};
- for(const k in MV)MV[k].forEach((d,i)=>{if(d)TH[k].mv[i][2]=d});
+ // (each class's three moves are set in 99-zzzzzzzzz-2b-mythmoves.js)
  const glowEdge=(g,col,t,tier,w)=>{if(tier<5)return;g.globalCompositeOperation='lighter';g.globalAlpha=.3+.25*Math.sin(t*5);g.strokeStyle=col;g.lineWidth=w||5;g.stroke();g.globalAlpha=1;g.globalCompositeOperation='source-over'};
  const halo=(g,x,y,r,col,t)=>{g.save();g.translate(x,y);g.rotate(t*.8);g.strokeStyle=A.rgba(col,.85);g.lineWidth=1.1;g.beginPath();g.ellipse(0,0,r,r*.4,0,0,TAU);g.stroke();for(let i=0;i<4;i++){const q=i*TAU/4+t;A.star4(g,Math.cos(q)*r,Math.sin(q)*r*.4,2.4,col,t)}g.restore()};
  const sparks=(g,x,y,r,col,t)=>{for(let i=0;i<5;i++){const q=t*1.7+i*1.26,rr=r*(.8+.3*Math.sin(t*2+i));A.star4(g,x+Math.cos(q)*rr,y+Math.sin(q)*rr*.7,2+Math.sin(t*6+i),col,q)}};
@@ -77,4 +74,10 @@
    if(tr>=4)halo(g,0,0,24,l,t);if(tr>=5)sparks(g,0,0,30,m,t);g.restore()}};
  A.weapon=function(g,k,tier,L,t,o){const th=TH[k]||TH.reaper,ty=th.type||'scythe';if(ty=='scythe')return A.scythe(g,k,tier,L,t,o);tier=Math.max(1,Math.min(5,tier|0));o=o||{};t=t||0;g.save();g.scale(L/100,L/100);g.lineJoin='round';g.lineCap='round';
   if(tier>=4||o.aura)aura(g,ty=='gauntlet'||ty=='chakram'||ty=='gun'?20:60,0,ty=='bow'?70:60,th.pal[0],t,tier);try{D[ty](g,k,tier,t,o)}catch(e){if(!A.weapon.e){A.weapon.e=1;console.error('MYART weapon',ty,e)}}g.restore()};
+ // ---- class emblem: a small round logo per class (inventory badges, the Classes rail, weapon cards)
+ const EMB={};A.emblem=function(k,S){S=S||48;const key=k+'|'+S;if(EMB[key])return EMB[key];const th=TH[k]||TH.reaper,[m,l,d,a]=th.pal,c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d'),r=S/2;g.lineJoin='round';
+  const bg=g.createRadialGradient(r*.8,r*.7,1,r,r,r);bg.addColorStop(0,A.mix(m,'#ffffff',.15));bg.addColorStop(.55,d);bg.addColorStop(1,'#050307');g.fillStyle=bg;g.beginPath();g.arc(r,r,r*.86,0,TAU);g.fill();
+  g.strokeStyle=A.metal(g,0,0,S,S,k,.15);g.lineWidth=S*.09;g.beginPath();g.arc(r,r,r*.86,0,TAU);g.stroke();g.strokeStyle=OL;g.lineWidth=Math.max(1,S*.025);g.beginPath();g.arc(r,r,r*.96,0,TAU);g.stroke();
+  g.save();g.translate(r,r);if(th.mot=='crow')A.crow(g,0,0,r*.62,0,'#f0e8ff',1);else if(th.mot=='ink')A.ink(g,0,0,r*.3,'#eaf6ff',3);else A.motif(g,k,0,0,r*.42,-.5,1.2,A.mix(l,'#ffffff',.35));g.restore();
+  A.gem(g,r,S*.1,S*.075,a);EMB[key]=c.toDataURL();return EMB[key]};
  A.WT=WT})();

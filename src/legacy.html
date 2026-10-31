@@ -520,7 +520,7 @@ function bonus(){const r={gem:0,spd:0,jump:0,pow:0,arm:0,xp:0,light:0,flat:0,far
  // level + allocated stat points (see Character tab)
  r.hp+=pst.vit*10+(lvl-1)*5;r.dmg+=pst.str*.04;r.pow+=Math.floor(pst.str/5);r.spd+=pst.agi*.01;r.atk+=pst.agi*.02;r.arm+=pst.def*.015;r.crit+=pst.lck*.01;r.luck+=pst.lck*.02;r.cdr+=pst.foc*.02;
  r.arm=Math.min(.75,r.arm);r.cdr=Math.min(.5,r.cdr);r.crit=Math.min(.6,r.crit);return r}
-const xpNeed=l=>Math.round(60+l*l*38);
+const xpNeed=l=>Math.round(80+l*l*45+l*l*l*.6);   // progression curve: see docs/progression-balance.md
 function xpGain(kind,n){const b=bonus();n*=1+b.xp+(focus>0?1:0)+(kind=='farm'?b.farm:0);const p=prof[kind];if(p){p.x+=n;while(p.x>=xpNeed(p.l)*.7){p.x-=xpNeed(p.l)*.7;p.l++;say(({mine:'Mining',farm:'Farming',fight:'Combat'})[kind]+' level '+p.l);snd(660,.2,'triangle');snd(880,.3,'triangle',.05)}}
  xp+=n;while(xp>=xpNeed(lvl)){xp-=xpNeed(lvl);lvl++;pst.pts+=2;P.hp=maxHP();say('Level up! You are level '+lvl+'  (+2 stat points)');rings.push({x:P.x,y:P.y+30,c:'#ffd24a',t:performance.now()});burst(P.x,P.y+20,'#ffd24a',30,220,5,'p');snd(523,.2,'triangle');snd(784,.3,'triangle',.05);snd(1047,.4,'triangle',.05)}}
 const dmgM=w=>{const b=bonus();return Math.round(w.md*(rally>0?1.5:1)*(1+prof.fight.l*.04+(wUp[wp]|0)*.18+b.pow*.08+b.dmg))};
@@ -635,13 +635,13 @@ function renderDlg(){const n=curNPC;let h=`<div class="dh"><b>${n.n}</b><small>$
   if(shopTab=='buy'){for(const b of[1,8,3,5,6,7,11,15,14,12,13,17,9,10,20,21,22,27,28,29,30,31,33,34,35,36,37,38,32,23,24,25,26,39,40,41])for(const sd of(b==17||b>=20?[0]:[0,1])){const k=b+(sd?100:0),pr=buyP(k),lv=LVREQ[b]||1;h+=rowH(k,BLK[b][0]+(sd?' Seed':''),(lv>lvl?'Requires level '+lv:pr+' gems each'),[['Buy 1','buy:'+k+':1',lv>lvl||gems<pr],['Buy 10','buy:'+k+':10',lv>lvl||gems<pr*10]])}}
   else{let any=0;for(const k of Object.keys(inv).map(Number).sort((a,b)=>a-b)){if(!cnt(k)||!(MAT[k]||PRICE[k%100]))continue;any=1;h+=rowH(k,iname(k)+' x'+cnt(k),sellP(k)+' gems each',[['Sell 1','sell:'+k+':1',0],['Sell all','sell:'+k+':all',0]])}if(!any)h+='<small>Nothing to sell yet.</small>'}}
  else if(n.k=='quest'){h+='<small>Finish tasks for gems and XP. A new task appears when you claim one.</small>';qs.forEach((q,i)=>{const done2=q.p>=q.need;h+=`<div class="rw"><div><b>${q.n}</b><small>${q.d} - ${q.p}/${q.need}</small><div class="bar"><i style="width:${q.p/q.need*100}%"></i></div><small>Reward: ${q.g} gems, ${q.x} XP</small></div><button data-a="claim:${i}"${done2?'':' disabled'}>Claim</button></div>`})}
- else if(n.k=='lock')h+=lockHTML();else{const l=wUp[wp]|0,cost=Math.round(120*Math.pow(l+1,1.5)),st=(l+1)*10;h+=rowH('w:'+wp,WPN[wp].n+'  +'+l,'Each level: +1 break power, +18% damage. Next: '+cost+' gems, '+st+' Stone. Needs level '+(l+2),[[l>=10?'Max':'Upgrade','up',l>=10||gems<cost||cnt(3)<st||lvl<l+2]])+'<small>Equip the tool you want to improve first.</small>'}
+ else if(n.k=='lock')h+=lockHTML();else{const l=wUp[wp]|0,cost=Math.round(150*Math.pow(l+1,1.8)),st=(l+1)*10;h+=rowH('w:'+wp,WPN[wp].n+'  +'+l,'Each level: +1 break power, +18% damage. Next: '+cost+' gems, '+st+' Stone. Needs level '+(3+3*l),[[l>=10?'Max':'Upgrade','up',l>=10||gems<cost||cnt(3)<st||lvl<3+3*l]])+'<small>Equip the tool you want to improve first.</small>'}
  dlg.innerHTML=h;for(const b of dlg.querySelectorAll('[data-a]'))b.onclick=()=>dlgAct(b.dataset.a)}
 function dlgAct(a){const p=a.split(':');if(p[0]=='close')return closeDlg();if(p[0]=='lk')return lockAct(p);if(p[0]=='talk'){try{NPC2.nextLine(curNPC)}catch(_){}}else if(p[0]=='tab'){shopTab=p[1]}
  else if(p[0]=='buy'){const k=+p[1],n=+p[2],pr=buyP(k)*n;if(gems>=pr){gems-=pr;addI(k,n);snd(500,.1,'triangle')}}
  else if(p[0]=='sell'){const k=+p[1],n=p[2]=='all'?cnt(k):Math.min(cnt(k),+p[2]);if(n>0){addI(k,-n);gems+=sellP(k)*n;snd(700,.1,'triangle');ft(P.x,P.y-20,'+'+sellP(k)*n,'#7ee8ff')}}
  else if(p[0]=='claim'){const q=qs[+p[1]];if(q&&q.p>=q.need){gems+=q.g;xpGain('',q.x);ft(P.x,P.y-20,'+'+q.g,'#7ee8ff');qs[+p[1]]=newQuest();snd(880,.3,'triangle')}}
- else if(p[0]=='up'){const l=wUp[wp]|0,cost=Math.round(120*Math.pow(l+1,1.5)),st=(l+1)*10;if(l<10&&gems>=cost&&cnt(3)>=st&&lvl>=l+2){gems-=cost;addI(3,-st);wUp[wp]=l+1;burst(P.x,P.y+20,'#ffd24a',24,200,5,'p');snd(660,.3,'triangle');say(WPN[wp].n+' upgraded to +'+(l+1))}}
+ else if(p[0]=='up'){const l=wUp[wp]|0,cost=Math.round(150*Math.pow(l+1,1.8)),st=(l+1)*10;if(l<10&&gems>=cost&&cnt(3)>=st&&lvl>=3+3*l){gems-=cost;addI(3,-st);wUp[wp]=l+1;burst(P.x,P.y+20,'#ffd24a',24,200,5,'p');snd(660,.3,'triangle');say(WPN[wp].n+' upgraded to +'+(l+1))}}
  renderDlg()}
 // NPC bodies, behaviour, nameplates and station props live in NPC2 (src/js/late/77-npcs2.js) + NPCART (77-npc.js)
 function drawNPCs(now){drawDoor(now);drawLampGlow();try{if(typeof NPC2!='undefined')NPC2.draw(now)}catch(e){if(!drawNPCs.e){drawNPCs.e=1;console.error(e)}}}

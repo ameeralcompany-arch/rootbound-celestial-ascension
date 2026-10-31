@@ -167,3 +167,21 @@
 #hudL #pframe9{position:absolute;pointer-events:none;z-index:3}
 #hudL #pbanner9{position:absolute;pointer-events:none;z-index:0;top:calc(100% - 6px);right:20px;width:34px;height:84px}
 #hudL.cls9on{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--clsc,#fff) 55%,transparent),0 10px 26px -12px color-mix(in srgb,var(--clsc,#000) 70%,transparent)!important}
+/* Equip buttons, class emblems (Classes rail + weapon cards) */
+#cls9 .wfoot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:2px}
+#cls9 .c9eq{padding:5px 12px;border-radius:999px;border:1px solid var(--l);background:color-mix(in srgb,var(--m) 30%,rgba(0,0,0,.4));font:800 8.5px var(--font-ui);letter-spacing:.18em;text-transform:uppercase;color:#fff}
+#cls9 .c9eq:hover{filter:brightness(1.2)}
+#cls9 .c9eq.big{padding:10px 16px;font-size:9.5px}
+#cls9 .c9eq.on{border-color:var(--line9);background:none;color:var(--l)}
+#cls9 .c9eq[aria-disabled=true]{cursor:default;opacity:.7}
+#cls9 .c9eq[aria-disabled=true]:not(.on){border-color:var(--line9);background:none;color:var(--dim9)}
+#cls9 .c9c{padding-left:40px}
+#cls9 .c9ce{position:absolute;left:7px;top:50%;width:26px;height:26px;transform:translateY(-50%);filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+/* inventory: class emblem on every class weapon; your class's weapons glow in the class colour and a shine sweeps across them */
+#inv7 .it7{position:relative}
+#inv7 .it7 .ce7{position:absolute;left:4px;bottom:22px;width:18px;height:18px;opacity:.45;filter:grayscale(.5);pointer-events:none;z-index:2}
+#inv7 .it7 .ce7.me{opacity:1;filter:drop-shadow(0 0 4px var(--clsc,#fff));width:22px;height:22px}
+#inv7 .it7.cls7{box-shadow:0 0 0 2px var(--clsc,#fff),0 0 16px -2px var(--clsc,#fff)!important;overflow:hidden}
+#inv7 .it7.cls7::after{content:'';position:absolute;inset:-40% -60%;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.55) 50%,transparent 58%);transform:translateX(-60%);animation:cls7shine 2.6s ease-in-out infinite;pointer-events:none;z-index:1}
+@keyframes cls7shine{0%{transform:translateX(-60%)}55%,100%{transform:translateX(60%)}}
+@media (prefers-reduced-motion:reduce){#inv7 .it7.cls7::after{animation:none;display:none}}

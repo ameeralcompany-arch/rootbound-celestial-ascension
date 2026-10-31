@@ -31,25 +31,37 @@ const MYTH=(()=>{
  for(const k of KEYS){const th=TH[k],id=ID(k);KOF[id]=k;WPN[id]={id,n:th.n,g:A.hex(th.pal[0]),bd:3,md:BASE,cd:CD,k:KN[th.type]||'scythe',cost:0,fx:'',rar:'mythic',lv:0,
   d:th.ep+'. A mythic '+th.noun+' that ascends through five tiers.',move:'Combo: '+th.mv.map(m=>m[0]).join(' → '),myth:k}}
  // ---- state
- const SK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbmyth';let S={t:{},out:1};
- function load(){try{const o=JSON.parse(localStorage.getItem(SK())||'null');if(o&&typeof o=='object'){S.t={};for(const k of KEYS){const v=+((o.t||{})[k]);if(v>=1&&v<=5)S.t[k]=v|0}S.out=o.out==0?0:1}}catch(_){}}
+ const SK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbmyth';let S={t:{},out:1,kc:{},bk:{}};
+ function load(){try{const o=JSON.parse(localStorage.getItem(SK())||'null');if(o&&typeof o=='object'){S.t={};for(const k of KEYS){const v=+((o.t||{})[k]);if(v>=1&&v<=MAXT)S.t[k]=v|0}S.out=o.out==0?0:1;S.kc=o.kc&&typeof o.kc=='object'?o.kc:{};S.bk=o.bk&&typeof o.bk=='object'?o.bk:{}}}catch(_){}}
  const save=()=>{try{localStorage.setItem(SK(),JSON.stringify(S))}catch(_){}};
  load();
  const tier=k=>S.t[k]|0;
- function apply(k){const w=WPN[ID(k)];if(w)w.md=Math.round(BASE*(1+.22*(Math.max(1,tier(k))-1)))}
- for(const k of KEYS)apply(k);
+ function apply(k){const w=WPN[ID(k)];if(w)w.md=Math.round(BASE*(1+DMG*(Math.max(1,tier(k))-1)))}
  // ---- forging and ascension costs (tier n needs class level LV[n], GEMS[n] and the depth materials MATS[n])
- const LV=[0,1,5,15,30,50],GEMS=[0,0,800,2500,6000,15000],MATS=[[],[],[[260,5],[261,3]],[[262,3],[263,2]],[[264,2],[265,1]],[[266,1],[267,1],[269,1]]];
- const RN=['','I','II','III','IV','V'];
+ // Tier I (forging) needs class level 50 and a tribute; tiers II-VI need class level 55 / 60 / 65 / 70 / 75 plus three things earned since the
+ // last ascension, each harder than the one before: SLAY monsters slain as the class, BOSS bosses defeated as the class, and a tribute of
+ // GEMS gems + MATS depth materials. Resonant Shards (268) come from the Singing Crystals, Relics (269) from relic vaults (two of each per world).
+ // Each tier adds DMG (25%) damage and a new mechanic. Formulas: docs/progression-balance.md
+ const MAXT=6,LV=[0,50,55,60,65,70,75],SLAY=[0,0,500,1000,1800,3000,5000],BOSS=[0,0,2,3,5,7,10],GEMS=[0,5000,4000,9000,16000,26000,40000],DMG=.25,
+  MATS=[[],[[260,8],[261,4]],[[262,6],[263,3]],[[263,5],[264,3],[268,1]],[[264,5],[265,3],[268,2]],[[265,4],[266,2],[269,1]],[[266,3],[267,2],[269,2]]];
+ const RN=['','I','II','III','IV','V','VI'];
+ for(const k of KEYS)apply(k);
  function access(k){if(free())return null;let cj=null,ln=[];try{cj=CJOB.cur;ln=CJOB.learned}catch(_){}if(!cj)return'Choose a class first: talk to a class master in the Plaza';
   if(cj!==k&&!ln.includes(k))return'Learn '+CLASS7.C[k].n+' from its master first';return null}
- function next(k){const t=tier(k);if(t>=5)return null;const n=t+1;return{n,lv:LV[n],gems:GEMS[n],mats:MATS[n]}}
+ function next(k){const t=tier(k);if(t>=MAXT)return null;const n=t+1;return{n,lv:LV[n],slay:SLAY[n],boss:BOSS[n],gems:GEMS[n],mats:MATS[n]}}
+ // the requirements of the next tier with what you have: [{label, have, need, ok}]
+ function reqs(k){const q=next(k);if(!q)return[];const C7=CLASS7.C[k].n,r=[{label:C7+' level',have:CLASS7.lv(k),need:q.lv}];if(q.slay)r.push({label:'Monsters slain as '+C7,have:S.kc[k]|0,need:q.slay});if(q.boss)r.push({label:'Bosses defeated as '+C7,have:S.bk[k]|0,need:q.boss});
+  r.push({label:'Gems',have:gems|0,need:q.gems});for(const[id,n]of q.mats)r.push({label:iname(id),have:cnt(id),need:n});for(const x of r)x.ok=x.have>=x.need;return r}
  function check(k){const q=next(k);if(!q)return{ok:false,max:true,miss:[]};const miss=[],ac=access(k);if(ac)miss.push(ac);
-  if(!free()){if(CLASS7.lv(k)<q.lv)miss.push(CLASS7.C[k].n+' level '+q.lv);if((gems|0)<q.gems)miss.push(q.gems+' gems');for(const[id,n]of q.mats)if(cnt(id)<n)miss.push(n+' × '+iname(id))}
+  if(!free())for(const r of reqs(k))if(!r.ok)miss.push(r.label+' '+r.have+' / '+r.need)
   return{ok:!miss.length,miss,q}}
- function ascend(k){const c=check(k);if(!c.ok)return false;const q=c.q;if(!free()){gems-=q.gems;for(const[id,n]of q.mats)addI(id,-n)}const prev=tier(k);S.t[k]=q.n;save();apply(k);own[ID(k)]=1;
+ function ascend(k){const c=check(k);if(!c.ok)return false;const q=c.q;if(!free()){gems-=q.gems;for(const[id,n]of q.mats)addI(id,-n)}const prev=tier(k);S.t[k]=q.n;S.kc[k]=0;S.bk[k]=0;save();apply(k);own[ID(k)]=1;
   if(q.n==1)try{if(typeof HOTBAR!='undefined'&&HOTBAR.equip)HOTBAR.equip('w:'+ID(k));else wp=ID(k);renderW();renderBar()}catch(_){wp=ID(k)}
   try{saveP()}catch(_){}scene(k,prev,q.n);return true}
+ // ---- the slay / boss requirements: kills made with a class's weapons after its mythic weapon is forged
+ let kDirty=0;
+ {const _hm=hurtMob;hurtMob=function(m,d,w){const was=m&&m.hp>0;const r=_hm.apply(this,arguments);try{if(was&&m.hp<=0&&!m._mk&&w){m._mk=1;const k=CLASS7.of(w);if(k&&tier(k)>=1&&tier(k)<MAXT){S.kc[k]=(S.kc[k]|0)+1;if(m.boss)S.bk[k]=(S.bk[k]|0)+1;kDirty=1}}}catch(_){}return r}}
+ setInterval(()=>{if(kDirty){kDirty=0;save()}},4000);
  // ---- combat
  const PIV=28;let SW=null,lastEnd=-9,step=-1,THR=null,HIDE=false;const FX=[],PT=[];
  const pivot=()=>({x:P.x,y:P.y+PIV});
@@ -60,6 +72,7 @@ const MYTH=(()=>{
  function gyAt(x,y0){const tx=Math.max(1,Math.min(W-2,Math.floor(x/T)));let ty=Math.max(0,Math.floor(y0/T));for(let i=0;i<20&&ty<H-1;i++,ty++)if(solidAt(tx,ty))return ty*T;return y0+T*2}
  function onHit(k,m,ang,mul,w,kn){if(!live(m))return;let d=Math.max(1,Math.round(dmgM(w)*mul));
   if((k=='samurai'&&R()<.2)||(k=='gunslinger'&&R()<.15))d=Math.round(d*1.65);
+  try{if(typeof MYMV!='undefined')d=MYMV.mod(k,m,d)}catch(_){}
   try{hurtMob(m,d,w,ang)}catch(e){console.error('MYTH hit',e)}
   const kb=(kn==null?1:kn)*(k=='knight'?1.5:1);if(!m.boss){m.vx+=Math.cos(ang)*230*kb;m.vy-=110*kb}
   if(k=='demon'||tier(k)>=5)try{P.hp=Math.min(maxHP(),P.hp+d*(k=='demon'?.05:.03))}catch(_){}
@@ -86,6 +99,8 @@ const MYTH=(()=>{
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&w.myth&&own[w.id]){try{attack(w)}catch(e){console.error('MYTH',e)}return}return _uw.apply(this,arguments)}}
  // ---- the effect of each move
  function cast(name,k,w,o,aim,f,mul,sc){sc=sc||1;const th=TH[k],tx=Math.max(o.x-T*7,Math.min(o.x+T*7,mx+cam.x)),ty=Math.max(o.y-T*5,Math.min(o.y+T*4,my+cam.y)),base={th:k,w,mul,t:0,hit:new Set(),sc};
+  if(typeof MYMV!='undefined'&&name.startsWith('echo:')){MYMV.cast('echo',{k,w,o,aim,f,mul,sc,tx,ty,name:name.slice(5)});return}
+  if(typeof MYMV!='undefined'&&MYMV.has(name)&&name!='echo'){MYMV.cast(name,{k,w,o,aim,f,mul,sc,tx,ty,name});return}   // the class-unique moves
   switch(name){
    case'crescent':FX.push(Object.assign({k:'cres',x:o.x+Math.cos(aim)*30,y:o.y+Math.sin(aim)*30,vx:Math.cos(aim)*640,vy:Math.sin(aim)*640,a:aim,life:k=='archer'?1:.7,r:44*sc},base,{mul:mul*.8}));break;
    case'pillar':{const x=o.x+f*T*2.6,gy=gyAt(x,o.y-T);FX.push(Object.assign({k:'pil',x,y:gy,life:.85,h:T*5.5*sc,done:0},base));break}
@@ -106,17 +121,17 @@ const MYTH=(()=>{
  // ---- per frame
  function tick(dt){
   if(SW){const s=SW,pf=s.pf,o=pivot(),pa=angAt(s);s.t+=dt;const ca=angAt(s);
-   if(pf.ranged){if(!s.shot&&s.t>=s.dur*.18){s.shot=true;const n=s.tr>=3&&s.step==2?3:1;for(let i=0;i<n;i++)shoot(s.k,s.w,o,s.aim+(i-(n-1)/2)*.12,pf.ranged,s.mul)}}
-   else{for(const m of mobs)if(live(m)&&!s.hit.has(m)&&swept(m,o,pa,ca,T*pf.rad*(1+.06*(s.tr-1)))){s.hit.add(m);onHit(s.k,m,ca+(s.a1>s.a0?1:-1)*Math.PI/2,s.mul,s.w)}
+   if(!pf.ranged){for(const m of mobs)if(live(m)&&!s.hit.has(m)&&swept(m,o,pa,ca,T*pf.rad*(1+.06*(s.tr-1)))){s.hit.add(m);onHit(s.k,m,ca+(s.a1>s.a0?1:-1)*Math.PI/2,s.mul,s.w)}
     s.tail.push(ca);if(s.tail.length>9)s.tail.shift();if(!red()&&R()<.7){const L=pf.len*.7;part(o.x+Math.cos(ca)*L,o.y+Math.sin(ca)*L,(R()-.5)*40,(R()-.5)*40,.3,3,TH[s.k].pal[1],false,s.k)}}
-   if(!s.fx&&s.t>=s.dur*.42){s.fx=true;const mv=TH[s.k].mv[s.step][1];cast(mv,s.k,s.w,o,s.aim,s.f,s.mul,(s.tr>=5&&s.step==2?1.4:1)*(1+.05*(s.tr-1)));
-    if(s.tr>=2&&s.step==0&&mv!='crescent')cast('crescent',s.k,s.w,o,s.aim,s.f,s.mul*.6,.7);
-    if(s.tr>=3&&s.step==2&&!pf.thr&&!pf.ranged)cast('crescent',s.k,s.w,o,s.aim,s.f,s.mul*.8,1);
+   if(!s.fx&&s.t>=s.dur*(pf.ranged?.15:.42)){s.fx=true;const mv=TH[s.k].mv[s.step][1],m1=s.tr>=2&&s.step==0?1.3:1;   // tier II: the first move hits 30% harder and wider
+    cast(mv,s.k,s.w,o,s.aim,s.f,s.mul*m1*(s.tr>=6?1.2:1),(s.tr>=5&&s.step==2?1.4:1)*(1+.05*(s.tr-1))*(m1>1?1.15:1)*(s.tr>=6?1.2:1));
+    if(s.tr>=3&&s.step==2&&!pf.thr)cast('echo:'+mv,s.k,s.w,o,s.aim,s.f,s.mul,1);   // tier III: the finisher echoes (throwing weapons are thrown instead)
     if(s.tr>=5&&s.step==2)cast(mv,s.k,s.w,o,s.aim+(s.f>0?-.4:.4),s.f,s.mul*.6,1)}
    if(s.t>=s.dur){lastEnd=performance.now()/1000;if(s.step==2&&s.tr>=3&&pf.thr)throwIt(s.k,s.w);SW=null}}
   if(THR)thrTick(dt);
   for(let i=FX.length-1;i>=0;i--){const e=FX[i];if(fxTick(e,dt))FX.splice(i,1)}
   for(let i=PT.length-1;i>=0;i--){const p=PT[i];p.l-=dt;if(p.l<=0){PT.splice(i,1);continue}p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=1-dt*2.2;p.vy=p.vy*(1-dt*2.2)+(p.mo?30:60)*dt;p.a+=p.va*dt}
+  try{if(typeof MYMV!='undefined')MYMV.frame(dt)}catch(_){}
   outfitTick(dt);
   for(const k of KEYS)if(tier(k)>=1&&!own[ID(k)])own[ID(k)]=1}
  // a shot from a bow (light arrow), the pistol (tracer round) or a staff (glowing orb): fast, pierces up to two foes
@@ -129,12 +144,12 @@ const MYTH=(()=>{
   if(!red()&&R()<.8)part(q.x,q.y,(R()-.5)*50,(R()-.5)*50,.35,4,TH[q.k].pal[0],false,q.k);
   if((q.back&&d<34)||q.t>2.4){THR=null;try{SFX7.tone(900,600,.15,'triangle',.025)}catch(_){}}}
  function hitArea(e,x,y,r,mul,kn,once){let n=0;for(const m of mobs)if(live(m)&&!(once&&e.hit.has(m))&&Math.hypot(m.x-x,m.y+m.h/2-y)<r+Math.max(m.w,m.h)*.5){e.hit.add(m);onHit(e.th,m,Math.atan2(m.y+m.h/2-y,m.x-x),mul,e.w,kn);n++}return n}
- function fxTick(e,dt){if(e.del>0){e.del-=dt;return false}e.t+=dt;const p=TH[e.th].pal;
+ function fxTick(e,dt){if(e.mm)return MYMV.tick(e,dt);if(e.del>0){e.del-=dt;return false}e.t+=dt;const p=TH[e.th].pal;
   switch(e.k){
    case'proj':{e.x+=e.vx*dt;e.y+=e.vy*dt;if(e.kind=='arrow')e.vy+=120*dt;e.a=Math.atan2(e.vy,e.vx);for(const m of mobs)if(live(m)&&!e.hit.has(m)&&Math.hypot(m.x-e.x,m.y+m.h/2-e.y)<16+Math.max(m.w,m.h)*.5){e.hit.add(m);onHit(e.th,m,e.a,e.mul,e.w,.5);if(--e.pierce<=0){e.t=e.life;break}}
     if(!red()&&R()<.8)part(e.x,e.y,(R()-.5)*30,(R()-.5)*30,.3,e.kind=='orb'?5:3,p[R()<.6?0:1],e.kind=='orb'&&R()<.3,e.th);if(solidAt(Math.floor(e.x/T),Math.floor(e.y/T))){sparks(e.x,e.y,e.th,4,140);e.t=e.life}break}
    case'cres':e.x+=e.vx*dt;e.y+=e.vy*dt;hitArea(e,e.x,e.y,e.r*.7,e.mul,.8,true);if(!red()&&R()<.9)part(e.x-Math.cos(e.a)*e.r*.3,e.y-Math.sin(e.a)*e.r*.3,(R()-.5)*30,(R()-.5)*30,.4,R()<.3?6:3,p[R()<.5?0:1],R()<.25,e.th);if(solidAt(Math.floor(e.x/T),Math.floor(e.y/T)))e.t=Math.max(e.t,e.life-.08);break;
-   case'pil':if(!e.done&&e.t>.1){e.done=1;hitArea(e,e.x,e.y-T*1.2,T*1.7*e.sc,e.mul,1.6,true);for(const m of e.hit)if(!m.boss)m.vy=-420;sparks(e.x,e.y,e.th,red()?6:18,320);try{shake=Math.max(shake,QM.reduce?0:.12)}catch(_){}}
+   case'pil':if(!e.done&&e.t>.1){e.done=1;hitArea(e,e.x,e.y-T*1.2,T*(e.look=='grave'?1.2:1.7)*e.sc,e.mul,1.6,true);for(const m of e.hit){if(!m.boss)m.vy=-420;if(e.burn)m.burn=Math.max(m.burn||0,3)}sparks(e.x,e.y,e.th,red()?6:18,320);try{shake=Math.max(shake,QM.reduce?0:.12)}catch(_){}}
     if(!red()&&e.t<.6&&R()<.9)part(e.x+(R()-.5)*T*1.2,e.y,(R()-.5)*60,-200-R()*260,.6,R()<.4?7:3,p[R()<.5?0:1],R()<.3,e.th);break;
    case'vor':{e.tick-=dt;const pull=e.t<e.life-.2;for(const m of mobs)if(live(m)&&!m.boss){const dx=e.x-m.x,dy=e.y-(m.y+m.h/2),d=Math.hypot(dx,dy);if(d<e.r*1.6&&pull){m.vx+=dx/d*900*dt;m.vy+=dy/d*900*dt}}
     if(e.tick<=0&&pull){e.tick=.22;e.hit=new Set();hitArea(e,e.x,e.y,e.r*.6,e.mul,0,false)}
@@ -147,8 +162,8 @@ const MYTH=(()=>{
    case'spl':if(!e.done&&e.t>.07){e.done=1;for(const m of mobs)if(live(m)){const dx=m.x-e.x,dy=m.y+m.h/2-e.y,d=Math.hypot(dx,dy);let da=Math.abs(Math.atan2(dy,dx)-e.a);if(da>Math.PI)da=TAU-da;if(d<e.r+Math.max(m.w,m.h)*.5&&da<1){e.hit.add(m);onHit(e.th,m,Math.atan2(dy,dx),e.mul,e.w,1)}}}break;
    case'blt':if(!e.done){e.done=1;if(e.m&&live(e.m)){onHit(e.th,e.m,-Math.PI/2,e.mul,e.w,.5);if(!e.m.boss)e.m.stun=Math.max(e.m.stun||0,.4)}else hitArea(e,e.x,e.y,T*1.1,e.mul,.5,true);sparks(e.x,e.y,e.th,red()?4:12,260)}break;
    case'str':{const u=Math.min(1,e.t/(e.life*.6));e.cx=e.x+(e.x1-e.x)*u;e.cy=e.y+(e.y1-e.y)*u;if(!e.done&&u>=1){e.done=1;hitArea(e,e.x1,e.y1-T*.3,T*1.3,e.mul,.7,true);sparks(e.x1,e.y1,e.th,red()?4:10,240)}break}
-   case'shd':if(!e.done&&e.t>.08){e.done=1;hitArea(e,e.x,e.y-T*.6,T*.95,e.mul,1.2,true);for(const m of e.hit)if(!m.boss)m.vy=-300;sparks(e.x,e.y,e.th,red()?3:8,200)}break;
-   case'ring':{const rr=e.r*Math.min(1,e.t/(e.life*.8));for(const m of mobs)if(live(m)&&!e.hit.has(m)&&Math.abs(Math.hypot(m.x-e.x,m.y+m.h/2-e.y)-rr)<T*.7){e.hit.add(m);onHit(e.th,m,Math.atan2(m.y+m.h/2-e.y,m.x-e.x),e.mul,e.w,1.2)}break}}
+   case'shd':if(!e.done&&e.t>.08){e.done=1;hitArea(e,e.x,e.y-T*.6,T*.95,e.mul,1.2,true);for(const m of e.hit){if(!m.boss)m.vy=-300;if(e.th=='elementalist')m.frz=Math.max(m.frz||0,1)}sparks(e.x,e.y,e.th,red()?3:8,200)}break;
+   case'ring':{const rr=e.r*Math.min(1,e.t/(e.life*.8));for(const m of mobs)if(live(m)&&!e.hit.has(m)&&Math.abs(Math.hypot(m.x-e.x,m.y+m.h/2-e.y)-rr)<T*.7){e.hit.add(m);onHit(e.th,m,Math.atan2(m.y+m.h/2-e.y,m.x-e.x),e.mul,e.w,1.2);if(e.prism){if(m.x<e.x)m.burn=Math.max(m.burn||0,2.5);else m.slow=Math.max(m.slow||0,2.5)}}break}}
   return e.t>=e.life}
  // ---- drawing (world space, on top of the characters)
  function draw(g2,cx,cy){const t=performance.now()/1000;g2.save();
@@ -165,15 +180,19 @@ const MYTH=(()=>{
   g2.globalCompositeOperation='source-over';for(const p of PT)if(p.mo){g2.globalAlpha=Math.min(1,p.l/p.ml*1.5);A.motif(g2,p.k,p.x-cx,p.y-cy,p.s,p.a,t)}
   g2.globalAlpha=1;g2.restore()}
  function drawHeld(g2,k,tr,ox,oy,a,cw,t){const pf=prof(k);g2.save();g2.translate(ox,oy);g2.rotate(a);if(cw)g2.scale(1,-1);g2.translate(-pf.len*pf.piv,0);A.weapon(g2,k,tr,pf.len,t);g2.restore()}
- function fxDraw(g,e,cx,cy,t){const p=TH[e.th].pal,u=e.t/e.life,fade=Math.max(0,1-Math.max(0,u-.6)/.4);g.save();
+ function fxDraw(g,e,cx,cy,t){if(e.mm){MYMV.draw(g,e,cx,cy,t);return}const p=TH[e.th].pal,u=e.t/e.life,fade=Math.max(0,1-Math.max(0,u-.6)/.4);g.save();
   switch(e.k){
    case'proj':{g.translate(e.x-cx,e.y-cy);g.rotate(e.a);g.globalAlpha=fade;g.globalCompositeOperation='lighter';
     if(e.kind=='orb'){g.drawImage(glow(p[0]),-18,-18,36,36);g.drawImage(glow('#ffffff'),-6,-6,12,12)}
+    else if(e.kind=='shur'){g.globalCompositeOperation='source-over';A.shuriken(g,0,0,8,t*24,'#cfe8f8')}
     else{const L=e.kind=='bullet'?44:34,gr=g.createLinearGradient(-L,0,0,0);gr.addColorStop(0,A.rgba(p[0],0));gr.addColorStop(1,A.rgba(p[1],1));g.strokeStyle=gr;g.lineWidth=e.kind=='bullet'?3:2.4;g.beginPath();g.moveTo(-L,0);g.lineTo(0,0);g.stroke();
      g.globalCompositeOperation='source-over';if(e.kind=='arrow')A.star4(g,0,0,6,'#ffffff',t*6);else{g.fillStyle='#fff6d8';g.beginPath();g.ellipse(0,0,4,2,0,0,TAU);g.fill()}}break}
    case'cres':{g.translate(e.x-cx,e.y-cy);g.rotate(e.a);g.globalAlpha=fade;g.globalCompositeOperation='lighter';const r=e.r;g.beginPath();g.arc(0,0,r,-1.25,1.25);g.arc(-r*.32,0,r*.92,1.2,-1.2,true);g.closePath();const gr=g.createLinearGradient(-r,0,r,0);gr.addColorStop(0,A.rgba(p[0],0));gr.addColorStop(.6,A.rgba(p[0],.7));gr.addColorStop(1,A.rgba(p[1],1));g.fillStyle=gr;g.fill();
     g.beginPath();g.arc(0,0,r,-1.1,1.1);g.strokeStyle='rgba(255,255,255,.95)';g.lineWidth=2.2;g.stroke();break}
-   case'pil':{const x=e.x-cx,y=e.y-cy,a=e.t<.12?e.t/.12:fade,w=T*1.1*e.sc*(e.t<.12?.4+e.t/.12*.6:1);g.globalCompositeOperation='lighter';g.globalAlpha=a;const gr=g.createLinearGradient(x-w,0,x+w,0);gr.addColorStop(0,A.rgba(p[0],0));gr.addColorStop(.35,A.rgba(p[0],.6));gr.addColorStop(.5,'rgba(255,255,255,.95)');gr.addColorStop(.65,A.rgba(p[0],.6));gr.addColorStop(1,A.rgba(p[0],0));
+   case'pil':if(e.look=='flame'||e.look=='grave'){const x=e.x-cx,y=e.y-cy,a=e.t<.12?e.t/.12:fade,gr0=Math.min(1,e.t/.15);g.globalAlpha=a;
+    if(e.look=='flame'){g.globalCompositeOperation='lighter';g.drawImage(glow(p[3]),x-T*1.3,y-e.h*gr0,T*2.6,e.h*gr0);g.globalCompositeOperation='source-over';for(let i=0;i<6;i++){const s=1-i/6;A.flame(g,x+Math.sin(t*9+i)*6,y-e.h*gr0*i/6,T*.7*s+6,i%2?p[3]:'#ff5a1a',t+i)}}
+    else{g.globalCompositeOperation='lighter';g.drawImage(glow(p[0]),x-T,y-e.h*.8*gr0,T*2,e.h*.9*gr0);g.globalCompositeOperation='source-over';for(let i=0;i<4;i++)A.crystal(g,x+(i-1.5)*12,y+2,e.h*gr0*(.55+((i*37)%5)/10),(i-1.5)*.22,i%2?'#2a1838':p[0]);g.globalCompositeOperation='lighter';g.beginPath();g.ellipse(x,y,T*.9,T*.22,0,0,TAU);g.strokeStyle=A.rgba(p[1],.8);g.lineWidth=2;g.stroke()}break}
+   {const x=e.x-cx,y=e.y-cy,a=e.t<.12?e.t/.12:fade,w=T*1.1*e.sc*(e.t<.12?.4+e.t/.12*.6:1);g.globalCompositeOperation='lighter';g.globalAlpha=a;const gr=g.createLinearGradient(x-w,0,x+w,0);gr.addColorStop(0,A.rgba(p[0],0));gr.addColorStop(.35,A.rgba(p[0],.6));gr.addColorStop(.5,'rgba(255,255,255,.95)');gr.addColorStop(.65,A.rgba(p[0],.6));gr.addColorStop(1,A.rgba(p[0],0));
     g.fillStyle=gr;g.fillRect(x-w,y-e.h,w*2,e.h);g.beginPath();g.ellipse(x,y,w*1.9,w*.45,0,0,TAU);g.strokeStyle=A.rgba(p[1],.9);g.lineWidth=3;g.stroke();g.beginPath();g.ellipse(x,y,w*1.25*(1+u),w*.3*(1+u),0,0,TAU);g.strokeStyle=A.rgba(p[0],.7);g.lineWidth=2;g.stroke();
     g.globalCompositeOperation='source-over';for(let i=0;i<5;i++){const q=i*1.3+e.x,hh=T*(.6+((i*37)%10)/10)*(e.t<.15?e.t/.15:1);A.crystal(g,x+(i-2)*w*.55,y+2,hh,(i-2)*.25,i%2?p[1]:p[0])}break}
    case'vor':{const x=e.x-cx,y=e.y-cy,gr0=Math.min(1,e.t/.2),r=e.r*.42*gr0*(e.burst?1+(e.t-(e.life-.2))*4:1);g.globalAlpha=e.burst?fade:1;g.globalCompositeOperation='lighter';const gr=g.createRadialGradient(x,y,r*.6,x,y,r*2.2);gr.addColorStop(0,A.rgba(p[0],.9));gr.addColorStop(.4,A.rgba(p[3],.4));gr.addColorStop(1,A.rgba(p[0],0));g.fillStyle=gr;g.fillRect(x-r*2.3,y-r*2.3,r*4.6,r*4.6);
@@ -194,7 +213,9 @@ const MYTH=(()=>{
    case'shd':{const x=e.x-cx,y=e.y-cy,gr=Math.min(1,e.t/.1);g.globalAlpha=fade;const th=TH[e.th],col=th.mot=='leaf'?'#3a7a2a':th.mot=='rock'?'#7a5a4a':e.th=='knight'?p[0]:p[1];
     if(th.mot=='leaf'){g.strokeStyle='#2a5a1a';g.lineWidth=5;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+10*e.rot,y-e.h*.5*gr,x+e.rot*20,y-e.h*gr);g.stroke();A.rose(g,x+e.rot*20,y-e.h*gr,7,p[3])}
     else{A.crystal(g,x,y+2,e.h*gr,e.rot,col);A.crystal(g,x-8,y+2,e.h*.6*gr,e.rot-.4,col);A.crystal(g,x+8,y+2,e.h*.5*gr,e.rot+.4,col)}g.globalCompositeOperation='lighter';g.globalAlpha=fade*.6;g.drawImage(glow(p[0]),x-30,y-40,60,60);break}
-   case'ring':{const x=e.x-cx,y=e.y-cy,rr=e.r*Math.min(1,e.t/(e.life*.8));g.globalCompositeOperation='lighter';g.globalAlpha=fade;g.beginPath();g.arc(x,y,rr,0,TAU);g.strokeStyle=A.rgba(p[0],.8);g.lineWidth=e.small?3:6;g.stroke();g.beginPath();g.arc(x,y,rr*.9,0,TAU);g.strokeStyle=A.rgba(p[1],.9);g.lineWidth=2;g.stroke();
+   case'ring':{const x=e.x-cx,y=e.y-cy,rr=e.r*Math.min(1,e.t/(e.life*.8));g.globalCompositeOperation='lighter';g.globalAlpha=fade;
+    if(e.prism){for(let i=0;i<16;i++){g.beginPath();g.arc(x,y,rr,i/16*TAU,(i+1)/16*TAU);g.strokeStyle=A.rgba(i%2?p[0]:p[3],.9);g.lineWidth=7;g.stroke()}break}
+    if(e.bloom){g.beginPath();g.arc(x,y,rr,0,TAU);g.strokeStyle=A.rgba(p[0],.7);g.lineWidth=4;g.stroke();break}g.beginPath();g.arc(x,y,rr,0,TAU);g.strokeStyle=A.rgba(p[0],.8);g.lineWidth=e.small?3:6;g.stroke();g.beginPath();g.arc(x,y,rr*.9,0,TAU);g.strokeStyle=A.rgba(p[1],.9);g.lineWidth=2;g.stroke();
     if(!e.small)for(let i=0;i<12;i++){const q=i/12*TAU+e.t;g.beginPath();g.moveTo(x+Math.cos(q)*rr*.7,y+Math.sin(q)*rr*.7);g.lineTo(x+Math.cos(q)*rr*1.05,y+Math.sin(q)*rr*1.05);g.strokeStyle=A.rgba(p[1],.6);g.lineWidth=2;g.stroke()}break}}
   g.restore()}
  // ---- the scythe in the hand (the default holder pose) and on the back; hidden while our own swing or throw draws it
@@ -271,7 +292,7 @@ const MYTH=(()=>{
    // fade out at the end
    if(t>dur-.6){g2.globalAlpha=Math.min(1,(t-(dur-.6))/.6);g2.fillStyle='#06040a';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
    if(t<dur)requestAnimationFrame(fr);else{for(const ev of evs)removeEventListener(ev,block,{capture:true});cv2.remove();window.RB_COVER=cover0;SC=null;
-    try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic scythe is in your hand.':'Damage +'+Math.round(22*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?' · the finisher throws the scythe':to==4?' · hits echo with bursts':' · a doubled finisher that heals'),3200)}catch(_){}
+    try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic scythe is in your hand.':'Damage +'+Math.round(DMG*100*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?' · the finisher throws the scythe':to==4?' · hits echo with bursts':to==5?' · a doubled finisher that heals':' · Mythic Awakening'),3200)}catch(_){}
     try{if(typeof CLS9!='undefined'&&CLS9.isOpen())CLS9.refresh&&CLS9.refresh()}catch(_){}}};
   requestAnimationFrame(fr)}
- return{prof,drawCrown,ID,KOF,TH,tier,next,check,ascend,access,scene,LV,GEMS,MATS,RN,get S(){return S},save,setOutfit(v){S.out=v?1:0;save()},get outfit(){return S.out},outfitK,attack,get swing(){return SW},get thrown(){return THR},fx:FX,parts:PT,PROF}})();
+ return{DMG,MAXT,reqs,LVS:LV,api:{onHit,part,sparks,glow,hitArea,near,gyAt,pivot,FX,live,cast},prof,drawCrown,ID,KOF,TH,tier,next,check,ascend,access,scene,LV,GEMS,MATS,RN,get S(){return S},save,setOutfit(v){S.out=v?1:0;save()},get outfit(){return S.out},outfitK,attack,get swing(){return SW},get thrown(){return THR},fx:FX,parts:PT,PROF}})();

@@ -2,7 +2,7 @@
 // Your class is the class of the weapon in your hand. Each class levels up on its own from hits and kills made with its weapons,
 // and every level makes that class's weapons stronger and its passive better. State: key rbc4 (account-namespaced). =====
 const CLASS7=(()=>{
- const MAX=100,need=l=>Math.round(40+l*l*22);
+ const MAX=75,need=l=>Math.round(60+l*l*30+l*l*l*.4);   // slower class levels: see docs/progression-balance.md
  const C={
   brawler:{n:'Brawler',c:'#ffb27a',ic:'✊',ids:['fist','pan','emberfist'],p:'Swift Fists: attacks recover up to 30% faster'},
   knight:{n:'Knight',c:'#ffd86a',ic:'🛡',ids:['ember','frost','solarfang','skyspear','tidecaller'],p:'Valor: heavier knockback, hits sometimes stun'},
@@ -83,4 +83,4 @@ const CLASS7=(()=>{
  // druid regen
  setInterval(()=>{try{if(entered&&cur()=='druid'&&P.hp>0&&P.hp<maxHP())P.hp=Math.min(maxHP(),P.hp+bonC('druid',lv('druid')).regen)}catch(_){}},2000);
  // the class screen itself is CLS9 (98-z-classui.js): one CLASSES button in the top bar, or K
- return{C,S,of,lv,need,gainXp,cur,bon,perk,gOf}})();
+ return{MAX,C,S,of,lv,need,gainXp,cur,bon,perk,gOf}})();

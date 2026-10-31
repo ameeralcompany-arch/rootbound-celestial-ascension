@@ -25,7 +25,10 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
  ok('confirming makes you a Mage',await click('talk:jobok')&&await E(()=>CJOB.cur=='mage'&&CJOB.learned.join()=='mage'));
  const held=await E(()=>({wp,cls:CLASS7.of(WPN[wp])}));ok('a mage weapon is put in your hand',held.cls=='mage',held);
  const u1=await use('ember');ok('a knight weapon is blocked for a mage',!u1.ok,u1);
- ok('fist and tools still work, mage weapons work',(await use('fist')).ok&&(await use('arcane')).ok&&await E(()=>!CJOB.blocks('pip')&&!CJOB.blocks('glimmer')));
+ const rq=await E(()=>{const id=CLASS7.C.mage.ids.filter(i=>WPN[i]&&!WPN[i].myth&&!WPN[i].hid).sort((a,b)=>CJOB.creq(b)-CJOB.creq(a))[0];return{id,lv:CLASS7.lv('mage'),need:CJOB.creq(id),blk:CJOB.blocks(id)}});ok('class weapons need a class level by rarity (the rarest mage weapon is locked at mage level 1)',rq.need>1&&(rq.lv>=rq.need||rq.blk),rq);
+ const ml=await E(()=>{const v=CLASS7.S.lv.mage;CLASS7.S.lv.mage=40;return v});
+ ok('fist and tools still work, mage weapons work once the class level allows',(await use('fist')).ok&&(await use('arcane')).ok&&await E(()=>!CJOB.blocks('pip')&&!CJOB.blocks('glimmer')));
+ await E(v=>{CLASS7.S.lv.mage=v},ml);
  ok('hotbar shows the knight weapon locked',await E(()=>{HOTBAR.set(6,'w:ember',{quiet:1});return HOTBAR.state('w:ember')=='lock'}));
  const d2=await talk('kael');ok('Kael (knight) refuses until your mage is level 10',/Reach level 10 as a Mage/.test(d2.txt)&&!(await click('talk:job')),d2.txt.slice(0,240));
  await E(()=>{CLASS7.S.lv.mage=10});const d3=await talk('kael');ok('at mage level 10 Kael offers to teach Knight',/Learn Knight/.test(d3.txt),d3.txt.slice(0,240));

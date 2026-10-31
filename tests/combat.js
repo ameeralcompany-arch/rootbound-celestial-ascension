@@ -29,8 +29,8 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},300000).unre
   o.storeLv=SHOP7.byId.get('wpn_sniper').lv==28&&!SHOP7.lvOk(SHOP7.byId.get('wpn_sniper'));delete own.sniper;wp='fist';return o});
  ok('under-level weapons: store refuses, equip refuses, a forced equip reverts with a message, cannot fire',gate.buy==0&&!gate.has&&gate.eq===false&&gate.reverted&&/level 28/i.test(gate.msg)&&!gate.fired&&gate.wp2!='sniper',gate);
  ok('inventory + store show the level requirement (tooltip, locked button)',gate.lockBtn&&gate.tip&&gate.storeLv,gate);
- const buy=await E(async()=>{lvl=30;gems=5000;const r=await SHOP7.buy('wpn_sniper');const o={ok:r.ok,gems,has:SHOP7.has('wpn_sniper')};o.eq=SHOP7.equip('wpn_sniper')&&wp=='sniper';delete own.sniper;wp='fist';gems=99999;return o});
- ok('at the right level a new weapon can be bought (gems charged) and equipped',buy.ok&&buy.gems==2500&&buy.has&&buy.eq,buy);
+ const buy=await E(async()=>{lvl=30;gems=20000;const pr=SHOP7.byId.get('wpn_sniper').price;const r=await SHOP7.buy('wpn_sniper');const o={ok:r.ok,gems,pr,has:SHOP7.has('wpn_sniper')};o.eq=SHOP7.equip('wpn_sniper')&&wp=='sniper';delete own.sniper;wp='fist';gems=99999;return o});
+ ok('at the right level a new weapon can be bought (gems charged) and equipped',buy.ok&&buy.gems==20000-buy.pr&&buy.has&&buy.eq,buy);
  // --- every new weapon fires and hurts a monster (no page errors)
  await E(()=>{lvl=60;for(const id of GUN9.IDS)own[id]=1;// a flat, open strip so nothing blocks the shots
   const px=Math.floor(P.x/T),fy=Math.floor((P.y+P.h-2)/T);for(let x=px-3;x<=px+10;x++){for(let y=fy-5;y<=fy;y++){const k=y*W+x;tiles[k]=0;wl[k]=0}const k=(fy+1)*W+x;tiles[k]=1;hp[k]=BLK[1][2]}P.vx=0});await p.waitForTimeout(400);

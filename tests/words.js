@@ -13,7 +13,8 @@ async function boot(p,reload){if(reload)await p.reload();else await p.goto(URL);
 (async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox']});
  const ctx=await b.newContext({viewport:{width:1366,height:800}});const p=await ctx.newPage();const errs=[];p.on('pageerror',x=>errs.push(x.message));p.on('console',m=>{if(m.type()=='error'&&!/ERR_|Failed to load|net::/.test(m.text()))errs.push('console: '+m.text())});
  await p.addInitScript(guest);await boot(p);const E=(f,a)=>p.evaluate(f,a);const W8=ms=>p.waitForTimeout(ms||100);
- const go=async w=>{await E(w=>{enterWorld(w);WX6.force='clear';mobs.length=0},w);await W8(500)};
+ // the Letter Wardens (GUARD16) are tested in tests/guards.js; here every letter starts unguarded
+const go=async w=>{await E(w=>{enterWorld(w);WX6.force='clear';mobs.length=0;try{for(const l of WORD9.letters)GUARD16.clear(cur,l.i)}catch(_){}},w);await W8(500)};
  await E(()=>{lvl=5});await go('wordsa');
  // ---- placement
  const A=await E(()=>{const L=WORD9.letters,w=WORD9.word;return{w,L,n:L.length,all:L.every(l=>tiles[l.y*W+l.x]==WORD9.LETTER),inList:WORD9.WORDS.includes(w),

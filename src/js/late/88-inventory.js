@@ -79,7 +79,7 @@ const INV7=(()=>{
  const mk=()=>{if(el)return;el=document.createElement('div');el.id='inv7';el.className='ed';el.innerHTML='<div class="sheet" role="dialog" aria-label="Inventory"></div>';document.body.appendChild(el);
   const ab=document.createElement('div');ab.className='assignbanner ed';ab.id='asb';document.body.appendChild(ab);
   el.addEventListener('mousedown',e=>{if(menu&&!e.target.closest('#ictx8'))closeMenu();if(e.target===el)close()});el.addEventListener('click',onClick);el.addEventListener('contextmenu',onCtx);
-  el.addEventListener('scroll',closeMenu,true);
+  el.addEventListener('scroll',()=>{if(performance.now()>quietScroll)closeMenu()},true);   // the grid's own scroll to the item you right-clicked must not close its menu
   // drag a tile onto a hotbar slot (handled by HOTBAR) or onto the Equipped strip (equips it)
   el.addEventListener('dragstart',e=>{const t=e.target.closest&&e.target.closest('.it7[draggable=true]');if(!t)return;closeMenu();let k=t.dataset.k;try{e.dataTransfer.setData('text/plain','rbitem:'+k);e.dataTransfer.effectAllowed='copyMove';const im=t.querySelector('img');if(im)e.dataTransfer.setDragImage(im,24,24)}catch(_){}
    el.classList.add('eqdrag');if(/^\d+$/.test(k))k=+k;if(HB()&&hbOk(k))HB().dragBegin()});
@@ -97,7 +97,8 @@ const INV7=(()=>{
  function sorted(all){let list=all.filter(i=>filter=='all'?i.own:filter=='stats'?false:filter=='fav'?(i.own&&favs[i.k]):i.t==filter);
   const qq=q.trim().toLowerCase();if(qq)list=list.filter(i=>(nameOf(i.k)+' '+ITEM7.label(i.k)+' '+(i.sub||'')).toLowerCase().includes(qq)||ITEM7.RN[tierOf(i.k)].toLowerCase()==qq);
   const pw=i=>isWpn(i.k)?ITEM7.power(i.k):0,tv=i=>tierOf(i.k);
-  return list.map((i,x)=>[i,x]).sort((A,B)=>{const a=A[0],b=B[0];let d=(favs[b.k]?1:0)-(favs[a.k]?1:0);if(d)return d;d=(b.own|0)-(a.own|0);if(d)return d;
+  return list.map((i,x)=>[i,x]).sort((A,B)=>{const a=A[0],b=B[0];let d=(mineW(b.k)?1:0)-(mineW(a.k)?1:0);if(d)return d;   // the weapons of the class you use always come first
+   d=(favs[b.k]?1:0)-(favs[a.k]?1:0);if(d)return d;d=(b.own|0)-(a.own|0);if(d)return d;
    if(sortBy=='name')d=nameOf(a.k).localeCompare(nameOf(b.k));else if(sortBy=='count')d=(b.n|0)-(a.n|0);else if(sortBy=='rar')d=tv(b)-tv(a)||pw(b)-pw(a)||costOf(b.k)-costOf(a.k);
    else if(sortBy=='power')d=pw(b)-pw(a)||tv(b)-tv(a);else if(sortBy=='value')d=costOf(b.k)-costOf(a.k);else if(sortBy=='new')d=(got[b.k]||0)-(got[a.k]||0)||(isNew(b)?1:0)-(isNew(a)?1:0);
    return d||A[1]-B[1]}).map(x=>x[0])}
@@ -121,8 +122,13 @@ const INV7=(()=>{
   return h+'</div>'}
  const wInfo=k=>{const w=WPN[k.slice(2)];return w?'Power '+ITEM7.power(k)+' · damage '+w.md+' · '+(1/w.cd).toFixed(1)+' hits/s'+(w.lv?' · Lv '+w.lv+(lvl<w.lv?' required':''):''):''};
  function tip(i){const k=i.k,p=primary(i);return nameOf(k)+'\n'+ITEM7.RN[tierOf(k)]+' '+(i.t=='charms'?(i.sub=='charm'?'charm':'effect'):i.t=='wings'?'wings':ITEM7.catName(k).toLowerCase())+(i.n?' · '+i.n+' owned':'')+(isWpn(k)?'\n'+wInfo(k):'')+(p&&p.a&&!p.dis?'\nDouble-click or E: '+p.l.replace(/ ·.*$/,''):'')+'\nRight-click for more'}
+ // the class you chose (CJOB) and the class each weapon belongs to
+ const myCls=()=>{try{return CJOB.cur||null}catch(_){return null}},wCls=k=>{try{return typeof k=='string'&&k.startsWith('w:')&&WPN[k.slice(2)]?CLASS7.of(WPN[k.slice(2)]):null}catch(_){return null}};
+ function mineW(k){const c=myCls();return!!c&&wCls(k)===c}
+ function emb(k){const c=wCls(k);if(!c||typeof MYART=='undefined'||!MYART.emblem)return'';const me=c===myCls();return'<img class="ce7'+(me?' me':'')+'" src="'+MYART.emblem(c,40)+'" alt="" title="'+esc(CLASS7.C[c].n)+' weapon'+(me?' · your class':'')+'">'}
  function tile(i){const t=i.t,own=i.own,nm=nameOf(i.k),hs=hbSlot(i.k),pw=t=='weapons'?ITEM7.power(i.k):0,dr=own&&(hbOk(i.k)||t=='wings'||t=='charms'||t=='wear'&&!i.lock);
-  return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+(isNew(i)?' new':'')+'" data-k="'+esc(i.k)+'"'+(dr?' draggable="true"':'')+RARA(i.k)+' title="'+esc(tip(i))+'">'+'<i class="rp7" aria-hidden="true">'+ITEM7.GLY[tierOf(i.k)]+'</i>'+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(hs>=0?'<u class="hbn7" title="Hotbar slot '+(hs+1)+'">'+(hs+1)+'</u>':'')+(pw?'<u class="pw7" title="Power">⚔'+pw+'</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'||t=='wings'?'WORN':typeof i.k=='number'?'HELD':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
+  const mc=t=='weapons'&&mineW(i.k);
+  return'<button class="it7'+(selK===i.k?' sel':'')+(own?'':' lock')+(i.worn?' eq':'')+(isNew(i)?' new':'')+(mc?' cls7':'')+'" data-k="'+esc(i.k)+'"'+(mc?' style="--clsc:'+CLASS7.C[myCls()].c+'"':'')+(dr?' draggable="true"':'')+RARA(i.k)+' title="'+esc(tip(i))+'">'+(t=='weapons'?emb(i.k):'')+'<i class="rp7" aria-hidden="true">'+ITEM7.GLY[tierOf(i.k)]+'</i>'+'<span class="pl7"><img src="'+iconOf(i.k)+'" alt="">'+(i.n?'<b class="q7">'+i.n+'</b>':'')+'</span>'+(favs[i.k]?'<u class="fv7">★</u>':'')+(hs>=0?'<u class="hbn7" title="Hotbar slot '+(hs+1)+'">'+(hs+1)+'</u>':'')+(pw?'<u class="pw7" title="Power">⚔'+pw+'</u>':'')+(i.worn?'<em class="st7">'+(t=='wear'||t=='wings'?'WORN':typeof i.k=='number'?'HELD':'EQUIPPED')+'</em>':'')+'<span class="nm7">'+esc(nm)+'</span></button>'}
  function hbRow(k){const h=HB();if(!h||!h.assignable(k))return'';const s=h.slotOf(k);let b='';for(let i=0;i<h.N;i++)b+='<button class="btn ghost'+(i===s?' on':'')+'" data-a="hb'+i+'" title="'+(i===s?'Remove from slot ':'Put in slot ')+(i+1)+'" aria-label="'+(i===s?'Remove from hotbar slot ':'Put in hotbar slot ')+(i+1)+'">'+(i+1)+'</button>';
   return'<div class="eyebrow" style="margin-top:12px">Hotbar slot</div><div class="hbrow7">'+b+'</div><p class="hbtip7">'+(s>=0?'In slot '+(s+1)+' (click it again to take it off the bar). ':'')+'Or press 1–7, or drag it onto the hotbar.</p>'}
  function actRow(i){const p=primary(i);let h='<div class="row7 act8">';if(p)h+=p.a=='equip'&&i.worn||!p.a?'<button class="btn" disabled>'+esc(p.a?'Equipped':p.l)+'</button>':'<button class="btn" data-a="'+p.a+'"'+(p.dis?' disabled':'')+'>'+esc(p.l)+'</button>';
@@ -158,8 +164,9 @@ const INV7=(()=>{
   if(/^hb\d$/.test(act)&&k!=null&&HB()){const i=+act.slice(2);HB().set(i,HB().slotOf(k)===i?null:k);render();return}
   if(['equip','unequip','buy','wear'].includes(act)&&k!=null){if(run(act,k))pulse(k)}}
  // ---- right-click menu
+ let quietScroll=0;
  function closeMenu(){if(menu){menu.remove();menu=null}}
- function onCtx(e){const t=e.target.closest('.it7[data-k]'),es=e.target.closest('.es8[data-ek]');if(!t&&!es)return;e.preventDefault();const k=keyOf((t||es).dataset[t?'k':'ek']);if(t)select(k);else selK=k;
+ function onCtx(e){const t=e.target.closest('.it7[data-k]'),es=e.target.closest('.es8[data-ek]');if(!t&&!es)return;e.preventDefault();quietScroll=performance.now()+400;const k=keyOf((t||es).dataset[t?'k':'ek']);if(t)select(k);else selK=k;
   const i=items().find(x=>x.k===k);if(!i)return;const p=primary(i),h=HB();let b='<div class="mh8">'+esc(nameOf(k))+'</div>';
   if(p&&p.a&&!p.dis)b+='<button data-c="p">'+esc(p.l)+'<kbd>E</kbd></button>';if(i.worn&&p&&p.a!='unequip'&&kind(k)!='mats'&&!(p.a=='wear'))b+='<button data-c="u">Unequip</button>';
   if(h&&h.assignable(k)){const s=h.slotOf(k);b+='<div class="ms8">Put in hotbar slot</div><div class="mr8">';for(let x=0;x<h.N;x++)b+='<button data-c="hb'+x+'" class="'+(x===s?'on':'')+'" title="Slot '+(x+1)+'">'+(x+1)+'</button>';b+='</div>';if(s>=0)b+='<button data-c="hbx">Remove from hotbar</button>'}

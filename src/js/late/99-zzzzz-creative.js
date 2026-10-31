@@ -12,7 +12,7 @@ const CRV8=(()=>{
   try{for(const id in WEAR)ownW[id]=1}catch(_){}
   try{for(const it of SHOP7.items){if(it.stack)continue;if(it.cat=='weapons')own[it.ref]=1;else if(it.cat=='gear')ownW[it.ref]=1;SHOP7.st.own[it.id]=1}SHOP7.save()}catch(_){}
   try{WINGX.has=()=>true}catch(_){}
-  try{for(const k in CLASS7.C){CLASS7.S.lv[k]=CLASS7.S.lv[k]>=100?CLASS7.S.lv[k]:100;CLASS7.S.xp[k]=0}}catch(_){}
+  try{for(const k in CLASS7.C){CLASS7.S.lv[k]=CLASS7.MAX||75;CLASS7.S.xp[k]=0}}catch(_){}
   try{for(const id of TOOLLV.IDS)if(TOOLLV.lvl(id)<TOOLLV.MAX)TOOLLV.set(id,TOOLLV.MAX,0)}catch(_){}
   fill();try{saveP()}catch(_){}try{renderW()}catch(_){}try{renderBar()}catch(_){}}
  // every stackable store item (blocks, seeds, objects, weather machines) kept at 999
