@@ -1792,6 +1792,128 @@ html[data-reduce=true] #ictx8{animation:none}
 html[data-reduce=true] #wl9 i.on,html[data-reduce=true] #wg9 .tl i,html[data-reduce=true] #wl9 em.go{animation:none}
 body.bb10c #wl9{opacity:0!important;transition:opacity .35s;pointer-events:none}
 
+/* ========== CSS: 95-classes.css ========== */
+/* ===== CLS9: the Classes screen (98-z-classui.js). Black, soft blurred cream light, thin wide-tracked uppercase type, a chrome title,
+   frosted glass panels and round glass orbs. --cc is the selected class colour, used only as a faint accent. ===== */
+#cls9{--cream:#efe4cc;--ink9:#ece6da;--dim9:rgba(236,230,218,.56);--line9:rgba(255,255,255,.13);--glass9:rgba(255,255,255,.055);--cc:#efe4cc;
+ position:fixed;inset:0;z-index:7100;display:none;background:#090807;color:var(--ink9);font-family:var(--font-ui,'Montserrat',system-ui,sans-serif);overflow:hidden;opacity:0;transition:opacity .28s ease}
+#cls9.on{opacity:1}
+#cls9 button{font-family:inherit;color:inherit;cursor:pointer}
+#cls9 .c9bg{position:absolute;inset:-12%;pointer-events:none;filter:blur(34px)}
+#cls9 .c9bg i{position:absolute;border-radius:50%}
+#cls9 .c9bg .s1{width:78vw;height:34vw;left:-6%;top:34%;transform:rotate(-24deg);box-shadow:inset 0 0 0 3.4vw rgba(239,228,204,.72);opacity:.95}
+#cls9 .c9bg .s2{width:46vw;height:22vw;right:-4%;top:6%;transform:rotate(38deg);box-shadow:inset 0 0 0 2.6vw rgba(239,228,204,.6)}
+#cls9 .c9bg .s3{width:58vw;height:16vw;left:26%;bottom:2%;transform:rotate(-6deg);background:radial-gradient(closest-side,rgba(239,228,204,.42),transparent)}
+#cls9 .c9bg .s4{width:44vw;height:44vw;left:36%;top:16%;background:radial-gradient(closest-side,color-mix(in srgb,var(--cc) 40%,transparent),transparent);opacity:.32;transition:background .4s}
+#cls9::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 35%,rgba(0,0,0,.72) 100%)}
+#cls9 .c9wrap{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;padding:14px 56px 12px;box-sizing:border-box}
+/* top bar */
+#cls9 .c9top{display:flex;align-items:center;gap:18px;padding-right:150px;font:600 10px var(--font-ui);letter-spacing:.2em;text-transform:uppercase}
+#cls9 .c9brand{font:700 12px var(--font-ui);letter-spacing:.02em;text-transform:none;opacity:.9}
+#cls9 nav{display:flex;gap:4px;margin:0 auto}
+#cls9 nav button,#cls9 .c9x{background:none;border:0;padding:6px 10px;font:600 9.5px var(--font-ui);letter-spacing:.22em;text-transform:uppercase;color:var(--dim9);border-radius:999px;transition:color .2s,background .2s}
+#cls9 nav button:hover,#cls9 .c9x:hover{color:var(--ink9);background:rgba(255,255,255,.06)}
+#cls9 .c9meta{color:var(--dim9)}
+#cls9 .c9x b{margin-left:6px;font-weight:600}
+/* vertical side labels */
+#cls9 .c9v{position:absolute;top:50%;font:600 9px var(--font-ui);letter-spacing:.24em;text-transform:uppercase;color:var(--dim9);white-space:nowrap;pointer-events:none}
+#cls9 .c9vl{left:22px;transform:translateY(-50%) rotate(-90deg);transform-origin:left center;margin-left:6px}
+#cls9 .c9vr{right:22px;transform:translateY(-50%) rotate(90deg);transform-origin:right center;margin-right:6px}
+/* hero: the chrome title */
+#cls9 .c9hero{text-align:center;padding:10px 160px 6px;min-width:0}
+#cls9 .c9eye{display:flex;justify-content:center;gap:22px;font:600 9px var(--font-ui);letter-spacing:.24em;text-transform:uppercase;color:var(--dim9);min-height:12px}
+#cls9 .c9eye span:empty{display:none}
+#cls9 .c9title{margin:4px 0 0;font:900 italic clamp(46px,7.6vw,112px)/1 var(--font-ui);letter-spacing:-.045em;text-transform:none;transform:skewX(-7deg);
+ background:linear-gradient(176deg,#ffffff 0%,#d9d9dc 20%,#6e6e74 43%,#f6f6f6 52%,#9a9aa0 68%,#e9e9ec 84%,#8a8a90 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+ -webkit-text-stroke:1px rgba(255,255,255,.28);filter:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 14px 22px rgba(0,0,0,.55));white-space:nowrap;overflow:hidden;text-overflow:clip}
+#cls9 .c9title em{font-style:inherit;color:transparent}
+#cls9 .c9title.in{animation:c9in .42s cubic-bezier(.2,.7,.2,1)}
+@keyframes c9in{from{opacity:0;transform:skewX(-7deg) translateY(10px);filter:blur(6px)}}
+#cls9 .c9sub{margin:6px 0 0;font:500 12px var(--font-ui);letter-spacing:.06em;color:var(--dim9)}
+/* side panel with the two orbs */
+#cls9 .c9side{position:absolute;top:0;right:22px;width:138px;padding:58px 0 18px;display:flex;flex-direction:column;align-items:center;gap:14px;
+ background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));border:1px solid var(--line9);border-top:0;border-radius:0 0 18px 18px;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);z-index:2}
+#cls9 .c9orb{position:relative;width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+ border:1px solid rgba(255,255,255,.32);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.14),rgba(255,255,255,.02) 62%);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 10px 26px rgba(0,0,0,.4);padding:0;text-align:center}
+#cls9 .c9orb b{font:700 22px/1 var(--font-ui);letter-spacing:.02em}
+#cls9 .c9orb small{font:600 7.5px/1.3 var(--font-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--dim9);max-width:84px}
+#cls9 .c9lv svg{position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);transform:rotate(-90deg)}
+#cls9 .c9lv .trk{fill:none;stroke:rgba(255,255,255,.08);stroke-width:2}
+#cls9 .c9lv .val{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;transition:stroke-dashoffset .5s}
+#cls9 .c9st b{font-size:13px;letter-spacing:.2em;text-transform:uppercase}
+#cls9 .c9st[data-st=switch]{border-color:var(--cream);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 22px -4px color-mix(in srgb,var(--cream) 60%,transparent)}
+#cls9 .c9st[data-st=switch]:hover{background:rgba(239,228,204,.16)}
+#cls9 .c9st[data-st=active]{border-color:color-mix(in srgb,var(--cc) 70%,white)}
+#cls9 .c9st[aria-disabled=true]{cursor:default}
+/* body: two glass columns */
+#cls9 .c9body{display:grid;grid-template-columns:minmax(250px,1fr) minmax(320px,1.7fr);gap:14px;min-height:0;overflow:auto;margin:10px 160px 10px 0;padding:2px 6px 2px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
+#cls9 .c9col{display:flex;flex-direction:column;gap:14px;min-width:0}
+#cls9 .c9card{background:var(--glass9);border:1px solid var(--line9);border-radius:18px;padding:14px 16px;backdrop-filter:blur(16px) saturate(1.15);-webkit-backdrop-filter:blur(16px) saturate(1.15);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);min-width:0}
+#cls9 .c9card h4{margin:12px 0 6px;font:600 9px var(--font-ui);letter-spacing:.24em;text-transform:uppercase;color:var(--dim9)}
+#cls9 .c9card h4:first-child{margin-top:0}
+#cls9 .c9card h4 small{margin-left:6px;color:var(--ink9)}
+#cls9 .c9card p{margin:0 0 6px;font:500 12px/1.5 var(--font-ui);color:var(--ink9)}
+#cls9 .c9card p.dim{color:var(--dim9);font-size:11px}
+#cls9 .c9card .pk{font:600 13px/1.45 var(--font-ui)}
+#cls9 .c9ms{list-style:none;margin:0;padding:0 0 0 12px;border-left:1px solid var(--line9)}
+#cls9 .c9ms li{position:relative;display:grid;grid-template-columns:44px 1fr;gap:6px;padding:3px 0;font:500 10.5px/1.4 var(--font-ui);color:var(--dim9)}
+#cls9 .c9ms li::before{content:'';position:absolute;left:-16px;top:8px;width:7px;height:7px;border-radius:50%;background:#090807;border:1px solid rgba(255,255,255,.35)}
+#cls9 .c9ms li.got{color:var(--ink9)}
+#cls9 .c9ms li.got::before{background:var(--cream);border-color:var(--cream)}
+#cls9 .c9ms b{font:700 9px/1.9 var(--font-ui);letter-spacing:.14em;text-transform:uppercase}
+#cls9 .c9go{margin-top:4px;padding:8px 16px;border-radius:999px;border:1px solid var(--cream);background:rgba(239,228,204,.1);font:700 9.5px var(--font-ui);letter-spacing:.2em;text-transform:uppercase}
+#cls9 .c9go:hover{background:rgba(239,228,204,.2)}
+/* weapon cards */
+#cls9 .c9ws{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:10px}
+#cls9 .c9w{display:grid;grid-template-columns:54px 1fr;gap:10px;padding:10px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);transition:border-color .2s,transform .2s}
+#cls9 .c9w:hover{border-color:rgba(255,255,255,.24);transform:translateY(-1px)}
+#cls9 .c9w .pic{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.16),rgba(255,255,255,.03) 65%);border:1px solid rgba(255,255,255,.18)}
+#cls9 .c9w .pic img{width:46px;height:46px;border-radius:50%;image-rendering:auto;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5))}
+#cls9 .c9w .tx{min-width:0}
+#cls9 .c9w b{display:block;font:700 12.5px/1.2 var(--font-ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cls9 .tags{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0 6px}
+#cls9 .tags i{font:600 7.5px/1 var(--font-ui);font-style:normal;letter-spacing:.14em;text-transform:uppercase;padding:3px 6px;border-radius:999px;border:1px solid rgba(255,255,255,.16);color:var(--dim9)}
+#cls9 .tags i.rt{color:#0b0a09;background:var(--cream);border-color:transparent}
+#cls9 .c9w[data-rar=uncommon] .tags i.rt{background:#bfe8c6}#cls9 .c9w[data-rar=rare] .tags i.rt{background:#b8d6ff}#cls9 .c9w[data-rar=epic] .tags i.rt{background:#d8c2ff}
+#cls9 .c9w[data-rar=legendary] .tags i.rt{background:#ffd98a}#cls9 .c9w[data-rar=mythic] .tags i.rt{background:linear-gradient(90deg,#ffb3d9,#ffe08a,#b3ffd1,#b3e6ff)}
+#cls9 .sb{display:grid;grid-template-columns:28px 1fr 40px;align-items:center;gap:6px;margin:2px 0}
+#cls9 .sb label{font:700 7.5px var(--font-ui);letter-spacing:.16em;color:var(--dim9)}
+#cls9 .sb span{height:3px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}
+#cls9 .sb span i{display:block;height:100%;background:linear-gradient(90deg,rgba(239,228,204,.5),var(--cream))}
+#cls9 .sb em{font:600 9px var(--font-ui);font-style:normal;text-align:right;color:var(--ink9)}
+#cls9 .mv{margin:6px 0 4px!important;font:500 10px/1.4 var(--font-ui)!important;color:var(--dim9)!important}
+#cls9 .c9w .own{font:700 7.5px var(--font-ui);letter-spacing:.18em;text-transform:uppercase;color:var(--dim9)}
+#cls9 .c9w.own .own{color:var(--cream)}
+#cls9 .c9w.own .own::before{content:'● ';color:var(--cc)}
+/* footer: logo + class rail */
+#cls9 .c9foot{display:flex;align-items:flex-end;gap:22px;min-width:0}
+#cls9 .c9logo{flex:0 0 auto;font:900 26px/1 var(--font-ui);letter-spacing:-.04em}
+#cls9 .c9logo em{font-style:normal;color:var(--cream)}
+#cls9 .c9logo small{display:block;margin-top:6px;font:600 7.5px var(--font-ui);letter-spacing:.2em;text-transform:uppercase;color:var(--dim9)}
+#cls9 .c9rail{flex:1;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:4px 2px 6px;scrollbar-width:none;scroll-behavior:smooth}
+#cls9 .c9rail::-webkit-scrollbar{display:none}
+#cls9 .c9c{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:7px 12px 7px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid var(--line9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background .2s,color .2s,border-color .2s}
+#cls9 .c9c small{font:600 7.5px var(--font-ui);letter-spacing:.2em;color:var(--dim9)}
+#cls9 .c9c b{font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase}
+#cls9 .c9c em{font:500 8px var(--font-ui);font-style:normal;letter-spacing:.1em;color:var(--dim9)}
+#cls9 .c9c:hover{border-color:rgba(255,255,255,.3)}
+#cls9 .c9c.on{background:var(--cream);color:#0b0a09;border-color:var(--cream)}
+#cls9 .c9c.on small,#cls9 .c9c.on em{color:rgba(11,10,9,.62)}
+#cls9 .c9c.ln::after{content:'';position:absolute;top:7px;right:8px;width:5px;height:5px;border-radius:50%;background:rgba(236,230,218,.6)}
+#cls9 .c9c.act::after{background:#fff6dc;box-shadow:0 0 8px #efe4cc}
+#cls9 :focus-visible{outline:1.5px solid var(--cream);outline-offset:2px}
+/* the one CLASSES button (next to STORE) */
+#hudR #bcls{width:auto!important;padding:0 14px!important;font:900 12px var(--font-ui)!important;letter-spacing:.2em!important;color:#efe4cc!important;
+ background:linear-gradient(160deg,rgba(30,28,26,.92),rgba(10,9,8,.92))!important;border:1px solid rgba(239,228,204,.35)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 16px -8px rgba(0,0,0,.7)!important}
+#hudR #bcls:hover{border-color:#efe4cc!important}
+/* smaller screens */
+@media (max-width:1100px){#cls9 .c9body{margin-right:0}#cls9 .c9hero{padding:10px 150px 6px 0;text-align:left}#cls9 .c9eye{justify-content:flex-start}}
+@media (max-width:760px){#cls9 .c9wrap{padding:10px 14px 10px}#cls9 .c9top{padding-right:0}#cls9 .c9v{display:none}#cls9 nav{display:none}
+ #cls9 .c9side{position:static;flex-direction:row;justify-content:center;width:auto;padding:8px 0;border:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+ #cls9 .c9orb{width:84px;height:84px}#cls9 .c9wrap{grid-template-rows:auto auto auto minmax(0,1fr) auto}#cls9 .c9hero{padding:6px 0;text-align:center}#cls9 .c9eye{justify-content:center}
+ #cls9 .c9body{grid-template-columns:1fr}#cls9 .c9logo{display:none}}
+@media (prefers-reduced-motion:reduce){#cls9,#cls9 *{transition:none!important;animation:none!important}}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -9144,20 +9266,7 @@ const CLASS7=(()=>{
  {const _b=bonus;bonus=function(){const r=_b.apply(this,arguments);try{const k=cur();if(k=='knight')r.arm=Math.min(.75,(r.arm||0)+bonC(k,lv(k)).arm);else if(k=='mage')r.cdr=Math.min(.5,(r.cdr||0)+bonC(k,lv(k)).cdr)}catch(_){}return r}}
  // druid regen
  setInterval(()=>{try{if(entered&&cur()=='druid'&&P.hp>0&&P.hp<maxHP())P.hp=Math.min(maxHP(),P.hp+bonC('druid',lv('druid')).regen)}catch(_){}},2000);
- // ---- HUD badge
- let badge=null,lastTxt='';
- function hud(){try{if(!badge){const host=document.getElementById('hudL');if(!host)return;badge=document.createElement('div');badge.id='clsBadge';badge.title='Your class (open the hub with C > Classes)';
-    if(getComputedStyle(host).position=='static')host.style.position='relative';
-    badge.style.cssText='position:absolute;right:12px;bottom:-12px;padding:2px 9px;border-radius:999px;font:600 11px/18px system-ui,sans-serif;color:#fff;background:rgba(20,18,30,.72);display:inline-block;cursor:pointer;pointer-events:auto;white-space:nowrap;z-index:2';badge.onclick=()=>{try{UI6.open('classes')}catch(_){}};host.appendChild(badge)}
-   const k=cur();const t=k?C[k].ic+' '+C[k].n+' Lv '+lv(k)+' · '+Math.floor(100*S.xp[k]/need(lv(k)))+'%':'';if(t!==lastTxt){lastTxt=t;badge.textContent=t;badge.style.display=t?'inline-block':'none';if(k)badge.style.boxShadow='inset 0 0 0 1.5px '+C[k].c}}catch(_){}}
- setInterval(hud,500);
- // ---- hub tab
- try{UI6.TABS.splice(UI6.TABS.findIndex(t=>t[0]=='settings'),0,['classes','Classes']);
-  UI6.ext.classes=function(){const esc=UI6.esc,k0=cur();let h='<h3>Classes</h3><p class="dim">Your class is the class of the weapon in your hand. Each class levels up on its own from the hits and kills you make with its weapons. Every class grows by the same amount: its levels add damage plus a perk of its own that gets stronger (about +41% total at level 25, +63% at 50).</p><div class="hgrid">';
-   for(const k in C){const c=C[k],L=lv(k),pc=L>=MAX?100:Math.floor(100*S.xp[k]/need(L)),ws=c.ids.filter(id=>WPN[id]);
-    h+='<div class="hcard'+(k==k0?' on':'')+'" style="border-color:'+c.c+'"><b style="color:'+c.c+'">'+c.ic+' '+esc(c.n)+(k==k0?' (active)':'')+'</b><small>Level '+L+(L>=MAX?' (max)':'')+'</small>'+
-     '<div class="stat"><div class="bar"><i style="width:'+pc+'%;background:'+c.c+'"></i></div></div><small>'+esc(perk(k,L))+'</small><small class="dim">'+ws.map(id=>esc(WPN[id].n)+(own[id]?' ✓':'')+(WPN[id].move?' - '+esc(WPN[id].move):'')).join('<br>')+'</small></div>'}
-   UI6.body.innerHTML=h+'</div>'}}catch(e){console.error('CLASS7 tab',e)}
+ // the class screen itself is CLS9 (98-z-classui.js): one CLASSES button in the top bar, or K
  return{C,S,of,lv,need,gainXp,cur,bon,perk,gOf}})();
 
 /* ========== LATE: 86-daily.js ========== */
@@ -9337,7 +9446,7 @@ const SFX7=(()=>{
 // ===== CJOB: class jobs. Talk to a class master in the Plaza (every NPC teaches the class of its house) to choose your class. Once you have a
 // class you can only fight with that class's weapons (the fist and the five tools always work; before you choose, every weapon works). When
 // the class you are using reaches level 10, any other class master will teach you another class; classes you learned keep their levels and
-// you switch between them at their master or in Hub > Classes. You get a starter weapon if you own none of the class. Creative mode has no
+// you switch between them at their master or in Classes (K). You get a starter weapon if you own none of the class. Creative mode has no
 // class limits. The lock itself is applied where weapons are already level-gated (86-z-levelscale gate, hotbar lock). State: RB_PREFIX +
 // 'rbpcls' {cur, learned[], hint}. =====
 const CJOB=(()=>{
@@ -9352,7 +9461,7 @@ const CJOB=(()=>{
  // true when your class keeps you from using this weapon
  function blocks(id){if(!S.cur||free()||!id||id=='fist')return false;const w=WPN[id];if(!w||w.k=='tool')return false;const k=clsOf(id);return !!k&&k!==S.cur}
  const master=k=>{try{const n=NPC2.list().find(n=>n.cls==k);return n?n.n:'its class master'}catch(_){return'its class master'}};
- function why(id){const k=clsOf(id),w=WPN[id]||{n:'That weapon'},c=C[k];return w.n+' is a '+(c?c.n:'other')+' weapon. You are a '+C[S.cur].n+(S.learned.includes(k)?' (switch to '+c.n+' at '+master(k)+' or in Hub > Classes)':'')}
+ function why(id){const k=clsOf(id),w=WPN[id]||{n:'That weapon'},c=C[k];return w.n+' is a '+(c?c.n:'other')+' weapon. You are a '+C[S.cur].n+(S.learned.includes(k)?' (switch to '+c.n+' at '+master(k)+' or in Classes (K))':'')}
  const canLearn=()=>!S.cur||CLASS7.lv(S.cur)>=NEED;
  // the best weapon of class k you own and can use; a starter weapon of the class if you own none
  function weaponFor(k){const ids=Object.keys(WPN).filter(id=>clsOf(id)==k&&WPN[id].k!='tool'&&id!='fist'),ok=id=>(WPN[id].lv|0)<=(lvl|0);let gift=null;
@@ -9381,16 +9490,6 @@ const CJOB=(()=>{
    if(a=='talk:jobok'&&n){n.jc=0;become(n.cls);renderDlg();return}
    if(a=='talk:jobno'&&n){n.jc=0;renderDlg();return}
    if(a=='close'&&n)n.jc=0;return _da.apply(this,arguments)}}
- // ---- Hub > Classes: your class, learned classes (switch here), how to learn more
- try{const _c=UI6.ext.classes;UI6.ext.classes=function(){_c.apply(this,arguments);try{const body=UI6.body,p=body.querySelector('p.dim');
-   if(p)p.textContent='Talk to a class master in the Plaza to choose your class. While you have a class, only that class\'s weapons work (the fist and tools always do). Reach level '+NEED+' in the class you use to learn another one from any other master; learned classes keep their levels and you can switch between them here. Every class grows by the same amount: about +41% at level 25, +63% at 50.';
-   const d=document.createElement('div');d.className='rw';d.id='cjob';
-   if(free())d.innerHTML='<small>Creative mode: every weapon works.</small>';
-   else if(!S.cur)d.innerHTML='<small><b>No class yet.</b> Visit a class master in the Plaza to choose one. Until then every weapon works.</small>';
-   else d.innerHTML='<div style="flex:1"><small><b style="color:'+C[S.cur].c+'">'+C[S.cur].ic+' You are a '+esc(C[S.cur].n)+'</b> (level '+CLASS7.lv(S.cur)+')'+(canLearn()?' · you can learn another class':' · level '+NEED+' to learn another class')+'</small></div>'+S.learned.filter(k=>k!==S.cur).map(k=>'<button data-cj="'+k+'">Switch to '+esc(C[k].n)+'</button>').join('');
-   d.onclick=e=>{const t=e.target.closest('[data-cj]');if(t&&become(t.dataset.cj))UI6.ext.classes()};
-   const h=body.querySelector('h3');h&&h.nextSibling?body.insertBefore(d,h.nextSibling):body.prepend(d);
-   for(const card of body.querySelectorAll('.hcard'))if(S.cur&&!free()){const nm=card.querySelector('b');const k=Object.keys(C).find(k=>nm&&nm.textContent.includes(C[k].n));if(k&&k!==S.cur&&!S.learned.includes(k))card.style.opacity='.6'}}catch(e){console.error('CJOB tab',e)}}}catch(_){}
  // ---- one quiet hint (a toast, not a banner), the first time you are in the Plaza without a class and nothing is open
  setInterval(()=>{try{if(S.hint||S.cur||free()||!entered||cur!='plaza'||dlgOpen||(typeof showInv!='undefined'&&showInv)||(typeof INV7!='undefined'&&INV7.isOpen))return;S.hint=1;save();say('Choose your class: talk to a class master in the Plaza (each house teaches its class)')}catch(_){}},4000);
  return{S,NEED,blocks,why,become,canLearn,row,weaponFor,get cur(){return S.cur},get learned(){return S.learned.slice()}}})();
@@ -14577,6 +14676,90 @@ if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated
 const CHARMIG9=(()=>{function run(){try{const sc=X6&&X6.sc;if(!sc)return false;const a=sc.act|0,own=Array.isArray(sc.looks)&&sc.looks[0]&&typeof sc.looks[0]=='object'?sc.looks[0]:null,had=a>0||(Array.isArray(sc.looks)&&sc.looks.length>1)||Object.keys(sc.fav||{}).some(k=>k!='0');
   if(!had)return false;sc.act=0;if(a>0&&own){Object.assign(cel.ap,sanAp(own))}sc.looks=[own?sanAp(own):sanAp(cel.ap)];const f0=sc.fav&&sc.fav[0];sc.fav={};if(f0)sc.fav[0]=1;try{x6Save()}catch(_){}try{celSave()}catch(_){}try{localStorage.setItem('rbcharmig9','1')}catch(_){}return true}catch(e){console.error('CHARMIG9',e);return false}}
  const did=run();return{run,did}})();
+
+/* ========== LATE: 98-z-classui.js ========== */
+// ===== CLS9: the Classes screen. One CLASSES button in the top bar (or K) opens a full-screen glass section in a dark editorial style:
+// soft cream light over black, a chrome class title, a glass side panel with the class level ring and its status (active / switch /
+// learn / locked), a panel with the passive, its milestones, how to play and who teaches it, every weapon of the class with its key
+// numbers (damage, speed, power, level, rarity, effect, special move, owned or not), and a rail of all 13 classes (click, or the arrow
+// keys). Learned classes are switched here; new ones are still taught by their master in the Plaza (CJOB). It replaces the old HUD class
+// badge and the Hub > Classes tab. =====
+const CLS9=(()=>{
+ const C=CLASS7.C,KEYS=Object.keys(C),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const pad=n=>String(n).padStart(2,'0'),pc=v=>Math.round(v*100)+'%';
+ const free=()=>typeof RB_CREATIVE!='undefined'&&!!RB_CREATIVE;
+ const job=()=>{try{return CJOB.cur}catch(_){return null}},learned=k=>{try{return CJOB.learned.includes(k)}catch(_){return false}};
+ const master=k=>{try{const n=NPC2.list().find(n=>n.cls==k);return n?n.n:null}catch(_){return null}};
+ const tip=k=>{try{return NPC2.TIPS[k]||''}catch(_){return''}};
+ const KIND={fist:'Fists',knuckle:'Knuckles',pan:'Pan',sword:'Blade',spear:'Spear',bow:'Bow',wand:'Wand',staff:'Staff',scythe:'Scythe',sickle:'Sickle',hammer:'Hammer',maul:'Maul',flail:'Flail',shuriken:'Shuriken',chakram:'Chakram',glaive:'Glaive',whip:'Whip',gun:'Gun'};
+ const FX={burn:'Burns',frost:'Chills',freeze:'Freezes',wave:'Light wave',poison:'Poisons',chain:'Chains',bleed:'Bleeds',stun:'Stuns',drain:'Drains life'};
+ // the weapons of a class (no tools, no hidden evolution stages), starter first
+ const weapons=k=>Object.keys(WPN).filter(id=>{const w=WPN[id];return w&&w.k!='tool'&&!w.hid&&CLASS7.of(w)==k}).sort((a,b)=>(WPN[a].lv|0)-(WPN[b].lv|0)||ITEM7.power('w:'+a)-ITEM7.power('w:'+b));
+ let MX=null;const maxes=()=>MX||(MX=(()=>{let d=1,s=1,p=1;for(const id in WPN){const w=WPN[id];if(!w||w.k=='tool'||w.hid)continue;d=Math.max(d,+w.md||0);s=Math.max(s,1/Math.max(.08,+w.cd||.5));p=Math.max(p,ITEM7.power('w:'+id))}return{d,s,p}})());
+ function status(k){if(free())return{t:'free',lab:'Open',sub:'creative mode'};const cj=job();
+  if(cj===k)return{t:'active',lab:'Active',sub:'your class'};
+  if(learned(k))return{t:'switch',lab:'Switch',sub:'learned · tap to use'};
+  if(!cj||CJOB.canLearn())return{t:'learn',lab:'Learn',sub:'talk to '+(master(k)||'its master')};
+  return{t:'locked',lab:'Locked',sub:C[cj].n+' level '+CJOB.NEED+' first'}}
+ const ring=f=>{const r=44,c=2*Math.PI*r;return'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="'+r+'" class="trk"/><circle cx="50" cy="50" r="'+r+'" class="val" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+(c*(1-f)).toFixed(1)+'"/></svg>'};
+ const bar=(lab,v,max,txt)=>'<div class="sb"><label>'+lab+'</label><span><i style="width:'+Math.max(4,Math.min(100,Math.round(100*v/max)))+'%"></i></span><em>'+txt+'</em></div>';
+ function wcard(id){const w=WPN[id],k='w:'+id,M=maxes(),sp=1/Math.max(.08,+w.cd||.5),pw=ITEM7.power(k),lv=w.lv|0,mine=!!own[id],low=lv>(lvl|0);let pic='';try{pic=iconURL(k)}catch(_){}
+  const tags=[ITEM7.label(k),KIND[w.k]||w.k,lv?'Lv '+lv:'',FX[w.fx]||'',w.ev?'Evolves':''].filter(Boolean);
+  return'<article class="c9w'+(mine?' own':'')+'" data-rar="'+ITEM7.rar(k)+'"><div class="pic">'+(pic?'<img src="'+pic+'" alt="">':'')+'</div><div class="tx"><b>'+esc(w.n)+'</b>'+
+   '<span class="tags">'+tags.map((t,i)=>'<i'+(i?'':' class="rt"')+'>'+esc(t)+'</i>').join('')+'</span>'+
+   bar('DMG',+w.md||0,M.d,Math.round(+w.md||0))+bar('SPD',sp,M.s,sp.toFixed(1)+'/s')+bar('PWR',pw,M.p,pw)+
+   '<p class="mv">'+esc(w.move||w.d||'')+'</p><span class="own">'+(mine?'Owned':low?'Reach level '+lv:'In the Store')+'</span></div></article>'}
+ // ---- the screen
+ let el=null,sel=null;
+ function html(){const k=sel,c=C[k],i=KEYS.indexOf(k),L=CLASS7.lv(k),need=CLASS7.need(L),xp=CLASS7.S.xp[k]||0,f=L>=100?1:Math.min(1,xp/need),st=status(k),ws=weapons(k),cj=job(),mn=master(k);
+  const pname=(c.p.split(':')[0]||c.n).trim(),hand=(()=>{try{return CLASS7.cur()===k}catch(_){return false}})();
+  const ms=[10,25,50,100].map(m=>'<li class="'+(L>=m?'got':'')+'"><b>Lv '+m+'</b><span>'+esc(CLASS7.perk(k,m))+'</span></li>').join('');
+  const rules=free()?'Creative mode: every weapon works, whatever your class.':!cj?'You have no class yet, so every weapon works. Choose one by talking to its master.':
+   'You can only fight with your class\'s weapons (fists and tools always work). Reach level '+CJOB.NEED+' in the class you use to learn another; learned classes keep their levels.';
+  return'<div class="c9bg" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>'+
+   '<header class="c9top"><span class="c9brand">Rootbound.</span><nav aria-label="Sections"><button data-go="ov">Overview</button><button data-go="wp">Weapons</button><button data-go="ms">Master</button></nav>'+
+   '<span class="c9meta">Classes</span><button class="c9x" data-a="close" aria-label="Close classes">Close <b aria-hidden="true">✕</b></button></header>'+
+   '<div class="c9v c9vl" aria-hidden="true">Class '+pad(i+1)+' / '+pad(KEYS.length)+'</div><div class="c9v c9vr" aria-hidden="true">'+esc(c.n)+' · #Lv'+L+'</div>'+
+   '<section class="c9hero"><div class="c9eye"><span>'+pad(i+1)+'</span><span>'+ws.length+' weapons</span><span>'+(hand?'in your hand':st.t=='active'?'your class':'')+'</span></div>'+
+   '<h1 class="c9title">'+esc(c.n)+'<em>.</em></h1><p class="c9sub">'+esc(pname.toLowerCase())+' edition</p></section>'+
+   '<aside class="c9side"><div class="c9orb c9lv" title="'+(L>=100?'Max level':Math.floor(xp)+' / '+need+' XP to the next level')+'">'+ring(f)+'<b>'+L+'</b><small>Level · '+(L>=100?'max':Math.floor(f*100)+'%')+'</small></div>'+
+   '<button class="c9orb c9st" data-a="st" data-st="'+st.t+'"'+(st.t=='switch'?'':' aria-disabled="true"')+'><b>'+st.lab+'</b><small>'+esc(st.sub)+'</small></button></aside>'+
+   '<main class="c9body"><div class="c9col">'+
+    '<section class="c9card" id="c9-ov"><h4>Passive</h4><p class="pk">'+esc(CLASS7.perk(k,L))+'</p>'+
+     '<h4>Milestones</h4><ol class="c9ms">'+ms+'</ol><h4>How to play</h4><p>'+esc(tip(k))+'</p><p class="dim">Levels come from the hits and kills you make with '+esc(c.n)+' weapons.</p></section>'+
+    '<section class="c9card" id="c9-ms"><h4>Master</h4><p><b>'+esc(mn||'A class master')+'</b> teaches '+esc(c.n)+' at their house in the Plaza.</p><p class="dim">'+esc(rules)+'</p>'+
+     (st.t=='switch'?'<button class="c9go" data-a="st">Switch to '+esc(c.n)+'</button>':'')+'</section></div>'+
+   '<section class="c9card c9wp" id="c9-wp"><h4>Weapons <small>'+ws.length+'</small></h4><div class="c9ws">'+ws.map(wcard).join('')+'</div></section></main>'+
+   '<footer class="c9foot"><div class="c9logo">ROOTBOUND<em>.</em><small>← → browse · Enter switch · Esc close</small></div><div class="c9rail" role="tablist" aria-label="Classes">'+
+    KEYS.map((q,n)=>'<button class="c9c'+(q==k?' on':'')+(learned(q)?' ln':'')+(cj==q?' act':'')+'" role="tab" aria-selected="'+(q==k)+'" data-k="'+q+'"><small>'+pad(n+1)+'</small><b>'+esc(C[q].n)+'</b><em>Lv '+CLASS7.lv(q)+'</em></button>').join('')+'</div></footer>'}
+ function render(){if(!el)return;const rail=el.querySelector('.c9rail'),sl=rail?rail.scrollLeft:0;el.style.setProperty('--cc',C[sel].c);el.innerHTML='<div class="c9wrap">'+html()+'</div>';
+  const r2=el.querySelector('.c9rail');if(r2){r2.scrollLeft=sl;const on=r2.querySelector('.on');if(on){const a=on.offsetLeft,b=a+on.offsetWidth;if(a<r2.scrollLeft||b>r2.scrollLeft+r2.clientWidth)r2.scrollLeft=a-(r2.clientWidth-on.offsetWidth)/2}}
+  const t=el.querySelector('.c9title');if(t){t.classList.add('in')}}
+ function pick(k){if(!C[k]||k===sel)return;sel=k;render();try{UIS.play('tab')}catch(_){}}
+ function step(d){const i=KEYS.indexOf(sel);pick(KEYS[(i+d+KEYS.length)%KEYS.length])}
+ function act(){const st=status(sel);if(st.t!='switch')return false;let ok=false;try{ok=CJOB.become(sel)}catch(_){}if(ok){try{UIS.play('confirm')}catch(_){}render()}return ok}
+ function build(){if(el)return el;el=document.createElement('div');el.id='cls9';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Classes');document.body.appendChild(el);
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-k],[data-a],[data-go]');if(!b)return;
+   if(b.dataset.k)pick(b.dataset.k);else if(b.dataset.a=='close')close();else if(b.dataset.a=='st')act();
+   else if(b.dataset.go){const s=el.querySelector('#c9-'+b.dataset.go);if(s)s.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}});
+  el.addEventListener('wheel',e=>{const r=e.target.closest('.c9rail');if(r&&Math.abs(e.deltaY)>Math.abs(e.deltaX)){r.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+  return el}
+ const isOpen=()=>!!el&&el.style.display=='block';
+ function open(k){build();try{if(UI6.on)UI6.close()}catch(_){}try{if(INV7.isOpen)INV7.close()}catch(_){}try{if(SHOP7.isOpen())SHOP7.close()}catch(_){}
+  try{for(const q in K)K[q]=0}catch(_){}sel=C[k]?k:(()=>{try{return CLASS7.cur()||job()||KEYS[0]}catch(_){return KEYS[0]}})();
+  el.style.display='block';render();void el.offsetWidth;el.classList.add('on');try{UIS.play('open')}catch(_){}}
+ function close(){if(!isOpen())return;el.classList.remove('on');try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},220)}
+ // while open the screen owns the keyboard: arrows browse, Enter switches, Esc / K close, nothing reaches the game
+ addEventListener('keydown',e=>{if(!isOpen())return;const k=e.key;
+  if(k=='Escape'||k=='k'||k=='K')close();else if(k=='ArrowLeft'||k=='a'||k=='A')step(-1);else if(k=='ArrowRight'||k=='d'||k=='D')step(1);else if(k=='Enter')act();else if(k=='Tab')return;
+  e.preventDefault();e.stopImmediatePropagation()},true);
+ addEventListener('keydown',e=>{if(isOpen()||e.repeat||e.ctrlKey||e.metaKey||e.altKey||(e.key!='k'&&e.key!='K'))return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.isContentEditable))return;
+  try{if(!entered||dlgOpen||creatorOn)return}catch(_){}e.preventDefault();e.stopImmediatePropagation();open()},true);
+ // the one CLASSES button, next to STORE
+ function btn(){if(document.getElementById('bcls'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bcls';b.className='pn';b.textContent='CLASSES';b.title='Classes (K)';
+  b.onclick=()=>isOpen()?close():open();const s=document.getElementById('bstore');s&&s.nextSibling?hr.insertBefore(b,s.nextSibling):hr.insertBefore(b,hr.firstChild)}
+ btn();if(document.readyState!='complete')addEventListener('load',btn);setTimeout(btn,1500);
+ return{open,close,isOpen,pick,step,act,status,weapons,get sel(){return sel},el:()=>el}})();
 
 /* ========== LATE: 98-z-heroaura.js ========== */
 // ===== HERO12: your character shines. On the home screen the portrait stands in an anime aura: flame tongues and slow light rays behind,

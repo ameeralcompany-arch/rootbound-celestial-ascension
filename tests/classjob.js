@@ -1,7 +1,7 @@
 // Class jobs (86-z-classjob.js): before choosing, every weapon works; talking to a class master offers "Become a <class>" with a confirm;
 // after choosing only that class's weapons work (fist + tools always), other weapons are blocked in use and shown locked on the hotbar;
 // a starter weapon is given when you own none of the class; another master refuses to teach until your class is level 10, then teaches;
-// learned classes can be switched at their master and in Hub > Classes; state survives reload; creative mode has no limits. node tests/classjob.js
+// learned classes can be switched at their master and in the Classes screen; state survives reload; creative mode has no limits. node tests/classjob.js
 const {chromium}=require('playwright');const path=require('path');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';
 let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(d!=null&&d!==''?'  - '+(typeof d=='string'?d:JSON.stringify(d)):''))};
@@ -36,9 +36,17 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
  // starter weapon for a class you own nothing of
  await E(()=>{CLASS7.S.lv.mage=12;for(const id of CLASS7.C.berserker.ids)own[id]=0});const d5=await talk('bram');await click('talk:job');await click('talk:jobok');
  const gift=await E(()=>({cur:CJOB.cur,owns:CLASS7.C.berserker.ids.filter(id=>own[id]),wp,cls:CLASS7.of(WPN[wp])}));ok('a starter weapon is given for a new class',gift.cur=='berserker'&&gift.owns.length>=1,gift);
- // hub tab
- const hub=await E(async()=>{if(dlgOpen)closeDlg();UI6.open('classes');await new Promise(r=>setTimeout(r,250));const d=document.getElementById('cjob'),t=d&&d.textContent;const bt=d&&d.querySelector('[data-cj=mage]');if(bt)bt.click();await new Promise(r=>setTimeout(r,150));const c=CJOB.cur;try{UI6.close()}catch(_){}return{t,c}});
- ok('Hub > Classes shows your class and switches between learned ones',hub.t&&/You are a Berserker/.test(hub.t)&&hub.c=='mage',hub);
+ // the Classes screen (CLS9): one CLASSES button (the old HUD badge and Hub tab are gone), K opens it too
+ const ui=await E(async()=>{if(dlgOpen)closeDlg();const r={btn:!!document.getElementById('bcls'),badge:!!document.getElementById('clsBadge'),tab:UI6.TABS.some(t=>t[0]=='classes')};
+  document.getElementById('bcls').click();await new Promise(q=>setTimeout(q,300));const el=CLS9.el();r.open=CLS9.isOpen();r.sel=CLS9.sel;r.title=el.querySelector('.c9title').textContent;r.st=el.querySelector('.c9st').dataset.st;
+  r.weapons=el.querySelectorAll('.c9w').length==CLS9.weapons(CLS9.sel).length&&CLS9.weapons(CLS9.sel).length>0;r.specs=[...el.querySelectorAll('.c9w')].every(w=>w.querySelectorAll('.sb').length==3&&w.querySelector('img'));r.rail=el.querySelectorAll('.c9rail [data-k]').length;
+  const x0=P.x;dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));r.next=CLS9.sel;r.still=P.x==x0;
+  el.querySelector('.c9rail [data-k=mage]').click();r.mst=el.querySelector('.c9st').dataset.st;el.querySelector('.c9st').click();await new Promise(q=>setTimeout(q,150));r.c=CJOB.cur;r.mst2=CLS9.el().querySelector('.c9st').dataset.st;
+  dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await new Promise(q=>setTimeout(q,300));r.closed=!CLS9.isOpen();
+  dispatchEvent(new KeyboardEvent('keydown',{key:'k',bubbles:true}));await new Promise(q=>setTimeout(q,100));r.kOpen=CLS9.isOpen();CLS9.close();await new Promise(q=>setTimeout(q,300));return r});
+ ok('one CLASSES button replaces the badge and the Hub tab',ui.btn&&!ui.badge&&!ui.tab,ui);
+ ok('the Classes screen opens on your class: chrome title, status, every class weapon with its specs, a rail of all 13 classes',ui.open&&ui.sel=='berserker'&&/Berserker/.test(ui.title)&&ui.st=='active'&&ui.weapons&&ui.specs&&ui.rail==13,ui);
+ ok('arrow keys browse classes (and the game does not move); a learned class switches from its status orb; Esc closes; K opens',ui.next!='berserker'&&ui.still&&ui.mst=='switch'&&ui.c=='mage'&&ui.mst2=='active'&&ui.closed&&ui.kOpen,ui);
  // saved
  await E(()=>{try{saveP()}catch(_){}});await enter(true);
  ok('class choice survives reload',await E(()=>CJOB.cur=='mage'&&CJOB.learned.join()=='mage,knight,berserker'));

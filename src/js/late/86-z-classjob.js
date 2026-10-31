@@ -1,7 +1,7 @@
 // ===== CJOB: class jobs. Talk to a class master in the Plaza (every NPC teaches the class of its house) to choose your class. Once you have a
 // class you can only fight with that class's weapons (the fist and the five tools always work; before you choose, every weapon works). When
 // the class you are using reaches level 10, any other class master will teach you another class; classes you learned keep their levels and
-// you switch between them at their master or in Hub > Classes. You get a starter weapon if you own none of the class. Creative mode has no
+// you switch between them at their master or in Classes (K). You get a starter weapon if you own none of the class. Creative mode has no
 // class limits. The lock itself is applied where weapons are already level-gated (86-z-levelscale gate, hotbar lock). State: RB_PREFIX +
 // 'rbpcls' {cur, learned[], hint}. =====
 const CJOB=(()=>{
@@ -16,7 +16,7 @@ const CJOB=(()=>{
  // true when your class keeps you from using this weapon
  function blocks(id){if(!S.cur||free()||!id||id=='fist')return false;const w=WPN[id];if(!w||w.k=='tool')return false;const k=clsOf(id);return !!k&&k!==S.cur}
  const master=k=>{try{const n=NPC2.list().find(n=>n.cls==k);return n?n.n:'its class master'}catch(_){return'its class master'}};
- function why(id){const k=clsOf(id),w=WPN[id]||{n:'That weapon'},c=C[k];return w.n+' is a '+(c?c.n:'other')+' weapon. You are a '+C[S.cur].n+(S.learned.includes(k)?' (switch to '+c.n+' at '+master(k)+' or in Hub > Classes)':'')}
+ function why(id){const k=clsOf(id),w=WPN[id]||{n:'That weapon'},c=C[k];return w.n+' is a '+(c?c.n:'other')+' weapon. You are a '+C[S.cur].n+(S.learned.includes(k)?' (switch to '+c.n+' at '+master(k)+' or in Classes (K))':'')}
  const canLearn=()=>!S.cur||CLASS7.lv(S.cur)>=NEED;
  // the best weapon of class k you own and can use; a starter weapon of the class if you own none
  function weaponFor(k){const ids=Object.keys(WPN).filter(id=>clsOf(id)==k&&WPN[id].k!='tool'&&id!='fist'),ok=id=>(WPN[id].lv|0)<=(lvl|0);let gift=null;
@@ -45,16 +45,6 @@ const CJOB=(()=>{
    if(a=='talk:jobok'&&n){n.jc=0;become(n.cls);renderDlg();return}
    if(a=='talk:jobno'&&n){n.jc=0;renderDlg();return}
    if(a=='close'&&n)n.jc=0;return _da.apply(this,arguments)}}
- // ---- Hub > Classes: your class, learned classes (switch here), how to learn more
- try{const _c=UI6.ext.classes;UI6.ext.classes=function(){_c.apply(this,arguments);try{const body=UI6.body,p=body.querySelector('p.dim');
-   if(p)p.textContent='Talk to a class master in the Plaza to choose your class. While you have a class, only that class\'s weapons work (the fist and tools always do). Reach level '+NEED+' in the class you use to learn another one from any other master; learned classes keep their levels and you can switch between them here. Every class grows by the same amount: about +41% at level 25, +63% at 50.';
-   const d=document.createElement('div');d.className='rw';d.id='cjob';
-   if(free())d.innerHTML='<small>Creative mode: every weapon works.</small>';
-   else if(!S.cur)d.innerHTML='<small><b>No class yet.</b> Visit a class master in the Plaza to choose one. Until then every weapon works.</small>';
-   else d.innerHTML='<div style="flex:1"><small><b style="color:'+C[S.cur].c+'">'+C[S.cur].ic+' You are a '+esc(C[S.cur].n)+'</b> (level '+CLASS7.lv(S.cur)+')'+(canLearn()?' · you can learn another class':' · level '+NEED+' to learn another class')+'</small></div>'+S.learned.filter(k=>k!==S.cur).map(k=>'<button data-cj="'+k+'">Switch to '+esc(C[k].n)+'</button>').join('');
-   d.onclick=e=>{const t=e.target.closest('[data-cj]');if(t&&become(t.dataset.cj))UI6.ext.classes()};
-   const h=body.querySelector('h3');h&&h.nextSibling?body.insertBefore(d,h.nextSibling):body.prepend(d);
-   for(const card of body.querySelectorAll('.hcard'))if(S.cur&&!free()){const nm=card.querySelector('b');const k=Object.keys(C).find(k=>nm&&nm.textContent.includes(C[k].n));if(k&&k!==S.cur&&!S.learned.includes(k))card.style.opacity='.6'}}catch(e){console.error('CJOB tab',e)}}}catch(_){}
  // ---- one quiet hint (a toast, not a banner), the first time you are in the Plaza without a class and nothing is open
  setInterval(()=>{try{if(S.hint||S.cur||free()||!entered||cur!='plaza'||dlgOpen||(typeof showInv!='undefined'&&showInv)||(typeof INV7!='undefined'&&INV7.isOpen))return;S.hint=1;save();say('Choose your class: talk to a class master in the Plaza (each house teaches its class)')}catch(_){}},4000);
  return{S,NEED,blocks,why,become,canLearn,row,weaponFor,get cur(){return S.cur},get learned(){return S.learned.slice()}}})();

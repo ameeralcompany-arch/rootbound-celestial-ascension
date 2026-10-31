@@ -81,18 +81,5 @@ const CLASS7=(()=>{
  {const _b=bonus;bonus=function(){const r=_b.apply(this,arguments);try{const k=cur();if(k=='knight')r.arm=Math.min(.75,(r.arm||0)+bonC(k,lv(k)).arm);else if(k=='mage')r.cdr=Math.min(.5,(r.cdr||0)+bonC(k,lv(k)).cdr)}catch(_){}return r}}
  // druid regen
  setInterval(()=>{try{if(entered&&cur()=='druid'&&P.hp>0&&P.hp<maxHP())P.hp=Math.min(maxHP(),P.hp+bonC('druid',lv('druid')).regen)}catch(_){}},2000);
- // ---- HUD badge
- let badge=null,lastTxt='';
- function hud(){try{if(!badge){const host=document.getElementById('hudL');if(!host)return;badge=document.createElement('div');badge.id='clsBadge';badge.title='Your class (open the hub with C > Classes)';
-    if(getComputedStyle(host).position=='static')host.style.position='relative';
-    badge.style.cssText='position:absolute;right:12px;bottom:-12px;padding:2px 9px;border-radius:999px;font:600 11px/18px system-ui,sans-serif;color:#fff;background:rgba(20,18,30,.72);display:inline-block;cursor:pointer;pointer-events:auto;white-space:nowrap;z-index:2';badge.onclick=()=>{try{UI6.open('classes')}catch(_){}};host.appendChild(badge)}
-   const k=cur();const t=k?C[k].ic+' '+C[k].n+' Lv '+lv(k)+' · '+Math.floor(100*S.xp[k]/need(lv(k)))+'%':'';if(t!==lastTxt){lastTxt=t;badge.textContent=t;badge.style.display=t?'inline-block':'none';if(k)badge.style.boxShadow='inset 0 0 0 1.5px '+C[k].c}}catch(_){}}
- setInterval(hud,500);
- // ---- hub tab
- try{UI6.TABS.splice(UI6.TABS.findIndex(t=>t[0]=='settings'),0,['classes','Classes']);
-  UI6.ext.classes=function(){const esc=UI6.esc,k0=cur();let h='<h3>Classes</h3><p class="dim">Your class is the class of the weapon in your hand. Each class levels up on its own from the hits and kills you make with its weapons. Every class grows by the same amount: its levels add damage plus a perk of its own that gets stronger (about +41% total at level 25, +63% at 50).</p><div class="hgrid">';
-   for(const k in C){const c=C[k],L=lv(k),pc=L>=MAX?100:Math.floor(100*S.xp[k]/need(L)),ws=c.ids.filter(id=>WPN[id]);
-    h+='<div class="hcard'+(k==k0?' on':'')+'" style="border-color:'+c.c+'"><b style="color:'+c.c+'">'+c.ic+' '+esc(c.n)+(k==k0?' (active)':'')+'</b><small>Level '+L+(L>=MAX?' (max)':'')+'</small>'+
-     '<div class="stat"><div class="bar"><i style="width:'+pc+'%;background:'+c.c+'"></i></div></div><small>'+esc(perk(k,L))+'</small><small class="dim">'+ws.map(id=>esc(WPN[id].n)+(own[id]?' ✓':'')+(WPN[id].move?' - '+esc(WPN[id].move):'')).join('<br>')+'</small></div>'}
-   UI6.body.innerHTML=h+'</div>'}}catch(e){console.error('CLASS7 tab',e)}
+ // the class screen itself is CLS9 (98-z-classui.js): one CLASSES button in the top bar, or K
  return{C,S,of,lv,need,gainXp,cur,bon,perk,gOf}})();
