@@ -70,9 +70,10 @@ namespace Rootbound
             Hero = Png(Json.S(he, "file", "hero.png"));
             int hw = (int)Json.N(he, "fw", 480), hh = (int)Json.N(he, "fh", 510);
             float ox = (float)Json.N(he, "ox", 240), oy = (float)Json.N(he, "oy", 234), sc = (float)Json.N(he, "scale", 3);
-            int nf = Hero.width / hw;
+            int hcols = (int)Json.N(he, "cols", Hero.width / hw), nf = 0;
+            foreach (var kv in Json.O(he, "anim")) nf += ((List<object>)kv.Value).Count;
             HeroFrames = new Sprite[nf];
-            for (int i = 0; i < nf; i++) HeroFrames[i] = Sprite.Create(Hero, new Rect(i * hw, 0, hw, hh), new Vector2(ox / hw, 1f - oy / hh), 48f * sc, 0, SpriteMeshType.FullRect);
+            for (int i = 0; i < nf; i++) HeroFrames[i] = Sprite.Create(Hero, new Rect((i % hcols) * hw, Hero.height - (i / hcols + 1) * hh, hw, hh), new Vector2(ox / hw, 1f - oy / hh), 48f * sc, 0, SpriteMeshType.FullRect);
             foreach (var kv in Json.O(he, "anim"))
             {
                 var l = kv.Value as List<object>;

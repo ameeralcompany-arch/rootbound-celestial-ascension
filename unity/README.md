@@ -42,9 +42,7 @@ node tools/unity-export.js
 ## Opening it in Unity
 
 1. Install **Unity Hub** from unity.com/download and sign in (a free Personal licence is fine).
-2. In Unity Hub, go to **Installs → Install Editor** and install **Unity 6 LTS** with **Windows Build Support**.
-   - Once the editor is installed, Claude finishes the project files off-screen: the Universal 2D template's settings and
-     packages, compiling and a test run. `unity/Rootbound` only holds the game's own code and art until then.
+2. In Unity Hub, go to **Installs → Install Editor** and install **Unity 6** (this project uses 6000.6.7f1).
 3. Unity Hub → **Projects → Add → Add project from disk** → choose the folder `unity/Rootbound` in this repo.
 4. Open it. The first time takes a few minutes. The **Rootbound** scene opens by itself.
 5. Press **Play** ▶. Type a world name and press Play in the game.

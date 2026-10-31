@@ -52,7 +52,7 @@ namespace Rootbound
         public void Init()
         {
             // reuse a global light the scene already has (the Universal 2D template ships one)
-            foreach (var l in FindObjectsByType<Light2D>(FindObjectsSortMode.None))
+            foreach (var l in FindObjectsByType<Light2D>())
                 if (l.lightType == Light2D.LightType.Global) { global = l; break; }
             if (global == null) global = Make(transform, "Global Light", Light2D.LightType.Global);
             AllLayers(global);

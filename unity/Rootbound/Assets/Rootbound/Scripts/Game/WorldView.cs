@@ -112,7 +112,7 @@ namespace Rootbound
         {
             var w = world;
             int W = w.W;
-            var wallTint = new Color32(92, 88, 100, 255);
+            var wallTint = new Color32(46, 44, 58, 255);
             for (int y = cy * C; y < Mathf.Min(w.H, cy * C + C); y++)
                 for (int x = cx * C; x < Mathf.Min(W, cx * C + C); x++)
                 {

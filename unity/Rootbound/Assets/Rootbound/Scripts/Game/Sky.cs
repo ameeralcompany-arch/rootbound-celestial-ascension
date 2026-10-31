@@ -11,6 +11,7 @@ namespace Rootbound
         SpriteRenderer grad, sun, moon, sunHalo, moonHalo;
         Texture2D gradTex;
         readonly List<SpriteRenderer> stars = new List<SpriteRenderer>();
+        readonly List<Vector2> starAt = new List<Vector2>();
         readonly List<Transform> clouds = new List<Transform>();
         readonly SpriteRenderer[] hills = new SpriteRenderer[6];
         Camera cam;
@@ -34,7 +35,7 @@ namespace Rootbound
             for (int i = 0; i < 90; i++)
             {
                 var s = Spr("Star", Art.SparkSprite, -395);
-                s.transform.localPosition = new Vector3((float)rnd.NextDouble() * 2 - 1, (float)rnd.NextDouble() * .9f + .1f, 0);
+                starAt.Add(new Vector2((float)rnd.NextDouble() * 2 - 1, (float)rnd.NextDouble() * .9f + .1f));
                 s.transform.localScale = Vector3.one * (float)(.08 + rnd.NextDouble() * .16);
                 stars.Add(s);
             }
@@ -124,7 +125,7 @@ namespace Rootbound
             gradTex.SetPixels(px);
             gradTex.Apply(false);
             grad.transform.position = new Vector3(cp.x, cp.y, 0);
-            grad.transform.localScale = new Vector3(ww * 2.2f, hh * 2.2f / 64f, 1);
+            grad.transform.localScale = new Vector3(ww * 4f, hh * 2.4f / 64f, 1);
 
             // sun and moon travel an arc across the view
             float a = (phase - .25f) * Mathf.PI * 2f;
@@ -146,7 +147,7 @@ namespace Rootbound
             for (int i = 0; i < stars.Count; i++)
             {
                 var s = stars[i];
-                var lp = s.transform.localPosition;
+                var lp = starAt[i];
                 s.transform.position = new Vector3(cp.x + lp.x * ww, cp.y + lp.y * hh, 0);
                 s.color = new Color(1, 1, 1, Mathf.Clamp01(night * 1.3f - .3f) * (.55f + .45f * Mathf.Sin(t * (1.3f + i % 5 * .4f) + i)));
             }

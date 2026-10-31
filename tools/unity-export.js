@@ -49,9 +49,9 @@ const png=(f,d)=>fs.writeFileSync(path.join(OUT,f),Buffer.from(d.split(',')[1],'
  // ---- the hero: idle, run and jump frames drawn by the game's own character renderer into a sprite sheet
  const hero=await p.evaluate(()=>{const Z=3,FW=160*Z,FH=170*Z,ox=80,oy=78,fr=[];for(let i=0;i<8;i++)fr.push({k:'idle',t:i*.18,vx:0,air:false});for(let i=0;i<8;i++)fr.push({k:'run',t:i*.07,vx:260,air:false});
   for(let i=0;i<4;i++)fr.push({k:'jump',t:i*.1,vx:120,air:true});
-  const c=document.createElement('canvas');c.width=FW*fr.length;c.height=FH;const x=c.getContext('2d'),g0=g;
-  fr.forEach((f,i)=>{const s=document.createElement('canvas');s.width=FW;s.height=FH;const sx=s.getContext('2d');g=sx;sx.setTransform(Z,0,0,Z,0,0);try{drawChar(ox,oy,1,myHue,'',f.t,f.vx,f.air,'','fist',0,0,wear,false,look,'')}catch(e){console.error('hero',e)}g=g0;sx.setTransform(1,0,0,1,0,0);sx.clearRect(0,0,FW,46*Z);x.drawImage(s,i*FW,0)});
-  const anim={};fr.forEach((f,i)=>{(anim[f.k]=anim[f.k]||[]).push(i)});return{url:c.toDataURL('image/png'),fw:FW,fh:FH,ox:ox*Z,oy:oy*Z,scale:Z,anim}});
+  const COLS=5,c=document.createElement('canvas');c.width=FW*COLS;c.height=FH*Math.ceil(fr.length/COLS);const x=c.getContext('2d'),g0=g;
+  fr.forEach((f,i)=>{const s=document.createElement('canvas');s.width=FW;s.height=FH;const sx=s.getContext('2d');g=sx;sx.setTransform(Z,0,0,Z,0,0);try{drawChar(ox,oy,1,myHue,'',f.t,f.vx,f.air,'','fist',0,0,wear,false,look,'')}catch(e){console.error('hero',e)}g=g0;sx.setTransform(1,0,0,1,0,0);sx.clearRect(0,0,FW,46*Z);x.drawImage(s,(i%COLS)*FW,Math.floor(i/COLS)*FH)});
+  const anim={};fr.forEach((f,i)=>{(anim[f.k]=anim[f.k]||[]).push(i)});return{url:c.toDataURL('image/png'),cols:COLS,fw:FW,fh:FH,ox:ox*Z,oy:oy*Z,scale:Z,anim}});
  png('hero.png',hero.url);delete hero.url;R.data.hero=Object.assign({file:'hero.png'},hero);
  fs.writeFileSync(path.join(OUT,'data.json'),JSON.stringify(R.data));
  const files=fs.readdirSync(OUT).map(f=>f+' '+(fs.statSync(path.join(OUT,f)).size/1024|0)+'KB');

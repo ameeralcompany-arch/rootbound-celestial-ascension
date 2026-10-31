@@ -20,7 +20,12 @@ namespace Rootbound
     {
         public static string Root
         {
-            get { return Path.Combine(Application.persistentDataPath, "RootboundSaves"); }
+            get
+            {
+                // tests point this elsewhere so they never touch real saves
+                var o = Environment.GetEnvironmentVariable("RB_SAVE_DIR");
+                return !string.IsNullOrEmpty(o) ? o : Path.Combine(Application.persistentDataPath, "RootboundSaves");
+            }
         }
 
         static string WorldFile(string n)
