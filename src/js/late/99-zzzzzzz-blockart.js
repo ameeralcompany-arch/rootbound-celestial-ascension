@@ -234,5 +234,5 @@ const BART9=(()=>{
  // type never pays for it inside a frame. spr() would paint any missing one on demand anyway.
  {const first=[2,1,3,77,8,11,5,42,15,10,9,71,72,60,61,62,65,73,74,75,76,94,4],q=[...first.filter(b=>D[b]),...IDS.filter(b=>!first.includes(b))].flatMap(b=>[0,1,2].map(v=>b*4+v));
   const later=f=>typeof requestIdleCallback=='function'?requestIdleCallback(f,{timeout:3000}):setTimeout(f,60);
-  const step=dl=>{try{do{const k=q.shift();if(k!=null&&!SPR[k])SPR[k]=blockSprite(k>>2,k&3)}while(q.length&&dl&&dl.timeRemaining&&dl.timeRemaining()>4)}catch(_){}if(q.length)later(step)};later(step)}
+  const step=dl=>{/* never during a cinematic (a sprite can take several ms; the story intro would stutter) */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>later(step),1500);return}try{do{const k=q.shift();if(k!=null&&!SPR[k])SPR[k]=blockSprite(k>>2,k&3)}while(q.length&&dl&&dl.timeRemaining&&dl.timeRemaining()>4)}catch(_){}if(q.length)later(step)};later(step)}
  return{IDS,has:b=>!!D[b],render,errs}})();

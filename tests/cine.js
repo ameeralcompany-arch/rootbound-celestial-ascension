@@ -12,7 +12,8 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
   ok('intro plays at launch over everything, game paused',s.cover===true&&s.z>2147483000&&!s.home&&s.st.total>=118&&s.st.total<=126,JSON.stringify(s));
   const keyed=await p.evaluate(()=>{let got=0;const h=()=>got++;addEventListener('keydown',h);dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));dispatchEvent(new KeyboardEvent('keyup',{key:'Escape'}));dispatchEvent(new KeyboardEvent('keydown',{key:'e'}));removeEventListener('keydown',h);return got});
   ok('a tap does not skip the intro (game handlers do not see keys)',keyed==0&&await p.evaluate(()=>CINE7.playing));
-  await p.waitForTimeout(1200);const sc=[];for(const u of await p.evaluate(()=>CINE7.STORY.map(s=>s[3]+s[1]*.5))){await p.evaluate(u=>CINE7.seek(u),u);await p.waitForTimeout(60);sc.push(await p.evaluate(()=>CINE7.state.scene))}
+  await p.waitForFunction(()=>!CINE7.state.prep,null,{timeout:15000});   // the unseen warm-up (art + rehearsal) is over: the story clock runs
+  const sc=[];for(const u of await p.evaluate(()=>CINE7.STORY.map(s=>s[3]+s[1]*.5))){await p.evaluate(u=>CINE7.seek(u),u);await p.waitForTimeout(60);sc.push(await p.evaluate(()=>CINE7.state.scene))}
   ok('all twenty-two scenes render (classes, depths, biome word, warden, levels, the guardians fall, restoration)',new Set(sc).size==22,sc.join(','));
   const px=await p.evaluate(()=>{const c=document.getElementById('cine7'),x=document.createElement('canvas');x.width=64;x.height=36;const g=x.getContext('2d');g.drawImage(c,0,0,64,36);const d=g.getImageData(0,0,64,36).data;let n=0;for(let i=0;i<d.length;i+=4)if(d[i]+d[i+1]+d[i+2]>60)n++;return n});ok('intro canvas has artwork',px>200,px);
   await p.evaluate(()=>CINE7.seek(CINE7.state.total-.8));await p.waitForTimeout(2200);
@@ -22,7 +23,7 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
   ok('the intro is silent (no narrator); the story lines still show as captions and every scene keeps its designed length',vo.log==0&&vo.spoke==0&&vo.caps>=15&&vo.lens,JSON.stringify(vo));
   ok('intro: no page errors',p.errs.length==0,p.errs.join('|'));await p.ctx.close()}
  // 2b. holding Space (1.2 s) skips straight to the hand-over into the home screen
- {const p=await page({force:true});await p.waitForFunction(()=>CINE7.playing,null,{timeout:15000});await p.waitForTimeout(800);
+ {const p=await page({force:true});await p.waitForFunction(()=>CINE7.playing&&!CINE7.state.prep,null,{timeout:15000});await p.waitForTimeout(300);
   await p.keyboard.down(' ');await p.waitForTimeout(600);const mid=await p.evaluate(()=>CINE7.hold);await p.waitForTimeout(900);await p.keyboard.up(' ');await p.waitForTimeout(2600);
   const h=await p.evaluate(()=>({playing:CINE7.playing,home:SHOW7.isOpen,gone:!document.getElementById('cine7')}));
   ok('holding Space fills the skip ring, then skips into the home screen',mid&&mid.held>.3&&mid.on&&!h.playing&&h.home&&h.gone,JSON.stringify({mid,h}));await p.ctx.close()}

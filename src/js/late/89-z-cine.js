@@ -446,13 +446,8 @@ const CINE7=(()=>{
  AB.bustD=()=>bustTint('rgba(2,16,24,.66)','#7ff0ff',.55);AB.bustL=()=>bustTint('rgba(30,20,60,.18)','#fff4d0',.5);
  AB.wing=()=>art(1300,860,1,x=>{try{x.translate(650,560);const sc=7.6;x.scale(sc,sc);WingArt.draw(x,0,0,0,1,1.3,0,0,0,1,null,0,{ds:Math.min(12,sc*I.q)})}catch(e){}});
  AB.flyer=()=>art(300,260,1,x=>{try{x.save();x.translate(150,128);x.scale(2.6,2.6);WingArt.draw(x,0,0,0,1,1,0,0,0,1,null,0,{ds:Math.min(8,2.6*I.q)});x.restore()}catch(e){}
-  // a slim anime silhouette rising with one arm reaching up and a scarf streaming below
-  const body=()=>{x.beginPath();x.ellipse(150,86,15,17,0,0,TAU);poly(x,135,84,128,62,142,72,146,56,154,70,166,58,164,76,172,70,166,90);
-   x.moveTo(139,101);x.quadraticCurveTo(150,97,161,101);x.quadraticCurveTo(166,124,158,146);x.lineTo(142,146);x.quadraticCurveTo(134,124,139,101);
-   x.moveTo(143,144);x.quadraticCurveTo(138,170,141,204);x.lineTo(148,204);x.quadraticCurveTo(149,172,151,146);x.closePath();x.moveTo(150,146);x.quadraticCurveTo(158,170,164,198);x.lineTo(170,195);x.quadraticCurveTo(164,168,158,144);x.closePath();
-   x.moveTo(158,104);x.quadraticCurveTo(170,80,176,40);x.lineTo(183,42);x.quadraticCurveTo(178,84,163,110);x.closePath();x.moveTo(141,104);x.quadraticCurveTo(126,118,124,140);x.lineTo(130,141);x.quadraticCurveTo(134,122,146,110);x.closePath();
-   x.moveTo(140,100);x.bezierCurveTo(120,130,128,170,96,214);x.bezierCurveTo(120,186,126,150,152,104);x.closePath()};
-  x.fillStyle='#d6fbff';x.save();x.translate(-2,-2);body();x.fill();x.restore();x.fillStyle='#0a0718';body();x.fill()});
+  // the player's own character between the wings
+  avatar(x,150,212,2.25,{air:true})});
  AB.rays=()=>art(1000,1000,.5,x=>{x.translate(500,500);for(let i=0;i<40;i++){const a=i/40*TAU,w=i%2?.035:.06;x.fillStyle=i%2?'rgba(255,240,200,.5)':'rgba(255,255,255,.85)';x.beginPath();x.moveTo(0,0);x.lineTo(Math.cos(a-w)*500,Math.sin(a-w)*500);x.lineTo(Math.cos(a+w)*500,Math.sin(a+w)*500);x.closePath();x.fill()}
   x.globalCompositeOperation='destination-in';const m=x.createRadialGradient(0,0,0,0,0,500);m.addColorStop(0,'rgba(0,0,0,1)');m.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=m;x.fillRect(-500,-500,1000,1000)});
  AB.speed=()=>art(1600,900,.5,x=>{const r=srnd(19);x.fillStyle='#fff';for(let i=0;i<170;i++){const a=r()*TAU,r0=300+r()*260,w=.003+r()*.007;x.globalAlpha=.35+r()*.6;x.beginPath();x.moveTo(800+Math.cos(a)*r0,450+Math.sin(a)*r0*.7);x.lineTo(800+Math.cos(a-w)*1200,450+Math.sin(a-w)*1200);x.lineTo(800+Math.cos(a+w)*1200,450+Math.sin(a+w)*1200);x.closePath();x.fill()}});
@@ -517,7 +512,7 @@ const CINE7=(()=>{
   x.fillStyle='rgba(160,120,230,.13)';for(let i=0;i<10;i++){x.beginPath();x.ellipse(r()*1600,795+r()*90,60+r()*150,5+r()*8,0,0,TAU);x.fill()}});
  AB.grain=()=>{const c=mk(256,256),x=c.getContext('2d'),d=x.createImageData(256,256);for(let i=0;i<d.data.length;i+=4){const v=R()*255|0;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);return{c,w:256,h:256}};
  // which assets each scene needs (pre-built one per frame, a scene ahead of time)
- const NEED=[['sky1','spark','aurora','clouds','tree','treeG','isl2','isl3','isl4','isl0','isl1','fg','grain'],[],['sun','corona','crk'],['sky3'],['sil_warden','pbg_warden','pnl_warden','sil_sovereign','pbg_sovereign','pnl_sovereign','sil_eclipse','pbg_eclipse','pnl_eclipse','sil_magma','pbg_magma','pnl_magma','sil_tide','pbg_tide','pnl_tide','sil_storm','pbg_storm','pnl_storm'],[],['cave','face','bust','bustD'],['m1','blk','bustL'],['wing','rays','speed','vlines','flyer'],['sky7'],['m3','m3r','caus','bootW'],[],['storm'],[],['m2','koi','treeY'],[],['title','band'],['embs','clsbg','dpth','bio0','bio1','bio2','wardn','gem']];
+ const NEED=[['sky1','spark','aurora','clouds','tree','treeG','isl2','isl3','isl4','isl0','isl1','fg','grain'],[],['sun','corona','crk'],['sky3'],['sil_warden','pbg_warden','pnl_warden','sil_sovereign','pbg_sovereign','pnl_sovereign','sil_eclipse','pbg_eclipse','pnl_eclipse','sil_magma','pbg_magma','pnl_magma','sil_tide','pbg_tide','pnl_tide','sil_storm','pbg_storm','pnl_storm'],[],['cave','face','bust','bustD'],['m1','blk','bustL'],['wing','rays','speed','vlines','flyer'],['sky7'],['m3','m3r','caus','bootW'],[],['storm'],[],['m2','koi','treeY'],[],['title','band'],['embs','clsbg','dpth','bio0','bio1','bio2','bpn0','bpn1','bpn2','wardn','gem','bigS','bigK','bigY']];
  // ---- camera: (cx,cy) of the 1600x900 stage at zoom z, with parallax depth p
  function cam(g,cx,cy,z,p){p=p==null?1:p;const Z=1+(z-1)*p,X=800+(cx-800)*p,Y=450+(cy-450)*p,s=I.s*Z;g.setTransform(s,0,0,s,I.cw/2-X*s+I.shx,I.ch/2-Y*s+I.shy)}
  const stage=g=>cam(g,800,450,1,1);
@@ -763,18 +758,10 @@ const CINE7=(()=>{
    g.font='italic 900 46px '+SANS;g.lineWidth=9;g.strokeText('...ow.',26,ph-30);g.fillStyle='#fff';g.fillText('...ow.',26,ph-30);g.restore();g.lineWidth=6;g.strokeStyle='#120a1e';g.strokeRect(0,0,pw,ph);g.restore()}
   if(t<.15)I.fl=Math.max(I.fl,.45*(1-t/.15));if(ht>0&&ht<.22)I.fl=Math.max(I.fl,.7*(1-ht/.22))}
  // ---- the fight: the wanderer charges the Eclipse Lord in a storm and is struck down. They kneel in the rain... and stand back up.
- // k: 0 kneeling -> 1 standing; k<0 sits on the ground (knees up, arms resting on them)
- function hero(g,x,y,k,s,t,rim,wk){const L=(a,b)=>[lerp(a[0],b[0],k),lerp(a[1],b[1],k)];
-  const J=k<0?{hd:[6,-130],nk:[2,-106],hp:[-8,-34],kf:[34,-56],ff:[48,0],kb:[24,-46],fb:[30,0],el:[16,-72],ha:[38,-58],eb:[-6,-72],hb:[22,-50]}:{hd:L([28,-112],[2,-186]),nk:L([14,-96],[0,-160]),hp:L([-6,-50],[0,-96]),kf:L([36,-44],[14,-50]),ff:L([46,0],[22,0]),kb:L([-30,-4],[-12,-50]),fb:L([-72,-2],[-20,0]),el:L([34,-50],[24,-126]),ha:L([44,-2],[36,-96]),eb:L([-12,-66],[-22,-126]),hb:L([-8,-38],[-32,-96])};
-  // wk: walk cycle phase (standing pose only): legs scissor, arms swing, a little bob
-  if(wk!=null){const sw=Math.sin(wk),bob=Math.abs(Math.cos(wk))*4;J.ff=[sw*26,-Math.max(0,-Math.cos(wk))*8];J.kf=[sw*14+6,-50];J.fb=[-sw*26,-Math.max(0,Math.cos(wk))*8];J.kb=[-sw*14+6,-50];J.ha=[30-sw*16,-96];J.hb=[-28+sw*16,-96];for(const n of['hd','nk','hp','el','eb','ha','hb'])J[n]=[J[n][0],J[n][1]-bob]}
-  const limb=(p,w)=>{g.lineWidth=w;g.beginPath();g.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)g.lineTo(p[i][0],p[i][1]);g.stroke()};
-  const body=()=>{limb([J.hp,J.kb,J.fb],15);limb([J.nk,J.eb,J.hb],11);limb([J.nk,J.hp],26);limb([J.hp,J.kf,J.ff],15);limb([J.nk,J.el,J.ha],11);const hx=J.hd[0],hy=J.hd[1];g.beginPath();g.arc(hx,hy,19,0,TAU);g.fill();
-   g.beginPath();poly(g,hx-20,hy-2,hx-32,hy-24,hx-12,hy-16,hx-8,hy-36,hx+6,hy-19,hx+24,hy-30,hx+19,hy-6,hx+32,hy+5,hx+14,hy+3);g.fill()};
-  g.save();g.translate(x,y);g.scale(s,s);g.lineCap='round';g.lineJoin='round';
-  // the scarf streams in the storm wind (red stays bright even when the world loses its colour)
-  const n=J.nk;g.strokeStyle='#d8304a';for(const w of[[9,0],[5,1.3]]){g.lineWidth=w[0];g.beginPath();g.moveTo(n[0],n[1]+4);for(let i=1;i<=8;i++){const u=i/8;g.lineTo(n[0]-u*130,n[1]+4+u*lerp(26,-6,Math.max(0,k))+Math.sin(t*9-u*5+w[1])*10*u)}g.stroke()}
-  g.save();g.translate(3,-3);g.strokeStyle=rim;g.fillStyle=rim;body();g.restore();g.strokeStyle='#07050d';g.fillStyle='#07050d';body();g.restore()}
+ // k: 1 standing, 0 kneeling, <0 sitting; wk: walking. Drawn as the player's own character (or o.ap: a friend), tinted toward the
+ // scene's light (o.dark, o.tint) with the old rim colour as a soft glow behind
+ function hero(g,x,y,k,s,t,rim,wk,o){o=o||{};const crouch=k<0?.5:cl(1-k,0,1)*.5,sc=s*3.3;A(g,.45,'lighter');putc(g,glow(rim),x,y-80*s,1.5*s);A(g,1);
+  avatarT(g,x,y,sc,{t,vx:wk!=null?220:0,crouch,dark:o.dark!=null?o.dark:.12,tint:o.tint,f:o.f||1,ap:o.ap})}
  function sClash(g,t,d){const SK=.9,KN=1.25,UP=2.9,IG=3.6,low=ez((t-KN)/.3)*(1-ez((t-UP)/.5));
   let C;if(t<SK)C=[lerp(560,760,ez(t/SK)),450,1];else if(t<KN)C=[lerp(760,600,ez((t-SK)/.35)),lerp(450,470,ez((t-SK)/.35)),1];else if(t<UP){const u=(t-KN)/(UP-KN);C=[lerp(600,430,ez(u)),lerp(470,610,ez(u)),lerp(1,1.45,ez(u))]}
   else{const u=eo((t-UP)/.7);C=[lerp(430,700,u),lerp(610,470,u),lerp(1.45,1.05,u)+(t>IG?.04*ez((t-IG)/1):0)]}I.C=C;
@@ -801,7 +788,7 @@ const CINE7=(()=>{
    const chest=[330+lerp(14,0,k)*1.2,780-lerp(80,130,k)*1.2];
    if(t>IG-.05){const w=t-IG,wa=as('wing'),s=.34,bx=bo(w/.45),by=lerp(.6,1,eo(w/.45));A(g,(1-ez(w/1))*.8+.2,'lighter');g.save();g.translate(chest[0],chest[1]);g.rotate(w*.4);putc(g,as('rays'),0,0,.8+w*.2);g.restore();A(g,1);
     put(g,wa,chest[0]-650*s*bx,chest[1]-560*s*by+20,1300*s*bx,860*s*by);A(g,.6,'lighter');putc(g,glow('#ffd77a'),chest[0],chest[1],3);A(g,1)}
-   hero(g,330+shiv,780,k,1.2,t,mix('#9a8ad8','#ffd77a',gold));
+   hero(g,330+shiv,780,k,1.2,t,mix('#9a8ad8','#ffd77a',gold),null,{dark:lerp(.62,.08,gold),tint:'#120a24'});
    const sp=ez((t-(UP-.35))/.35);if(sp>0){A(g,1,'lighter');putc(g,glow(t>IG?'#ffd77a':'#bff6ff'),chest[0],chest[1],.6+sp*1.2+.15*Math.sin(t*14));putc(g,as('spark'),chest[0],chest[1],.5+sp*.8);A(g,1)}
    if(t>IG+.1&&t<IG+.6){const u=(t-IG-.1)/.5;const hd=[330+2*1.2,780-186*1.2];A(g,1,'lighter');drawStreak(g,'#bff6ff',hd[0]+60,hd[1]+2,0,120,Math.sin(u*PI),5);A(g,1)}}
   if(t>IG&&t<IG+1){stage(g);A(g,(1-ez((t-IG)/.9))*.6,'lighter');put(g,as('speed'),0,0,1600,900);A(g,1)}
@@ -817,7 +804,7 @@ const CINE7=(()=>{
  function sVillage(g,t,d){const k=t/d,C=[lerp(520,660,ez(k)),lerp(500,450,ez(k)),lerp(1.22,1.12,ez(k))];I.C=C;
   world(g,t+3,C,{veins:.9+.1*Math.sin(t*2.5),nofg:true,mid:g2=>{cam(g2,C[0],C[1],C[2],.9);for(const l of I.lan){const u=t-l.dl;if(u<0)continue;const y=l.y-u*l.v;if(y<-420)continue;lantern(g2,l.x+Math.sin(u*.9+l.ph)*16,y,l.s,Math.min(1,u/.6),Math.sin(t*9+l.ph))}}});
   cam(g,C[0],C[1],C[2],1.3);g.fillStyle='#05040b';g.beginPath();g.moveTo(-400,1100);g.lineTo(-400,800);g.quadraticCurveTo(200,768,560,792);g.quadraticCurveTo(760,806,960,860);g.lineTo(960,1100);g.closePath();g.fill();
-  hero(g,300,788,1,.5,t,'#ffcf9a');
+  hero(g,300,788,1,.5,t,'#ffcf9a',null,{dark:.35,tint:'#140a2a'});
   const cu=(t-3)/.6;if(cu<0)cat(g,470,792,.9,0);else if(cu<1)cat(g,lerp(470,560,cu),792-Math.sin(cu*PI)*150,.9,1);else cat(g,560,794,.9,0,cu<1.35?.6+.4*ez((cu-1)/.35):1);
   if(t>3&&t<4)bubble(g,640,650,'mrrp!',26,-1,cl((t-3)/.08,0,1)*cl((4-t)/.1,0,1));
   const lu=t-1.3;lantern(g,322+(lu>0?Math.sin(lu*1.2)*20:0),720-(lu>0?lu*85:0),1.3,1,Math.sin(t*9))}
@@ -891,9 +878,9 @@ const CINE7=(()=>{
   cam(g,C[0],C[1],C[2],.25);put(g,as('sky1'),-100,-300);stars(g,t,1);cam(g,C[0],C[1],C[2],.3);A(g,.45+.1*Math.sin(t),'lighter');put(g,as('aurora'),-100,-250);A(g,1);islands(g,I.islF,C,t);
   cam(g,C[0],C[1],C[2],1);g.fillStyle='#08061a';g.fillRect(-300,FY+6,2200,600);g.fillStyle='#1b2f3a';g.fillRect(-300,FY+2,2200,8);
   const fl=.85+.15*Math.sin(t*17)*Math.sin(t*7.3);A(g,.55*fl,'lighter');putc(g,glow('#ff9a3a'),FX,FY-40,7*fl);A(g,1);
-  hero(g,620,FY,-1,.9,t,'#ffb070');
-  g.save();g.translate(2000,0);g.scale(-1,1);hero(g,1000,FY,-1,.95,t,'#ffb070');g.restore();
-  g.save();g.translate(2280,0);g.scale(-1,1);hero(g,1140,FY,-1,1.05,t,'#ffb070');const hx=1140+6*1.05,hy=FY-130*1.05-14;g.fillStyle='#07050d';g.beginPath();g.ellipse(hx,hy,40,9,0,0,TAU);g.fill();g.beginPath();poly(g,hx-20,hy,hx-12,hy-34,hx+14,hy-30,hx+20,hy);g.fill();g.restore();
+  hero(g,620,FY,-1,.9,t,'#ffb070',null,{dark:.22,tint:'#2a1206'});
+  g.save();g.translate(2000,0);g.scale(-1,1);hero(g,1000,FY,-1,.95,t,'#ffb070',null,{dark:.22,tint:'#2a1206',f:-1,ap:friend(0)});g.restore();
+  g.save();g.translate(2280,0);g.scale(-1,1);hero(g,1140,FY,-1,1.05,t,'#ffb070',null,{dark:.22,tint:'#2a1206',f:-1,ap:friend(1)});const hx=1140+6*1.05,hy=FY-130*1.05-14;g.fillStyle='#07050d';g.beginPath();g.ellipse(hx,hy,40,9,0,0,TAU);g.fill();g.beginPath();poly(g,hx-20,hy,hx-12,hy-34,hx+14,hy-30,hx+20,hy);g.fill();g.restore();
   g.save();g.translate(FX,FY);g.fillStyle='#2a1a12';for(const r of[-.35,.35]){g.save();g.rotate(r);g.fillRect(-46,-6,92,12);g.restore()}g.restore();
   A(g,1,'lighter');for(const fz of[[1,'#ff6a2a',60],[.72,'#ffb04a',44],[.45,'#fff0b0',28]]){const hgt=fz[2]*2.2*(1+.12*Math.sin(t*13+fz[0]*5));g.fillStyle=fz[1];g.beginPath();g.moveTo(FX-fz[2]*.8,FY);g.quadraticCurveTo(FX-fz[2],FY-hgt*.5,FX+Math.sin(t*9)*8,FY-hgt);g.quadraticCurveTo(FX+fz[2],FY-hgt*.5,FX+fz[2]*.8,FY);g.closePath();g.fill()}
   for(let i=0;i<20;i++){const u=((t*.9+i*.137)%1);putc(g,glow('#ffb04a'),FX+Math.sin(t*3+i)*24*u+(i%5-2)*6,FY-30-u*260,.22*(1-u))}A(g,1);
@@ -917,15 +904,26 @@ const CINE7=(()=>{
   if(t>=B&&t<B+.4)I.fl=Math.max(I.fl,(1-(t-B)/.4)*.9);if(t<.3)I.dk=Math.max(I.dk,1-t/.3)}
  // ================= the ascension cut: scenes built on the game's own content =================
  // the player's own anime character (the game's renderer, with their look), feet at (x,y), s = scale (1 = in-game size)
+ // o: t time, f facing, vx run speed, air, sw swing, crouch 0..1 (kneel/sit), ap another appearance (friends, see FRIENDS)
  function avatar(x2,x,y,s,o){o=o||{};if(typeof drawChar!='function')return;const g0=g,pd=typeof Plate!='undefined'?Plate.draw:null;
-  try{g=x2;if(pd)Plate.draw=()=>{};x2.save();x2.translate(x,y);x2.scale(s,s);drawChar(0,-54,o.f||1,typeof myHue!='undefined'?myHue:200,'',o.t||0,o.vx||0,!!o.air,'',o.w||'fist',o.sw||0,o.sw?1:0,typeof wear!='undefined'?wear:{},false,typeof look!='undefined'?look:undefined,'')}
+  try{g=x2;if(pd)Plate.draw=()=>{};x2.save();x2.translate(x,y);x2.scale(s,s*(1-.32*(o.crouch||0)));drawChar(0,-54,o.f||1,typeof myHue!='undefined'?myHue:200,'',o.t||0,o.vx||0,!!o.air,'',o.w||'fist',o.sw||0,o.sw?1:0,o.ap?{}:typeof wear!='undefined'?wear:{},false,typeof look!='undefined'?look:undefined,o.ap?{cx:{ap:o.ap,w:-1,a:0,t:0},lv:1}:'')}
   catch(e){if(!avatar.e){avatar.e=1;console.error('CINE7 avatar',e)}}finally{x2.restore();g=g0;if(pd)Plate.draw=pd}}
+ // the character drawn into a scratch layer, tinted toward the scene's light (dark: 0..1), then placed: storm, night, firelight
+ function avatarT(g2,x,y,s,o){if(!(o&&o.dark>0))return avatar(g2,x,y,s,o);const m=g2.getTransform(),kf=Math.hypot(m.a,m.b)*s,k=Math.min(kf,7),up=kf/k,W=Math.ceil(130*k),H=Math.ceil(140*k);
+  let c=I.avc;if(!c||c.width<W||c.height<H){c=I.avc=mk(Math.max(W,c?c.width:0),Math.max(H,c?c.height:0))}const x2=c.getContext('2d');x2.setTransform(1,0,0,1,0,0);x2.globalCompositeOperation='source-over';x2.globalAlpha=1;x2.clearRect(0,0,c.width,c.height);
+  avatar(x2,W/2,H*.9,k,o);x2.globalCompositeOperation='source-atop';x2.globalAlpha=Math.min(1,o.dark);x2.fillStyle=o.tint||'#0a0718';x2.fillRect(0,0,W,H);x2.globalCompositeOperation='source-over';x2.globalAlpha=1;
+  const p=m.transformPoint({x,y});g2.save();g2.setTransform(1,0,0,1,0,0);g2.drawImage(c,0,0,W,H,p.x-W*up/2,p.y-H*.9*up,W*up,H*up);g2.restore()}
+ // two companions with their own looks (based on the player's, so they share the art style)
+ const FRIENDS=[{hair:2,eyes:1,cape:0,hairCol:'#e8c070',outCol:'#7a2a3a',trimCol:'#f0d090'},{hair:3,eyes:2,acc:1,hairCol:'#c84a6a',outCol:'#2a6a4a',trimCol:'#e8e8e8'}];
+ const friend=i=>{let ap={};try{ap=Object.assign({},cel.ap)}catch(_){}return Object.assign(ap,FRIENDS[i%FRIENDS.length])};
  const CLS=()=>{try{return MYART.KEYS}catch(_){return[]}},TH=k=>{try{return MYART.TH[k]}catch(_){return null}};
  const myCls=()=>{let k='';try{k=CJOB.cur}catch(_){}const ks=CLS();return ks.includes(k)?k:(ks.includes('reaper')?'reaper':ks[0])};
  // class emblems come from the game as image URLs (for <img>); cache them as loaded images for the canvas
  const EMBI={};const emb=(k,S)=>{const key=k+'|'+S;let im=EMBI[key];if(!im){try{const u=MYART.emblem(k,S);if(typeof u=='string'){im=new Image();im.src=u}else im=u}catch(_){im=null}EMBI[key]=im||1}return im&&im!==1&&(im.getContext||(im.complete&&im.naturalWidth))?im:null};
  AB.embs=()=>{for(const k of CLS()){emb(k,128);emb(k,192)}return art(1,1,1,()=>{})};
  function spaced(g2,txt,x,y,sp){try{g2.letterSpacing=sp+'px'}catch(_){}g2.fillText(txt,x+sp/2,y);try{g2.letterSpacing='0px'}catch(_){}}
+ const BL={};function bigLetter(ch,gold){const k=ch+(gold?'g':'w');if(BL[k])return BL[k];return BL[k]=art(300,300,1,x=>{x.font='800 230px '+SERIF;x.textAlign='center';x.textBaseline='middle';x.lineJoin='round';x.lineWidth=12;x.strokeStyle=gold?'rgba(30,14,4,.9)':'rgba(6,4,14,.9)';x.strokeText(ch,150,158);
+  if(gold){const fg=x.createLinearGradient(0,40,0,270);fg.addColorStop(0,'#fffbe8');fg.addColorStop(.6,'#ffd77a');fg.addColorStop(1,'#d18a2a');x.fillStyle=fg}else x.fillStyle='#fff';x.fillText(ch,150,158)})}
  function gemGlyph(g2,x,y,r,c){g2.fillStyle=c;g2.beginPath();poly(g2,x,y-r,x+r*.8,y-r*.2,x,y+r,x-r*.8,y-r*.2);g2.fill();g2.fillStyle='rgba(255,255,255,.7)';g2.beginPath();poly(g2,x,y-r,x+r*.8,y-r*.2,x,y-r*.1);g2.fill()}
  AB.gem=()=>art(64,64,1,x=>{x.shadowColor='#7ff6ff';x.shadowBlur=14;gemGlyph(x,32,32,20,'#7ff6ff');x.shadowBlur=0;x.strokeStyle='#0a2a3a';x.lineWidth=2;x.beginPath();poly(x,32,12,48,28,32,52,16,28);x.closePath();x.stroke()});
  AB.clsbg=()=>art(1600,900,.5,(x,w,h)=>{const gr=x.createRadialGradient(800,420,40,800,450,900);gr.addColorStop(0,'#3a2a6a');gr.addColorStop(.45,'#140c2c');gr.addColorStop(1,'#04020a');x.fillStyle=gr;x.fillRect(0,0,w,h);
@@ -955,6 +953,10 @@ const CINE7=(()=>{
    if(id=='ember'){x.shadowColor=c;x.shadowBlur=30;x.strokeStyle='#ffb04a';x.lineWidth=7;for(let k=0;k<5;k++){let px=r()*w,py=h;x.beginPath();x.moveTo(px,py);for(let j=0;j<6;j++){px+=(r()-.5)*90;py-=80;x.lineTo(px,py)}x.stroke()}x.shadowBlur=0;
     for(let k=0;k<6;k++){const px=r()*w,ph=120+r()*220;x.fillStyle='#1a0a0a';x.beginPath();poly(x,px-40,h,px-8,h-ph,px+30,h);x.fill()}}
    const vg=x.createRadialGradient(w/2,h/2,100,w/2,h/2,620);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.6)');x.fillStyle=vg;x.fillRect(0,0,w,h)})}
+ AB.bigS=()=>{bigLetter('S',false);bigLetter('S',true);bigLetter('K',true);return art(1,1,1,()=>{})};AB.bigK=()=>{bigLetter('K',false);return art(1,1,1,()=>{})};AB.bigY=()=>{bigLetter('Y',false);bigLetter('Y',true);return art(1,1,1,()=>{})};
+ // each biome panel pre-cut to its slanted shape once (clipping three full-height panels every frame was slow at 4K)
+ const BSK=70,BPW=533.33;function bpn(i){return art(BPW+BSK*2,920,.7,x=>{x.beginPath();x.moveTo(BSK*2,0);x.lineTo(BPW+BSK*2,0);x.lineTo(BPW,920);x.lineTo(0,920);x.closePath();x.clip();const a=as('bio'+i);x.drawImage(a.c,-40,10,620,900)})}
+ AB.bpn0=()=>bpn(0);AB.bpn1=()=>bpn(1);AB.bpn2=()=>bpn(2);
  AB.bio0=()=>bioArt(0);AB.bio1=()=>bioArt(1);AB.bio2=()=>bioArt(2);
  // a Letter Warden: an armoured giant of living stone with a letter burning on its chest
  AB.wardn=()=>art(760,820,1,x=>{x.translate(380,820);x.fillStyle='#07050d';x.strokeStyle='rgba(150,220,255,.5)';x.lineWidth=3;x.lineJoin='round';
@@ -989,14 +991,13 @@ const CINE7=(()=>{
  // ---- Biomes: three lands slide in, each with its letter; the letters join into the world's word and the Word Gate opens
  function sBiomes(g,t,d){const B=BIOS(),word='SKY',J=4.1,jt=t-J;stage(g);g.fillStyle='#05030c';g.fillRect(-100,-100,1800,1100);const sk=70;
   for(let i=0;i<3;i++){const tl=t-(.1+i*.4);if(tl<0)continue;const dir=i%2?1:-1,off=(1-eo(tl/.4))*dir*1000,x0=i*533.33,x1=x0+533.33,cx=(x0+x1)/2,dim=jt>0?1-ez(jt/.6)*.65:1;
-   g.save();g.beginPath();g.moveTo(x0+sk,off-10);g.lineTo(x1+sk,off-10);g.lineTo(x1-sk,910+off);g.lineTo(x0-sk,910+off);g.closePath();g.clip();A(g,dim);put(g,as('bio'+i),x0-sk-40,off,620,900);A(g,1);g.restore();
-   const c=B[i][2],la=ez((tl-.3)/.3)*(jt>0?1-ez(jt/.25):1);if(la>0){const ly=390+off+Math.sin(t*2+i)*8;A(g,la*.8,'lighter');putc(g,glow(c),cx,ly,4.5);A(g,la);g.font='800 230px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.lineWidth=12;g.strokeStyle='rgba(6,4,14,.9)';g.strokeText(word[i],cx,ly);g.fillStyle='#fff';g.fillText(word[i],cx,ly);
+   A(g,dim);put(g,as('bpn'+i),x0-sk,off-10);A(g,1);
+   const c=B[i][2],la=ez((tl-.3)/.3)*(jt>0?1-ez(jt/.25):1);if(la>0){const ly=390+off+Math.sin(t*2+i)*8;A(g,la*.8,'lighter');putc(g,glow(c),cx,ly,4.5);A(g,la);putc(g,bigLetter(word[i],false),cx,ly);
     g.font='700 22px '+SANS;g.fillStyle=c;spaced(g,String(B[i][1]).toUpperCase(),cx,ly+170,5);A(g,1)}
    g.lineWidth=10;g.strokeStyle='#fff';g.beginPath();g.moveTo(x0+sk,off);g.lineTo(x0-sk,900+off);g.moveTo(x1+sk,off);g.lineTo(x1-sk,900+off);g.stroke()}
   if(jt>0){const ga=ez((jt-.6)/.5);if(ga>0){g.save();g.translate(800,420);g.rotate(t*.6);A(g,ga*.85,'lighter');g.strokeStyle='#ffd77a';g.lineWidth=4;for(const r of[250,290]){g.beginPath();g.arc(0,0,r,0,TAU);g.stroke()}g.setLineDash([18,14]);g.beginPath();g.arc(0,0,270,0,TAU);g.stroke();g.setLineDash([]);
     for(let i=0;i<12;i++){g.save();g.rotate(i/12*TAU);putc(g,glow('#ffd77a'),270,0,.35);g.restore()}A(g,1);g.restore();A(g,ga*.6,'lighter');g.save();g.translate(800,420);g.rotate(-t*.3);putc(g,as('rays'),0,0,1.1);g.restore();A(g,1)}
-   for(let i=0;i<3;i++){const u=eo(cl((jt-i*.08)/.7,0,1)),x=lerp(i*533.33+266.67,800+(i-1)*170,u),y=lerp(390,420,u),sz=lerp(230,190,u);A(g,1,'lighter');putc(g,glow(u>=1?'#ffd77a':B[i][2]),x,y,2.6);A(g,1);g.font='800 '+sz+'px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.lineWidth=10;g.strokeStyle='rgba(30,14,4,.9)';g.strokeText(word[i],x,y);
-    const fg=g.createLinearGradient(0,y-sz/2,0,y+sz/2);fg.addColorStop(0,'#fffbe8');fg.addColorStop(.6,'#ffd77a');fg.addColorStop(1,'#d18a2a');g.fillStyle=u>=1?fg:'#fff';g.fillText(word[i],x,y)}
+   for(let i=0;i<3;i++){const u=eo(cl((jt-i*.08)/.7,0,1)),x=lerp(i*533.33+266.67,800+(i-1)*170,u),y=lerp(390,420,u),sz=lerp(230,190,u);A(g,1,'lighter');putc(g,glow(u>=1?'#ffd77a':B[i][2]),x,y,2.6);A(g,1);putc(g,bigLetter(word[i],u>=1),x,y,sz/230)}
    const lt=jt-.9;if(lt>0){A(g,ez(lt/.4));g.font='700 22px '+SANS;g.fillStyle='#ffe9b0';g.textAlign='center';spaced(g,'THE WORD GATE OPENS',800,640,8);A(g,1)}if(jt>.75&&jt<1.1)I.fl=Math.max(I.fl,.7*(1-(jt-.75)/.35))}
   if(t<.2)I.fl=Math.max(I.fl,1-t/.2)}
  // ---- Wardens: the ground shakes and a Letter Warden rises behind its burning letter; the hero squares up
@@ -1042,8 +1043,10 @@ const CINE7=(()=>{
   if(!I.red){const sa=shakeAt(S[0],t);if(sa>0){I.shx=(R()-.5)*2*sa*I.s/2;I.shy=(R()-.5)*2*sa*I.s/2}}
   g.save();try{pre(g,t,S[1])}catch(e){if(!draw.e){draw.e=1;console.error('CINE7 scene',S[0],e)}}g.restore();
   g.setTransform(1,0,0,1,0,0);A(g,1);
-  // soft bloom: the frame, shrunk and blurred, screened back on top (bright areas glow, dark ones stay dark); warm light leaks drift at the edges
-  if(!I.red){const bw=Math.max(64,I.cw/6|0),bh0=Math.max(36,I.ch/6|0);let bc=I.bc;if(!bc||bc.width!=bw||bc.height!=bh0){bc=I.bc=mk(bw,bh0)}const bx=bc.getContext('2d');bx.globalCompositeOperation='copy';bx.filter='blur(4px)';bx.drawImage(I.cv,0,0,bw,bh0);bx.filter='none';
+  // soft bloom: the frame, shrunk to a tenth and smoothly scaled back up (a cheap blur), screened on top (bright areas glow, dark ones stay dark); warm light leaks drift at the edges
+  if(I.bsi!==I.si){I.bsi=I.si;I.bOff=false;I.bEma=0}if(!I.red&&!I.bOff){const bw=Math.max(64,I.cw/10|0),bh0=Math.max(36,I.ch/10|0);let bc=I.bc;if(!bc||bc.width!=bw||bc.height!=bh0){bc=I.bc=mk(bw,bh0)}const bx=bc.getContext('2d');bx.globalCompositeOperation='copy';bx.imageSmoothingQuality='low';const tb=performance.now();bx.drawImage(I.cv,0,0,bw,bh0);
+   // that copy waits for the GPU to finish the frame: when it keeps taking over 2.5 ms the scene is GPU-heavy, so skip bloom for the rest of it
+   const bt=performance.now()-tb;I.bEma=I.bEma?I.bEma*.85+bt*.15:bt;if(I.bEma>2.5){if((I.bn=(I.bn||0)+1)>12)I.bOff=true}else I.bn=0;   /* no filter: scaling the tiny copy back up is the blur (a canvas filter forced a slow read-back) */
    g.save();g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='screen';g.globalAlpha=.3;g.drawImage(bc,0,0,I.cw,I.ch);g.globalCompositeOperation='lighter';
    for(let i=0;i<2;i++){const ph=u*.13+i*2.4,lx=(i?.92:.06)*I.cw+Math.sin(ph)*I.cw*.05,ly=(i?.15:.8)*I.ch+Math.cos(ph*1.3)*I.ch*.06,lg=glow(i?'#ffb070':'#ff7ab0'),lr=I.ch*(.7+.15*Math.sin(ph*.7));g.globalAlpha=.07+.04*Math.sin(ph*1.7);g.drawImage(lg.c,lx-lr,ly-lr,lr*2,lr*2)}g.restore()}
   const vg=as('vig');g.drawImage(vg.c,0,0,I.cw,I.ch);
@@ -1221,4 +1224,4 @@ const CINE7=(()=>{
   else if(k=='vuln'){o('s',660,990,t,.18,'triangle',v*.05,.003);o('s',990,1320,t+.09,.22,'sine',v*.04,.003)}})}
  return{get hold(){return I?{held:I.hold,on:I.holding,skipped:!!I.skipped}:null},launch,intro,bossIntro,bossSkip,bossBars,bossWin,bossLose,bossSfx,slow,get tS(){return tS},on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
   seek(u){if(!I)return;I.el=cl(u,0,ST)*I.k;I.u=I.el/I.k;I.evi=I.ev.findIndex(e=>e[0]>=I.u);if(I.evi<0)I.evi=I.ev.length;for(const s of NEED)for(const n of s)try{as(n)}catch(_){}},
-  get state(){return I?{u:I.u,scene:STORY[I.si|0][0],total:ST,k:I.k,rate:I.rate||1,vpend}:null},get VO(){return VO},retime,lake:()=>!!AB.m3r,STORY}})();
+  get state(){return I?{u:I.u,scene:STORY[I.si|0][0],total:ST,k:I.k,rate:I.rate||1,vpend,prep:!!I.prep}:null},get VO(){return VO},retime,lake:()=>!!AB.m3r,STORY}})();

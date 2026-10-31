@@ -75,5 +75,5 @@ const LIFE8=(()=>{
   g.restore()};
  // warm up the cloud sprites in idle time so the first cloudy sky never hitches
  {const jobs=[];for(const p of['day','storm','dusk'])for(const[k,n]of[['cu',6],['st',2],['ci',2]])for(let i=0;i<n;i++)jobs.push(()=>WXS8.cloud(k,i,p));jobs.push(()=>WXS8.strip('day'),()=>WXS8.strip('storm'),()=>WXS8.fog,()=>WXS8.drops,()=>WXS8.flake,()=>WXS8.firefly,()=>WXS8.ray,()=>WXS8.sun);
-  const ric=window.requestIdleCallback||(f=>setTimeout(()=>f({timeRemaining:()=>8}),60));const run=d=>{while(jobs.length&&d.timeRemaining()>4)try{jobs.shift()()}catch(_){}if(jobs.length)ric(run)};ric(run)}
+  const ric=window.requestIdleCallback||(f=>setTimeout(()=>f({timeRemaining:()=>8}),60));const run=d=>{/* never during a cinematic */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>ric(run),1500);return}while(jobs.length&&d.timeRemaining()>4)try{jobs.shift()()}catch(_){}if(jobs.length)ric(run)};ric(run)}
  return{get counts(){return{butterflies:bf.length,fish:fish.length,fireflies:ff.length,flowers:flowers.length,grass:tops}}}})();

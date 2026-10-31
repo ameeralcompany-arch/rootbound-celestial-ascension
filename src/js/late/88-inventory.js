@@ -183,7 +183,7 @@ const INV7=(()=>{
  function close(){if(!el)return;closeMenu();assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv){el.classList.remove('open');document.documentElement.classList.remove('inv6')}},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';snd('close')}
  // item icons are drawn the first time they are needed (the first open used to stall ~0.6 s): draw them in idle moments a few seconds
  // after you enter a world, a few at a time between frames, so even the first open is instant
- {let q=null;const step=d=>{try{while(q.length&&d.timeRemaining()>3)iconOf(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:3000})};
+ {let q=null;const step=d=>{/* never during a cinematic: one icon can take 15 ms and the story intro would stutter */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:3000}),1500);return}try{while(q.length&&d.timeRemaining()>3)iconOf(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:3000})};
   const warm=()=>{if(q||typeof requestIdleCallback!='function')return;try{q=items().map(i=>i.k)}catch(_){q=[]}requestIdleCallback(step,{timeout:3000})};
   const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,2500)}},1000)}
  return{open,close,render,select,equip,unequip,doPrimary,drop,items,sorted,primary,nameOf,kind,

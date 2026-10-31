@@ -85,7 +85,7 @@ const STORE7=(()=>{
  function btn(){if(document.getElementById('bstore'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bstore';b.className='pn';b.textContent='STORE';b.title='Open the item store';b.onclick=()=>isOpen()?close():open();hr.insertBefore(b,hr.firstChild)}
  btn();if(document.readyState!='complete')addEventListener('load',btn);
  // the item previews are drawn on first use (the first open used to stall ~0.3 s): draw them in idle moments after you enter a world
- {let q=null;const step=d=>{try{while(q.length&&d.timeRemaining()>4)thumb(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:4000})};
+ {let q=null;const step=d=>{/* never during a cinematic (see 88-inventory.js) */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:4000}),1500);return}try{while(q.length&&d.timeRemaining()>4)thumb(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:4000})};
   const warm=()=>{if(q||typeof requestIdleCallback!='function')return;try{q=SHOP7.items.slice()}catch(_){q=[]}requestIdleCallback(step,{timeout:4000})};
   const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,4500)}},1000)}
  return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,flush(){for(const k in cache)delete cache[k];if(isOpen())render()},get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;render()}}})();
