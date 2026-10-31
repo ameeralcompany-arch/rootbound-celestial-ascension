@@ -9472,14 +9472,16 @@ const TOOLS8=(()=>{
  const R=Math.random;
  const TL={
   pip:{n:'Pip the Pocket Shovel',g:[255,190,120],tool:'soft',d:'A tiny shovel with a smiley face. Scoops dirt, grass, sand, wood, glass and leaves in one go.'},
-  pebble:{n:'Pebble the Rock Tapper',g:[255,150,200],tool:'stone',d:'A little pink hammer. Cracks stone, cobble, brick, marble and deepslate in one tap.'},
-  glimmer:{n:'Glimmer the Ore Pick',g:[150,240,255],tool:'ore',d:'A sparkly mini pickaxe made for ores. Mines the whole vein, finds bonus ore and makes nearby ores twinkle.'},
+  pebble:{n:'Pebble the Rock Tapper',g:[255,150,200],tool:'stone',d:'A little pink hammer. Cracks stone, cobble, brick, marble and deepslate in one tap — and the only tool that can break Geode Rock.'},
+  glimmer:{n:'Glimmer the Ore Pick',g:[150,240,255],tool:'ore',d:'A sparkly mini pickaxe made only for ores (it won\'t touch anything else). Mines the whole vein, finds bonus ore and makes nearby ores twinkle.'},
   twiggy:{n:'Twiggy the Tree Axe',g:[150,230,110],tool:'tree',d:'A leafy little axe. Chops trees for extra wood and splits wooden blocks.'},
   bubbles:{n:'Bubbles the Fishing Rod',g:[120,200,255],tool:'rod',d:'A cute rod with a duck bobber. Click water to cast, click when it bites, then hold to keep the fish in the green zone and reel it in! Bait from Tackle Boxes helps.'}};
  for(const id in TL){const t=TL[id];WPN[id]={n:t.n,g:t.g,bd:1,md:0,cd:t.tool=='rod'?.25:.18,k:'tool',cost:0,fx:'',d:t.d,tool:t.tool,id};own[id]=1}
  // ---- what kind of block is it?
  const ORE=new Set([9,10,60,61,62,65,71,72,73,74,75,76]);
- const catOf=b=>{if(!b)return'';const n=(BLK[b]||[''])[0];if(ORE.has(b)||/Ore|Crystal|Gold|Geode|Fossil|Vein|Ruby|Sapphire|Emerald|Diamond/.test(n))return'ore';
+ // CAT pins a block's kind when its name would mislead the regex (Geode Rock is stone, not ore); ONLY[b] is the one tool that may break b at all
+ const CAT={},ONLY={},NAME={soft:'Pocket Shovel',stone:'Rock Tapper',ore:'Ore Pick',tree:'Tree Axe'};
+ const catOf=b=>{if(!b)return'';if(CAT[b])return CAT[b];const n=(BLK[b]||[''])[0];if(ORE.has(b)||/Ore|Crystal|Gold|Geode|Fossil|Vein|Ruby|Sapphire|Emerald|Diamond/.test(n))return'ore';
   if(/Wood|Plank|Log|Bamboo|Crate/.test(n))return'wood';if(/Stone|Cobble|Marble|Brick|Deepslate|Basalt|Granite|Slate|Obsidian|Rock|Roof Tile/.test(n))return'stone';return'soft'};
  const fits=(tool,cat)=>tool==cat||(tool=='soft'&&cat=='wood')||(tool=='tree'&&cat=='wood');
  const tone=(a,b,d,ty,v,dl)=>{try{SFX7.tone(a,b,d,ty,v,dl)}catch(_){}};
@@ -9490,6 +9492,10 @@ const TOOLS8=(()=>{
   const tk=pickTree(c.x,c.y);if(tk>=0&&Math.hypot((tk%W)*T+T/2-P.x,(tk/W|0)*T+T/2-(P.y+P.h/2))<REACH+T){const crop=typeof FARM9!='undefined'&&FARM9.isCrop(trees.get(tk));harvest(tk);if(w.tool=='tree'&&!crop&&!trees.has(tk)){const px=(tk%W)*T+T/2,py=(tk/W|0)*T;spawnDrop(px,py,5,2);ft(px,py-10,'+2 Wood','#d8ffb0')}tone(500,700,.08,'triangle',.04);return}
   const tx=Math.floor(c.x/T),ty=Math.floor(c.y/T),k=ty*W+tx;if(!inReach(tx*T+T/2,ty*T+T/2)||tx<1||ty<1||tx>=W-1||ty>=H-1)return;const b=tiles[k];if(!b)return;
   const cat=catOf(b),good=fits(w.tool,cat),dmg=good?255:1;
+  // the Ore Pick only mines ores; ONLY-blocks refuse every other tool (no damage at all)
+  const no=!good&&(w.tool=='ore'||(ONLY[b]&&ONLY[b]!=w.tool));
+  if(no){const px=tx*T+T/2,py=ty*T+T/2;tone(180,140,.07,'triangle',.03);try{MSFX8.wrong(cat)}catch(_){}
+   if(performance.now()-(use.tip||0)>2500){use.tip=performance.now();try{ft(px,py-14,ONLY[b]?'Only the '+NAME[ONLY[b]]+' can break this':'The Ore Pick only mines ores','#ffd0d0')}catch(_){}}return}
   const r=breakAt(tx,ty,dmg),broken=r&&!tiles[k];const px=tx*T+T/2,py=ty*T+T/2;
   if(good){for(let i=0;i<5;i++)VFX.add(1,'rgb('+w.g+')',px,py,(R()-.5)*160,-60-R()*120,.4,8,2,{a:1});tone(900+R()*200,1300,.08,'sine',.035)}else{tone(240,200,.06,'triangle',.03);if(r&&performance.now()-(use.tip||0)>9000){use.tip=performance.now();try{ft(px,py-14,'Slow — try another tool','#ffd0d0')}catch(_){}}}
   if(broken){try{G('break')}catch(_){}
@@ -9578,7 +9584,7 @@ const TOOLS8=(()=>{
  {const _t=BOSS6.tick,_dp=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{FISH.tick(dt);FISH.tickQ(dt);twinkle(dt)}catch(e){console.error('TOOLS8',e)}};BOSS6.drawProj=function(g,cx,cy){_dp.call(this,g,cx,cy);try{FISH.draw(g,cx,cy)}catch(e){console.error('TOOLS8d',e)}}}
  // say hello once
  setTimeout(()=>{try{if(entered&&!localStorage.getItem('rbc5')){localStorage.setItem('rbc5','1');UI6.say6('Tiny tools','Only tools break blocks: put Pip, Pebble, Glimmer, Twiggy or Bubbles in a hotbar slot (1-6) · press G for the Tool Guide',4200)}}catch(_){}},4000);
- return{TL,catOf,fits,FISH,FISHES,BAIT}})();
+ return{TL,catOf,fits,CAT,ONLY,FISH,FISHES,BAIT}})();
 
 /* ========== LATE: 86-sfx7.js ========== */
 // ===== SFX7: synthesized voice shouts, cute monster sounds, water sounds. All WebAudio, no files. Volume follows the "Sound effects" slider. =====
@@ -17215,7 +17221,10 @@ const BIOME17=(()=>{
  const TILE={},ORE=new Set(),KIND={},DROP={};
  const SOFT=()=>(BLK[1]||[0,0,3])[2],HARD=()=>(BLK[3]||[0,0,6])[2];
  for(const b of BI){for(const id in b.tl){const t=b.tl[id],n=+id;TILE[n]={n:t[0],c:t[1],s:t[2],b};BLK[n]=[t[0],t[1],t[2]=='rock'?HARD():t[2]=='ore'?Math.round(HARD()*1.6):t[2]=='crys'?Math.round(HARD()*1.2):SOFT()];
-   try{PRICE[n]=t[2]=='ore'?b.sh[1]:4;LVREQ[n]=0;SOLID6[n]=1}catch(_){}}
+   try{PRICE[n]=t[2]=='ore'?b.sh[1]:4;LVREQ[n]=0;SOLID6[n]=1}catch(_){}
+   try{TOOLS8.CAT[n]=t[2]=='rock'?'stone':t[2]=='ore'||t[2]=='crys'?'ore':'soft'}catch(_){}}
+ // Geode Rock yields to the Rock Tapper alone
+ try{TOOLS8.ONLY[219]='stone'}catch(_){}
   ORE.add(b.ore);MAT[b.ore]={n:b.sh[0],c:b.tl[b.ore][1],p:b.sh[1]};try{GLOW7[b.ore]=hexRGB(b.tl[b.ore][1])}catch(_){}
   for(const q of b.mob){const[k,look,n,c,ai,hp,dmg,gem,w,h,x]=q;KIND[k]={b,look,base:{hp,dmg,gem}};MK[k]=Object.assign({c,hp,dmg,gem,w,h,ai,n,min:9999,max:9999,bio:1,look},ai=='fly'?{fly:1}:{},x||{});MOBMAT[k]=b.ore}}
  // biome blocks break into plain blocks (the ores drop their shard: the ore tile id is the shard's item id)

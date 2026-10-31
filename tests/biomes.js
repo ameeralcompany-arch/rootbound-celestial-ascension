@@ -65,6 +65,16 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  // a world whose hunt had already started keeps its word and letters (not sealed)
  const OLD=await E(async()=>{WORD9.state.w.biooldw={got:[0],ok:0,tr:0};enterWorld('biooldw');mobs.length=0;await new Promise(r=>setTimeout(r,400));const l=WORD9.letters.find(q=>q.i!=0);return{w:WORD9.word,inList:WORD9.WORDS.includes(WORD9.word),n:WORD9.letters.length,biomes:BIOME17.on,sealed:BIOME17.sealed(cur,l.i)}});
  ok('a world whose letter hunt had started keeps its old word (biomes still there, letters not sealed)',OLD.inList&&OLD.n==OLD.w.length&&OLD.biomes&&!OLD.sealed,OLD);
+ // tools: Geode Rock breaks only with the Rock Tapper; the Ore Pick refuses everything that isn't an ore
+ const TL=await E(()=>{mobs.length=0;P.vx=P.vy=0;const tx=Math.floor(P.x/T)+1,ty=Math.floor((P.y+P.h/2)/T),k=ty*W+tx;
+  const hit=(id,b,n)=>{tiles[k]=b;hp[k]=BLK[b][2];trees.delete(k);mx=tx*T+T/2-cam.x;my=ty*T+T/2-cam.y;own[id]=1;wp=id;for(let i=0;i<n;i++){wcd=0;useWeapon()}const r={left:tiles[k]==b,hurt:tiles[k]==b&&hp[k]<BLK[b][2]};tiles[k]=0;hp[k]=0;return r};
+  return{cat:[TOOLS8.catOf(219),TOOLS8.catOf(221),TOOLS8.catOf(220),TOOLS8.catOf(210)],
+   gOre:hit('glimmer',219,6),pip:hit('pip',219,6),axe:hit('twiggy',219,6),peb:hit('pebble',219,1),
+   gStone:hit('glimmer',3,6),gDirt:hit('glimmer',1,6),gMoss:hit('glimmer',210,6),gPrism:hit('glimmer',221,1),gIron:hit('glimmer',9,1),pipStone:hit('pip',3,1)}});
+ ok('Geode Rock counts as stone, biome ores and crystals as ores',TL.cat.join()=='stone,ore,ore,stone',TL.cat);
+ ok('Geode Rock: Ore Pick, Shovel and Axe do nothing; the Rock Tapper breaks it',TL.gOre.left&&!TL.gOre.hurt&&TL.pip.left&&!TL.pip.hurt&&TL.axe.left&&!TL.axe.hurt&&!TL.peb.left,TL);
+ ok('the Ore Pick leaves stone, dirt and biome rock alone but still mines ores',TL.gStone.left&&!TL.gStone.hurt&&TL.gDirt.left&&!TL.gDirt.hurt&&TL.gMoss.left&&!TL.gMoss.hurt&&!TL.gPrism.left&&!TL.gIron.left,TL);
+ ok('other tools still chip at blocks outside their job (Shovel on stone)',TL.pipStone.hurt||!TL.pipStone.left,TL.pipStone);
  // no biomes in the Plaza or an Inferno; depth zones go back to normal there
  await go('plaza');const PZ=await E(()=>({on:BIOME17.on,b:DEPTH8.BANDS.map(b=>b.n).join()}));
  ok('no biomes in the Plaza (depth zones back to their usual names)',!PZ.on&&/Glowroot/.test(PZ.b),PZ);

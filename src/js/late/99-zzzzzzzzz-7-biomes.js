@@ -56,7 +56,10 @@ const BIOME17=(()=>{
  const TILE={},ORE=new Set(),KIND={},DROP={};
  const SOFT=()=>(BLK[1]||[0,0,3])[2],HARD=()=>(BLK[3]||[0,0,6])[2];
  for(const b of BI){for(const id in b.tl){const t=b.tl[id],n=+id;TILE[n]={n:t[0],c:t[1],s:t[2],b};BLK[n]=[t[0],t[1],t[2]=='rock'?HARD():t[2]=='ore'?Math.round(HARD()*1.6):t[2]=='crys'?Math.round(HARD()*1.2):SOFT()];
-   try{PRICE[n]=t[2]=='ore'?b.sh[1]:4;LVREQ[n]=0;SOLID6[n]=1}catch(_){}}
+   try{PRICE[n]=t[2]=='ore'?b.sh[1]:4;LVREQ[n]=0;SOLID6[n]=1}catch(_){}
+   try{TOOLS8.CAT[n]=t[2]=='rock'?'stone':t[2]=='ore'||t[2]=='crys'?'ore':'soft'}catch(_){}}
+ // Geode Rock yields to the Rock Tapper alone
+ try{TOOLS8.ONLY[219]='stone'}catch(_){}
   ORE.add(b.ore);MAT[b.ore]={n:b.sh[0],c:b.tl[b.ore][1],p:b.sh[1]};try{GLOW7[b.ore]=hexRGB(b.tl[b.ore][1])}catch(_){}
   for(const q of b.mob){const[k,look,n,c,ai,hp,dmg,gem,w,h,x]=q;KIND[k]={b,look,base:{hp,dmg,gem}};MK[k]=Object.assign({c,hp,dmg,gem,w,h,ai,n,min:9999,max:9999,bio:1,look},ai=='fly'?{fly:1}:{},x||{});MOBMAT[k]=b.ore}}
  // biome blocks break into plain blocks (the ores drop their shard: the ore tile id is the shard's item id)
