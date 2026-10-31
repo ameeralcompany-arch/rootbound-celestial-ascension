@@ -1,7 +1,10 @@
 // ===== CINE7: anime-style cinematics. Original procedural art + synthesized score (no image or audio files) =====
-// 1) launch story intro: unskippable, 1:30 with a continuous score (reduced motion: the same 17 scenes in ~54 s), then fades into the home screen.
-//    Story beats: World Tree, lantern night, Eclipse, the fall, six guardians, a hundred years, awakening, first friend (gag), wings,
-//    a botched first flight (gag), practice (gag), the journey, struck down and rising (fight), campfire, montage, restoration, title
+// 1) launch story intro: ~2:00 with a continuous score (reduced motion: the same 22 scenes in ~73 s); hold Space / Enter / Esc or the mouse
+//    button for 1.2 s to skip. Then it fades into the home screen.
+//    Story beats: World Tree, lantern night, Eclipse, the fall, six guardians, a hundred years, awakening, first friend (gag),
+//    choosing a class (the 13 classes and their mythic weapons), wings, a botched first flight (gag), practice (gag), the depths,
+//    the biome word, the Letter Warden, struck down and rising (fight), campfire, levelling to mythic, montage, the guardians fall,
+//    restoration, title. The hero in the new scenes is the player's own character (the game's renderer).
 // 2) world entry: portal iris opening + world title card (pointer-events:none, never blocks input)
 // 3) boss overlays (letterbox, name card, defeat / loss cards), slow motion and boss sounds, driven by BOSS10 (89-zz-bossfight.js)
 // Budget: static art is pre-rendered once into offscreen canvases (lazily, one asset per frame ahead of use); every rAF loop /
@@ -192,12 +195,37 @@ const CINE7=(()=>{
   at(TR+2.18,t=>{splash(t,.16);splash(t+.08,.1)});at(TR+2.45,t=>wahwah(t,.035));
   at(TR+3.52,t=>bonk(t,.25));at(TR+3.92,t=>thunk(t,.1));
   at(TR+5.1,t=>{brass([50,54,57,62],t,.9,.06);shing(t,.1)});at(TR+5.25,t=>giggle(t,.04));for(let i=0;i<6;i++)at(TR+5.3+i*.09,t=>nz('s',t,.05,'bandpass',1800,0,.05,.002,1));
-  // 6c The journey: running strings, drums, the theme on lead, a whoosh for every island that flashes past
-  const J=S0('journey');beat(J,J+6,.8);bassline([[J,38],[J+1.5,46],[J+3,48],[J+4.5,45]],J+6);
-  for(let x=0;x<5.95;x+=.15){const n=[62,65,69,65][Math.round(x/.15)%4];at(J+x,t=>o('m',M(n),0,t,.12,'sawtooth',.008,.005))}
-  chords([[J,[50,57,62,65]],[J+1.5,[46,53,58,62]],[J+3,[48,55,60,64]],[J+4.5,[45,52,57,61]]],1.45,.022);melody(J+.6,J+6,.04);
-  for(let i=0;i<4;i++)at(J+i*1.5+.7,t=>whoosh(t,.6,.04));
-  [[J,[50,57,62]],[J+1.5,[46,53,58]],[J+3,[48,55,60]],[J+4.5,[45,52,57]]].forEach(c=>at(c[0],t=>{brass(c[1],t,.45,.055);crash(t,.035)}));[J+1.28,J+2.78,J+4.28,J+5.75].forEach(x=>toms(x,.055));
+  // 5b Classes: a hushed hall (pad, choir), a bell for every emblem that lights up, then the choice: a boom, brass and the theme's opening
+  {const K=S0('classes');at(K,t=>{pad([50,57,62,65],t,4.4,.03,900);choir([62,65,69],t,4.4,.022)});at(K,t=>nz('m',t,4.5,'bandpass',500,900,.016,1.4,.6));
+   for(let i=0;i<13;i++)at(K+.2+i*.12,t=>bell([74,77,81,84,86,89,93][i%7],t,.02,1.2));at(K+2.3,t=>pad([46,53,58,62],t,2.3,.03,1100));
+   at(K+4.0,t=>riser(t,.6,.06));at(K+4.6,t=>{boom(t,.42);crash(t,.08);shing(t,.12);brass([38,45,50,54,57],t,2.2,.07);pad([50,57,62,66,69],t,2.3,.034,1500)});
+   [74,76,77,81].forEach((n,i)=>at(K+4.75+i*.3,t=>flute(n,t,.5,.03)));taikoRun(K+4.6,K+6.9,.4,.09,.05)}
+  // 6c The depths: a low drone and a heartbeat that quickens on the way down, a whoosh into each zone, crystal pings for the ores
+  {const D=S0('depths');at(D,t=>{stack([M(26),M(33)],t,6,.04,'sawtooth',80,260,160,1,6);nz('m',t,6,'lowpass',300,120,.03,1.5,.5)});
+   for(let x=0,i=0;x<5.9;i++){const v=.08+i*.006;at(D+x,t=>{kick(t,v);o('m',70,40,t,.25,'sine',v*.6,.003)});x+=Math.max(.24,.62-i*.035)}
+   [0,1.9,3.8].forEach((x,j)=>{at(D+x+.05,t=>whoosh(t,.7,.05));at(D+x+.15,t=>[[74,78,81],[73,77,80],[69,72,76]][j].forEach((n,i)=>bell(n,t+i*.09,.03,1.4)))});
+   for(let i=0;i<16;i++)at(D+.3+i*.35,t=>o('s',[2600,3100,3500,2900][i%4],0,t,.18,'sine',.012,.002));
+   [74,72,69,67,65,64,62,57].forEach((n,i)=>at(D+.2+i*.7,t=>pluck(n,t,.035)))}
+  // 6d The biome word: the adventure theme on the full kit; a shimmer and chord as each letter lights, a choir as the word joins
+  {const B=S0('biomes');beat(B+.1,B+6.9,.9);bassline([[B+.1,38],[B+1.85,46],[B+3.6,48],[B+5.3,45]],B+6.9);melody(B+.5,B+4.1,.045);
+   chords([[B+.1,[50,57,62,65]],[B+1.85,[46,53,58,62]],[B+3.6,[48,55,60,64]],[B+5.3,[45,52,57,61]]],1.6,.022);
+   [.25,1.25,2.25].forEach((x,i)=>at(B+x,t=>{shing(t,.1);brass([[50,57,62],[53,57,62],[55,60,64]][i],t,.6,.05);crash(t,.035)}));
+   at(B+4.0,t=>riser(t,.9,.06));at(B+4.9,t=>{boom(t,.38);choir([62,66,69,74],t,2,.04);[86,90,93].forEach((n,i)=>bell(n,t+i*.08,.03,1.4))});
+   ost(B+4.9,B+6.9,[62,66,69,74],.01,.15);for(let i=0;i<3;i++)at(B+.35+i*1.0,t=>whoosh(t,.5,.04))}
+  // 6e The Letter Warden: the music drops out to a rumble; a massive hit as it rises, a minor choir, chains, and a riser as the hero squares up
+  {const W=S0('wardens');at(W,t=>{nz('s',t,1.1,'lowpass',220,60,.09,.8,0);stack([M(25),M(32)],t,1.1,.05,'sawtooth',70,200,140,.6,5)});
+   at(W+1.0,t=>{boom(t,.55);shatter(t,.05);crash(t,.07);brass([37,44,49,52],t,1.6,.07);choir([49,52,56],t,3.2,.04)});
+   [W+1.05,W+1.35,W+1.6].forEach((x,i)=>at(x,t=>taiko(t,.16+i*.03)));for(let i=0;i<5;i++)at(W+1.8+i*.28,t=>clink(t,.06));
+   [61,64,68,66,64,61].forEach((n,i)=>at(W+2.0+i*.3,t=>piano(n,t,.04)));at(W+3.6,t=>riser(t,1.3,.06));toms(W+4.6,.07)}
+  // 7c Levels: the hero theme in major over a driving beat; level-up chimes speed up with the counter; MYTHIC lands on a full hit
+  {const L=S0('levels');beat(L,L+6.4,1.1);bassline([[L,38],[L+1.6,43],[L+3.2,45],[L+4.8,50]],L+6.4);melody(L+.3,L+5.4,.05,true);
+   chords([[L,[62,66,69,74]],[L+1.6,[59,62,67,71]],[L+3.2,[61,64,69,73]],[L+4.8,[62,66,69,74]]],1.5,.024);ost(L+1.5,L+5.4,[62,66,69,74],.011,.15);
+   for(let x=.15,i=0;x<5.3;i++){const n=[86,88,90,93][i%4];at(L+x,t=>bell(n,t,.022,.9));x+=Math.max(.11,.5-i*.03)}
+   at(L+4.9,t=>riser(t,.6,.07));at(L+5.5,t=>{boom(t,.5);crash(t,.1);shing(t,.14);brass([38,45,50,54,57,62],t,1.2,.08);[86,90,93,98].forEach((n,i)=>bell(n,t+i*.06,.03,1.3))})}
+  // 8a The guardians fall: taiko and choir; a slash and a brass hit for each of the six; a final swell into the restoration
+  {const G=S0('ascend');at(G,t=>{choir([50,53,57],t,6,.035);pad([38,45,50],t,6,.03,700)});taikoRun(G,G+.6,.15,.1,.06);
+   for(let i=0;i<6;i++)at(G+.6+i*.62,t=>{shing(t,.1);boom(t,.22+i*.03);brass([[38,45,50],[41,48,53],[43,50,55],[45,52,57],[46,53,58],[48,55,60]][i],t,.5,.06)});
+   at(G+4.4,t=>riser(t,1.2,.07));at(G+5.6,t=>{boom(t,.5);crash(t,.1);choir([62,66,69,74],t,1,.045)})}
   // 7 The fight: thunder and rain, a drone and taiko as the wanderer charges. The strike drops the music to a muffled heartbeat
   //   and a lonely piano in the rain; a choir swells as they stand back up, and the brass answers when the wings reignite
   const SK=CL+.9,KN=CL+1.25,UP=CL+2.9,IG=CL+3.6;
@@ -262,15 +290,20 @@ const CINE7=(()=>{
   ['ages',5.0,'For a hundred years, the world waited... for someone to wake.'],
   ['wake',4.0,'Then, deep beneath the roots, a lone wanderer awoke.'],
   ['meet',5.0,'Their first friend was a sprout. A small, very loud sprout.'],
+  ['classes',7.0,'Thirteen masters still keep the old arts. Every hero must choose one.'],
   ['wings',3.8,'A spark of fallen starlight became their wings.'],
   ['oops',3.4,'Their first flight went... about as well as you would expect.'],
   ['training',6.0,'So they practised. And practised. And practised some more.'],
-  ['journey',6.0,'They crossed the shattered islands, from crystal caves to burning peaks.'],
+  ['depths',6.0,'Beneath every island, the stone goes down and down. The deeper you dig, the brighter it shines.'],
+  ['biomes',7.0,'Every world hides a secret word: one letter for each land, one trial for each letter.'],
+  ['wardens',5.0,'And every letter is guarded by a Warden.'],
   ['clash',5.0,'The dark struck them down, again and again. But every time, they stood back up.'],
   ['camp',5.5,'And they never had to face the dark alone.'],
+  ['levels',6.5,'Level by level. Class by class. Until their weapon became a legend.'],
   ['montage',4.9,'Build. Mine. Fish. Climb. And mend the roots.'],
+  ['ascend',6.0,'Six guardians still rule the broken sky. One by one... they will fall.'],
   ['restore',6.5,'Root by root, the light came back, and the islands rose to meet the sky.'],
-  ['title',7.5,'']];   // 90 s in all
+  ['title',7.5,'']];   // about 2 minutes in all
  for(const s of STORY)s[4]=s[1];   // s[4]: the designed length. s[1] may grow so the narration fits (retime)
  let ST=0,TI0=0;function stime(){ST=0;for(const s of STORY){s[3]=ST;ST+=s[1]}TI0=STORY[STORY.length-1][3]}stime();
  const MCUT=[[0,.9],[.9,.9],[1.8,2.2],[4.0,.9]];   // montage cuts: start, length (the fishing cut is longest: the still lake, then the boot, then the koi)
@@ -484,7 +517,7 @@ const CINE7=(()=>{
   x.fillStyle='rgba(160,120,230,.13)';for(let i=0;i<10;i++){x.beginPath();x.ellipse(r()*1600,795+r()*90,60+r()*150,5+r()*8,0,0,TAU);x.fill()}});
  AB.grain=()=>{const c=mk(256,256),x=c.getContext('2d'),d=x.createImageData(256,256);for(let i=0;i<d.data.length;i+=4){const v=R()*255|0;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);return{c,w:256,h:256}};
  // which assets each scene needs (pre-built one per frame, a scene ahead of time)
- const NEED=[['sky1','spark','aurora','clouds','tree','treeG','isl2','isl3','isl4','isl0','isl1','fg','grain'],[],['sun','corona','crk'],['sky3'],['sil_warden','pbg_warden','pnl_warden','sil_sovereign','pbg_sovereign','pnl_sovereign','sil_eclipse','pbg_eclipse','pnl_eclipse','sil_magma','pbg_magma','pnl_magma','sil_tide','pbg_tide','pnl_tide','sil_storm','pbg_storm','pnl_storm'],[],['cave','face','bust','bustD'],['m1','blk','bustL'],['wing','rays','speed','vlines','flyer'],['sky7'],['m3','m3r','caus','bootW'],[],['storm'],[],['m2','koi','treeY'],[],['title','band']];
+ const NEED=[['sky1','spark','aurora','clouds','tree','treeG','isl2','isl3','isl4','isl0','isl1','fg','grain'],[],['sun','corona','crk'],['sky3'],['sil_warden','pbg_warden','pnl_warden','sil_sovereign','pbg_sovereign','pnl_sovereign','sil_eclipse','pbg_eclipse','pnl_eclipse','sil_magma','pbg_magma','pnl_magma','sil_tide','pbg_tide','pnl_tide','sil_storm','pbg_storm','pnl_storm'],[],['cave','face','bust','bustD'],['m1','blk','bustL'],['wing','rays','speed','vlines','flyer'],['sky7'],['m3','m3r','caus','bootW'],[],['storm'],[],['m2','koi','treeY'],[],['title','band'],['embs','clsbg','dpth','bio0','bio1','bio2','wardn','gem']];
  // ---- camera: (cx,cy) of the 1600x900 stage at zoom z, with parallax depth p
  function cam(g,cx,cy,z,p){p=p==null?1:p;const Z=1+(z-1)*p,X=800+(cx-800)*p,Y=450+(cy-450)*p,s=I.s*Z;g.setTransform(s,0,0,s,I.cw/2-X*s+I.shx,I.ch/2-Y*s+I.shy)}
  const stage=g=>cam(g,800,450,1,1);
@@ -502,18 +535,6 @@ const CINE7=(()=>{
   if(o.mid)o.mid(g);
   islands(g,I.islN,C,t);
   if(!o.nofg){cam(g,C[0],C[1],C[2],1.35);put(g,as('fg'),-100,560)}}
- // ---- Unity backdrop: the last two scenes (restore + title, 14 s) play a video rendered in Unity (unity/Rootbound, IntroDirector:
- // the world at night, light returning, dawn, then a glide to the hero). It only replaces the painted backdrop: rays, motes, flash and
- // the title still draw on top. If the video is missing, slow or reduced motion is on, the painted world draws instead.
- const UV={el:null,ok:false};
- function uvPrep(){if(UV.el||!I||I.red)return;try{const v=document.createElement('video');v.muted=true;v.preload='auto';v.playsInline=true;v.oncanplaythrough=()=>{UV.ok=true};v.onerror=()=>{UV.ok=false};v.src='media/intro.webm';v.load();UV.el=v}catch(_){UV.el=null}}
- function uvEnd(){const v=UV.el;UV.el=null;UV.ok=false;if(!v)return;try{v.pause();v.removeAttribute('src');v.load()}catch(_){}}
- function uvid(g,vt,C){const v=UV.el;if(!v||!UV.ok||I.prep||v.readyState<2||!v.videoWidth)return false;
-  if(v.paused)try{const p=v.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}
-  if(Math.abs(v.currentTime-vt)>.25)try{v.currentTime=Math.max(0,Math.min(vt,(v.duration||14)-.05))}catch(_){}
-  g.setTransform(1,0,0,1,I.shx,I.shy);const k=Math.max(I.cw/v.videoWidth,I.ch/v.videoHeight),w=v.videoWidth*k,h=v.videoHeight*k;g.drawImage(v,(I.cw-w)/2,(I.ch-h)/2,w,h);
-  cam(g,C[0],C[1],C[2],1.35);return true}   // leave the transform where world() leaves it, so the overlays land in the same place
- const uvT=n=>{const a=STORY.find(q=>q[0]=='restore'),b=STORY.find(q=>q[0]==n);return a&&b?b[3]-a[3]:0};
  // ---- scenes (t = local story seconds)
  function sTree(g,t,d){const k=t/d,C=[800,lerp(-260,532,ez(k)),lerp(1.32,.95,eo(k))];I.C=C;
   world(g,t,C,{shoot:g2=>{for(const s of[[1.1,1700,-160,2.6],[2.9,1500,-250,2.75]]){const u=(t-s[0])/.7;if(u<0||u>1)continue;cam(g2,C[0],C[1],C[2],.25);const x=s[1]-u*700,y=s[2]+u*330;drawStreak(g2,'#cfe8ff',x,y,PI-.44,260,Math.sin(u*PI),9)}}});
@@ -685,7 +706,7 @@ const CINE7=(()=>{
   if(tc<.16){const u=tc/.16,x=lerp(-500,2100,u);g.fillStyle='#fff';g.beginPath();g.moveTo(x,0);g.lineTo(x+260,0);g.lineTo(x+60,900);g.lineTo(x-200,900);g.closePath();g.fill()}
   if(tc<.07)I.fl=Math.max(I.fl,(1-tc/.07)*.7)}
  function sTitle(g,t,d){const slam=.55,C=[800,lerp(470,420,ez(t/d)),lerp(1.12,1.0,eo(t/2.5))];I.C=C;I.sa=t>slam&&t<slam+.5?(1-(t-slam)/.5)*18:0;
-  uvid(g,uvT('title')+t,C)||world(g,t,C,{sky:'sky7',st:.45,au:.45,gold:1,gw:.75,gc:'#ffd77a',veins:.85+.15*Math.sin(t*3),nofg:false,
+  world(g,t,C,{sky:'sky7',st:.45,au:.45,gold:1,gw:.75,gc:'#ffd77a',veins:.85+.15*Math.sin(t*3),nofg:false,
    shoot:g2=>{cam(g2,C[0],C[1],C[2],.25);for(let i=0;i<9;i++){const st=.2+i*.5,u=(t-st)/.6;if(u<0||u>1)continue;const x=1700-((i*373)%900)-u*620,y=-260+((i*211)%300)+u*300;drawStreak(g2,i%2?'#ffe7c0':'#cfe8ff',x,y,PI-.45,240,Math.sin(u*PI),8)}}});
   motes(g,t,.7,'#ffe7a0');stage(g);A(g,.7);const dg=glow('#05030c');g.drawImage(dg.c,-100,140,1800,500);A(g,1);
   const T=as('title'),ty=380,tsc=.86;
@@ -695,7 +716,7 @@ const CINE7=(()=>{
    A(g,.9,'lighter');g.drawImage(tc,800-W.w*tsc/2,ty-W.h*tsc/2,W.w*tsc,W.h*tsc);A(g,1)}
   const st=t-1.25;if(st>0){const a=cl(st/.5,0,1),sp=lerp(2,16,eo(st/1.2));g.globalAlpha=a;g.font='600 30px '+SANS;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#f8eeff';try{g.letterSpacing=sp+'px'}catch(_){}g.fillText('CELESTIAL ASCENSION',800+sp/2,ty+118);try{g.letterSpacing='0px'}catch(_){}
    const lw=lerp(0,190,eo(st/1)),hw=(()=>{try{g.letterSpacing=sp+'px'}catch(_){}const m=g.measureText('CELESTIAL ASCENSION').width/2+26;try{g.letterSpacing='0px'}catch(_){}return m})();g.fillStyle='#ffd77a';g.fillRect(800-hw-lw,ty+117,lw,2);g.fillRect(800+hw,ty+117,lw,2);for(const s of[-1,1]){const dx=800+s*(hw+lw);g.save();g.translate(dx,ty+118);g.rotate(PI/4);g.fillRect(-4,-4,8,8);g.restore()}g.globalAlpha=1}
-  const tg=t-3.2;if(tg>0){g.globalAlpha=cl(tg/.8,0,1)*(1-ez((t-(d-1.1))/.8));g.font='italic 500 36px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#fff4dc';g.fillText('Your story begins.',800,ty+196);g.globalAlpha=1}
+  const tg=t-3.2;if(tg>0){g.globalAlpha=cl(tg/.8,0,1)*(1-ez((t-(d-1.1))/.8));g.font='italic 500 36px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#fff4dc';g.fillText('Your ascension begins.',800,ty+196);g.globalAlpha=1}
   if(t>=slam&&t<slam+.5)I.fl=Math.max(I.fl,1-(t-slam)/.5)}
  // ---- the first flight (a gag): full speed, total confidence, straight into a wall. A little sprout finds it hilarious.
  // Sprig, the sprout companion. mode: true/'laugh', 'scream', 'sleep', or idle
@@ -865,25 +886,6 @@ const CINE7=(()=>{
    const jump=tc>LAND?Math.abs(Math.sin((tc-LAND)*12))*30:0;sprig(g,1075,top-jump,1.3,t,tc>LAND?'laugh':0);if(tc>LAND+.1)card(g,1075,top-170-jump,'10/10!')}
   stage(g);const sp=bo(Math.min(1,tc/.18));g.save();g.translate(140,200);g.rotate(-.08);g.scale(sp,sp);g.font='italic 900 64px '+SANS;g.textAlign='left';g.textBaseline='middle';g.lineWidth=12;g.strokeStyle='#120a1e';g.strokeText(TRY[n],0,0);g.fillStyle=n==3?'#7fffb0':'#fff';g.fillText(TRY[n],0,0);g.restore();
   if(tc<.08)I.fl=Math.max(I.fl,.4*(1-tc/.08))}
- // ---- the journey: crystal caves, red mesas, frozen peaks streaming past; the guardians' lairs glow on the horizon
- // per region: sky top, sky middle, horizon, far ranges, near ranges, glow. Each region holds for a third of the scene, then blends quickly.
- const BIO=[['#020c2a','#0d3a7a','#5fe0ff','#0f3a66','#06203e','#7ff6ff'],['#1a0610','#8a2a2a','#ff9a4a','#5a1a1a','#2a0a0a','#ff6a2a'],['#0a1a3a','#4a7ac0','#f0f8ff','#5a7ab0','#2a3a6a','#e8fbff']];
- function sJourney(g,t,d){const seg=d/3,i0=Math.min(2,Math.floor(t/seg)),f=i0<2?ez(((t%seg)/seg-.72)/.28):0,i1=Math.min(2,i0+1),col=j=>mix(BIO[i0][j],BIO[i1][j],f),wt=b=>b==i0?1-f:b==i1?f:0;
-  g.setTransform(1,0,0,1,0,0);const sg=g.createLinearGradient(0,0,0,I.ch);sg.addColorStop(0,col(0));sg.addColorStop(.55,col(1));sg.addColorStop(1,col(2));g.fillStyle=sg;g.fillRect(0,0,I.cw,I.ch);
-  stage(g);
-  for(let i=0;i<6;i++){const x=((i*520-t*.18*420)%3120+3120)%3120-300;if(x<-100||x>1700)continue;A(g,.55,'lighter');drawStreak(g,BC[BIDS[i]],x,560,-PI/2,420,.6,16);putc(g,glow(BC[BIDS[i]]),x,560,1.4);A(g,1)}
-  [[.18,560,col(3),.9],[.45,690,mix(col(3),col(4),.5),.9],[1,800,col(4),1.1]].forEach((l,li)=>{const h=I.mt[li],N=h.length,seg=60,off=t*l[0]*420,base=Math.floor(off/seg),sh=off%seg;g.fillStyle=l[2];g.beginPath();g.moveTo(-seg,900);
-   for(let j=-1;j<1600/seg+3;j++)g.lineTo(j*seg-sh,l[1]-h[((base+j)%N+N)%N]*l[3]);g.lineTo(1700,900);g.closePath();g.fill();
-   // the near peaks carry each region's mark: crystal spires, lava glow, snow caps
-   if(li==2){for(let j=-1;j<1600/seg+3;j++){if(((base+j)%3+3)%3)continue;const px=j*seg-sh,py=l[1]-h[((base+j)%N+N)%N]*l[3];
-     if(wt(0)>.01){g.globalAlpha=wt(0);g.fillStyle='#7ff6ff';g.beginPath();poly(g,px-12,py+6,px,py-58,px+12,py+6);poly(g,px+8,py+8,px+20,py-30,px+28,py+8);g.fill();A(g,wt(0)*.8,'lighter');putc(g,glow('#7ff6ff'),px,py-20,.5);A(g,1)}
-     if(wt(1)>.01){A(g,wt(1)*.9,'lighter');putc(g,glow('#ff6a2a'),px,py+30,.9);putc(g,glow('#ffd36a'),px,py+4,.3);A(g,1)}
-     if(wt(2)>.01){g.globalAlpha=wt(2);g.fillStyle='#f4fbff';g.beginPath();poly(g,px-22,py+18,px,py-2,px+22,py+18);g.fill();g.globalAlpha=1}}}});
-  A(g,.7);const cx=(t*520)%2000;put(g,as('clouds'),-cx,680,2000,440);if(cx>400)put(g,as('clouds'),2000-cx,680,2000,440);A(g,1);
-  if(wt(1)>.01){A(g,wt(1)*.6,'lighter');for(let i=0;i<20;i++){const m=I.motes[i];putc(g,glow('#ff8a3a'),m.x,900-((t*m.v*4+m.y)%1000),.3)}A(g,1)}
-  if(wt(2)>.01){g.fillStyle='rgba(245,250,255,'+(.8*wt(2))+')';for(const r of I.rain)g.fillRect(((r.x-t*600)%1900+1900)%1900-150,((r.y+t*r.v*.15)%1100)-100,3,3)}
-  const fx=620+Math.sin(t*1.3)*40,fy=400+Math.sin(t*2.1)*26;A(g,1,'lighter');for(let i=1;i<12;i++)putc(g,glow('#e8fdff'),fx-i*34,400+Math.sin((t-i*.03)*2.1)*26,.75-i*.055);A(g,1);g.save();g.translate(fx,fy);g.rotate(1.38);putc(g,as('flyer'),0,0,.85);g.restore();
-  g.strokeStyle='rgba(20,10,30,.7)';g.lineWidth=3;g.beginPath();for(let i=0;i<6;i++){const bx=((1700-t*260-i*70)%1900+1900)%1900-150,by=230+i%3*30+Math.sin(t*3+i)*10,wf=Math.sin(t*14+i)*8;g.moveTo(bx-14,by-wf);g.lineTo(bx,by);g.lineTo(bx+14,by-wf)}g.stroke()}
  // ---- campfire: friends around the fire, Sprig asleep (with a snot bubble, naturally) until it pops
  function sCamp(g,t,d){const C=[800,lerp(470,455,ez(t/d)),lerp(1.12,1.05,ez(t/d))],FX=800,FY=700;I.C=C;
   cam(g,C[0],C[1],C[2],.25);put(g,as('sky1'),-100,-300);stars(g,t,1);cam(g,C[0],C[1],C[2],.3);A(g,.45+.1*Math.sin(t),'lighter');put(g,as('aurora'),-100,-250);A(g,1);islands(g,I.islF,C,t);
@@ -902,7 +904,7 @@ const CINE7=(()=>{
   if(t>pop&&t<pop+.8)bubble(g,640,FY-150,'!!',30,1,cl((t-pop)/.06,0,1)*cl((pop+.8-t)/.1,0,1))}
  // ---- restoration: the seed goes into the roots, gold light races out along them, colour floods back and the islands rise
  function sRestore(g,t,d){const B=1.6,k=t/d,lit=ez((t-B)/2.4),rise=ez((t-B-.3)/2.6),C=[800,lerp(560,470,ez(k)),lerp(1.15,.97,ez(k))];I.C=C;I.isy=lerp(800,0,rise);
-  uvid(g,t,C)||world(g,t,C,{st:.4+.6*lit,au:.6*lit,gw:.15+.6*lit,gc:'#ffd77a',veins:0,cl:.5+.5*lit,
+  world(g,t,C,{st:.4+.6*lit,au:.6*lit,gw:.15+.6*lit,gc:'#ffd77a',veins:0,cl:.5+.5*lit,
    pre:g2=>{if(lit>0){A(g2,lit);put(g2,as('sky7'),-100,-300);A(g2,1)}},
    mid:g2=>{if(t<=B)return;const R=lerp(0,1300,ez((t-B)/2.2)),tw=900,th=tw*1550/1500,tx=800-tw/2,ty=900-tw;g2.save();g2.beginPath();g2.arc(800,800,R,0,TAU);g2.clip();A(g2,.95,'lighter');put(g2,as('treeY'),tx,ty,tw,th);A(g2,1);g2.restore();
     A(g2,(1-ez((t-B)/2.2))*.8,'lighter');g2.strokeStyle='#ffe7a0';g2.lineWidth=10;g2.beginPath();g2.arc(800,800,R,0,TAU);g2.stroke();A(g2,1)}});
@@ -913,9 +915,126 @@ const CINE7=(()=>{
   if(t>B){const w=t-B;A(g,(1-ez(w/2.5))*.9,'lighter');g.save();g.translate(800,800);g.rotate(w*.3);putc(g,as('rays'),0,0,1.2+w*.4);g.restore();A(g,1)}
   motes(g,t,.3+.5*lit,'#ffe7a0');
   if(t>=B&&t<B+.4)I.fl=Math.max(I.fl,(1-(t-B)/.4)*.9);if(t<.3)I.dk=Math.max(I.dk,1-t/.3)}
- const SCN={tree:sTree,village:sVillage,eclipse:sEclipse,fall:sFall,bosses:sBosses,ages:sAges,wake:sWake,meet:sMeet,wings:sWings,oops:sOops,training:sTrain,journey:sJourney,clash:sClash,camp:sCamp,montage:sMont,restore:sRestore,title:sTitle};
+ // ================= the ascension cut: scenes built on the game's own content =================
+ // the player's own anime character (the game's renderer, with their look), feet at (x,y), s = scale (1 = in-game size)
+ function avatar(x2,x,y,s,o){o=o||{};if(typeof drawChar!='function')return;const g0=g,pd=typeof Plate!='undefined'?Plate.draw:null;
+  try{g=x2;if(pd)Plate.draw=()=>{};x2.save();x2.translate(x,y);x2.scale(s,s);drawChar(0,-54,o.f||1,typeof myHue!='undefined'?myHue:200,'',o.t||0,o.vx||0,!!o.air,'',o.w||'fist',o.sw||0,o.sw?1:0,typeof wear!='undefined'?wear:{},false,typeof look!='undefined'?look:undefined,'')}
+  catch(e){if(!avatar.e){avatar.e=1;console.error('CINE7 avatar',e)}}finally{x2.restore();g=g0;if(pd)Plate.draw=pd}}
+ const CLS=()=>{try{return MYART.KEYS}catch(_){return[]}},TH=k=>{try{return MYART.TH[k]}catch(_){return null}};
+ const myCls=()=>{let k='';try{k=CJOB.cur}catch(_){}const ks=CLS();return ks.includes(k)?k:(ks.includes('reaper')?'reaper':ks[0])};
+ // class emblems come from the game as image URLs (for <img>); cache them as loaded images for the canvas
+ const EMBI={};const emb=(k,S)=>{const key=k+'|'+S;let im=EMBI[key];if(!im){try{const u=MYART.emblem(k,S);if(typeof u=='string'){im=new Image();im.src=u}else im=u}catch(_){im=null}EMBI[key]=im||1}return im&&im!==1&&(im.getContext||(im.complete&&im.naturalWidth))?im:null};
+ AB.embs=()=>{for(const k of CLS()){emb(k,128);emb(k,192)}return art(1,1,1,()=>{})};
+ function spaced(g2,txt,x,y,sp){try{g2.letterSpacing=sp+'px'}catch(_){}g2.fillText(txt,x+sp/2,y);try{g2.letterSpacing='0px'}catch(_){}}
+ function gemGlyph(g2,x,y,r,c){g2.fillStyle=c;g2.beginPath();poly(g2,x,y-r,x+r*.8,y-r*.2,x,y+r,x-r*.8,y-r*.2);g2.fill();g2.fillStyle='rgba(255,255,255,.7)';g2.beginPath();poly(g2,x,y-r,x+r*.8,y-r*.2,x,y-r*.1);g2.fill()}
+ AB.gem=()=>art(64,64,1,x=>{x.shadowColor='#7ff6ff';x.shadowBlur=14;gemGlyph(x,32,32,20,'#7ff6ff');x.shadowBlur=0;x.strokeStyle='#0a2a3a';x.lineWidth=2;x.beginPath();poly(x,32,12,48,28,32,52,16,28);x.closePath();x.stroke()});
+ AB.clsbg=()=>art(1600,900,.5,(x,w,h)=>{const gr=x.createRadialGradient(800,420,40,800,450,900);gr.addColorStop(0,'#3a2a6a');gr.addColorStop(.45,'#140c2c');gr.addColorStop(1,'#04020a');x.fillStyle=gr;x.fillRect(0,0,w,h);
+  x.strokeStyle='rgba(190,170,255,.16)';x.lineWidth=2;for(const r of[150,250,340,420]){x.beginPath();x.ellipse(800,470,r*1.45,r*.42,0,0,TAU);x.stroke()}
+  const r=srnd(71);x.fillStyle='rgba(220,210,255,.5)';for(let i=0;i<140;i++){x.globalAlpha=.2+r()*.6;x.beginPath();x.arc(r()*w,r()*h,r()*1.8+.4,0,TAU);x.fill()}x.globalAlpha=1;
+  for(let i=0;i<7;i++){const px=120+i*226;const cg=x.createLinearGradient(px-34,0,px+34,0);cg.addColorStop(0,'rgba(10,6,24,.9)');cg.addColorStop(.5,'rgba(60,44,110,.55)');cg.addColorStop(1,'rgba(10,6,24,.9)');x.fillStyle=cg;x.fillRect(px-34,60,68,840)}});
+ // the depths: a 3000-tall cut through the ground, grass to dirt to stone to deepslate to magma, studded with glowing ore
+ const DZ=[['#3fd8b4','Glowroot Hollows'],['#9a7bff','Crystal Caverns'],['#ff6a2a','Emberdeep']];
+ AB.dpth=()=>{const ores=[];const a=art(1600,3000,.42,(x,w,h)=>{const band=(y0,y1,c0,c1)=>{const gr=x.createLinearGradient(0,y0,0,y1);gr.addColorStop(0,c0);gr.addColorStop(1,c1);x.fillStyle=gr;x.fillRect(0,y0,w,y1-y0)};
+   band(0,500,'#3d2a1c','#2a1c14');band(500,1300,'#3a3f4a','#262a33');band(1300,2100,'#2a2440','#1a1530');band(2100,3000,'#2a1010','#120404');
+   x.fillStyle='#4c9a3f';x.fillRect(0,0,w,40);x.fillStyle='#7ee06a';x.fillRect(0,0,w,10);
+   const r=srnd(41);for(let i=0;i<900;i++){const y=r()*h,px=r()*w;x.globalAlpha=.08+r()*.12;x.fillStyle=r()<.5?'#000':'#fff';x.fillRect(px,y,3+r()*8,2+r()*5)}x.globalAlpha=1;
+   x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=3;for(let i=0;i<60;i++){const y=200+r()*2700,px=r()*w;x.beginPath();x.moveTo(px,y);for(let k=0;k<4;k++)x.lineTo(px+(r()-.5)*120,y+k*30+r()*30);x.stroke()}
+   const cav=(cx,cy,rw,rh)=>{x.fillStyle='rgba(4,2,10,.85)';x.beginPath();x.ellipse(cx,cy,rw,rh,0,0,TAU);x.fill()};for(let i=0;i<14;i++)cav(r()*w,500+r()*2400,60+r()*160,30+r()*60);
+   const OC=[['#e08a4a',300,1000],['#d8c0a8',600,1500],['#3fd8b4',700,1400],['#9a7bff',1300,2100],['#3a7aff',1500,2200],['#ff3a5a',1700,2300],['#2ee07a',1900,2600],['#ff6a2a',2100,3000],['#bff6ff',2400,3000]];
+   for(let i=0;i<120;i++){const o=OC[i%OC.length],y=o[1]+r()*(o[2]-o[1]),px=40+r()*(w-80),rr=8+r()*12;ores.push([px,y,o[0]]);x.shadowColor=o[0];x.shadowBlur=18;x.fillStyle=o[0];x.beginPath();
+    for(let k=0;k<6;k++){const an=k*1.047+r()*.4,q=rr*(.7+r()*.5);k?x.lineTo(px+Math.cos(an)*q,y+Math.sin(an)*q):x.moveTo(px+Math.cos(an)*q,y+Math.sin(an)*q)}x.closePath();x.fill();x.shadowBlur=0;x.fillStyle='rgba(255,255,255,.7)';x.fillRect(px-2,y-rr*.5,3,3)}});a.ores=ores;return a};
+ // biome panels: moss caverns, frost grotto, ember depths (the biome worlds' looks)
+ const BIOS=()=>{try{const L=BIOME17.BI;const pick=['moss','frost','ember'].map(id=>L.find(b=>b.id==id)).filter(Boolean);if(pick.length==3)return pick.map(b=>[b.id,b.n,b.c])}catch(_){}return[['moss','Verdant Hollow','#6dff9a'],['frost','Frost Grotto','#9ae4ff'],['ember','Cinder Depths','#ff8a3a']]};
+ function bioArt(i){return art(700,900,.7,(x,w,h)=>{const id=['moss','frost','ember'][i],r=srnd(90+i);const top=['#0b2a1e','#0a1a36','#2a0a08'][i],bot=['#123d22','#16305a','#4a1206'][i],c=['#6dff9a','#9ae4ff','#ff8a3a'][i];
+   const gr=x.createLinearGradient(0,0,0,h);gr.addColorStop(0,top);gr.addColorStop(1,bot);x.fillStyle=gr;x.fillRect(0,0,w,h);
+   x.fillStyle='rgba(0,0,0,.45)';x.beginPath();x.moveTo(0,0);for(let k=0;k<=14;k++)x.lineTo(k*w/14,60+Math.sin(k*1.7)*30+r()*50);x.lineTo(w,0);x.fill();x.beginPath();x.moveTo(0,h);for(let k=0;k<=14;k++)x.lineTo(k*w/14,h-90-Math.sin(k*1.3)*30-r()*40);x.lineTo(w,h);x.fill();
+   if(id=='moss'){for(let k=0;k<9;k++){const px=40+r()*620,py=h-110-r()*40,sz=16+r()*20;x.fillStyle='#e8fff4';x.fillRect(px-3,py,6,40);x.shadowColor=c;x.shadowBlur=24;x.fillStyle=c;x.beginPath();x.ellipse(px,py,sz,sz*.6,0,PI,0);x.fill();x.shadowBlur=0}
+    x.strokeStyle='rgba(109,255,154,.5)';x.lineWidth=4;for(let k=0;k<7;k++){const px=r()*w;x.beginPath();x.moveTo(px,0);x.bezierCurveTo(px+30,200,px-30,360,px+10,520+r()*120);x.stroke()}}
+   if(id=='frost'){for(let k=0;k<12;k++){const px=r()*w,ph=60+r()*160;x.fillStyle='rgba(200,240,255,.85)';x.beginPath();poly(x,px-14,70,px,70+ph,px+14,70);x.fill()}x.shadowColor=c;x.shadowBlur=26;
+    for(let k=0;k<6;k++){const px=60+r()*580,py=h-120,ph=80+r()*140;x.fillStyle='rgba(154,228,255,.9)';x.beginPath();poly(x,px-22,py+20,px-4,py-ph,px+16,py+20);x.fill()}x.shadowBlur=0}
+   if(id=='ember'){x.shadowColor=c;x.shadowBlur=30;x.strokeStyle='#ffb04a';x.lineWidth=7;for(let k=0;k<5;k++){let px=r()*w,py=h;x.beginPath();x.moveTo(px,py);for(let j=0;j<6;j++){px+=(r()-.5)*90;py-=80;x.lineTo(px,py)}x.stroke()}x.shadowBlur=0;
+    for(let k=0;k<6;k++){const px=r()*w,ph=120+r()*220;x.fillStyle='#1a0a0a';x.beginPath();poly(x,px-40,h,px-8,h-ph,px+30,h);x.fill()}}
+   const vg=x.createRadialGradient(w/2,h/2,100,w/2,h/2,620);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.6)');x.fillStyle=vg;x.fillRect(0,0,w,h)})}
+ AB.bio0=()=>bioArt(0);AB.bio1=()=>bioArt(1);AB.bio2=()=>bioArt(2);
+ // a Letter Warden: an armoured giant of living stone with a letter burning on its chest
+ AB.wardn=()=>art(760,820,1,x=>{x.translate(380,820);x.fillStyle='#07050d';x.strokeStyle='rgba(150,220,255,.5)';x.lineWidth=3;x.lineJoin='round';
+  x.beginPath();poly(x,-300,0,-250,-300,-330,-430,-200,-520,-120,-470,-90,-600,-40,-640,40,-640,90,-600,120,-470,200,-520,330,-430,250,-300,300,0);x.closePath();x.fill();x.stroke();
+  x.beginPath();poly(x,-80,-640,-60,-760,0,-800,60,-760,80,-640);x.closePath();x.fill();x.stroke();
+  x.beginPath();poly(x,-60,-760,-110,-810,-70,-740);poly(x,60,-760,110,-810,70,-740);x.fill();
+  x.strokeStyle='rgba(120,200,255,.25)';x.lineWidth=6;for(const p of[[-200,-420,-150,-200],[200,-420,150,-200],[-60,-520,60,-520],[-120,-300,120,-300]]){x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[2],p[3]);x.stroke()}});
+ // ---- Classes: the thirteen emblems circle the hall; one comes to the hero, and their mythic weapon answers
+ function sClasses(g,t,d){const ks=CLS(),me=myCls(),th=TH(me)||{n:'',ep:'',q:'',pal:['#b58cff','#ffffff','#2a1a4a','#ffd36a']},pick=4.6,pk=t-pick;
+  stage(g);put(g,as('clsbg'),0,0,1600,900);motes(g,t,.5,th.pal[1]);stage(g);
+  const N=ks.length,spin=t<pick?t*.55:pick*.55+(1-Math.exp(-pk*3))*.4,list=[];
+  for(let i=0;i<N;i++){const k=ks[i];if(k==me&&pk>0)continue;const a=i/N*TAU+spin,z=Math.sin(a),x=800+Math.cos(a)*560,y=470+z*150,sc=lerp(.55,1.15,(z+1)/2),ap=ez((t-.2-i*.12)/.35);if(ap<=0)continue;list.push([z,k,x,y,sc,ap])}
+  list.sort((a,b)=>a[0]-b[0]);for(const[z,k,x,y,sc,ap]of list){const c=emb(k,128);if(!c)continue;const s2=96*sc*bo(ap)*(pk>0?1-ez(pk/.5)*.35:1),al=ap*lerp(.35,1,(z+1)/2)*(pk>0?1-ez(pk/.6)*.6:1),p=(TH(k)||{pal:['#fff']}).pal;
+   A(g,al*.6,'lighter');putc(g,glow(p[0]),x,y,s2/70);A(g,al);g.drawImage(c,x-s2/2,y-s2/2,s2,s2);A(g,1)}
+  if(t<pick&&N){const ci=Math.floor(t/.33)%N,tk=TH(ks[ci])||{};g.textAlign='center';g.textBaseline='middle';A(g,.85*ez((t-.6)/.4)*(1-ez((t-(pick-.3))/.3)));g.font='700 40px '+SERIF;g.fillStyle='#fff6e6';g.fillText(String(tk.n||'').toUpperCase(),800,700);g.font='600 18px '+SANS;g.fillStyle=(tk.pal||['#ccc'])[0];spaced(g,String(tk.ep||'').toUpperCase(),800,740,5);A(g,1)}
+  if(pk>0){const fy=lerp(470,330,eo(pk/.5)),c=emb(me,192);A(g,1,'lighter');putc(g,glow(th.pal[0]),800,fy,3.2+Math.sin(t*4)*.2);putc(g,as('spark'),800,fy,3*(1-ez(pk/.5))+.6);A(g,1);if(c){const S2=lerp(110,150,eo(pk/.5));g.drawImage(c,800-S2/2,fy-S2/2,S2,S2)}
+   const wa=ez((pk-.25)/.6);if(wa>0){g.save();g.translate(860,640);g.rotate(-.9+Math.sin(t*1.6)*.04);A(g,wa);try{MYART.weapon(g,me,Math.min(5,1+Math.floor(pk*2)),300,t,{aura:true})}catch(_){}A(g,1);g.restore()}
+   A(g,.9*ez(pk/.4),'lighter');putc(g,glow(th.pal[1]),800,640,4);A(g,1);avatar(g,780,760,4.6,{t,f:1});
+   const ta=ez((pk-.35)/.4);if(ta>0){g.textAlign='center';g.textBaseline='middle';A(g,ta);g.font='700 66px '+SERIF;g.lineWidth=8;g.strokeStyle='rgba(8,4,20,.85)';const nm=String(th.n).toUpperCase();g.strokeText(nm,800,130);g.fillStyle='#fff3d8';g.fillText(nm,800,130);
+    g.font='600 20px '+SANS;g.fillStyle=th.pal[0];spaced(g,String(th.ep||'').toUpperCase(),800,182,6);g.font='italic 500 26px '+SERIF;g.fillStyle='rgba(255,246,230,.85)';g.fillText('\u201C'+String(th.q||'')+'\u201D',800,228);A(g,1)}}
+  if(pk>0&&pk<.4)I.fl=Math.max(I.fl,.8*(1-pk/.4));if(t<.3)I.dk=Math.max(I.dk,1-t/.3)}
+ // ---- Depths: down through the layers; each zone's name slams in as it passes, the ore glitters, the depth counter climbs
+ function sDepths(g,t,d){const k=ez(t/d),off=lerp(0,2100,k),dp=as('dpth');stage(g);put(g,dp,0,-off,1600,3000);
+  A(g,1,'lighter');for(const o of dp.ores||[]){const y=o[1]-off;if(y<-40||y>940)continue;const tw=.5+.5*Math.sin(t*5+o[0]*.07);putc(g,glow(o[2]),o[0],y,.5+.35*tw);if(tw>.92)putc(g,as('spark'),o[0],y,.7)}A(g,1);
+  const hy=360+Math.sin(t*2)*14,hx=800+Math.sin(t*1.3)*30;A(g,1,'lighter');putc(g,glow('#fff1c0'),hx,hy-60,2.6);A(g,1);avatar(g,hx,hy+30,3.6,{t,air:true,vx:Math.cos(t*1.3)*80});
+  g.strokeStyle='rgba(255,240,200,.5)';g.lineWidth=2;g.beginPath();g.moveTo(hx,-10);g.lineTo(hx,hy-110);g.stroke();
+  const zones=[[.15,0],[1.95,1],[3.75,2]];for(const[z0,zi]of zones){const zt=t-z0;if(zt<0||zt>1.9)continue;const[c,nm]=DZ[zi],a=ez(zt/.25)*(1-ez((zt-1.5)/.35)),sx=lerp(zi%2?1700:-100,zi%2?1060:540,eo(zt/.35));
+   g.save();g.translate(sx,640);g.rotate(-.06);A(g,a,'lighter');putc(g,glow(c),0,0,4);A(g,a);g.font='italic 800 64px '+SANS;g.textAlign='center';g.textBaseline='middle';g.lineWidth=8;g.strokeStyle='rgba(6,4,14,.9)';g.strokeText(nm.toUpperCase(),0,0);g.fillStyle='#fff';g.fillText(nm.toUpperCase(),0,0);
+   g.font='700 18px '+SANS;g.fillStyle=c;spaced(g,'ZONE '+(zi+1)+' OF 3',0,52,6);A(g,1);g.restore()}
+  const dn=Math.round(lerp(0,96,k));g.textAlign='right';g.textBaseline='middle';g.font='800 46px '+SANS;g.fillStyle='rgba(255,255,255,.9)';g.fillText('DEPTH '+dn,1540,140);g.font='600 15px '+SANS;g.fillStyle='rgba(255,230,180,.8)';spaced(g,'THE DEEPER, THE RICHER',1540,182,3);
+  if(t<.3)I.dk=Math.max(I.dk,1-t/.3);I.dk=Math.max(I.dk,ez((t-(d-.35))/.35)*.7)}
+ // ---- Biomes: three lands slide in, each with its letter; the letters join into the world's word and the Word Gate opens
+ function sBiomes(g,t,d){const B=BIOS(),word='SKY',J=4.1,jt=t-J;stage(g);g.fillStyle='#05030c';g.fillRect(-100,-100,1800,1100);const sk=70;
+  for(let i=0;i<3;i++){const tl=t-(.1+i*.4);if(tl<0)continue;const dir=i%2?1:-1,off=(1-eo(tl/.4))*dir*1000,x0=i*533.33,x1=x0+533.33,cx=(x0+x1)/2,dim=jt>0?1-ez(jt/.6)*.65:1;
+   g.save();g.beginPath();g.moveTo(x0+sk,off-10);g.lineTo(x1+sk,off-10);g.lineTo(x1-sk,910+off);g.lineTo(x0-sk,910+off);g.closePath();g.clip();A(g,dim);put(g,as('bio'+i),x0-sk-40,off,620,900);A(g,1);g.restore();
+   const c=B[i][2],la=ez((tl-.3)/.3)*(jt>0?1-ez(jt/.25):1);if(la>0){const ly=390+off+Math.sin(t*2+i)*8;A(g,la*.8,'lighter');putc(g,glow(c),cx,ly,4.5);A(g,la);g.font='800 230px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.lineWidth=12;g.strokeStyle='rgba(6,4,14,.9)';g.strokeText(word[i],cx,ly);g.fillStyle='#fff';g.fillText(word[i],cx,ly);
+    g.font='700 22px '+SANS;g.fillStyle=c;spaced(g,String(B[i][1]).toUpperCase(),cx,ly+170,5);A(g,1)}
+   g.lineWidth=10;g.strokeStyle='#fff';g.beginPath();g.moveTo(x0+sk,off);g.lineTo(x0-sk,900+off);g.moveTo(x1+sk,off);g.lineTo(x1-sk,900+off);g.stroke()}
+  if(jt>0){const ga=ez((jt-.6)/.5);if(ga>0){g.save();g.translate(800,420);g.rotate(t*.6);A(g,ga*.85,'lighter');g.strokeStyle='#ffd77a';g.lineWidth=4;for(const r of[250,290]){g.beginPath();g.arc(0,0,r,0,TAU);g.stroke()}g.setLineDash([18,14]);g.beginPath();g.arc(0,0,270,0,TAU);g.stroke();g.setLineDash([]);
+    for(let i=0;i<12;i++){g.save();g.rotate(i/12*TAU);putc(g,glow('#ffd77a'),270,0,.35);g.restore()}A(g,1);g.restore();A(g,ga*.6,'lighter');g.save();g.translate(800,420);g.rotate(-t*.3);putc(g,as('rays'),0,0,1.1);g.restore();A(g,1)}
+   for(let i=0;i<3;i++){const u=eo(cl((jt-i*.08)/.7,0,1)),x=lerp(i*533.33+266.67,800+(i-1)*170,u),y=lerp(390,420,u),sz=lerp(230,190,u);A(g,1,'lighter');putc(g,glow(u>=1?'#ffd77a':B[i][2]),x,y,2.6);A(g,1);g.font='800 '+sz+'px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.lineWidth=10;g.strokeStyle='rgba(30,14,4,.9)';g.strokeText(word[i],x,y);
+    const fg=g.createLinearGradient(0,y-sz/2,0,y+sz/2);fg.addColorStop(0,'#fffbe8');fg.addColorStop(.6,'#ffd77a');fg.addColorStop(1,'#d18a2a');g.fillStyle=u>=1?fg:'#fff';g.fillText(word[i],x,y)}
+   const lt=jt-.9;if(lt>0){A(g,ez(lt/.4));g.font='700 22px '+SANS;g.fillStyle='#ffe9b0';g.textAlign='center';spaced(g,'THE WORD GATE OPENS',800,640,8);A(g,1)}if(jt>.75&&jt<1.1)I.fl=Math.max(I.fl,.7*(1-(jt-.75)/.35))}
+  if(t<.2)I.fl=Math.max(I.fl,1-t/.2)}
+ // ---- Wardens: the ground shakes and a Letter Warden rises behind its burning letter; the hero squares up
+ function sWardens(g,t,d){const rise=eo(cl(t/1.1,0,1)),wy=lerp(1300,880,rise);stage(g);const gr=g.createLinearGradient(0,0,0,900);gr.addColorStop(0,'#05040c');gr.addColorStop(1,'#140a24');g.fillStyle=gr;g.fillRect(-100,-100,1800,1100);stars(g,t,.4);stage(g);
+  A(g,.5+.3*Math.sin(t*3),'lighter');putc(g,glow('#7fd8ff'),820,wy-420,9);A(g,1);put(g,as('wardn'),820-380,wy-820,760,820);
+  const ey=wy-700;for(const ex of[790,850]){A(g,rise,'lighter');putc(g,glow('#bff6ff'),ex,ey,.9+.2*Math.sin(t*9));putc(g,as('spark'),ex,ey,.8);A(g,1)}
+  const lt=t-1.0;if(lt>0){const la=ez(lt/.3),ly=wy-430;A(g,la,'lighter');putc(g,glow('#ffd77a'),820,ly,3.2+.3*Math.sin(t*5));A(g,la);g.font='800 150px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.lineWidth=10;g.strokeStyle='rgba(30,14,4,.9)';g.strokeText('K',820,ly);g.fillStyle='#ffe9a8';g.fillText('K',820,ly);A(g,1)}
+  g.fillStyle='#030208';g.beginPath();g.moveTo(-100,900);for(let i=0;i<=20;i++)g.lineTo(i*85-100,800-Math.abs(Math.sin(i*1.9))*40);g.lineTo(1800,900);g.closePath();g.fill();
+  if(t<1.1){for(let i=0;i<10;i++){const px=(i*167+t*40)%1600,py=860-((t*400+i*90)%300);A(g,.6);g.fillStyle='#2a2238';g.fillRect(px,py,8+i%3*4,8+i%3*4)}A(g,1)}
+  const ht=t-2.2;if(ht>0){const ha=ez(ht/.4);A(g,ha*.8,'lighter');putc(g,glow('#ffe0b0'),330,700,2.4);A(g,ha);avatar(g,330,790,3.9,{t,f:1,sw:ht>1.6&&ht<1.9?.15:0});A(g,1)}
+  const ct=t-1.35;if(ct>0){const ca=ez(ct/.25)*(1-ez((ct-2.4)/.4)),sx=lerp(1700,1180,eo(ct/.3));g.save();g.translate(sx,170);g.rotate(-.05);A(g,ca);g.fillStyle='rgba(6,4,14,.85)';g.fillRect(-250,-46,500,92);g.fillStyle='#ffd77a';g.fillRect(-250,-46,8,92);g.font='800 46px '+SANS;g.textAlign='left';g.textBaseline='middle';g.fillStyle='#fff';g.fillText('LETTER WARDEN',-220,-6);g.font='600 15px '+SANS;g.fillStyle='#bfe8ff';spaced(g,'GUARDIAN OF THE LETTER K',-220,28,3);A(g,1);g.restore()}
+  if(t>=1.0&&t<1.3)I.fl=Math.max(I.fl,.75*(1-(t-1.0)/.3));if(t<.3)I.dk=Math.max(I.dk,1-t/.3)}
+ // ---- Levels: the counter races from 1 to 100, the XP bar fills faster every level, gems pour, the weapon evolves to MYTHIC
+ function sLevels(g,t,d){const me=myCls(),th=TH(me)||{pal:['#b58cff','#fff','#2a1a4a','#ffd36a'],n:''},p=th.pal,k=cl(t/5.4,0,1),lv=Math.max(1,Math.round(1+99*Math.pow(k,1.7))),my=t-5.5;
+  stage(g);const gr=g.createRadialGradient(800,470,40,800,470,1000);gr.addColorStop(0,mix(p[2],'#ffffff',.1));gr.addColorStop(1,'#040208');g.fillStyle=gr;g.fillRect(-100,-100,1800,1100);
+  g.save();g.translate(800,470);g.rotate(t*.25);A(g,.35+.25*k,'lighter');putc(g,as('rays'),0,0,1.4+k*.4);A(g,1);g.restore();A(g,.25+.3*k,'lighter');put(g,as('speed'),0,0,1600,900);A(g,1);
+  for(let i=0;i<26;i++){const m=I.motes[i],x=(m.x+t*120)%1700-50,y=((m.y+t*m.v*6)%1000)-60;A(g,.85);putc(g,as('gem'),x,y,.5+(i%3)*.15);A(g,1)}
+  const tier=Math.min(5,1+Math.floor(k*4.99));g.save();g.translate(880,560);g.rotate(-.95);A(g,1);try{MYART.weapon(g,me,tier,330,t,{aura:tier>=3})}catch(_){}g.restore();
+  A(g,.6+.3*Math.sin(t*6),'lighter');putc(g,glow(p[0]),790,600,4+k*2);A(g,1);avatar(g,790,760,5.2,{t});
+  g.textAlign='left';g.textBaseline='alphabetic';g.font='italic 800 44px '+SANS;g.fillStyle=p[1];g.fillText('LV',150,250);g.font='italic 900 150px '+SANS;g.lineWidth=10;g.strokeStyle='rgba(6,4,14,.85)';g.strokeText(String(lv),220,300);g.fillStyle='#fff';g.fillText(String(lv),220,300);
+  const bars=[['LEVEL',(1+99*Math.pow(k,1.7))%1,p[0]],[String(th.n||'CLASS').toUpperCase(),(k*7.3)%1,p[3]]];bars.forEach((b,i)=>{const y=350+i*56;g.font='700 15px '+SANS;g.fillStyle='rgba(255,255,255,.8)';spaced(g,b[0],150,y,3);g.fillStyle='rgba(255,255,255,.12)';g.fillRect(150,y+12,440,14);g.fillStyle=b[2];g.fillRect(150,y+12,440*(lv>=100?1:b[1]),14)});
+  for(const m of[10,25,50,75]){const mt=Math.pow((m-1)/99,1/1.7)*5.4,u=t-mt;if(u<0||u>.7)continue;A(g,1-ez(u/.7));g.font='italic 900 '+(46+u*30)+'px '+SANS;g.textAlign='center';g.lineWidth=8;g.strokeStyle='rgba(6,4,14,.85)';g.strokeText('LEVEL UP!',1180,330-u*60);g.fillStyle='#ffe9a0';g.fillText('LEVEL UP!',1180,330-u*60);A(g,1)}
+  if(my>0){A(g,ez(my/.25));g.save();g.translate(1180,300);g.rotate(-.08);g.scale(lerp(1.6,1,eo(my/.3)),lerp(1.6,1,eo(my/.3)));g.font='900 110px '+SERIF;g.textAlign='center';g.textBaseline='middle';g.lineWidth=12;g.strokeStyle='rgba(30,10,4,.9)';g.strokeText('MYTHIC',0,0);const fg=g.createLinearGradient(0,-55,0,55);fg.addColorStop(0,'#fffbe8');fg.addColorStop(.6,'#ffd77a');fg.addColorStop(1,'#d18a2a');g.fillStyle=fg;g.fillText('MYTHIC',0,0);g.restore();A(g,1)}
+  if(my>0&&my<.4)I.fl=Math.max(I.fl,.85*(1-my/.4));if(t<.25)I.dk=Math.max(I.dk,1-t/.25)}
+ // ---- The guardians fall: six portraits, one slash each; then the winged hero rises before the broken Eclipse
+ function sAscend(g,t,d){stage(g);put(g,as('sky3'),0,0,1600,900);A(g,.9,'lighter');putc(g,as('corona'),800,140,.8+.05*Math.sin(t*3));A(g,1);g.fillStyle='#030008';g.beginPath();g.arc(800,140,58,0,TAU);g.fill();cracks(g,1,800,140,.55+cl((t-4.4)/1,0,1)*.4);
+  const out=ez((t-4.3)/.5);for(let i=0;i<6;i++){const id=BIDS[i],col=i%3,row=Math.floor(i/3),cx=360+col*440,cy=360+row*300,ap=ez((t-i*.06)/.3),hit=t-(.6+i*.62);if(ap<=0)continue;const al=ap*(1-out);if(al<=0)continue;
+   g.save();g.translate(cx,cy+(1-ap)*40);A(g,al);g.fillStyle='rgba(6,4,14,.8)';g.fillRect(-190,-130,380,260);g.save();g.beginPath();g.rect(-186,-126,372,252);g.clip();putc(g,glow(BC[id]),0,10,3);
+   const sl=as('sil_'+id);put(g,sl,-sl.w*.24,-sl.h*.24-10,sl.w*.48,sl.h*.48);if(hit>0){g.fillStyle='rgba(10,6,20,'+(.55*ez(hit/.3))+')';g.fillRect(-190,-130,380,260)}g.restore();
+   g.strokeStyle=hit>0?'#7a6a8a':BC[id];g.lineWidth=4;g.strokeRect(-190,-130,380,260);g.font='800 18px '+SANS;g.textAlign='center';g.fillStyle='#fff';spaced(g,BNM[id].toUpperCase(),0,112,3);
+   if(hit>0&&hit<.35){A(g,al*(1-hit/.35),'lighter');drawStreak(g,'#ffffff',260,-160,2.5,560,1,12);A(g,al)}
+   if(hit>.15){const sa=ez((hit-.15)/.2);g.save();g.rotate(-.18);g.scale(lerp(1.8,1,eo((hit-.15)/.2)),lerp(1.8,1,eo((hit-.15)/.2)));A(g,al*sa);g.strokeStyle='#ff3a4a';g.lineWidth=5;g.strokeRect(-130,-34,260,68);g.font='900 40px '+SANS;g.fillStyle='#ff4a5a';g.textBaseline='middle';g.fillText('DEFEATED',0,2);g.restore()}
+   A(g,1);g.restore()}
+  if(out>0){const ry=lerp(900,500,eo(cl((t-4.4)/1.2,0,1)));A(g,out*.7,'lighter');g.save();g.translate(800,ry);g.rotate(t*.3);putc(g,as('rays'),0,0,1.4);g.restore();putc(g,glow('#fff4d0'),800,ry,4);A(g,out);putc(g,as('flyer'),800,ry,1.6);A(g,1)}
+  if(t>5.6)I.fl=Math.max(I.fl,ez((t-5.6)/.4)*.9);if(t<.25)I.dk=Math.max(I.dk,1-t/.25)}
+ const SCN={tree:sTree,village:sVillage,eclipse:sEclipse,fall:sFall,bosses:sBosses,ages:sAges,wake:sWake,meet:sMeet,wings:sWings,oops:sOops,training:sTrain,classes:sClasses,depths:sDepths,biomes:sBiomes,wardens:sWardens,levels:sLevels,clash:sClash,camp:sCamp,montage:sMont,ascend:sAscend,restore:sRestore,title:sTitle};
  // ---- frame: background scene, then flash / letterbox / caption in screen space
- function draw(){const g=I.g,u=I.u;g.setTransform(1,0,0,1,0,0);A(g,1);g.fillStyle='#000';g.fillRect(0,0,I.cw,I.ch);I.fl=0;I.dk=0;I.sa=0;I.shx=I.shy=0;
+ function draw(){holdTick();const g=I.g,u=I.u;g.setTransform(1,0,0,1,0,0);A(g,1);g.fillStyle='#000';g.fillRect(0,0,I.cw,I.ch);I.fl=0;I.dk=0;I.sa=0;I.shx=I.shy=0;
   let si=0;while(si<STORY.length-1&&u>=STORY[si+1][3])si++;const S=STORY[si],t=u-S[3];I.si=si;
   if(!I.prep&&I.vsi!==si){I.vsi=si;if(S[2])narr(S[2],S[0]);if(S[0]=='title'&&!I.vt){I.vt=1;setTimeout(()=>narr('RootBound.','title',true),Math.max(0,(.5-t)*1000))}}
   // shake is decided by the scene's first lines; compute it with a dry pass of the timings
@@ -923,6 +1042,10 @@ const CINE7=(()=>{
   if(!I.red){const sa=shakeAt(S[0],t);if(sa>0){I.shx=(R()-.5)*2*sa*I.s/2;I.shy=(R()-.5)*2*sa*I.s/2}}
   g.save();try{pre(g,t,S[1])}catch(e){if(!draw.e){draw.e=1;console.error('CINE7 scene',S[0],e)}}g.restore();
   g.setTransform(1,0,0,1,0,0);A(g,1);
+  // soft bloom: the frame, shrunk and blurred, screened back on top (bright areas glow, dark ones stay dark); warm light leaks drift at the edges
+  if(!I.red){const bw=Math.max(64,I.cw/6|0),bh0=Math.max(36,I.ch/6|0);let bc=I.bc;if(!bc||bc.width!=bw||bc.height!=bh0){bc=I.bc=mk(bw,bh0)}const bx=bc.getContext('2d');bx.globalCompositeOperation='copy';bx.filter='blur(4px)';bx.drawImage(I.cv,0,0,bw,bh0);bx.filter='none';
+   g.save();g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='screen';g.globalAlpha=.3;g.drawImage(bc,0,0,I.cw,I.ch);g.globalCompositeOperation='lighter';
+   for(let i=0;i<2;i++){const ph=u*.13+i*2.4,lx=(i?.92:.06)*I.cw+Math.sin(ph)*I.cw*.05,ly=(i?.15:.8)*I.ch+Math.cos(ph*1.3)*I.ch*.06,lg=glow(i?'#ffb070':'#ff7ab0'),lr=I.ch*(.7+.15*Math.sin(ph*.7));g.globalAlpha=.07+.04*Math.sin(ph*1.7);g.drawImage(lg.c,lx-lr,ly-lr,lr*2,lr*2)}g.restore()}
   const vg=as('vig');g.drawImage(vg.c,0,0,I.cw,I.ch);
   // fine film grain (one pattern fill, moved every frame)
   if(!I.red){const gp=I.gp||(I.gp=g.createPattern(as('grain').c,'repeat'));g.save();g.globalAlpha=.05;g.globalCompositeOperation='overlay';g.translate(-(R()*256|0),-(R()*256|0));g.fillStyle=gp;g.fillRect(0,0,I.cw+256,I.ch+256);g.restore()}
@@ -936,15 +1059,19 @@ const CINE7=(()=>{
   // typewriter caption inside the lower bar
   const cap=S[2];if(cap&&bh>8){const ct=t-.35,n=Math.floor(ct/Math.min(.034,(S[1]*.55)/cap.length));if(n>0){const fs=Math.max(12,Math.min(bh*.34,I.cw*.021));g.font='italic 600 '+fs+'px '+SERIF;let f2=fs;while(g.measureText(cap).width>I.cw*.9&&f2>10){f2-=1;g.font='italic 600 '+f2+'px '+SERIF}
     const shown=cap.slice(0,n),fade=1-ez((t-(S[1]-.3))/.3);g.textAlign='center';g.textBaseline='middle';const full=g.measureText(cap).width,x0=I.cw/2-full/2;g.textAlign='left';g.fillStyle='rgba(244,236,255,'+fade+')';g.fillText(shown,x0,I.ch-bh/2);
-    if(n<cap.length&&Math.floor(u*6)%2==0){const w=g.measureText(shown).width;g.fillStyle='rgba(255,215,122,'+fade+')';g.fillRect(x0+w+3,I.ch-bh/2-f2*.4,2,f2*.8)}}}}
- const WIPE={fall:'#000',meet:'#fff6e0',oops:'#fff6e0',training:'#fff6e0',journey:'#000',clash:'#000',camp:'#000',montage:'#000'};   // scenes that open on an ink-slash wipe
+    if(n<cap.length&&Math.floor(u*6)%2==0){const w=g.measureText(shown).width;g.fillStyle='rgba(255,215,122,'+fade+')';g.fillRect(x0+w+3,I.ch-bh/2-f2*.4,2,f2*.8)}}}holdRing(g)}
+ const WIPE={fall:'#000',meet:'#fff6e0',oops:'#fff6e0',training:'#fff6e0',depths:'#000',wardens:'#000',ascend:'#000',clash:'#000',camp:'#000',montage:'#000'};   // scenes that open on an ink-slash wipe
  function shakeAt(id,t){if(id=='eclipse'){const ct=t-1.8;return ct>0&&ct<.7?(1-ct/.7)*22:0}if(id=='wings'){const bt=t-1.0;return bt>0&&bt<.5?(1-bt/.5)*16:0}if(id=='title'){const st=t-.55;return st>0&&st<.5?(1-st/.5)*18:0}if(id=='oops'){const ht=t-1.25;return ht>0&&ht<.4?(1-ht/.4)*16:0}
   if(id=='fall'){let s=2.5;for(const b of[.3,1.0,1.6,2.3]){const v=(t-b)/.35;if(v>0&&v<1)s=Math.max(s,(1-v)*10)}return s}
   if(id=='training'){const v=(t-3.52)/.3;return v>0&&v<1?(1-v)*12:0}
   if(id=='restore'){const v=(t-1.6)/.6;return v>0&&v<1?(1-v)*12:0}
+  if(id=='wardens'){const v=(t-1.0)/.6;return v>0&&v<1?(1-v)*20:t<1?t*3:0}
+  if(id=='classes'){const v=(t-4.6)/.4;return v>0&&v<1?(1-v)*10:0}
+  if(id=='levels'){const v=(t-5.5)/.5;return v>0&&v<1?(1-v)*14:0}
+  if(id=='ascend'){for(let i=0;i<6;i++){const v=(t-(.6+i*.62))/.25;if(v>0&&v<1)return(1-v)*9}const v=(t-5.6)/.4;return v>0&&v<1?(1-v)*12:0}
   if(id=='clash'){for(const s of[[.9,24,.6],[3.6,12,.45]]){const v=(t-s[0])/s[2];if(v>0&&v<1)return(1-v)*s[1]}return 0}
   if(id=='montage'){const tc=t-MCUT[1][0];if(tc>0&&tc<MCUT[1][1]){for(const h of[.3,.58]){const v=(tc-h)/.14;if(v>0&&v<1)return(1-v)*10}}}return 0}
- function fit(){if(!I)return;const d=Math.min(1.5,window.devicePixelRatio||1);I.cw=Math.max(320,Math.round(innerWidth*d));I.ch=Math.max(180,Math.round(innerHeight*d));I.cv.width=I.cw;I.cv.height=I.ch;I.s=Math.max(I.cw/1600,I.ch/900)}
+ function fit(){if(!I)return;const d=Math.min(2,window.devicePixelRatio||1);I.cw=Math.max(320,Math.round(innerWidth*d));I.ch=Math.max(180,Math.round(innerHeight*d));I.cv.width=I.cw;I.cv.height=I.ch;I.s=Math.max(I.cw/1600,I.ch/900)}
  function sched(){const ax=au();while(I.evi<I.ev.length&&I.ev[I.evi][0]<=I.u+.3){const e=I.ev[I.evi++];if(ax&&e[0]>=I.u-.08)try{e[1](ax.a.currentTime+Math.max(0,(e[0]-I.u)*I.k)+.02)}catch(_){}}}
  function frame(now){if(!I)return;I.raf=requestAnimationFrame(frame);const f0=performance.now();
   // prep: build every scene's art on a black screen BEFORE the story clock starts (~12 ms of work per frame), so nothing is
@@ -967,7 +1094,15 @@ const CINE7=(()=>{
   if(I.q2.length&&performance.now()-f0<7){const n=I.q2.shift();try{as(n)}catch(e){console.error('CINE7 art',n,e)}}
   if(I.u>=ST-.9&&!I.ending){I.ending=1;try{I.done&&I.done()}catch(e){console.error(e)}I.cv.style.transition='opacity '+(.9*I.k).toFixed(2)+'s ease';I.cv.classList.add('out')}
   if(I.el>=ST*I.k+.05)end()}
- function blockKey(e){if(!I)return;try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}if(/^F\d+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault()}
+ const HOLDK={' ':1,Enter:1,Escape:1},HOLD=1.2;
+ function blockKey(e){if(!I)return;try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}if(/^F\d+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault();I.hint=performance.now();if(HOLDK[e.key]&&!e.repeat)I.holding=true}
+ function holdUp(e){if(!I)return;if(HOLDK[e.key])I.holding=false;e.stopImmediatePropagation()}
+ // advance the hold (real time) and skip to the hand-over once it is full
+ function holdTick(){const now=performance.now(),dt=Math.min(.1,(now-(I.ht||now))/1000);I.ht=now;if(I.skipped)return;I.hold=I.holding?I.hold+dt:Math.max(0,I.hold-dt*2.5);if(I.hold>=HOLD){I.skipped=1;I.holding=false;const to=Math.max(I.u,ST-.6);I.el=to*I.k;I.u=to;I.evi=I.ev.length}}
+ function holdRing(g){if(I.skipped)return;const now=performance.now(),seen=I.u<4||now-(I.hint||-1e9)<2500||I.hold>0;I.ha=lerp(I.ha||0,seen?1:0,.12);if(I.ha<.02)return;
+  const r=Math.max(13,I.ch*.022),x=I.cw-r*2.2,y=Math.max(r*1.6,I.ch*.058),k=Math.min(1,I.hold/HOLD);g.save();g.setTransform(1,0,0,1,0,0);g.globalAlpha=I.ha*.9;g.lineWidth=Math.max(2,r*.2);g.strokeStyle='rgba(255,255,255,.25)';g.beginPath();g.arc(x,y,r,0,TAU);g.stroke();
+  if(k>0){g.strokeStyle='#ffd77a';g.beginPath();g.arc(x,y,r,-PI/2,-PI/2+k*TAU);g.stroke()}g.fillStyle='#fff';g.beginPath();poly(g,x-r*.28,y-r*.38,x+r*.42,y,x-r*.28,y+r*.38);g.fill();
+  g.font='600 '+Math.max(11,r*.8|0)+'px '+SANS;g.textAlign='right';g.textBaseline='middle';g.fillStyle='rgba(255,255,255,.85)';g.fillText('Hold Space or click to skip',x-r*1.6,y);g.restore()}
  function resume(){try{if(AC&&AC.state=='suspended')AC.resume()}catch(_){}}
  // ---- narrator (VOX12): deep, calm and clean; darker characters get a deeper, more commanding read. The score ducks under the voice.
  let talking=0,vpend=0;
@@ -981,10 +1116,10 @@ const CINE7=(()=>{
    if(a){VOX12.log.push(text);try{a.currentTime=0;a.volume=Math.min(1,OPT.sv==null?1:+OPT.sv);a.onplay=on;a.onended=done;a.onerror=done;const pr=a.play();if(pr&&pr.catch)pr.catch(done)}catch(_){done()}}
    else if(!VOX12.say(text,{pitch:title?Math.max(.74,p.pitch-.06):p.pitch,rate:title?.74:p.rate,onstart:on,onend:done}))done();
   if(title){try{const A=au();if(A){const t0=A.a.currentTime+.05;o('m',65.4,65.4,t0,3.2,'sine',.09,.06);o('m',98,98,t0,3,'sine',.05,.08);o('m',130.8,130.8,t0+.05,2.6,'triangle',.025,.1,0,1)}}catch(_){}}}catch(_){}}
- function end(){if(!I)return;cancelAnimationFrame(I.raf);uvEnd();{const t0=Date.now(),w=()=>{if(I)return;if(vpend>0&&Date.now()-t0<9000){setTimeout(w,250);return}try{VOX12.stop()}catch(_){}DUCK=1;talking=0;vpend=0;vol()};setTimeout(w,400)}removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
+ function end(){if(!I)return;cancelAnimationFrame(I.raf);removeEventListener('keyup',holdUp,true);{const t0=Date.now(),w=()=>{if(I)return;if(vpend>0&&Date.now()-t0<9000){setTimeout(w,250);return}try{VOX12.stop()}catch(_){}DUCK=1;talking=0;vpend=0;vol()};setTimeout(w,400)}removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
   try{if(!(typeof SHOW7!='undefined'&&SHOW7.isOpen))window.RB_COVER=false}catch(_){window.RB_COVER=false}try{startBGM()}catch(_){}/* the game's music takes over (it was held back during the story) */}
  function intro(done){if(I)return false;try{retime(reduce()?.6:1)}catch(e){console.error('CINE7 retime',e)}const red=reduce(),cv=mk(1,1);cv.id='cine7';cv.setAttribute('role','img');cv.setAttribute('aria-label','Story intro: Rootbound, Celestial Ascension');document.body.appendChild(cv);
-  I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);uvPrep();
+  I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,hold:0,holding:false,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2.6,I.s*1.1);
   const r=srnd(99);I.stars=[];for(let i=0;i<260;i++)I.stars.push({x:-100+r()*1800,y:-300+r()*950,r:r()<.85?1.2+r()*1.3:2.4+r()*1.5,b:.4+r()*.6,sp:1+r()*3,ph:r()*6});I.big=[];for(let i=0;i<14;i++)I.big.push({x:-50+r()*1700,y:-280+r()*700,r:18+r()*26,ph:r()*6});
   I.motes=[];for(let i=0;i<64;i++)I.motes.push({x:r()*1600,y:r()*900,v:14+r()*36,r:5+r()*13,ph:r()*6,c:r()<.7?'#9ff6ff':'#ffe08a'});
   I.islF=[{a:'isl2',x:300,y:190,p:.6,sc:1,ph:1},{a:'isl3',x:1290,y:120,p:.6,sc:1,ph:2},{a:'isl4',x:1060,y:520,p:.6,sc:1,ph:3}];I.islN=[{a:'isl0',x:150,y:520,p:1.15,sc:1,ph:4},{a:'isl1',x:1460,y:380,p:1.15,sc:1,ph:5}];
@@ -996,7 +1131,7 @@ const CINE7=(()=>{
   I.mt=[0,1,2].map(li=>{const h=[];for(let j=0;j<64;j++)h.push(Math.max(10,(li==0?150:li==1?110:70)+Math.sin(j*.45+li*2)*60+Math.sin(j*1.3+li)*30+r()*40+(j%5==0&&li==2?50:0)));return h});
   I.cr=crackGen();I.sh=shardGen();I.fe=[];for(let i=0;i<46;i++){const a=r()*TAU,sp=200+r()*700;I.fe.push({vx:Math.cos(a)*sp,vy:Math.sin(a)*sp*.7-120,a:r()*6,va:(r()-.5)*8,s:6+r()*10})}
   I.q2=[].concat(...NEED.slice(1));NEED[0].concat(['vig']).forEach(n=>{try{as(n)}catch(e){console.error('CINE7 art',n,e)}});
-  window.RB_COVER=true;addEventListener('resize',fit);addEventListener('keydown',blockKey,true);cv.addEventListener('pointerdown',resume);I.last=performance.now();I.raf=requestAnimationFrame(frame);return true}
+  window.RB_COVER=true;addEventListener('resize',fit);addEventListener('keydown',blockKey,true);addEventListener('keyup',holdUp,true);cv.addEventListener('pointerdown',e=>{resume();I.hint=performance.now();I.holding=true});cv.addEventListener('pointerup',()=>{if(I)I.holding=false});cv.addEventListener('pointerleave',()=>{if(I)I.holding=false});cv.addEventListener('pointermove',()=>{if(I)I.hint=performance.now()});I.last=performance.now();I.raf=requestAnimationFrame(frame);return true}
  // launch: wait for the game to be ready (never hide the startup diagnostic), then play the story and hand over to the home screen
  function launch(home){let n=0;const iv=setInterval(()=>{n++;let rdy=true,bad=false;try{rdy=!window.RBDIAG||RBDIAG.ready;const d=document.getElementById('rbdiag');bad=!!(d&&getComputedStyle(d).display!='none')}catch(_){}
   if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{if(!intro(home))home()}catch(e){console.error('CINE7 intro',e);try{if(I){try{I.cv.remove()}catch(_){}I=null}window.RB_COVER=false}catch(_){}home()}},60)}
@@ -1084,6 +1219,6 @@ const CINE7=(()=>{
   else if(k=='crack'){for(let i=0;i<4;i++)nz('s',t+i*.21,.09,'highpass',2200+R()*2000,0,v*.12,.001);o('s',1200,600,t,.8,'sine',v*.03,.05,0,1)}
   else if(k=='burst'){boom(t,v*.55);shatter(t+.02,v*.2);crash(t,v*.08);for(let i=0;i<7;i++)o('s',110+R()*90,50,t+.35+i*.15+R()*.05,.12,'triangle',v*.05,.003);[523,659,784,1047].forEach((f,i)=>o('s',f,f,t+1.1+i*.09,.6,'sine',v*.04,.004,0,1))}
   else if(k=='vuln'){o('s',660,990,t,.18,'triangle',v*.05,.003);o('s',990,1320,t+.09,.22,'sine',v*.04,.003)}})}
- return{uvState:()=>({ok:UV.ok,rs:UV.el?UV.el.readyState:-1,w:UV.el?UV.el.videoWidth:0,d:UV.el?UV.el.duration:0,ct:UV.el?UV.el.currentTime:0}),launch,intro,bossIntro,bossSkip,bossBars,bossWin,bossLose,bossSfx,slow,get tS(){return tS},on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
+ return{get hold(){return I?{held:I.hold,on:I.holding,skipped:!!I.skipped}:null},launch,intro,bossIntro,bossSkip,bossBars,bossWin,bossLose,bossSfx,slow,get tS(){return tS},on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
   seek(u){if(!I)return;I.el=cl(u,0,ST)*I.k;I.u=I.el/I.k;I.evi=I.ev.findIndex(e=>e[0]>=I.u);if(I.evi<0)I.evi=I.ev.length;for(const s of NEED)for(const n of s)try{as(n)}catch(_){}},
   get state(){return I?{u:I.u,scene:STORY[I.si|0][0],total:ST,k:I.k,rate:I.rate||1,vpend}:null},get VO(){return VO},retime,lake:()=>!!AB.m3r,STORY}})();
