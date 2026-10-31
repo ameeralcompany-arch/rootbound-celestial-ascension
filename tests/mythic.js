@@ -25,13 +25,13 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  await p.keyboard.press('Escape');await p.mouse.click(600,400);await sleep(600);const f2=await E(()=>!!document.getElementById('myth9'));
  ok('forging at class 50 (a 5000-gem tribute) starts the ascension scene and equips the scythe; the world is paused',f1.ok&&f1.t==1&&f1.wp=='myth_reaper'&&f1.scene&&f1.cover&&f1.gems==5000,f1);
  ok('the scene cannot be skipped (Esc and clicks do nothing)',f2);
- await sleep(6600);const f3=await E(()=>({scene:!!document.getElementById('myth9'),cover:window.RB_COVER===true}));ok('the scene ends by itself and the world resumes',!f3.scene&&!f3.cover,f3);
+ await sleep(2700);const f3=await E(()=>({scene:!!document.getElementById('myth9'),cover:window.RB_COVER===true}));ok('the quick scene (about 3 s) ends by itself and the world resumes',!f3.scene&&!f3.cover,f3);
  // ascend to II: pays gems + materials
  const a1=await E(()=>({ok:MYTH.check('reaper').ok,rq:MYTH.reqs('reaper').map(r=>r.label+':'+r.have+'/'+r.need).join(' | ')}));
  ok('each upgrade asks for three earned things: monsters slain and bosses defeated as the class, and a tribute (plus the class level)',!a1.ok&&/Monsters slain/.test(a1.rq)&&/Bosses defeated/.test(a1.rq)&&/Gems/.test(a1.rq),a1);
- const a2=await E(()=>{MYTH.S.kc.reaper=500;MYTH.S.bk.reaper=2;const g0=gems,m0=cnt(262),ok=MYTH.ascend('reaper');return{ok,t:MYTH.tier('reaper'),gems:g0-gems,mat:m0-cnt(262),md:WPN.myth_reaper.md,kc:MYTH.S.kc.reaper|0}});await sleep(7000);
+ const a2=await E(()=>{MYTH.S.kc.reaper=500;MYTH.S.bk.reaper=2;const g0=gems,m0=cnt(262),ok=MYTH.ascend('reaper');return{ok,t:MYTH.tier('reaper'),gems:g0-gems,mat:m0-cnt(262),md:WPN.myth_reaper.md,kc:MYTH.S.kc.reaper|0}});await sleep(3300);   // the ascension scene lasts about 3 s
  ok('ascending spends the tribute, resets the slain / boss counters and raises damage',a2.ok&&a2.t==2&&a2.gems==4000&&a2.mat==6&&a2.md>40&&a2.kc==0,a2);
- await E(()=>{MYTH.S.kc.reaper=1000;MYTH.S.bk.reaper=3;MYTH.ascend('reaper')});await sleep(7000);
+ await E(()=>{MYTH.S.kc.reaper=1000;MYTH.S.bk.reaper=3;MYTH.ascend('reaper')});await sleep(3300);   // the ascension scene lasts about 3 s
  // combo against a row of monsters on the right
  for(let i=0;i<60&&await E(()=>!!document.getElementById('myth9'));i++)await sleep(200);
  const c=await E(async()=>{const px=Math.floor(P.x/T),fy=Math.floor((P.y+P.h)/T);for(let x=px-6;x<=px+12;x++){for(let y=fy-7;y<fy;y++)setTile(x,y,0);setTile(x,fy,1);setTile(x,fy+1,1)}P.y=fy*T-P.h-1;P.vy=0;mobs.length=0;P.vx=0;const kk=Object.keys(MK).filter(q=>!MK[q].boss&&!MK[q].fly)[0],d=MK[kk];for(let i=0;i<4;i++)mobs.push({k:kk,x:P.x+55+i*30,y:P.y+P.h-d.h,w:d.w,h:d.h,vx:0,vy:0,hp:9000,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0});

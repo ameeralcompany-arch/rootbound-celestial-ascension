@@ -43,6 +43,7 @@ const MYUI=(()=>{
  function fit(c){const r=c.getBoundingClientRect(),d=Math.min(1.5,devicePixelRatio||1),w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));if(c.width!==w||c.height!==h){c.width=w;c.height=h}return{w:r.width,h:r.height,d}}
  // background: motif particles that behave like their material, over a faint class sigil
  function bg(c,k,t){const{w,h,d}=fit(c),g=c.getContext('2d'),th=TH[k],p=th.pal,mo=th.mot;g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);
+  try{if(typeof CLART!='undefined')CLART.scene(g,k,w,h)}catch(_){}   // the class's own world (99-zzzzzzzzz-9-classart.js)
   const n=mo=='star'?60:mo=='rune'||mo=='gear'?14:30;let sd=A.KEYS.indexOf(k)*977+13;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;bgP=[];
   while(bgP.length<n)bgP.push({x:rn()*w,y:rn()*h,s:.6+rn()*.9,v:.4+rn()*.8,a:rn()*TAU,ph:rn()*TAU,o:.2+rn()*.6});
   const fall=mo=='petal'||mo=='leaf'||mo=='feather'||mo=='blood',rise=mo=='spark'||mo=='flame'||mo=='rock';

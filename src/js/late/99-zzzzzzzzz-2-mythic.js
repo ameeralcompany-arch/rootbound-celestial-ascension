@@ -1,5 +1,5 @@
 // ===== MYTH: the mythic arsenal. Every class has its own mythic weapon of its own kind (MYART.TH / MYART.WT; only the Reaper's is a scythe): forge it in the Classes screen, then ascend it through
-// five tiers with gems, class levels and materials from the depths. Each ascension plays a scene you cannot skip: the old blade shatters
+// five tiers with gems, class levels and materials from the depths. Each ascension plays a quick scene (3 s) you cannot skip: the old blade shatters
 // and the new one is revealed ("You have been ascended to a new level of <weapon>").
 // Combat: a real swing instead of an instant hit. Three moves chain into a combo (a downward reap, a rising return cut, a full spin), each
 // swept along an eased arc (wind-up, fast cut, follow-through) that hits whatever the blade passes through, knocks it along the swing and
@@ -255,42 +255,42 @@ const MYTH=(()=>{
  {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){if(!tick.e){tick.e=1;console.error('MYTH',e)}}};BOSS6.drawProj=function(g2,cx,cy){_d.call(this,g2,cx,cy);try{draw(g2,cx,cy)}catch(e){if(!draw.e){draw.e=1;console.error('MYTH draw',e)}}}}
  // ---- the ascension scene: cannot be skipped (input is swallowed and the world is paused until it ends)
  let SC=null;
- function scene(k,from,to){if(SC)return;const th=TH[k],p=th.pal,red2=red(),dur=red2?4.2:6.6,cv2=document.createElement('canvas');cv2.id='myth9';cv2.setAttribute('role','img');cv2.setAttribute('aria-label',th.n+' ascended to tier '+RN[to]);
+ function scene(k,from,to){if(SC)return;const th=TH[k],p=th.pal,red2=red(),dur=red2?2.2:3.0,cv2=document.createElement('canvas');cv2.id='myth9';cv2.setAttribute('role','img');cv2.setAttribute('aria-label',th.n+' ascended to tier '+RN[to]);
   cv2.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483300;cursor:default';document.body.appendChild(cv2);
   const block=e=>{e.preventDefault();e.stopImmediatePropagation()};const evs=['keydown','keyup','mousedown','mouseup','click','contextmenu','wheel','touchstart','pointerdown'];
   for(const ev of evs)addEventListener(ev,block,{capture:true,passive:false});
   const cover0=window.RB_COVER;window.RB_COVER=true;try{for(const q in K)K[q]=0}catch(_){}
   SC={k,from,to,t0:performance.now(),dur,cv:cv2,shards:[],motes:[]};
   for(let i=0;i<26;i++)SC.shards.push({a:R()*TAU,v:200+R()*500,r:R()*TAU,vr:(R()-.5)*10,s:6+R()*14});for(let i=0;i<70;i++)SC.motes.push({a:R()*TAU,d:300+R()*500,s:2+R()*3,o:R()});
-  const tn=(f,d,v,dl)=>{try{SFX7.tone(f,f,d,'triangle',v,dl)}catch(_){}};try{SFX7.tone(55,48,2.4,'sine',.07)}catch(_){}
-  setTimeout(()=>{[523,659,784,1047,1319].forEach((f,i)=>tn(f,1.6,.035,i*.09));tn(2093,2.4,.02,.5)},(red2?1.4:2.5)*1000);
+  const tn=(f,d,v,dl)=>{try{SFX7.tone(f,f,d,'triangle',v,dl)}catch(_){}};try{SFX7.tone(55,48,1.2,'sine',.07)}catch(_){}
+  setTimeout(()=>{[523,659,784,1047,1319].forEach((f,i)=>tn(f,1.0,.035,i*.05));tn(2093,1.4,.02,.25)},(red2?.6:.85)*1000);
   const fr=()=>{const w=innerWidth,h=innerHeight,dpr=Math.min(2,devicePixelRatio||1);if(cv2.width!=w*dpr){cv2.width=w*dpr;cv2.height=h*dpr}const g2=cv2.getContext('2d');g2.setTransform(dpr,0,0,dpr,0,0);
-   const t=(performance.now()-SC.t0)/1000,u=t/dur,cxs=w/2,cys=h*.46,sc=Math.min(w,h)/700,tt=t,flashT=red2?1.4:2.5;
+   const t=(performance.now()-SC.t0)/1000,u=t/dur,cxs=w/2,cys=h*.46,sc=Math.min(w,h)/700,tt=t,flashT=red2?.6:.85;
    // backdrop
-   g2.fillStyle='rgba(6,4,10,'+Math.min(1,t/.6)+')';g2.fillRect(0,0,w,h);
-   const bg=g2.createRadialGradient(cxs,cys,10,cxs,cys,Math.max(w,h)*.7);bg.addColorStop(0,A.rgba(p[0],Math.min(.45,t*.25)));bg.addColorStop(1,'rgba(0,0,0,0)');g2.fillStyle=bg;g2.fillRect(0,0,w,h);
+   g2.fillStyle='rgba(6,4,10,'+Math.min(1,t/.25)+')';g2.fillRect(0,0,w,h);
+   const bg=g2.createRadialGradient(cxs,cys,10,cxs,cys,Math.max(w,h)*.7);bg.addColorStop(0,A.rgba(p[0],Math.min(.45,t*.8)));bg.addColorStop(1,'rgba(0,0,0,0)');g2.fillStyle=bg;g2.fillRect(0,0,w,h);
    // converging motes and light lines before the flash, radiating after
-   g2.globalCompositeOperation='lighter';for(const m of SC.motes){const pre=t<flashT,k2=pre?Math.max(0,1-t/flashT):Math.min(1,(t-flashT)/2.5),d=pre?m.d*k2*sc:m.d*k2*sc*1.2,x=cxs+Math.cos(m.a+t*.3)*d,y=cys+Math.sin(m.a+t*.3)*d;g2.globalAlpha=pre?.4+.6*(1-k2):Math.max(0,1-k2);g2.drawImage(glow(p[m.o<.5?0:1]),x-m.s*4,y-m.s*4,m.s*8,m.s*8)}
-   if(t>flashT){for(let i=0;i<16;i++){const q=i/16*TAU+t*.15;g2.globalAlpha=Math.max(0,.35-(t-flashT)*.05);g2.beginPath();g2.moveTo(cxs,cys);g2.lineTo(cxs+Math.cos(q-.04)*w,cys+Math.sin(q-.04)*w);g2.lineTo(cxs+Math.cos(q+.04)*w,cys+Math.sin(q+.04)*w);g2.closePath();g2.fillStyle=A.rgba(p[1],1);g2.fill()}}
+   g2.globalCompositeOperation='lighter';for(const m of SC.motes){const pre=t<flashT,k2=pre?Math.max(0,1-t/flashT):Math.min(1,(t-flashT)/1.2),d=pre?m.d*k2*sc:m.d*k2*sc*1.2,x=cxs+Math.cos(m.a+t*.3)*d,y=cys+Math.sin(m.a+t*.3)*d;g2.globalAlpha=pre?.4+.6*(1-k2):Math.max(0,1-k2);g2.drawImage(glow(p[m.o<.5?0:1]),x-m.s*4,y-m.s*4,m.s*8,m.s*8)}
+   if(t>flashT){for(let i=0;i<16;i++){const q=i/16*TAU+t*.15;g2.globalAlpha=Math.max(0,.35-(t-flashT)*.2);g2.beginPath();g2.moveTo(cxs,cys);g2.lineTo(cxs+Math.cos(q-.04)*w,cys+Math.sin(q-.04)*w);g2.lineTo(cxs+Math.cos(q+.04)*w,cys+Math.sin(q+.04)*w);g2.closePath();g2.fillStyle=A.rgba(p[1],1);g2.fill()}}
    g2.globalAlpha=1;g2.globalCompositeOperation='source-over';
    // the scythe: the old tier spins in, flashes, shatters; the new tier is revealed inside a turning halo
    const L=(th.type=='gauntlet'||th.type=='chakram'?220:th.type=='gun'||th.type=='bow'?300:380)*sc;if(t<flashT){const k2=Math.min(1,t/(flashT*.8)),rot=-1.1+(1-k2)*2.2+Math.sin(t*3)*.03;g2.save();g2.translate(cxs,cys+(1-k2)*80*sc);g2.rotate(rot);g2.globalAlpha=Math.min(1,t*1.5);g2.translate(-L*.45,0);A.weapon(g2,k,Math.max(1,from),L,t,{aura:1});g2.restore();
     if(!red2)for(let i=0;i<3;i++){g2.globalCompositeOperation='lighter';g2.globalAlpha=(t/flashT)*.25;g2.beginPath();g2.arc(cxs,cys,(60+i*40)*sc*(1-t/flashT*.5),0,TAU);g2.strokeStyle=p[1];g2.lineWidth=2;g2.stroke();g2.globalCompositeOperation='source-over'}}
-   else{const k3=Math.min(1,(t-flashT)/.6);
-    if(!red2)for(const s of SC.shards){const d=s.v*(t-flashT)*sc;if(d>Math.max(w,h))continue;g2.save();g2.translate(cxs+Math.cos(s.a)*d,cys+Math.sin(s.a)*d);g2.rotate(s.r+s.vr*(t-flashT));g2.globalAlpha=Math.max(0,1-(t-flashT)/1.6);g2.fillStyle=A.metal(g2,-s.s,-s.s,s.s,s.s,k,.2);g2.beginPath();g2.moveTo(0,-s.s);g2.lineTo(s.s*.5,s.s*.6);g2.lineTo(-s.s*.4,s.s*.4);g2.closePath();g2.fill();g2.restore()}
+   else{const k3=Math.min(1,(t-flashT)/.3);
+    if(!red2)for(const s of SC.shards){const d=s.v*(t-flashT)*sc;if(d>Math.max(w,h))continue;g2.save();g2.translate(cxs+Math.cos(s.a)*d,cys+Math.sin(s.a)*d);g2.rotate(s.r+s.vr*(t-flashT));g2.globalAlpha=Math.max(0,1-(t-flashT)/.9);g2.fillStyle=A.metal(g2,-s.s,-s.s,s.s,s.s,k,.2);g2.beginPath();g2.moveTo(0,-s.s);g2.lineTo(s.s*.5,s.s*.6);g2.lineTo(-s.s*.4,s.s*.4);g2.closePath();g2.fill();g2.restore()}
     g2.save();g2.translate(cxs,cys);g2.globalAlpha=k3;g2.rotate(tt*.25);g2.strokeStyle=A.rgba(p[1],.85);g2.lineWidth=2;g2.beginPath();g2.arc(0,0,250*sc,0,TAU);g2.stroke();g2.lineWidth=1;g2.beginPath();g2.arc(0,0,268*sc,0,TAU);g2.stroke();
     for(let i=0;i<12;i++){const q=i/12*TAU;A.rune(g2,Math.cos(q)*259*sc,Math.sin(q)*259*sc,7*sc,A.rgba(p[1],.9),q+Math.PI/2,i)}for(let i=0;i<4;i++){const q=i/4*TAU+tt*.4;A.star4(g2,Math.cos(q)*250*sc,Math.sin(q)*250*sc,12*sc,'#ffffff',q)}g2.restore();
     g2.save();g2.translate(cxs,cys+Math.sin(tt*1.6)*6*sc);g2.rotate(-1.05+Math.sin(tt*1.1)*.03);g2.globalAlpha=k3;g2.translate(-L*.45,0);A.weapon(g2,k,to,L,t,{aura:1});g2.restore();
     for(let i=0;i<10;i++){const q=i*.63+tt*.8,r=(150+60*Math.sin(tt+i))*sc;g2.globalAlpha=k3*(.5+.5*Math.sin(tt*3+i));A.motif(g2,k,cxs+Math.cos(q)*r,cys+Math.sin(q)*r*.7,9*sc,q,tt)}g2.globalAlpha=1;
     // words
-    const tw=Math.min(1,(t-flashT-.4)/.8);if(tw>0){g2.globalAlpha=tw;g2.textAlign='center';g2.fillStyle=A.rgba(p[1],.9);g2.font='600 '+Math.round(12*sc+4)+"px Montserrat,'Segoe UI',sans-serif";g2.fillText((from?'ASCENSION':'AWAKENING').split('').join(' '),cxs,h*.12+10);
+    const tw=Math.min(1,(t-flashT-.12)/.35);if(tw>0){g2.globalAlpha=tw;g2.textAlign='center';g2.fillStyle=A.rgba(p[1],.9);g2.font='600 '+Math.round(12*sc+4)+"px Montserrat,'Segoe UI',sans-serif";g2.fillText((from?'ASCENSION':'AWAKENING').split('').join(' '),cxs,h*.12+10);
      const big=Math.round(64*sc+18);g2.font='900 italic '+big+"px Montserrat,'Segoe UI',sans-serif";const gr=g2.createLinearGradient(0,h*.8-big,0,h*.8);gr.addColorStop(0,'#ffffff');gr.addColorStop(.5,A.mix(p[1],'#ffffff',.3));gr.addColorStop(.55,p[0]);gr.addColorStop(1,'#ffffff');g2.fillStyle=gr;
      g2.fillText('TIER '+RN[to],cxs,h*.82);g2.font='700 '+Math.round(18*sc+6)+"px Montserrat,'Segoe UI',sans-serif";g2.fillStyle='#ffffff';g2.fillText(th.n,cxs,h*.82+Math.round(30*sc+10));
      g2.font='500 italic '+Math.round(13*sc+5)+"px 'Cormorant Garamond',Georgia,serif";g2.fillStyle=A.rgba('#ffffff',.85);g2.fillText(from?'You have been ascended to a new level of '+th.noun+'.':'The scythe has chosen you.',cxs,h*.82+Math.round(56*sc+18))}}
    // the flash
-   const fl=Math.max(0,1-Math.abs(t-flashT)/.35);if(fl>0){g2.globalAlpha=fl*(red2?.5:1);g2.fillStyle='#ffffff';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
+   const fl=Math.max(0,1-Math.abs(t-flashT)/.22);if(fl>0){g2.globalAlpha=fl*(red2?.5:1);g2.fillStyle='#ffffff';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
    // fade out at the end
-   if(t>dur-.6){g2.globalAlpha=Math.min(1,(t-(dur-.6))/.6);g2.fillStyle='#06040a';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
+   if(t>dur-.35){g2.globalAlpha=Math.min(1,(t-(dur-.35))/.35);g2.fillStyle='#06040a';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
    if(t<dur)requestAnimationFrame(fr);else{for(const ev of evs)removeEventListener(ev,block,{capture:true});cv2.remove();window.RB_COVER=cover0;SC=null;
     try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic scythe is in your hand.':'Damage +'+Math.round(DMG*100*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?' · the finisher throws the scythe':to==4?' · hits echo with bursts':to==5?' · a doubled finisher that heals':' · Mythic Awakening'),3200)}catch(_){}
     try{if(typeof CLS9!='undefined'&&CLS9.isOpen())CLS9.refresh&&CLS9.refresh()}catch(_){}}};
