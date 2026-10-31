@@ -3,7 +3,7 @@ const SHOT=process.env.SHOTS||'';
 (async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});const p=await b.newPage({viewport:{width:1280,height:720}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('file://'+__dirname+'/../index.html');await p.waitForTimeout(900);
 await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(300);await p.evaluate(()=>{SHOW7.close()});await p.waitForTimeout(600);
-ok('light theme is the default',await p.evaluate(()=>document.documentElement.dataset.theme)=='light');
+ok('Aqua glass (Frutiger Aero) is the default: the dark palette with the aero skin',await p.evaluate(()=>cel.opt.theme=='aero'&&document.documentElement.dataset.theme=='dark'&&document.documentElement.dataset.skin=='aero'));
 await p.evaluate(()=>UI6.open('settings'));await p.waitForTimeout(400);
 ok('settings has theme + UI sound controls',await p.evaluate(()=>!!document.getElementById('sth')&&!!document.getElementById('suv')&&!!document.getElementById('sum')));
 await p.selectOption('#sth','dark');await p.waitForTimeout(300);

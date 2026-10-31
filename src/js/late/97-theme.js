@@ -1,12 +1,13 @@
 // ===== THEME7: light/dark/auto theme, reduced-motion + contrast flags, HUD interface options, toast colours, per-category item-icon plates =====
 const THEME7=(()=>{
  const mq=(()=>{try{return matchMedia('(prefers-color-scheme: dark)')}catch(_){return null}})();
- const eff=m=>m=='auto'?(mq&&mq.matches?'dark':'light'):(m=='dark'?'dark':'light');
+ // 'aero' (Aqua glass, the default) is the dark palette with the Frutiger Aero skin on top (css/99-aero.css)
+ const eff=m=>m=='aero'?'dark':m=='auto'?(mq&&mq.matches?'dark':'light'):(m=='dark'?'dark':'light');
  // extra interface options live in cel.opt (saved by celSave); celLoad only copies the original keys, so restore ours from the same save
  try{const o=(JSON.parse(localStorage.getItem('rbc')||'null')||{}).opt||{},O=cel.opt;O.hudOp=Math.max(.4,Math.min(1,+o.hudOp||1));O.hideQuest=o.hideQuest?1:0;O.hideMini=o.hideMini?1:0;O.contrast=o.contrast?1:0}catch(_){}
  // toasts are DOM elements now (87-uisfx, animated with the motion tokens); the legacy canvas toast keeps running but draws fully transparent
  function toastColors(){window.TK6={bg:'rgba(0,0,0,0)',bd:'rgba(0,0,0,0)',tx:'rgba(0,0,0,0)'}}
- function apply(){const o=cel.opt||{},m=o.theme||'light',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);d.setAttribute('data-reduce',o.reduce||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
+ function apply(){const o=cel.opt||{},m=o.theme||'aero',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);if(m=='aero')d.setAttribute('data-skin','aero');else d.removeAttribute('data-skin');d.setAttribute('data-reduce',o.reduce||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
   d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
   toastColors();try{localStorage.setItem('rbtheme',m)}catch(_){}}
  try{if(mq&&mq.addEventListener)mq.addEventListener('change',()=>{if(cel.opt.theme=='auto')apply()})}catch(_){}

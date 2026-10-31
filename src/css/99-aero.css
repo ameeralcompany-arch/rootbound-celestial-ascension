@@ -1,0 +1,76 @@
+/* ===== AERO: the Frutiger Aero / liquid glass skin (Settings > General > Theme > Aqua glass; the default).
+   It sits on the dark theme (html[data-theme=dark][data-skin=aero]): deep ocean-to-aqua tokens, frosted glass with a convex gloss,
+   a bright specular rim along top edges, glowing hairline borders, glossy pill buttons, glass sliders, and a soft light that follows
+   the mouse across panels (--mx/--my, set by 99-zzzzzzzzz-a-aero.js). All of it is backgrounds, borders and shadows: no layout changes. ===== */
+html[data-skin=aero]:root{
+ --ink:#ecfdff;--ink-2:#bdeefc;--muted:#86c3d8;--line:rgba(150,232,255,.24);--line-strong:rgba(170,240,255,.5);
+ --accent:#00d2ff;--accent-2:#6ff3ff;--accent-soft:rgba(0,210,255,.16);--focus:#00d2ff;
+ --bg-page:radial-gradient(1200px 600px at 50% -10%,rgba(0,210,255,.28),transparent 60%),linear-gradient(170deg,#0a192f 0%,#0b2b4c 55%,#06415f 100%);
+ --surface:linear-gradient(175deg,rgba(110,215,255,.2),rgba(24,96,160,.2) 46%,rgba(6,36,74,.42));
+ --surface-solid:#0d2a48;--surface-2:linear-gradient(175deg,rgba(150,235,255,.16),rgba(30,110,170,.1));--surface-3:linear-gradient(175deg,rgba(150,235,255,.1),rgba(30,110,170,.05));
+ --overlay:rgba(2,14,30,.55);--glass-blur:16px;
+ --btn-bg:linear-gradient(180deg,rgba(200,248,255,.42) 0%,rgba(90,190,235,.26) 48%,rgba(14,86,140,.42) 52%,rgba(20,120,180,.3) 100%);
+ --btn-bg-hover:linear-gradient(180deg,rgba(220,252,255,.6) 0%,rgba(110,215,250,.4) 48%,rgba(20,110,170,.55) 52%,rgba(40,160,220,.45) 100%);--btn-ink:#f2feff;
+ --btn-primary:linear-gradient(180deg,#a8f6ff 0%,#3fd8ff 46%,#0096dc 54%,#00b8f0 100%);--btn-primary-ink:#002236;
+ --sel-bg:linear-gradient(175deg,rgba(0,210,255,.3),rgba(0,120,200,.16));--sel-bd:#00d2ff;--input-bg:rgba(3,22,44,.55);
+ --sh-1:inset 0 1px 0 rgba(255,255,255,.45),0 4px 12px -4px rgba(0,0,0,.5);
+ --sh-2:inset 0 1px 0 rgba(255,255,255,.4),0 20px 40px rgba(0,0,0,.4);
+ --sh-3:inset 0 1px 0 rgba(255,255,255,.45),0 30px 70px -18px rgba(0,0,0,.6);
+ --glow:0 0 0 1px rgba(0,210,255,.65),0 0 22px -4px rgba(0,210,255,.75);
+ --toast-bg:rgba(8,48,88,.55);--toast-bd:rgba(0,210,255,.45);
+ --bg:#0a192f;--pn:rgba(14,70,120,.4);--panel:rgba(14,70,120,.45);--panel2:rgba(24,96,160,.4);--gold:#00d2ff;--gold2:#ecfdff;--vio:#6ff3ff;--ice:#9eeaff;
+ --ed-bg:rgba(8,44,84,.5);--ed-paper:rgba(20,80,130,.42);--ed-soft:rgba(160,235,255,.07);
+ /* the atelier palette (80-atelier.css), from plum to ocean */
+ --g-pearl:linear-gradient(170deg,rgba(60,160,215,.36),rgba(10,52,104,.5));--g-pearl-lav:linear-gradient(165deg,rgba(50,150,210,.32),rgba(12,56,108,.48));--g-lav-mist:linear-gradient(165deg,rgba(40,140,205,.3),rgba(8,46,96,.5));
+ --g-blush-pearl:linear-gradient(165deg,rgba(70,170,220,.3),rgba(14,58,110,.48));--g-silver-violet:linear-gradient(165deg,rgba(90,180,225,.26),rgba(16,62,114,.46));--g-sky-lilac:linear-gradient(165deg,#0f4775,#0a2c55);
+ --g-holo:linear-gradient(115deg,#0b3d63 0%,#0e5784 35%,#0a3466 68%,#06425a 100%);--g-accent:linear-gradient(180deg,#a8f6ff 0%,#3fd8ff 46%,#0096dc 54%,#00b8f0 100%);--g-accent-2:linear-gradient(135deg,#7ff3ff,#1fb4ee);
+ --g-sheen:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,0) 52%);--g-rule:linear-gradient(90deg,transparent,rgba(150,235,255,.45),transparent);--tex-dots:radial-gradient(circle at 1px 1px,rgba(160,240,255,.09) 1px,transparent 1.4px)}
+html[data-skin=aero] body{background:#0a192f}
+/* ---- the glass recipe: mouse light, convex gloss (bright top half), the surface; specular rim, inner glow, depth */
+html[data-skin=aero] body .pn,html[data-skin=aero] #hubc,html[data-skin=aero] #dlg7 .box,html[data-skin=aero] #store7 .shell,html[data-skin=aero] #tools7 .sheet,
+html[data-skin=aero] #chestui,html[data-skin=aero] #inv7 .panel,html[data-skin=aero] #inv7 .sheet,html[data-skin=aero] .netcard,html[data-skin=aero] #dlg,html[data-skin=aero] #hudL,
+html[data-skin=aero] #wl9,html[data-skin=aero] #toast7 .t7,html[data-skin=aero] #menu #card,html[data-skin=aero] #book7{
+ background:radial-gradient(260px circle at var(--mx,50%) var(--my,-70%),rgba(175,246,255,.3),rgba(175,246,255,0) 70%),
+  linear-gradient(180deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.1) 36%,rgba(255,255,255,0) 50%),var(--surface)!important;
+ backdrop-filter:blur(16px) saturate(1.5)!important;-webkit-backdrop-filter:blur(16px) saturate(1.5)!important;
+ border:1px solid rgba(150,235,255,.4)!important;color:var(--ink);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,40,80,.35),inset 0 0 22px rgba(0,210,255,.12),0 20px 40px rgba(0,0,0,.4),0 0 26px -10px rgba(0,210,255,.55)!important}
+/* glossy pill buttons in the top bar, with a soft glowing label */
+html[data-skin=aero] #hudR .pn{border-radius:999px!important;background:radial-gradient(90px circle at var(--mx,50%) var(--my,-80%),rgba(200,250,255,.45),transparent 70%),var(--btn-bg)!important;transition:transform .18s cubic-bezier(.2,.9,.3,1.3),box-shadow .2s}
+html[data-skin=aero] #hudR .pn:hover{transform:translateY(-1px) scale(1.06);background:radial-gradient(90px circle at var(--mx,50%) var(--my,-80%),rgba(220,252,255,.6),transparent 70%),var(--btn-bg-hover)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 20px -6px rgba(0,0,0,.5),0 0 18px -2px rgba(0,210,255,.75)!important}
+html[data-skin=aero] #hudR .pn:active{transform:scale(.97)}
+html[data-skin=aero] body .pn,html[data-skin=aero] #hudR .pn,html[data-skin=aero] #hudL b{text-shadow:0 0 8px rgba(0,210,255,.55),0 1px 1px rgba(0,30,60,.6)}
+/* active tabs glow like lit glass */
+html[data-skin=aero] #store7 nav button.on,html[data-skin=aero] #inv7 nav button.on,html[data-skin=aero] #hubnav button.on,html[data-skin=aero] .snav7 button.on{
+ background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;text-shadow:0 1px 0 rgba(255,255,255,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 0 20px -2px rgba(0,210,255,.85)!important;border-color:rgba(200,250,255,.8)!important}
+/* hotbar slots: small glass tiles; the selected one is lit */
+html[data-skin=aero] #bar .s6{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.06) 45%,rgba(255,255,255,0) 52%),linear-gradient(175deg,rgba(110,215,255,.22),rgba(6,40,80,.45))!important;
+ border:1px solid rgba(150,235,255,.42)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 18px -8px rgba(0,0,0,.6)!important;backdrop-filter:blur(10px)}
+html[data-skin=aero] #bar .s6.on,html[data-skin=aero] #bar .s6.sel{box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 0 2px rgba(0,210,255,.8),0 0 20px -2px rgba(0,210,255,.85)!important}
+/* item and shop cards lift a little under the cursor */
+html[data-skin=aero] #inv7 .it7,html[data-skin=aero] #store7 .card{transition:transform .2s cubic-bezier(.2,.9,.3,1.2),box-shadow .2s}
+html[data-skin=aero] #inv7 .it7:hover,html[data-skin=aero] #store7 .card:hover{transform:translateY(-2px) scale(1.03)}
+html[data-skin=aero] #inv7 .it7:not(.cls7):hover,html[data-skin=aero] #store7 .card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px rgba(0,210,255,.6),0 10px 24px -8px rgba(0,0,0,.55),0 0 18px -6px rgba(0,210,255,.7)!important}
+/* glass sliders: a recessed track with an aqua fill (--v, set by the skin script) and a glossy bead */
+html[data-skin=aero] input[type=range]{-webkit-appearance:none;appearance:none;height:10px;border-radius:999px;background:linear-gradient(90deg,#3fe4ff 0,#00a8e8 var(--v,50%),rgba(255,255,255,.14) var(--v,50%))!important;
+ box-shadow:inset 0 1px 3px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,255,255,.22),0 0 12px -4px rgba(0,210,255,.6);border:1px solid rgba(150,235,255,.35);outline:none}
+html[data-skin=aero] input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;cursor:pointer;
+ background:radial-gradient(circle at 40% 30%,#ffffff 0,#dffaff 22%,#5fdcff 60%,#0090d0 100%);border:1px solid rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(0,0,0,.5),0 0 14px rgba(0,210,255,.8);transition:transform .15s}
+html[data-skin=aero] input[type=range]:active::-webkit-slider-thumb{transform:scale(1.18)}
+html[data-skin=aero] input[type=checkbox],html[data-skin=aero] input[type=radio]{accent-color:#00d2ff}
+html[data-skin=aero] select,html[data-skin=aero] input[type=text],html[data-skin=aero] input[type=search]{background:var(--input-bg)!important;border:1px solid rgba(150,235,255,.38)!important;color:var(--ink)!important;border-radius:12px;box-shadow:inset 0 1px 3px rgba(0,0,0,.45)}
+html[data-skin=aero] select:focus,html[data-skin=aero] input[type=text]:focus,html[data-skin=aero] input[type=search]:focus{box-shadow:inset 0 1px 3px rgba(0,0,0,.45),0 0 0 2px rgba(0,210,255,.6),0 0 16px -2px rgba(0,210,255,.7)!important}
+/* status dots and progress bars glow aqua */
+html[data-skin=aero] #hudL .bar i,html[data-skin=aero] #cxp9 i{box-shadow:0 0 10px rgba(0,210,255,.7)}
+/* scrollbars */
+html[data-skin=aero] ::-webkit-scrollbar{width:10px;height:10px}
+html[data-skin=aero] ::-webkit-scrollbar-thumb{background:linear-gradient(90deg,rgba(160,240,255,.6),rgba(0,150,220,.55));border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+html[data-skin=aero] ::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
+/* the main menu backdrop: ocean light with drifting bubbles */
+html[data-skin=aero] #menu{background:var(--bg-page)!important}
+html[data-skin=aero][data-reduce=true] #hudR .pn,html[data-skin=aero][data-reduce=true] #inv7 .it7,html[data-skin=aero][data-reduce=true] #store7 .card{transition:none}
+html[data-skin=aero][data-reduce=true] #hudR .pn:hover,html[data-skin=aero][data-reduce=true] #inv7 .it7:hover,html[data-skin=aero][data-reduce=true] #store7 .card:hover{transform:none}
+/* glass switches: a recessed glass track that lights aqua when on, with a glossy pearl knob */
+html[data-skin=aero] .rb-toggle{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(255,255,255,.08))!important;border:1px solid rgba(150,235,255,.35)!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.55)!important}
+html[data-skin=aero] .rb-toggle:checked{background:linear-gradient(180deg,#a8f6ff 0%,#3fd8ff 46%,#0096dc 54%,#00b8f0 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 14px -2px rgba(0,210,255,.85)!important}
+html[data-skin=aero] .rb-toggle:after{background:radial-gradient(circle at 40% 30%,#fff 0,#e6fbff 45%,#9fdcf0 100%)!important;box-shadow:0 1px 3px rgba(0,0,0,.5)!important}
