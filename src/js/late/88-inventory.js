@@ -179,8 +179,13 @@ const INV7=(()=>{
   else if(/^hb\d$/.test(c)&&h){h.set(+c.slice(2),k);render()}else if(c=='hbx'&&h){const s=h.slotOf(k);if(s>=0)h.set(s,null);render()}
   else if(c=='d1')drop(k,1);else if(c=='da')drop(k,cnt(k))}
  const isOpen=()=>showInv&&!!el&&el.classList.contains('open');
- function open(f,slot){mk();document.documentElement.classList.add('inv6');el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');requestAnimationFrame(()=>el.classList.add('show'));render();try{G('bag')}catch(_){}snd('open')}
+ function open(f,slot){mk();document.documentElement.classList.add('inv6');el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');render();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(showInv)el.classList.add('show')}));try{G('bag')}catch(_){}snd('open')}
  function close(){if(!el)return;closeMenu();assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv){el.classList.remove('open');document.documentElement.classList.remove('inv6')}},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';snd('close')}
+ // item icons are drawn the first time they are needed (the first open used to stall ~0.6 s): draw them in idle moments a few seconds
+ // after you enter a world, a few at a time between frames, so even the first open is instant
+ {let q=null;const step=d=>{try{while(q.length&&d.timeRemaining()>3)iconOf(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:3000})};
+  const warm=()=>{if(q||typeof requestIdleCallback!='function')return;try{q=items().map(i=>i.k)}catch(_){q=[]}requestIdleCallback(step,{timeout:3000})};
+  const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,2500)}},1000)}
  return{open,close,render,select,equip,unequip,doPrimary,drop,items,sorted,primary,nameOf,kind,
   get isOpen(){return isOpen()},get filter(){return filter},set filter(v){filter=v},get selK(){return selK},set selK(v){selK=v},get assign(){return assign},get sortBy(){return sortBy},set sortBy(v){sortBy=v;saveP()},get q(){return q},set q(v){q=String(v||'')},get list(){return last.map(i=>i.k)}}})();
 // ---- legacy hooks: inventory toggle (the bar is drawn by HOTBAR in 99-zzz-hotbar.js)

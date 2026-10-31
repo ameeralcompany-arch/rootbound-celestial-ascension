@@ -80,8 +80,12 @@ const STORE7=(()=>{
   addEventListener('keydown',e=>{if(el.style.display!='none'&&el.style.display&&e.key=='Escape'&&!DLG7.isOpen){e.stopPropagation();close()}},true)}
  const isOpen=()=>!!el&&el.style.display=='flex';
  function loop(){if(!isOpen()){raf=0;return}const t=performance.now()/1000;if(pv&&selId){const it=SHOP7.byId.get(selId);if(it)drawPrev(pv.getContext('2d'),it,300,255,t,1,false)}raf=requestAnimationFrame(loop)}
- function open(o){mk();lastKey='';if(o&&o.cat)cat=o.cat;if(o&&o.item){const it=SHOP7.byId.get(o.item);if(it){cat='all';selId=it.id}}el.style.display='flex';requestAnimationFrame(()=>el.classList.add('on'));render();try{UIS.play('open')}catch(_){}if(!raf)raf=requestAnimationFrame(loop);try{keys&&Object.keys(keys).forEach(k=>keys[k]=0)}catch(_){}}
+ function open(o){mk();lastKey='';if(o&&o.cat)cat=o.cat;if(o&&o.item){const it=SHOP7.byId.get(o.item);if(it){cat='all';selId=it.id}}el.style.display='flex';render();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(el.style.display=='flex')el.classList.add('on')}));try{UIS.play('open')}catch(_){}if(!raf)raf=requestAnimationFrame(loop);try{keys&&Object.keys(keys).forEach(k=>keys[k]=0)}catch(_){}}
  function close(){if(!el)return;el.classList.remove('on');try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},200)}
  function btn(){if(document.getElementById('bstore'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bstore';b.className='pn';b.textContent='STORE';b.title='Open the item store';b.onclick=()=>isOpen()?close():open();hr.insertBefore(b,hr.firstChild)}
  btn();if(document.readyState!='complete')addEventListener('load',btn);
+ // the item previews are drawn on first use (the first open used to stall ~0.3 s): draw them in idle moments after you enter a world
+ {let q=null;const step=d=>{try{while(q.length&&d.timeRemaining()>4)thumb(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:4000})};
+  const warm=()=>{if(q||typeof requestIdleCallback!='function')return;try{q=SHOP7.items.slice()}catch(_){q=[]}requestIdleCallback(step,{timeout:4000})};
+  const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,4500)}},1000)}
  return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,flush(){for(const k in cache)delete cache[k];if(isOpen())render()},get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;render()}}})();

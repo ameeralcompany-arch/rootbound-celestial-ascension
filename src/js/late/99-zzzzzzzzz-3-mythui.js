@@ -72,18 +72,28 @@ const MYUI=(()=>{
   A.gem(g,w/2,m,7,p[3],true);A.curl(g,w/2-6,m+2,18,Math.PI-.2,true,A.mix(p[1],'#ffffff',.3),1.6);A.curl(g,w/2+6,m+2,18,.2,false,A.mix(p[1],'#ffffff',.3),1.6);
   for(let i=0;i<4;i++){const tw=.5+.5*Math.sin(t*2+i*1.7);g.globalAlpha=tw;A.star4(g,[m+30,w-m-30,w-m-26,m+26][i],[m+24,m+30,h-m-28,h-m-34][i],4+tw*3,'#ffffff',t)}g.globalAlpha=1;
   g.font="600 9px Montserrat,'Segoe UI',sans-serif";g.textAlign='center';g.fillStyle=A.rgba(p[1],.8);g.fillText((th.n+' · '+(MYTH.tier(k)?'Tier '+MYTH.RN[MYTH.tier(k)]:'Not forged')).toUpperCase().split('').join(String.fromCharCode(8202)),w/2,h-m-12);g.restore()}
- // ---- HUD: the avatar frame and the class banner on the character card
- let fc=null,bc=null,hk=null,lay=null,layT=0;
+ // ---- HUD: the character card. The portrait sits in a crisp ring in the class colours with the class emblem as a badge, the class
+ // banner hangs below the card (drawn once per class; it sways with a CSS animation, so nothing is redrawn per frame), and a class bar
+ // shows the class, its level and the XP to the next level. Updated four times a second; DOM writes only when a value changed.
+ let wrap=null,bc=null,cx=null,hk=null,cxk='';
  const cls=()=>{try{return CLASS7.cur()||CJOB.cur||null}catch(_){return null}};
+ const fmtN=n=>n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+'M':n>=1e4?Math.round(n/1e3)+'k':String(Math.round(n));
  function hud(){const hl=document.getElementById('hudL'),pt=document.getElementById('portrait');if(!hl||!pt)return;try{if(CLS9.isOpen())return}catch(_){}const k=cls();
-  if(!fc){fc=document.createElement('canvas');fc.id='pframe9';fc.setAttribute('aria-hidden','true');hl.appendChild(fc);bc=document.createElement('canvas');bc.id='pbanner9';bc.setAttribute('aria-hidden','true');hl.appendChild(bc)}
-  const show=!!k&&hl.offsetWidth>0;fc.style.display=bc.style.display=show?'block':'none';hl.classList.toggle('cls9on',show);if(!show){hk=null;return}
-  if(hk!==k){hk=k;hl.style.setProperty('--clsc',TH[k].pal[0])}
-  // the layout is measured once a second (not every frame); the art redraws ~10 times a second
-  const now=performance.now();if(!lay||now-layT>1000){layT=now;const hr=hl.getBoundingClientRect(),pr=pt.getBoundingClientRect();if(!pr.width)return;lay={pw:pr.width,S:Math.round(pr.width*1.9),x:Math.round(pr.left-hr.left+pr.width/2-pr.width*.95),y:Math.round(pr.top-hr.top+pr.height/2-pr.width*.95)};
-   fc.style.width=fc.style.height=lay.S+'px';fc.style.left=lay.x+'px';fc.style.top=lay.y+'px'}
-  const S=lay.S,pr={width:lay.pw},d=Math.min(2,devicePixelRatio||1);if(fc.width!==S*d){fc.width=fc.height=S*d}
-  const t=performance.now()/1000,g=fc.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,S,S);A.frame(g,k,S/2,S/2,pr.width/2+1,red()?0:t);
-  const bw=34,bh=84;if(bc.width!==bw*d){bc.width=bw*d;bc.height=bh*d}const b2=bc.getContext('2d');b2.setTransform(d,0,0,d,0,0);b2.clearRect(0,0,bw,bh);A.banner(b2,k,bw,bh,red()?0:t)}
- setInterval(()=>{if(document.hidden)return;try{hud()}catch(e){if(!hud.e){hud.e=1;console.error('MYUI hud',e)}}},100);
+  if(!wrap||!wrap.isConnected){wrap=document.createElement('div');wrap.id='pwrap9';pt.parentNode.insertBefore(wrap,pt);wrap.appendChild(pt);wrap.insertAdjacentHTML('beforeend','<i class="ring" aria-hidden="true"></i><img class="emb" alt="" hidden>');
+   bc=document.createElement('canvas');bc.id='pbanner9';bc.setAttribute('aria-hidden','true');hl.appendChild(bc);
+   cx=document.createElement('div');cx.id='cxp9';cx.innerHTML='<span class="cl"><b></b><em></em></span><div class="hpb cx"><i></i></div>';const xb=document.getElementById('xpf');const row=xb&&xb.parentNode;if(row&&row.parentNode===hl)row.after(cx);else hl.appendChild(cx);hk=undefined;cxk=''}
+  // gems and wings share one row, so the class bar fits without making the card taller
+  {const gv=document.getElementById('gv'),hw=document.getElementById('hudWing');if(gv&&hw&&hw.parentNode!==gv.parentNode){gv.parentNode.classList.add('gw9');gv.parentNode.appendChild(hw)}}
+  // the CHARACTER button hangs from the card's bottom edge, whatever the card's height
+  {const bh=document.getElementById('bhub');if(bh&&hl.offsetWidth){const y=Math.round(hl.getBoundingClientRect().bottom-12);if(bh._y!==y){bh._y=y;bh.style.top=y+'px'}}}
+  const show=!!k&&hl.offsetWidth>0;hl.classList.toggle('cls9on',show);
+  if(!show){if(hk!==null){hk=null;bc.style.display=cx.style.display='none';wrap.querySelector('.emb').hidden=true}return}
+  if(hk!==k){hk=k;const p=TH[k].pal;for(const[n,v]of[['--clsc',p[0]],['--clsl',p[1]],['--clsd',p[2]],['--clsa',p[3]]])hl.style.setProperty(n,v);
+   const em=wrap.querySelector('.emb');em.src=A.emblem(k,48);em.hidden=false;bc.style.display='block';cx.style.display='';
+   const d=Math.min(2,devicePixelRatio||1),bw=34,bh=84;bc.width=bw*d;bc.height=bh*d;const b2=bc.getContext('2d');b2.setTransform(d,0,0,d,0,0);b2.clearRect(0,0,bw,bh);A.banner(b2,k,bw,bh,0)}
+  let L=1,mx=75,x=0,need=1;try{L=CLASS7.lv(k);mx=CLASS7.MAX||75;if(L<mx){need=CLASS7.need(L);x=Math.max(0,CLASS7.S.xp[k]||0)}}catch(_){}
+  const f=L>=mx?1:Math.min(1,x/need),key=k+'|'+L+'|'+Math.round(f*500);if(key===cxk)return;cxk=key;
+  let nm=k;try{nm=CLASS7.C[k].n}catch(_){}cx.querySelector('b').textContent=nm+' · Lv '+L+(L>=mx?' (max)':'');cx.querySelector('em').textContent=L>=mx?'MAX':fmtN(x)+' / '+fmtN(need)+' XP';
+  cx.querySelector('i').style.width=(f*100).toFixed(1)+'%';cx.title=nm+' class level '+L+' of '+mx+(L<mx?' · '+Math.round(f*100)+'% to level '+(L+1):'')}
+ setInterval(()=>{if(document.hidden)return;try{hud()}catch(e){if(!hud.e){hud.e=1;console.error('MYUI hud',e)}}},250);
  return{section,act,after,start,stop,hud,lookOf}})();

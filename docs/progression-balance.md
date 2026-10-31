@@ -131,6 +131,70 @@ Every hidden-word letter is sealed by a mini-boss that rises when you come near 
   - A reward card.
 - Defeated wardens stay defeated for that world. Creative mode has none.
 
+## 7. Biome worlds
+
+Every normal world (not the Plaza, not an Inferno) is a first-tier world (`BIOME17`). Its hidden word always has **3 letters**, and under
+the surface it has **one biome per letter**, in equal bands of **30 depths**. Depth counts tiles below the surface.
+
+| Band | Depth | Holds |
+|---|---|---|
+| Biome I | 6–36 m | its letter (deep in the band), 3 beacons |
+| Biome II | 36–66 m | its letter, 3 beacons |
+| Biome III | 66–96 m (its rock runs on to the bedrock) | its letter, 3 beacons |
+
+Each world draws three of six biomes from its name, so the layout is the same on every visit:
+
+| Biome | Blocks | Monsters | Beacons |
+|---|---|---|---|
+| Verdant Hollow | Moss Rock, Root Loam, moss caverns, glowshrooms | Moss Beetle (armoured walker), Spore Puff (hopper) | Spore Totems |
+| Frost Grotto | Frost Rock, Packed Ice, frozen pools, icicles | Frost Slime (hopper), Ice Wisp (flyer) | Frost Lanterns |
+| Sunken Dunes | Dune Rock, Dune Sand layers, buried sandstone ruins with urns | Sand Scarab (fast walker), Dust Wraith (flies through rock) | Sun Obelisks |
+| Amethyst Geodes | Geode Rock, Amethyst Crystal, hollow geodes | Crystal Golem (tank), Shard Sprite (fast flyer) | Resonant Prisms |
+| Tidewater Caves | Reef Rock, Brain Coral, pools | Reef Crab (walker), Glow Jelly (slow flyer) | Tide Shells |
+| Cinder Depths | Cinder Rock, Cinder Ash, basalt spires, magma veins | Cinder Toad (big hopper), Flame Moth (flyer) | Ember Braziers |
+
+Biome blocks break into plain blocks: stone, dirt, sand, crystal, coral, basalt and so on. Each biome's ore drops a shard worth 34–44 gems.
+The biome's monsters drop it too.
+
+**Biome trial.** Each biome's letter is sealed, and its warden sleeps, until the trial is done. The trial has three parts:
+
+1. **Beacons:** light the biome's 3 beacons. Press E (or hit the beacon) to wake a wave of 3 + band monsters (+1 at 4 stars or more).
+   Beat the wave to light the beacon.
+2. **Monsters:** defeat 12 / 16 / 20 of the biome's monsters (biomes I / II / III).
+3. **Ore:** mine 6 / 8 / 10 of the biome's ore.
+
+**Monster strength:**
+
+```
+hp     = base x (1 + 0.07 (L - 1)) x (1 + 0.4 band) x (1 + 0.2 (difficulty - 1))
+damage = base x (1 + 0.025 (L - 1)) x (1 + 0.25 band) x (1 + 0.12 (difficulty - 1))
+gems   = base x (1 + 0.5 band) x (1 + 0.15 (difficulty - 1))
+```
+
+Base health is 26–80 and base damage 6–10. The hardest normal monster has 95 health.
+
+**World difficulty:** every world rolls 1–5 stars from its name:
+
+| Stars | Name | Share of worlds |
+|---|---|---|
+| 1 | Gentle | 20% |
+| 2 | Fair | 25% |
+| 3 | Tough | 25% |
+| 4 | Fierce | 18% |
+| 5 | Mythic | 12% |
+
+**Rewards:**
+
+| Goal | Gems | XP | Class XP | Materials |
+|---|---|---|---|---|
+| Biome trial | 4 min of income | 5% of a level | 30 + L | — |
+| World conquered (all trials + the Word Gate) | (10 + 6·d) min of income | (20 + 8·d)% of a level | 100·d + 3L | 3 Amethyst, 2 Sapphire; +2 Emerald at 2★, +1 Resonant Shard at 3★, +2 Starheart at 4★, +1 Relic and 1 Voidstone at 5★ |
+
+The world reward is paid once per world. At level 15, a 3★ world pays about 2,700 gems and 44% of a level.
+
+Worlds where the letter hunt had already started before this update keep their old word and letter spots. Their biomes and trials still
+apply, but the letters there are not sealed. The future higher-tier worlds can use more letters: one 30-depth band per letter.
+
 ## Where it lives
 
 | What | File |
@@ -143,5 +207,6 @@ Every hidden-word letter is sealed by a mini-boss that rises when you come near 
 | UI | `src/js/late/98-z-classui.js`, `src/js/late/99-zzzzzzzzz-3-mythui.js`, `src/js/late/88-inventory.js` |
 | Loadouts | `src/js/late/99-zzzzzzzzz-5-loadout.js` |
 | Wardens | `src/js/late/99-zzzzzzzzz-6-guards.js` |
+| Biome worlds | `src/js/late/99-zzzzzzzzz-7-biomes.js`, `src/css/96-biomes.css` (word and letters: `99-zzzzzz-words.js`; zone display: `86-z-depths.js`) |
 
-Tests: `tests/mythic.js`, `tests/guards.js`, `tests/classjob.js`, `tests/balance.js`.
+Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.js`, `tests/balance.js`.

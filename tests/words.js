@@ -13,11 +13,12 @@ async function boot(p,reload){if(reload)await p.reload();else await p.goto(URL);
 (async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox']});
  const ctx=await b.newContext({viewport:{width:1366,height:800}});const p=await ctx.newPage();const errs=[];p.on('pageerror',x=>errs.push(x.message));p.on('console',m=>{if(m.type()=='error'&&!/ERR_|Failed to load|net::/.test(m.text()))errs.push('console: '+m.text())});
  await p.addInitScript(guest);await boot(p);const E=(f,a)=>p.evaluate(f,a);const W8=ms=>p.waitForTimeout(ms||100);
- // the Letter Wardens (GUARD16) are tested in tests/guards.js; here every letter starts unguarded
-const go=async w=>{await E(w=>{enterWorld(w);WX6.force='clear';mobs.length=0;try{for(const l of WORD9.letters)GUARD16.clear(cur,l.i)}catch(_){}},w);await W8(500)};
- await E(()=>{lvl=5});await go('wordsa');
+ // the Letter Wardens (GUARD16) are tested in tests/guards.js and the biome seals (BIOME17) in tests/biomes.js; here every letter starts free
+const go=async w=>{await E(w=>{enterWorld(w);WX6.force='clear';mobs.length=0;try{for(const l of WORD9.letters)GUARD16.clear(cur,l.i)}catch(_){}try{BIOME17.clearAll()}catch(_){}},w);await W8(500)};
+ // 'wordsa' plays as a world whose hunt began before the biome update (an older, longer word: these checks need 4+ letters)
+ await E(()=>{lvl=5;BIOME17.state.w.wordsa={bw:0,lit:{},k:[0,0,0],o:[0,0,0],c:[0,0,0],done:0}});await go('wordsa');
  // ---- placement
- const A=await E(()=>{const L=WORD9.letters,w=WORD9.word;return{w,L,n:L.length,all:L.every(l=>tiles[l.y*W+l.x]==WORD9.LETTER),inList:WORD9.WORDS.includes(w),
+ const A=await E(()=>{const L=WORD9.letters,w=WORD9.word;return{w,L,n:L.length,all:L.every(l=>tiles[l.y*W+l.x]==WORD9.LETTER),inList:WORD9.WORDS.includes(w)||BIOME17.WORDS3.includes(w),bands:L.map(l=>BIOME17.bandOfDepth(l.y-sh(l.x))),
   sameChars:L.map(l=>l.ch).sort().join('')==[...w].sort().join(''),scr:L.map(l=>l.ch).join('')!=w,surf:L.some(l=>l.y==sh(l.x)-1),under:L.filter(l=>l.y>sh(l.x)+5).length,
   xs:L.map(l=>l.x).sort((a,b)=>a-b),door:L.every(l=>Math.abs(l.x-DX)>5||l.y>sh(l.x)+5),count:(()=>{let c=0;for(let k=0;k<W*H;k++)if(tiles[k]==WORD9.LETTER)c++;return c})()}});
  ok('a normal world hides one word from the list (3-7 letters), one Letter Block per letter',A.inList&&A.n==A.w.length&&A.n>=3&&A.n<=7&&A.all&&A.count==A.n,{w:A.w,n:A.n,count:A.count});

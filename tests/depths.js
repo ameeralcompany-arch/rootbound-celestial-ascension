@@ -22,7 +22,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  ok('world generation places every site kind (groves, singing crystals, Mole Rush, Crystal Gallery, Ember Forges, relic vaults) and no shrines',['grove','reso','mole','gal','forge','vault'].every(k=>gen.kinds.includes(k))&&!gen.kinds.includes('shrine'),gen);
  ok('Buried Caches (93) and Crystal Geodes (94) are placed and render through the block sprite path',gen.ca>=6&&gen.ge>=8&&gen.spr&&gen.tile7&&gen.glow&&gen.valid,gen);
  ok('tool categories: geodes are ore (Glimmer), caches are soft (Pip)',gen.cat=='ore/soft',gen.cat);
- // ---- bands + indicator
+ // ---- bands + indicator (the classic zones, as in an Inferno; in a normal world the bands show its biomes: tests/biomes.js)
+ await E(()=>DEPTH8.theme(null));
  for(const[k,id,nm]of[['grove','hollow','Glowroot Hollows'],['reso','crystal','Crystal Caverns'],['forge','magma','Emberdeep']]){await E(k=>TP(k),k);await sleep(450);
   const r=await E(()=>{const e=document.getElementById('dz8');return{band:DEPTH8.band,on:!!e&&e.classList.contains('on'),txt:e&&e.textContent,depth:Math.round(DEPTH8.depth)}});
   ok('band '+id+' is detected and its indicator shows name + depth',r.band==id&&r.on&&r.txt.includes(nm)&&/\d+ m deep/.test(r.txt),r)}

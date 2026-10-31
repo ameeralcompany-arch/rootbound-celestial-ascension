@@ -1,0 +1,31 @@
+/* Panel motion polish: the inventory, store and menu open on a warmed layer with one long, soft ease-out and leave quickly.
+   The content is painted at near-zero opacity a frame before the motion (inventory / store open()), so nothing pops or stalls. */
+:root{--pm-ease:cubic-bezier(.16,1,.3,1);--pm-in:.46s;--pm-fade:.28s;--pm-out:.18s}
+/* inventory */
+#inv7.open:not(.show){opacity:.001!important}
+#inv7{transition:opacity var(--pm-out) cubic-bezier(.5,0,.75,0)!important}
+#inv7.show{transition:opacity var(--pm-fade) var(--pm-ease)!important}
+#inv7 .sheet{will-change:transform;transform:translateY(20px) scale(.97)!important;transition:transform var(--pm-out) cubic-bezier(.5,0,.75,0)!important}
+#inv7.show .sheet{transform:none!important;transition:transform var(--pm-in) var(--pm-ease)!important}
+/* store */
+#store7:not(.on){opacity:.001!important}
+#store7{transition:opacity var(--pm-out) cubic-bezier(.5,0,.75,0)!important}
+#store7.on{transition:opacity var(--pm-fade) var(--pm-ease)!important}
+#store7 .shell{will-change:transform;transform:translateY(20px) scale(.975)!important;transition:transform var(--pm-out) cubic-bezier(.5,0,.75,0)!important}
+#store7.on .shell{transform:none!important;transition:transform var(--pm-in) var(--pm-ease)!important}
+/* menu, worlds, options */
+@keyframes pm-fade{from{opacity:0}to{opacity:1}}
+@keyframes pm-rise{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes pm-screen{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pm-row{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+#menu.mo9show{animation:pm-fade var(--pm-fade) var(--pm-ease) both}
+#menu #card.mo9card{animation:pm-rise var(--pm-in) var(--pm-ease) both}
+#menu .mo9in{animation:pm-screen .36s var(--pm-ease) both}
+#mworlds.mo9list .wr{animation:pm-row .38s var(--pm-ease) both;animation-delay:calc(var(--i,0) * 24ms + 70ms)}
+html[data-reduce=true] :is(#inv7,#inv7 .sheet,#store7,#store7 .shell){transition:none!important}
+html[data-reduce=true] :is(#menu.mo9show,#menu #card.mo9card,#menu .mo9in,#mworlds.mo9list .wr){animation:none!important}
+@media(prefers-reduced-motion:reduce){:is(#inv7 .sheet,#store7 .shell){transition:none!important}:is(#menu.mo9show,#menu #card.mo9card,#menu .mo9in,#mworlds.mo9list .wr){animation:none!important}}
+/* only the tiles on screen are laid out and painted when a panel opens; the rest render as they scroll into view
+   (tiles clip their content already, so nothing changes visually) */
+#inv7 .grid7>.it7{content-visibility:auto;contain-intrinsic-size:auto 104px}
+#store7 .cards>.card{content-visibility:auto;contain-intrinsic-size:auto 200px}

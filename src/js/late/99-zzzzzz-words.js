@@ -26,7 +26,8 @@ const WORD9=(()=>{
  function infName(b){b=norm(b);const n=b.length<=12?b+'-inf':b.slice(0,9)+(h32(b)%46656).toString(36).padStart(3,'0')+'-inf';S.inf[n]=b;return n}
  const baseOf=n=>S.inf[n]||n.slice(0,-4)||'plaza',pretty=n=>n=='plaza'?'The Plaza':String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
  const label=n=>isInf(n)?pretty(baseOf(n))+' · Inferno':pretty(n),hasWord=n=>n!='plaza'&&!isInf(n);
- const wordFor=n=>WORDS[Math.floor(rr((h32(n)^0x5eed)>>>0)()*WORDS.length)];
+ // biome worlds (BIOME17) hide a 3-letter word, one letter per biome; worlds whose hunt had started before keep their word
+ const wordFor=n=>{try{const b=BIOME17.wordOf(n);if(b)return b}catch(_){}return WORDS[Math.floor(rr((h32(n)^0x5eed)>>>0)()*WORDS.length)]};
  let INF=false,L=[],WORD='';
  // ---- blocks
  BLK[LETTER]=['Letter Block','#ffe27a',2];BLK[ASH]=['Ash','#6a6266',3];BLK[BASALT]=['Basalt','#3c3b43',6];BLK[MAGMA]=['Magma Stone','#d2481c',8];BLK[SCORCH]=['Scorched Earth','#4e2e26',3];
@@ -43,6 +44,9 @@ const WORD9=(()=>{
  // ---- letters: word, scramble and spots for the current world (called right after the terrain is generated, before saved edits apply)
  function place(){L=[];WORD='';if(!hasWord(cur))return;const R0=rr((h32(cur)^0x1e77e2)>>>0);WORD=wordFor(cur);const n=WORD.length;
   const sc=[...WORD];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[sc[i],sc[j]]=[sc[j],sc[i]]}if(sc.join('')==WORD)sc.push(sc.shift());
+  // biome worlds: letter i sits in a chamber deep in biome i (BIOME17 carves it)
+  let bs=null;try{bs=BIOME17.letterSpots(cur,n)}catch(_){}
+  if(bs){for(let i=0;i<n;i++){const k=bs[i];if(!(k>=0))continue;tiles[k]=LETTER;hp[k]=BLK[LETTER][2];wl[k]=0;trees.delete(k);L.push({k,ch:sc[i],i})}return}
   const x0=6,x1=W-7,seg=(x1-x0)/n,segs=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]]}
   const used=new Set(),off=Math.floor(R0()*3),rx=(a,b)=>a+Math.floor(R0()*Math.max(1,b-a));
   const deco=x=>{try{return SUMMER9.LAND.some(d=>x>=d.c0-1&&x<=d.c1+1)}catch(_){return false}},okX=x=>Math.abs(x-DX)>5&&!deco(x);   // not at the spawn door, not on poolside decor (92-zz-summer.js)
@@ -56,7 +60,7 @@ const WORD9=(()=>{
  function sync(){if(!L.length)return;const st=peek(cur);for(const l of L){const got=st.got.includes(l.i);if(!got&&tiles[l.k]!=LETTER){tiles[l.k]=LETTER;hp[l.k]=BLK[LETTER][2];wl[l.k]=0;trees.delete(l.k)}else if(got&&tiles[l.k]==LETTER){tiles[l.k]=0;hp[l.k]=0}}}
  const gotN=()=>{const st=peek(cur);return L.filter(l=>st.got.includes(l.i)).length};
  const NOTE=[523,587,659,784,880,988,1047];
- function collect(l){if(!l||!hasWord(cur))return false;const st=stOf(cur);if(st.got.includes(l.i))return false;if(typeof GUARD16!='undefined'&&GUARD16.blocks(cur,l))return false;st.got.push(l.i);save();
+ function collect(l){if(!l||!hasWord(cur))return false;const st=stOf(cur);if(st.got.includes(l.i))return false;if(typeof BIOME17!='undefined'&&BIOME17.locks(cur,l))return false;if(typeof GUARD16!='undefined'&&GUARD16.blocks(cur,l))return false;st.got.push(l.i);save();
   if(tiles[l.k]==LETTER){tiles[l.k]=0;hp[l.k]=0;try{pushEdit(l.k)}catch(_){}}
   const x=(l.k%W+.5)*T,y=((l.k/W|0)+.5)*T,n=gotN();
   try{VFX.burst(x,y,['#ff6a8a','#ffb84a','#ffe86a','#6aff9a','#5ad0ff','#b07aff'],26,320,1,.9,14);VFX.wave(x,y,'#fff6c0',70,.5,1)}catch(_){}try{burst(x,y,'#ffe27a',10,160,4,'p');rings.push({x,y,c:'#ffe27a',t:performance.now()})}catch(_){}
@@ -107,7 +111,7 @@ const WORD9=(()=>{
   for(let i=0;i<34;i++){const x=3+(R0()*(W-6)|0),s=sh(x),y0=s+14+(R0()*Math.max(1,H-s-20)|0);if(y0>=H-4||tiles[y0*W+x])continue;let y=y0;while(y<H-3&&!tiles[(y+1)*W+x])y++;if(y>=H-3)continue;
    let l=x,r=x;while(l>2&&!tiles[y*W+l-1]&&x-l<6)l--;while(r<W-3&&!tiles[y*W+r+1]&&r-x<6)r++;for(let xx=l;xx<=r;xx++){wl[y*W+xx]=8;const kb=(y+1)*W+xx;if(tiles[kb]&&tiles[kb]!=4){tiles[kb]=OBSID;hp[kb]=BLK[OBSID][2]}}}}
  {const _g=gen;gen=function(){const inf=cur!='plaza'&&isInf(cur);if(inf){const b=baseOf(cur);try{ws=wsOf(b);SHN=VILL9.verOf(b)==2?VILL9.terrain(ws).h:null}catch(e){console.error('WORD9 seed',e)}}
-  const r=_g.apply(this,arguments);try{if(inf){L=[];WORD='';burn()}else place()}catch(e){console.error('WORD9 gen',e)}return r}}
+  const r=_g.apply(this,arguments);try{if(inf){L=[];WORD='';burn()}else{try{if(typeof BIOME17!='undefined')BIOME17.shape()}catch(e){console.error('BIOME17 shape',e)}place()}}catch(e){console.error('WORD9 gen',e)}return r}}
  let wxSet=false;
  {const _lw=loadWorld;loadWorld=function(n,e){let nm=norm(n);if(isInf(nm)&&(lvl|0)<LV){const b=baseOf(nm);n=b;e=undefined;nm=b;setTimeout(()=>{say('The Inferno needs level '+LV+' (you are level '+(lvl|0)+')');try{UI6.say6('TOO HOT TO ENTER','Reach level '+LV+' to brave the Inferno',2800)}catch(_){}},60)}
   const r=_lw.call(this,n,e);try{INF=isInf(cur);EM.length=0;FB.length=0;sync();strip();shown=null;vis();

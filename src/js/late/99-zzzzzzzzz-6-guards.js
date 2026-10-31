@@ -20,6 +20,8 @@ const GUARD16=(()=>{
  const gemsOf=L=>Math.round(3*(30+4.5*Math.max(1,L))),xpOf=L=>Math.round(.08*xpNeed(Math.max(1,L)));
  let alertT=0,wCur=null,wT=0;const G=[],ORB=[];   // live wardens, caster orbs
  const liveG=i=>G.find(g=>g.i==i&&g.m&&g.m.hp>0&&!g.m.dead);
+ // in a biome world the warden sleeps until that biome's trial is done (BIOME17)
+ const sealed=l=>{try{return BIOME17.sealed(cur,l.i)}catch(_){return false}};
  // ---- is this letter sealed? (WORD9.collect asks before it collects)
  function blocks(w,l){if(creative()||!l||cleared(w,l.i))return false;const g=liveG(l.i);if(!g)spawn(l);const n=performance.now();if(n-alertT>2200){alertT=n;try{say('A Letter Warden guards "'+l.ch+'" — defeat it to free the letter')}catch(_){}try{SFX7.tone(220,180,.25,'square',.03)}catch(_){}}return true}
  // ---- spawning: an open spot on the ground near the letter, else beside you
@@ -41,7 +43,7 @@ const GUARD16=(()=>{
  function tick(dt){if(!entered||creative())return;let L=[];try{L=WORD9.letters;if(!WORD9.hasWord(cur))L=[]}catch(_){L=[]}const got=((WORD9.state.w[cur]||{}).got)||[];
   // wake the warden of a sealed letter when you come close (never while a menu is open, nor in your first seconds in a world)
   if(cur!==wCur){wCur=cur;wT=performance.now()}const busy=performance.now()-wT<4000||(()=>{try{return (typeof INV7!='undefined'&&INV7.isOpen)||UI6.on||(typeof CLS9!='undefined'&&CLS9.isOpen())||dlgOpen}catch(_){return false}})();
-  if(!busy)for(const l of L){if(got.includes(l.i)||cleared(cur,l.i)||G.some(q=>q.i==l.i&&q.w==cur))continue;const x=(l.x+.5)*T,y=(l.y+.5)*T;if(Math.abs(P.x-x)<T*8&&Math.abs(P.y-y)<T*6)spawn(l)}
+  if(!busy)for(const l of L){if(got.includes(l.i)||cleared(cur,l.i)||G.some(q=>q.i==l.i&&q.w==cur)||sealed(l))continue;const x=(l.x+.5)*T,y=(l.y+.5)*T;if(Math.abs(P.x-x)<T*8&&Math.abs(P.y-y)<T*6)spawn(l)}
   for(let i=G.length-1;i>=0;i--){const g=G[i],m=g.m;
    if(g.w!==cur){G.splice(i,1);continue}
    if(m.hp<=0||m.dead||!mobs.includes(m)){if(m.hp<=0||m.dead)reward(g);G.splice(i,1);continue}

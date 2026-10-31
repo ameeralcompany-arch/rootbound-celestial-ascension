@@ -10,7 +10,7 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  await p.goto(URL);await p.waitForTimeout(800);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);
  await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}lvl=20});
  const E=(f,a)=>p.evaluate(f,a),W8=ms=>p.waitForTimeout(ms);
- await E(()=>{enterWorld('guardtest');WX6.force='clear';mobs.length=0});await W8(4500);
+ await E(()=>{enterWorld('guardtest');WX6.force='clear';mobs.length=0;BIOME17.clearAll()});await W8(4500);
  // walk up to a letter: its warden rises and the letter is sealed
  const s1=await E(async()=>{const l=WORD9.letters[0];P.x=(l.x+.5)*T+T*3;P.y=(l.y+.5)*T-P.h;P.vx=P.vy=0;iT=1e4;await new Promise(r=>setTimeout(r,500));const g=GUARD16.live.find(q=>q.i==l.i),col=WORD9.collect(l.i);
   return{n:GUARD16.live.length,has:!!g,st:g&&g.st,hp:g&&g.m.mhp,want:GUARD16.hpOf(lvl),col,got:(WORD9.state.w.guardtest||{got:[]}).got.includes(l.i),inMobs:g&&mobs.includes(g.m)}});

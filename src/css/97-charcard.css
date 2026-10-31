@@ -1,0 +1,50 @@
+/* Character card (#hudL): the portrait in a crisp ring (class colours once a class is chosen) with the class emblem badge, a class
+   level / XP bar, smooth bar fills and a gently swaying class banner. All motion is transform / opacity / width on small elements. */
+#hudL #pwrap9{grid-row:1/9;position:relative;width:64px;height:64px;margin:4px 2px 4px 4px}
+#hudL #pwrap9 #portrait{grid-row:auto;display:block;width:64px;height:64px;border-radius:50%;border:0!important;box-shadow:0 0 0 1px rgba(20,12,40,.28),inset 0 0 0 1px rgba(255,255,255,.2)!important}
+#hudL #pwrap9 .ring{position:absolute;inset:-6px;border-radius:50%;pointer-events:none;overflow:hidden;
+ background:conic-gradient(from 200deg,#fffaf0,#d9cfe8 22%,#ffffff 40%,#c6b8de 62%,#fffaf0 80%,#d9cfe8);
+ -webkit-mask:radial-gradient(circle,transparent 0 calc(50% - 5px),#000 calc(50% - 4.4px));mask:radial-gradient(circle,transparent 0 calc(50% - 5px),#000 calc(50% - 4.4px))}
+#hudL.cls9on #pwrap9 .ring{background:conic-gradient(from 200deg,var(--clsl),var(--clsc) 20%,var(--clsd) 38%,var(--clsl) 52%,var(--clsc) 72%,var(--clsa) 88%,var(--clsl))}
+#hudL #pwrap9 .ring:before{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0 62%,rgba(255,255,255,.95) 72%,transparent 82%);animation:pr9spin 7s linear infinite}
+#hudL #pwrap9:after{content:'';position:absolute;inset:-7px;border-radius:50%;pointer-events:none;box-shadow:0 0 0 1px rgba(20,12,40,.22),0 3px 10px -3px rgba(20,12,40,.45)}
+#hudL.cls9on #pwrap9:after{box-shadow:0 0 0 1px color-mix(in srgb,var(--clsd) 70%,#000),0 0 14px -3px var(--clsc),0 3px 10px -3px rgba(20,12,40,.45)}
+#hudL #pwrap9 .emb{position:absolute;right:-9px;bottom:-7px;width:24px;height:24px;border-radius:50%;z-index:2;box-shadow:0 0 0 2px var(--surface-solid,#fbfaf7),0 2px 6px rgba(20,12,40,.4)}
+#hudL #pwrap9 .emb[hidden]{display:none}
+@keyframes pr9spin{to{transform:rotate(360deg)}}
+/* the old canvas frame is retired */
+#hudL #pframe9{display:none!important}
+/* bars: rounded, a soft inner shine, fills glide instead of jumping */
+#hudL .hpb{height:7px!important;border-radius:99px!important;overflow:hidden;position:relative}
+#hudL .hpb i{border-radius:99px!important;transition:width .5s cubic-bezier(.22,.8,.3,1)!important}
+#hudL .hpb i:after{content:'';position:absolute;left:0;right:0;top:0;height:45%;background:linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,0));border-radius:99px}
+#hudL .hpb i{position:relative}
+/* class level + XP */
+#hudL #cxp9{grid-column:2;margin-top:3px;min-width:0}
+#hudL #cxp9 .cl{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:700 10px/1.2 var(--font-ui);letter-spacing:.02em;white-space:nowrap}
+#hudL #cxp9 .cl b{color:color-mix(in srgb,var(--clsc,#7a5cff) 70%,var(--ink,#2b2140));overflow:hidden;text-overflow:ellipsis}
+#hudL #cxp9 .cl em{font:600 9.5px var(--font-ui);font-style:normal;font-variant-numeric:tabular-nums;color:var(--ink-2,#5a5070)}
+#hudL #cxp9 .hpb{margin:2px 0 0!important;height:6px!important;background:color-mix(in srgb,var(--clsc,#7a5cff) 16%,rgba(20,12,40,.1))}
+#hudL #cxp9 .hpb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--clsd,#4a2a8a),var(--clsc,#7a5cff) 55%,var(--clsl,#d8c8ff))!important;box-shadow:0 0 8px -1px var(--clsc,#7a5cff)}
+html[data-theme=dark] #hudL #cxp9 .cl b{color:color-mix(in srgb,var(--clsl,#d8c8ff) 75%,#fff)}
+html[data-theme=dark] #hudL #cxp9 .cl em{color:#cfc6e4}
+/* the card itself: a calmer shadow and a soft rise on hover */
+#hudL{transition:opacity var(--t-med,.2s),transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s cubic-bezier(.16,1,.3,1)!important}
+#hudL:hover{transform:translateY(-1px)}
+/* banner: drawn once per class, swings softly from its top edge */
+#hudL #pbanner9{transform-origin:50% 0;animation:pb9sway 4.6s ease-in-out infinite alternate;will-change:transform}
+@keyframes pb9sway{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
+html[data-reduce=true] #hudL #pwrap9 .ring:before,html[data-reduce=true] #hudL #pbanner9{animation:none}
+@media(prefers-reduced-motion:reduce){#hudL #pwrap9 .ring:before,#hudL #pbanner9{animation:none}#hudL .hpb i{transition:none!important}}
+/* gems + wings on one row (the wing name moves into the gem row) */
+#hudL .gw9{display:flex;align-items:center;gap:6px;min-width:0;margin-top:2px}
+#hudL .gw9 #hudWing{margin-left:auto;padding-left:8px;font-size:10.5px!important;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#hudL .gw9 #hudWing i{flex:none}
+/* a little tighter, so the card stays compact with the class bar */
+#hudL{row-gap:1px!important;padding-top:9px!important;padding-bottom:9px!important}
+#hudL .hpb{margin:2px 0!important}
+/* the player XP bar keeps its own colour in the dark theme (an older rule painted every bar pink there) */
+html[data-theme=dark] #hudL .xp i{background:linear-gradient(90deg,var(--accent-2,#8a7bff),#9cc0ea)!important}
+/* the depth indicator and biome panel sit below the CHARACTER button */
+#dz8{top:calc(176px + env(safe-area-inset-top,0px))}
+#bi17{top:calc(266px + env(safe-area-inset-top,0px))}

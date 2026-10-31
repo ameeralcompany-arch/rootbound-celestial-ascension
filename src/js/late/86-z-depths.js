@@ -19,6 +19,10 @@ const DEPTH8=(()=>{
  const BANDS=[{id:'hollow',n:'Glowroot Hollows',d0:8,d1:26,c:'#3fd8b4',h:'Catch spores at glowcap groves · dig Buried Caches with Pip (4) · bonk moles at Mole Rush'},
   {id:'crystal',n:'Crystal Caverns',d0:26,d1:46,c:'#9a7bff',h:'Crack Crystal Geodes with Glimmer (6) · repeat the Singing Crystals · hit floating crystals at a Crystal Gallery'},
   {id:'magma',n:'Emberdeep',d0:46,d1:999,c:'#ff6a2a',h:'Strike in rhythm at Ember Forges · Relic Vaults are guarded'}];
+ // biome worlds (BIOME17, 99-zzzzzzzzz-7-biomes.js) re-theme the bands: name, colour, hint, depth range, motes (m), zone key (z) and the status
+ // line (em). Only the display follows; the sites keep the depths they were generated at. theme(null) restores the defaults.
+ const BASE=BANDS.map(b=>({...b}));
+ function theme(list){BANDS.length=0;if(!Array.isArray(list)||!list.length){for(const b of BASE)BANDS.push({...b})}else list.forEach((o,i)=>BANDS.push(Object.assign({},BASE[Math.min(i,BASE.length-1)],o)));band=null}
  // ---- blocks: Buried Cache (93), Crystal Geode (94). Both render through the normal sprite path (TILE7 chunk cache, shadows)
  const CACHE=93,GEODE=94;BLK[CACHE]=['Buried Cache','#c8913a',5];BLK[GEODE]=['Crystal Geode','#9a7bff',14];
  for(const id of[CACHE,GEODE]){PRICE[id]=id==CACHE?40:90;LVREQ[id]=0;SOLID6[id]=1}GLOW7[GEODE]=[170,130,255];
@@ -225,18 +229,27 @@ const DEPTH8=(()=>{
  // DOM writes only when a value changed (this runs 5 times a second)
  const tx2=(e,s,v)=>{const q=e.querySelector(s);if(q&&q.textContent!==v)q.textContent=v},cv2=(e,k,v)=>{if(e.style.getPropertyValue(k)!==v)e.style.setProperty(k,v)};
  function render(){const e=ui(),now=performance.now();
-  if(band){const c=counts(band);cv2(e,'--dz',band.c);tx2(e,'small','Entering');tx2(e,'b',band.n);tx2(e,'em',(depth|0)+' m deep · '+c.f+'/'+c.n+' found');tx2(e,'.dz8h',band.h);e.classList.toggle('mini',now>elT);e.classList.add('on')}
+  if(band){const c=counts(band);cv2(e,'--dz',band.c);tx2(e,'small',band.z?'Entering biome':'Entering');tx2(e,'b',band.n);tx2(e,'em',band.em?band.em(depth|0,c):(depth|0)+' m deep · '+c.f+'/'+c.n+' found');tx2(e,'.dz8h',band.h);e.classList.toggle('mini',now>elT);e.classList.add('on')}
   else e.classList.remove('on')}
  function enter(b){elT=performance.now()+4200;try{const e=ui();e.classList.remove('mini','on');void e.offsetWidth}catch(_){}tone(392,392*1.5,.5,'sine',.025);tone(588,588,.7,'sine',.015,.12);
-  if(!db.zone[b.id]){db.zone[b.id]=1;save();pay(0,40);const q=RW();if(q){q.fan('discover');q.card({kind:'zone',kick:'New zone discovered',title:b.n,xp:40,tier:2,ms:3600})}}render()}
+  const zk=b.z||b.id;if(!db.zone[zk]){db.zone[zk]=1;save();pay(0,40);const q=RW();if(q){q.fan('discover');q.card({kind:'zone',kick:b.z?'New biome discovered':'New zone discovered',title:b.n,xp:40,tier:2,ms:3600})}}render()}
+ // biome motes (BIOME17 bands): spores, snowflakes, sand dust, crystal glints, rising bubbles, embers
+ function mote(m,x,y){
+  if(m=='spores')VFX.add(0,R0()<.6?'#c8ff9a':'#7affb0',x,y,(R0()-.5)*14,-6-R0()*10,2.4+R0()*1.6,7,3,{d:.2,g:-2,a:.6});
+  else if(m=='snow')VFX.add(1,R0()<.7?'#ffffff':'#bfeaff',x,y,(R0()-.5)*18,14+R0()*16,1.6+R0()*1.2,5,11,{d:.3,r:R0()*6,vr:(R0()-.5)*2,a:.8});
+  else if(m=='dust')VFX.add(0,R0()<.6?'#ffe0a0':'#f0c070',x,y,24+R0()*20,(R0()-.5)*8,1.6+R0(),6,3,{d:.1,a:.45});
+  else if(m=='glint')VFX.add(1,R0()<.6?'#e8d8ff':'#ffd0f8',x,y,0,-3,1.4+R0(),3,11,{d:.5,r:R0()*6,vr:(R0()-.5)*2,a:.8});
+  else if(m=='bubbles')VFX.add(0,R0()<.7?'#bff8ff':'#7ae8e0',x,y,(R0()-.5)*8,-22-R0()*20,2+R0()*1.4,6,3,{d:.1,g:-6,a:.55});
+  else VFX.add(0,R0()<.75?'#ff9a4a':'#ffd36a',x,y,(R0()-.5)*30,-40-R0()*50,2+R0()*1.2,6,2,{d:.15,g:-10,a:.8})}
  function ambient(dt,b){if(!b||OPT.q<.3||typeof VFX=='undefined')return;const vw=cv.width/ZM,vh=cv.height/ZM,red=QM.reduce;amb+=dt*(b.id=='magma'?7:b.id=='crystal'?4.5:5)*Math.min(1.2,QM.vfxK)*(red?.3:1);
   while(amb>=1){amb--;const x=cam.x+R0()*vw,y=cam.y+R0()*vh;if(solidAt(Math.floor(x/T),Math.floor(y/T)))continue;
+   if(b.m){mote(b.m,x,y);continue}
    if(b.id=='hollow')VFX.add(0,R0()<.7?'#7affd8':'#c8ff9a',x,y,(R0()-.5)*16,-8-R0()*14,2.6+R0()*1.6,7,3,{d:.2,g:-2,a:.6});
    else if(b.id=='crystal')VFX.add(1,R0()<.6?'#d8c8ff':'#9fe8ff',x,y,0,-4,1.4+R0(),3,11,{d:.5,r:R0()*6,vr:(R0()-.5)*2,a:.75});
    else VFX.add(0,R0()<.75?'#ff9a4a':'#ffd36a',x,y,(R0()-.5)*30,-40-R0()*50,2+R0()*1.2,6,2,{d:.15,g:-10,a:.8})}
-  ambS-=dt;if(ambS>0)return;ambS=3+R0()*4;
-  if(b.id=='hollow'){const f=1500+R0()*700;tone(f,f*.55,.07,'sine',.02);tone(f*.8,f*.45,.07,'sine',.008,.28)}
-  else if(b.id=='crystal'){const P5=[1047,1175,1319,1568,1760,2093],a=P5[R0()*6|0],c=P5[R0()*6|0];tone(a,a,.9,'triangle',.009);tone(c,c,1.1,'sine',.007,.22)}
+  ambS-=dt;if(ambS>0)return;ambS=3+R0()*4;const sid=b.m?({spores:'hollow',dust:'hollow',bubbles:'hollow',snow:'crystal',glint:'crystal'}[b.m]||'magma'):b.id;
+  if(sid=='hollow'){const f=1500+R0()*700;tone(f,f*.55,.07,'sine',.02);tone(f*.8,f*.45,.07,'sine',.008,.28)}
+  else if(sid=='crystal'){const P5=[1047,1175,1319,1568,1760,2093],a=P5[R0()*6|0],c=P5[R0()*6|0];tone(a,a,.9,'triangle',.009);tone(c,c,1.1,'sine',.007,.22)}
   else{tone(58,44,1.6,'sawtooth',.014);if(R0()<.6)tone(190,110,.14,'sine',.016,.5)}}
  // ---- per frame
  function tick(dt){if(!entered||cur=='plaza'||creatorOn){if(el)el.classList.remove('on');band=null;blend=0;return}
@@ -313,5 +326,5 @@ const DEPTH8=(()=>{
    else if(r.k=='vault'){label(g2,cx,by-92+bob,w.v[r.id]?'Relic vault (empty)':r.killed>=3?'Press E: open the relic chest':r.gs.length?'Defeat the guardians  '+r.killed+' / 3':'A sealed relic vault','#ff7a3a')}
    else if(r.k=='grove'&&!ready(r))label(g2,cx,by-108+bob,'Regrowing  '+fmt((w.g[r.id]||0)-Date.now()),CAPC[0])}}
  {const _dp=BOSS6.drawProj;BOSS6.drawProj=function(g2,cx,cy){try{drawTop(g2,cx,cy)}catch(e){if(!drawTop.e){drawTop.e=1;console.error('DEPTH8 top',e)}}return _dp.apply(this,arguments)}}
- return{BANDS,MG,MATS,holeX,bonk,tgPos,shoot,needle,hammer,startMole,startGal,startForge,strike,CACHE,GEODE,sites:()=>S,caches:()=>CA,geodes:()=>GE,get band(){return band&&band.id},get depth(){return depth},get db(){return db},wr,save,reload:load,spore,pillX,hit,listen,use,counts,el:()=>el,
+ return{BANDS,theme,MG,MATS,holeX,bonk,tgPos,shoot,needle,hammer,startMole,startGal,startForge,strike,CACHE,GEODE,sites:()=>S,caches:()=>CA,geodes:()=>GE,get band(){return band&&band.id},get depth(){return depth},get db(){return db},wr,save,reload:load,spore,pillX,hit,listen,use,counts,el:()=>el,
   find:k=>S.find(r=>r.k==k)}})();
