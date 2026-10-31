@@ -79,7 +79,7 @@ const HOTBAR=(()=>{
  const LOCK='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5.2a3.5 3.5 0 0 1 7 0V7h.8c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.7a.7.7 0 0 1-.7-.7V7.7c0-.4.3-.7.7-.7zm1.8 0h3.4V5.2a1.7 1.7 0 0 0-3.4 0z"/></svg>';
  const SUB={soft:'Tool · digs dirt, sand, wood',stone:'Tool · cracks stone & brick',ore:'Tool · mines whole ore veins',tree:'Tool · chops trees & wood',rod:'Tool · click water to fish'};
  function sub(k){const t=kind(k),st=state(k);if(t=='empty')return'Empty · drag an item here, or click to choose';if(st=='missing')return'You do not own this any more';
-  if(st=='lock')return'Locked · reach level '+WPN[wid(k)].lv;if(st=='out')return'Used up · break or buy more';
+  if(st=='lock'){const w=WPN[wid(k)];return(w.lv|0)>(lvl|0)?'Locked · reach level '+w.lv:"Locked · another class's weapon"}if(st=='out')return'Used up · break or buy more';
   if(t=='place'){const c=ITEM7.cat(k);return(c=='seed'?'Seed · click soil to plant':c=='obj'||c=='door'?'Object · click to place':'Block · click to place')+' · '+cnt(k)}
   if(t=='mat')return ITEM7.catName(k)+' · '+cnt(k)+' · sells at the market';if(t=='wear')return wearing(k)?'Wearing · press again to take off':'Wearable · press to wear';
   const w=WPN[wid(k)];if(t=='tool')return SUB[w.tool]||'Tool';return(typeof GUN9!='undefined'&&GUN9.AIM&&GUN9.AIM.has(wid(k))?'Ranged · aim with the mouse':'Weapon · fights, never digs')}

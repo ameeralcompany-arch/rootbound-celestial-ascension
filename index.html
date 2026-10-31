@@ -1913,6 +1913,56 @@ body.bb10c #wl9{opacity:0!important;transition:opacity .35s;pointer-events:none}
  #cls9 .c9orb{width:84px;height:84px}#cls9 .c9wrap{grid-template-rows:auto auto auto minmax(0,1fr) auto}#cls9 .c9hero{padding:6px 0;text-align:center}#cls9 .c9eye{justify-content:center}
  #cls9 .c9body{grid-template-columns:1fr}#cls9 .c9logo{display:none}}
 @media (prefers-reduced-motion:reduce){#cls9,#cls9 *{transition:none!important;animation:none!important}}
+/* ===== mythic arsenal (99-zzzzzzzzz-3-mythui.js): per-class palette (--m main, --l light, --d dark, --a accent), live background, hero art, Mythic card ===== */
+#cls9{--m:#efe4cc;--l:#efe4cc;--d:#1a1410;--a:#efe4cc}
+#cls9 .c9fx{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#cls9 .c9bg .s1{box-shadow:inset 0 0 0 3.4vw color-mix(in srgb,var(--l) 55%,rgba(239,228,204,.6))}
+#cls9 .c9bg .s2{box-shadow:inset 0 0 0 2.6vw color-mix(in srgb,var(--m) 45%,rgba(239,228,204,.5))}
+#cls9 .c9bg .s4{background:radial-gradient(closest-side,color-mix(in srgb,var(--m) 55%,transparent),transparent);opacity:.4}
+#cls9 .c9title{background:linear-gradient(176deg,#ffffff 0%,color-mix(in srgb,var(--l) 60%,#d9d9dc) 20%,color-mix(in srgb,var(--d) 70%,#6e6e74) 43%,#f6f6f6 52%,color-mix(in srgb,var(--m) 45%,#9a9aa0) 68%,#e9e9ec 84%,color-mix(in srgb,var(--d) 50%,#8a8a90) 100%);-webkit-background-clip:text;background-clip:text}
+#cls9 .c9card{border-color:color-mix(in srgb,var(--m) 22%,rgba(255,255,255,.13))}
+#cls9 .c9c.on{background:color-mix(in srgb,var(--l) 70%,#efe4cc);border-color:color-mix(in srgb,var(--l) 70%,#efe4cc)}
+#cls9 .c9lv .val{stroke:color-mix(in srgb,var(--l) 70%,#efe4cc)}
+#cls9 .c9art{position:absolute;left:44px;top:46px;bottom:86px;width:min(30vw,420px);z-index:0;pointer-events:none}
+#cls9 .c9art canvas{width:100%;height:100%;display:block}
+#cls9 .c9hero,#cls9 .c9body{margin-left:calc(min(30vw,420px) + 16px)}
+#cls9 .c9hero{padding-left:0;padding-right:150px}
+#cls9 .c9my h3{margin:2px 0 0;font:900 italic 22px/1.1 var(--font-ui);letter-spacing:-.02em;color:var(--l)}
+#cls9 .c9my .c9myh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px 10px}
+#cls9 .c9my .c9myh small{font:500 10.5px var(--font-ui);color:var(--dim9)}
+#cls9 .c9pips{display:flex;gap:4px}
+#cls9 .c9pips i{font:700 8.5px/22px var(--font-ui);font-style:normal;width:22px;height:22px;text-align:center;border-radius:50%;border:1px solid rgba(255,255,255,.2);color:var(--dim9)}
+#cls9 .c9pips i.on{background:color-mix(in srgb,var(--m) 75%,#000);border-color:var(--l);color:#fff;box-shadow:0 0 10px -2px var(--m)}
+#cls9 .c9my blockquote{margin:10px 0 4px;font:italic 600 15px/1.35 var(--font-display,'Cormorant Garamond',Georgia,serif);color:var(--ink9);padding-left:10px;border-left:2px solid var(--m)}
+#cls9 .c9mv{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+#cls9 .c9mv li{display:grid;grid-template-columns:30px 1fr;gap:8px;align-items:center;padding:6px 8px;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07)}
+#cls9 .mvi{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;color:#fff;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--l) 70%,#fff),var(--m) 55%,var(--d));box-shadow:0 0 12px -3px var(--m)}
+#cls9 .c9mv b{display:block;font:700 11px var(--font-ui);letter-spacing:.04em}
+#cls9 .c9mv small{display:block;font:500 10px/1.35 var(--font-ui);color:var(--dim9)}
+#cls9 .c9un{list-style:none;margin:0;padding:0 0 0 12px;border-left:1px solid var(--line9)}
+#cls9 .c9un li{display:grid;grid-template-columns:24px 1fr;gap:6px;padding:2px 0;font:500 10.5px/1.4 var(--font-ui);color:var(--dim9)}
+#cls9 .c9un li.got{color:var(--ink9)}#cls9 .c9un li.got b{color:var(--l)}
+#cls9 .c9un b{font:800 9px/1.9 var(--font-ui);letter-spacing:.1em}
+#cls9 .c9req{list-style:none;margin:0 0 4px;padding:0;display:grid;gap:3px}
+#cls9 .c9req li{font:600 10.5px var(--font-ui);padding-left:16px;position:relative}
+#cls9 .c9req li::before{position:absolute;left:0;font-weight:800}
+#cls9 .c9req li.ok{color:#bff3c8}#cls9 .c9req li.ok::before{content:'✓'}
+#cls9 .c9req li.no{color:#ffb8c0}#cls9 .c9req li.no::before{content:'✕'}
+#cls9 .c9myb{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#cls9 .c9asc{padding:10px 18px;border-radius:999px;border:1px solid var(--l);font:800 10px var(--font-ui);letter-spacing:.2em;text-transform:uppercase;color:#fff;
+ background:linear-gradient(135deg,color-mix(in srgb,var(--m) 80%,#000),var(--d));box-shadow:0 0 22px -4px var(--m),inset 0 1px 0 rgba(255,255,255,.3);animation:c9pulse 2.4s ease-in-out infinite}
+#cls9 .c9asc:hover{filter:brightness(1.15)}
+#cls9 .c9asc[aria-disabled=true]{opacity:.45;cursor:not-allowed;animation:none;box-shadow:none}
+@keyframes c9pulse{50%{box-shadow:0 0 34px -2px var(--m),inset 0 1px 0 rgba(255,255,255,.3)}}
+#cls9 .c9tog{padding:10px 14px;border-radius:999px;border:1px solid var(--line9);background:rgba(255,255,255,.05);font:700 9.5px var(--font-ui);letter-spacing:.16em;text-transform:uppercase}
+#cls9 .c9tog[aria-pressed=true]{border-color:var(--l);color:var(--l)}
+@media (max-width:1100px){#cls9 .c9art{width:26vw}#cls9 .c9hero,#cls9 .c9body{margin-left:calc(26vw + 12px)}}
+@media (max-width:760px){#cls9 .c9art{position:relative;left:auto;top:auto;bottom:auto;width:100%;height:300px}#cls9 .c9hero,#cls9 .c9body{margin-left:0}#cls9 .c9hero{padding-right:0}
+ #cls9 .c9wrap{grid-template-rows:auto auto auto auto minmax(0,1fr) auto}}
+/* HUD: avatar frame + hanging class banner */
+#hudL #pframe9{position:absolute;pointer-events:none;z-index:3}
+#hudL #pbanner9{position:absolute;pointer-events:none;z-index:0;top:calc(100% - 6px);right:20px;width:34px;height:84px}
+#hudL.cls9on{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--clsc,#fff) 55%,transparent),0 10px 26px -12px color-mix(in srgb,var(--clsc,#000) 70%,transparent)!important}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -9222,6 +9272,7 @@ const CLASS7=(()=>{
   stormcaller:'Static: '+pc(o.arc)+' chance of a chain spark for +50% damage; hits can stun',berserker:'Rage: up to +'+pc(o.floor+o.rage)+' damage as your health drops',druid:'Grove: regenerate '+o.regen.toFixed(1)+' HP every 2 s holding a druid weapon',
   knight:'Valor: +'+pc(o.arm)+' armour, heavier knockback, hits can stun'})[k]+(L>1?' · +'+pc(o.dmg-1)+' damage':'')}
  const BYK={fist:'brawler',knuckle:'brawler',pan:'brawler',sword:'knight',spear:'knight',bow:'archer',wand:'mage',staff:'mage',scythe:'reaper',sickle:'reaper',hammer:'stormcaller',maul:'berserker',flail:'berserker',shuriken:'ninja',chakram:'ninja',glaive:'ninja',whip:'druid',gun:'gunslinger'};
+ for(const k in C)C[k].ids.push('myth_'+k);   // each class's mythic scythe (99-zzzzzzzzz-2-mythic.js)
  const OF={};for(const k in C)for(const id of C[k].ids)OF[id]=k;
  const of=w=>w?(OF[w.id]||BYK[w.k]||null):null;
  const S={lv:{},xp:{}};for(const k in C){S.lv[k]=1;S.xp[k]=0}
@@ -14717,14 +14768,15 @@ const CLS9=(()=>{
   const rules=free()?'Creative mode: every weapon works, whatever your class.':!cj?'You have no class yet, so every weapon works. Choose one by talking to its master.':
    'You can only fight with your class\'s weapons (fists and tools always work). Reach level '+CJOB.NEED+' in the class you use to learn another; learned classes keep their levels.';
   return'<div class="c9bg" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>'+
-   '<header class="c9top"><span class="c9brand">Rootbound.</span><nav aria-label="Sections"><button data-go="ov">Overview</button><button data-go="wp">Weapons</button><button data-go="ms">Master</button></nav>'+
+   '<header class="c9top"><span class="c9brand">Rootbound.</span><nav aria-label="Sections"><button data-go="my">Mythic</button><button data-go="ov">Overview</button><button data-go="wp">Weapons</button><button data-go="ms">Master</button></nav>'+
    '<span class="c9meta">Classes</span><button class="c9x" data-a="close" aria-label="Close classes">Close <b aria-hidden="true">✕</b></button></header>'+
    '<div class="c9v c9vl" aria-hidden="true">Class '+pad(i+1)+' / '+pad(KEYS.length)+'</div><div class="c9v c9vr" aria-hidden="true">'+esc(c.n)+' · #Lv'+L+'</div>'+
+   '<div class="c9art" aria-hidden="true"><canvas class="c9heroc"></canvas></div>'+
    '<section class="c9hero"><div class="c9eye"><span>'+pad(i+1)+'</span><span>'+ws.length+' weapons</span><span>'+(hand?'in your hand':st.t=='active'?'your class':'')+'</span></div>'+
    '<h1 class="c9title">'+esc(c.n)+'<em>.</em></h1><p class="c9sub">'+esc(pname.toLowerCase())+' edition</p></section>'+
    '<aside class="c9side"><div class="c9orb c9lv" title="'+(L>=100?'Max level':Math.floor(xp)+' / '+need+' XP to the next level')+'">'+ring(f)+'<b>'+L+'</b><small>Level · '+(L>=100?'max':Math.floor(f*100)+'%')+'</small></div>'+
    '<button class="c9orb c9st" data-a="st" data-st="'+st.t+'"'+(st.t=='switch'?'':' aria-disabled="true"')+'><b>'+st.lab+'</b><small>'+esc(st.sub)+'</small></button></aside>'+
-   '<main class="c9body"><div class="c9col">'+
+   '<main class="c9body"><div class="c9col">'+(typeof MYUI!='undefined'?MYUI.section(k):'')+
     '<section class="c9card" id="c9-ov"><h4>Passive</h4><p class="pk">'+esc(CLASS7.perk(k,L))+'</p>'+
      '<h4>Milestones</h4><ol class="c9ms">'+ms+'</ol><h4>How to play</h4><p>'+esc(tip(k))+'</p><p class="dim">Levels come from the hits and kills you make with '+esc(c.n)+' weapons.</p></section>'+
     '<section class="c9card" id="c9-ms"><h4>Master</h4><p><b>'+esc(mn||'A class master')+'</b> teaches '+esc(c.n)+' at their house in the Plaza.</p><p class="dim">'+esc(rules)+'</p>'+
@@ -14732,23 +14784,26 @@ const CLS9=(()=>{
    '<section class="c9card c9wp" id="c9-wp"><h4>Weapons <small>'+ws.length+'</small></h4><div class="c9ws">'+ws.map(wcard).join('')+'</div></section></main>'+
    '<footer class="c9foot"><div class="c9logo">ROOTBOUND<em>.</em><small>← → browse · Enter switch · Esc close</small></div><div class="c9rail" role="tablist" aria-label="Classes">'+
     KEYS.map((q,n)=>'<button class="c9c'+(q==k?' on':'')+(learned(q)?' ln':'')+(cj==q?' act':'')+'" role="tab" aria-selected="'+(q==k)+'" data-k="'+q+'"><small>'+pad(n+1)+'</small><b>'+esc(C[q].n)+'</b><em>Lv '+CLASS7.lv(q)+'</em></button>').join('')+'</div></footer>'}
- function render(){if(!el)return;const rail=el.querySelector('.c9rail'),sl=rail?rail.scrollLeft:0;el.style.setProperty('--cc',C[sel].c);el.innerHTML='<div class="c9wrap">'+html()+'</div>';
+ function render(){if(!el)return;const rail=el.querySelector('.c9rail'),sl=rail?rail.scrollLeft:0,bd=el.querySelector('.c9body'),st=bd?bd.scrollTop:0;el.style.setProperty('--cc',C[sel].c);
+  let wrap=el.querySelector('.c9wrap');if(!wrap){el.innerHTML='<canvas class="c9fx" aria-hidden="true"></canvas><div class="c9wrap"></div>';wrap=el.querySelector('.c9wrap')}wrap.innerHTML=html();
+  const b2=el.querySelector('.c9body');if(b2&&render.keep)b2.scrollTop=st;render.keep=false;
   const r2=el.querySelector('.c9rail');if(r2){r2.scrollLeft=sl;const on=r2.querySelector('.on');if(on){const a=on.offsetLeft,b=a+on.offsetWidth;if(a<r2.scrollLeft||b>r2.scrollLeft+r2.clientWidth)r2.scrollLeft=a-(r2.clientWidth-on.offsetWidth)/2}}
-  const t=el.querySelector('.c9title');if(t){t.classList.add('in')}}
+  const t=el.querySelector('.c9title');if(t){t.classList.add('in')}try{(typeof MYUI!='undefined'?MYUI.after(el,sel):0)}catch(e){console.error('CLS9 mythic',e)}}
  function pick(k){if(!C[k]||k===sel)return;sel=k;render();try{UIS.play('tab')}catch(_){}}
  function step(d){const i=KEYS.indexOf(sel);pick(KEYS[(i+d+KEYS.length)%KEYS.length])}
  function act(){const st=status(sel);if(st.t!='switch')return false;let ok=false;try{ok=CJOB.become(sel)}catch(_){}if(ok){try{UIS.play('confirm')}catch(_){}render()}return ok}
  function build(){if(el)return el;el=document.createElement('div');el.id='cls9';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Classes');document.body.appendChild(el);
-  el.addEventListener('click',e=>{const b=e.target.closest('[data-k],[data-a],[data-go]');if(!b)return;
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-k],[data-a],[data-go]');if(b&&b.getAttribute('aria-disabled')=='true'&&b.dataset.a&&b.dataset.a.startsWith('my:'))return;if(!b)return;
    if(b.dataset.k)pick(b.dataset.k);else if(b.dataset.a=='close')close();else if(b.dataset.a=='st')act();
+   else if(b.dataset.a&&b.dataset.a.startsWith('my:')){try{if(MYUI.act(b.dataset.a.slice(3),sel)){render.keep=true;render()}}catch(e){console.error('CLS9 mythic',e)}}
    else if(b.dataset.go){const s=el.querySelector('#c9-'+b.dataset.go);if(s)s.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}});
   el.addEventListener('wheel',e=>{const r=e.target.closest('.c9rail');if(r&&Math.abs(e.deltaY)>Math.abs(e.deltaX)){r.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
   return el}
  const isOpen=()=>!!el&&el.style.display=='block';
  function open(k){build();try{if(UI6.on)UI6.close()}catch(_){}try{if(INV7.isOpen)INV7.close()}catch(_){}try{if(SHOP7.isOpen())SHOP7.close()}catch(_){}
   try{for(const q in K)K[q]=0}catch(_){}sel=C[k]?k:(()=>{try{return CLASS7.cur()||job()||KEYS[0]}catch(_){return KEYS[0]}})();
-  el.style.display='block';render();void el.offsetWidth;el.classList.add('on');try{UIS.play('open')}catch(_){}}
- function close(){if(!isOpen())return;el.classList.remove('on');try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},220)}
+  el.style.display='block';render();void el.offsetWidth;el.classList.add('on');try{UIS.play('open')}catch(_){}try{(typeof MYUI!='undefined'?MYUI.start(el):0)}catch(_){}}
+ function close(){if(!isOpen())return;el.classList.remove('on');try{(typeof MYUI!='undefined'?MYUI.stop():0)}catch(_){}try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},220)}
  // while open the screen owns the keyboard: arrows browse, Enter switches, Esc / K close, nothing reaches the game
  addEventListener('keydown',e=>{if(!isOpen())return;const k=e.key;
   if(k=='Escape'||k=='k'||k=='K')close();else if(k=='ArrowLeft'||k=='a'||k=='A')step(-1);else if(k=='ArrowRight'||k=='d'||k=='D')step(1);else if(k=='Enter')act();else if(k=='Tab')return;
@@ -14759,7 +14814,7 @@ const CLS9=(()=>{
  function btn(){if(document.getElementById('bcls'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bcls';b.className='pn';b.textContent='CLASSES';b.title='Classes (K)';
   b.onclick=()=>isOpen()?close():open();const s=document.getElementById('bstore');s&&s.nextSibling?hr.insertBefore(b,s.nextSibling):hr.insertBefore(b,hr.firstChild)}
  btn();if(document.readyState!='complete')addEventListener('load',btn);setTimeout(btn,1500);
- return{open,close,isOpen,pick,step,act,status,weapons,get sel(){return sel},el:()=>el}})();
+ return{open,close,isOpen,pick,step,act,status,weapons,refresh(){render.keep=true;render()},get sel(){return sel},el:()=>el}})();
 
 /* ========== LATE: 98-z-heroaura.js ========== */
 // ===== HERO12: your character shines. On the home screen the portrait stands in an anime aura: flame tongues and slow light rays behind,
@@ -15103,7 +15158,7 @@ const HOTBAR=(()=>{
  const LOCK='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5.2a3.5 3.5 0 0 1 7 0V7h.8c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.7a.7.7 0 0 1-.7-.7V7.7c0-.4.3-.7.7-.7zm1.8 0h3.4V5.2a1.7 1.7 0 0 0-3.4 0z"/></svg>';
  const SUB={soft:'Tool · digs dirt, sand, wood',stone:'Tool · cracks stone & brick',ore:'Tool · mines whole ore veins',tree:'Tool · chops trees & wood',rod:'Tool · click water to fish'};
  function sub(k){const t=kind(k),st=state(k);if(t=='empty')return'Empty · drag an item here, or click to choose';if(st=='missing')return'You do not own this any more';
-  if(st=='lock')return'Locked · reach level '+WPN[wid(k)].lv;if(st=='out')return'Used up · break or buy more';
+  if(st=='lock'){const w=WPN[wid(k)];return(w.lv|0)>(lvl|0)?'Locked · reach level '+w.lv:"Locked · another class's weapon"}if(st=='out')return'Used up · break or buy more';
   if(t=='place'){const c=ITEM7.cat(k);return(c=='seed'?'Seed · click soil to plant':c=='obj'||c=='door'?'Object · click to place':'Block · click to place')+' · '+cnt(k)}
   if(t=='mat')return ITEM7.catName(k)+' · '+cnt(k)+' · sells at the market';if(t=='wear')return wearing(k)?'Wearing · press again to take off':'Wearable · press to wear';
   const w=WPN[wid(k)];if(t=='tool')return SUB[w.tool]||'Tool';return(typeof GUN9!='undefined'&&GUN9.AIM&&GUN9.AIM.has(wid(k))?'Ranged · aim with the mouse':'Weapon · fights, never digs')}
@@ -15925,6 +15980,527 @@ const STILL13=(()=>{
  {const _dp=drawPrecip;drawPrecip=function(){if(on())return;return _dp.apply(this,arguments)}}
  try{const _u=WX6.update;WX6.update=function(dt){if(!on())return _u.apply(this,arguments);const f=WX6.force;WX6.force='clear';try{return _u.apply(this,arguments)}finally{WX6.force=f}}}catch(_){}
  return{on,get frozen(){return frozen}}})();
+
+/* ========== LATE: 99-zzzzzzzzz-1-mythart.js ========== */
+// ===== MYART: the look of the mythic arsenal. One theme per class (palette, motif, scythe name, its three moves, the outfit pieces, the
+// avatar frame and banner style, the anime look of its hero), plus the vector art shared by the game, the HUD and the Classes screen:
+// ornaments (filigree curls, gems, feathers, petals, roses, leaves, stars, crystals, bolts, flames, crows, drops, gears, runes, shuriken,
+// ink), the mythic scythe at any size and ascension tier, the ornate avatar frame and the hanging class banner. Everything is drawn in
+// code (no image files), lined like anime cel art with metallic gradients and soft glows. =====
+const MYART=(()=>{
+ const TAU=Math.PI*2,R=Math.random;
+ const hex=h=>{h=String(h).replace('#','');return[parseInt(h.slice(0,2),16)|0,parseInt(h.slice(2,4),16)|0,parseInt(h.slice(4,6),16)|0]};
+ const rgba=(h,a)=>{const c=hex(h);return'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'};
+ const mix=(a,b,k)=>{const x=hex(a),y=hex(b);return'#'+x.map((v,i)=>Math.round(v+(y[i]-v)*k).toString(16).padStart(2,'0')).join('')};
+ // pal: [main, light, dark, accent]; mv: the three combo moves [name, effect, what it does]; out: outfit pieces; fr: frame style; gold: gold metal
+ const TH={
+  brawler:{n:'Cindermaw',ep:'Scythe of the Burning Fist',q:'Every blow is a promise kept.',pal:['#ff8a3a','#ffe0b0','#5a1a08','#ffd36a'],mot:'spark',fr:'flame',gold:1,
+   mv:[['Crashing Arc','ring','A wide sweep that bursts into a ring of shockwaves'],['Ember Crescent','crescent','The return cut hurls a blazing crescent'],['Meteor Uppercut','pillar','A full spin that drives a pillar of fire up from the ground']],
+   out:{crown:'band',cape:'#5a1a08'},wing:27,look:{hs:0,hair:'#3a1a10',eye:2,skin:'#f1c9a0',out:'#7a2e10',trim:'#ffb27a',gd:0}},
+  knight:{n:'Dawnwarden',ep:'Scythe of the Last Light',q:'I stand so that others may rise.',pal:['#ffd86a','#fffbe8','#6a5418','#ffffff'],mot:'feather',fr:'angel',gold:1,
+   mv:[['Oath Sweep','crescent','A radiant arc of light cuts ahead'],['Lances of Dawn','shards','Golden spears erupt along the ground'],['Judgement','pillar','A spin that calls a column of holy light']],
+   out:{crown:'halo',cape:'#e8e2d0'},wing:40,look:{hs:8,hair:'#f4ecd8',eye:1,skin:'#f6d7b8',out:'#e8e2d0',trim:'#d9b46a',gd:1}},
+  samurai:{n:'Sakura Requiem',ep:'Scythe of Falling Petals',q:'Bloom once. Cut once. Never look back.',pal:['#ff7a9a','#ffe4ec','#5a1428','#ffd0dc'],mot:'petal',fr:'blossom',
+   mv:[['Iaido Crescent','crescent','A blinding draw-cut sends a pink crescent'],['Petal Storm','flock','A cyclone of sakura petals slices through enemies'],['Ink Requiem','splash','A spin that bursts into sweeping ink strokes']],
+   out:{crown:'crest',cape:'#2a1420'},wing:8,look:{hs:1,hair:'#1a1420',eye:4,skin:'#f6d7c0',out:'#2a1420',trim:'#ff7a9a',gd:1}},
+  archer:{n:'Starlight Aurelis',ep:'Scythe of a Thousand Stars',q:'When stars align, destiny is reaped.',pal:['#c8b8ff','#fff6e0','#2a2050','#ffd98a'],mot:'star',fr:'star',
+   mv:[['Starlight Arc','crescent','A crescent of condensed starlight that flies true'],['Stardust Veil','flock','A swarm of shooting stars weaves into enemies'],['Starfall','stars','A spin that rains falling stars onto the field']],
+   out:{crown:'tiara',cape:'#2a2050'},wing:33,look:{hs:5,hair:'#f0e6ff',eye:6,skin:'#f6dccb',out:'#2a2050',trim:'#ffd98a',gd:1}},
+  mage:{n:'Arcana Veil',ep:'Scythe of the Spectral Library',q:'Every spell is a door. I hold the keys.',pal:['#b06aff','#f0e0ff','#2a1050','#ff6ae0'],mot:'rune',fr:'crystal',
+   mv:[['Spectral Chains','chains','Ghostly chains whirl out and drag enemies close'],['Arcane Eruption','pillar','A burst of violet light tears up from the ground'],['Event Horizon','vortex','A spin that opens a black hole that swallows foes']],
+   out:{crown:'circlet',cape:'#3a1a6a'},wing:9,look:{hs:2,hair:'#e8e8ff',eye:3,skin:'#f3d9c8',out:'#3a1a6a',trim:'#c8a0ff',gd:1}},
+  demon:{n:'Crimson Covenant',ep:'Scythe of the Blood Pact',q:'Your strength becomes mine.',pal:['#ff2a4a','#ffd0d8','#3a0610','#ff8a9a'],mot:'blood',fr:'demon',
+   mv:[['Blood Rend','splash','A cut that explodes into living crimson tendrils'],['Hemorrhage Arc','crescent','A crescent of blood that drains what it cuts'],['Blood Moon','vortex','A spin that summons a crimson moon pulling foes in']],
+   out:{crown:'horns',cape:'#1a0a10'},wing:21,look:{hs:3,hair:'#e8e8ec',eye:4,skin:'#ecd0c4',out:'#1a0a10',trim:'#ff2a4a',gd:0}},
+  reaper:{n:'Nightveil Harvester',ep:'Scythe of the Final Hour',q:'Every soul has an hour. I bring it.',pal:['#9a6aff','#ece0ff','#14081e','#e04aff'],mot:'crow',fr:'raven',
+   mv:[['Crow Flock','flock','A murder of spectral crows tears forward'],['Spectral Chains','chains','Chains of the dead coil around you and bind'],['Grave Rupture','pillar','A spin that shatters the ground in violet light']],
+   out:{crown:'thorn',cape:'#14081e'},wing:17,look:{hs:5,hair:'#f0f0f4',eye:6,skin:'#efdcd2',out:'#14081e',trim:'#9a6aff',gd:1}},
+  elementalist:{n:'Tempest Prism',ep:'Scythe of Fire and Frost',q:'Fire remembers. Ice forgets nothing.',pal:['#5ad8ff','#e8fbff','#0a2a3a','#ff8a3a'],mot:'flame',fr:'frost',
+   mv:[['Glacier Line','shards','Ice crystals rupture along the ground'],['Flame Geyser','pillar','A geyser of fire bursts where you cut'],['Prism Nova','ring','A spin that releases a ring of fire and frost']],
+   out:{crown:'flame',cape:'#123a50'},wing:1,look:{hs:7,hair:'#bfefff',eye:0,skin:'#f3dccc',out:'#123a50',trim:'#5ad8ff',gd:1}},
+  stormcaller:{n:'Thunderveil',ep:'Scythe of the Sky Tyrant',q:'The sky answers when I call.',pal:['#ffe95a','#fffbe0','#2a2a10','#7ad8ff'],mot:'bolt',fr:'storm',gold:1,
+   mv:[['Chain Lightning','bolts','Lightning leaps down onto nearby enemies'],['Thunderclap','ring','A crack of thunder rolls out as a shockwave'],['Skyfall Spire','pillar','A spin that calls a lightning spire down']],
+   out:{crown:'bolt',cape:'#1a2240'},wing:43,look:{hs:3,hair:'#fff3a0',eye:1,skin:'#f1c9a0',out:'#1a2240',trim:'#ffe95a',gd:0}},
+  berserker:{n:'Ruinbringer',ep:'Scythe of the Broken Mountain',q:'Pain is just fuel.',pal:['#ff6a2a','#ffd8b8','#3a1206','#ffb04a'],mot:'rock',fr:'flame',gold:1,
+   mv:[['Quake Sweep','ring','A crushing sweep that rolls a quake outward'],['Rockbreaker','shards','Jagged stone spikes burst from the earth'],['Cataclysm','pillar','A spin that erupts the ground in molten rock']],
+   out:{crown:'horns2',cape:'#3a1206'},wing:13,look:{hs:0,hair:'#8a1a10',eye:2,skin:'#e8bc98',out:'#3a1206',trim:'#ff8a4a',gd:0}},
+  ninja:{n:'Inkshade',ep:'Scythe of the Silent Brush',q:'You will not see the cut.',pal:['#7ad0ff','#eaf6ff','#0a1420','#ffffff'],mot:'ink',fr:'ink',
+   mv:[['Shadow Crescent','crescent','A swift crescent of shadow'],['Shuriken Gale','flock','A spiral of shadow shuriken flies out'],['Ink Tempest','splash','A spin that splashes slashing ink everywhere']],
+   out:{crown:'band',cape:'#0a1420'},wing:41,look:{hs:4,hair:'#101418',eye:0,skin:'#f1d2b8',out:'#0a1420',trim:'#7ad0ff',gd:0}},
+  druid:{n:'Thornbloom',ep:'Scythe of the First Grove',q:'What is cut, regrows. What grows, binds.',pal:['#7aff8a','#eaffe0','#123a14','#ff7aa8'],mot:'leaf',fr:'rose',
+   mv:[['Thorn Line','shards','Thorned vines burst from the ground ahead'],['Leaf Gale','flock','A gale of razor leaves sweeps forward'],['Bloom Nova','ring','A spin that blooms a ring of petals and thorns']],
+   out:{crown:'flowers',cape:'#1a4020'},wing:25,look:{hs:7,hair:'#d8ffc8',eye:5,skin:'#f3dcc4',out:'#1a4020',trim:'#9aff7a',gd:1}},
+  gunslinger:{n:'Chrono Reaver',ep:'Scythe of the Clockwork Sun',q:'Six seconds is all I need.',pal:['#6adfff','#e0fbff','#0a1e28','#ffd36a'],mot:'gear',fr:'gear',gold:1,
+   mv:[['Barrel Arc','crescent','A crescent fired like a shot'],['Bullet Rain','stars','A spin of the barrel rains rounds from above'],['Clockwork Nova','ring','Gears of light burst outward in a ring']],
+   out:{crown:'hat',cape:'#1a2a38'},wing:30,look:{hs:6,hair:'#2a2a30',eye:0,skin:'#f1c9a0',out:'#1a2a38',trim:'#ffd36a',gd:0}}};
+ const OL='#0d0a12';
+ // ---- metal: a cel-shaded metallic gradient between two points, silver or gold, tinted toward the class colour
+ function metal(g,x0,y0,x1,y1,k,tint){const t=TH[k]||TH.reaper,base=t.gold?['#fff7d6','#f0c860','#8a6420','#ffe9a0','#5a4010']:['#ffffff','#d8dce6','#6e7080','#f2f2f6','#3a3a48'];const gr=g.createLinearGradient(x0,y0,x1,y1);
+  const tn=tint==null?.18:tint;[0,.32,.5,.62,1].forEach((s,i)=>gr.addColorStop(s,tn?mix(base[i],t.pal[0],tn*(i==2||i==4?1:.5)):base[i]));return gr}
+ // ---- ornaments (all in local units, centred on x,y)
+ function curl(g,x,y,s,a,flip,col,lw){g.save();g.translate(x,y);g.rotate(a);if(flip)g.scale(1,-1);g.beginPath();g.moveTo(0,0);g.bezierCurveTo(s*.4,-s*.5,s*1.1,-s*.35,s*1.05,s*.15);g.bezierCurveTo(s*1,s*.5,s*.55,s*.55,s*.55,s*.25);g.bezierCurveTo(s*.55,s*.05,s*.78,s*.02,s*.8,s*.2);
+  g.strokeStyle=col||'#e8e8f0';g.lineWidth=lw||Math.max(.8,s*.12);g.lineCap='round';g.stroke();g.restore()}
+ function gem(g,x,y,r,col,glow){g.save();g.translate(x,y);if(glow){const gr=g.createRadialGradient(0,0,0,0,0,r*3);gr.addColorStop(0,rgba(col,.55));gr.addColorStop(1,rgba(col,0));g.fillStyle=gr;g.fillRect(-r*3,-r*3,r*6,r*6)}
+  g.beginPath();g.moveTo(0,-r*1.25);g.lineTo(r*.85,-r*.2);g.lineTo(0,r*1.25);g.lineTo(-r*.85,-r*.2);g.closePath();const gr=g.createLinearGradient(-r,-r,r,r);gr.addColorStop(0,'#ffffff');gr.addColorStop(.35,col);gr.addColorStop(1,mix(col,'#000000',.55));g.fillStyle=gr;g.fill();
+  g.strokeStyle=OL;g.lineWidth=Math.max(.6,r*.18);g.stroke();g.fillStyle='rgba(255,255,255,.75)';g.beginPath();g.moveTo(-r*.3,-r*.6);g.lineTo(0,-r*.95);g.lineTo(r*.15,-r*.4);g.closePath();g.fill();g.restore()}
+ function star4(g,x,y,r,col,a){g.save();g.translate(x,y);g.rotate(a||0);g.fillStyle=col;g.beginPath();for(let i=0;i<8;i++){const q=i*Math.PI/4,rr=i%2?r*.22:r;g.lineTo(Math.cos(q)*rr,Math.sin(q)*rr)}g.closePath();g.fill();g.restore()}
+ function feather(g,x,y,len,a,c1,c2){g.save();g.translate(x,y);g.rotate(a);const w=len*.2;g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(len*.35,-w,len,-w*.1);g.quadraticCurveTo(len*.4,w*.9,0,0);const gr=g.createLinearGradient(0,0,len,0);gr.addColorStop(0,c2);gr.addColorStop(1,c1);g.fillStyle=gr;g.fill();
+  g.strokeStyle=OL;g.lineWidth=Math.max(.5,len*.03);g.stroke();g.strokeStyle=rgba('#ffffff',.45);g.lineWidth=Math.max(.4,len*.02);g.beginPath();g.moveTo(len*.05,0);g.quadraticCurveTo(len*.5,-w*.3,len*.95,-w*.1);g.stroke();
+  g.strokeStyle=rgba('#000000',.25);for(let i=1;i<6;i++){const u=i/6;g.beginPath();g.moveTo(len*u,-w*.25*(1-u));g.lineTo(len*(u+.07),w*.35*(1-u*.7));g.stroke()}g.restore()}
+ function petal(g,x,y,s,a,col){g.save();g.translate(x,y);g.rotate(a);g.beginPath();g.moveTo(0,s);g.bezierCurveTo(-s*.9,s*.2,-s*.6,-s*.8,-s*.12,-s*.9);g.lineTo(0,-s*.62);g.lineTo(s*.12,-s*.9);g.bezierCurveTo(s*.6,-s*.8,s*.9,s*.2,0,s);
+  const gr=g.createLinearGradient(0,s,0,-s);gr.addColorStop(0,mix(col,'#ffffff',.6));gr.addColorStop(1,col);g.fillStyle=gr;g.fill();g.strokeStyle=rgba(mix(col,'#000000',.5),.8);g.lineWidth=Math.max(.4,s*.08);g.stroke();g.restore()}
+ function rose(g,x,y,r,col){g.save();g.translate(x,y);for(let i=0;i<3;i++){const rr=r*(1-i*.28);g.beginPath();for(let j=0;j<5;j++){const q=j*TAU/5+i*.6;g.ellipse(Math.cos(q)*rr*.35,Math.sin(q)*rr*.35,rr*.62,rr*.45,q,0,TAU)}
+   g.fillStyle=mix(col,i?'#ffffff':'#000000',i*.18+(i?0:.15));g.fill();g.strokeStyle=rgba(mix(col,'#000000',.6),.9);g.lineWidth=Math.max(.4,r*.06);g.stroke()}
+  g.strokeStyle=rgba(mix(col,'#000000',.6),.9);g.beginPath();for(let q=0;q<9;q+=.35){const rr=r*.08*q;g.lineTo(Math.cos(q)*rr,Math.sin(q)*rr)}g.stroke();g.restore()}
+ function leaf(g,x,y,s,a,col){g.save();g.translate(x,y);g.rotate(a);g.beginPath();g.moveTo(0,0);g.quadraticCurveTo(s*.5,-s*.45,s,0);g.quadraticCurveTo(s*.5,s*.45,0,0);g.fillStyle=col;g.fill();g.strokeStyle=rgba(mix(col,'#000000',.55),.9);g.lineWidth=Math.max(.4,s*.06);g.stroke();
+  g.beginPath();g.moveTo(0,0);g.lineTo(s*.9,0);g.stroke();g.restore()}
+ function crystal(g,x,y,h,a,col){g.save();g.translate(x,y);g.rotate(a);const w=h*.28;g.beginPath();g.moveTo(0,-h);g.lineTo(w,-h*.7);g.lineTo(w*.8,0);g.lineTo(-w*.8,0);g.lineTo(-w,-h*.7);g.closePath();const gr=g.createLinearGradient(-w,0,w,0);gr.addColorStop(0,mix(col,'#ffffff',.7));gr.addColorStop(.5,col);gr.addColorStop(1,mix(col,'#000000',.4));
+  g.fillStyle=gr;g.fill();g.strokeStyle=OL;g.lineWidth=Math.max(.5,h*.05);g.stroke();g.strokeStyle='rgba(255,255,255,.6)';g.beginPath();g.moveTo(0,-h);g.lineTo(0,0);g.stroke();g.restore()}
+ function bolt(g,x,y,len,a,col,seed){g.save();g.translate(x,y);g.rotate(a);let s=Math.abs(seed|0)%2147483000+1;const rn=()=>(s=(s*16807)%2147483647)/2147483647;g.beginPath();g.moveTo(0,0);for(let i=1;i<=6;i++)g.lineTo(len*i/6,(rn()-.5)*len*.28*(i<6?1:0));
+  g.strokeStyle=rgba(col,.5);g.lineWidth=Math.max(1,len*.08);g.stroke();g.strokeStyle='#ffffff';g.lineWidth=Math.max(.6,len*.025);g.stroke();g.restore()}
+ function flame(g,x,y,s,col,t){g.save();g.translate(x,y);const w=Math.sin((t||0)*9+x)*s*.08;g.beginPath();g.moveTo(-s*.5,0);g.bezierCurveTo(-s*.6,-s*.6,w-s*.1,-s*.9,w,-s*1.4);g.bezierCurveTo(w+s*.15,-s*.8,s*.6,-s*.7,s*.5,0);g.closePath();
+  const gr=g.createLinearGradient(0,0,0,-s*1.4);gr.addColorStop(0,col);gr.addColorStop(.6,mix(col,'#ffe9a0',.6));gr.addColorStop(1,'#ffffff');g.fillStyle=gr;g.fill();g.restore()}
+ function crow(g,x,y,s,a,col,fl){g.save();g.translate(x,y);g.rotate(a);const f=Math.sin(fl||0)*.6;g.fillStyle=col;g.beginPath();g.moveTo(s,0);g.quadraticCurveTo(s*.3,-s*.18,-s*.2,-s*.05);g.quadraticCurveTo(-s*.1,-s*(.7+f),-s*.7,-s*(.9+f*.6));g.quadraticCurveTo(-s*.35,-s*.3,-s*.5,0);
+  g.quadraticCurveTo(-s*.1,s*(.55-f*.4),-s*.8,s*(.6-f*.5));g.quadraticCurveTo(-s*.2,s*.25,s,0);g.fill();g.restore()}
+ function drop(g,x,y,s,col){g.save();g.translate(x,y);g.beginPath();g.moveTo(0,-s);g.bezierCurveTo(s*.6,-s*.2,s*.6,s*.6,0,s*.6);g.bezierCurveTo(-s*.6,s*.6,-s*.6,-s*.2,0,-s);g.fillStyle=col;g.fill();g.fillStyle='rgba(255,255,255,.5)';g.beginPath();g.ellipse(-s*.15,s*.05,s*.12,s*.2,0,0,TAU);g.fill();g.restore()}
+ function gear(g,x,y,r,col,a){g.save();g.translate(x,y);g.rotate(a||0);g.beginPath();const n=10;for(let i=0;i<n*2;i++){const q=i*Math.PI/n,rr=i%2?r*.78:r;g.lineTo(Math.cos(q-.08)*rr,Math.sin(q-.08)*rr);g.lineTo(Math.cos(q+.08)*rr,Math.sin(q+.08)*rr)}g.closePath();
+  g.fillStyle=col;g.fill();g.strokeStyle=OL;g.lineWidth=Math.max(.5,r*.08);g.stroke();g.beginPath();g.arc(0,0,r*.35,0,TAU);g.fillStyle=mix(col,'#000000',.5);g.fill();g.stroke();g.restore()}
+ function rune(g,x,y,r,col,a,seed){g.save();g.translate(x,y);g.rotate(a||0);g.strokeStyle=col;g.lineWidth=Math.max(.6,r*.14);g.lineCap='round';const s=Math.abs(seed|0)%4;g.beginPath();
+  if(s==0){g.moveTo(0,-r);g.lineTo(0,r);g.moveTo(0,-r*.3);g.lineTo(r*.6,-r*.8);g.moveTo(0,r*.2);g.lineTo(-r*.6,-r*.2)}else if(s==1){g.moveTo(-r*.6,r);g.lineTo(0,-r);g.lineTo(r*.6,r);g.moveTo(-r*.35,r*.2);g.lineTo(r*.35,r*.2)}
+  else if(s==2){g.arc(0,0,r*.65,0,TAU);g.moveTo(0,-r);g.lineTo(0,r)}else{g.moveTo(-r*.6,-r);g.lineTo(r*.6,r);g.moveTo(r*.6,-r);g.lineTo(-r*.6,r);g.moveTo(-r*.8,0);g.lineTo(r*.8,0)}g.stroke();g.restore()}
+ function shuriken(g,x,y,r,a,col){g.save();g.translate(x,y);g.rotate(a);g.beginPath();for(let i=0;i<4;i++){const q=i*Math.PI/2;g.lineTo(Math.cos(q)*r,Math.sin(q)*r);g.lineTo(Math.cos(q+Math.PI/4)*r*.28,Math.sin(q+Math.PI/4)*r*.28)}g.closePath();g.fillStyle=col;g.fill();g.strokeStyle=OL;g.lineWidth=Math.max(.5,r*.1);g.stroke();
+  g.fillStyle=OL;g.beginPath();g.arc(0,0,r*.14,0,TAU);g.fill();g.restore()}
+ function ink(g,x,y,r,col,seed){g.save();g.translate(x,y);let s=Math.abs(seed|0)%2147483000+7;const rn=()=>(s=(s*16807)%2147483647)/2147483647;g.fillStyle=col;g.beginPath();for(let i=0;i<14;i++){const q=i/14*TAU,rr=r*(.55+rn()*.6);g.lineTo(Math.cos(q)*rr,Math.sin(q)*rr)}g.closePath();g.fill();
+  for(let i=0;i<5;i++){const q=rn()*TAU,d=r*(1.1+rn()*.7);g.beginPath();g.arc(Math.cos(q)*d,Math.sin(q)*d,r*(.08+rn()*.14),0,TAU);g.fill()}g.restore()}
+ // the class motif at a point (used by particles, engravings, frames and the Classes screen background)
+ function motif(g,k,x,y,s,a,t,col){const th=TH[k]||TH.reaper,c=col||th.pal[0];switch(th.mot){
+  case'spark':return star4(g,x,y,s,c,a);case'feather':return feather(g,x,y,s*2,a,'#ffffff',mix(c,'#ffffff',.4));case'petal':return petal(g,x,y,s*.8,a,c);case'star':return star4(g,x,y,s,c,a);
+  case'rune':return rune(g,x,y,s*.8,c,a,Math.floor(x*13+y*7));case'blood':return drop(g,x,y,s*.8,c);case'crow':return crow(g,x,y,s*1.2,a,mix(th.pal[2],'#000000',.3),(t||0)*14+x);
+  case'flame':return(Math.floor(x+y)%2?flame(g,x,y,s,th.pal[3],t):crystal(g,x,y,s*1.3,a,c));case'bolt':return bolt(g,x,y,s*1.6,a,c,Math.floor(x*31+y*17)|1);case'rock':return crystal(g,x,y,s*1.2,a,mix(th.pal[2],'#8a6a5a',.5));
+  case'ink':return ink(g,x,y,s*.6,mix(th.pal[2],'#000000',.3),Math.floor(x*3+y));case'leaf':return leaf(g,x,y,s*1.3,a,c);case'gear':return gear(g,x,y,s*.8,th.pal[3],a)}}
+ // ---- the mythic scythe. Local space: the shaft runs from x=0 (butt) to x=L (head) along +x; the blade sweeps up (-y) and back.
+ // tier 1-5 adds detail: II a second barb and a gem, III a smaller second blade, IV a floating halo ring, V a living glow and sparks.
+ function scythe(g,k,tier,L,t,o){const th=TH[k]||TH.reaper,[m,l,d,a]=th.pal,s=L/100;tier=Math.max(1,Math.min(5,tier|0));o=o||{};t=t||0;g.save();g.scale(s,s);g.lineJoin='round';g.lineCap='round';const lw=1.3;
+  // aura (tier 4+ and large showcase draws)
+  if(tier>=4||o.aura){const pul=.5+.5*Math.sin(t*3),gr=g.createRadialGradient(70,-30,4,70,-30,80);gr.addColorStop(0,rgba(m,.28+pul*.12*(tier>=5?1.6:1)));gr.addColorStop(1,rgba(m,0));g.fillStyle=gr;g.fillRect(-20,-120,180,180)}
+  // butt spike + shaft
+  g.beginPath();g.moveTo(-3,-2.6);g.lineTo(-17,0);g.lineTo(-3,2.6);g.closePath();g.fillStyle=metal(g,-17,-3,-3,3,k);g.fill();g.strokeStyle=OL;g.lineWidth=lw;g.stroke();
+  const sg=g.createLinearGradient(0,-2.4,0,2.4);sg.addColorStop(0,mix(d,'#ffffff',.25));sg.addColorStop(.45,d);sg.addColorStop(1,'#050307');g.fillStyle=sg;g.beginPath();g.roundRect(-4,-2.4,102,4.8,2);g.fill();g.stroke();
+  g.strokeStyle=rgba(m,.75);g.lineWidth=.9;g.beginPath();g.moveTo(6,-.6);g.lineTo(90,-.6);g.stroke();   // a vein of class colour down the shaft (like the red streak in the reference)
+  g.strokeStyle=rgba(a,.9);g.lineWidth=1.1;for(let x=36;x<54;x+=3.2){g.beginPath();g.moveTo(x,-2.4);g.lineTo(x+2.6,2.4);g.stroke()}   // grip wrap
+  for(const x of[28,58,88]){g.fillStyle=metal(g,x,-4,x+4,4,k);g.beginPath();g.roundRect(x,-3.6,4,7.2,1.4);g.fill();g.strokeStyle=OL;g.lineWidth=lw;g.stroke()}
+  // barbs under the head (opposite the blade)
+  const barb=(x0,y0,x1,y1,cx,cy)=>{g.beginPath();g.moveTo(x0-4,y0);g.quadraticCurveTo(cx,cy,x1,y1);g.quadraticCurveTo(cx+4,cy-2,x0+4,y0);g.closePath();g.fillStyle=metal(g,x0,y0,x1,y1,k,.3);g.fill();g.strokeStyle=OL;g.lineWidth=lw;g.stroke()};
+  barb(98,3,84,24,96,16);if(tier>=2)barb(104,2,112,20,110,10);
+  // second blade (tier 3+): a smaller crescent hanging down and back
+  if(tier>=3){g.save();g.translate(98,6);g.scale(.52,-.52);bladePath(g);g.fillStyle=metal(g,0,0,-80,-60,k,.35);g.fill();g.strokeStyle=OL;g.lineWidth=lw*1.8;g.stroke();g.restore()}
+  // main blade
+  g.save();g.translate(100,-1);g.scale(1.22,1.22);bladePath(g);g.fillStyle=metal(g,0,0,-86,-58,k,.12);g.fill();g.strokeStyle=OL;g.lineWidth=lw;g.stroke();
+  // the coloured pattern along the spine (flame-like band), engraved with the class motif
+  g.beginPath();g.moveTo(-2,-7);g.bezierCurveTo(-3,-34,-30,-53,-70,-55);g.bezierCurveTo(-58,-50,-48,-47,-40,-44);g.bezierCurveTo(-46,-40,-30,-38,-24,-34);g.bezierCurveTo(-28,-28,-12,-26,-8,-12);g.closePath();
+  const bg=g.createLinearGradient(0,-8,-70,-55);bg.addColorStop(0,d);bg.addColorStop(.5,m);bg.addColorStop(1,mix(m,l,.5));g.fillStyle=bg;g.globalAlpha=.92;g.fill();g.globalAlpha=1;g.strokeStyle=rgba(OL,.6);g.lineWidth=.8;g.stroke();
+  for(let i=0;i<3;i++)motif(g,k,-16-i*16,-34-i*6.5+(i==2?2:0),3.4,-.5-i*.25,t,mix(l,'#ffffff',.3));
+  // the cutting edge: a hard white line and a soft coloured glow
+  g.beginPath();g.moveTo(-6,-6);g.bezierCurveTo(-14,-30,-40,-44,-86,-58);g.strokeStyle=rgba(l,.45);g.lineWidth=3.2;g.stroke();g.strokeStyle='#ffffff';g.lineWidth=1;g.stroke();
+  if(tier>=5){g.globalCompositeOperation='lighter';g.globalAlpha=.35+.25*Math.sin(t*5);g.strokeStyle=m;g.lineWidth=6;g.stroke();g.globalAlpha=1;g.globalCompositeOperation='source-over'}
+  g.restore();
+  // ornate head collar + gem
+  g.beginPath();g.moveTo(90,-5);g.lineTo(95,-10);g.lineTo(100,-6);g.lineTo(106,-12);g.lineTo(108,-4);g.lineTo(112,0);g.lineTo(108,4);g.lineTo(100,7);g.lineTo(92,5);g.closePath();g.fillStyle=metal(g,90,-12,112,7,k,.2);g.fill();g.strokeStyle=OL;g.lineWidth=lw;g.stroke();
+  curl(g,92,6,7,.4,false,mix(l,'#ffffff',.4),.9);curl(g,104,-11,6,-1.6,true,mix(l,'#ffffff',.4),.9);
+  gem(g,101,-1,tier>=2?4:3.2,a,tier>=2||o.aura);
+  // halo ring (tier 4+)
+  if(tier>=4){g.save();g.translate(101,-1);g.rotate(t*.8);g.strokeStyle=rgba(l,.85);g.lineWidth=1.1;g.beginPath();g.ellipse(0,0,15,6,0,0,TAU);g.stroke();for(let i=0;i<4;i++){const q=i*TAU/4+t;star4(g,Math.cos(q)*15,Math.sin(q)*6,2.6,l,t)}g.restore()}
+  // sparks (tier 5) and chains with charms (tier 2+)
+  if(tier>=2){g.strokeStyle=rgba(mix(l,'#9a9aa8',.4),.9);g.lineWidth=.8;const sw=Math.sin(t*2)*2;for(let i=0;i<(tier>=4?3:2);i++){g.beginPath();g.moveTo(96+i*4,6);g.quadraticCurveTo(97+i*4+sw,18+i*3,95+i*5+sw,28+i*6);g.stroke();gem(g,95+i*5+sw,30+i*6,1.8,a)}}
+  if(tier>=5)for(let i=0;i<5;i++){const q=t*1.7+i*1.26,r=30+12*Math.sin(t*2+i);star4(g,70+Math.cos(q)*r,-30+Math.sin(q)*r*.7,2.2+Math.sin(t*6+i),l,q)}
+  g.restore()}
+ // outline of the main blade, from the head (0,0) to the tip (-86,-58)
+ function bladePath(g){g.beginPath();g.moveTo(3,-1);g.bezierCurveTo(6,-40,-26,-64,-86,-58);g.bezierCurveTo(-46,-50,-20,-38,-8,-8);g.lineTo(-6,4);g.closePath()}
+ // ---- avatar frame: an ornate ring around a round portrait of radius r (cached per class and size; sparkles drawn live on top)
+ const FC={};
+ function frameStatic(k,r){const key=k+'|'+r;if(FC[key])return FC[key];const S=Math.ceil(r*3.2),c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d'),th=TH[k]||TH.reaper,[m,l,d,a]=th.pal,cx=S/2,cy=S/2;g.lineJoin='round';g.lineCap='round';
+  const ring=(rr,w,tint)=>{g.beginPath();g.arc(cx,cy,rr,0,TAU);g.strokeStyle=metal(g,cx-rr,cy-rr,cx+rr,cy+rr,k,tint);g.lineWidth=w;g.stroke()};
+  // style adornments behind the ring
+  const st=th.fr;
+  if(st=='angel'||st=='raven'||st=='demon'){const dark=st!='angel',c1=st=='angel'?'#ffffff':st=='raven'?'#2a2038':'#3a0a14',c2=st=='angel'?mix(m,'#ffffff',.5):st=='raven'?m:'#ff2a4a';
+   for(const sd of[-1,1]){if(st=='raven'&&sd>0)continue;for(let i=7;i>=0;i--){const o=Math.PI-.55+i*.15,q=Math.PI-.3+i*.19,len=r*(.7+Math.sin(i/7*Math.PI)*.45+(i>5?.1:0)),ox=cx+Math.cos(o)*r*.92,oy=cy+Math.sin(o)*r*.92;if(sd<0)feather(g,ox,oy,len,q,dark?c1:'#ffffff',c2);else feather(g,2*cx-ox,oy,len,Math.PI-q,dark?c1:'#ffffff',c2)}}
+   if(st=='raven'){g.save();g.translate(cx+r*1.02,cy+r*.35);const og=g.createRadialGradient(0,0,0,0,0,r*.3);og.addColorStop(0,'#ffffff');og.addColorStop(.3,a);og.addColorStop(1,mix(d,'#000000',.2));g.fillStyle=og;g.beginPath();g.arc(0,0,r*.24,0,TAU);g.fill();g.strokeStyle=OL;g.lineWidth=r*.03;g.stroke();
+    g.strokeStyle='#1a1424';g.lineWidth=r*.05;for(let i=0;i<3;i++){g.beginPath();g.arc(0,0,r*(.28+i*.03),i,i+2.4);g.stroke()}g.restore()}
+   if(st=='demon')for(const sd of[-1,1]){g.beginPath();g.moveTo(cx+sd*r*.35,cy-r*.85);g.quadraticCurveTo(cx+sd*r*.75,cy-r*1.45,cx+sd*r*.25,cy-r*1.55);g.quadraticCurveTo(cx+sd*r*.5,cy-r*1.2,cx+sd*r*.15,cy-r*.95);g.closePath();g.fillStyle=metal(g,cx,cy-r*1.5,cx+sd*r,cy-r*.8,k,.4);g.fill();g.strokeStyle=OL;g.lineWidth=r*.03;g.stroke()}}
+  if(st=='blossom'){for(let i=0;i<9;i++){const q=Math.PI*.15+i*.32;petal(g,cx+Math.cos(q)*r*1.08,cy+Math.sin(q)*r*1.08,r*.16,q+1.2,i%2?m:mix(m,'#ffffff',.4))}g.strokeStyle='#3a1a14';g.lineWidth=r*.05;g.beginPath();g.arc(cx,cy,r*1.12,Math.PI*.1,Math.PI*.95);g.stroke()}
+  if(st=='star'){g.save();g.translate(cx,cy-r*1.12);g.fillStyle=metal(g,-r*.3,-r*.3,r*.3,r*.3,k,.1);g.beginPath();g.arc(0,0,r*.26,0,TAU);g.arc(r*.1,-r*.05,r*.22,0,TAU,true);g.fill('evenodd');g.restore();for(let i=0;i<6;i++){const q=i*TAU/6+.3;star4(g,cx+Math.cos(q)*r*1.18,cy+Math.sin(q)*r*1.18,r*(i%2?.12:.2),l)}}
+  if(st=='crystal'||st=='frost'){for(let i=0;i<5;i++){const q=Math.PI*.55+(i-2)*.28;crystal(g,cx+Math.cos(q)*r*.98,cy+Math.sin(q)*r*.98,r*(.5-Math.abs(i-2)*.1),q+Math.PI/2,i%2?l:m)}for(let i=0;i<3;i++){const q=-Math.PI/2+(i-1)*.35;crystal(g,cx+Math.cos(q)*r*.98,cy+Math.sin(q)*r*.98,r*(.32-Math.abs(i-1)*.08),q+Math.PI/2,m)}}
+  if(st=='flame'){for(let i=0;i<9;i++){const q=Math.PI*.1+i*.35;g.save();g.translate(cx+Math.cos(q)*r,cy+Math.sin(q)*r);g.rotate(q+Math.PI/2);flame(g,0,0,r*.28,a,i);g.restore()}}
+  if(st=='storm'){for(let i=0;i<6;i++){const q=i*TAU/6+.4;bolt(g,cx+Math.cos(q)*r*.98,cy+Math.sin(q)*r*.98,r*.55,q,m,i*7+3)}}
+  if(st=='ink'){for(let i=0;i<5;i++){const q=Math.PI*.6+i*.5;ink(g,cx+Math.cos(q)*r*1.02,cy+Math.sin(q)*r*1.02,r*.16,mix(d,'#000000',.3),i*11)}g.strokeStyle=mix(d,'#000000',.3);g.lineWidth=r*.12;g.beginPath();g.arc(cx,cy,r*1.08,Math.PI*.9,Math.PI*1.6);g.stroke()}
+  if(st=='rose'){g.strokeStyle='#1e3a18';g.lineWidth=r*.05;g.beginPath();g.arc(cx,cy,r*1.06,Math.PI*.5,Math.PI*1.4);g.stroke();for(let i=0;i<6;i++){const q=Math.PI*.55+i*.16;leaf(g,cx+Math.cos(q)*r*1.06,cy+Math.sin(q)*r*1.06,r*.22,q+(i%2?.8:-.8),m)}
+   rose(g,cx-r*.72,cy+r*.78,r*.24,a);rose(g,cx+r*.8,cy-r*.72,r*.2,a);rose(g,cx-r*.98,cy+r*.3,r*.15,mix(a,'#ffffff',.3))}
+  if(st=='gear'){gear(g,cx-r*.85,cy+r*.8,r*.32,mix(a,'#8a6420',.3),.2);gear(g,cx+r*.95,cy-r*.65,r*.22,mix(a,'#8a6420',.3),.5);for(let i=0;i<12;i++){const q=i*TAU/12;g.fillStyle=metal(g,0,0,4,4,k);g.beginPath();g.arc(cx+Math.cos(q)*r*1.08,cy+Math.sin(q)*r*1.08,r*.045,0,TAU);g.fill()}}
+  // the ring itself: a thick metal band, an inner coloured line, filigree curls and gems
+  ring(r*1.02,r*.13,.15);g.beginPath();g.arc(cx,cy,r*1.02,0,TAU);g.strokeStyle=OL;g.lineWidth=r*.02;g.stroke();ring(r*.9,r*.04,.4);g.beginPath();g.arc(cx,cy,r*.93,0,TAU);g.strokeStyle=rgba(m,.9);g.lineWidth=r*.025;g.stroke();
+  for(let i=0;i<8;i++){const q=i*TAU/8+TAU/16;curl(g,cx+Math.cos(q)*r*1.1,cy+Math.sin(q)*r*1.1,r*.2,q+.4,i%2==1,mix(l,'#ffffff',.4),r*.03)}
+  gem(g,cx,cy-r*1.04,r*.14,a,true);gem(g,cx,cy+r*1.04,r*.11,a,true);gem(g,cx-r*1.04,cy,r*.07,m);gem(g,cx+r*1.04,cy,r*.07,m);
+  // a charm chain hanging under the bottom gem
+  g.strokeStyle=rgba(l,.8);g.lineWidth=r*.02;g.beginPath();g.moveTo(cx-r*.3,cy+r*1.0);g.quadraticCurveTo(cx,cy+r*1.25,cx+r*.3,cy+r*1.0);g.stroke();gem(g,cx,cy+r*1.24,r*.05,a);
+  FC[key]=c;return c}
+ function frame(g,k,cx,cy,r,t){const c=frameStatic(k,Math.round(r)),S=c.width;g.drawImage(c,cx-S/2,cy-S/2);const th=TH[k]||TH.reaper;
+  for(let i=0;i<5;i++){const q=i*1.7+t*.4,tw=.5+.5*Math.sin(t*3+i*2.1);if(tw<.35)continue;g.globalAlpha=tw;star4(g,cx+Math.cos(q)*r*1.18,cy+Math.sin(q)*r*1.18,r*.09*tw+1,i%2?'#ffffff':th.pal[1],t);g.globalAlpha=1}}
+ // ---- the hanging class banner: a cloth pennant on a rod, swaying, with a swallowtail, a trim, tassels and the class emblem
+ function banner(g,k,w,h,t){const th=TH[k]||TH.reaper,[m,l,d,a]=th.pal,sway=Math.sin(t*1.3)*.5;g.save();g.lineJoin='round';
+  const rodY=5;g.fillStyle=metal(g,0,rodY-2,w,rodY+2,k);g.beginPath();g.roundRect(1,rodY-2.2,w-2,4.4,2);g.fill();g.strokeStyle=OL;g.lineWidth=1;g.stroke();gem(g,2.5,rodY,2.6,a);gem(g,w-2.5,rodY,2.6,a);
+  const x0=w*.14,x1=w*.86,yb=h-2,yn=h*.8,wave=y=>Math.sin(t*2.1+y*.06)*1.4*(y/h)+sway*(y/h)*3;
+  g.beginPath();g.moveTo(x0,rodY+2);for(let y=rodY+2;y<=yb;y+=4)g.lineTo(x0+wave(y),y);g.lineTo((x0+x1)/2+wave(yn),yn);g.lineTo(x1+wave(yb),yb);for(let y=yb;y>=rodY+2;y-=4)g.lineTo(x1+wave(y),y);g.closePath();
+  const cg=g.createLinearGradient(0,0,w,h);cg.addColorStop(0,mix(m,'#ffffff',.15));cg.addColorStop(.5,mix(m,d,.35));cg.addColorStop(1,d);g.fillStyle=cg;g.fill();g.strokeStyle=OL;g.lineWidth=1;g.stroke();
+  // inner trim line
+  const ix0=x0+3,ix1=x1-3;g.beginPath();g.moveTo(ix0,rodY+5);for(let y=rodY+5;y<=yb-6;y+=4)g.lineTo(ix0+wave(y),y);g.lineTo((x0+x1)/2+wave(yn-5),yn-5);g.lineTo(ix1+wave(yb-6),yb-6);for(let y=yb-6;y>=rodY+5;y-=4)g.lineTo(ix1+wave(y),y);g.closePath();g.strokeStyle=rgba(a,.9);g.lineWidth=1;g.stroke();
+  // fold shading
+  g.globalAlpha=.18;g.fillStyle='#000000';g.fillRect((x0+x1)/2-2+wave(h*.5),rodY+4,4,h*.6);g.globalAlpha=1;
+  // emblem: a ring with the motif, and a little crest of the class colour
+  const ex=(x0+x1)/2+wave(h*.42),ey=h*.42,er=Math.min(w*.26,h*.15);g.beginPath();g.arc(ex,ey,er,0,TAU);g.fillStyle=rgba(d,.55);g.fill();g.strokeStyle=metal(g,ex-er,ey-er,ex+er,ey+er,k,.1);g.lineWidth=1.6;g.stroke();
+  motif(g,k,ex,ey,er*.7,-.6,t,l);star4(g,ex,ey-er-3,2.4,a,t);
+  for(const tx of[x0+1,x1-1]){const tw=wave(yb);g.strokeStyle=rgba(a,.9);g.lineWidth=.8;g.beginPath();g.moveTo(tx+tw,tx==x0+1?yb-8:yb);g.lineTo(tx+tw+sway,tx==x0+1?yb-2:yb+6);g.stroke();gem(g,tx+tw+sway,tx==x0+1?yb-1:yb+7,1.6,a)}
+  g.restore()}
+ return{TH,KEYS:Object.keys(TH),hex,rgba,mix,metal,curl,gem,star4,feather,petal,rose,leaf,crystal,bolt,flame,crow,drop,gear,rune,shuriken,ink,motif,scythe,frame,frameStatic,banner,OL}})();
+
+/* ========== LATE: 99-zzzzzzzzz-2-mythic.js ========== */
+// ===== MYTH: the mythic arsenal. Every class has its own mythic scythe (MYART.TH): forge it in the Classes screen, then ascend it through
+// five tiers with gems, class levels and materials from the depths. Each ascension plays a scene you cannot skip: the old blade shatters
+// and the new one is revealed ("You have been ascended to a new level of scythe").
+// Combat: a real swing instead of an instant hit. Three moves chain into a combo (a downward reap, a rising return cut, a full spin), each
+// swept along an eased arc (wind-up, fast cut, follow-through) that hits whatever the blade passes through, knocks it along the swing and
+// fires that move's own effect: crescent waves, light pillars, black holes, spectral chains, crow / petal / leaf / star / shuriken flocks,
+// blood or ink splashes, chain lightning, starfall, ground shards or shock rings, all in the class palette with its motif particles.
+// Tiers add damage and reach; II fires a crescent on the first cut, III throws the scythe on the finisher (it flies out and swings back),
+// IV makes hits echo with small bursts, V doubles the finisher and heals on hit. The class passives (CLASS7) apply as usual.
+// The mythic outfit (cape with cloth physics, shoulder guards, a crown piece for each class and drifting motif sparks) shows while you
+// use that class with its scythe forged; it can be turned off in the Classes screen. State: RB_PREFIX + 'rbmyth'. =====
+const MYTH=(()=>{
+ const A=MYART,TH=A.TH,KEYS=A.KEYS,TAU=Math.PI*2,R=Math.random;
+ const red=()=>{try{return !!(cel.opt.reduce||(typeof QM!='undefined'&&QM.reduce))}catch(_){return false}};
+ const free=()=>typeof RB_CREATIVE!='undefined'&&!!RB_CREATIVE;
+ const ID=k=>'myth_'+k,KOF={};
+ // ---- the weapons (one per class, mythic). Damage grows 22% per tier.
+ const BASE=40,CD=.34;
+ for(const k of KEYS){const th=TH[k],id=ID(k);KOF[id]=k;WPN[id]={id,n:th.n,g:A.hex(th.pal[0]),bd:3,md:BASE,cd:CD,k:'scythe',cost:0,fx:'',rar:'mythic',lv:0,
+  d:th.ep+'. A mythic scythe that ascends through five tiers.',move:'Combo: '+th.mv.map(m=>m[0]).join(' → '),myth:k}}
+ // ---- state
+ const SK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbmyth';let S={t:{},out:1};
+ function load(){try{const o=JSON.parse(localStorage.getItem(SK())||'null');if(o&&typeof o=='object'){S.t={};for(const k of KEYS){const v=+((o.t||{})[k]);if(v>=1&&v<=5)S.t[k]=v|0}S.out=o.out==0?0:1}}catch(_){}}
+ const save=()=>{try{localStorage.setItem(SK(),JSON.stringify(S))}catch(_){}};
+ load();
+ const tier=k=>S.t[k]|0;
+ function apply(k){const w=WPN[ID(k)];if(w)w.md=Math.round(BASE*(1+.22*(Math.max(1,tier(k))-1)))}
+ for(const k of KEYS)apply(k);
+ // ---- forging and ascension costs (tier n needs class level LV[n], GEMS[n] and the depth materials MATS[n])
+ const LV=[0,1,5,15,30,50],GEMS=[0,0,800,2500,6000,15000],MATS=[[],[],[[260,5],[261,3]],[[262,3],[263,2]],[[264,2],[265,1]],[[266,1],[267,1],[269,1]]];
+ const RN=['','I','II','III','IV','V'];
+ function access(k){if(free())return null;let cj=null,ln=[];try{cj=CJOB.cur;ln=CJOB.learned}catch(_){}if(!cj)return'Choose a class first: talk to a class master in the Plaza';
+  if(cj!==k&&!ln.includes(k))return'Learn '+CLASS7.C[k].n+' from its master first';return null}
+ function next(k){const t=tier(k);if(t>=5)return null;const n=t+1;return{n,lv:LV[n],gems:GEMS[n],mats:MATS[n]}}
+ function check(k){const q=next(k);if(!q)return{ok:false,max:true,miss:[]};const miss=[],ac=access(k);if(ac)miss.push(ac);
+  if(!free()){if(CLASS7.lv(k)<q.lv)miss.push(CLASS7.C[k].n+' level '+q.lv);if((gems|0)<q.gems)miss.push(q.gems+' gems');for(const[id,n]of q.mats)if(cnt(id)<n)miss.push(n+' × '+iname(id))}
+  return{ok:!miss.length,miss,q}}
+ function ascend(k){const c=check(k);if(!c.ok)return false;const q=c.q;if(!free()){gems-=q.gems;for(const[id,n]of q.mats)addI(id,-n)}const prev=tier(k);S.t[k]=q.n;save();apply(k);own[ID(k)]=1;
+  if(q.n==1)try{if(typeof HOTBAR!='undefined'&&HOTBAR.equip)HOTBAR.equip('w:'+ID(k));else wp=ID(k);renderW();renderBar()}catch(_){wp=ID(k)}
+  try{saveP()}catch(_){}scene(k,prev,q.n);return true}
+ // ---- combat
+ const MV=[{dur:.30,a0:-2.05,a1:1.25,mul:1},{dur:.28,a0:1.25,a1:-2.0,mul:1.12},{dur:.46,a0:-1.3,a1:-1.3+TAU,mul:1.7}];
+ const LEN=96,RAD=T*2.3,PIV=28;let SW=null,lastEnd=-9,step=-1,THR=null,HIDE=false;const FX=[],PT=[];
+ const pivot=()=>({x:P.x,y:P.y+PIV});
+ const live=m=>m&&!m.dead&&m.hp>0;
+ const ease=u=>u<.16?-.07*Math.sin(u/.16*Math.PI):1-Math.pow(1-(u-.16)/.84,3);   // a small wind-up, then a fast cut easing out
+ const angAt=s=>{const u=Math.min(1,s.t/s.dur);return s.a0+(s.a1-s.a0)*ease(u)};
+ const near=(x,y,r,ex)=>mobs.filter(m=>live(m)&&!(ex&&ex.has(m))&&Math.hypot(m.x-x,m.y+m.h/2-y)<r+Math.max(m.w,m.h)*.5);
+ function gyAt(x,y0){const tx=Math.max(1,Math.min(W-2,Math.floor(x/T)));let ty=Math.max(0,Math.floor(y0/T));for(let i=0;i<20&&ty<H-1;i++,ty++)if(solidAt(tx,ty))return ty*T;return y0+T*2}
+ function onHit(k,m,ang,mul,w,kn){if(!live(m))return;let d=Math.max(1,Math.round(dmgM(w)*mul));
+  if((k=='samurai'&&R()<.2)||(k=='gunslinger'&&R()<.15))d=Math.round(d*1.65);
+  try{hurtMob(m,d,w,ang)}catch(e){console.error('MYTH hit',e)}
+  const kb=(kn==null?1:kn)*(k=='knight'?1.5:1);if(!m.boss){m.vx+=Math.cos(ang)*230*kb;m.vy-=110*kb}
+  if(k=='demon'||tier(k)>=5)try{P.hp=Math.min(maxHP(),P.hp+d*(k=='demon'?.05:.03))}catch(_){}
+  if(k=='druid')try{P.hp=Math.min(maxHP(),P.hp+1)}catch(_){}
+  if(k=='elementalist'){if(R()<.5)m.burn=Math.max(m.burn||0,2);else m.slow=Math.max(m.slow||0,2)}
+  if((k=='stormcaller'||k=='brawler')&&R()<.15&&!m.boss)m.stun=Math.max(m.stun||0,.6);
+  if(tier(k)>=4&&R()<.2)FX.push({k:'ring',x:m.x,y:m.y+m.h/2,t:0,life:.35,r:T*1.4,th:k,w,mul:.35,hit:new Set([m]),small:1});
+  sparks(m.x,m.y+m.h/2,k,red()?3:8,220);try{shake=Math.max(shake,QM&&QM.reduce?0:.05)}catch(_){}}
+ // a swing or the thrown scythe: is m inside the angular band swept between a and b at a distance the blade covers?
+ function swept(m,o,a,b,rmax){const dx=m.x-o.x,dy=m.y+m.h/2-o.y,d=Math.hypot(dx,dy),rr=Math.max(m.w,m.h)*.5;if(d>rmax+rr||d<10)return false;let an=Math.atan2(dy,dx);const lo=Math.min(a,b)-.18-rr/Math.max(30,d),hi=Math.max(a,b)+.18+rr/Math.max(30,d);
+  an+=TAU*Math.round(((lo+hi)/2-an)/TAU);return an>=lo&&an<=hi}
+ // the combo chains while a swing is still finishing, or within 0.75 s of the last one
+ function attack(w){const k=w.myth,now=performance.now()/1000;if(THR)return;
+  try{if(CJOB.blocks(w.id)){say(CJOB.why(w.id));return}}catch(_){}
+  step=(SW||now-lastEnd<.75)&&step<2&&step>=0?step+1:0;const mv=MV[step],o=pivot(),wx=mx+cam.x,wy=my+cam.y,aim=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(aim)>=0?1:-1;
+  const f=P.f,base=f>0?aim:Math.PI-aim,tr=tier(k)||1;
+  // angles are built for facing right and mirrored for facing left
+  const mir=a=>f>0?a:Math.PI-a,a0=mir(base+mv.a0),a1=mir(base+mv.a1);
+  SW={k,w,step,t:0,dur:mv.dur*(k=='ninja'?.85:1),a0,a1,mul:mv.mul*(tr>=5&&step==2?1.25:1),hit:new Set(),fx:false,aim,f,tr,tail:[]};
+  let cdv=(SW.dur+.04)/(1+bonus().atk);try{const cl=CLASS7.cur();if(cl){const bo=CLASS7.bon(cl,CLASS7.lv(cl));if(bo.spd>0)cdv/=1+bo.spd}}catch(_){}wcd=cdv;swing=.22;
+  try{DEPTH8.strike(wx,wy)}catch(_){}
+  try{noise(step==2?.32:.16,step==2?900:1500,.08);snd(step==2?160:220+R()*40,.12,'triangle',.035,.6)}catch(_){}}
+ {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&w.myth&&own[w.id]){try{attack(w)}catch(e){console.error('MYTH',e)}return}return _uw.apply(this,arguments)}}
+ // ---- the effect of each move
+ function cast(name,k,w,o,aim,f,mul,sc){sc=sc||1;const th=TH[k],tx=Math.max(o.x-T*7,Math.min(o.x+T*7,mx+cam.x)),ty=Math.max(o.y-T*5,Math.min(o.y+T*4,my+cam.y)),base={th:k,w,mul,t:0,hit:new Set(),sc};
+  switch(name){
+   case'crescent':FX.push(Object.assign({k:'cres',x:o.x+Math.cos(aim)*30,y:o.y+Math.sin(aim)*30,vx:Math.cos(aim)*640,vy:Math.sin(aim)*640,a:aim,life:k=='archer'?1:.7,r:44*sc},base,{mul:mul*.8}));break;
+   case'pillar':{const x=o.x+f*T*2.6,gy=gyAt(x,o.y-T);FX.push(Object.assign({k:'pil',x,y:gy,life:.85,h:T*5.5*sc,done:0},base));break}
+   case'vortex':FX.push(Object.assign({k:'vor',x:tx,y:ty,life:1.35,r:T*2.6*sc,tick:0},base,{mul:mul*.3}));break;
+   case'chains':FX.push(Object.assign({k:'chn',x:o.x,y:o.y,life:1,r:T*3.2*sc,done:0},base));break;
+   case'flock':{const n=red()?4:7,items=[];for(let i=0;i<n;i++)items.push({x:o.x,y:o.y,a:aim+(i-(n-1)/2)*.09,sp:540+R()*140,ph:R()*6,sw:(i-(n-1)/2)*.8,del:i*.04,hit:new Set()});FX.push(Object.assign({k:'flk',items,life:1.6},base,{mul:mul*.45}));break}
+   case'splash':FX.push(Object.assign({k:'spl',x:o.x,y:o.y,a:aim,life:.7,done:0,seed:(R()*1e6)|0,r:T*3.6*sc},base));break;
+   case'bolts':{const tg=near(o.x,o.y,T*7).sort((p,q)=>Math.hypot(p.x-o.x,p.y-o.y)-Math.hypot(q.x-o.x,q.y-o.y)).slice(0,5),pts=tg.length?tg.map(m=>({x:m.x,y:m.y+m.h/2,m})):[0,1,2].map(i=>({x:o.x+f*T*(2+i*1.6),y:gyAt(o.x+f*T*(2+i*1.6),o.y-T)-T*.5}));
+    pts.forEach((p,i)=>FX.push(Object.assign({k:'blt',x:p.x,y:p.y,m:p.m,life:.42,del:i*.06,done:0,seed:(R()*1e6)|0},base,{hit:new Set()})));break}
+   case'stars':for(let i=0;i<(red()?5:9);i++){const x=tx+(R()-.5)*T*5,gy=gyAt(x,ty-T*2);FX.push(Object.assign({k:'str',x:x-T*3,y:gy-T*9,x1:x,y1:gy,life:.55,del:i*.07,done:0},base,{mul:mul*.5,hit:new Set()}))}break;
+   case'shards':for(let i=0;i<6;i++){const x=o.x+f*(T*1.2+i*T*.95),gy=gyAt(x,o.y-T);FX.push(Object.assign({k:'shd',x,y:gy,life:.9,del:i*.06,h:T*(1.2+R()*.9)*sc,done:0,rot:(R()-.5)*.5},base,{mul:mul*.6,hit:new Set()}))}break;
+   case'ring':FX.push(Object.assign({k:'ring',x:o.x,y:o.y,life:.5,r:T*4*sc},base));break}
+  try{const tn=th.pal&&{crescent:[700,1200],pillar:[180,520],vortex:[90,300],chains:[200,900],flock:[600,900],splash:[260,420],bolts:[1200,2400],stars:[1300,1900],shards:[1500,2200],ring:[140,380]}[name];if(tn){SFX7.tone(tn[0],tn[1],.35,'triangle',.035);SFX7.tone(tn[0]*1.5,tn[1]*1.5,.25,'sine',.015,.03)}}catch(_){}}
+ // ---- particles (own pool; motif sprites + glow dots)
+ const GLOW={};function glow(c){if(GLOW[c])return GLOW[c];const s=document.createElement('canvas');s.width=s.height=32;const x=s.getContext('2d'),gr=x.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.3,A.rgba(c,.75));gr.addColorStop(1,A.rgba(c,0));x.fillStyle=gr;x.fillRect(0,0,32,32);return GLOW[c]=s}
+ function part(x,y,vx,vy,l,s,c,mo,k){if(PT.length>520)PT.shift();PT.push({x,y,vx,vy,l,ml:l,s,c,mo,k,a:R()*TAU,va:(R()-.5)*6})}
+ function sparks(x,y,k,n,sp){const p=TH[k].pal;for(let i=0;i<n;i++){const a=R()*TAU,v=(.3+R())*(sp||160);part(x,y,Math.cos(a)*v,Math.sin(a)*v,.35+R()*.3,3+R()*3,i%3?p[0]:p[1],false,k)}if(!red())for(let i=0;i<Math.ceil(n/4);i++){const a=R()*TAU,v=(.2+R())*(sp||160)*.6;part(x,y,Math.cos(a)*v,Math.sin(a)*v-40,.7+R()*.4,5+R()*3,p[0],true,k)}}
+ // ---- per frame
+ function tick(dt){
+  if(SW){const s=SW,o=pivot(),pa=angAt(s);s.t+=dt;const ca=angAt(s);
+   for(const m of mobs)if(live(m)&&!s.hit.has(m)&&swept(m,o,pa,ca,RAD*(1+.06*(s.tr-1)))){s.hit.add(m);onHit(s.k,m,ca+(s.a1>s.a0?1:-1)*Math.PI/2,s.mul*(1+0*s.tr),s.w)}
+   s.tail.push(ca);if(s.tail.length>9)s.tail.shift();
+   if(!s.fx&&s.t>=s.dur*.42){s.fx=true;const mv=TH[s.k].mv[s.step][1];cast(mv,s.k,s.w,o,s.aim,s.f,s.mul,(s.tr>=5&&s.step==2?1.4:1)*(1+.05*(s.tr-1)));
+    if(s.tr>=2&&s.step==0&&mv!='crescent')cast('crescent',s.k,s.w,o,s.aim,s.f,s.mul*.6,.7);
+    if(s.tr>=5&&s.step==2)cast(mv,s.k,s.w,o,s.aim+(s.f>0?-.4:.4),s.f,s.mul*.6,1)}
+   if(!red()&&R()<.7){const tip=o,L=LEN*.62;part(tip.x+Math.cos(ca)*L,tip.y+Math.sin(ca)*L,(R()-.5)*40,(R()-.5)*40,.3,3,TH[s.k].pal[1],false,s.k)}
+   if(s.t>=s.dur){lastEnd=performance.now()/1000;if(s.step==2&&s.tr>=3)throwIt(s.k,s.w);SW=null}}
+  if(THR)thrTick(dt);
+  for(let i=FX.length-1;i>=0;i--){const e=FX[i];if(fxTick(e,dt))FX.splice(i,1)}
+  for(let i=PT.length-1;i>=0;i--){const p=PT[i];p.l-=dt;if(p.l<=0){PT.splice(i,1);continue}p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=1-dt*2.2;p.vy=p.vy*(1-dt*2.2)+(p.mo?30:60)*dt;p.a+=p.va*dt}
+  outfitTick(dt);
+  for(const k of KEYS)if(tier(k)>=1&&!own[ID(k)])own[ID(k)]=1}
+ function throwIt(k,w){const o=pivot(),wx=mx+cam.x,wy=my+cam.y,a=Math.atan2(wy-o.y,wx-o.x);THR={k,w,x:o.x,y:o.y,vx:Math.cos(a)*940,vy:Math.sin(a)*940,t:0,rot:0,back:false,hit:new Set()};try{SFX7.tone(500,900,.3,'triangle',.03)}catch(_){}}
+ function thrTick(dt){const q=THR,o=pivot();q.t+=dt;q.rot+=dt*16*(P.f||1);const dx=o.x-q.x,dy=o.y-q.y,d=Math.hypot(dx,dy)||1,acc=q.t<.22?600:2600;q.vx+=dx/d*acc*dt;q.vy+=dy/d*acc*dt;
+  const sp=Math.hypot(q.vx,q.vy),mx2=1100;if(sp>mx2){q.vx*=mx2/sp;q.vy*=mx2/sp}q.x+=q.vx*dt;q.y+=q.vy*dt;
+  const back=q.vx*dx+q.vy*dy>0;if(back&&!q.back){q.back=true;q.hit=new Set()}
+  for(const m of mobs)if(live(m)&&!q.hit.has(m)&&Math.hypot(m.x-q.x,m.y+m.h/2-q.y)<44+Math.max(m.w,m.h)*.5){q.hit.add(m);onHit(q.k,m,Math.atan2(q.vy,q.vx),.9,q.w,.6)}
+  if(!red()&&R()<.8)part(q.x,q.y,(R()-.5)*50,(R()-.5)*50,.35,4,TH[q.k].pal[0],false,q.k);
+  if((q.back&&d<34)||q.t>2.4){THR=null;try{SFX7.tone(900,600,.15,'triangle',.025)}catch(_){}}}
+ function hitArea(e,x,y,r,mul,kn,once){let n=0;for(const m of mobs)if(live(m)&&!(once&&e.hit.has(m))&&Math.hypot(m.x-x,m.y+m.h/2-y)<r+Math.max(m.w,m.h)*.5){e.hit.add(m);onHit(e.th,m,Math.atan2(m.y+m.h/2-y,m.x-x),mul,e.w,kn);n++}return n}
+ function fxTick(e,dt){if(e.del>0){e.del-=dt;return false}e.t+=dt;const p=TH[e.th].pal;
+  switch(e.k){
+   case'cres':e.x+=e.vx*dt;e.y+=e.vy*dt;hitArea(e,e.x,e.y,e.r*.7,e.mul,.8,true);if(!red()&&R()<.9)part(e.x-Math.cos(e.a)*e.r*.3,e.y-Math.sin(e.a)*e.r*.3,(R()-.5)*30,(R()-.5)*30,.4,R()<.3?6:3,p[R()<.5?0:1],R()<.25,e.th);if(solidAt(Math.floor(e.x/T),Math.floor(e.y/T)))e.t=Math.max(e.t,e.life-.08);break;
+   case'pil':if(!e.done&&e.t>.1){e.done=1;hitArea(e,e.x,e.y-T*1.2,T*1.7*e.sc,e.mul,1.6,true);for(const m of e.hit)if(!m.boss)m.vy=-420;sparks(e.x,e.y,e.th,red()?6:18,320);try{shake=Math.max(shake,QM.reduce?0:.12)}catch(_){}}
+    if(!red()&&e.t<.6&&R()<.9)part(e.x+(R()-.5)*T*1.2,e.y,(R()-.5)*60,-200-R()*260,.6,R()<.4?7:3,p[R()<.5?0:1],R()<.3,e.th);break;
+   case'vor':{e.tick-=dt;const pull=e.t<e.life-.2;for(const m of mobs)if(live(m)&&!m.boss){const dx=e.x-m.x,dy=e.y-(m.y+m.h/2),d=Math.hypot(dx,dy);if(d<e.r*1.6&&pull){m.vx+=dx/d*900*dt;m.vy+=dy/d*900*dt}}
+    if(e.tick<=0&&pull){e.tick=.22;e.hit=new Set();hitArea(e,e.x,e.y,e.r*.6,e.mul,0,false)}
+    if(e.t>=e.life-.2&&!e.burst){e.burst=1;e.hit=new Set();hitArea(e,e.x,e.y,e.r,e.mul*4,1.4,true);sparks(e.x,e.y,e.th,red()?8:24,360)}
+    if(!red()&&R()<.9){const a=R()*TAU,r=e.r*(.8+R()*.5);part(e.x+Math.cos(a)*r,e.y+Math.sin(a)*r,-Math.cos(a)*r*1.4+Math.sin(a)*120,-Math.sin(a)*r*1.4-Math.cos(a)*120,.5,3,p[R()<.6?0:3],false,e.th)}break}
+   case'chn':if(!e.done&&e.t>.12){e.done=1;hitArea(e,e.x,e.y,e.r,e.mul,0,true);for(const m of e.hit)if(!m.boss){const dx=e.x-m.x,d=Math.abs(dx)||1;m.vx+=dx/d*360}}break;
+   case'flk':{let alive=0;for(const it of e.items){if(it.del>0){it.del-=dt;alive++;continue}if(it.done)continue;alive++;it.ph+=dt*8;const a=it.a+Math.sin(it.ph*.6)*.25*it.sw*.3;it.x+=Math.cos(a)*it.sp*dt;it.y+=Math.sin(a)*it.sp*dt+Math.sin(it.ph)*30*dt;
+     for(const m of mobs)if(live(m)&&!it.hit.has(m)&&Math.hypot(m.x-it.x,m.y+m.h/2-it.y)<26+Math.max(m.w,m.h)*.5){it.hit.add(m);onHit(e.th,m,a,e.mul,e.w,.4)}
+     if(solidAt(Math.floor(it.x/T),Math.floor(it.y/T))){it.done=1;sparks(it.x,it.y,e.th,4,120)}}if(!alive)return true;break}
+   case'spl':if(!e.done&&e.t>.07){e.done=1;for(const m of mobs)if(live(m)){const dx=m.x-e.x,dy=m.y+m.h/2-e.y,d=Math.hypot(dx,dy);let da=Math.abs(Math.atan2(dy,dx)-e.a);if(da>Math.PI)da=TAU-da;if(d<e.r+Math.max(m.w,m.h)*.5&&da<1){e.hit.add(m);onHit(e.th,m,Math.atan2(dy,dx),e.mul,e.w,1)}}}break;
+   case'blt':if(!e.done){e.done=1;if(e.m&&live(e.m)){onHit(e.th,e.m,-Math.PI/2,e.mul,e.w,.5);if(!e.m.boss)e.m.stun=Math.max(e.m.stun||0,.4)}else hitArea(e,e.x,e.y,T*1.1,e.mul,.5,true);sparks(e.x,e.y,e.th,red()?4:12,260)}break;
+   case'str':{const u=Math.min(1,e.t/(e.life*.6));e.cx=e.x+(e.x1-e.x)*u;e.cy=e.y+(e.y1-e.y)*u;if(!e.done&&u>=1){e.done=1;hitArea(e,e.x1,e.y1-T*.3,T*1.3,e.mul,.7,true);sparks(e.x1,e.y1,e.th,red()?4:10,240)}break}
+   case'shd':if(!e.done&&e.t>.08){e.done=1;hitArea(e,e.x,e.y-T*.6,T*.95,e.mul,1.2,true);for(const m of e.hit)if(!m.boss)m.vy=-300;sparks(e.x,e.y,e.th,red()?3:8,200)}break;
+   case'ring':{const rr=e.r*Math.min(1,e.t/(e.life*.8));for(const m of mobs)if(live(m)&&!e.hit.has(m)&&Math.abs(Math.hypot(m.x-e.x,m.y+m.h/2-e.y)-rr)<T*.7){e.hit.add(m);onHit(e.th,m,Math.atan2(m.y+m.h/2-e.y,m.x-e.x),e.mul,e.w,1.2)}break}}
+  return e.t>=e.life}
+ // ---- drawing (world space, on top of the characters)
+ function draw(g2,cx,cy){const t=performance.now()/1000;g2.save();
+  // the swing: an anime smear along the blade tip, then the scythe itself
+  if(SW){const s=SW,o=pivot(),ox=o.x-cx,oy=o.y-cy,p=TH[s.k].pal,ca=angAt(s),tl=s.tail,rr=LEN*.66;
+   if(tl.length>1){g2.globalCompositeOperation='lighter';for(let i=1;i<tl.length;i++){const a0=tl[i-1],a1=tl[i],al=i/tl.length;g2.beginPath();g2.arc(ox,oy,rr,Math.min(a0,a1),Math.max(a0,a1));g2.arc(ox,oy,rr*.35,Math.max(a0,a1),Math.min(a0,a1),true);g2.closePath();g2.fillStyle=A.rgba(p[0],.28*al);g2.fill()}
+    g2.beginPath();g2.arc(ox,oy,rr*1.02,Math.min(tl[0],ca),Math.max(tl[0],ca));g2.strokeStyle=A.rgba(p[1],.85);g2.lineWidth=3;g2.stroke();g2.globalCompositeOperation='source-over'}
+   drawHeld(g2,s.k,s.tr,ox,oy,ca,s.a1>s.a0,t)}
+  if(THR){const q=THR;g2.save();g2.translate(q.x-cx,q.y-cy);g2.rotate(q.rot);g2.globalCompositeOperation='lighter';g2.globalAlpha=.4;g2.drawImage(glow(TH[q.k].pal[0]),-50,-50,100,100);g2.globalAlpha=1;g2.globalCompositeOperation='source-over';g2.translate(-LEN*.5,0);A.scythe(g2,q.k,tier(q.k),LEN,t);g2.restore()}
+  for(const e of FX)if(!(e.del>0))fxDraw(g2,e,cx,cy,t);
+  // particles
+  g2.globalCompositeOperation='lighter';for(const p of PT)if(!p.mo){g2.globalAlpha=Math.min(1,p.l/p.ml*1.5);const s=p.s*2.4;g2.drawImage(glow(p.c),p.x-cx-s,p.y-cy-s,s*2,s*2)}
+  g2.globalCompositeOperation='source-over';for(const p of PT)if(p.mo){g2.globalAlpha=Math.min(1,p.l/p.ml*1.5);A.motif(g2,p.k,p.x-cx,p.y-cy,p.s,p.a,t)}
+  g2.globalAlpha=1;g2.restore()}
+ function drawHeld(g2,k,tr,ox,oy,a,cw,t){g2.save();g2.translate(ox,oy);g2.rotate(a);if(cw)g2.scale(1,-1);g2.translate(-LEN*.3,0);A.scythe(g2,k,tr,LEN,t);g2.restore()}
+ function fxDraw(g,e,cx,cy,t){const p=TH[e.th].pal,u=e.t/e.life,fade=Math.max(0,1-Math.max(0,u-.6)/.4);g.save();
+  switch(e.k){
+   case'cres':{g.translate(e.x-cx,e.y-cy);g.rotate(e.a);g.globalAlpha=fade;g.globalCompositeOperation='lighter';const r=e.r;g.beginPath();g.arc(0,0,r,-1.25,1.25);g.arc(-r*.32,0,r*.92,1.2,-1.2,true);g.closePath();const gr=g.createLinearGradient(-r,0,r,0);gr.addColorStop(0,A.rgba(p[0],0));gr.addColorStop(.6,A.rgba(p[0],.7));gr.addColorStop(1,A.rgba(p[1],1));g.fillStyle=gr;g.fill();
+    g.beginPath();g.arc(0,0,r,-1.1,1.1);g.strokeStyle='rgba(255,255,255,.95)';g.lineWidth=2.2;g.stroke();break}
+   case'pil':{const x=e.x-cx,y=e.y-cy,a=e.t<.12?e.t/.12:fade,w=T*1.1*e.sc*(e.t<.12?.4+e.t/.12*.6:1);g.globalCompositeOperation='lighter';g.globalAlpha=a;const gr=g.createLinearGradient(x-w,0,x+w,0);gr.addColorStop(0,A.rgba(p[0],0));gr.addColorStop(.35,A.rgba(p[0],.6));gr.addColorStop(.5,'rgba(255,255,255,.95)');gr.addColorStop(.65,A.rgba(p[0],.6));gr.addColorStop(1,A.rgba(p[0],0));
+    g.fillStyle=gr;g.fillRect(x-w,y-e.h,w*2,e.h);g.beginPath();g.ellipse(x,y,w*1.9,w*.45,0,0,TAU);g.strokeStyle=A.rgba(p[1],.9);g.lineWidth=3;g.stroke();g.beginPath();g.ellipse(x,y,w*1.25*(1+u),w*.3*(1+u),0,0,TAU);g.strokeStyle=A.rgba(p[0],.7);g.lineWidth=2;g.stroke();
+    g.globalCompositeOperation='source-over';for(let i=0;i<5;i++){const q=i*1.3+e.x,hh=T*(.6+((i*37)%10)/10)*(e.t<.15?e.t/.15:1);A.crystal(g,x+(i-2)*w*.55,y+2,hh,(i-2)*.25,i%2?p[1]:p[0])}break}
+   case'vor':{const x=e.x-cx,y=e.y-cy,gr0=Math.min(1,e.t/.2),r=e.r*.42*gr0*(e.burst?1+(e.t-(e.life-.2))*4:1);g.globalAlpha=e.burst?fade:1;g.globalCompositeOperation='lighter';const gr=g.createRadialGradient(x,y,r*.6,x,y,r*2.2);gr.addColorStop(0,A.rgba(p[0],.9));gr.addColorStop(.4,A.rgba(p[3],.4));gr.addColorStop(1,A.rgba(p[0],0));g.fillStyle=gr;g.fillRect(x-r*2.3,y-r*2.3,r*4.6,r*4.6);
+    g.save();g.translate(x,y);g.rotate(-.35);g.beginPath();g.ellipse(0,0,r*2,r*.42,0,0,TAU);g.strokeStyle=A.rgba(p[1],.9);g.lineWidth=3;g.stroke();g.restore();g.globalCompositeOperation='source-over';g.beginPath();g.arc(x,y,r*.82,0,TAU);g.fillStyle='#050208';g.fill();g.strokeStyle=A.rgba(p[1],.95);g.lineWidth=2.5;g.stroke();
+    g.globalCompositeOperation='lighter';for(let i=0;i<3;i++){const q=t*2+i*2.1;A.bolt(g,x+Math.cos(q)*r*1.1,y+Math.sin(q)*r*1.1,r*.9,q,p[0],((t*20)|0)+i)}break}
+   case'chn':{const x=e.x-cx,y=e.y-cy,rr=e.r*Math.min(1,e.t/.15);g.globalAlpha=fade;g.globalCompositeOperation='lighter';g.beginPath();g.ellipse(x,y+T*.9,rr,rr*.28,0,0,TAU);g.strokeStyle=A.rgba(p[0],.7);g.lineWidth=2;g.stroke();
+    for(let i=0;i<5;i++)A.rune(g,x+Math.cos(t*1.5+i*1.26)*rr*.8,y+T*.9+Math.sin(t*1.5+i*1.26)*rr*.22,5,A.rgba(p[1],.9),0,i);
+    for(let i=0;i<22;i++){const q=i/22*TAU+t*3,lx=x+Math.cos(q)*rr,ly=y+Math.sin(q)*rr*.55;g.beginPath();g.ellipse(lx,ly,6,3.4,q+Math.PI/2+(i%2?1.57:0),0,TAU);g.strokeStyle=A.rgba(i%2?p[1]:p[0],.95);g.lineWidth=2;g.stroke()}break}
+   case'flk':for(const it of e.items){if(it.del>0||it.done)continue;const x=it.x-cx,y=it.y-cy,a=it.a;g.globalCompositeOperation='lighter';g.globalAlpha=.45;g.drawImage(glow(p[0]),x-20,y-20,40,40);g.globalAlpha=1;g.globalCompositeOperation='source-over';
+    if(TH[e.th].mot=='crow')A.crow(g,x,y,13,a,'#140a1e',it.ph*1.6);else if(e.th=='ninja')A.shuriken(g,x,y,8,it.ph*2,'#cfe8f8');else A.motif(g,e.th,x,y,8,a+it.ph,t)}break;
+   case'spl':{const x=e.x-cx,y=e.y-cy,gr=Math.min(1,e.t/.12),ink=TH[e.th].mot=='ink'||e.th=='samurai',c1=ink?'#0c0a10':p[2],c2=ink?p[0]:p[0];let s=e.seed;const rn=()=>(s=(s*16807)%2147483647)/2147483647;g.globalAlpha=fade;
+    for(let i=0;i<7;i++){const a=e.a+(rn()-.5)*1.8,L=e.r*(.5+rn()*.6)*gr,wd=8+rn()*10;g.beginPath();g.moveTo(x,y);const c1x=x+Math.cos(a-.3)*L*.5,c1y=y+Math.sin(a-.3)*L*.5,ex=x+Math.cos(a)*L,ey=y+Math.sin(a)*L;g.quadraticCurveTo(c1x,c1y,ex,ey);g.strokeStyle=i%2?c1:c2;g.lineWidth=wd*(1-u*.5);g.lineCap='round';g.stroke();
+     g.fillStyle=i%2?c1:c2;g.beginPath();g.arc(ex+Math.cos(a)*8,ey+Math.sin(a)*8,wd*.35,0,TAU);g.fill();A.drop(g,ex+Math.cos(a+.4)*16*gr,ey+Math.sin(a+.4)*16*gr,4,i%2?c1:c2)}break}
+   case'blt':{const x=e.x-cx,y=e.y-cy;g.globalCompositeOperation='lighter';g.globalAlpha=fade;let s=e.seed;const rn=()=>(s=(s*16807)%2147483647)/2147483647;g.beginPath();let px=x+(rn()-.5)*60,py=y-T*8;g.moveTo(px,py);for(let i=1;i<=8;i++){px=x+(rn()-.5)*30*(1-i/8);py=y-T*8+T*8*i/8;g.lineTo(px,py)}
+    g.strokeStyle=A.rgba(p[0],.6);g.lineWidth=8;g.stroke();g.strokeStyle='#ffffff';g.lineWidth=2.5;g.stroke();g.drawImage(glow(p[0]),x-36,y-36,72,72);break}
+   case'str':{if(e.cx==null)break;const x=e.cx-cx,y=e.cy-cy;g.globalCompositeOperation='lighter';g.globalAlpha=fade;g.beginPath();g.moveTo(x,y);g.lineTo(x-(e.x1-e.x)*.25,y-(e.y1-e.y)*.25);g.strokeStyle=A.rgba(p[1],.7);g.lineWidth=3;g.stroke();A.star4(g,x,y,10,'#ffffff',t*4);g.drawImage(glow(p[0]),x-18,y-18,36,36);
+    if(e.done){g.beginPath();g.ellipse(e.x1-cx,e.y1-cy,T*.9*(1+u),T*.22*(1+u),0,0,TAU);g.strokeStyle=A.rgba(p[0],.7);g.lineWidth=2;g.stroke()}break}
+   case'shd':{const x=e.x-cx,y=e.y-cy,gr=Math.min(1,e.t/.1);g.globalAlpha=fade;const th=TH[e.th],col=th.mot=='leaf'?'#3a7a2a':th.mot=='rock'?'#7a5a4a':e.th=='knight'?p[0]:p[1];
+    if(th.mot=='leaf'){g.strokeStyle='#2a5a1a';g.lineWidth=5;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+10*e.rot,y-e.h*.5*gr,x+e.rot*20,y-e.h*gr);g.stroke();A.rose(g,x+e.rot*20,y-e.h*gr,7,p[3])}
+    else{A.crystal(g,x,y+2,e.h*gr,e.rot,col);A.crystal(g,x-8,y+2,e.h*.6*gr,e.rot-.4,col);A.crystal(g,x+8,y+2,e.h*.5*gr,e.rot+.4,col)}g.globalCompositeOperation='lighter';g.globalAlpha=fade*.6;g.drawImage(glow(p[0]),x-30,y-40,60,60);break}
+   case'ring':{const x=e.x-cx,y=e.y-cy,rr=e.r*Math.min(1,e.t/(e.life*.8));g.globalCompositeOperation='lighter';g.globalAlpha=fade;g.beginPath();g.arc(x,y,rr,0,TAU);g.strokeStyle=A.rgba(p[0],.8);g.lineWidth=e.small?3:6;g.stroke();g.beginPath();g.arc(x,y,rr*.9,0,TAU);g.strokeStyle=A.rgba(p[1],.9);g.lineWidth=2;g.stroke();
+    if(!e.small)for(let i=0;i<12;i++){const q=i/12*TAU+e.t;g.beginPath();g.moveTo(x+Math.cos(q)*rr*.7,y+Math.sin(q)*rr*.7);g.lineTo(x+Math.cos(q)*rr*1.05,y+Math.sin(q)*rr*1.05);g.strokeStyle=A.rgba(p[1],.6);g.lineWidth=2;g.stroke()}break}}
+  g.restore()}
+ // ---- the scythe in the hand (the default holder pose) and on the back; hidden while our own swing or throw draws it
+ {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const k=KOF[id];if(!k)return _dw.apply(this,arguments);if(HIDE)return;x.save();try{const big=L>=100,s=big?1.15:1.9;x.translate(-L*(big?.45:.62),0);A.scythe(x,k,tier(k)||1,L*s,t||0)}finally{x.restore()}}}
+ // ---- the mythic outfit
+ const cape=[];let capeK=null;
+ function outfitK(){if(!S.out)return null;try{const w=WPN[wp];if(w&&w.myth&&tier(w.myth)>=1)return w.myth;const c=CLASS7.cur();if(c&&tier(c)>=1)return c}catch(_){}return null}
+ function outfitTick(dt){const k=outfitK();if(k!==capeK){capeK=k;cape.length=0}if(!k||!entered)return;const ax=P.x-(P.f||1)*5,ay=P.y+22;
+  if(!cape.length)for(let i=0;i<7;i++)cape.push({x:ax,y:ay+i*6,px:ax,py:ay+i*6});cape[0].x=cape[0].px=ax;cape[0].y=cape[0].py=ay;
+  const wind=-(P.vx||0)*.9-(P.f||1)*18;for(let i=1;i<cape.length;i++){const c=cape[i],vx=(c.x-c.px)*.94,vy=(c.y-c.py)*.94;c.px=c.x;c.py=c.y;c.x+=vx+wind*dt*dt*12+Math.sin(performance.now()/300+i)*.15;c.y+=vy+900*dt*dt}
+  for(let n=0;n<3;n++)for(let i=1;i<cape.length;i++){const a=cape[i-1],b=cape[i],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,df=(d-6)/d;b.x-=dx*df;b.y-=dy*df;
+    const tx=Math.floor(b.x/T),ty=Math.floor(b.y/T);if(solidAt(tx,ty)){b.y=Math.min(b.y,ty*T-1)}}
+  if(!red()&&R()<dt*3)part(P.x+(R()-.5)*30,P.y+R()*50,(R()-.5)*20,-30-R()*30,1.2,5,TH[k].pal[0],R()<.5,k)}
+ function drawCape(g2,k,cx,cy){if(cape.length<2)return;const p=TH[k].pal,ox=cx-P.x,oy=cy-P.y,f=P.f||1;g2.save();g2.lineJoin='round';const L=[],Rt=[];
+  for(let i=0;i<cape.length;i++){const c=cape[i],w=10+i*2,n=cape[Math.min(cape.length-1,i+1)],m2=cape[Math.max(0,i-1)],dx=n.x-m2.x,dy=n.y-m2.y,d=Math.hypot(dx,dy)||1;L.push([c.x+ox-dy/d*w,c.y+oy+dx/d*w]);Rt.push([c.x+ox+dy/d*w,c.y+oy-dx/d*w])}
+  g2.beginPath();g2.moveTo(L[0][0],L[0][1]);for(const q of L)g2.lineTo(q[0],q[1]);const tat=k=='reaper'||k=='demon'||k=='ninja';const end=cape[cape.length-1];
+  if(tat){for(let i=0;i<4;i++){const u=i/3,bx=L[L.length-1][0]+(Rt[Rt.length-1][0]-L[L.length-1][0])*u,by=L[L.length-1][1]+(Rt[Rt.length-1][1]-L[L.length-1][1])*u;g2.lineTo(bx,by+(i%2?0:9))}}
+  for(let i=Rt.length-1;i>=0;i--)g2.lineTo(Rt[i][0],Rt[i][1]);g2.closePath();const gr=g2.createLinearGradient(cx,cy+20,end.x+ox,end.y+oy);gr.addColorStop(0,A.mix(TH[k].out.cape,p[0],.25));gr.addColorStop(1,TH[k].out.cape);g2.fillStyle=gr;g2.fill();
+  g2.strokeStyle=A.OL;g2.lineWidth=1.2;g2.stroke();g2.strokeStyle=A.rgba(p[3],.9);g2.lineWidth=1.2;g2.beginPath();for(const q of Rt)g2.lineTo(q[0],q[1]);g2.stroke();g2.restore()}
+ function drawCrown(g2,k,cx,cy,f,t){const p=TH[k].pal,c=TH[k].out.crown,hx=cx,hy=cy+2;g2.save();g2.lineJoin='round';const bob=Math.sin(t*2)*1.2;
+  if(c=='halo'){g2.translate(hx,hy-10+bob);g2.globalCompositeOperation='lighter';g2.beginPath();g2.ellipse(0,0,13,4,0,0,TAU);g2.strokeStyle=A.rgba(p[0],.95);g2.lineWidth=2.5;g2.stroke();for(let i=0;i<8;i++){const q=i/8*TAU+t;const sx=Math.cos(q)*13,sy=Math.sin(q)*4;g2.beginPath();g2.moveTo(sx,sy);g2.lineTo(sx*1.35,sy*1.35-4);g2.strokeStyle=A.rgba(p[1],.9);g2.lineWidth=1.2;g2.stroke()}}
+  else if(c=='horns'||c=='horns2'){const big=c=='horns2'?1.35:1;for(const sd of[-1,1]){g2.beginPath();g2.moveTo(hx+sd*6,hy+4);g2.quadraticCurveTo(hx+sd*14*big,hy-2,hx+sd*10*big,hy-13*big);g2.quadraticCurveTo(hx+sd*9*big,hy-3,hx+sd*2,hy+5);g2.closePath();g2.fillStyle=A.metal(g2,hx,hy-12,hx+sd*12,hy+4,k,.5);g2.fill();g2.strokeStyle=A.OL;g2.lineWidth=1;g2.stroke()}}
+  else if(c=='crest'){g2.translate(hx,hy-1);g2.beginPath();g2.moveTo(-12,-2);g2.quadraticCurveTo(0,-20,12,-2);g2.quadraticCurveTo(0,-12,-12,-2);g2.fillStyle=A.metal(g2,-12,-14,12,0,k,0);g2.fill();g2.strokeStyle=A.OL;g2.lineWidth=1;g2.stroke();A.gem(g2,0,-4,2.4,p[0])}
+  else if(c=='tiara'||c=='circlet'){g2.translate(hx,hy+3);g2.beginPath();g2.moveTo(-10,0);g2.quadraticCurveTo(0,-3,10,0);g2.strokeStyle=A.metal(g2,-10,-2,10,2,k,.1);g2.lineWidth=2;g2.stroke();A.gem(g2,0,-2,c=='tiara'?2.4:3,p[3]);if(c=='tiara')for(const sx of[-6,6])A.star4(g2,sx,-3,3.2,p[1],t)}
+  else if(c=='thorn'){g2.translate(hx,hy+1);g2.strokeStyle='#1a1024';g2.lineWidth=2;g2.beginPath();g2.ellipse(0,0,11,3.2,0,0,TAU);g2.stroke();for(let i=0;i<7;i++){const q=i/7*Math.PI+Math.PI;g2.beginPath();g2.moveTo(Math.cos(q)*11,Math.sin(q)*3.2);g2.lineTo(Math.cos(q)*14,Math.sin(q)*3.2-6);g2.stroke()}A.gem(g2,0,-3,2.2,p[3])}
+  else if(c=='flame'){g2.translate(hx,hy-6+bob);for(let i=-2;i<=2;i++)A.flame(g2,i*4.5,0,4+(2-Math.abs(i))*1.4,i%2?p[3]:p[0],t+i)}
+  else if(c=='bolt'){g2.translate(hx,hy-2);g2.globalCompositeOperation='lighter';for(let i=-2;i<=2;i++)A.bolt(g2,i*4,0,9+(2-Math.abs(i))*3,-Math.PI/2+i*.25,p[0],((t*12)|0)+i+9)}
+  else if(c=='flowers'){g2.translate(hx,hy+1);for(let i=0;i<5;i++){const q=Math.PI+i/4*Math.PI;A.rose(g2,Math.cos(q)*11,Math.sin(q)*3.4,2.8,i%2?p[3]:'#ffffff')}for(let i=0;i<4;i++)A.leaf(g2,Math.cos(Math.PI+.4+i*.75)*12,-1,5,-1.2+i*.8,p[0])}
+  else if(c=='band'){g2.translate(hx,hy+4);g2.fillStyle=p[0];g2.fillRect(-10,-1.6,20,3.2);g2.strokeStyle=A.OL;g2.lineWidth=.8;g2.strokeRect(-10,-1.6,20,3.2);const sw=Math.sin(t*6)*3;g2.strokeStyle=p[0];g2.lineWidth=2.4;g2.lineCap='round';for(const o of[0,3]){g2.beginPath();g2.moveTo(-f*9,0);g2.quadraticCurveTo(-f*18,4+o+sw,-f*27,2+o*2+sw*1.5);g2.stroke()}}
+  else if(c=='hat'){g2.translate(hx,hy-6+bob*.3);g2.rotate(t*.6);for(let i=0;i<3;i++){A.gear(g2,0,0,15-i*4,i?A.mix(p[3],'#ffffff',i*.2):p[3],t*(i%2?-1:1))}}
+  g2.restore()}
+ function drawPauldrons(g2,k,cx,cy){const p=TH[k].pal;for(const sd of[-1,1]){g2.save();g2.translate(cx+sd*10,cy+22);g2.scale(sd,1);g2.beginPath();g2.moveTo(-4,-2);g2.quadraticCurveTo(4,-8,9,-1);g2.quadraticCurveTo(8,5,1,6);g2.closePath();g2.fillStyle=A.metal(g2,-4,-8,9,6,k,.35);g2.fill();g2.strokeStyle=A.OL;g2.lineWidth=1;g2.stroke();A.gem(g2,3,-1,1.6,p[3]);g2.restore()}}
+ {const _dc=drawChar;drawChar=function(cx,cy){const me=arguments[15]==='me';if(!me)return _dc.apply(this,arguments);const k=outfitK(),t=performance.now()/1000,f=arguments[2]||1;
+   if(k)try{drawCape(g,k,cx,cy)}catch(e){if(!drawChar.e1){drawChar.e1=1;console.error('MYTH cape',e)}}
+   HIDE=!!(SW||THR);let r;try{r=_dc.apply(this,arguments)}finally{HIDE=false}
+   if(k)try{drawPauldrons(g,k,cx,cy);drawCrown(g,k,cx,cy,f,t)}catch(e){if(!drawChar.e2){drawChar.e2=1;console.error('MYTH outfit',e)}}return r}}
+ {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){if(!tick.e){tick.e=1;console.error('MYTH',e)}}};BOSS6.drawProj=function(g2,cx,cy){_d.call(this,g2,cx,cy);try{draw(g2,cx,cy)}catch(e){if(!draw.e){draw.e=1;console.error('MYTH draw',e)}}}}
+ // ---- the ascension scene: cannot be skipped (input is swallowed and the world is paused until it ends)
+ let SC=null;
+ function scene(k,from,to){if(SC)return;const th=TH[k],p=th.pal,red2=red(),dur=red2?4.2:6.6,cv2=document.createElement('canvas');cv2.id='myth9';cv2.setAttribute('role','img');cv2.setAttribute('aria-label',th.n+' ascended to tier '+RN[to]);
+  cv2.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483300;cursor:default';document.body.appendChild(cv2);
+  const block=e=>{e.preventDefault();e.stopImmediatePropagation()};const evs=['keydown','keyup','mousedown','mouseup','click','contextmenu','wheel','touchstart','pointerdown'];
+  for(const ev of evs)addEventListener(ev,block,{capture:true,passive:false});
+  const cover0=window.RB_COVER;window.RB_COVER=true;try{for(const q in K)K[q]=0}catch(_){}
+  SC={k,from,to,t0:performance.now(),dur,cv:cv2,shards:[],motes:[]};
+  for(let i=0;i<26;i++)SC.shards.push({a:R()*TAU,v:200+R()*500,r:R()*TAU,vr:(R()-.5)*10,s:6+R()*14});for(let i=0;i<70;i++)SC.motes.push({a:R()*TAU,d:300+R()*500,s:2+R()*3,o:R()});
+  const tn=(f,d,v,dl)=>{try{SFX7.tone(f,f,d,'triangle',v,dl)}catch(_){}};try{SFX7.tone(55,48,2.4,'sine',.07)}catch(_){}
+  setTimeout(()=>{[523,659,784,1047,1319].forEach((f,i)=>tn(f,1.6,.035,i*.09));tn(2093,2.4,.02,.5)},(red2?1.4:2.5)*1000);
+  const fr=()=>{const w=innerWidth,h=innerHeight,dpr=Math.min(2,devicePixelRatio||1);if(cv2.width!=w*dpr){cv2.width=w*dpr;cv2.height=h*dpr}const g2=cv2.getContext('2d');g2.setTransform(dpr,0,0,dpr,0,0);
+   const t=(performance.now()-SC.t0)/1000,u=t/dur,cxs=w/2,cys=h*.46,sc=Math.min(w,h)/700,tt=t,flashT=red2?1.4:2.5;
+   // backdrop
+   g2.fillStyle='rgba(6,4,10,'+Math.min(1,t/.6)+')';g2.fillRect(0,0,w,h);
+   const bg=g2.createRadialGradient(cxs,cys,10,cxs,cys,Math.max(w,h)*.7);bg.addColorStop(0,A.rgba(p[0],Math.min(.45,t*.25)));bg.addColorStop(1,'rgba(0,0,0,0)');g2.fillStyle=bg;g2.fillRect(0,0,w,h);
+   // converging motes and light lines before the flash, radiating after
+   g2.globalCompositeOperation='lighter';for(const m of SC.motes){const pre=t<flashT,k2=pre?Math.max(0,1-t/flashT):Math.min(1,(t-flashT)/2.5),d=pre?m.d*k2*sc:m.d*k2*sc*1.2,x=cxs+Math.cos(m.a+t*.3)*d,y=cys+Math.sin(m.a+t*.3)*d;g2.globalAlpha=pre?.4+.6*(1-k2):Math.max(0,1-k2);g2.drawImage(glow(p[m.o<.5?0:1]),x-m.s*4,y-m.s*4,m.s*8,m.s*8)}
+   if(t>flashT){for(let i=0;i<16;i++){const q=i/16*TAU+t*.15;g2.globalAlpha=Math.max(0,.35-(t-flashT)*.05);g2.beginPath();g2.moveTo(cxs,cys);g2.lineTo(cxs+Math.cos(q-.04)*w,cys+Math.sin(q-.04)*w);g2.lineTo(cxs+Math.cos(q+.04)*w,cys+Math.sin(q+.04)*w);g2.closePath();g2.fillStyle=A.rgba(p[1],1);g2.fill()}}
+   g2.globalAlpha=1;g2.globalCompositeOperation='source-over';
+   // the scythe: the old tier spins in, flashes, shatters; the new tier is revealed inside a turning halo
+   const L=380*sc;if(t<flashT){const k2=Math.min(1,t/(flashT*.8)),rot=-1.1+(1-k2)*2.2+Math.sin(t*3)*.03;g2.save();g2.translate(cxs,cys+(1-k2)*80*sc);g2.rotate(rot);g2.globalAlpha=Math.min(1,t*1.5);g2.translate(-L*.45,0);A.scythe(g2,k,Math.max(1,from),L,t,{aura:1});g2.restore();
+    if(!red2)for(let i=0;i<3;i++){g2.globalCompositeOperation='lighter';g2.globalAlpha=(t/flashT)*.25;g2.beginPath();g2.arc(cxs,cys,(60+i*40)*sc*(1-t/flashT*.5),0,TAU);g2.strokeStyle=p[1];g2.lineWidth=2;g2.stroke();g2.globalCompositeOperation='source-over'}}
+   else{const k3=Math.min(1,(t-flashT)/.6);
+    if(!red2)for(const s of SC.shards){const d=s.v*(t-flashT)*sc;if(d>Math.max(w,h))continue;g2.save();g2.translate(cxs+Math.cos(s.a)*d,cys+Math.sin(s.a)*d);g2.rotate(s.r+s.vr*(t-flashT));g2.globalAlpha=Math.max(0,1-(t-flashT)/1.6);g2.fillStyle=A.metal(g2,-s.s,-s.s,s.s,s.s,k,.2);g2.beginPath();g2.moveTo(0,-s.s);g2.lineTo(s.s*.5,s.s*.6);g2.lineTo(-s.s*.4,s.s*.4);g2.closePath();g2.fill();g2.restore()}
+    g2.save();g2.translate(cxs,cys);g2.globalAlpha=k3;g2.rotate(tt*.25);g2.strokeStyle=A.rgba(p[1],.85);g2.lineWidth=2;g2.beginPath();g2.arc(0,0,250*sc,0,TAU);g2.stroke();g2.lineWidth=1;g2.beginPath();g2.arc(0,0,268*sc,0,TAU);g2.stroke();
+    for(let i=0;i<12;i++){const q=i/12*TAU;A.rune(g2,Math.cos(q)*259*sc,Math.sin(q)*259*sc,7*sc,A.rgba(p[1],.9),q+Math.PI/2,i)}for(let i=0;i<4;i++){const q=i/4*TAU+tt*.4;A.star4(g2,Math.cos(q)*250*sc,Math.sin(q)*250*sc,12*sc,'#ffffff',q)}g2.restore();
+    g2.save();g2.translate(cxs,cys+Math.sin(tt*1.6)*6*sc);g2.rotate(-1.05+Math.sin(tt*1.1)*.03);g2.globalAlpha=k3;g2.translate(-L*.45,0);A.scythe(g2,k,to,L,t,{aura:1});g2.restore();
+    for(let i=0;i<10;i++){const q=i*.63+tt*.8,r=(150+60*Math.sin(tt+i))*sc;g2.globalAlpha=k3*(.5+.5*Math.sin(tt*3+i));A.motif(g2,k,cxs+Math.cos(q)*r,cys+Math.sin(q)*r*.7,9*sc,q,tt)}g2.globalAlpha=1;
+    // words
+    const tw=Math.min(1,(t-flashT-.4)/.8);if(tw>0){g2.globalAlpha=tw;g2.textAlign='center';g2.fillStyle=A.rgba(p[1],.9);g2.font='600 '+Math.round(12*sc+4)+"px Montserrat,'Segoe UI',sans-serif";g2.fillText((from?'ASCENSION':'AWAKENING').split('').join(' '),cxs,h*.12+10);
+     const big=Math.round(64*sc+18);g2.font='900 italic '+big+"px Montserrat,'Segoe UI',sans-serif";const gr=g2.createLinearGradient(0,h*.8-big,0,h*.8);gr.addColorStop(0,'#ffffff');gr.addColorStop(.5,A.mix(p[1],'#ffffff',.3));gr.addColorStop(.55,p[0]);gr.addColorStop(1,'#ffffff');g2.fillStyle=gr;
+     g2.fillText('TIER '+RN[to],cxs,h*.82);g2.font='700 '+Math.round(18*sc+6)+"px Montserrat,'Segoe UI',sans-serif";g2.fillStyle='#ffffff';g2.fillText(th.n,cxs,h*.82+Math.round(30*sc+10));
+     g2.font='500 italic '+Math.round(13*sc+5)+"px 'Cormorant Garamond',Georgia,serif";g2.fillStyle=A.rgba('#ffffff',.85);g2.fillText(from?'You have been ascended to a new level of scythe.':'The scythe has chosen you.',cxs,h*.82+Math.round(56*sc+18))}}
+   // the flash
+   const fl=Math.max(0,1-Math.abs(t-flashT)/.35);if(fl>0){g2.globalAlpha=fl*(red2?.5:1);g2.fillStyle='#ffffff';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
+   // fade out at the end
+   if(t>dur-.6){g2.globalAlpha=Math.min(1,(t-(dur-.6))/.6);g2.fillStyle='#06040a';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
+   if(t<dur)requestAnimationFrame(fr);else{for(const ev of evs)removeEventListener(ev,block,{capture:true});cv2.remove();window.RB_COVER=cover0;SC=null;
+    try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic scythe is in your hand.':'Damage +'+Math.round(22*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?' · the finisher throws the scythe':to==4?' · hits echo with bursts':' · a doubled finisher that heals'),3200)}catch(_){}
+    try{if(typeof CLS9!='undefined'&&CLS9.isOpen())CLS9.refresh&&CLS9.refresh()}catch(_){}}};
+  requestAnimationFrame(fr)}
+ return{drawCrown,ID,KOF,TH,tier,next,check,ascend,access,scene,LV,GEMS,MATS,RN,get S(){return S},save,setOutfit(v){S.out=v?1:0;save()},get outfit(){return S.out},outfitK,attack,get swing(){return SW},get thrown(){return THR},fx:FX,parts:PT,MV}})();
+
+/* ========== LATE: 99-zzzzzzzzz-3-mythui.js ========== */
+// ===== MYUI: the mythic arsenal on screen.
+// Classes screen (CLS9): every class gets its own look. The palette recolours the light, the title and the glass; a live background in the
+// class motif (falling petals / leaves / feathers, rising embers, twinkling stars, a turning rune circle, lightning, blood drips, crows,
+// ink, floating rock, turning gears); an animated anime hero of the class (hair and cloth sway, blinking, breathing, wings, holding its
+// mythic scythe) inside an ornate frame; and a Mythic card: the scythe's name and creed, its tier, the three moves, what each tier unlocks,
+// what the next ascension needs (with what you have), the Forge / Ascend button and the outfit switch.
+// Character card (HUD): an ornate avatar frame and a hanging banner in the style of the class you are using. =====
+const MYUI=(()=>{
+ const A=MYART,TH=A.TH,TAU=Math.PI*2,R=Math.random,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const red=()=>{try{return !!(cel.opt.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(_){return false}};
+ const UNL=['Forged: the three-move combo','The first cut also fires a crescent','The finisher throws the scythe; it swings back','Hits echo with small bursts','A doubled finisher that heals you on hit'];
+ const CROWN_Y=150,CROWN_S=6.2;   // where the crown piece sits on the hero portrait (SHOWART design space)
+ const FXN={crescent:'◐',pillar:'▮',vortex:'◉',chains:'∞',flock:'≋',splash:'✺',bolts:'ϟ',stars:'✦',shards:'▲',ring:'◎'};
+ // ---- the Mythic card
+ function section(k){const th=TH[k],t=MYTH.tier(k),nx=MYTH.next(k),ck=MYTH.check(k),RN=MYTH.RN;
+  const pips=[1,2,3,4,5].map(i=>'<i class="'+(i<=t?'on':'')+'">'+RN[i]+'</i>').join('');
+  const mv=th.mv.map((m,i)=>'<li><span class="mvi" aria-hidden="true">'+(FXN[m[1]]||'✦')+'</span><div><b>'+(i+1)+' · '+esc(m[0])+'</b><small>'+esc(m[2])+'</small></div></li>').join('');
+  const un=UNL.map((u,i)=>'<li class="'+(t>=i+1?'got':'')+'"><b>'+RN[i+1]+'</b><span>'+esc(u)+(i?' · +'+(22*i)+'% damage':'')+'</span></li>').join('');
+  let req='';if(nx){const rows=[];const free=typeof RB_CREATIVE!='undefined'&&!!RB_CREATIVE,ac=MYTH.access(k);if(ac)rows.push([ac,false]);
+   if(!free){rows.push([CLASS7.C[k].n+' level '+nx.lv+' (now '+CLASS7.lv(k)+')',CLASS7.lv(k)>=nx.lv]);if(nx.gems)rows.push([nx.gems+' gems (you have '+(gems|0)+')',(gems|0)>=nx.gems]);for(const[id,n]of nx.mats)rows.push([n+' × '+iname(id)+' ('+cnt(id)+')',cnt(id)>=n])}
+   req='<ul class="c9req">'+rows.map(r=>'<li class="'+(r[1]?'ok':'no')+'">'+esc(r[0])+'</li>').join('')+'</ul>'+(nx.mats.length?'<p class="dim">Materials come from the depths: groves, caches, geodes, the Singing Crystals and the relic vaults.</p>':'')}
+  const lab=!nx?'Fully ascended':t==0?'Forge '+th.n:'Ascend to Tier '+RN[nx.n];
+  return'<section class="c9card c9my" id="c9-my"><div class="c9myh"><div><h4>Mythic scythe</h4><h3>'+esc(th.n)+'</h3><small>'+esc(th.ep)+'</small></div><div class="c9pips" title="Tier '+(t?RN[t]:'— (not forged)')+'">'+pips+'</div></div>'+
+   '<blockquote>“'+esc(th.q)+'”</blockquote><h4>Combo</h4><ul class="c9mv">'+mv+'</ul><h4>Ascension</h4><ol class="c9un">'+un+'</ol>'+
+   (nx?'<h4>'+(t==0?'To forge':'Next ascension')+'</h4>'+req:'')+
+   '<div class="c9myb"><button class="c9asc" data-a="my:asc"'+(ck.ok?'':' aria-disabled="true"')+(ck.miss&&ck.miss.length?' title="Needs: '+esc(ck.miss.join(', '))+'"':'')+'>'+esc(lab)+'</button>'+
+   (t>=1?'<button class="c9tog" data-a="my:out" aria-pressed="'+(MYTH.outfit?'true':'false')+'">Mythic outfit · '+(MYTH.outfit?'On':'Off')+'</button>':'')+'</div></section>'}
+ function act(a,k){if(a=='asc')return MYTH.ascend(k);if(a=='out'){MYTH.setOutfit(!MYTH.outfit);return true}return false}
+ // ---- live canvases on the Classes screen
+ let root=null,raf=0,last=0,cur=null,bgP=[];
+ function after(el,k){root=el;const p=TH[k].pal;el.style.setProperty('--m',p[0]);el.style.setProperty('--l',p[1]);el.style.setProperty('--d',p[2]);el.style.setProperty('--a',p[3]);el.dataset.cls=k;if(cur!==k){cur=k;bgP=[]}}
+ function start(el){root=el;stop();last=0;raf=requestAnimationFrame(loop)}
+ function stop(){if(raf)cancelAnimationFrame(raf);raf=0}
+ function fit(c){const r=c.getBoundingClientRect(),d=Math.min(1.5,devicePixelRatio||1),w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));if(c.width!==w||c.height!==h){c.width=w;c.height=h}return{w:r.width,h:r.height,d}}
+ function loop(now){raf=requestAnimationFrame(loop);if(!root||!root.isConnected||root.style.display=='none'){stop();return}if(now-last<(red()?200:33))return;last=now;const t=now/1000,k=cur;if(!k)return;
+  try{const fx=root.querySelector('.c9fx');if(fx)bg(fx,k,t)}catch(e){if(!loop.e1){loop.e1=1;console.error('MYUI bg',e)}}
+  try{const hc=root.querySelector('.c9heroc');if(hc)hero(hc,k,t)}catch(e){if(!loop.e2){loop.e2=1;console.error('MYUI hero',e)}}}
+ // background: motif particles that behave like their material, over a faint class sigil
+ function bg(c,k,t){const{w,h,d}=fit(c),g=c.getContext('2d'),th=TH[k],p=th.pal,mo=th.mot;g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);
+  const n=red()?10:mo=='star'?60:mo=='rune'||mo=='gear'?14:34;
+  while(bgP.length<n)bgP.push({x:R()*w,y:R()*h,s:.6+R()*.9,v:.4+R()*.8,a:R()*TAU,ph:R()*TAU,o:R()});
+  const fall=mo=='petal'||mo=='leaf'||mo=='feather'||mo=='blood',rise=mo=='spark'||mo=='flame'||mo=='rock';
+  for(const q of bgP){if(fall){q.y+=q.v*.9;q.x+=Math.sin(t+q.ph)*.5;q.a+=.01*q.v}else if(rise){q.y-=q.v*.6;q.x+=Math.sin(t*.7+q.ph)*.3}else if(mo=='crow'){q.x+=q.v*1.4;q.y+=Math.sin(t+q.ph)*.3}else if(mo=='ink'){q.o+=.004;if(q.o>1){q.o=0;q.x=R()*w;q.y=R()*h}}
+   if(q.y>h+30){q.y=-20;q.x=R()*w}if(q.y<-30){q.y=h+20;q.x=R()*w}if(q.x>w+40){q.x=-30;q.y=R()*h}}
+  // the big sigil behind the hero
+  const sx=w*.24,sy=h*.48,sr=Math.min(w,h)*.36;g.save();g.translate(sx,sy);g.rotate(t*.05);g.globalAlpha=.16;g.strokeStyle=p[1];g.lineWidth=1;g.beginPath();g.arc(0,0,sr,0,TAU);g.stroke();g.beginPath();g.arc(0,0,sr*.86,0,TAU);g.stroke();
+  for(let i=0;i<24;i++){const q=i/24*TAU;A.rune(g,Math.cos(q)*sr*.93,Math.sin(q)*sr*.93,5,p[1],q+Math.PI/2,i)}g.rotate(-t*.12);for(let i=0;i<6;i++){const q=i/6*TAU;g.beginPath();g.moveTo(Math.cos(q)*sr*.86,Math.sin(q)*sr*.86);g.lineTo(Math.cos(q+TAU/3)*sr*.86,Math.sin(q+TAU/3)*sr*.86);g.stroke()}g.restore();g.globalAlpha=1;
+  if(mo=='bolt'&&R()<.02){g.globalCompositeOperation='lighter';A.bolt(g,R()*w,0,h*.5,Math.PI/2+(R()-.5)*.4,p[0],(R()*1e6)|0);g.globalCompositeOperation='source-over'}
+  if(mo=='gear'){g.globalAlpha=.18;A.gear(g,w*.92,h*.18,90,p[3],t*.2);A.gear(g,w*.82,h*.32,50,p[3],-t*.36);g.globalAlpha=1}
+  for(const q of bgP){const al=mo=='star'?.25+.6*Math.abs(Math.sin(t*1.3+q.ph)):mo=='ink'?Math.sin(q.o*Math.PI)*.5:.55;g.globalAlpha=al*(.5+q.s*.4);
+   if(mo=='star')A.star4(g,q.x,q.y,2+q.s*3,q.o<.3?p[3]:'#ffffff',t*.3+q.ph);else if(mo=='crow')A.crow(g,q.x,q.y,8+q.s*8,0,'#0a0610',t*10+q.ph);else if(mo=='rune'){const rr=Math.min(w,h)*(.2+q.o*.5);A.rune(g,w*.5+Math.cos(t*.1*q.v+q.ph)*rr,h*.5+Math.sin(t*.1*q.v+q.ph)*rr*.6,6+q.s*6,p[q.o<.5?0:1],t*.2,(q.ph*10)|0)}
+   else if(mo=='gear')A.gear(g,q.x,q.y,8+q.s*8,p[3],t*q.v*(q.o<.5?1:-1));else A.motif(g,k,q.x,q.y,5+q.s*6,q.a,t)}
+  g.globalAlpha=1}
+ // the hero: the anime portrait renderer (SHOWART) with a look of the class, its wings and its mythic scythe, inside an ornate frame
+ function lookOf(k){const L=TH[k].look,ap=typeof AP!='undefined'?AP:{eyeCol:['#35c9c0']};return{skin:L.skin,hair:L.hair,eye:ap.eyeCol[L.eye%ap.eyeCol.length],out:L.out,trim:L.trim,hs:L.hs,es:L.gd?1:0,of:A.KEYS.indexOf(k)%6,acc:0,cape:1,gd:L.gd}}
+ function hero(c,k,t){const{w,h,d}=fit(c),g=c.getContext('2d'),th=TH[k],p=th.pal;g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);
+  const gr=g.createRadialGradient(w*.5,h*.42,10,w*.5,h*.42,Math.max(w,h)*.7);gr.addColorStop(0,A.rgba(p[0],.32));gr.addColorStop(.55,A.rgba(p[2],.18));gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,w,h);
+  // halo behind the head
+  g.save();g.translate(w*.5,h*.36);g.rotate(t*.15);g.globalCompositeOperation='lighter';g.strokeStyle=A.rgba(p[1],.5);g.lineWidth=1.5;g.beginPath();g.arc(0,0,Math.min(w,h)*.26,0,TAU);g.stroke();for(let i=0;i<8;i++){const q=i/8*TAU;g.beginPath();g.moveTo(Math.cos(q)*Math.min(w,h)*.26,Math.sin(q)*Math.min(w,h)*.26);g.lineTo(Math.cos(q)*Math.min(w,h)*.31,Math.sin(q)*Math.min(w,h)*.31);g.stroke()}g.restore();g.globalCompositeOperation='source-over';
+  if(typeof SHOWART!='undefined'){g.save();const ih=h*.94;try{const zm=.86,dy=h*.06;SHOWART.draw(g,w,ih,{look:lookOf(k),t:red()?0:t,wpn:MYTH.ID(k),wingIdx:th.wing,gear:{},ox:w*.5,dy,zoom:zm});const sc=ih/760*zm,X=w*.5-310*sc,Y=ih-860*sc+60*sc+dy;g.save();g.translate(X+310*sc,Y+CROWN_Y*sc+Math.sin(t*1.5)*3*sc);g.scale(sc*CROWN_S,sc*CROWN_S);MYTH.drawCrown(g,k,0,0,1,t);g.restore()}catch(e){if(!hero.e){hero.e=1;console.error('MYUI showart',e)}}g.restore()}
+  // the frame: thin metal lines with filigree corners, a crowning gem and the class motif at the corners
+  g.save();const m=8;g.strokeStyle=A.metal(g,0,0,w,h,k,.15);g.lineWidth=2;g.strokeRect(m,m,w-m*2,h-m*2);g.strokeStyle=A.rgba(p[1],.5);g.lineWidth=1;g.strokeRect(m+5,m+5,w-m*2-10,h-m*2-10);
+  const cn=[[m,m,0],[w-m,m,Math.PI/2],[w-m,h-m,Math.PI],[m,h-m,-Math.PI/2]];for(const[x,y,a]of cn){A.curl(g,x,y,26,a+.3,false,A.mix(p[1],'#ffffff',.3),2);A.curl(g,x,y,26,a+1.27,true,A.mix(p[1],'#ffffff',.3),2);A.gem(g,x,y,5,p[3],true)}
+  A.gem(g,w/2,m,7,p[3],true);A.curl(g,w/2-6,m+2,18,Math.PI-.2,true,A.mix(p[1],'#ffffff',.3),1.6);A.curl(g,w/2+6,m+2,18,.2,false,A.mix(p[1],'#ffffff',.3),1.6);
+  for(let i=0;i<4;i++){const tw=.5+.5*Math.sin(t*2+i*1.7);g.globalAlpha=tw;A.star4(g,[m+30,w-m-30,w-m-26,m+26][i],[m+24,m+30,h-m-28,h-m-34][i],4+tw*3,'#ffffff',t)}g.globalAlpha=1;
+  g.font="600 9px Montserrat,'Segoe UI',sans-serif";g.textAlign='center';g.fillStyle=A.rgba(p[1],.8);g.fillText((th.n+' · '+(MYTH.tier(k)?'Tier '+MYTH.RN[MYTH.tier(k)]:'Not forged')).toUpperCase().split('').join(String.fromCharCode(8202)),w/2,h-m-12);g.restore()}
+ // ---- HUD: the avatar frame and the class banner on the character card
+ let fc=null,bc=null,hk=null,lay=null,layT=0;
+ const cls=()=>{try{return CLASS7.cur()||CJOB.cur||null}catch(_){return null}};
+ function hud(){const hl=document.getElementById('hudL'),pt=document.getElementById('portrait');if(!hl||!pt)return;const k=cls();
+  if(!fc){fc=document.createElement('canvas');fc.id='pframe9';fc.setAttribute('aria-hidden','true');hl.appendChild(fc);bc=document.createElement('canvas');bc.id='pbanner9';bc.setAttribute('aria-hidden','true');hl.appendChild(bc)}
+  const show=!!k&&hl.offsetParent!==null;fc.style.display=bc.style.display=show?'block':'none';hl.classList.toggle('cls9on',show);if(!show){hk=null;return}
+  if(hk!==k){hk=k;hl.style.setProperty('--clsc',TH[k].pal[0])}
+  // the layout is measured once a second (not every frame); the art redraws ~10 times a second
+  const now=performance.now();if(!lay||now-layT>1000){layT=now;const hr=hl.getBoundingClientRect(),pr=pt.getBoundingClientRect();if(!pr.width)return;lay={pw:pr.width,S:Math.round(pr.width*1.9),x:Math.round(pr.left-hr.left+pr.width/2-pr.width*.95),y:Math.round(pr.top-hr.top+pr.height/2-pr.width*.95)};
+   fc.style.width=fc.style.height=lay.S+'px';fc.style.left=lay.x+'px';fc.style.top=lay.y+'px'}
+  const S=lay.S,pr={width:lay.pw},d=Math.min(2,devicePixelRatio||1);if(fc.width!==S*d){fc.width=fc.height=S*d}
+  const t=performance.now()/1000,g=fc.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,S,S);A.frame(g,k,S/2,S/2,pr.width/2+1,red()?0:t);
+  const bw=34,bh=84;if(bc.width!==bw*d){bc.width=bw*d;bc.height=bh*d}const b2=bc.getContext('2d');b2.setTransform(d,0,0,d,0,0);b2.clearRect(0,0,bw,bh);A.banner(b2,k,bw,bh,red()?0:t)}
+ setInterval(()=>{if(document.hidden)return;try{hud()}catch(e){if(!hud.e){hud.e=1;console.error('MYUI hud',e)}}},100);
+ return{section,act,after,start,stop,hud,lookOf}})();
 
 
 </script></body></html>

@@ -1,5 +1,6 @@
 // Balance (ARENA7 + BMOVE12 + BAL11 + CLASS7): the boss arena is tall enough to fly in (you reach the soft ceiling, it stops you gently, the camera
 // keeps you and the boss in view, your zoom comes back afterwards), every boss moves (and stays inside the arena, out of the walls), weapon power
+// (the mythic scythes of 99-zzzzzzzzz-2-mythic.js are progression weapons outside the rarity curve and are left out)
 // (WPOWER) is monotonic in rarity and level, each weapon's measured power sits in its rarity band, classes land within +-12% of each other at
 // class levels 1 / 25 / 50, class level bonuses grow by the same total value for every class, and every class beats every boss at the expected
 // level in a reasonable simulated time. Weapons are measured headlessly against training dummies on a virtual clock (fixed random seed).
@@ -55,15 +56,15 @@ const SIMLIB=`window.SIM=(()=>{let vt=0,on=false,seed=1;const pn=Performance.pro
   await E(()=>{BOSS10.stop();mobs.length=0;BOSS6.clear()});await until(()=>!ARENA7.arena,null,6000);await until(()=>!document.getElementById('cine7b'),null,6000);await E(()=>{P.hp=maxHP()})}
  const z1=await E(()=>ZM);ok('your camera zoom comes back when the arena is gone',Math.abs(z1-z0)<1e-6,{z0,z1});
  // ---- weapon power: rarity bands, monotonic, level order
- const wp=await E(()=>{const RO=BAL11.RO,ids=Object.keys(WPN).filter(id=>WPN[id].md>0&&WPN[id].k!='tool');const o={n:ids.length,bad:[],rows:ids.map(id=>({id,r:RO.indexOf(WPNRAR(id)),p:WPOWER(id),lv:WPN[id].lv|0}))};
+ const wp=await E(()=>{const RO=BAL11.RO,ids=Object.keys(WPN).filter(id=>WPN[id].md>0&&WPN[id].k!='tool'&&!WPN[id].myth);const o={n:ids.length,bad:[],rows:ids.map(id=>({id,r:RO.indexOf(WPNRAR(id)),p:WPOWER(id),lv:WPN[id].lv|0}))};
   for(const x of o.rows)if(!(x.p>0)||x.r<0)o.bad.push(x.id);for(let r=0;r<5;r++){const a=o.rows.filter(x=>x.r==r),c=o.rows.filter(x=>x.r==r+1);if(a.length&&c.length&&Math.max(...a.map(x=>x.p))>=Math.min(...c.map(x=>x.p)))o.bad.push('band '+RO[r])}
   for(let r=0;r<6;r++){const a=o.rows.filter(x=>x.r==r).sort((p,q)=>p.lv-q.lv);for(let i=1;i<a.length;i++)if(a[i].lv>a[i-1].lv&&a[i].p<a[i-1].p)o.bad.push('lv '+a[i].id)}
   o.gunLv=GUN9.IDS.every((id,i,L)=>!i||WPOWER(id)>=WPOWER(L[i-1]));return o});
  ok('WPOWER: every weapon has a power and a rarity; power is monotonic in rarity (common < ... < mythic) and in level',wp.bad.length==0&&wp.gunLv&&wp.n>=60,wp.bad);
  await E(SIMLIB);await E(()=>{enterWorld('baltest')});await Wt(1500);
- const meas=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&WPN[id].k!='tool')o[id]=SIM.weapon(id);return o});
+ const meas=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&WPN[id].k!='tool'&&!WPN[id].myth)o[id]=SIM.weapon(id);return o});
  const val=v=>{const r=v.far>=.5*v.near,S=r?(v.near+v.far)/2:v.near,A=Math.min(3.5,r?(v.nearA+v.farA)/Math.max(1e-6,v.near+v.far):v.nearA/Math.max(1e-6,v.near));return{r,S,V:S*(1+.15*(A-1))*(r?1.1:1)}};
- const info=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0)o[id]={rar:WPNRAR(id),p:WPOWER(id),cls:CLASS7.of(WPN[id]),lv:WPN[id].lv|0};return{o,C:Object.fromEntries(Object.entries(CLASS7.C).map(([k,c])=>[k,c.ids.filter(id=>WPN[id])]))}});
+ const info=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&!WPN[id].myth)o[id]={rar:WPNRAR(id),p:WPOWER(id),cls:CLASS7.of(WPN[id]),lv:WPN[id].lv|0};return{o,C:Object.fromEntries(Object.entries(CLASS7.C).map(([k,c])=>[k,c.ids.filter(id=>WPN[id]&&!WPN[id].myth)]))}});
  const off=[];for(const id in meas){const v=val(meas[id]),e=v.V/info.o[id].p-1;meas[id].v=v;meas[id].e=e;if(Math.abs(e)>.2)off.push(id+' '+Math.round(e*100)+'%')}
  ok('each weapon\'s measured power is within 20% of its rarity band target (WPOWER)',off.length==0,off);
  // ---- classes at class level 1 / 25 / 50
