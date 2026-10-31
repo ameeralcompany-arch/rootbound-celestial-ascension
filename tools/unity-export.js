@@ -32,7 +32,11 @@ const png=(f,d)=>fs.writeFileSync(path.join(OUT,f),Buffer.from(d.split(',')[1],'
   const cr=mk(T*5,T),cx=cr.getContext('2d');for(let s=0;s<5;s++){try{cx.drawImage(crackSprite(s),s*T,0)}catch(_){}}
   data.cracks={file:'cracks.png',n:5,cell:T};
   // ---- item icons (64px): every block, every tool, every material
-  const keys=[...ids,...Object.keys(TOOLS8.TL).map(i=>'w:'+i),...Object.keys(mats).map(Number)];
+  const keys=[...ids,...Object.keys(WPN).map(i=>'w:'+i),...Object.keys(mats).map(Number)];
+  // weapons and monsters (bosses come later with their own art)
+  data.weapons={};for(const id in WPN){const w=WPN[id];data.weapons[id]={n:w.n,k:w.k,md:w.md,bd:w.bd||0,cd:w.cd,cost:w.cost||0,fx:w.fx||'',d:w.d||'',g:w.g||[255,255,255]}}
+  data.monsters={};for(const k in MK){const m=MK[k];const o={};for(const f in m)if(typeof m[f]!='function'&&typeof m[f]!='object')o[f]=m[f];data.monsters[k]=o}
+  try{data.mobmat=Object.assign({},MOBMAT)}catch(_){data.mobmat={}}
   return{data,keys,atlas:atl.toDataURL('image/png'),cracks:cr.toDataURL('image/png')}});
  png('blocks.png',R.atlas);png('cracks.png',R.cracks);
  // icons are produced by the game asynchronously (images from data URLs): collect them one by one
@@ -53,6 +57,14 @@ const png=(f,d)=>fs.writeFileSync(path.join(OUT,f),Buffer.from(d.split(',')[1],'
   fr.forEach((f,i)=>{const s=document.createElement('canvas');s.width=FW;s.height=FH;const sx=s.getContext('2d');g=sx;sx.setTransform(Z,0,0,Z,0,0);try{drawChar(ox,oy,1,myHue,'',f.t,f.vx,f.air,'','fist',0,0,wear,false,look,'')}catch(e){console.error('hero',e)}g=g0;sx.setTransform(1,0,0,1,0,0);sx.clearRect(0,0,FW,46*Z);x.drawImage(s,(i%COLS)*FW,Math.floor(i/COLS)*FH)});
   const anim={};fr.forEach((f,i)=>{(anim[f.k]=anim[f.k]||[]).push(i)});return{url:c.toDataURL('image/png'),cols:COLS,fw:FW,fh:FH,ox:ox*Z,oy:oy*Z,scale:Z,anim}});
  png('hero.png',hero.url);delete hero.url;R.data.hero=Object.assign({file:'hero.png'},hero);
+ // ---- monsters: 8 animation frames + 1 hit-flash frame each, drawn by the game's own monster renderer at 1.5x.
+ // Logical frame 120x120 with the feet (bottom centre of the hitbox) at (60,100).
+ const mobs=await p.evaluate(()=>{const Z=1.5,L=120,FW=L*Z,N=9,keys=Object.keys(MK).filter(k=>!MK[k].boss);
+  const c=document.createElement('canvas');c.width=FW*N;c.height=FW*keys.length;const x=c.getContext('2d'),g0=g,rows={};
+  keys.forEach((k,row)=>{const d=MK[k];rows[k]=row;for(let i=0;i<N;i++){const s=document.createElement('canvas');s.width=s.height=FW;const sx=s.getContext('2d');g=sx;sx.setTransform(Z,0,0,Z,0,0);
+   const m={k,x:0,y:0,w:d.w,h:d.h,vx:0,vy:0,f:1,hp:d.hp,fade:1,fl:i==8?1:0,ph:0,t:0,g:true};try{drawMobV(m,i<8?i*95:0,60,100-d.h)}catch(e){console.error('mob',k,e)}g=g0;x.drawImage(s,i*FW,row*FW)}});
+  return{url:c.toDataURL('image/png'),fw:FW,frames:N,rows,ox:60*Z,oy:100*Z,scale:Z}});
+ png('mobs.png',mobs.url);delete mobs.url;R.data.mobSheet=Object.assign({file:'mobs.png'},mobs);
  fs.writeFileSync(path.join(OUT,'data.json'),JSON.stringify(R.data));
  const files=fs.readdirSync(OUT).map(f=>f+' '+(fs.statSync(path.join(OUT,f)).size/1024|0)+'KB');
  console.log('exported:',files.join(', '));console.log('blocks',R.data.ids.length,'icons',Object.keys(icons.map).length,'errors',errs.length?errs.slice(0,3):'none');

@@ -17,6 +17,8 @@ namespace Rootbound
         public Camera Cam { get; private set; }
         public PlayerSave Save { get; private set; }
         public bool ShowInventory;
+        // the studio intro director drives the camera and clock itself
+        public bool Directed;
         public List<string> SavedWorlds = new List<string>();
 
         WorldView view;
@@ -241,7 +243,7 @@ namespace Rootbound
                 saveT += dt;
                 if (saveT > 30f) { saveT = 0; SaveAll(); }
             }
-            else
+            else if (!Directed)
             {
                 // title: drift slowly along the preview world's surface
                 titlePan += dt * 2.2f;

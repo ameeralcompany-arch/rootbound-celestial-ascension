@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const path=require('path');let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?'  - '+x:''));if(!c)fails++};
 const URL='file://'+path.resolve(__dirname,'../index.html');
 setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},180000).unref();
-(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox','--allow-file-access-from-files']});   // the intro draws a local video (media/intro.webm); this keeps its canvas readable for the artwork check
  const page=async(o={})=>{const ctx=await b.newContext({viewport:{width:1280,height:720},reducedMotion:o.rm||'no-preference'});if(o.force)await ctx.addInitScript(()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}let n=0;window.p0spoke=()=>n;try{const sp=speechSynthesis.speak.bind(speechSynthesis);speechSynthesis.speak=u=>{n++;return sp(u)}}catch(_){}});const p=await ctx.newPage();p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/CINE7/.test(m.text()))p.errs.push(m.text())});p.ctx=ctx;await p.goto(URL);return p};
  // 1. automated browsers skip the intro (tests keep working)
  {const p=await page();await p.waitForTimeout(900);ok('webdriver skips the launch intro',await p.evaluate(()=>!CINE7.playing&&!document.getElementById('cine7')&&!SHOW7.isOpen));await p.ctx.close()}

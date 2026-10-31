@@ -502,6 +502,18 @@ const CINE7=(()=>{
   if(o.mid)o.mid(g);
   islands(g,I.islN,C,t);
   if(!o.nofg){cam(g,C[0],C[1],C[2],1.35);put(g,as('fg'),-100,560)}}
+ // ---- Unity backdrop: the last two scenes (restore + title, 14 s) play a video rendered in Unity (unity/Rootbound, IntroDirector:
+ // the world at night, light returning, dawn, then a glide to the hero). It only replaces the painted backdrop: rays, motes, flash and
+ // the title still draw on top. If the video is missing, slow or reduced motion is on, the painted world draws instead.
+ const UV={el:null,ok:false};
+ function uvPrep(){if(UV.el||!I||I.red)return;try{const v=document.createElement('video');v.muted=true;v.preload='auto';v.playsInline=true;v.oncanplaythrough=()=>{UV.ok=true};v.onerror=()=>{UV.ok=false};v.src='media/intro.webm';v.load();UV.el=v}catch(_){UV.el=null}}
+ function uvEnd(){const v=UV.el;UV.el=null;UV.ok=false;if(!v)return;try{v.pause();v.removeAttribute('src');v.load()}catch(_){}}
+ function uvid(g,vt,C){const v=UV.el;if(!v||!UV.ok||I.prep||v.readyState<2||!v.videoWidth)return false;
+  if(v.paused)try{const p=v.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}
+  if(Math.abs(v.currentTime-vt)>.25)try{v.currentTime=Math.max(0,Math.min(vt,(v.duration||14)-.05))}catch(_){}
+  g.setTransform(1,0,0,1,I.shx,I.shy);const k=Math.max(I.cw/v.videoWidth,I.ch/v.videoHeight),w=v.videoWidth*k,h=v.videoHeight*k;g.drawImage(v,(I.cw-w)/2,(I.ch-h)/2,w,h);
+  cam(g,C[0],C[1],C[2],1.35);return true}   // leave the transform where world() leaves it, so the overlays land in the same place
+ const uvT=n=>{const a=STORY.find(q=>q[0]=='restore'),b=STORY.find(q=>q[0]==n);return a&&b?b[3]-a[3]:0};
  // ---- scenes (t = local story seconds)
  function sTree(g,t,d){const k=t/d,C=[800,lerp(-260,532,ez(k)),lerp(1.32,.95,eo(k))];I.C=C;
   world(g,t,C,{shoot:g2=>{for(const s of[[1.1,1700,-160,2.6],[2.9,1500,-250,2.75]]){const u=(t-s[0])/.7;if(u<0||u>1)continue;cam(g2,C[0],C[1],C[2],.25);const x=s[1]-u*700,y=s[2]+u*330;drawStreak(g2,'#cfe8ff',x,y,PI-.44,260,Math.sin(u*PI),9)}}});
@@ -673,7 +685,7 @@ const CINE7=(()=>{
   if(tc<.16){const u=tc/.16,x=lerp(-500,2100,u);g.fillStyle='#fff';g.beginPath();g.moveTo(x,0);g.lineTo(x+260,0);g.lineTo(x+60,900);g.lineTo(x-200,900);g.closePath();g.fill()}
   if(tc<.07)I.fl=Math.max(I.fl,(1-tc/.07)*.7)}
  function sTitle(g,t,d){const slam=.55,C=[800,lerp(470,420,ez(t/d)),lerp(1.12,1.0,eo(t/2.5))];I.C=C;I.sa=t>slam&&t<slam+.5?(1-(t-slam)/.5)*18:0;
-  world(g,t,C,{sky:'sky7',st:.45,au:.45,gold:1,gw:.75,gc:'#ffd77a',veins:.85+.15*Math.sin(t*3),nofg:false,
+  uvid(g,uvT('title')+t,C)||world(g,t,C,{sky:'sky7',st:.45,au:.45,gold:1,gw:.75,gc:'#ffd77a',veins:.85+.15*Math.sin(t*3),nofg:false,
    shoot:g2=>{cam(g2,C[0],C[1],C[2],.25);for(let i=0;i<9;i++){const st=.2+i*.5,u=(t-st)/.6;if(u<0||u>1)continue;const x=1700-((i*373)%900)-u*620,y=-260+((i*211)%300)+u*300;drawStreak(g2,i%2?'#ffe7c0':'#cfe8ff',x,y,PI-.45,240,Math.sin(u*PI),8)}}});
   motes(g,t,.7,'#ffe7a0');stage(g);A(g,.7);const dg=glow('#05030c');g.drawImage(dg.c,-100,140,1800,500);A(g,1);
   const T=as('title'),ty=380,tsc=.86;
@@ -890,7 +902,7 @@ const CINE7=(()=>{
   if(t>pop&&t<pop+.8)bubble(g,640,FY-150,'!!',30,1,cl((t-pop)/.06,0,1)*cl((pop+.8-t)/.1,0,1))}
  // ---- restoration: the seed goes into the roots, gold light races out along them, colour floods back and the islands rise
  function sRestore(g,t,d){const B=1.6,k=t/d,lit=ez((t-B)/2.4),rise=ez((t-B-.3)/2.6),C=[800,lerp(560,470,ez(k)),lerp(1.15,.97,ez(k))];I.C=C;I.isy=lerp(800,0,rise);
-  world(g,t,C,{st:.4+.6*lit,au:.6*lit,gw:.15+.6*lit,gc:'#ffd77a',veins:0,cl:.5+.5*lit,
+  uvid(g,t,C)||world(g,t,C,{st:.4+.6*lit,au:.6*lit,gw:.15+.6*lit,gc:'#ffd77a',veins:0,cl:.5+.5*lit,
    pre:g2=>{if(lit>0){A(g2,lit);put(g2,as('sky7'),-100,-300);A(g2,1)}},
    mid:g2=>{if(t<=B)return;const R=lerp(0,1300,ez((t-B)/2.2)),tw=900,th=tw*1550/1500,tx=800-tw/2,ty=900-tw;g2.save();g2.beginPath();g2.arc(800,800,R,0,TAU);g2.clip();A(g2,.95,'lighter');put(g2,as('treeY'),tx,ty,tw,th);A(g2,1);g2.restore();
     A(g2,(1-ez((t-B)/2.2))*.8,'lighter');g2.strokeStyle='#ffe7a0';g2.lineWidth=10;g2.beginPath();g2.arc(800,800,R,0,TAU);g2.stroke();A(g2,1)}});
@@ -969,10 +981,10 @@ const CINE7=(()=>{
    if(a){VOX12.log.push(text);try{a.currentTime=0;a.volume=Math.min(1,OPT.sv==null?1:+OPT.sv);a.onplay=on;a.onended=done;a.onerror=done;const pr=a.play();if(pr&&pr.catch)pr.catch(done)}catch(_){done()}}
    else if(!VOX12.say(text,{pitch:title?Math.max(.74,p.pitch-.06):p.pitch,rate:title?.74:p.rate,onstart:on,onend:done}))done();
   if(title){try{const A=au();if(A){const t0=A.a.currentTime+.05;o('m',65.4,65.4,t0,3.2,'sine',.09,.06);o('m',98,98,t0,3,'sine',.05,.08);o('m',130.8,130.8,t0+.05,2.6,'triangle',.025,.1,0,1)}}catch(_){}}}catch(_){}}
- function end(){if(!I)return;cancelAnimationFrame(I.raf);{const t0=Date.now(),w=()=>{if(I)return;if(vpend>0&&Date.now()-t0<9000){setTimeout(w,250);return}try{VOX12.stop()}catch(_){}DUCK=1;talking=0;vpend=0;vol()};setTimeout(w,400)}removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
+ function end(){if(!I)return;cancelAnimationFrame(I.raf);uvEnd();{const t0=Date.now(),w=()=>{if(I)return;if(vpend>0&&Date.now()-t0<9000){setTimeout(w,250);return}try{VOX12.stop()}catch(_){}DUCK=1;talking=0;vpend=0;vol()};setTimeout(w,400)}removeEventListener('resize',fit);removeEventListener('keydown',blockKey,true);try{I.cv.remove()}catch(_){}I=null;
   try{if(!(typeof SHOW7!='undefined'&&SHOW7.isOpen))window.RB_COVER=false}catch(_){window.RB_COVER=false}try{startBGM()}catch(_){}/* the game's music takes over (it was held back during the story) */}
  function intro(done){if(I)return false;try{retime(reduce()?.6:1)}catch(e){console.error('CINE7 retime',e)}const red=reduce(),cv=mk(1,1);cv.id='cine7';cv.setAttribute('role','img');cv.setAttribute('aria-label','Story intro: Rootbound, Celestial Ascension');document.body.appendChild(cv);
-  I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);
+  I={cv,g:cv.getContext('2d',{alpha:false}),k:red?.6:1,red,el:0,u:0,last:performance.now(),prep:performance.now(),done,as:{},ev:score(),evi:0,fl:0,dk:0,sa:0,shx:0,shy:0,C:[800,450,1]};fit();I.q=Math.min(2,I.s*1.1);uvPrep();
   const r=srnd(99);I.stars=[];for(let i=0;i<260;i++)I.stars.push({x:-100+r()*1800,y:-300+r()*950,r:r()<.85?1.2+r()*1.3:2.4+r()*1.5,b:.4+r()*.6,sp:1+r()*3,ph:r()*6});I.big=[];for(let i=0;i<14;i++)I.big.push({x:-50+r()*1700,y:-280+r()*700,r:18+r()*26,ph:r()*6});
   I.motes=[];for(let i=0;i<64;i++)I.motes.push({x:r()*1600,y:r()*900,v:14+r()*36,r:5+r()*13,ph:r()*6,c:r()<.7?'#9ff6ff':'#ffe08a'});
   I.islF=[{a:'isl2',x:300,y:190,p:.6,sc:1,ph:1},{a:'isl3',x:1290,y:120,p:.6,sc:1,ph:2},{a:'isl4',x:1060,y:520,p:.6,sc:1,ph:3}];I.islN=[{a:'isl0',x:150,y:520,p:1.15,sc:1,ph:4},{a:'isl1',x:1460,y:380,p:1.15,sc:1,ph:5}];
@@ -1072,6 +1084,6 @@ const CINE7=(()=>{
   else if(k=='crack'){for(let i=0;i<4;i++)nz('s',t+i*.21,.09,'highpass',2200+R()*2000,0,v*.12,.001);o('s',1200,600,t,.8,'sine',v*.03,.05,0,1)}
   else if(k=='burst'){boom(t,v*.55);shatter(t+.02,v*.2);crash(t,v*.08);for(let i=0;i<7;i++)o('s',110+R()*90,50,t+.35+i*.15+R()*.05,.12,'triangle',v*.05,.003);[523,659,784,1047].forEach((f,i)=>o('s',f,f,t+1.1+i*.09,.6,'sine',v*.04,.004,0,1))}
   else if(k=='vuln'){o('s',660,990,t,.18,'triangle',v*.05,.003);o('s',990,1320,t+.09,.22,'sine',v*.04,.003)}})}
- return{launch,intro,bossIntro,bossSkip,bossBars,bossWin,bossLose,bossSfx,slow,get tS(){return tS},on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
+ return{uvState:()=>({ok:UV.ok,rs:UV.el?UV.el.readyState:-1,w:UV.el?UV.el.videoWidth:0,d:UV.el?UV.el.duration:0,ct:UV.el?UV.el.currentTime:0}),launch,intro,bossIntro,bossSkip,bossBars,bossWin,bossLose,bossSfx,slow,get tS(){return tS},on:true,get playing(){return !!I},get boss(){return B7&&B7.kind},get world(){return !!W7},
   seek(u){if(!I)return;I.el=cl(u,0,ST)*I.k;I.u=I.el/I.k;I.evi=I.ev.findIndex(e=>e[0]>=I.u);if(I.evi<0)I.evi=I.ev.length;for(const s of NEED)for(const n of s)try{as(n)}catch(_){}},
   get state(){return I?{u:I.u,scene:STORY[I.si|0][0],total:ST,k:I.k,rate:I.rate||1,vpend}:null},get VO(){return VO},retime,lake:()=>!!AB.m3r,STORY}})();
