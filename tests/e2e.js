@@ -24,7 +24,7 @@ const ev=(p,f,a)=>p.evaluate(f,a);
   ok('no host/join-room UI is present',await ev(A,()=>!/host a room|room code|join room/i.test(document.body.innerText)&&!document.querySelector('#bh,#bjoin,#rcode')));
   // owner signs in on A (verified by the server); B stays an ordinary guest
   await ev(A,()=>NET7.send({t:'login',name:'Creator',pass:'owner-pass-123456'}));
-  await A.waitForFunction(()=>NET7.owner,null,{timeout:8000}).catch(()=>{});
+  await A.waitForFunction(()=>typeof ACCT13!='undefined'&&ACCT13.live&&NET7.owner,null,{timeout:15000}).catch(()=>{});await sleep(500);await ev(A,()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});
   ok('owner login is recognised by the server',await ev(A,()=>NET7.owner));
   ok('Tools button visible for the owner',await ev(A,()=>{const b=document.getElementById('btools');return !!b&&getComputedStyle(b).display!='none'}));
   ok('Tools button absent for an ordinary guest',await ev(B,()=>{const b=document.getElementById('btools');return !b||getComputedStyle(b).display=='none'}));
@@ -56,7 +56,7 @@ const ev=(p,f,a)=>p.evaluate(f,a);
   await ev(A,()=>NET7.toOffline());await sleep(900);
   ok('B stays connected after A disconnects',await ev(B,()=>NET7.online&&NET7.world=='e2eworld'));
   // purchases: server-validated wallet + ownership, persisted across a restart
-  const E=await client(b,url,'E');await ev(E,()=>NET7.send({t:'login',name:'Creator',pass:'owner-pass-123456'}));await E.waitForFunction(()=>NET7.owner&&SHOP7.serverMode,null,{timeout:8000}).catch(()=>{});
+  const E=await client(b,url,'E');await ev(E,()=>NET7.send({t:'login',name:'Creator',pass:'owner-pass-123456'}));await E.waitForFunction(()=>typeof ACCT13!='undefined'&&ACCT13.live&&NET7.owner&&SHOP7.serverMode,null,{timeout:15000}).catch(()=>{});await sleep(500);await ev(E,()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});
   ok('signed-in client has a server wallet',await ev(E,()=>SHOP7.serverMode));
   await ev(E,()=>{gems=1500;NET7.send({t:'sync',gems:1500})});await sleep(700);
   const g1=await ev(E,()=>gems);ok('server accepted a small gem sync (rate-limited)',g1==1500,String(g1));
@@ -69,7 +69,7 @@ const ev=(p,f,a)=>p.evaluate(f,a);
   ok('B auto-reconnects after a server restart',await ev(B,()=>NET7.online&&NET7.world=='e2eworld'));
   ok('block still present after restart',await ev(B,k=>tiles[k]==3,K));
   ok('weather still galaxy after restart',await ev(B,()=>ENV7.target)=='galaxy');
-  const F=await client(b,url,'F');await ev(F,()=>NET7.send({t:'login',name:'Creator',pass:'owner-pass-123456'}));await F.waitForFunction(()=>NET7.owner&&SHOP7.serverMode,null,{timeout:8000}).catch(()=>{});await sleep(500);
+  const F=await client(b,url,'F');await ev(F,()=>NET7.send({t:'login',name:'Creator',pass:'owner-pass-123456'}));await F.waitForFunction(()=>typeof ACCT13!='undefined'&&ACCT13.live&&NET7.owner&&SHOP7.serverMode,null,{timeout:15000}).catch(()=>{});await sleep(500);await ev(F,()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});await sleep(500);
   const pr=await ev(F,()=>({has:SHOP7.has('wpn_frostbite'),gems}));ok('purchase + wallet persisted across the server restart',pr.has&&pr.gems==800,JSON.stringify(pr));
   const C=await client(b,url,'C');await ev(C,()=>NET7.go('e2eworld',false));await C.waitForFunction(()=>NET7.world=='e2eworld',null,{timeout:8000}).catch(()=>{});
   ok('late joiner receives saved world + weather',await ev(C,()=>ENV7.target)=='galaxy'&&await ev(C,k=>tiles[k]==3,K));

@@ -3213,6 +3213,18 @@ $('crnd').onclick=()=>{const p=a=>a[Math.random()*a.length|0];look={skin:p(SKINS
 
 
 
+/* ========== EARLY: 00-0-account.js ========== */
+// ===== RB_ACCT: every signed-in account has its own save. While one is active, each game key in this browser's storage is read and written under
+// "a_<account id>_", so a new account starts empty (level 1) whatever this computer has played before, and the offline save stays untouched under the plain
+// keys. This runs before anything reads a save. Device-wide keys keep their names: "rb_*", the sign-in token and the server address. Which account is active
+// is decided by ACCT13 (late), which reloads the page when it changes. =====
+const RB_ACCT=(()=>{let id='',ls=null,fz=false;try{ls=window.localStorage;id=ls.getItem('rb_acct')||''}catch(_){return{id:'',pre:'',free:()=>true,freeze(){}}}
+ if(!/^[A-Za-z0-9_-]{1,40}$/.test(id))id='';const pre=id?'a_'+id+'_':'',free=k=>/^rb_|^rbtok$|^rbsrv$|^a_/.test(k);
+ if(id){const S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem,mp=(o,k)=>{k=String(k);return o===ls&&!free(k)?pre+k:k};
+  S.getItem=function(k){return g.call(this,mp(this,k))};S.setItem=function(k,v){if(fz&&this===ls&&!free(String(k)))return;return s.call(this,mp(this,k),v)};S.removeItem=function(k){if(fz&&this===ls&&!free(String(k)))return;return r.call(this,mp(this,k))}}
+ // freeze: a save was just replaced and the page is reloading, so the game's save-on-close must not write the old state over it
+ return{id,pre,free,freeze(){fz=true}}})();
+
 /* ========== EARLY: 00-profile.js ========== */
 // ===== Single save: Rootbound is single-player and has no accounts, so every save key is used as-is. =====
 // Older versions kept account saves under an "a_<id>_" prefix. If the last session was an account and there is no plain save yet,
@@ -6655,7 +6667,7 @@ const NET7=(()=>{
   if(t=='server'){info={max:m.max,ownerConfigured:m.ownerConfigured};lastPong=Date.now();startPing();beginAuth();return}
   if(t=='pong'){lastPong=Date.now();return}
   if(HH[t]){try{HH[t](m)}catch(e){console.error(e)}return}
-  if(t=='auth'){if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
+  if(t=='auth'){try{if(typeof ACCT13!='undefined'&&ACCT13.auth(m)){if(ws){ws.onmessage=null;ws.onclose=null}return}}catch(e){console.error(e)}if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
    const was=auth;auth={uid:m.uid,name:m.name,kind:m.kind,owner:!!m.owner};if(m.token&&m.kind!='guest')lsSet('rbtok',m.token);tries=0;D.stage('net-auth',m.kind);
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
@@ -6716,8 +6728,8 @@ const NET7=(()=>{
   h+='</div>';el.innerHTML=h;const b=id=>el.querySelector('#'+id);
   if(b('nco'))b('nco').onclick=()=>{const v=b('nsrv').value.trim();if(!v)return;lsSet('rbsrv',v);authDone.g=0;connect(norm(v),true)};
   if(b('nsrv'))b('nsrv').onkeydown=e=>{if(e.key=='Enter')b('nco').click()};
-  if(b('ndc'))b('ndc').onclick=()=>{toOffline();say('Disconnected. Playing offline.')};
-  if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
+  if(b('ndc'))b('ndc').onclick=()=>{try{if(ACCT13.leave(true))return}catch(_){}toOffline();say('Disconnected. Playing offline.')};
+  if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
   if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
  async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:''},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
   authDone.g=1;send({t:reg?'register':'login',name:v.n,pass:v.p});
@@ -6737,7 +6749,7 @@ const NET7=(()=>{
  // HUD status chip text
  function chip(n){if(SOLO)return'';if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
  // boot: try to discover a server without ever blocking the game
- async function boot(){try{const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
+ async function boot(){try{let off=false;try{off=!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
  return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW}}})();
 
@@ -8313,9 +8325,9 @@ const UI6=(()=>{
  function applyUi(){const s=cel.opt.ui;for(const id of['hudL','bar','skills','quest','hudR'])el(id)&&(el(id).style.zoom=s);$('fps').style.display=cel.opt.fpsShow?'block':'none'}
  // ---- account / save export & import
  function exportAll(){const o={app:'rootbound',v:1,keys:{}};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(RB_PREFIX)&&!/^pending_/.test(k)){const b=k.slice(RB_PREFIX.length);if(/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)/.test(b)&&!b.startsWith('rbp_corrupt'))o.keys[b]=localStorage.getItem(b)}}return JSON.stringify(o)}
- function importAll(txt){const o=JSON.parse(txt);if(!o||o.app!='rootbound'||typeof o.keys!='object')throw Error('Not a Rootbound backup');let n=0;for(const k in o.keys){if(!/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)[A-Za-z0-9_-]{0,40}$/.test(k)||typeof o.keys[k]!='string'||o.keys[k].length>4e6)continue;try{if(k!='rbid')JSON.parse(o.keys[k])}catch(_){continue}if(k!='rbid')JSON.parse(o.keys[k]);localStorage.setItem(k,o.keys[k]);n++}return n}
+ function importAll(txt){try{if(NET7.online||RB_ACCT.id)throw Error('online')}catch(e){if(e.message=='online')throw Error('Save files cannot be imported while online')}const o=JSON.parse(txt);if(!o||o.app!='rootbound'||typeof o.keys!='object')throw Error('Not a Rootbound backup');let n=0;for(const k in o.keys){if(!/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)[A-Za-z0-9_-]{0,40}$/.test(k)||typeof o.keys[k]!='string'||o.keys[k].length>4e6)continue;try{if(k!='rbid')JSON.parse(o.keys[k])}catch(_){continue}if(k!='rbid')JSON.parse(o.keys[k]);localStorage.setItem(k,o.keys[k]);n++}return n}
  // save backup (the game is single-player: one save on this computer)
- function account(){body.innerHTML='<h3>Save Data</h3><p>Your progress is saved automatically on this computer.</p><div class="hrow"><button class="hbtn" id="aex">Export save file</button><button class="hbtn" id="aim">Import save file</button></div><input type="file" id="afile" accept=".json,application/json" style="display:none"><div id="amsg" class="dim"></div><p class="dim">Export a backup now and then, so you can bring your progress back if anything happens to this computer.</p>';
+ function account(){if((()=>{try{return NET7.online||!!RB_ACCT.id}catch(_){return false}})()){body.innerHTML='<h3>Save Data</h3><p>Your progress is saved on the server with your account.</p>';return}body.innerHTML='<h3>Save Data</h3><p>Your progress is saved automatically on this computer.</p><div class="hrow"><button class="hbtn" id="aex">Export save file</button><button class="hbtn" id="aim">Import save file</button></div><input type="file" id="afile" accept=".json,application/json" style="display:none"><div id="amsg" class="dim"></div><p class="dim">Export a backup now and then, so you can bring your progress back if anything happens to this computer.</p>';
   el('aex').onclick=()=>{try{saveP();celSave()}catch(_){}const b=new Blob([exportAll()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rootbound-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
   el('aim').onclick=()=>el('afile').click();el('afile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const n=importAll(String(r.result));el('amsg').textContent='Imported '+n+' entries. Reloading...';setTimeout(()=>location.reload(),700)}catch(er){el('amsg').textContent='Import failed: '+er.message}};r.readAsText(f)}}
  applyUi();
@@ -13882,7 +13894,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   const S={
    general:row('sth','Theme','Clean white and grey (fastest), aqua glass, pearl daylight or the plum night palette',sel('sth',[['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'clean'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
-    +row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>'),
+    +((()=>{try{return NET7.online||!!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
@@ -13915,7 +13927,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   // general
   q('sth').onchange=e=>{o.theme=e.target.value;celSave()};
   q('snm').onchange=e=>{const n=e.target.value.trim().slice(0,14);if(n){myName=n;try{$('nm').value=n;saveP()}catch(_){}}else e.target.value=myName};q('snm').onkeydown=e=>e.stopPropagation();
-  q('ssd').onclick=()=>UI6.open('account');
+  if(q('ssd'))q('ssd').onclick=()=>UI6.open('account');
   // graphics
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
@@ -19625,6 +19637,41 @@ const ONL10=(()=>{
   for(const e of o.querySelectorAll('.mine10'))e.onclick=async ev=>{const rel=ev.target.closest('[data-rel]');if(!rel)return enterWorld(e.dataset.mw);if(await DLG7.confirm('Release “'+rel.dataset.rel+'”?','It stays saved, but it is no longer yours and anyone can claim it.','Release'))NET7.send({t:'world_release',w:rel.dataset.rel})}}
  {const _r=renderWorlds;renderWorlds=function(){const r=_r.apply(this,arguments);try{panels()}catch(e){console.error('ONL10 panels',e)}return r}}
  return{drop,wrench:wrenchAt,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();
+
+/* ========== LATE: 99-zzzzzzzzz-k-accounts.js ========== */
+// ===== ACCT13: each account's progress lives on the server, so it follows the account to any computer and a reset really starts everyone over. Signing in
+// makes that account's save the active one (RB_ACCT) and reloads the page; a new account has nothing saved, so it starts at level 1. While you play, the save
+// is sent to the server every 30 s when it has changed (not your local worlds, the backup copy or god mode). The server's copy wins: if it is newer (another
+// computer) it replaces this one, and if the server was reset (gen) this copy is wiped. The server cannot watch gameplay, so it stores what the game reports. =====
+const ACCT13=(()=>{
+ const ID=RB_ACCT.id,PRE=RB_ACCT.pre,LS=(()=>{try{return localStorage}catch(_){return null}})(),SKIP=/^(rbw_|rbidx|rbid$|rbp_bak|rbp_corrupt|rbcr|rbprof)/,CH=20000;
+ let base=0,last='',live=false,seq=0,asked=false;
+ const reload=()=>{try{location.reload()}catch(_){}};
+ const setActive=u=>{try{u?LS.setItem('rb_acct',u):LS.removeItem('rb_acct')}catch(_){}};
+ function names(){const out=[];for(let i=0;i<LS.length;i++){const k=LS.key(i);if(k&&k.startsWith(PRE))out.push(k.slice(PRE.length))}return out}
+ function gather(){const o={};for(const n of names())if(!SKIP.test(n)&&!RB_ACCT.free(n)){const v=LS.getItem(n);if(typeof v=='string')o[n]=v}return o}
+ function wipe(){for(const n of names())LS.removeItem(n)}
+ function upload(force){if(!live||!ID)return;try{if(CRV8.on)return}catch(_){}try{saveP()}catch(_){}try{celSave()}catch(_){}
+  const s=JSON.stringify(gather());if(s===last&&!force)return;if(s.length>1.2e6){console.warn('ACCT13: save too large to upload',s.length);return}
+  last=s;const id=++seq,n=Math.max(1,Math.ceil(s.length/CH));for(let i=0;i<n;i++)NET7.send({t:'prof_put',id,i,n,base,d:s.slice(i*CH,(i+1)*CH)})}
+ // called by NET7 for every auth answer; true = the page is reloading, stop here
+ function auth(m){if(!LS)return false;
+  if(!m.ok){if(ID&&m.expired){try{LS.removeItem('rbtok')}catch(_){}setActive('');reload();return true}return false}
+  if(m.kind=='guest'){if(ID){setActive('');reload();return true}return false}
+  if(m.uid!==ID){try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}setActive(m.uid);reload();return true}
+  const g=m.gen|0,lg=LS.getItem('rbprofgen');if(lg!=null&&+lg!==g){wipe();LS.setItem('rbprofgen',String(g));LS.setItem('rbprofrev','0');try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}RB_ACCT.freeze();reload();return true}LS.setItem('rbprofgen',String(g));
+  const srv=m.prev|0,mine=+LS.getItem('rbprofrev')||0;base=srv;
+  if(srv>mine){asked=true;setTimeout(()=>NET7.send({t:'prof_get'}),0);return false}   // another computer saved something newer
+  live=true;setTimeout(()=>upload(true),4000);return false}
+ NET7.on('prof',m=>{if(!ID||!m.keys||typeof m.keys!='object')return;live=false;for(const n of names())if(!SKIP.test(n)||/^rbprof/.test(n))LS.removeItem(n);for(const k in m.keys){if(typeof m.keys[k]=='string'&&!RB_ACCT.free(k)&&!SKIP.test(k))LS.setItem(k,m.keys[k])}LS.setItem('rbprofrev',String(m.rev|0));LS.setItem('rbprofgen',String(m.gen|0));RB_ACCT.freeze();reload()});
+ NET7.on('prof_ok',m=>{base=m.rev|0;LS.setItem('rbprofrev',String(base))});
+ NET7.on('prof_stale',()=>{live=false;NET7.send({t:'prof_get'})});
+ setInterval(()=>upload(false),30000);addEventListener('beforeunload',()=>{try{if(live)upload(false)}catch(_){}});
+ // gems an earlier version moved from this computer's own save to "pending" for an account come back to it (accounts have their own saves now)
+ if(!ID)setTimeout(()=>{try{const q=SHOP7.st;if(q&&q.pend>0){gems=(gems|0)+(q.pend|0);q.pend=0;SHOP7.save();saveP()}}catch(_){}},1500);
+ // sign out / disconnect: back to this computer's own save
+ function leave(stayOff){try{upload(false)}catch(_){}live=false;if(stayOff)try{sessionStorage.setItem('rb_stayoff','1')}catch(_){}if(ID){setActive('');reload();return true}return false}
+ return{auth,leave,upload,get live(){return live},get base(){return base},get active(){return ID}}})();
 
 
 </script></body></html>

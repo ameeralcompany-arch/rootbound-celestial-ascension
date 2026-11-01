@@ -3,6 +3,7 @@
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),zlib=require('zlib');
 const ENV=process.env;
+const ACCOUNT_GEN=1;   // raise this by one to reset every account again when the server next starts
 const WB_GEMS=[3000,7000,12000,18000,28000],WB_DAY=10;   // what each realm's world boss pays (src/js/late/99-zzzzzzzzz-i-worldboss.js)
 function createServer(opts={}){
  const cfg=Object.assign({port:+ENV.PORT||8787,host:ENV.HOST||'0.0.0.0',dataDir:ENV.DATA_DIR||path.join(__dirname,'data'),client:ENV.CLIENT_FILE||path.join(__dirname,'..','index.html'),
@@ -24,6 +25,11 @@ function createServer(opts={}){
  const userById=id=>Object.values(accounts.users).find(u=>u.id==id);
  const isOwnerUid=uid=>!!(owner&&owner.ownerUid&&uid===owner.ownerUid);
  // Free hosts have no shell for cli.js: OWNER_NAME + OWNER_PASSWORD (set in the host's dashboard, never in the repo) create or claim the single owner account at boot. Only a scrypt hash is stored; the id comes from the name, so it survives a lost disk.
+ // one-time reset, run once per resetGen: every account and session goes (the owner is recreated just below), worlds stay but belong to nobody.
+ (function resetAccounts(){const g=cfg.resetGen|0;if(!g||(accounts.gen|0)>=g)return;accounts.users={};accounts.gen=g;sess={};owner=null;
+  for(const f of fs.readdirSync(store.p('worlds')).filter(x=>x.endsWith('.json'))){const p=store.p('worlds',f),j=store.readJSON(p,null);if(j&&(j.ownerUid||j.ownerName||j.meta)){j.ownerUid='';j.ownerName='';j.meta=null;store.writeJSON(p,j)}}
+  for(const f of fs.readdirSync(store.p('profiles')).filter(x=>x.endsWith('.json'))){const p=store.p('profiles',f);try{fs.rmSync(p,{force:true});fs.rmSync(p+'.bak',{force:true})}catch(_){}try{if(cfg.cloud)cfg.cloud.forget(p)}catch(_){}}
+  store.writeJSON(store.p('accounts.json'),accounts);store.writeJSON(store.p('sessions.json'),sess);store.writeJSON(store.p('owner.json'),null);store.audit({ev:'accounts-reset',gen:g});console.log('All accounts were reset (generation '+g+')')})();
  (function ownerFromEnv(){const n=cfg.ownerName,pw=cfg.ownerPass;if(!n&&!pw)return;if(!nameOk(n)||String(pw).length<12){console.error('OWNER_NAME must be 3-16 letters, numbers, _ or - and OWNER_PASSWORD at least 12 characters: owner not set');return}const k=nameKey(n);let u=accounts.users[k];
   if(!u)u=accounts.users[k]={id:'a'+crypto.createHash('sha256').update('rb-owner:'+k).digest('hex').slice(0,8),name:n,pw:hashPw(pw),role:'owner',created:Date.now(),worlds:[]};else if(!checkPw(pw,u.pw))u.pw=hashPw(pw);u.role='owner';
   owner={ownerUid:u.id,name:u.name,set:new Date().toISOString()};store.writeJSON(store.p('accounts.json'),accounts);store.writeJSON(store.p('owner.json'),owner)})();
@@ -114,7 +120,7 @@ function createServer(opts={}){
  const authFail={};
  function loginThrottle(key,lim){const a=authFail[key];if(a&&a.until&&Date.now()>a.until){delete authFail[key];return false}return !!a&&a.n>=lim}
  function failed(key,lim){const a=authFail[key]||(authFail[key]={n:0,until:0});a.n++;if(a.n>=lim)a.until=Date.now()+60000}
- function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token});signedIn(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
+ function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token,gen:accounts.gen|0,prev:(u.prof&&u.prof.rev)|0});signedIn(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
  // what every sign-in gets: wallet, bag, the owner's god mode if it was left on, the owned-world list
  function signedIn(s,u){sendWallet(s,u);eco.signedIn(s,u);s.god=!!(s.owner&&u.god);if(s.god)send(s,{t:'god',on:1});sendMine(s)}
  function sendWallet(s,u){if(!u)return;send(s,Object.assign({t:'wallet'},SHOP.view(u)))}
@@ -138,7 +144,7 @@ function createServer(opts={}){
    setAuth(s,u);return}
   case 'resume':{if(!bucket(s,'auth',10,60000))return;const rec=sess[hashTok(String(m.token||''))];if(!rec||rec.exp<Date.now())return send(s,{t:'auth',ok:0,m:'Session expired',expired:1});const u=userById(rec.uid);if(!u||banned(u.id)||(ipBanned(s.ip)&&!isOwnerUid(u.id)))return send(s,{t:'auth',ok:0,m:'Account unavailable'});
    for(const o of sessions.values())if(o.uid==u.id&&o!==s){send(o,{t:'_kick',m:'Signed in from another place'});o.conn.close(1000)}
-   s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1});signedIn(s,u);return}
+   s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1,gen:accounts.gen|0,prev:(u.prof&&u.prof.rev)|0});signedIn(s,u);return}
   case 'logout':{const h=hashTok(String(m.token||''));if(sess[h]){delete sess[h];saveSess()}return}
   }
   if(!s.uid)return;// everything below requires an identity (account or guest)
@@ -153,6 +159,11 @@ function createServer(opts={}){
    if(s.kind=='guest')return send(s,{t:'buy_res',ok:0,m:'Sign in to buy items in shared worlds',rid:String(m.rid||'')});
    const u=userById(s.uid);if(!u)return;const r=SHOP.buy(u,CAT,m);if(r.ok&&!r.dup){saveAcc();store.audit({ev:'buy',uid:s.uid,id:r.id,qty:r.qty,spent:r.spent})}send(s,Object.assign({t:'buy_res'},r));return}
   case 'admin':{if(!bucket(s,'admin',30,10000))return;return adminOp(s,m)}
+  // each account's save: the game's own keys, sent in pieces when they change. A copy based on an older version than the server's is refused (another computer saved since).
+  case 'prof_put':{if(s.kind=='guest'||!bucket(s,'prof',120,60000))return;const u=userById(s.uid),i=m.i|0,n=m.n|0;if(!u||n<1||n>80||i<0||i>=n||typeof m.d!='string')return;let q=s.pput;if(!q||q.id!==m.id||q.n!==n)q=s.pput={id:m.id,n,parts:[],got:0};if(q.parts[i]==null){q.parts[i]=m.d;q.got++}if(q.got<n)return;s.pput=null;
+   const txt=q.parts.join('');if(txt.length>1.5e6)return;let keys;try{keys=JSON.parse(txt)}catch(_){return}if(!keys||typeof keys!='object'||Array.isArray(keys))return;for(const k in keys)if(!/^[A-Za-z0-9_.:-]{1,64}$/.test(k)||typeof keys[k]!='string')return;
+   const rev=(u.prof&&u.prof.rev)|0;if((m.base|0)!==rev)return send(s,{t:'prof_stale',rev});u.prof={rev:rev+1};store.writeJSON(store.p('profiles',u.id+'.json'),{rev:rev+1,keys,t:Date.now()});saveAcc();return send(s,{t:'prof_ok',rev:rev+1})}
+  case 'prof_get':{if(s.kind=='guest'||!bucket(s,'profg',12,60000))return;const u=userById(s.uid);if(!u)return;const j=store.readJSON(store.p('profiles',u.id+'.json'),null);if(j&&j.keys)send(s,{t:'prof',rev:j.rev|0,gen:accounts.gen|0,keys:j.keys});return}
   // world boss wins: the fight runs on the player's computer, so the server can only limit what a win is worth: once per world, at most WB_DAY a day, not
   // sooner than wbMinMs after the fight began. Too fast or over the limit just means the gems arrive at the normal rate instead.
   case 'wb':{if(s.kind=='guest'||!bucket(s,'wb',10,60000))return;const u=userById(s.uid),id=s.world;if(!u||!id||id=='plaza')return;if(m.op=='start'){s.wbT={w:id,t:Date.now()};return}if(m.op!='win')return;const st=s.wbT;s.wbT=null;if(!st||st.w!==id||Date.now()-st.t<cfg.wbMinMs)return;
@@ -207,5 +218,5 @@ module.exports={createServer};
 if(require.main===module)(async()=>{const dir=ENV.DATA_DIR||path.join(__dirname,'data'),cloud=require('./cloud').fromEnv(dir);
  // the saves must be back on disk before anything reads them; if the database cannot be reached, stop (the host restarts us) rather than start empty and overwrite it
  if(cloud){const n=await cloud.restore();console.log('Cloud saves restored: '+n+' files')}else console.log('No cloud store set: saves live only in '+dir);
- const s=createServer({cloud});const p=await s.listen();console.log('Rootbound server on http://localhost:'+p+'  (data: '+s.cfg.dataDir+')');const ow=s.store.readJSON(s.store.p('owner.json'),null);console.log(ow?'Owner account configured: '+ow.name:'WARNING: no owner configured. Set OWNER_NAME + OWNER_PASSWORD or run: node server/cli.js set-owner <AccountName>');
+ const s=createServer({cloud,resetGen:ACCOUNT_GEN});const p=await s.listen();console.log('Rootbound server on http://localhost:'+p+'  (data: '+s.cfg.dataDir+')');const ow=s.store.readJSON(s.store.p('owner.json'),null);console.log(ow?'Owner account configured: '+ow.name:'WARNING: no owner configured. Set OWNER_NAME + OWNER_PASSWORD or run: node server/cli.js set-owner <AccountName>');
  const stop=()=>{s.close().then(()=>process.exit(0))};process.on('SIGINT',stop);process.on('SIGTERM',stop)})().catch(e=>{console.error('Server failed to start:',e.message);process.exit(1)});

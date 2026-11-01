@@ -11,7 +11,7 @@ async function client(b,url,tag){const ctx=await b.newContext({viewport:{width:1
  await p.goto(url);await p.waitForTimeout(800);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(400);await p.evaluate(()=>{try{SHOW7.close()}catch(_){}});
  await p.waitForFunction(()=>NET7.online,null,{timeout:15000});return p}
 const ev=(p,f,a)=>p.evaluate(f,a);
-const signup=async(p,name,pass)=>{await ev(p,([n,w])=>NET7.send({t:'register',name:n,pass:w}),[name,pass||name+'-password']);await p.waitForFunction(n=>NET7.auth&&NET7.auth.name==n,name,{timeout:8000})};
+const signup=async(p,name,pass)=>{await ev(p,([n,w])=>NET7.send({t:'register',name:n,pass:w}),[name,pass||name+'-password']);await p.waitForFunction(n=>typeof NET7!='undefined'&&NET7.auth&&NET7.auth.name==n,name,{timeout:15000});await p.waitForFunction(()=>typeof RB_ACCT!='undefined'&&!!RB_ACCT.id&&NET7.online&&NET7.auth&&NET7.auth.uid==RB_ACCT.id,null,{timeout:15000});await p.waitForTimeout(400);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});await p.waitForTimeout(300)};
 const go=async(p,w,c)=>{await ev(p,([w,c])=>NET7.go(w,c),[w,c]);await p.waitForFunction(w=>NET7.world==w&&cur==w,w,{timeout:8000}).catch(()=>{});await p.waitForTimeout(300)};
 const cmd=(p,t)=>ev(p,t=>SOC6.cmd(t),t);
 const hash=p=>ev(p,()=>{let h=0;for(let i=0;i<tiles.length;i++)h=(h*31+tiles[i])|0;return h});
@@ -21,7 +21,7 @@ const hash=p=>ev(p,()=>{let h=0;for(let i=0;i<tiles.length;i++)h=(h*31+tiles[i])
   ok('the page served by the server goes online by itself',await ev(A,()=>NET7.online));
   ok('no creative button in the main menu for anyone',await ev(A,()=>!document.getElementById('bcr')&&!CRV8.on));
   await ev(A,()=>{UI6.open&&UI6.open('settings')});await sleep(300);ok('no game-mode switch in Settings',await ev(A,()=>!document.getElementById('crv8s')));await ev(A,()=>{try{UI6.close&&UI6.close()}catch(_){}});
-  await signup(A,'annie');await signup(B,'beatrix');await ev(O,p=>NET7.send({t:'login',name:'Boss',pass:p}),PW);await O.waitForFunction(()=>NET7.owner,null,{timeout:8000});
+  await signup(A,'annie');await signup(B,'beatrix');await ev(O,p=>NET7.send({t:'login',name:'Boss',pass:p}),PW);await O.waitForFunction(()=>typeof RB_ACCT!='undefined'&&RB_ACCT.id&&NET7.owner,null,{timeout:8000});
   // ---- worlds: same terrain for everyone, owned
   await go(A,'annland',true);await go(B,'annland');await go(O,'annland');await sleep(500);
   ok('the world creator owns it, and the client knows',await ev(A,()=>canEdit()&&RB_OWN.on=='annie'));

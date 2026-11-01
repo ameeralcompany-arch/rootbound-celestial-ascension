@@ -33,7 +33,7 @@ const NET7=(()=>{
   if(t=='server'){info={max:m.max,ownerConfigured:m.ownerConfigured};lastPong=Date.now();startPing();beginAuth();return}
   if(t=='pong'){lastPong=Date.now();return}
   if(HH[t]){try{HH[t](m)}catch(e){console.error(e)}return}
-  if(t=='auth'){if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
+  if(t=='auth'){try{if(typeof ACCT13!='undefined'&&ACCT13.auth(m)){if(ws){ws.onmessage=null;ws.onclose=null}return}}catch(e){console.error(e)}if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
    const was=auth;auth={uid:m.uid,name:m.name,kind:m.kind,owner:!!m.owner};if(m.token&&m.kind!='guest')lsSet('rbtok',m.token);tries=0;D.stage('net-auth',m.kind);
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
@@ -94,8 +94,8 @@ const NET7=(()=>{
   h+='</div>';el.innerHTML=h;const b=id=>el.querySelector('#'+id);
   if(b('nco'))b('nco').onclick=()=>{const v=b('nsrv').value.trim();if(!v)return;lsSet('rbsrv',v);authDone.g=0;connect(norm(v),true)};
   if(b('nsrv'))b('nsrv').onkeydown=e=>{if(e.key=='Enter')b('nco').click()};
-  if(b('ndc'))b('ndc').onclick=()=>{toOffline();say('Disconnected. Playing offline.')};
-  if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
+  if(b('ndc'))b('ndc').onclick=()=>{try{if(ACCT13.leave(true))return}catch(_){}toOffline();say('Disconnected. Playing offline.')};
+  if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
   if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
  async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:''},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
   authDone.g=1;send({t:reg?'register':'login',name:v.n,pass:v.p});
@@ -115,6 +115,6 @@ const NET7=(()=>{
  // HUD status chip text
  function chip(n){if(SOLO)return'';if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
  // boot: try to discover a server without ever blocking the game
- async function boot(){try{const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
+ async function boot(){try{let off=false;try{off=!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
  return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW}}})();

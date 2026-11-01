@@ -4,13 +4,13 @@
 // writes are batched so a busy world costs a few commands a minute (the free plan allows 500,000 a month). Node 18+ global fetch, no dependencies.
 const fs=require('fs'),path=require('path');
 const KEY='rb:data',DELAY=20000,MAX_BATCH=8e6;
-const SAFE=/^([a-z]+\.json|worlds\/[a-z0-9_-]+\.json)$/;
+const SAFE=/^([a-z]+\.json|worlds\/[a-z0-9_-]+\.json|profiles\/[A-Za-z0-9_-]+\.json)$/;
 class Cloud{
  constructor(url,token,dir,delay){this.url=String(url).replace(/\/+$/,'');this.token=token;this.dir=dir;this.delay=delay==null?DELAY:delay;this.pend=new Map();this.t=null}
  async cmd(a){const r=await fetch(this.url,{method:'POST',headers:{Authorization:'Bearer '+this.token,'Content-Type':'application/json'},body:JSON.stringify(a)});if(!r.ok)throw new Error('cloud store answered '+r.status);const j=await r.json();if(j.error)throw new Error(j.error);return j.result}
  rel(file){return path.relative(this.dir,file).split(path.sep).join('/')}
  // fills the data folder from the database. Throws when the database cannot be read: starting empty would later overwrite everyone's saves.
- async restore(){const a=await this.cmd(['HGETALL',KEY]);let n=0;if(!Array.isArray(a))return 0;fs.mkdirSync(path.join(this.dir,'worlds'),{recursive:true});
+ async restore(){const a=await this.cmd(['HGETALL',KEY]);let n=0;if(!Array.isArray(a))return 0;fs.mkdirSync(path.join(this.dir,'worlds'),{recursive:true});fs.mkdirSync(path.join(this.dir,'profiles'),{recursive:true});
   for(let i=0;i+1<a.length;i+=2){if(!SAFE.test(a[i]))continue;fs.writeFileSync(path.join(this.dir,...a[i].split('/')),a[i+1]);n++}return n}
  put(file,str){const r=this.rel(file);if(!SAFE.test(r))return;this.pend.set(r,str);this.arm()}
  forget(file){const r=this.rel(file);if(!SAFE.test(r))return;this.pend.set(r,null);this.arm()}

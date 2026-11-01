@@ -2,7 +2,7 @@
 // Durable storage: atomic JSON writes with .bak copies, corrupt-file quarantine, append-only audit log.
 const fs=require('fs'),path=require('path');
 class Store{
- constructor(dir){this.dir=dir;fs.mkdirSync(path.join(dir,'worlds'),{recursive:true});this.timers=new Map()}
+ constructor(dir){this.dir=dir;fs.mkdirSync(path.join(dir,'worlds'),{recursive:true});fs.mkdirSync(path.join(dir,'profiles'),{recursive:true});this.timers=new Map()}
  p(...a){return path.join(this.dir,...a)}
  readJSON(file,def){const tryRead=f=>JSON.parse(fs.readFileSync(f,'utf8'));
   try{return tryRead(file)}catch(e){

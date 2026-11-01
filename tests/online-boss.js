@@ -10,7 +10,7 @@ async function client(b,url,tag){const ctx=await b.newContext({viewport:{width:1
  await p.goto(url);await p.waitForTimeout(800);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(400);await p.evaluate(()=>{try{SHOW7.close()}catch(_){}});
  await p.waitForFunction(()=>NET7.online,null,{timeout:15000});return p}
 const ev=(p,f,a)=>p.evaluate(f,a);
-const signup=async(p,name)=>{await ev(p,([n,w])=>NET7.send({t:'register',name:n,pass:w}),[name,name+'-password']);await p.waitForFunction(n=>NET7.auth&&NET7.auth.name==n,name,{timeout:8000})};
+const signup=async(p,name)=>{await ev(p,([n,w])=>NET7.send({t:'register',name:n,pass:w}),[name,name+'-password']);await p.waitForFunction(n=>typeof NET7!='undefined'&&NET7.auth&&NET7.auth.name==n,name,{timeout:15000});await p.waitForFunction(()=>typeof RB_ACCT!='undefined'&&!!RB_ACCT.id&&NET7.online&&NET7.auth&&NET7.auth.uid==RB_ACCT.id,null,{timeout:15000});await p.waitForTimeout(400);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});await p.waitForTimeout(300)};
 const go=async(p,w,c)=>{await ev(p,([w,c])=>NET7.go(w,c),[w,c]);await p.waitForFunction(w=>NET7.world==w&&cur==w,w,{timeout:8000}).catch(()=>{});await p.waitForTimeout(400)};
 const until=async(p,f,ms,a)=>{const t0=Date.now();while(Date.now()-t0<(ms||15000)){if(await ev(p,f,a))return true;await sleep(120)}return false};
 const tilesOn=p=>ev(p,()=>{let n=0;for(let i=0;i<tiles.length;i++)if(tiles[i])n++;return n});
