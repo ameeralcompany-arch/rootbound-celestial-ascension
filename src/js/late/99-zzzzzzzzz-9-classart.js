@@ -167,7 +167,7 @@ const CLART=(()=>{
    '\n#cls9 .c9c.on{box-shadow:0 0 0 1px var(--l,#fff),0 0 16px -4px var(--m,#fff)}#cls9 .c9c b,#cls9 .c9c small,#cls9 .c9c em{text-shadow:0 1px 3px rgba(0,0,0,.85)}'+
    '\n#bcls.clart{background-size:cover;background-position:center;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);border-color:var(--clart-l,rgba(255,255,255,.5))}';if(css.textContent!==txt)css.textContent=txt}
  const busy=()=>typeof CINE7!='undefined'&&CINE7.playing;
- let qi=null;function warm(){if(qi)return;qi=A.KEYS.slice();const step=dl=>{if(busy()){setTimeout(()=>ric(step),1500);return}try{do{mini(qi.shift())}while(qi.length&&dl&&dl.timeRemaining&&dl.timeRemaining()>6)}catch(_){qi.length=0}if(qi.length)ric(step);else sheet()};ric(step)}
+ let qi=null;function warm(){if(qi)return;qi=A.KEYS.slice();const step=dl=>{if(busy()){setTimeout(()=>ric(step),1500);return}if(dl&&(dl.didTimeout||dl.timeRemaining()<10)){ric(step);return}const t0=performance.now();try{mini(qi.shift())}catch(_){qi.length=0}if(performance.now()-t0>45)qi.length=0;if(qi.length)setTimeout(()=>ric(step),60);else sheet()};ric(step)}
  const ric=f=>typeof requestIdleCallback=='function'?requestIdleCallback(f,{timeout:4000}):setTimeout(f,80);
  setTimeout(warm,6000);
  // the CLASSES button wears the current class's world

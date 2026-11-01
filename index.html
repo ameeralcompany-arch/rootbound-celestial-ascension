@@ -2167,6 +2167,20 @@ html[data-skin=aero][data-reduce=true] #hudR .pn:hover,html[data-skin=aero][data
 html[data-skin=aero] .rb-toggle{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(255,255,255,.08))!important;border:1px solid rgba(150,235,255,.35)!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.55)!important}
 html[data-skin=aero] .rb-toggle:checked{background:linear-gradient(180deg,#a8f6ff 0%,#3fd8ff 46%,#0096dc 54%,#00b8f0 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 0 14px -2px rgba(0,210,255,.85)!important}
 html[data-skin=aero] .rb-toggle:after{background:radial-gradient(circle at 40% 30%,#fff 0,#e6fbff 45%,#9fdcf0 100%)!important;box-shadow:0 1px 3px rgba(0,0,0,.5)!important}
+/* performance: a live backdrop blur over the moving game is re-computed every frame (it cost ~10 FPS in heavy fights), so the
+   always-on HUD uses baked glass (the same gloss and glow, a slightly denser surface, no live blur); panels you open keep the real blur */
+html[data-skin=aero] body .pn,html[data-skin=aero] #hudL,html[data-skin=aero] #wl9,html[data-skin=aero] #toast7 .t7,html[data-skin=aero] #bar .s6,html[data-skin=aero] #quest,html[data-skin=aero] #mini{
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-skin=aero] body .pn,html[data-skin=aero] #hudL,html[data-skin=aero] #wl9,html[data-skin=aero] #toast7 .t7{
+ background:radial-gradient(260px circle at var(--mx,50%) var(--my,-70%),rgba(175,246,255,.3),rgba(175,246,255,0) 70%),
+  linear-gradient(180deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.1) 36%,rgba(255,255,255,0) 50%),linear-gradient(175deg,rgba(40,140,200,.62),rgba(12,62,118,.72) 46%,rgba(6,32,70,.82))!important}
+html[data-skin=aero] #hubc,html[data-skin=aero] #dlg7 .box,html[data-skin=aero] #store7 .shell,html[data-skin=aero] #tools7 .sheet,html[data-skin=aero] #chestui,html[data-skin=aero] #inv7 .sheet,html[data-skin=aero] #dlg,html[data-skin=aero] #menu #card,html[data-skin=aero] #book7{
+ backdrop-filter:blur(16px) saturate(1.5)!important;-webkit-backdrop-filter:blur(16px) saturate(1.5)!important}
+/* performance: always-on HUD cards repaint often (numbers, quests, toasts), so they get slimmer shadows (one soft drop + the specular
+   rim, no wide inner glow) and a single text glow; panels you open keep the full layered recipe */
+html[data-skin=aero] body .pn,html[data-skin=aero] #hudL,html[data-skin=aero] #wl9,html[data-skin=aero] #toast7 .t7{
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,40,80,.35),0 8px 20px -6px rgba(0,0,0,.45)!important}
+html[data-skin=aero] body .pn,html[data-skin=aero] #hudR .pn,html[data-skin=aero] #hudL b{text-shadow:0 0 6px rgba(0,210,255,.5)}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -7641,7 +7655,7 @@ const STORE7=(()=>{
  function btn(){if(document.getElementById('bstore'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bstore';b.className='pn';b.textContent='STORE';b.title='Open the item store';b.onclick=()=>isOpen()?close():open();hr.insertBefore(b,hr.firstChild)}
  btn();if(document.readyState!='complete')addEventListener('load',btn);
  // the item previews are drawn on first use (the first open used to stall ~0.3 s): draw them in idle moments after you enter a world
- {let q=null;const step=d=>{/* never during a cinematic (see 88-inventory.js) */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:4000}),1500);return}try{while(q.length&&d.timeRemaining()>4)thumb(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:4000})};
+ {let q=null;const step=d=>{/* never during a cinematic (see 88-inventory.js) */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:4000}),1500);return}/* one thumbnail per real idle moment, a pause between, stop if one is slow (see 88-inventory.js) */if(d.didTimeout||d.timeRemaining()<10){requestIdleCallback(step,{timeout:4000});return}const t0=performance.now();try{thumb(q.shift())}catch(_){q.length=0}if(performance.now()-t0>45)q.length=0;if(q.length)setTimeout(()=>requestIdleCallback(step,{timeout:4000}),60)};
   const warm=()=>{if(q||typeof requestIdleCallback!='function')return;try{q=SHOP7.items.slice()}catch(_){q=[]}requestIdleCallback(step,{timeout:4000})};
   const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,4500)}},1000)}
  return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,flush(){for(const k in cache)delete cache[k];if(isOpen())render()},get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;render()}}})();
@@ -11419,8 +11433,8 @@ const INV7=(()=>{
  function close(){if(!el)return;closeMenu();assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv){el.classList.remove('open');document.documentElement.classList.remove('inv6')}},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';snd('close')}
  // item icons are drawn the first time they are needed (the first open used to stall ~0.6 s): draw them in idle moments a few seconds
  // after you enter a world, a few at a time between frames, so even the first open is instant
- {let q=null;const step=d=>{/* never during a cinematic: one icon can take 15 ms and the story intro would stutter */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:3000}),1500);return}try{while(q.length&&d.timeRemaining()>3)iconOf(q.shift())}catch(_){q.length=0}if(q.length)requestIdleCallback(step,{timeout:3000})};
-  const warm=()=>{if(q||typeof requestIdleCallback!='function')return;try{q=items().map(i=>i.k)}catch(_){q=[]}requestIdleCallback(step,{timeout:3000})};
+ {let q=null;const step=d=>{/* never during a cinematic: one icon can take 15 ms and the story intro would stutter */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:3000}),1500);return}/* one icon per real idle moment (never on a forced timeout), a pause between, and stop for good if one is slow: background work must never freeze a frame */if(d.didTimeout||d.timeRemaining()<10){requestIdleCallback(step,{timeout:3000});return}const t0=performance.now();try{iconOf(q.shift())}catch(_){q.length=0}if(performance.now()-t0>45)q.length=0;if(q.length)setTimeout(()=>requestIdleCallback(step,{timeout:3000}),60)};
+  const warm=()=>{if(q||typeof requestIdleCallback!='function')return;/* first what monsters drop (so a fight never builds icons mid-frame), then the bag */let dk=[];try{dk=[...new Set(Object.values(MOBMAT))].filter(k=>k&&!ICONC[k]).concat([1,3,5,8,9,10,71,72,77].filter(k=>!ICONC[k]))}catch(_){}try{q=[...new Set(dk.concat(items().map(i=>i.k)))]}catch(_){q=dk}requestIdleCallback(step,{timeout:3000})};
   const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,2500)}},1000)}
  return{open,close,render,select,equip,unequip,doPrimary,drop,items,sorted,primary,nameOf,kind,
   get isOpen(){return isOpen()},get filter(){return filter},set filter(v){filter=v},get selK(){return selK},set selK(v){selK=v},get assign(){return assign},get sortBy(){return sortBy},set sortBy(v){sortBy=v;saveP()},get q(){return q},set q(v){q=String(v||'')},get list(){return last.map(i=>i.k)}}})();
@@ -13278,6 +13292,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('sb','Bloom & glow','Soft light around bright blocks and magic',tog('sb',o.bloom,'Bloom'))
+    +row('sunc','Uncapped frame rate','Desktop app: run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
     +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
     +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
     +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars')),
@@ -13310,7 +13325,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
   q('sv').oninput=e=>{o.vfx=e.target.value/100;lab('sv',e.target.value);try{QM.apply(QM.cur.id,true)}catch(_){}celSave()};
-  tg('sb',v=>o.bloom=v?1:0);tg('sw',v=>o.wxOn=v?1:0);tg('sst',v=>o.still=v?1:0);tg('sci',v=>o.cine=v?1:0);
+  tg('sb',v=>o.bloom=v?1:0);tg('sunc',v=>{try{localStorage.setItem('rb_fps_uncapped',v?'1':'0')}catch(_){}try{say('Restart Rootbound to apply the frame rate setting')}catch(_){}});tg('sw',v=>o.wxOn=v?1:0);tg('sst',v=>o.still=v?1:0);tg('sci',v=>o.cine=v?1:0);
   // audio: drive the original menu sliders so every listener (music engine, ambience) reacts exactly as before
   const drive=(id,v)=>{const m=el(id);if(m){m.value=v;m.dispatchEvent(new Event('input'))}};
   q('smv').oninput=e=>{lab('smv',e.target.value);if(el('ov'))drive('ov',e.target.value);else{OPT.mv=e.target.value/100;saveP()}};
@@ -17851,7 +17866,7 @@ const CLART=(()=>{
    '\n#cls9 .c9c.on{box-shadow:0 0 0 1px var(--l,#fff),0 0 16px -4px var(--m,#fff)}#cls9 .c9c b,#cls9 .c9c small,#cls9 .c9c em{text-shadow:0 1px 3px rgba(0,0,0,.85)}'+
    '\n#bcls.clart{background-size:cover;background-position:center;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);border-color:var(--clart-l,rgba(255,255,255,.5))}';if(css.textContent!==txt)css.textContent=txt}
  const busy=()=>typeof CINE7!='undefined'&&CINE7.playing;
- let qi=null;function warm(){if(qi)return;qi=A.KEYS.slice();const step=dl=>{if(busy()){setTimeout(()=>ric(step),1500);return}try{do{mini(qi.shift())}while(qi.length&&dl&&dl.timeRemaining&&dl.timeRemaining()>6)}catch(_){qi.length=0}if(qi.length)ric(step);else sheet()};ric(step)}
+ let qi=null;function warm(){if(qi)return;qi=A.KEYS.slice();const step=dl=>{if(busy()){setTimeout(()=>ric(step),1500);return}if(dl&&(dl.didTimeout||dl.timeRemaining()<10)){ric(step);return}const t0=performance.now();try{mini(qi.shift())}catch(_){qi.length=0}if(performance.now()-t0>45)qi.length=0;if(qi.length)setTimeout(()=>ric(step),60);else sheet()};ric(step)}
  const ric=f=>typeof requestIdleCallback=='function'?requestIdleCallback(f,{timeout:4000}):setTimeout(f,80);
  setTimeout(warm,6000);
  // the CLASSES button wears the current class's world

@@ -7,6 +7,10 @@ if(SAFE){app.disableHardwareAcceleration();app.commandLine.appendSwitch('disable
 // Always the dedicated graphics card on PCs that also have integrated graphics. The frame rate stays synced to the monitor (144 Hz
 // monitor = 144 FPS): running uncapped without vsync made frames pile up and the GPU process crash, so the screen showed ~10 FPS.
 else app.commandLine.appendSwitch('force_high_performance_gpu');
+// Settings > Graphics > Uncapped frame rate (off by default): the game stores it in its storage; the app copies it to rbgfx.json
+// (see syncGfx) and applies it at the next launch, since these switches only work before start-up.
+const GFX=(()=>{try{return JSON.parse(fs.readFileSync(path.join(app.getPath('userData'),'rbgfx.json'),'utf8'))}catch(_){return{}}})();
+if(!SAFE&&GFX.uncapped){app.commandLine.appendSwitch('disable-frame-rate-limit');app.commandLine.appendSwitch('disable-gpu-vsync')}
 let logf=null;function log(m){const l=new Date().toISOString()+' '+m+'\n';try{if(!logf)logf=path.join(app.getPath('userData'),'rootbound-startup.log');fs.appendFileSync(logf,l)}catch(_){}if(SMOKE)console.log(m)}
 function create(){
  const w=new BrowserWindow(Object.assign({width:1280,height:720,show:false,backgroundColor:'#ece8f5',title:'Rootbound',autoHideMenuBar:true,webPreferences:{contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}},OFF?{x:-32000,y:-32000,skipTaskbar:true,focusable:false}:{}));
@@ -22,6 +26,9 @@ function create(){
  // F11 toggles fullscreen (the app menu is hidden, so add it back by hand)
  w.webContents.on('before-input-event',(e,i)=>{if(i.type=='keyDown'&&i.key=='F11'){w.setFullScreen(!w.isFullScreen());e.preventDefault()}});
  w.loadFile(path.join(__dirname,'index.html'));
+ // copy the game's frame rate choice to rbgfx.json for the next launch (only when it changes)
+ const syncGfx=()=>{if(w.isDestroyed())return;w.webContents.executeJavaScript("(()=>{try{return localStorage.getItem('rb_fps_uncapped')}catch(_){return null}})()",true).then(v=>{const u=v==='1';if(!!GFX.uncapped===u)return;GFX.uncapped=u;try{fs.writeFileSync(path.join(app.getPath('userData'),'rbgfx.json'),JSON.stringify(GFX))}catch(_){}}).catch(()=>{})};
+ const gfxT=setInterval(syncGfx,5000);w.on('closed',()=>clearInterval(gfxT));
  if(SMOKE){let n=0;const iv=setInterval(async()=>{n++;try{const r=await w.webContents.executeJavaScript('(function(){return window.RBDIAG?{ready:RBDIAG.ready,errors:RBDIAG.errors.length,rep:RBDIAG.report()}:null})()');if(r&&r.ready){clearInterval(iv);console.log('SMOKE-OK ready; runtime errors='+r.errors);try{console.log('gpu '+JSON.stringify(app.getGPUFeatureStatus()))}catch(_){}console.log(r.rep);app.exit(0)}}catch(e){log('smoke eval '+e)}if(n>40){clearInterval(iv);console.log('SMOKE-FAIL not ready in 20s');try{console.log(await w.webContents.executeJavaScript('RBDIAG.report()'))}catch(_){}app.exit(1)}},500)}
 }
 // a crashed GPU process makes Chromium fall back to slow software drawing: leave a trace in the startup log
