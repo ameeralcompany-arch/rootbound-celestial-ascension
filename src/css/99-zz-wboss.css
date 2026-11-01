@@ -1,0 +1,20 @@
+/* WBOSS13: the world boss cinematic canvas and the "fight now?" dialog */
+#wb13c{position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483000;background:#000;display:block}
+#wb13q{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;background:rgba(6,6,12,.62);opacity:0;transition:opacity .16s ease}
+#wb13q.on{opacity:1}
+#wb13q .box{width:min(440px,calc(100vw - 32px));padding:22px 24px 18px;border-radius:14px;background:linear-gradient(180deg,#fff,#eceef2);color:#20222a;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+#wb13q .k{display:block;font-style:normal;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#a2354a}
+#wb13q h3{margin:4px 0 8px;font-size:22px}
+#wb13q p{margin:0 0 14px;font-size:14px;line-height:1.45}
+#wb13q small{color:#5a5e6a}
+#wb13q .acts{display:flex;justify-content:flex-end;gap:8px}
+#wb13q button{padding:8px 16px;border-radius:9px;border:1px solid #c4c8d2;background:#f6f7f9;color:#20222a;font:inherit;font-weight:600;cursor:pointer}
+#wb13q button.pri{background:#a2354a;border-color:#a2354a;color:#fff}
+/* in the void: no world HUD, and the banner reads on dark */
+body.wb13v :is(#bi17,#dz8,#mini,#wl9){display:none!important}
+body.wb13v #banner b{color:#fff!important;text-shadow:0 2px 14px #000,0 0 4px #000!important}
+body.wb13v #banner span{color:#fff!important;text-shadow:0 1px 8px #000!important}
+/* the boss bar and the hidden-word strip share the top centre: the strip steps aside during any boss fight */
+body:has(#bb10.on) #wl9{opacity:0!important;pointer-events:none}
+/* the Character button hides with the rest of the HUD while a boss cinematic holds the screen */
+body.bb10c #bhub{opacity:0!important;pointer-events:none}

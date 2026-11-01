@@ -11,12 +11,12 @@ const WINGX=(()=>{
  try{const o=JSON.parse(localStorage.getItem(KEY)||'null');if(o&&typeof o=='object'){for(const k of['ex','claimed','fl'])if(o[k]&&typeof o[k]=='object')for(const id of Object.keys(o[k]).slice(0,200))if(/^[a-z0-9_]{1,24}$/.test(id)&&o[k][id])S[k][id]=Math.max(1,+o[k][id]||1);S.init=o.init?1:0}}catch(_){}
  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(_){}};
  const n=v=>{v=+v;return Number.isFinite(v)?v:0};
- const bossesDone=()=>{try{return BOSSES.filter(b=>(bossK[b.id]|0)>0).length}catch(_){return 0}};
+ const bossesDone=()=>{try{return BOSSES.filter(b=>!b.wb&&(bossK[b.id]|0)>0).length}catch(_){return 0}};
  const bestClass=()=>{try{let m=0;for(const k in CLASS7.C)m=Math.max(m,CLASS7.lv(k)|0);return m}catch(_){return 0}};
  const achDone=()=>{try{return ACH.filter((a,i)=>achD[i]).length}catch(_){return 0}};
  // requirement rows: [label, current(), need]
  const REQ={
-  sovereign:[['Defeat every boss',bossesDone,()=>{try{return BOSSES.length}catch(_){return 6}}]],
+  sovereign:[['Defeat every boss',bossesDone,()=>{try{return BOSSES.filter(b=>!b.wb).length}catch(_){return 6}}]],
   monarch:[['Find all Spirit Stones in the Plaza',()=>{try{return HUNT7.count()}catch(_){return 0}},()=>{try{return HUNT7.SPOTS.length}catch(_){return 7}}],['Finish the Sky Run in under 90 s',()=>{try{return RUN7.title||(RUN7.best!=null&&RUN7.best<90000)?1:0}catch(_){return 0}},1]],
   voidemp:[['Mine a Void Geode (deep caves)',()=>S.fl.geode?1:0,1],['Catch a Void Eel',()=>S.fl.eel?1:0,1]],
   phoenix:[['Reach class level 25 in any class',bestClass,25],['Catch a Golden Carp',()=>S.fl.carp?1:0,1]],

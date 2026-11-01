@@ -12,7 +12,7 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
  await p.addInitScript(guest);await p.goto(URL);await p.waitForTimeout(700);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);
  await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}});await p.waitForTimeout(300);
  const E=(f,a)=>p.evaluate(f,a),W8=ms=>p.waitForTimeout(ms||100);
- const go=async w=>{await E(w=>{enterWorld(w);mobs.length=0;try{for(const l of WORD9.letters)GUARD16.clear(cur,l.i)}catch(_){}try{BIOME17.clearAll()}catch(_){}},w);await W8(600)};
+ const go=async w=>{await E(w=>{WBOSS13.need=()=>false;enterWorld(w);mobs.length=0;try{for(const l of WORD9.letters)GUARD16.clear(cur,l.i)}catch(_){}try{BIOME17.clearAll()}catch(_){}},w);await W8(600)};
  // ---- names and the chain
  const N=await E(()=>({inf:WORD9.stName('realmsa',1),gal:WORD9.stName('realmsa',2),sea:WORD9.stName('realmsa',3),cry:WORD9.stName('realmsa',4),lab:[2,3,4].map(i=>WORD9.label(WORD9.stName('realmsa',i))),st:['realmsa','realmsa-inf','realmsa-gal','realmsa-sea','realmsa-cry'].map(n=>WORD9.stageOf(n))}));
  ok('every realm is a world of its own, named after its world',N.inf=='realmsa-inf'&&N.gal=='realmsa-gal'&&N.sea=='realmsa-sea'&&N.cry=='realmsa-cry'&&N.lab.join('|')=='Realmsa · Galaxy|Realmsa · Abyssal Sea|Realmsa · Crystal Realm'&&N.st.join()=='0,1,2,3,4',N);

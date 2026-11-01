@@ -78,7 +78,7 @@ const WORD9=(()=>{
   try{ft(x,y-18,'+'+l.ch,'#ffe27a')}catch(_){}try{gain(6,x,y-34)}catch(_){}
   try{const f=NOTE[Math.min(NOTE.length-1,n-1)];SFX7.tone(f,f*1.01,.18,'triangle',.07);SFX7.tone(f*1.5,f*1.5,.22,'sine',.05,.08);SFX7.tone(f*2,f*2.02,.3,'sine',.035,.16,1)}catch(_){}
   fly(l,x,y);strip();
-  if(n>=L.length){try{UI6.say6('ALL LETTERS FOUND','Unscramble the word at the Word Gate',2600)}catch(_){}setTimeout(()=>{if(hasWord(cur)&&gotN()>=L.length&&!peek(cur).ok)open()},1300)}else say('Letter '+l.ch+' found  ·  '+n+'/'+L.length+'  ·  the hidden word has '+L.length+' letters');return true}
+  if(n>=L.length&&typeof WBOSS13!='undefined'&&WBOSS13.need(cur)){try{UI6.say6('ALL LETTERS FOUND','Something stirs below...',1500)}catch(_){}WBOSS13.found(cur)}else if(n>=L.length){try{UI6.say6('ALL LETTERS FOUND','Unscramble the word at the Word Gate',2600)}catch(_){}setTimeout(()=>{if(hasWord(cur)&&gotN()>=L.length&&!peek(cur).ok)open()},1300)}else say('Letter '+l.ch+' found  ·  '+n+'/'+L.length+'  ·  the hidden word has '+L.length+' letters');return true}
  // breaking (any tool, any power) collects instead of mining; outermost wrapper, so no other break logic sees the tile
  {const _ba=breakAt;breakAt=function(x,y){if(x>=0&&y>=0&&x<W&&y<H&&tiles[y*W+x]==LETTER){const k=y*W+x,l=L.find(q=>q.k==k);if(l)return collect(l)||true;tiles[k]=0;hp[k]=0;try{pushEdit(k)}catch(_){}return true}return _ba.apply(this,arguments)}}
  // ---- HUD strip (scrambled slots) + the letter flying into it
@@ -94,6 +94,7 @@ const WORD9=(()=>{
  // ---- the Word Gate modal (same look as the shared dialogs)
  let MD=null,mode='',openF=false,cT=0;
  function open(){if(!L.length||!entered)return false;const st=peek(cur),n=gotN();if(n<L.length&&!st.ok){say('Find every letter first  ·  '+n+'/'+L.length+' found');if(SE){SE.classList.remove('nudge');void SE.offsetWidth;SE.classList.add('nudge')}return false}
+  if(!st.ok&&typeof WBOSS13!='undefined'&&WBOSS13.need(cur)){WBOSS13.ask(cur);return false}
   if(!MD){MD=document.createElement('div');MD.id='wg9';MD.innerHTML='<div class="box" role="dialog" aria-modal="true" aria-labelledby="wg9t"></div>';document.body.appendChild(MD);MD.addEventListener('mousedown',e=>{if(e.target===MD)close()})}
   try{mdL=mdR=false}catch(_){}clearTimeout(cT);render(st.ok?'done':'ask');MD.style.display='flex';void MD.offsetWidth;MD.classList.add('on');openF=true;try{UIS.play('open')}catch(_){}return true}
  function close(){if(!MD||!openF)return;openF=false;MD.classList.remove('on');try{UIS.play('close')}catch(_){}clearTimeout(cT);cT=setTimeout(()=>{if(MD&&!openF)MD.style.display='none'},200);try{document.activeElement&&document.activeElement.blur()}catch(_){}}

@@ -217,6 +217,20 @@ Realm), each with its own rock, caverns, geodes and ore; the deeper one favours 
 **Rewards.** Solving a realm's word pays 160 x (stage + 1)^1.6 gems (stage 1 = Inferno … 4 = Crystal Realm): about 470, 930, 1480 and
 2100. The Crystal Realm's word completes the world's **Celestial Ascension**: another 2500 gems.
 
+## 9. World bosses
+
+Every realm has one huge boss standing between its last letter and its Word Gate (WBOSS13, `99-zzzzzzzzz-i-worldboss.js`). Base HP and the level each is tuned for, with simulated kill times per class (`tests/balance.js`, 60% uptime):
+
+| Realm | Boss | Base HP | Base damage | Level | Kill time |
+|---|---|---|---|---|---|
+| World | Thornmaw the Rootwarden | 8,500 | 24 | 10 | 198-272 s |
+| Inferno | Vulkhar the Pyrelord | 14,500 | 32 | 20 | 191-269 s |
+| Galaxy | Nyx the Astral Devourer | 25,000 | 40 | 30 | 197-284 s |
+| Abyssal Sea | Maelor the Leviathan | 37,000 | 48 | 40 | 183-268 s |
+| Crystal Realm | Aurelia the Prism Empress | 54,000 | 56 | 48 | 184-262 s |
+
+That is about three times a cave boss (30-200 s). Each pays once per world, and its relic is a permanent bonus the first time. World bosses are left out of the hunt page and the "Defeat every boss" wing goal.
+
 ## Where it lives
 
 | What | File |

@@ -14,7 +14,7 @@ async function boot(p,reload){if(reload)await p.reload();else await p.goto(URL);
  const ctx=await b.newContext({viewport:{width:1366,height:800}});const p=await ctx.newPage();const errs=[];p.on('pageerror',x=>errs.push(x.message));p.on('console',m=>{if(m.type()=='error'&&!/ERR_|Failed to load|net::/.test(m.text()))errs.push('console: '+m.text())});
  await p.addInitScript(guest);await boot(p);const E=(f,a)=>p.evaluate(f,a);const W8=ms=>p.waitForTimeout(ms||100);
  // the Letter Wardens (GUARD16) are tested in tests/guards.js and the biome seals (BIOME17) in tests/biomes.js; here every letter starts free
-const go=async w=>{await E(w=>{enterWorld(w);WX6.force='clear';mobs.length=0;try{for(const l of WORD9.letters)GUARD16.clear(cur,l.i)}catch(_){}try{BIOME17.clearAll()}catch(_){}},w);await W8(500)};
+const go=async w=>{await E(w=>{WBOSS13.need=()=>false;enterWorld(w);WX6.force='clear';mobs.length=0;try{for(const l of WORD9.letters)GUARD16.clear(cur,l.i)}catch(_){}try{BIOME17.clearAll()}catch(_){}},w);await W8(500)};
  // 'wordsa' plays as a world whose hunt began before the biome update (an older, longer word: these checks need 4+ letters)
  await E(()=>{lvl=5;BIOME17.state.w.wordsa={bw:0,lit:{},k:[0,0,0],o:[0,0,0],c:[0,0,0],done:0}});await go('wordsa');
  // ---- placement

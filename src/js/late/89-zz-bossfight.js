@@ -231,6 +231,6 @@ const BOSS10=(()=>{
  {const _dp=BOSS6.drawProj;BOSS6.drawProj=function(gc,cx,cy){_dp.call(this,gc,cx,cy);try{const n2=performance.now();if(G&&S&&S.kind=='out')drawOut(gc,n2);drawMarks(gc,n2,cx,cy)}catch(e){if(!BOSS6.drawProj.e){BOSS6.drawProj.e=1;console.error('BOSS10 draw',e)}}}}
  {const _lw=loadWorld;loadWorld=function(){stop();barOff();return _lw.apply(this,arguments)}}
  const left=()=>S&&S.kind=='out'?Math.max(0,(OUT.ret-tt())*1000/S.F):0;
- return{intro,outro,phase,vuln,stop,left,skip:doSkip,IN,OUT,AURA,
+ return{intro,outro,phase,vuln,stop,left,skip:doSkip,IN,OUT,AURA,EPI,PHS,
   get cam(){return !!S&&!S.free},get kind(){return S?S.kind:null},get t(){return tt()},get ghost(){return G},get canSkip(){return !!(S&&S.kind=='in'&&S.skip&&!S.skipped)},
   get state(){return S?{kind:S.kind,id:S.id,t:tt(),skip:S.skip,skipped:S.skipped,free:S.free}:null},seen:()=>Object.assign({},seen),forget(){seen={};saveSeen()}}})();

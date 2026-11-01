@@ -8,10 +8,10 @@ BOSSES.push(
 for(const b of BOSSES.slice(3)){MK['boss_'+b.id]={c:b.c,hp:b.hp,w:b.w,h:b.h,gem:40,dmg:b.dmg,ai:b.ai,jp:b.jp,sx:b.sx,cd:b.cd,spm:b.spm,fly:b.ai=='fly'?1:0,ph:b.ai=='fly'?1:0,min:9999,max:9999,boss:1};MOBMAT['boss_'+b.id]=10}
 const BOSSX=(()=>{
  const HZ=[],ORB=[],Q=[],AL=[];let nb=0;const rn=(a,b)=>a+Math.random()*(b-a);
- const cols={warden:'#6fe08a',sovereign:'#7fd8ff',eclipse:'#b58cff',magma:'#ff6a2a',tide:'#4aa8ff',storm:'#ffe27a'},MOV=[];let gust=null;
+ const EXT={},cols={warden:'#6fe08a',sovereign:'#7fd8ff',eclipse:'#b58cff',magma:'#ff6a2a',tide:'#4aa8ff',storm:'#ffe27a'},MOV=[];let gust=null;
  const boss=()=>{const a=BOSS6.active();return a&&!a.dead&&mobs.includes(a)?a:null};
  const id=m=>m.k.slice(5);
- function hit(a,kb){if(iT>0)return;P.hp-=a*(1-Math.min(.8,bonus().arm+(guard>0?.5:0)));iT=.9;P.vx=kb||0;P.vy=-320;hurtF=.45;shake=Math.max(shake,QM.reduce?0:.14);snd(130,.22,'sawtooth',.07)}
+ function hit(a,kb){if(iT>0||!(a>0))return;P.hp-=a*(1-Math.min(.8,bonus().arm+(guard>0?.5:0)));iT=.9;P.vx=kb||0;P.vy=-320;hurtF=.45;shake=Math.max(shake,QM.reduce?0:.14);snd(130,.22,'sawtooth',.07)}
  const gyAt=(x,fromY)=>{const tx=Math.max(1,Math.min(W-2,Math.floor(x/T)));let ty=Math.floor(fromY/T);for(let i=0;i<40&&ty<H-2;i++,ty++)if(solidAt(tx,ty))return ty*T;return fromY};   // 40 rows: the arena is tall enough to fly 20 tiles up
  const hitsP=z=>z.circ?Math.hypot(P.x-z.cx,P.y+P.h/2-z.cy)<z.r+P.w*.4:P.x+P.w/2>z.x0&&P.x-P.w/2<z.x1&&P.y+P.h>z.y0&&P.y<z.y1;
  // hazard: rectangle (or circle) that warns for tel seconds, then hurts for act seconds
@@ -83,7 +83,7 @@ const BOSSX=(()=>{
   for(let i=0;i<xs.length;i++){const x=xs[i],gy=gyAt(x,P.y+P.h-8),tel=1.25+i*.2,d=m.dmg*.8;let z;
    if(b=='warden')z=addZ(x-T*.6,gy-T*4,x+T*.6,gy+2,tel,.35,'#8fdc5a',d,'up');else if(b=='sovereign')z=addZ(x-T*.6,gy-T*13,x+T*.6,gy+2,tel,.3,'#bfeaff',d,'down');
    else if(b=='eclipse')z=addZ(x-T*.6,gy-T*13,x+T*.6,gy+2,tel,.3,'#9a6bff',d,'down');else if(b=='magma'){z=addZ(x-T*.7,gy-T*6,x+T*.7,gy+2,tel,.4,'#ff8a3a',d,'up');addZ(x-T*1.1,gy-T*.6,x+T*1.1,gy+2,tel+.4,1.8,'#ff5a1a',m.dmg*.18,'fire',120,.55).ah=1}
-   else if(b=='tide')z=addZ(x-T*.7,gy-T*5,x+T*.7,gy+2,tel,.4,'#6ac8ff',d,'up');else z=addZ(x-T*.4,gy-T*16,x+T*.4,gy+2,tel,.22,'#fff6b0',d,'bolt',300);z.ah=1}}
+   else if(b=='tide')z=addZ(x-T*.7,gy-T*5,x+T*.7,gy+2,tel,.4,'#6ac8ff',d,'up');else if(EXT[b])z=EXT[b](m,x,gy,tel,d,i);else z=addZ(x-T*.4,gy-T*16,x+T*.4,gy+2,tel,.22,'#fff6b0',d,'bolt',300);z.ah=1}}
  function zoneFx(z){try{shake=Math.max(shake,QM.reduce?0:(z.kind=='bolt'?.14:.08));const x=(z.x0+z.x1)/2,cn=QM.reduce?3:z.ah?5:9;snd(z.kind=='bolt'?1400:z.kind=='beam'?240:100,.2,z.kind=='bolt'?'square':'sawtooth',.07,.4);
   if(z.kind=='beam'){for(let i=0;i<cn;i++)VFX.add(1,z.c,z.x0+Math.random()*(z.x1-z.x0),(z.y0+z.y1)/2,0,(Math.random()-.5)*80,.4,9,2,{a:1});return}
   if(z.kind=='fire')return;if(z.circ){VFX.wave(z.cx,z.cy,z.c,z.r*1.1,.45,1);VFX.wave(z.cx,z.cy,'#fff',z.r*.8,.3,1);for(let i=0;i<cn;i++){const a=Math.random()*6.283;VFX.add(1,z.c,z.cx+Math.cos(a)*z.r*.8,z.cy+Math.sin(a)*z.r*.8,Math.cos(a)*160,Math.sin(a)*160,.45,10,2,{a:.9})}return}
@@ -100,7 +100,7 @@ const BOSSX=(()=>{
   // vulnerable window: opens when a big attack has played out
   if(m.vq>0){m.vq-=dt;if(m.vq<=0&&m.stag<=0){m.vul=1.6;try{BOSS10.vuln(m)}catch(_){}}}if(m.vul>0)m.vul-=dt;
   // shield: Sovereign + Eclipse + the newer bosses raise a barrier at the phase marks (after the transition beat); breaking it staggers the boss
-  if(b!='warden'&&m.shieldAt.length&&m.hp/m.mhp<m.shieldAt[0]&&!(m.pb>0)){m.shieldAt.shift();m.shield=m.mhp*.12;m.shieldMax=m.shield;UI6.say6('SHIELD UP','Burst it down to break it',1800);VFX.wave(m.x,m.y+m.h/2,cols[b],260,.8,.4);snd(520,.4,'sine',.08,.6)}
+  if(b!='warden'&&m.shieldAt.length&&m.hp/m.mhp<m.shieldAt[0]&&!(m.pb>0)){m.shieldAt.shift();m.shield=m.mhp*.12;m.shieldMax=m.shield;UI6.say6('SHIELD UP','Burst it down to break it',1800);VFX.wave(m.x,m.y+m.h/2,cols[b]||'#fff',260,.8,.4);snd(520,.4,'sine',.08,.6)}
   // wind-up (crouch + warning mark), then the attack
   if(m.wind>0){m.wind-=dt;if(m.wind<=0){m.wind=0;fire(m,b,m.wpick,ph);m.xc++;
     if(m.xc%4==0){m.stag=3.4;m.xt=3.6;m.vq=0;UI6.say6('EXHAUSTED','Hit it now',1400);VFX.wave(m.x,m.y+m.h/2,'#ffd24a',200,.7,.3)}}}
@@ -130,7 +130,7 @@ const BOSSX=(()=>{
    if(d<P.w/2+(o.r||12)){hit(m.dmg*.8,Math.sign(o.vx||1)*200);o.l=0}if(o.l<=0){VFX.burst(o.x,o.y,[o.c,'#fff'],6,120,1,.4,9);ORB.splice(i,1)}}}
  function clearFx(){HZ.length=0;ORB.length=0;MOV.length=0;Q.length=0;AL.length=0;gust=null}
  // damage shaping: shield absorbs, staggered bosses take +45%, a vulnerable window +35%
- {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(m.boss&&m.k&&m.k.startsWith('boss_')){if(m.shield>0){const ab=Math.min(d,m.shield);m.shield-=ab;d-=ab;if(m.shield<=0){m.shield=0;m.stag=4.2;m.xt=4.4;m.wind=0;UI6.say6('SHIELD BROKEN','Strike now!',1500);try{VFX.shatter(m.x,m.y+m.h/2,['#fff',cols[id(m)]],30)}catch(_){}snd(900,.2,'triangle',.08,1.2)}if(d<=0)d=.01}else if(m.stag>0)d*=1.45;else if(m.vul>0)d*=1.35}return _h.call(this,m,d,w,ang)}}
+ {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(m.boss&&m.k&&m.k.startsWith('boss_')){if(m.shield>0){const ab=Math.min(d,m.shield);m.shield-=ab;d-=ab;if(m.shield<=0){m.shield=0;m.stag=4.2;m.xt=4.4;m.wind=0;UI6.say6('SHIELD BROKEN','Strike now!',1500);try{VFX.shatter(m.x,m.y+m.h/2,['#fff',cols[id(m)]||'#fff'],30)}catch(_){}snd(900,.2,'triangle',.08,1.2)}if(d<=0)d=.01}else if(m.stag>0)d*=1.45;else if(m.vul>0)d*=1.35}return _h.call(this,m,d,w,ang)}}
  // no building inside a boss (or right beside it)
  {const _pa=placeAction;placeAction=function(){try{const tx=Math.floor((mx+cam.x)/T),ty=Math.floor((my+cam.y)/T);for(const m of mobs){if(!m.boss||m.dead)continue;if(tx*T<m.x+m.w/2+T&&(tx+1)*T>m.x-m.w/2-T&&ty*T<m.y+m.h+T&&(ty+1)*T>m.y-T){if(performance.now()-nb>1200){nb=performance.now();say("You can't build inside a boss");try{UIS.play('error')}catch(_){}}return}}}catch(_){}return _pa.apply(this,arguments)}}
 
@@ -215,4 +215,4 @@ const BOSSX=(()=>{
   if(ORB.length){gc.globalCompositeOperation='lighter';gc.globalAlpha=1;for(const o of ORB){const R2=(o.r||12)+6;gc.drawImage(BOSS6.glo(o.c),o.x-cx-R2,o.y-cy-R2,R2*2,R2*2)}}
   gc.restore()}}
  {const _t=BOSS6.tick,_c=BOSS6.clear;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){console.error('BOSSX',e)}};BOSS6.clear=function(){_c.call(this);clearFx()}}
- return{HZ,ORB,MOV,Q,AL,tick,addZ,addC,gyAt,clearFx,LIST,BIG,ATK,arenaHz,get gust(){return gust}}})();
+ return{HZ,ORB,MOV,Q,AL,tick,addZ,addC,gyAt,clearFx,LIST,BIG,ATK,arenaHz,EXT,cols,hit,get gust(){return gust}}})();

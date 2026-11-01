@@ -168,7 +168,7 @@ const BIOME17=(()=>{
  {const _uw=useWeapon;useWeapon=function(){try{if(ON&&entered&&typeof mx!='undefined'){const wx=mx+cam.x,wy=my+cam.y;for(const q of BEA)if(q.st=='idle'&&Math.abs(wx-(q.x+.5)*T)<T*.8&&wy>(q.y-2)*T&&wy<q.y*T&&nearB(q,T*3))wake(q)}}catch(_){}return _uw.apply(this,arguments)}}
  // ---- per frame
  let refT=0,doneT=0,uiT=0,saveT=0;
- function tick(dt){if(!entered||!ON)return;refT-=dt;if(refT<=0){refT=2;refresh()}
+ function tick(dt){if(!entered||!ON||(typeof WBOSS13!='undefined'&&WBOSS13.void))return;refT-=dt;if(refT<=0){refT=2;refresh()}
   for(const q of BEA){if(q.st!='wave')continue;q.t+=dt;q.nx-=dt;const live=q.ms.filter(m=>m.hp>0&&!m.dead&&mobs.includes(m));
    if(q.sp<q.want&&(q.nx<=0||!live.length)){spawnW(q,q.want-q.sp)}
    else if(q.sp>=q.want&&!live.length)light(q);

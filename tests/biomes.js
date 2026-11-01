@@ -12,7 +12,7 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  await p.goto(URL);await p.waitForTimeout(800);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);
  await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}lvl=20});
  const E=(f,a)=>p.evaluate(f,a),W8=ms=>p.waitForTimeout(ms);
- const go=async w=>{await E(w=>{enterWorld(w);WX6.force='clear';mobs.length=0},w);await W8(500)};
+ const go=async w=>{await E(w=>{WBOSS13.need=()=>false;enterWorld(w);WX6.force='clear';mobs.length=0},w);await W8(500)};
  await go('biotest');
  // word, biomes, bands
  const A=await E(()=>{const L=BIOME17.lay,ls=WORD9.letters;return{w:WORD9.word,in3:BIOME17.WORDS3.includes(WORD9.word),bi:L.bi.map(b=>b.id),diff:L.diff,

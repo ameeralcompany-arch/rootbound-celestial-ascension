@@ -252,7 +252,7 @@ const DEPTH8=(()=>{
   else if(sid=='crystal'){const P5=[1047,1175,1319,1568,1760,2093],a=P5[R0()*6|0],c=P5[R0()*6|0];tone(a,a,.9,'triangle',.009);tone(c,c,1.1,'sine',.007,.22)}
   else{tone(58,44,1.6,'sawtooth',.014);if(R0()<.6)tone(190,110,.14,'sine',.016,.5)}}
  // ---- per frame
- function tick(dt){if(!entered||cur=='plaza'||creatorOn){if(el)el.classList.remove('on');band=null;blend=0;return}
+ function tick(dt){if(!entered||cur=='plaza'||creatorOn||(typeof WBOSS13!='undefined'&&WBOSS13.void)){if(el)el.classList.remove('on');band=null;blend=0;return}
   const tx=Math.max(0,Math.min(W-1,P.x/T|0));depth=(P.y+P.h/2)/T-sh(tx);let nb=null;for(const b of BANDS)if(depth>=b.d0&&depth<b.d1){nb=b;break}
   if(band&&nb!==band&&depth>=band.d0-1.5&&depth<band.d1+1.5)nb=band;if(nb!==band){band=nb;if(nb)enter(nb)}
   blend+=((band?1:0)-blend)*Math.min(1,dt*1.6);if(band)tintB=band;ambient(dt,band);

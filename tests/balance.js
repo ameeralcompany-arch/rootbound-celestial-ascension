@@ -86,12 +86,15 @@ const SIMLIB=`window.SIM=(()=>{let vt=0,on=false,seed=1;const pn=Performance.pro
  ok('class level bonuses grow with level and add up to the same total value for every class (+-5%)',bv.length==0,bv);
  const txt=await E(()=>Object.keys(CLASS7.C).every(k=>CLASS7.perk(k,30).length>10&&CLASS7.perk(k,30)!==CLASS7.perk(k,60)));ok('each class shows its own perk text, with numbers that grow',txt);
  // ---- bosses: simulated time to kill per class at the expected level (single target, 60% uptime for dodging / phase beats)
- const bd=await E(()=>({B:BOSSES.map(b=>[b.id,b.hp]),bb:[8,15,28,22,35,42].map(L=>[L,LVL9.bossB(L),LVL9.dmgB(L)]),band:BAL11.RO.map(r=>BAL11.band(r))}));
+ const bd=await E(()=>({B:BOSSES.filter(b=>!b.wb).map(b=>[b.id,b.hp]),W:BOSSES.filter(b=>b.wb).map(b=>[b.id,b.hp,b.lv]),bb:[8,15,28,22,35,42,10,20,30,40,48].map(L=>[L,LVL9.bossB(L),LVL9.dmgB(L)]),band:BAL11.RO.map(r=>BAL11.band(r))}));
  const EXP={warden:8,sovereign:15,eclipse:28,magma:22,tide:35,storm:42},tierAt=L=>L<5?0:L<13?1:L<23?2:L<33?3:L<45?4:5,RO=['common','uncommon','rare','epic','legendary','mythic'];
  const gOf=L=>.9*(1-Math.exp(-(Math.max(1,L)-1)/40));const mAt=(k,cl)=>{const g=gOf(cl);return g<=gOf(25)?1+(mult[k][25]/bonus[k][25].safe-1)*g/gOf(25):1+(mult[k][25]/bonus[k][25].safe-1)+(mult[k][50]/bonus[k][50].safe-mult[k][25]/bonus[k][25].safe)*(g-gOf(25))/(gOf(50)-gOf(25))};
  const ttk={},badT=[];for(const[bid,hp]of bd.B){const L=EXP[bid],t=tierAt(L),q=bd.bb.find(x=>x[0]==L),cl=Math.round(L*.6);ttk[bid]={};
   for(const k in cls){const s=geo(cls[k].map(id=>meas[id].v.S*bd.band[t]/bd.band[RO.indexOf(info.o[id].rar)]));const dps=s*(1+q[2])*(1+.04*L/2)/1.04*mAt(k,cl),T2=hp*q[1]/(dps*.6);ttk[bid][k]=Math.round(T2);if(T2<30||T2>200)badT.push(bid+'/'+k+' '+Math.round(T2)+'s')}}
  console.log('\nboss TTK (s) at expected level:');for(const bid in ttk)console.log(bid.padEnd(10),'L'+EXP[bid],Object.entries(ttk[bid]).map(([k,v])=>k.slice(0,5)+' '+v).join('  '));
  ok('every class beats every boss at the expected level in 30-200 s (simulated)',badT.length==0,badT);
+ // world bosses are meant to be very hard: about three times as long as a cave boss, but still beatable by every class
+ const badW=[];console.log('\nworld boss TTK (s) at the recommended level:');for(const[bid,hp,L]of bd.W){const t=tierAt(L),q=bd.bb.find(x=>x[0]==L),cl=Math.round(L*.6),row=[];for(const k in cls){const s=geo(cls[k].map(id=>meas[id].v.S*bd.band[t]/bd.band[RO.indexOf(info.o[id].rar)]));const dps=s*(1+q[2])*(1+.04*L/2)/1.04*mAt(k,cl),T2=hp*q[1]/(dps*.6);row.push(k.slice(0,5)+' '+Math.round(T2));if(T2<120||T2>340)badW.push(bid+'/'+k+' '+Math.round(T2)+'s')}console.log(bid.padEnd(10),'L'+L,row.join('  '))}
+ ok('every class beats every world boss at its recommended level in 120-340 s (simulated)',badW.length==0,badW);
  ok('balance: no page errors',errs.length==0,errs.slice(0,6).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all balance tests passed');process.exit(fails?1:0)})();

@@ -23,7 +23,7 @@ const WEV7=(()=>{
   try{say(NAMES[e.kind]+' has appeared in this world!');SFX7.tone(520,880,.4,'sine',.06);SFX7.tone(780,1320,.4,'sine',.05,.18)}catch(_){}}
  function reward(g,msg){if(!srv()&&g)gems+=g;try{say(msg+(g&&!srv()?'  +'+g+' gems':''));saveP()}catch(_){}}
  // ---- per frame
- function tick(dt){if(!entered||cur=='plaza'||creatorOn){ev=null;if(hud&&hud._on!==0){hud._on=0;hud.style.display='none'}return}ensureHud();const now=Date.now();
+ function tick(dt){if(!entered||cur=='plaza'||creatorOn||(typeof WBOSS13!='undefined'&&WBOSS13.void)){ev=null;if(hud&&hud._on!==0){hud._on=0;hud.style.display='none'}return}ensureHud();const now=Date.now();
   if(now-lastCheck>500){lastCheck=now;const e=current(now);if((e&&e.id)!==(ev&&ev.id)){ev=e;if(e)start(e);else{riftMobs=[];meteors=[]}}}
   if(ev&&now>ev.t1){ev=null;riftMobs=[];meteors=[]}if(!ev){if(hud._on!==0){hud._on=0;hud.style.display='none'}return}
   const left=ev.t1-now,dxp=ev.x-P.x,dir=Math.abs(dxp)<T*6?'here':dxp>0?'east →':'← west';
