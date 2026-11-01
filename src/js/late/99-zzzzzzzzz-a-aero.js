@@ -16,5 +16,7 @@ const AERO7=(()=>{
  try{new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(n.nodeType!==1)continue;if(n.type=='range'){fill(n);continue}const rs=n.getElementsByTagName('input');for(let i=0;i<rs.length;i++)if(rs[i].type=='range')fill(rs[i])}}).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}
  for(const r of document.querySelectorAll('input[type=range]'))fill(r);
  // the new default, once (players can switch back in Settings)
- try{if(!localStorage.getItem('rb_aero1')){localStorage.setItem('rb_aero1','1');cel.opt.theme='aero';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
+ try{if(!localStorage.getItem('rb_aero1'))localStorage.setItem('rb_aero1','1')}catch(_){}
+ // the Clean skin (white and grey, no blur or glow, reduced UI motion: css/99-z-clean.css) is the new default, once for everyone
+ try{if(!localStorage.getItem('rb_clean1')){localStorage.setItem('rb_clean1','1');cel.opt.theme='clean';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
  return{on,fill}})();

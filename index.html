@@ -2182,6 +2182,74 @@ html[data-skin=aero] body .pn,html[data-skin=aero] #hudL,html[data-skin=aero] #w
  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,40,80,.35),0 8px 20px -6px rgba(0,0,0,.45)!important}
 html[data-skin=aero] body .pn,html[data-skin=aero] #hudR .pn,html[data-skin=aero] #hudL b{text-shadow:0 0 6px rgba(0,210,255,.5)}
 
+/* ========== CSS: 99-z-clean.css ========== */
+/* ===== CLEAN: the simple skin (Settings > General > Theme > Clean; the default). White-to-grey gradients on every panel, button, card and
+   HUD piece, plain hairline borders, one soft shadow, dark slate for what is selected. No glass blur, no glows, no gloss, no hover lifts,
+   and the interface runs in reduced motion (THEME7 sets data-reduce, which collapses every UI transition and animation): menus cost the
+   GPU almost nothing, so the game keeps its frame rate. It sits on the light theme (html[data-theme=light][data-skin=clean]). ===== */
+html[data-skin=clean]:root{
+ --ink:#1c2230;--ink-2:#3a4252;--muted:#6a7383;--line:#cfd4dc;--line-strong:#a9b1bd;
+ --accent:#4a5262;--accent-2:#6b7484;--accent-soft:rgba(74,82,98,.12);--focus:#4a5262;
+ --bg-page:linear-gradient(180deg,#ffffff,#d9dde3);
+ --surface:linear-gradient(180deg,#ffffff 0%,#e7eaee 100%);--surface-solid:#f2f4f7;--surface-2:linear-gradient(180deg,#fcfcfd,#eceef2);--surface-3:linear-gradient(180deg,#f6f7f9,#e5e8ec);
+ --overlay:rgba(40,46,58,.32);--glass-blur:0px;
+ --btn-bg:linear-gradient(180deg,#ffffff,#dfe3e9);--btn-bg-hover:linear-gradient(180deg,#ffffff,#eceff3);--btn-ink:#1c2230;
+ --btn-primary:linear-gradient(180deg,#646d7d,#3d4452);--btn-primary-ink:#ffffff;
+ --sel-bg:linear-gradient(180deg,#eef0f3,#d9dde3);--sel-bd:#5c6575;--input-bg:#ffffff;
+ --sh-1:0 1px 2px rgba(20,25,35,.12);--sh-2:0 2px 6px rgba(20,25,35,.14);--sh-3:0 4px 14px rgba(20,25,35,.16);--glow:0 0 0 2px #7a8494;
+ --toast-bg:linear-gradient(180deg,#ffffff,#e7eaee);--toast-bd:#c3c9d2;
+ --bg:#e9ecf0;--pn:#f2f4f7;--panel:#f2f4f7;--panel2:#e7eaee;--gold:#5c6575;--gold2:#1c2230;--vio:#6b7484;--ice:#8a93a2;--txt:#1c2230;--dim:#6a7383;
+ --ed-bg:#f2f4f7;--ed-paper:#ffffff;--ed-soft:rgba(74,82,98,.06);
+ --g-pearl:linear-gradient(180deg,#ffffff,#e7eaee);--g-pearl-lav:linear-gradient(180deg,#ffffff,#e4e7ec);--g-lav-mist:linear-gradient(180deg,#fafbfc,#e2e5ea);
+ --g-blush-pearl:linear-gradient(180deg,#ffffff,#e6e9ed);--g-silver-violet:linear-gradient(180deg,#f7f8fa,#dfe3e8);--g-sky-lilac:linear-gradient(180deg,#f4f6f8,#dde1e6);
+ --g-holo:linear-gradient(180deg,#ffffff,#d9dde3);--g-accent:linear-gradient(180deg,#646d7d,#3d4452);--g-accent-2:linear-gradient(180deg,#7a8392,#4f5767);
+ --g-sheen:none;--g-rule:linear-gradient(90deg,transparent,#c3c9d2,transparent);--tex-dots:none}
+html[data-skin=clean] body{background:#e9ecf0}
+/* every panel, card and HUD piece: a white-to-grey gradient, a hairline border, one soft shadow, dark text; nothing blurs or glows */
+html[data-skin=clean] :is(body .pn,#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#chestui,#inv7 .panel,#inv7 .sheet,.netcard,#dlg,#hudL,#wl9,#toast7 .t7,#menu #card,#book7,#cls9>*,#quest,#mini,#qm,#objui,.objpanel,#prompt,#wg9 .box,#rw8lv,.rw8c){
+ background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:var(--sh-2)!important;text-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-skin=clean] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important}
+html[data-skin=clean] :is(#hudL,#quest,#wl9,#mini,body .pn) :is(b,i,em,span,small,div,a){color:inherit}
+/* buttons: light pills; the active tab / primary action is dark slate */
+html[data-skin=clean] :is(#hudR .pn,button,.btn,#hudR button){background:var(--btn-bg)!important;color:var(--btn-ink)!important;border:1px solid var(--line-strong)!important;box-shadow:var(--sh-1)!important;filter:none!important}
+html[data-skin=clean] :is(#hudR .pn,button,.btn):hover{background:var(--btn-bg-hover)!important;transform:none!important}
+html[data-skin=clean] :is(#store7 nav button.on,#inv7 nav button.on,#hubnav button.on,.snav7 button.on,button.pri,.btn.pri,button.on,.tab.on){background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border-color:#3d4452!important}
+html[data-skin=clean] button:disabled{opacity:.55}
+/* item / shop cards and the hotbar: grey tiles, the selected one outlined in slate, no lifting or glowing */
+html[data-skin=clean] :is(#inv7 .it7,#store7 .card,.gcard7,#bar .s6){background:var(--surface-2)!important;border:1px solid var(--line)!important;box-shadow:var(--sh-1)!important;transform:none!important}
+html[data-skin=clean] :is(#inv7 .it7,#store7 .card,.gcard7)::after,html[data-skin=clean] :is(#inv7 .it7,#store7 .card,.gcard7)::before{display:none!important}
+html[data-skin=clean] :is(#bar .s6.on,#bar .s6.sel,#inv7 .it7.sel,#store7 .card.sel){border-color:#3d4452!important;box-shadow:0 0 0 2px #5c6575!important}
+html[data-skin=clean] :is(#inv7 .it7,#store7 .card,#hudR .pn):hover{transform:none!important;box-shadow:var(--sh-2)!important}
+html[data-skin=clean] :is(#store7 .card canvas,#store7 .card img,#inv7 .it7 img){background:linear-gradient(180deg,#ffffff,#e9ecf0)!important}
+/* inputs, sliders, switches: plain and readable */
+html[data-skin=clean] :is(select,input[type=text],input[type=search],input[type=number],textarea){background:#ffffff!important;color:var(--ink)!important;border:1px solid var(--line-strong)!important;border-radius:8px;box-shadow:none!important}
+html[data-skin=clean] input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:999px;background:linear-gradient(90deg,#5c6575 0,#5c6575 var(--v,50%),#d5d9df var(--v,50%))!important;border:1px solid #b9c0ca;box-shadow:none;outline:none}
+html[data-skin=clean] input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;cursor:pointer;background:linear-gradient(180deg,#ffffff,#d5d9df);border:1px solid #8a93a2;box-shadow:var(--sh-1)}
+html[data-skin=clean] :is(input[type=checkbox],input[type=radio]){accent-color:#4a5262}
+html[data-skin=clean] .rb-toggle{background:linear-gradient(180deg,#d5d9df,#eceef1)!important;border:1px solid #b9c0ca!important;box-shadow:none!important}
+html[data-skin=clean] .rb-toggle:checked{background:linear-gradient(180deg,#646d7d,#3d4452)!important}
+html[data-skin=clean] .rb-toggle:after{background:linear-gradient(180deg,#ffffff,#e4e7eb)!important;box-shadow:var(--sh-1)!important}
+/* bars and progress: slate fills, no glow */
+html[data-skin=clean] :is(#hudL .bar i,#cxp9 i){box-shadow:none!important}
+/* overlays behind modals: a light dim, no blur */
+html[data-skin=clean] :is(#inv7,#store7,#cls9,#hub,#tools7,#book7,#wg9){background-color:rgba(40,46,58,.28)!important}
+/* scrollbars */
+html[data-skin=clean] ::-webkit-scrollbar{width:10px;height:10px}
+html[data-skin=clean] ::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#c7ccd4,#a9b1bd);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+html[data-skin=clean] ::-webkit-scrollbar-track{background:#eef0f3}
+/* the main menu */
+html[data-skin=clean] #menu{background:var(--bg-page)!important}
+/* no looping decoration anywhere in the interface (data-reduce collapses durations; these keep the few infinite loops still) */
+html[data-skin=clean] :is(#hudR,#hudL,#bar,#quest,#mini,#inv7,#store7,#cls9,#hubc,#dlg7,#wl9,#toast7,#menu) *{animation-iteration-count:1!important}
+/* the active tab in every menu reads as dark slate (doubled selectors outrank the menus' own tab styles) */
+html[data-skin=clean][data-skin=clean] :is(#inv7,#store7,#hubc,#cls9,#dlg7,#tools7,#book7) :is(button.on.on,[aria-selected=true]){background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border-color:#3d4452!important}
+/* rarity cards (the mythic obsidian look, legendary glow) become light cards with dark text and a thin rarity border */
+html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[data-rar]{background:linear-gradient(180deg,#ffffff,#e7eaee)!important;color:var(--ink)!important}
+html[data-skin=clean][data-skin=clean] #store7 .card[data-rar]>:is(b,.pr),html[data-skin=clean][data-skin=clean] #store7 .card[data-rar] .pr>span{color:var(--ink)!important}
+html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7):is([data-rar=mythic],[data-rar=exclusive]){border-color:#7a6aa8!important}
+html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[data-rar=legendary]{border-color:#b8962a!important}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -3259,7 +3327,7 @@ function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'nul
  cel.plate=o.plate=='auto'?'auto':n(o.plate,'auto',0,99);cel.seenW=n(o.seenW,0,0,99);cel.seenNp=n(o.seenNp,0,0,999);cel.tut=n(o.tut,0,0,9);
  const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);A.gd=n(a.gd,0,0,2);
  A.hairCol=col(a.hairCol,A.hairCol);A.skinCol=col(a.skinCol,A.skinCol);A.outCol=col(a.outCol,A.outCol);A.trimCol=col(a.trimCol,A.trimCol);
- const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.still=p.still==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['aero','light','dark','auto'].includes(p.theme)?p.theme:'aero'}
+ const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.still=p.still==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['clean','aero','light','dark','auto'].includes(p.theme)?p.theme:'clean'}
 // ---- derived progression (single source of truth: character level)
 // ownership: level wings by level, shop wings by the catalog item, exclusive wings by their achievement record (WINGX)
 const wingOwned=(w,l)=>{if(!w)return false;if(w.src=='level')return (l==null?lvl:l)>=w.lvl;if(w.src=='excl'){try{return WINGX.has(w.id)}catch(_){return false}}try{return SHOP7.has('wing_'+w.id)}catch(_){return false}};
@@ -13669,7 +13737,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
  const num=(v,d)=>v==null||isNaN(v)?d:+v;
  X.settings=function(){const body=UI6.body,o=cel.opt,preset=['auto',...QPRE.map(p=>p.id)];
   const S={
-   general:row('sth','Theme','Aqua glass, pearl daylight or the plum night palette',sel('sth',[['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'aero'))
+   general:row('sth','Theme','Clean white and grey (fastest), aqua glass, pearl daylight or the plum night palette',sel('sth',[['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'clean'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
     +row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>'),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
@@ -15345,12 +15413,12 @@ const CHEST6=(()=>{
 const THEME7=(()=>{
  const mq=(()=>{try{return matchMedia('(prefers-color-scheme: dark)')}catch(_){return null}})();
  // 'aero' (Aqua glass, the default) is the dark palette with the Frutiger Aero skin on top (css/99-aero.css)
- const eff=m=>m=='aero'?'dark':m=='auto'?(mq&&mq.matches?'dark':'light'):(m=='dark'?'dark':'light');
+ const eff=m=>m=='clean'?'light':m=='aero'?'dark':m=='auto'?(mq&&mq.matches?'dark':'light'):(m=='dark'?'dark':'light');
  // extra interface options live in cel.opt (saved by celSave); celLoad only copies the original keys, so restore ours from the same save
  try{const o=(JSON.parse(localStorage.getItem('rbc')||'null')||{}).opt||{},O=cel.opt;O.hudOp=Math.max(.4,Math.min(1,+o.hudOp||1));O.hideQuest=o.hideQuest?1:0;O.hideMini=o.hideMini?1:0;O.contrast=o.contrast?1:0}catch(_){}
  // toasts are DOM elements now (87-uisfx, animated with the motion tokens); the legacy canvas toast keeps running but draws fully transparent
  function toastColors(){window.TK6={bg:'rgba(0,0,0,0)',bd:'rgba(0,0,0,0)',tx:'rgba(0,0,0,0)'}}
- function apply(){const o=cel.opt||{},m=o.theme||'aero',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);if(m=='aero')d.setAttribute('data-skin','aero');else d.removeAttribute('data-skin');d.setAttribute('data-reduce',o.reduce||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
+ function apply(){const o=cel.opt||{},m=o.theme||'clean',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);if(m=='aero'||m=='clean')d.setAttribute('data-skin',m);else d.removeAttribute('data-skin');d.setAttribute('data-reduce',o.reduce||m=='clean'/* the clean skin runs the interface in reduced motion */||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
   d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
   toastColors();try{localStorage.setItem('rbtheme',m)}catch(_){}}
  try{if(mq&&mq.addEventListener)mq.addEventListener('change',()=>{if(cel.opt.theme=='auto')apply()})}catch(_){}
@@ -15363,7 +15431,7 @@ const THEME7=(()=>{
   obj:['#463a63','#2a2342','#a08ad8'],door:['#38415f','#222a42','#8ea2d4'],wear:['#383f66','#2b2546','#9a8fdd'],weapon:['#553447','#2e2440','#d48da4'],wing:['#3e3466','#222c4a','#a596e6'],fx:['#3e3466','#222c4a','#a596e6']};
  const dark=()=>document.documentElement.getAttribute('data-theme')=='dark';
  const rr=(x,a,b,w,h,r)=>{x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()};
- burstBG=function(x,S){const D=dark(),p=(D?PLD:PL)[IK]||(D?PLD:PL).fx,k=S/48;x.save();rr(x,.5,.5,S-1,S-1,8*k);const gr=x.createLinearGradient(0,0,S,S);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);x.fillStyle=gr;x.fill();x.clip();
+ burstBG=function(x,S){const D=dark(),CL=document.documentElement.getAttribute('data-skin')=='clean',p=CL?['#ffffff','#dde1e6','#8a93a2']:(D?PLD:PL)[IK]||(D?PLD:PL).fx,k=S/48;x.save();rr(x,.5,.5,S-1,S-1,8*k);const gr=x.createLinearGradient(0,0,S,S);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);x.fillStyle=gr;x.fill();x.clip();
   x.globalAlpha=.2;x.strokeStyle=p[2];x.fillStyle=p[2];x.lineWidth=k;
   if(IK=='seed'){x.beginPath();x.ellipse(S/2,S*1.04,S*.48,S*.2,0,0,6.3);x.fill()}
   else if(IK=='weapon'){x.lineWidth=7*k;x.beginPath();x.moveTo(S*.08,S*.92);x.lineTo(S*.92,S*.08);x.stroke()}
@@ -15385,7 +15453,7 @@ const THEME7=(()=>{
     else{const sp=spr(k,0,0);x.save();x.shadowColor='rgba(30,20,55,.38)';x.shadowBlur=4;x.shadowOffsetY=2;x.fillStyle='#000';x.fillRect(5,4,38,38);x.restore();x.imageSmoothingEnabled=false;x.drawImage(sp,5,4,38,38);x.strokeStyle='rgba(255,255,255,.3)';x.lineWidth=1;x.strokeRect(5.5,4.5,37,37)}
     ICONC[k]=c;return ICON[k]=c.toDataURL()}
    return _iu(k)}finally{IK=''}};
- const _ap=apply;apply=function(){_ap();const t=document.documentElement.getAttribute('data-theme');if(lastT!==null&&t!==lastT)flushIcons();lastT=t};
+ const _ap=apply;apply=function(){_ap();const t=document.documentElement.getAttribute('data-theme')+'|'+(document.documentElement.getAttribute('data-skin')||'');if(lastT!==null&&t!==lastT)flushIcons();lastT=t};
  apply();flushIcons();return{apply,flushIcons,get effective(){return eff(cel.opt.theme)}}})();
 // re-apply once the saved options are loaded and whenever they change
 {const _cs=celSave;celSave=function(){_cs();try{THEME7.apply()}catch(_){}}}
@@ -18299,7 +18367,9 @@ const AERO7=(()=>{
  try{new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(n.nodeType!==1)continue;if(n.type=='range'){fill(n);continue}const rs=n.getElementsByTagName('input');for(let i=0;i<rs.length;i++)if(rs[i].type=='range')fill(rs[i])}}).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}
  for(const r of document.querySelectorAll('input[type=range]'))fill(r);
  // the new default, once (players can switch back in Settings)
- try{if(!localStorage.getItem('rb_aero1')){localStorage.setItem('rb_aero1','1');cel.opt.theme='aero';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
+ try{if(!localStorage.getItem('rb_aero1'))localStorage.setItem('rb_aero1','1')}catch(_){}
+ // the Clean skin (white and grey, no blur or glow, reduced UI motion: css/99-z-clean.css) is the new default, once for everyone
+ try{if(!localStorage.getItem('rb_clean1')){localStorage.setItem('rb_clean1','1');cel.opt.theme='clean';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
  return{on,fill}})();
 
 /* ========== LATE: 99-zzzzzzzzz-b-liquids.js ========== */

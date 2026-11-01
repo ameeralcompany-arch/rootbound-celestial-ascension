@@ -2,12 +2,12 @@
 const THEME7=(()=>{
  const mq=(()=>{try{return matchMedia('(prefers-color-scheme: dark)')}catch(_){return null}})();
  // 'aero' (Aqua glass, the default) is the dark palette with the Frutiger Aero skin on top (css/99-aero.css)
- const eff=m=>m=='aero'?'dark':m=='auto'?(mq&&mq.matches?'dark':'light'):(m=='dark'?'dark':'light');
+ const eff=m=>m=='clean'?'light':m=='aero'?'dark':m=='auto'?(mq&&mq.matches?'dark':'light'):(m=='dark'?'dark':'light');
  // extra interface options live in cel.opt (saved by celSave); celLoad only copies the original keys, so restore ours from the same save
  try{const o=(JSON.parse(localStorage.getItem('rbc')||'null')||{}).opt||{},O=cel.opt;O.hudOp=Math.max(.4,Math.min(1,+o.hudOp||1));O.hideQuest=o.hideQuest?1:0;O.hideMini=o.hideMini?1:0;O.contrast=o.contrast?1:0}catch(_){}
  // toasts are DOM elements now (87-uisfx, animated with the motion tokens); the legacy canvas toast keeps running but draws fully transparent
  function toastColors(){window.TK6={bg:'rgba(0,0,0,0)',bd:'rgba(0,0,0,0)',tx:'rgba(0,0,0,0)'}}
- function apply(){const o=cel.opt||{},m=o.theme||'aero',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);if(m=='aero')d.setAttribute('data-skin','aero');else d.removeAttribute('data-skin');d.setAttribute('data-reduce',o.reduce||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
+ function apply(){const o=cel.opt||{},m=o.theme||'clean',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);if(m=='aero'||m=='clean')d.setAttribute('data-skin',m);else d.removeAttribute('data-skin');d.setAttribute('data-reduce',o.reduce||m=='clean'/* the clean skin runs the interface in reduced motion */||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
   d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
   toastColors();try{localStorage.setItem('rbtheme',m)}catch(_){}}
  try{if(mq&&mq.addEventListener)mq.addEventListener('change',()=>{if(cel.opt.theme=='auto')apply()})}catch(_){}
@@ -20,7 +20,7 @@ const THEME7=(()=>{
   obj:['#463a63','#2a2342','#a08ad8'],door:['#38415f','#222a42','#8ea2d4'],wear:['#383f66','#2b2546','#9a8fdd'],weapon:['#553447','#2e2440','#d48da4'],wing:['#3e3466','#222c4a','#a596e6'],fx:['#3e3466','#222c4a','#a596e6']};
  const dark=()=>document.documentElement.getAttribute('data-theme')=='dark';
  const rr=(x,a,b,w,h,r)=>{x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()};
- burstBG=function(x,S){const D=dark(),p=(D?PLD:PL)[IK]||(D?PLD:PL).fx,k=S/48;x.save();rr(x,.5,.5,S-1,S-1,8*k);const gr=x.createLinearGradient(0,0,S,S);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);x.fillStyle=gr;x.fill();x.clip();
+ burstBG=function(x,S){const D=dark(),CL=document.documentElement.getAttribute('data-skin')=='clean',p=CL?['#ffffff','#dde1e6','#8a93a2']:(D?PLD:PL)[IK]||(D?PLD:PL).fx,k=S/48;x.save();rr(x,.5,.5,S-1,S-1,8*k);const gr=x.createLinearGradient(0,0,S,S);gr.addColorStop(0,p[0]);gr.addColorStop(1,p[1]);x.fillStyle=gr;x.fill();x.clip();
   x.globalAlpha=.2;x.strokeStyle=p[2];x.fillStyle=p[2];x.lineWidth=k;
   if(IK=='seed'){x.beginPath();x.ellipse(S/2,S*1.04,S*.48,S*.2,0,0,6.3);x.fill()}
   else if(IK=='weapon'){x.lineWidth=7*k;x.beginPath();x.moveTo(S*.08,S*.92);x.lineTo(S*.92,S*.08);x.stroke()}
@@ -42,7 +42,7 @@ const THEME7=(()=>{
     else{const sp=spr(k,0,0);x.save();x.shadowColor='rgba(30,20,55,.38)';x.shadowBlur=4;x.shadowOffsetY=2;x.fillStyle='#000';x.fillRect(5,4,38,38);x.restore();x.imageSmoothingEnabled=false;x.drawImage(sp,5,4,38,38);x.strokeStyle='rgba(255,255,255,.3)';x.lineWidth=1;x.strokeRect(5.5,4.5,37,37)}
     ICONC[k]=c;return ICON[k]=c.toDataURL()}
    return _iu(k)}finally{IK=''}};
- const _ap=apply;apply=function(){_ap();const t=document.documentElement.getAttribute('data-theme');if(lastT!==null&&t!==lastT)flushIcons();lastT=t};
+ const _ap=apply;apply=function(){_ap();const t=document.documentElement.getAttribute('data-theme')+'|'+(document.documentElement.getAttribute('data-skin')||'');if(lastT!==null&&t!==lastT)flushIcons();lastT=t};
  apply();flushIcons();return{apply,flushIcons,get effective(){return eff(cel.opt.theme)}}})();
 // re-apply once the saved options are loaded and whenever they change
 {const _cs=celSave;celSave=function(){_cs();try{THEME7.apply()}catch(_){}}}

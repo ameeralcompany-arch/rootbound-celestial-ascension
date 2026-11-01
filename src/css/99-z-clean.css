@@ -1,0 +1,66 @@
+/* ===== CLEAN: the simple skin (Settings > General > Theme > Clean; the default). White-to-grey gradients on every panel, button, card and
+   HUD piece, plain hairline borders, one soft shadow, dark slate for what is selected. No glass blur, no glows, no gloss, no hover lifts,
+   and the interface runs in reduced motion (THEME7 sets data-reduce, which collapses every UI transition and animation): menus cost the
+   GPU almost nothing, so the game keeps its frame rate. It sits on the light theme (html[data-theme=light][data-skin=clean]). ===== */
+html[data-skin=clean]:root{
+ --ink:#1c2230;--ink-2:#3a4252;--muted:#6a7383;--line:#cfd4dc;--line-strong:#a9b1bd;
+ --accent:#4a5262;--accent-2:#6b7484;--accent-soft:rgba(74,82,98,.12);--focus:#4a5262;
+ --bg-page:linear-gradient(180deg,#ffffff,#d9dde3);
+ --surface:linear-gradient(180deg,#ffffff 0%,#e7eaee 100%);--surface-solid:#f2f4f7;--surface-2:linear-gradient(180deg,#fcfcfd,#eceef2);--surface-3:linear-gradient(180deg,#f6f7f9,#e5e8ec);
+ --overlay:rgba(40,46,58,.32);--glass-blur:0px;
+ --btn-bg:linear-gradient(180deg,#ffffff,#dfe3e9);--btn-bg-hover:linear-gradient(180deg,#ffffff,#eceff3);--btn-ink:#1c2230;
+ --btn-primary:linear-gradient(180deg,#646d7d,#3d4452);--btn-primary-ink:#ffffff;
+ --sel-bg:linear-gradient(180deg,#eef0f3,#d9dde3);--sel-bd:#5c6575;--input-bg:#ffffff;
+ --sh-1:0 1px 2px rgba(20,25,35,.12);--sh-2:0 2px 6px rgba(20,25,35,.14);--sh-3:0 4px 14px rgba(20,25,35,.16);--glow:0 0 0 2px #7a8494;
+ --toast-bg:linear-gradient(180deg,#ffffff,#e7eaee);--toast-bd:#c3c9d2;
+ --bg:#e9ecf0;--pn:#f2f4f7;--panel:#f2f4f7;--panel2:#e7eaee;--gold:#5c6575;--gold2:#1c2230;--vio:#6b7484;--ice:#8a93a2;--txt:#1c2230;--dim:#6a7383;
+ --ed-bg:#f2f4f7;--ed-paper:#ffffff;--ed-soft:rgba(74,82,98,.06);
+ --g-pearl:linear-gradient(180deg,#ffffff,#e7eaee);--g-pearl-lav:linear-gradient(180deg,#ffffff,#e4e7ec);--g-lav-mist:linear-gradient(180deg,#fafbfc,#e2e5ea);
+ --g-blush-pearl:linear-gradient(180deg,#ffffff,#e6e9ed);--g-silver-violet:linear-gradient(180deg,#f7f8fa,#dfe3e8);--g-sky-lilac:linear-gradient(180deg,#f4f6f8,#dde1e6);
+ --g-holo:linear-gradient(180deg,#ffffff,#d9dde3);--g-accent:linear-gradient(180deg,#646d7d,#3d4452);--g-accent-2:linear-gradient(180deg,#7a8392,#4f5767);
+ --g-sheen:none;--g-rule:linear-gradient(90deg,transparent,#c3c9d2,transparent);--tex-dots:none}
+html[data-skin=clean] body{background:#e9ecf0}
+/* every panel, card and HUD piece: a white-to-grey gradient, a hairline border, one soft shadow, dark text; nothing blurs or glows */
+html[data-skin=clean] :is(body .pn,#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#chestui,#inv7 .panel,#inv7 .sheet,.netcard,#dlg,#hudL,#wl9,#toast7 .t7,#menu #card,#book7,#cls9>*,#quest,#mini,#qm,#objui,.objpanel,#prompt,#wg9 .box,#rw8lv,.rw8c){
+ background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:var(--sh-2)!important;text-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-skin=clean] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important}
+html[data-skin=clean] :is(#hudL,#quest,#wl9,#mini,body .pn) :is(b,i,em,span,small,div,a){color:inherit}
+/* buttons: light pills; the active tab / primary action is dark slate */
+html[data-skin=clean] :is(#hudR .pn,button,.btn,#hudR button){background:var(--btn-bg)!important;color:var(--btn-ink)!important;border:1px solid var(--line-strong)!important;box-shadow:var(--sh-1)!important;filter:none!important}
+html[data-skin=clean] :is(#hudR .pn,button,.btn):hover{background:var(--btn-bg-hover)!important;transform:none!important}
+html[data-skin=clean] :is(#store7 nav button.on,#inv7 nav button.on,#hubnav button.on,.snav7 button.on,button.pri,.btn.pri,button.on,.tab.on){background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border-color:#3d4452!important}
+html[data-skin=clean] button:disabled{opacity:.55}
+/* item / shop cards and the hotbar: grey tiles, the selected one outlined in slate, no lifting or glowing */
+html[data-skin=clean] :is(#inv7 .it7,#store7 .card,.gcard7,#bar .s6){background:var(--surface-2)!important;border:1px solid var(--line)!important;box-shadow:var(--sh-1)!important;transform:none!important}
+html[data-skin=clean] :is(#inv7 .it7,#store7 .card,.gcard7)::after,html[data-skin=clean] :is(#inv7 .it7,#store7 .card,.gcard7)::before{display:none!important}
+html[data-skin=clean] :is(#bar .s6.on,#bar .s6.sel,#inv7 .it7.sel,#store7 .card.sel){border-color:#3d4452!important;box-shadow:0 0 0 2px #5c6575!important}
+html[data-skin=clean] :is(#inv7 .it7,#store7 .card,#hudR .pn):hover{transform:none!important;box-shadow:var(--sh-2)!important}
+html[data-skin=clean] :is(#store7 .card canvas,#store7 .card img,#inv7 .it7 img){background:linear-gradient(180deg,#ffffff,#e9ecf0)!important}
+/* inputs, sliders, switches: plain and readable */
+html[data-skin=clean] :is(select,input[type=text],input[type=search],input[type=number],textarea){background:#ffffff!important;color:var(--ink)!important;border:1px solid var(--line-strong)!important;border-radius:8px;box-shadow:none!important}
+html[data-skin=clean] input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:999px;background:linear-gradient(90deg,#5c6575 0,#5c6575 var(--v,50%),#d5d9df var(--v,50%))!important;border:1px solid #b9c0ca;box-shadow:none;outline:none}
+html[data-skin=clean] input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;cursor:pointer;background:linear-gradient(180deg,#ffffff,#d5d9df);border:1px solid #8a93a2;box-shadow:var(--sh-1)}
+html[data-skin=clean] :is(input[type=checkbox],input[type=radio]){accent-color:#4a5262}
+html[data-skin=clean] .rb-toggle{background:linear-gradient(180deg,#d5d9df,#eceef1)!important;border:1px solid #b9c0ca!important;box-shadow:none!important}
+html[data-skin=clean] .rb-toggle:checked{background:linear-gradient(180deg,#646d7d,#3d4452)!important}
+html[data-skin=clean] .rb-toggle:after{background:linear-gradient(180deg,#ffffff,#e4e7eb)!important;box-shadow:var(--sh-1)!important}
+/* bars and progress: slate fills, no glow */
+html[data-skin=clean] :is(#hudL .bar i,#cxp9 i){box-shadow:none!important}
+/* overlays behind modals: a light dim, no blur */
+html[data-skin=clean] :is(#inv7,#store7,#cls9,#hub,#tools7,#book7,#wg9){background-color:rgba(40,46,58,.28)!important}
+/* scrollbars */
+html[data-skin=clean] ::-webkit-scrollbar{width:10px;height:10px}
+html[data-skin=clean] ::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#c7ccd4,#a9b1bd);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+html[data-skin=clean] ::-webkit-scrollbar-track{background:#eef0f3}
+/* the main menu */
+html[data-skin=clean] #menu{background:var(--bg-page)!important}
+/* no looping decoration anywhere in the interface (data-reduce collapses durations; these keep the few infinite loops still) */
+html[data-skin=clean] :is(#hudR,#hudL,#bar,#quest,#mini,#inv7,#store7,#cls9,#hubc,#dlg7,#wl9,#toast7,#menu) *{animation-iteration-count:1!important}
+/* the active tab in every menu reads as dark slate (doubled selectors outrank the menus' own tab styles) */
+html[data-skin=clean][data-skin=clean] :is(#inv7,#store7,#hubc,#cls9,#dlg7,#tools7,#book7) :is(button.on.on,[aria-selected=true]){background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border-color:#3d4452!important}
+/* rarity cards (the mythic obsidian look, legendary glow) become light cards with dark text and a thin rarity border */
+html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[data-rar]{background:linear-gradient(180deg,#ffffff,#e7eaee)!important;color:var(--ink)!important}
+html[data-skin=clean][data-skin=clean] #store7 .card[data-rar]>:is(b,.pr),html[data-skin=clean][data-skin=clean] #store7 .card[data-rar] .pr>span{color:var(--ink)!important}
+html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7):is([data-rar=mythic],[data-rar=exclusive]){border-color:#7a6aa8!important}
+html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[data-rar=legendary]{border-color:#b8962a!important}
