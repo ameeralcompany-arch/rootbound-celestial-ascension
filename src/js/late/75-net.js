@@ -16,15 +16,15 @@ const NET7=(()=>{
  const send=m=>{try{if(ws&&ws.readyState==1){ws.send(JSON.stringify(m));return true}}catch(_){}return false};
  // ---- connection lifecycle
  function setSt(s,e){st=s;err=e||'';try{if(menuEl.style.display!='none')render()}catch(_){}try{TOOLS7.sync()}catch(_){}}
- function connect(u,isManual){if(ws){try{ws.onclose=null;ws.close()}catch(_){}ws=null}url=u;manual=!!isManual;if(isManual)retry=false;if(!u){setSt('offline');return}setSt(retry?'reconnecting':'connecting',err);D.stage('net-connect',u.replace(/^wss?:\/\//,'').slice(0,60));
+ let wakeN=0;function connect(u,isManual){if(ws){try{ws.onclose=null;ws.close()}catch(_){}ws=null}url=u;manual=!!isManual;if(isManual)retry=false;if(!u){setSt('offline');return}setSt(retry?'reconnecting':'connecting',err);D.stage('net-connect',u.replace(/^wss?:\/\//,'').slice(0,60));
   let w,opened=false;try{w=new WebSocket(u)}catch(e){setSt('offline','Could not open a connection: '+e.message);D.err&&0;return}ws=w;
   const to=setTimeout(()=>{if(!opened){try{w.close()}catch(_){}}},7000);
-  w.onopen=()=>{opened=true;clearTimeout(to);lastPong=Date.now()};
+  w.onopen=()=>{opened=true;clearTimeout(to);lastPong=Date.now();wakeN=0};
   w.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(_){return}onMsg(m)};
   w.onerror=()=>{};
   w.onclose=()=>{clearTimeout(to);if(ws!==w)return;ws=null;clearInterval(hbT);const was=st;auth=null;info=null;drop();
    if(was=='online'||was=='reconnecting'||retry){retry=true;setSt('reconnecting','Connection lost');say6&&say6('Connection lost','Your changes are not being saved. Reconnecting…',4000);sched()}
-   else{setSt('offline',opened?'The server closed the connection':'Could not reach the server');if(!manual&&0)sched()}}}
+   else if(!opened&&!manual&&wakeN<14){/* a free server sleeps and takes about a minute to wake */if(!wakeN)say('Waking the online server, about a minute. You can play here meanwhile.');wakeN++;setSt('connecting','Waking the server…');clearTimeout(rt);rt=setTimeout(()=>{if(st=='connecting')connect(url,false)},4000)}else{wakeN=0;setSt('offline',opened?'The server closed the connection':'Could not reach the server')}}}
  function sched(){clearTimeout(rt);tries++;const d=Math.min(30000,1000*Math.pow(2,Math.min(5,tries-1)))+Math.random()*500;rt=setTimeout(()=>{if(st=='reconnecting')connect(url,false)},d)}
  function drop(){window.RB_OWN=null;if(room){room.dead=1}if(rm===room){rm=null}room=null;if(joinedW){const hm=(typeof WBOSS13!='undefined'&&WBOSS13.home)||P;saved={w:joinedW,x:hm.x,y:hm.y}}joinedW=null;guest=false;roomCode='';myId=LOCAL_ID;try{OBJ6&&0}catch(_){}}
  function startPing(){clearInterval(hbT);hbT=setInterval(()=>{if(Date.now()-lastPong>40000){try{ws.close()}catch(_){}return}send({t:'ping',n:Date.now()})},12000)}

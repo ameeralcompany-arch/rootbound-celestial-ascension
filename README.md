@@ -210,7 +210,7 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 
 ## Online (Growtopia-style)
 
-The game runs online from one free server: **Render** (the server) and **Upstash Redis** (the saves), neither of which needs a card. **To put it online, follow [server/DEPLOY.md](server/DEPLOY.md).** Until the server is deployed and its address is set in `RB_SERVER` (`src/legacy.html`), the desktop app and the GitHub Pages copy stay single-player. The page the server itself hosts is always online.
+The game runs online from one free server: **Render** (the server) and **Upstash Redis** (the saves), neither of which needs a card. **It is live at https://rootbound-rcvi.onrender.com** (setup steps: [server/DEPLOY.md](server/DEPLOY.md)). The desktop app and the GitHub Pages copy connect to the address in `RB_SERVER` (`src/legacy.html`). The page the server itself hosts is always online.
 
 - **Owner:** one account, set by `OWNER_NAME` + `OWNER_PASSWORD` on the host. Chat commands: `/god`, `/pull`, `/summon`, `/ban`, `/unban`, `/give`, `/kick`, `/smute`, `/sunmute`, `/announce`. The server checks every one.
 - **Creative mode is gone** as a menu option. Its powers are now `/god`, for the owner only. A player who was in creative when this update arrives gets their normal save back on load.
