@@ -6,7 +6,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  async function mk(name,id){const ctx=await b.newContext({viewport:{width:1000,height:600}});const p=await ctx.newPage();p.on('pageerror',x=>errs.push(name+':'+x.message));
   await p.addInitScript(()=>localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'})));await p.goto(URL);await p.waitForTimeout(600);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(400);
   await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}lvl=20});pages[name]=p;return p}
- const A=await mk('A'),B=await mk('B');const IA=await A.evaluate(()=>myId),IB=await B.evaluate(()=>myId);for(const q of[A,B])await q.evaluate(([a,b])=>{window.IA=a;window.IB=b},[IA,IB]);ok('clients have distinct identities',IA!=IB,IA+' vs '+IB);
+ const A=await mk('A'),B=await mk('B');await A.waitForTimeout(2500);/* level 20 pays its achievement and milestone rewards in the next seconds: let them land before gems are set */const IA=await A.evaluate(()=>myId),IB=await B.evaluate(()=>myId);for(const q of[A,B])await q.evaluate(([a,b])=>{window.IA=a;window.IB=b},[IA,IB]);ok('clients have distinct identities',IA!=IB,IA+' vs '+IB);
  // in-memory relay between two real pages (the real network path is covered by tests/e2e.js)
  await A.exposeFunction('relayToB',m=>B.evaluate(m=>{if(m.t=='x')SOC6.remote(m.d,m.f);else if(m.t=='chat')chatIn6({peer:m.f,data:m.d})},m));
  await B.exposeFunction('sendToHost',async m=>{return A.evaluate(m=>{if(m.t=='x')SOC6.remote(m.d,'pb');else if(m.t=='chat')chatIn6({peer:'pb',data:m.d});return true},m)});

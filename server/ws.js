@@ -4,7 +4,7 @@ const crypto=require('crypto');
 const GUID='258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 class Conn{
  constructor(sock,maxPayload){this.sock=sock;this.max=maxPayload;this.buf=Buffer.alloc(0);this.frag=null;this.closed=false;this.onmessage=()=>{};this.onclose=()=>{};this.lastPong=Date.now();
-  sock.on('data',d=>this._data(d));sock.on('close',()=>this._end());sock.on('error',()=>this._end());sock.setNoDelay(true)}
+  sock.on('data',d=>this._data(d));sock.on('end',()=>this._end());sock.on('close',()=>this._end());sock.on('error',()=>this._end());sock.setNoDelay(true)}
  _end(){if(this.closed)return;this.closed=true;try{this.sock.destroy()}catch(_){}this.onclose()}
  _data(d){this.buf=Buffer.concat([this.buf,d]);if(this.buf.length>this.max*2+16){return this.close(1009)}
   for(;;){const b=this.buf;if(b.length<2)return;const fin=!!(b[0]&128),op=b[0]&15,masked=!!(b[1]&128);let len=b[1]&127,off=2;

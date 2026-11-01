@@ -73,8 +73,9 @@ const INV7=(()=>{
  function run(a,k){if(k==null||!a)return false;let r=false;if(a=='equip')r=equip(k);else if(a=='unequip')r=unequip(k);else if(a=='buy')r=buy(k);else if(a=='wear')r=isWorn(k)?unequip(k):equip(k);if(isOpen())render();return r}
  function doPrimary(k){const i=items().find(x=>x.k===k);const p=primary(i);if(!p||!p.a||p.dis){if(i)say(!p?nameOf(k)+': nothing to equip — put it on the hotbar or sell it at the market':p.dis?'Not enough gems':p.l);snd('error');return false}const r=run(p.a,k);if(r)pulse(k);return r}
  // throw items on the ground in front of you (picked up again after a moment if you stay close)
- function drop(k,n){if(typeof k!='number'||!(cnt(k)>0))return false;n=Math.max(1,Math.min(cnt(k),n|0));const L=drops.length;spawnDrop(P.x+(P.f||1)*44,P.y+P.h*.4,k,n);if(drops.length==L){say('Too many items on the ground here');return false}
+ function drop(k,n){if(typeof k!='number'||!(cnt(k)>0))return false;n=Math.max(1,Math.min(cnt(k),n|0));try{if(ONL10.drop(k,n)){if(isOpen())render();return true}}catch(_){}const L=drops.length;spawnDrop(P.x+(P.f||1)*44,P.y+P.h*.4,k,n);if(drops.length==L){say('Too many items on the ground here');return false}
   const d=drops[drops.length-1];d.t=-1.6;d.vx=(P.f||1)*Math.abs(d.vx||120);addI(k,-n);say('Dropped '+n+' × '+nameOf(k));snd('close');if(isOpen())render();return true}
+ function dropAsk(k){const c=cnt(k);if(c<=1)return drop(k,1);DLG7.open({title:'Drop '+nameOf(k),text:'Anyone nearby can pick it up.',fields:[{k:'n',label:'How many (you have '+c+')',val:String(c),max:5}],ok:'Drop'}).then(v=>{if(v)drop(k,Math.floor(+v.n)||0)})}
  // ---- rendering
  const mk=()=>{if(el)return;el=document.createElement('div');el.id='inv7';el.className='ed';el.innerHTML='<div class="sheet" role="dialog" aria-label="Inventory"></div>';document.body.appendChild(el);
   const ab=document.createElement('div');ab.className='assignbanner ed';ab.id='asb';document.body.appendChild(ab);
@@ -133,7 +134,7 @@ const INV7=(()=>{
   return'<div class="eyebrow" style="margin-top:12px">Hotbar slot</div><div class="hbrow7">'+b+'</div><p class="hbtip7">'+(s>=0?'In slot '+(s+1)+' (click it again to take it off the bar). ':'')+'Or press 1–7, or drag it onto the hotbar.</p>'}
  function actRow(i){const p=primary(i);let h='<div class="row7 act8">';if(p)h+=p.a=='equip'&&i.worn||!p.a?'<button class="btn" disabled>'+esc(p.a?'Equipped':p.l)+'</button>':'<button class="btn" data-a="'+p.a+'"'+(p.dis?' disabled':'')+'>'+esc(p.l)+'</button>';
   if((i.t=='weapons'||i.t=='tools')&&i.worn)h='<div class="row7 act8"><button class="btn" data-a="equip" disabled>Equipped</button><button class="btn ghost" data-a="unequip">Put away</button>';
-  h+='<button class="btn ghost" data-a="fav" title="Favourite">'+(favs[i.k]?'★':'☆')+'</button></div>';if(p&&p.a&&!p.dis)h+='<p class="kb8"><kbd>E</kbd> or double-click: '+esc(p.l.replace(/ ·.*$/,''))+' · right-click for more</p>';return h}
+  if(typeof i.k=='number'&&cnt(i.k)>0)h+='<button class="btn ghost" data-a="drop" title="Drop for others to pick up">Drop</button>';h+='<button class="btn ghost" data-a="fav" title="Favourite">'+(favs[i.k]?'★':'☆')+'</button></div>';if(p&&p.a&&!p.dis)h+='<p class="kb8"><kbd>E</kbd> or double-click: '+esc(p.l.replace(/ ·.*$/,''))+' · right-click for more</p>';return h}
  function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does.</p><p style="margin-top:14px"><b>Equip anything fast:</b> double-click an item, or select it and press <kbd>E</kbd>. Right-click for a menu, or drag it onto <b>Equipped</b> or onto the hotbar.</p><p>Your hotbar has <b>seven</b> slots, keys <b>1–7</b> or the <b>mouse wheel</b>. Select an item and press <b>1–7</b> to put it in that slot. <b>X</b> swaps weapon ⇄ tool. Only tools break blocks.</p>';
   const k=s.k,nm=nameOf(k),c=ITEM7.cat(k),t=s.t;let h='<div class="rbar7"><span class="catl7"><i>'+(ITEM7.CATG[c]||'✦')+'</i>'+(t=='wings'?'Wings':t=='charms'?(s.sub=='charm'?'Charm':'Effect'):ITEM7.CATN[c])+'</span><span class="rtag" data-rar="'+ITEM7.RAR[tierOf(k)]+'">'+ITEM7.RN[tierOf(k)]+'</span></div><div class="pic"'+RARA(k)+'><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
   if(t=='wear'){const w=WEAR[k.slice(2)];h+='<p>'+esc(w.d)+'<br><b>'+esc(w.sd)+'</b></p><div class="kv"><span>Slot</span>'+({hat:'Head',body:'Body',wing:'Wings',boot:'Boots',glove:'Gloves'})[w.s]+'</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+w.lv+'</div>':'')+actRow(s)+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
@@ -160,6 +161,7 @@ const INV7=(()=>{
    select(k);snd('select');return}
   const a=e.target.closest('[data-a]');if(!a)return;const act=a.dataset.a,k=selK;
   if(act=='close'){close();return}
+  if(act=='drop'&&k!=null){dropAsk(k);return}
   if(act=='fav'&&k!=null){if(favs[k])delete favs[k];else favs[k]=1;saveP();render();snd('select');return}
   if(/^hb\d$/.test(act)&&k!=null&&HB()){const i=+act.slice(2);HB().set(i,HB().slotOf(k)===i?null:k);render();return}
   if(['equip','unequip','buy','wear'].includes(act)&&k!=null){if(run(act,k))pulse(k)}}

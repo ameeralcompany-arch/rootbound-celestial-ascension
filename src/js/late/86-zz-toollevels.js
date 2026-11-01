@@ -114,7 +114,7 @@ const TOOLLV=(()=>{
   if(!h.broken){try{MSFX8.play('hit',h.cat,h.b,{pr:h.b==94?1-hp[h.k]/BLK[94][2]:0})}catch(_){}return}
   try{MSFX8.play('break',h.cat,h.b)}catch(_){}if(h.b==70)return;
   addXP(u.id,h.b==94?XP.geode:h.b==93?XP.cache:XP[h.cat]||2);perks(u.id,h,l,h.x*T+T/2,h.y*T+T/2)}
- {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(!(w&&w.k=='tool'&&own[w.id])||w.tool=='rod')return _uw.apply(this,arguments);const u=U={id:w.id,tool:w.tool,ph:1,hit:null,mute:false,tree:-1};
+ {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(!(w&&w.k=='tool'&&own[w.id])||w.tool=='rod'||w.tool=='wrench')return _uw.apply(this,arguments);const u=U={id:w.id,tool:w.tool,ph:1,hit:null,mute:false,tree:-1};
    try{return _uw.apply(this,arguments)}finally{U=null;try{after(u)}catch(e){console.error('TOOLLV',e)}}}}
  // ---- fishing: luck during the catch, double catches, sooner bites and a longer bite window (state changes watched each frame)
  {const F=TOOLS8.FISH,_c=F.click;F.click=function(c){if(F.S.st!='bite')return _c.apply(this,arguments);const l=lvl('bubbles'),B=TOOLS8.BAIT,bk=F.S.bait,o=B[bk]||null,ol=o?o.luck:0,FS=TOOLS8.FISHES,b0={};for(const k in FS)b0[k]=cnt(+k);

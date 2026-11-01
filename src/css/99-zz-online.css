@@ -1,0 +1,27 @@
+/* Online: trade window, the player card opened with the wrench, world + realm picker rows */
+#trade10{position:fixed;inset:0;z-index:8000;display:none;align-items:center;justify-content:center;background:rgba(7,6,13,.45);padding:16px}
+#trade10 .card10{width:100%;max-width:560px;max-height:90vh;overflow:auto;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+#trade10 header,#pcard10 header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+#trade10 header b,#pcard10 header b{flex:1;font-size:16px}
+#trade10 header button,#pcard10 header button{background:none;border:0;color:inherit;font-size:15px;cursor:pointer}
+#trade10 .cols10{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#trade10 section{border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:96px}
+#trade10 section.locked10{border-color:var(--gold2,#c9a64a)}
+#trade10 h4{margin:0 0 6px;font-size:12px;letter-spacing:.04em}
+#trade10 .trow10{display:flex;align-items:center;gap:6px;font-size:13px;padding:2px 0}
+#trade10 .trow10 span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#trade10 .trow10[data-rm]{cursor:pointer}
+#trade10 .trow10 i{font-style:normal;font-size:11px;opacity:.6}
+#trade10 .add10{display:flex;gap:8px;margin-top:10px}
+#trade10 .add10 select{flex:1;min-width:0}
+#trade10 .add10 input{width:84px}
+#trade10 footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+#trade10 .note10{font-size:12px;opacity:.72;margin:8px 0 0}
+#pcard10{position:fixed;top:84px;left:50%;transform:translateX(-50%);z-index:7900;display:none;width:min(320px,calc(100vw - 32px));background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 12px 34px rgba(0,0,0,.4)}
+#pcard10 header small{opacity:.7}
+#pcard10 .pcb10{display:flex;flex-wrap:wrap;gap:8px}
+#mworlds .wr.rl10>span:first-of-type{flex:1;text-align:left}
+#mworlds .wr.lock10{opacity:.6;cursor:not-allowed}
+#mworlds .wr.here10{outline:1px solid var(--gold2,#c9a64a)}
+#mworlds .wr.mine10 .btn{padding:4px 10px;font-size:12px}
+@media(max-width:520px){#trade10 .cols10{grid-template-columns:1fr}}

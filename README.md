@@ -207,3 +207,17 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 - **Assign**: drag an item from the inventory onto a slot, or select it and press 1-6, click a slot, or use the "Hotbar slot" buttons in its details. Right-click a slot to clear it; drag slot onto slot to swap.
 - **Use**: blocks/seeds/objects place (left or right click), weapons attack, tools dig, Bubbles fishes, a wearable slot puts it on/off. A used-up stack stays greyed in its slot; under-level weapons show locked and give the level message.
 - Saved per profile in `rbphb`. Saves from before get 1 = your weapon, 2-4 = Pip/Pebble/Glimmer, 5 = your selected block, 6 = Bubbles. Icon decoration hook: `window.SLOTDECO(ctx,item,x,y,size)` / `TOOLLV.badge(...)`. Tests: `tests/hotbar.js`.
+
+## Online (Growtopia-style)
+
+The game runs online from one free server: **Render** (the server) and **Upstash Redis** (the saves), neither of which needs a card. **To put it online, follow [server/DEPLOY.md](server/DEPLOY.md).** Until the server is deployed and its address is set in `RB_SERVER` (`src/legacy.html`), the desktop app and the GitHub Pages copy stay single-player. The page the server itself hosts is always online.
+
+- **Owner:** one account, set by `OWNER_NAME` + `OWNER_PASSWORD` on the host. Chat commands: `/god`, `/pull`, `/summon`, `/ban`, `/unban`, `/give`, `/kick`, `/smute`, `/sunmute`, `/announce`. The server checks every one.
+- **Creative mode is gone** as a menu option. Its powers are now `/god`, for the owner only. A player who was in creative when this update arrives gets their normal save back on load.
+- **Worlds are owned:** whoever creates a world owns it, up to 5 per person (the server owner has no limit). Nobody else can build there without permission. Release a world from Worlds to free a slot, or `/claim` one with no owner. A world's realms belong to its owner and do not count toward the limit.
+- **Realm picker:** Worlds lists the base world, Inferno, Galaxy, Abyssal Sea and Crystal Realm. Realms you have not opened show as locked and say why.
+- **Trading:** hold the wrench (key **V**), click a player, choose Trade. Both add items, both lock, both confirm, and the server makes the swap. `/trade name giveItem n wantItem n` starts one with terms already filled in.
+- **Dropping:** the Drop button in the inventory, or `/drop item n`. Items stay on the ground for everyone until someone picks them up.
+- **Settings > Graphics > Hide other players' effects** stops drawing other players' auras, wings and emote sparkles.
+
+**Still limited:** items and gems earned in play are reported by each player's client (growth is capped, but a modified client can still claim items slowly). Levels and most progress are saved per device. Monsters run on each player's own screen, so they are not shared. Render's free plan sleeps after 15 idle minutes and takes about a minute to wake.

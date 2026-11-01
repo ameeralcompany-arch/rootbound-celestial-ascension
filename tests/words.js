@@ -3,7 +3,7 @@
 // wrong answers shake + hint after 2 tries, Esc closes and L reopens, the right word below level 15 keeps the gate open but refuses the Inferno
 // (also when typed as a world name), collected letters + the solved gate survive a reload, at level 15 the gate leads to "<World> · Inferno":
 // same terrain, burnt blocks, lava instead of water (it burns), clear sky, only the new monsters (stronger than any normal one, better drops,
-// imps throw fireballs), and the way home is the normal door / menu. Creative: letters and gates still work, lava does not hurt. node tests/words.js
+// imps throw fireballs), and the way home is the normal door / menu. God mode: letters and gates still work, lava does not hurt. node tests/words.js
 const {chromium}=require('playwright');const path=require('path');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';
 let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(d!=null&&d!==''?'  - '+(typeof d=='string'?d:JSON.stringify(d)):''))};
@@ -107,12 +107,12 @@ const go=async w=>{await E(w=>{WBOSS13.need=()=>false;enterWorld(w);WX6.force='c
  await go('wordsa');const hm=await E(()=>({cur,inf:WORD9.inf,letters:WORD9.letters.length,picks:(()=>{const s=new Set();for(let i=0;i<300;i++)s.add(pickMob(i%2?2:30));return[...s]})(),wname:document.getElementById('wname').textContent}));
  ok('the menu / door brings you home: normal world, normal monsters, letters back on the HUD',hm.cur=='wordsa'&&!hm.inf&&hm.letters==A.n&&!hm.picks.some(k=>k!=null&&/^inf_/.test(k))&&hm.picks.filter(Boolean).length>0&&hm.wname!='Wordsa · Inferno',hm);
  await E(()=>{lvl=9});await go('wordsa-inf');ok('dropping below level 15 locks the Inferno again',await E(()=>cur=='wordsa'&&!WORD9.inf));
- // ---- creative mode: letters + gate work (level 150), lava does not hurt
- await E(()=>{try{saveP()}catch(_){}localStorage.setItem('rb_cr_go','on')});await boot(p,true);await go('wordsc');
+ // ---- god mode: letters + gate work (level 150), lava does not hurt
+ await E(()=>{try{saveP()}catch(_){}CRV8.enable()});await go('wordsc');
  const cr=await E(async()=>{const on=CRV8.on,n=WORD9.letters.length;for(const l of WORD9.letters)WORD9.collect(l.i);await new Promise(r=>setTimeout(r,1500));const op=WORD9.isOpen();WORD9.submit(WORD9.word);await new Promise(r=>setTimeout(r,1300));return{on,n,op,cur,inf:WORD9.inf,lvl}});
- ok('creative: letters and the Word Gate work, the gate leads straight into the Inferno',cr.on&&cr.n>=3&&cr.op&&cr.cur=='wordsc-inf'&&cr.inf,cr);
+ ok('god mode: letters and the Word Gate work, the gate leads straight into the Inferno',cr.on&&cr.n>=3&&cr.op&&cr.cur=='wordsc-inf'&&cr.inf,cr);
  const cl=await E(async()=>{let k=-1;for(let y=10;y<H-3&&k<0;y++)for(let x=3;x<W-3;x++){const q=y*W+x;if(wl[q]>=8&&wl[q+W]>=8&&!tiles[q]&&!tiles[q+W]&&!tiles[q-W]){k=q;break}}if(k<0)return{k};mobs.length=0;let low=1e9;for(let i=0;i<8;i++){P.x=(k%W)*T+T/2;P.y=(k/W|0)*T+4;await new Promise(r=>setTimeout(r,60));low=Math.min(low,P.hp)}return{k,low,max:maxHP()}});
- ok('creative: lava does not hurt',cl.k>0&&cl.low>=cl.max,cl);
- await E(()=>localStorage.setItem('rb_cr_go','off'));await boot(p,true);ok('back to survival afterwards',await E(()=>!CRV8.on));
+ ok('god mode: lava does not hurt',cl.k>0&&cl.low>=cl.max,cl);
+ await boot(p,true);ok('back to normal after a reload',await E(()=>!CRV8.on));
  ok('no page errors',errs.length==0,errs.join(' | '));
  await b.close();console.log(fails?fails+' word test(s) FAILED':'all word tests passed');process.exit(fails?1:0)})();

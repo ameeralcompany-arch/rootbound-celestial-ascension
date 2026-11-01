@@ -1,15 +1,15 @@
 'use strict';
 // Rootbound persistent multiplayer server. Zero dependencies (Node 18+). See server/README.md.
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
-const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop');
+const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),zlib=require('zlib');
 const ENV=process.env;
 function createServer(opts={}){
  const cfg=Object.assign({port:+ENV.PORT||8787,host:ENV.HOST||'0.0.0.0',dataDir:ENV.DATA_DIR||path.join(__dirname,'data'),client:ENV.CLIENT_FILE||path.join(__dirname,'..','index.html'),
-  maxPlayers:+ENV.MAX_PLAYERS_PER_WORLD||24,maxWorlds:+ENV.MAX_WORLDS||500,maxWorldsPerAccount:+ENV.MAX_WORLDS_PER_ACCOUNT||8,maxConns:+ENV.MAX_CONNECTIONS||400,maxConnsPerIp:+ENV.MAX_CONNS_PER_IP||12,
-  wxCooldownMs:+ENV.WEATHER_COOLDOWN_MS||20000,origins:ENV.ALLOWED_ORIGINS?ENV.ALLOWED_ORIGINS.split(','):null,scryptN:+ENV.SCRYPT_N||16384},opts);
- const store=new Store(cfg.dataDir);const t0=Date.now();const CAT=SHOP.loadCatalog();
+  maxPlayers:+ENV.MAX_PLAYERS_PER_WORLD||24,maxWorlds:+ENV.MAX_WORLDS||500,maxWorldsPerAccount:+ENV.MAX_WORLDS_PER_ACCOUNT||5,maxConns:+ENV.MAX_CONNECTIONS||400,maxConnsPerIp:+ENV.MAX_CONNS_PER_IP||12,
+  wxCooldownMs:+ENV.WEATHER_COOLDOWN_MS||20000,origins:ENV.ALLOWED_ORIGINS?ENV.ALLOWED_ORIGINS.split(','):null,scryptN:+ENV.SCRYPT_N||16384,trustProxy:ENV.TRUST_PROXY=='1',banIps:ENV.TRUST_PROXY=='1',ownerName:ENV.OWNER_NAME||'',ownerPass:ENV.OWNER_PASSWORD||'',ownerEmail:String(ENV.OWNER_EMAIL||'').toLowerCase(),cloud:null},opts);
+ const store=new Store(cfg.dataDir);store.cloud=cfg.cloud;const t0=Date.now();const CAT=SHOP.loadCatalog();
  // ---------- accounts / owner / bans
- let accounts=store.readJSON(store.p('accounts.json'),{users:{}}),owner=store.readJSON(store.p('owner.json'),null),bans=store.readJSON(store.p('bans.json'),{bans:{},mutes:{}}),sess=store.readJSON(store.p('sessions.json'),{});
+ let accounts=store.readJSON(store.p('accounts.json'),{users:{}}),owner=store.readJSON(store.p('owner.json'),null),bans=store.readJSON(store.p('bans.json'),{bans:{},mutes:{}}),sess=store.readJSON(store.p('sessions.json'),{});if(!bans.ips)bans.ips={};
  const saveAcc=()=>store.later('acc',()=>store.writeJSON(store.p('accounts.json'),accounts)),saveBans=()=>store.later('bans',()=>store.writeJSON(store.p('bans.json'),bans)),saveSess=()=>store.later('sess',()=>store.writeJSON(store.p('sessions.json'),sess));
  const hashTok=t=>crypto.createHash('sha256').update(t).digest('hex');
  const nameKey=n=>String(n).toLowerCase();
@@ -22,6 +22,12 @@ function createServer(opts={}){
  for(const k of Object.keys(sess))if(sess[k].exp<Date.now())delete sess[k];
  const userById=id=>Object.values(accounts.users).find(u=>u.id==id);
  const isOwnerUid=uid=>!!(owner&&owner.ownerUid&&uid===owner.ownerUid);
+ // Free hosts have no shell for cli.js: OWNER_NAME + OWNER_PASSWORD (set in the host's dashboard, never in the repo) create or claim the single owner account at boot. Only a scrypt hash is stored; the id comes from the name, so it survives a lost disk.
+ (function ownerFromEnv(){const n=cfg.ownerName,pw=cfg.ownerPass;if(!n&&!pw)return;if(!nameOk(n)||String(pw).length<12){console.error('OWNER_NAME must be 3-16 letters, numbers, _ or - and OWNER_PASSWORD at least 12 characters: owner not set');return}const k=nameKey(n);let u=accounts.users[k];
+  if(!u)u=accounts.users[k]={id:'a'+crypto.createHash('sha256').update('rb-owner:'+k).digest('hex').slice(0,8),name:n,pw:hashPw(pw),role:'owner',created:Date.now(),worlds:[]};else if(!checkPw(pw,u.pw))u.pw=hashPw(pw);u.role='owner';
+  owner={ownerUid:u.id,name:u.name,set:new Date().toISOString()};store.writeJSON(store.p('accounts.json'),accounts);store.writeJSON(store.p('owner.json'),owner)})();
+ const banned=uid=>{const b=bans.bans[uid];if(!b)return false;if(b.until&&b.until<Date.now()){delete bans.bans[uid];saveBans();return false}return true};
+ const ipBanned=ip=>{if(!cfg.banIps)return false;const u=bans.ips[ip];if(!u)return false;if(u<Date.now()){delete bans.ips[ip];saveBans();return false}return true};
  // ---------- worlds
  const worlds=new Map(); // id -> world
  const wname=n=>String(n||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16);
@@ -29,57 +35,66 @@ function createServer(opts={}){
  // worlds saved before the world grew were 100 tiles wide: move each tile key to its new index (x,y unchanged)
  function migrateWorld(j){const ow=j.W||100,re=k=>Math.floor(k/ow)*R.W+(k%ow),mv=o=>{const r={};if(o&&typeof o=='object')for(const k of Object.keys(o)){const n=+k;if(Number.isInteger(n)&&n>=0)r[re(n)]=o[k]}return r};j.edits=mv(j.edits);j.objs=mv(j.objs);j.W=R.W}
  function loadWorld(id,create,ownerUid){let w=worlds.get(id);if(w)return w;const j=store.readJSON(wfile(id),null);
-  if(j&&j.id==id){if(j.W!==R.W)migrateWorld(j);w={id,name:j.name||id,created:j.created||Date.now(),ownerUid:j.ownerUid||'',edits:{},meta:R.cleanMeta(j.meta)||null,objs:R.cleanObjMap(j.objs),weather:R.WEATHERS.includes(j.weather)?j.weather:'default',rev:j.rev|0,updated:j.updated||0,lastWx:0};
+  if(j&&j.id==id){if(j.W!==R.W)migrateWorld(j);w={id,name:j.name||id,created:j.created||Date.now(),ownerUid:j.ownerUid||'',ownerName:j.ownerName||(j.ownerUid&&(userById(j.ownerUid)||{}).name)||'',base:j.base||'',g:j.g===1||j.g===2?j.g:Object.keys(j.edits||{}).length?1:2,drops:ECON.cleanDrops(j.drops),edits:{},meta:R.cleanMeta(j.meta)||null,objs:R.cleanObjMap(j.objs),weather:R.WEATHERS.includes(j.weather)?j.weather:'default',rev:j.rev|0,updated:j.updated||0,lastWx:0};
    for(const k of Object.keys(j.edits||{})){if(R.validEdit({k:+k,a:j.edits[k]}))w.edits[k]=j.edits[k]}}
-  else if(create){if(countWorlds()>=cfg.maxWorlds)return null;w={id,name:id,created:Date.now(),ownerUid:ownerUid||'',edits:{},meta:null,objs:{},weather:'default',rev:0,updated:Date.now(),lastWx:0};}
+  else if(create){if(countWorlds()>=cfg.maxWorlds)return null;w={id,name:id,created:Date.now(),ownerUid:ownerUid||'',ownerName:ownerUid?(userById(ownerUid)||{}).name||'':'',base:'',g:2,drops:[],edits:{},meta:null,objs:{},weather:'default',rev:0,updated:Date.now(),lastWx:0};}
   else return null;
   w.members=new Set();w.dirty=false;w.emptySince=Date.now();worlds.set(id,w);if(create&&!j){saveWorld(w,true);store.audit({ev:'world-created',w:id,by:ownerUid})}return w}
  function countWorlds(){try{return fs.readdirSync(store.p('worlds')).filter(f=>f.endsWith('.json')).length}catch(_){return worlds.size}}
- function saveWorld(w,now){w.dirty=true;const doSave=()=>{w.dirty=false;w.rev++;w.updated=Date.now();store.writeJSON(wfile(w.id),{v:1,W:R.W,id:w.id,name:w.name,created:w.created,ownerUid:w.ownerUid,weather:w.weather,rev:w.rev,updated:w.updated,meta:w.meta,objs:w.objs,edits:w.edits})};if(now)doSave();else store.later('w:'+w.id,doSave)}
+ function saveWorld(w,now){w.dirty=true;const doSave=()=>{w.dirty=false;w.rev++;w.updated=Date.now();store.writeJSON(wfile(w.id),{v:1,W:R.W,id:w.id,name:w.name,created:w.created,ownerUid:w.ownerUid,ownerName:w.ownerName,base:w.base,g:w.g,drops:w.drops,weather:w.weather,rev:w.rev,updated:w.updated,meta:w.meta,objs:w.objs,edits:w.edits})};if(now)doSave();else store.later('w:'+w.id,doSave)}
  const worldExists=id=>worlds.has(id)||fs.existsSync(wfile(id));
  function listWorlds(){const out=[];let files=[];try{files=fs.readdirSync(store.p('worlds')).filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5))}catch(_){}
-  for(const id of files){const w=worlds.get(id);let info;if(w)info={id,pop:w.members.size,owner:w.meta?w.meta.on:'',weather:w.weather,rev:w.rev,updated:w.updated,priv:!!(w.meta&&w.meta.pr)};else{try{const st=fs.statSync(wfile(id));info={id,pop:0,owner:'',weather:'default',rev:0,updated:st.mtimeMs,priv:false,cold:1}}catch(_){continue}}out.push(info)}
+  for(const id of files){if(R.realmStage(id))continue;const w=worlds.get(id);let info;if(w)info={id,pop:w.members.size,owner:w.ownerName||(w.meta?w.meta.on:''),weather:w.weather,rev:w.rev,updated:w.updated,priv:!!(w.meta&&w.meta.pr)};else{try{const st=fs.statSync(wfile(id));info={id,pop:0,owner:'',weather:'default',rev:0,updated:st.mtimeMs,priv:false,cold:1}}catch(_){continue}}out.push(info)}
   if(!out.find(x=>x.id=='plaza'))out.push({id:'plaza',pop:plaza.size,owner:'',weather:'default',rev:0,updated:0,priv:false,hub:1});return out}
  // ---------- sessions
- const sessions=new Map(),plaza=new Set(),ipCount=new Map();let sidN=0;
+ const sessions=new Map(),plaza=new Set(),plazaDrops=[],ipCount=new Map();let sidN=0;
  const send=(s,m)=>{if(s.conn&&!s.conn.closed&&s.conn.backlog<2e6)s.conn.send(JSON.stringify(m))};
  const members=id=>id=='plaza'?plaza:(worlds.get(id)?worlds.get(id).members:new Set());
  const relay=(wid,m,exceptSid)=>{const raw=JSON.stringify(m);for(const sid of members(wid)){if(sid===exceptSid)continue;const s=sessions.get(sid);if(s&&s.conn&&!s.conn.closed&&s.conn.backlog<2e6)s.conn.send(raw)}};
  function bucket(s,k,cap,ms){const now=Date.now(),a=(s.rate[k]=(s.rate[k]||[]).filter(x=>now-x<ms));if(a.length>=cap)return false;a.push(now);return true}
  const isMuted=uid=>{const u=bans.mutes[uid];if(!u)return false;if(u<Date.now()){delete bans.mutes[uid];return false}return true};
- function leaveWorld(s){if(!s.world)return;const id=s.world;const set=members(id);set.delete(s.sid);relay(id,{t:'_x',f:s.sid});s.world=null;const w=worlds.get(id);if(w){if(!w.members.size){w.emptySince=Date.now();if(w.dirty)saveWorld(w,true)}}}
+ function leaveWorld(s){if(!s.world)return;eco.leaving(s);const id=s.world;const set=members(id);set.delete(s.sid);relay(id,{t:'_x',f:s.sid});s.world=null;const w=worlds.get(id);if(w){if(!w.members.size){w.emptySince=Date.now();if(w.dirty)saveWorld(w,true)}}}
  function helloFor(s,id){const pl={};for(const sid of members(id)){if(sid==s.sid)continue;const o=sessions.get(sid);if(o)pl[sid]=o.pres}pl[s.sid]=s.pres;
-  if(id=='plaza')return{w:'plaza',edits:{},pl,wx:'default'};const w=worlds.get(id);const e=Object.assign({},w.edits);if(w.meta)e.m=w.meta;if(Object.keys(w.objs).length)e.o=w.objs;return{w:id,edits:e,pl,wx:w.weather,rev:w.rev}}
- function enter(s,idRaw,create){const id=wname(idRaw);if(!id)return send(s,{t:'enter_err',m:'Invalid world name'});
+  if(id=='plaza')return{w:'plaza',edits:{},pl,wx:'default',dr:plazaDrops};const w=worlds.get(id);const e=Object.assign({},w.edits);if(w.meta)e.m=w.meta;if(Object.keys(w.objs).length)e.o=w.objs;return{w:id,edits:e,pl,wx:w.weather,rev:w.rev,g:w.g,own:w.ownerUid?{o:w.ownerUid,on:w.ownerName}:null,dr:w.drops}}
+ function enter(s,idRaw,create,baseRaw){const id=wname(idRaw);if(!id)return send(s,{t:'enter_err',m:'Invalid world name'});
   if(s.world==id)return;
-  if(bans.bans[s.uid])return send(s,{t:'enter_err',m:'You are banned from this server'});
-  let w=null;if(id!='plaza'){if(!worldExists(id)){if(!create)return send(s,{t:'enter_err',m:'That world does not exist yet. Use Create to make it.'});if(s.kind!='user'&&s.kind!='owner')return send(s,{t:'enter_err',m:'Create an account to make new worlds (guests can join existing ones).'});
-    const u=userById(s.uid);if(u&&!isOwnerUid(s.uid)&&(u.worlds||[]).length>=cfg.maxWorldsPerAccount)return send(s,{t:'enter_err',m:'World limit reached ('+cfg.maxWorldsPerAccount+' per account)'});
+  if(banned(s.uid))return send(s,{t:'enter_err',m:'You are banned from this server'});const pass=s.owner||s.summon===id;
+  let w=null;if(id!='plaza'){const sg=R.realmStage(id);if(sg&&!worldExists(id)){const b=wname(baseRaw),bw=b&&R.stName(b,sg)==id&&!R.realmStage(b)&&worldExists(b)?loadWorld(b,false):null;if(!bw)return send(s,{t:'enter_err',m:'Enter the base world of this realm first'});if(!bucket(s,'realm',8,60000))return send(s,{t:'enter_err',m:'Slow down'});w=loadWorld(id,true,bw.ownerUid);if(!w)return send(s,{t:'enter_err',m:'The server has reached its world limit'});w.ownerName=bw.ownerName;w.base=b;saveWorld(w,true)}else if(!worldExists(id)){if(!create)return send(s,{t:'enter_err',m:'That world does not exist yet. Use Create to make it.'});if(s.kind!='user'&&s.kind!='owner')return send(s,{t:'enter_err',m:'Create an account to make new worlds (guests can join existing ones).'});if(sg)return send(s,{t:'enter_err',m:'World names cannot end in a realm suffix'});
+    const u=userById(s.uid);if(u&&!canOwn(u))return send(s,{t:'enter_err',m:'You already own '+cfg.maxWorldsPerAccount+' worlds, the most one person can have. Release one first.'});
     if(!bucket(s,'create',3,60000))return send(s,{t:'enter_err',m:'Slow down: too many worlds created'});
-    w=loadWorld(id,true,s.uid);if(!w)return send(s,{t:'enter_err',m:'The server has reached its world limit'});if(u){u.worlds=(u.worlds||[]).concat(id);saveAcc()}}
+    w=loadWorld(id,true,s.uid);if(!w)return send(s,{t:'enter_err',m:'The server has reached its world limit'});if(u){u.worlds=(u.worlds||[]).concat(id);saveAcc();sendMine(s)}}
    else{w=loadWorld(id,false);if(!w)return send(s,{t:'enter_err',m:'World data could not be loaded'})}
-   if(w.meta&&w.meta.b&&w.meta.b.includes(s.uid))return send(s,{t:'enter_err',m:'You are banned from this world'});
-   if(w.meta&&w.meta.pr&&!(w.meta.o==s.uid||(w.meta.f||[]).includes(s.uid)||(w.meta.t||[]).includes(s.uid))&&!s.owner)return send(s,{t:'enter_err',m:'This world is private'})}
-  if(members(id).size>=cfg.maxPlayers&&!s.owner)return send(s,{t:'enter_err',m:'World is full ('+cfg.maxPlayers+' players)'});
-  leaveWorld(s);s.world=id;members(id).add(s.sid);s.pres={n:s.name,uid:s.uid,x:0,y:0,f:1};
+   const gate=w.base&&loadWorld(w.base,false)||w;if(gate.meta&&gate.meta.b&&gate.meta.b.includes(s.uid)&&!pass)return send(s,{t:'enter_err',m:'You are banned from this world'});
+   if(gate.meta&&gate.meta.pr&&!(gate.meta.o==s.uid||(gate.meta.f||[]).includes(s.uid)||(gate.meta.t||[]).includes(s.uid))&&!pass)return send(s,{t:'enter_err',m:'This world is private'})}
+  if(members(id).size>=cfg.maxPlayers&&!pass)return send(s,{t:'enter_err',m:'World is full ('+cfg.maxPlayers+' players)'});
+  leaveWorld(s);s.summon='';s.world=id;members(id).add(s.sid);s.pres={n:s.name,uid:s.uid,x:0,y:0,f:1};s.presLook=s.presKey='';
   send(s,{t:'joined',sid:s.sid,w:id,uid:s.uid,name:s.name,owner:!!s.owner,kind:s.kind});send(s,{t:'_hello',d:helloFor(s,id)});relay(id,{t:'_p',d:s.pres,f:s.sid},s.sid)}
+ // ---------- world ownership: up to cfg.maxWorldsPerAccount per person (the server owner has no cap); a world's realms belong to its owner and do not count
+ const canOwn=u=>isOwnerUid(u.id)||(u.worlds||[]).length<cfg.maxWorldsPerAccount;
+ function setOwner(id,uid,name){const ids=[id];for(let i=1;i<R.REALM.length;i++)if(worldExists(R.stName(id,i)))ids.push(R.stName(id,i));for(const x of ids){const w=loadWorld(x,false);if(!w)continue;w.ownerUid=uid;w.ownerName=name;if(!uid)w.meta=null;saveWorld(w);relay(x,{t:'own',d:{o:uid,on:name,clearLock:uid?0:1}})}}
+ function sendMine(s){const u=userById(s.uid);if(!u)return;send(s,{t:'myworlds',list:(u.worlds||[]).map(id=>({id,pop:members(id).size})),max:isOwnerUid(u.id)?0:cfg.maxWorldsPerAccount})}
+ const notify=(s,text)=>send(s,{t:'notice',d:{text,by:'Server'}});
+ function setGod(s,u,on){const sh=SHOP.ensure(u);if(on&&!u.god){sh.realG=sh.g;sh.g=Math.max(sh.g,999999)}else if(!on&&u.god){sh.g=Number.isFinite(sh.realG)?sh.realG:sh.g;delete sh.realG}u.god=on?1:0;s.god=!!on;saveAcc();send(s,{t:'god',on:on?1:0});sendWallet(s,u)}
+ const eco=ECON.createEconomy({send,sessions,userById,saveAcc:()=>saveAcc(),relay:(w,m)=>relay(w,m),dropsOf:id=>id=='plaza'?plazaDrops:(worlds.get(id)||{drops:[]}).drops,touchWorld:id=>{const w=worlds.get(id);if(w)saveWorld(w)},bucket:(s,k,c,ms)=>bucket(s,k,c,ms),audit:o=>store.audit(o),rid:()=>crypto.randomBytes(2).toString('hex')});
  // ---------- admin (OWNER ONLY, verified server-side on every call)
  function adminOp(s,m){const rid=m.rid,ok=(msg,data)=>send(s,{t:'admin_res',rid,ok:1,m:msg,data}),no=msg=>send(s,{t:'admin_res',rid,ok:0,m:msg});
   if(!s.owner||!isOwnerUid(s.uid)||s.kind!='owner'){store.audit({ev:'admin-denied',uid:s.uid,op:String(m.op).slice(0,24),ip:s.ip});return no('Not authorized')}
-  const op=String(m.op||'');const find=q=>{q=String(q||'').toLowerCase();for(const o of sessions.values())if(o.sid==q||o.uid==q||o.name.toLowerCase()==q)return o;return null};const A=(o)=>store.audit(Object.assign({ev:'admin',op,by:s.name},o||{}));
+  const op=String(m.op||'');const find=q=>{q=String(q||'').toLowerCase();for(const o of sessions.values())if(o.sid==q||o.uid==q||o.name.toLowerCase()==q)return o;return null};const A=(o)=>store.audit(Object.assign({ev:'admin',op,by:s.name},o||{}));const acc=q=>accounts.users[nameKey(String(q||''))];
   switch(op){
   case 'players':return ok('ok',[...sessions.values()].map(o=>({sid:o.sid,uid:o.uid,name:o.name,kind:o.kind,world:o.world})));
   case 'stats':return ok('ok',{players:sessions.size,worlds:listWorlds().length,loaded:worlds.size,uptime:Math.round((Date.now()-t0)/1000),mem:Math.round(process.memoryUsage().rss/1e6)});
   case 'kick':{const o=find(m.who);if(!o||isOwnerUid(o.uid))return no('Player not found');send(o,{t:'_kick',m:String(m.reason||'Removed by the server owner').slice(0,80)});A({who:o.name});setTimeout(()=>o.conn.close(1000),150);return ok('Kicked '+o.name)}
   case 'mute':{const o=find(m.who);const mins=Math.max(1,Math.min(1440,m.mins|0||5));if(!o||isOwnerUid(o.uid))return no('Player not found');bans.mutes[o.uid]=Date.now()+mins*60000;saveBans();A({who:o.name,mins});return ok('Muted '+o.name+' for '+mins+' min')}
   case 'unmute':{const o=find(m.who);const u=o?o.uid:String(m.who);delete bans.mutes[u];saveBans();A({who:u});return ok('Unmuted')}
-  case 'ban':{const o=find(m.who);if(!o||isOwnerUid(o.uid))return no('Player not found (must be online to ban by name)');if(o.kind=='guest')return no('Guests have temporary ids; kick them or ban their account');bans.bans[o.uid]={name:o.name,ts:Date.now(),reason:String(m.reason||'').slice(0,80)};saveBans();send(o,{t:'_ban'});setTimeout(()=>o.conn.close(1000),150);A({who:o.name,uid:o.uid});return ok('Banned '+o.name)}
-  case 'unban':{const q=String(m.who||'').toLowerCase();const k=Object.keys(bans.bans).find(u=>u==q||String(bans.bans[u].name).toLowerCase()==q);if(!k)return no('Not banned');delete bans.bans[k];saveBans();A({who:k});return ok('Unbanned')}
+  case 'ban':{const o=find(m.who),a=o?(o.kind=='guest'?null:userById(o.uid)):acc(m.who);if((!o&&!a)||isOwnerUid((o||a).uid||(a&&a.id)))return no('Player not found');const mins=Math.max(0,Math.min(525600,m.mins|0)),until=mins?Date.now()+mins*60000:0,name=o?o.name:a.name;
+   // a guest id dies with the connection, so guests are held by address (only where the host reports real addresses); so is an account, for a week, to slow a new sign-up
+   const ip=o&&o.ip;if(ip&&cfg.banIps){bans.ips[ip]=until||Date.now()+(o.kind=='guest'?86400e3:7*86400e3)}if(a)bans.bans[a.id]=Object.assign({name,ts:Date.now(),reason:String(m.reason||'').slice(0,80)},until?{until}:{},ip?{ip}:{});else if(!cfg.banIps)return no('Guests have temporary ids here; kick them or ban their account');saveBans();if(o){send(o,{t:'_ban',m:until?'You are banned for '+mins+' minutes':''});setTimeout(()=>o.conn.close(1000),150)}A({who:name,uid:a&&a.id,mins});return ok('Banned '+name+(mins?' for '+mins+' minutes':''))}
+  case 'unban':{const q=String(m.who||'').toLowerCase();const k=Object.keys(bans.bans).find(u=>u==q||String(bans.bans[u].name).toLowerCase()==q);if(!k)return no('Not banned');if(bans.bans[k].ip)delete bans.ips[bans.bans[k].ip];delete bans.bans[k];saveBans();A({who:k});return ok('Unbanned')}
   case 'bans':return ok('ok',Object.keys(bans.bans).map(u=>Object.assign({uid:u},bans.bans[u])));
   case 'announce':{const text=String(m.text||'').slice(0,160).replace(/[<>]/g,'');if(!text)return no('Empty message');const scope=m.scope=='world'?'world':'all';if(scope=='all'){for(const o of sessions.values())send(o,{t:'notice',d:{text,by:'Server'}})}else relay(wname(m.world),{t:'notice',d:{text,by:'Server'}});A({scope,text:text.slice(0,60)});return ok('Sent')}
   case 'weather':{const id=wname(m.world);const wx=String(m.weather||'');if(!R.WEATHERS.includes(wx))return no('Unknown weather');const w=id=='plaza'?null:loadWorld(id,false);if(!w)return no('World not found');setWeather(w,wx,'Server owner');A({w:id,wx});return ok('Weather set to '+wx)}
   case 'worlds':return ok('ok',listWorlds());
-  case 'world_delete':{const id=wname(m.world);if(id=='plaza'||m.confirm!==id)return no('Type the world name to confirm');const w=worlds.get(id);if(w){for(const sid of [...w.members]){const o=sessions.get(sid);if(o){send(o,{t:'_kick',m:'This world was deleted'});leaveWorld(o)}}worlds.delete(id)}try{fs.renameSync(wfile(id),wfile(id)+'.deleted-'+Date.now())}catch(_){return no('World not found')}A({w:id});return ok('Deleted '+id+' (file kept as .deleted for recovery)')}
+  case 'world_delete':{const id=wname(m.world);if(id=='plaza'||m.confirm!==id)return no('Type the world name to confirm');const w=loadWorld(id,false);if(w){for(const sid of [...w.members]){const o=sessions.get(sid);if(o){send(o,{t:'_kick',m:'This world was deleted'});leaveWorld(o)}}const ou=userById(w.ownerUid);if(ou&&ou.worlds){ou.worlds=ou.worlds.filter(x=>x!=id);saveAcc()}worlds.delete(id)}try{fs.renameSync(wfile(id),wfile(id)+'.deleted-'+Date.now());if(store.cloud)store.cloud.forget(wfile(id))}catch(_){return no('World not found')}A({w:id});return ok('Deleted '+id+' (file kept as .deleted for recovery)')}
   case 'world_reset':{const id=wname(m.world);if(id=='plaza'||m.confirm!==id)return no('Type the world name to confirm');const w=loadWorld(id,false);if(!w)return no('World not found');try{fs.copyFileSync(wfile(id),wfile(id)+'.pre-reset-'+Date.now())}catch(_){}w.edits={};w.meta=null;w.objs={};saveWorld(w,true);for(const sid of w.members){const o=sessions.get(sid);if(o)send(o,{t:'_hello',d:helloFor(o,id)})}A({w:id});return ok('World reset (backup kept)')}
   case 'world_restore':{const id=wname(m.world);if(!fs.existsSync(wfile(id)+'.bak'))return no('No backup for that world');const w=worlds.get(id);if(w&&w.members.size)return no('Empty the world first');worlds.delete(id);fs.copyFileSync(wfile(id)+'.bak',wfile(id));A({w:id});return ok('Restored last backup')}
   case 'config_get':return ok('ok',{maxPlayers:cfg.maxPlayers,maxWorlds:cfg.maxWorlds,maxWorldsPerAccount:cfg.maxWorldsPerAccount,wxCooldownMs:cfg.wxCooldownMs});
@@ -87,6 +102,10 @@ function createServer(opts={}){
   case 'audit':return ok('ok',store.readAudit(Math.max(1,Math.min(200,m.n|0||50))));
   case 'tp':{const o=find(m.who);if(!o)return no('Player not found');send(o,{t:'sys',d:{op:'tp',x:+m.x||0,y:+m.y||0}});A({who:o.name});return ok('Teleported '+o.name)}
   case 'goto_world':{const o=find(m.who);const id=wname(m.world);if(!o)return no('Player not found');send(o,{t:'sys',d:{op:'world',w:id}});A({who:o.name,w:id});return ok('Sent '+o.name+' to '+id)}
+  case 'god':{const u=userById(s.uid);if(!u)return no('No account');const on=m.on==null?!u.god:!!m.on;setGod(s,u,on);A({on});return ok(on?'God mode on':'God mode off',{on:on?1:0})}
+  case 'pull':{const o=find(m.who);if(!o)return no('Player not found');if(o===s)return no('That is you');if(!s.world||o.world!==s.world)return no(o.name+' is in another world. Use /summon');send(o,{t:'sys',d:{op:'tp',x:+s.pres.x||0,y:+s.pres.y||0,by:s.name}});A({who:o.name});return ok('Pulled '+o.name)}
+  case 'summon':{const o=find(m.who);if(!o)return no('Player not found');if(o===s)return no('That is you');if(!s.world)return no('Enter a world first');const x=+s.pres.x||0,y=+s.pres.y||0;if(o.world===s.world)send(o,{t:'sys',d:{op:'tp',x,y,by:s.name}});else{o.summon=s.world;const cw=worlds.get(s.world);send(o,{t:'sys',d:{op:'world',w:s.world,x,y,base:cw&&cw.base||'',by:s.name}})}A({who:o.name,w:s.world});return ok('Summoned '+o.name)}
+  case 'give':{const i=m.item,n=m.n;if(!ECON.okItem(i)||!ECON.okN(n))return no('Usage: /give name item amount');const o=find(m.who),u=o?(o.kind=='guest'?null:userById(o.uid)):acc(m.who);if(!o&&!u)return no('Player not found');eco.give(o,u,i,n);A({who:o?o.name:u.name,i,n});return ok('Gave '+n+' to '+(o?o.name:u.name))}
   default:return no('Unknown operation')}}
  function setWeather(w,wx,by){w.weather=wx;w.lastWx=Date.now();saveWorld(w);relay(w.id,{t:'wx',d:{w:wx,by:String(by||'').slice(0,14),rev:w.rev}})}
  // ---------- message handling
@@ -94,35 +113,38 @@ function createServer(opts={}){
  const authFail={};
  function loginThrottle(key,lim){const a=authFail[key];if(a&&a.until&&Date.now()>a.until){delete authFail[key];return false}return !!a&&a.n>=lim}
  function failed(key,lim){const a=authFail[key]||(authFail[key]={n:0,until:0});a.n++;if(a.n>=lim)a.until=Date.now()+60000}
- function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token});sendWallet(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
+ function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token});signedIn(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
+ // what every sign-in gets: wallet, bag, the owner's god mode if it was left on, the owned-world list
+ function signedIn(s,u){sendWallet(s,u);eco.signedIn(s,u);s.god=!!(s.owner&&u.god);if(s.god)send(s,{t:'god',on:1});sendMine(s)}
  function sendWallet(s,u){if(!u)return;send(s,Object.assign({t:'wallet'},SHOP.view(u)))}
  function onMsg(s,raw){let m;if(raw.length>20000&&!/^\{"t":"(e|o|meta|_p)"/.test(raw.slice(0,12)))return;try{m=JSON.parse(raw)}catch(_){if(++s.strikes>8)s.conn.close(1008);return}
   if(!m||typeof m.t!='string')return;
   if(!bucket(s,'all',300,5000)){if(++s.strikes>20)s.conn.close(1008);return}
   const t=m.t;
   switch(t){
-  case 'guest':{if(s.uid)return;if(!bucket(s,'auth',10,60000))return;const base=String(m.name||'Player').replace(/[^A-Za-z0-9_-]/g,'').slice(0,8)||'Player';s.uid='g'+crypto.randomBytes(4).toString('hex');s.name='~'+base;s.kind='guest';s.owner=false;send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:'guest',owner:false});return}
+  case 'guest':{if(s.uid)return;if(!bucket(s,'auth',10,60000))return;if(ipBanned(s.ip))return send(s,{t:'auth',ok:0,m:'You are banned from this server'});const base=String(m.name||'Player').replace(/[^A-Za-z0-9_-]/g,'').slice(0,8)||'Player';s.uid='g'+crypto.randomBytes(4).toString('hex');s.name='~'+base;s.kind='guest';s.owner=false;send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:'guest',owner:false});return}
   case 'register':{if(s.uid&&s.kind!='guest')return;if(!bucket(s,'auth',10,60000))return send(s,{t:'auth',ok:0,m:'Too many attempts. Wait a minute.'});const name=String(m.name||''),pw=String(m.pass||'');
-   if(!nameOk(name))return send(s,{t:'auth',ok:0,m:'Name: 3-16 letters, numbers, _ or -'});if(pw.length<8||pw.length>128)return send(s,{t:'auth',ok:0,m:'Password must be 8-128 characters'});
+   if(ipBanned(s.ip))return send(s,{t:'auth',ok:0,m:'You are banned from this server'});if(!nameOk(name))return send(s,{t:'auth',ok:0,m:'Name: 3-16 letters, numbers, _ or -'});if(pw.length<8||pw.length>128)return send(s,{t:'auth',ok:0,m:'Password must be 8-128 characters'});
    if(RESERVED.includes(nameKey(name))||(owner&&nameKey(owner.name)==nameKey(name))||accounts.users[nameKey(name)])return send(s,{t:'auth',ok:0,m:'That name is not available'});
    if(Object.keys(accounts.users).length>=20000)return send(s,{t:'auth',ok:0,m:'Registration closed'});
    const u=createAccount(name,pw,'player');setAuth(s,u);return}
   case 'login':{if(!bucket(s,'auth',10,60000))return send(s,{t:'auth',ok:0,m:'Too many attempts. Wait a minute.'});const name=String(m.name||''),pw=String(m.pass||'');const key=nameKey(name)+'|'+s.ip,ik='ip:'+s.ip,uk=nameKey(name);
    if(loginThrottle(key,5)||loginThrottle(ik,40))return send(s,{t:'auth',ok:0,m:'Too many failed attempts. Try again in a minute.'});
-   const u=accounts.users[uk];if(!u||!checkPw(pw,u.pw)){failed(key,5);failed(ik,40);store.audit({ev:'login-failed',name:name.slice(0,16),ip:s.ip});return send(s,{t:'auth',ok:0,m:'Wrong name or password'})}
-   if(bans.bans[u.id])return send(s,{t:'auth',ok:0,m:'This account is banned'});
+   // the owner may sign in with OWNER_EMAIL instead of the account name
+   const u=accounts.users[cfg.ownerEmail&&uk==cfg.ownerEmail&&owner?nameKey(owner.name):uk];if(!u||!checkPw(pw,u.pw)){failed(key,5);failed(ik,40);store.audit({ev:'login-failed',name:name.slice(0,16),ip:s.ip});return send(s,{t:'auth',ok:0,m:'Wrong name or password'})}
+   if(banned(u.id)||(ipBanned(s.ip)&&!isOwnerUid(u.id)))return send(s,{t:'auth',ok:0,m:'This account is banned'});
    for(const o of sessions.values())if(o.uid==u.id&&o!==s){send(o,{t:'_kick',m:'Signed in from another place'});o.conn.close(1000)}
    setAuth(s,u);return}
-  case 'resume':{if(!bucket(s,'auth',10,60000))return;const rec=sess[hashTok(String(m.token||''))];if(!rec||rec.exp<Date.now())return send(s,{t:'auth',ok:0,m:'Session expired',expired:1});const u=userById(rec.uid);if(!u||bans.bans[u.id])return send(s,{t:'auth',ok:0,m:'Account unavailable'});
+  case 'resume':{if(!bucket(s,'auth',10,60000))return;const rec=sess[hashTok(String(m.token||''))];if(!rec||rec.exp<Date.now())return send(s,{t:'auth',ok:0,m:'Session expired',expired:1});const u=userById(rec.uid);if(!u||banned(u.id)||(ipBanned(s.ip)&&!isOwnerUid(u.id)))return send(s,{t:'auth',ok:0,m:'Account unavailable'});
    for(const o of sessions.values())if(o.uid==u.id&&o!==s){send(o,{t:'_kick',m:'Signed in from another place'});o.conn.close(1000)}
-   s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1});sendWallet(s,u);return}
+   s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1});signedIn(s,u);return}
   case 'logout':{const h=hashTok(String(m.token||''));if(sess[h]){delete sess[h];saveSess()}return}
   }
   if(!s.uid)return;// everything below requires an identity (account or guest)
   switch(t){
   case 'ping':return send(s,{t:'pong',n:m.n});
   case 'worlds':{if(!bucket(s,'wl',10,10000))return;return send(s,{t:'worlds',list:listWorlds().filter(x=>!x.priv).sort((a,b)=>b.pop-a.pop||(b.updated||0)-(a.updated||0)).slice(0,200),max:cfg.maxPlayers})}
-  case 'enter':if(!bucket(s,'enter',12,30000))return send(s,{t:'enter_err',m:'Slow down'});return enter(s,m.w,!!m.create);
+  case 'enter':if(!bucket(s,'enter',12,30000))return send(s,{t:'enter_err',m:'Slow down'});return enter(s,m.w,!!m.create,m.base);
   case 'leave':return leaveWorld(s);
   case 'sync':{if(s.kind=='guest'||!bucket(s,'sync',12,60000))return;const u=userById(s.uid);if(!u)return;SHOP.sync(u,m.gems);sendWallet(s,u);saveAcc();return}
   case 'wallet':{if(s.kind=='guest')return send(s,{t:'wallet',gems:0,owned:{},guest:1});const u=userById(s.uid);return sendWallet(s,u)}
@@ -130,28 +152,42 @@ function createServer(opts={}){
    if(s.kind=='guest')return send(s,{t:'buy_res',ok:0,m:'Sign in to buy items in shared worlds',rid:String(m.rid||'')});
    const u=userById(s.uid);if(!u)return;const r=SHOP.buy(u,CAT,m);if(r.ok&&!r.dup){saveAcc();store.audit({ev:'buy',uid:s.uid,id:r.id,qty:r.qty,spent:r.spent})}send(s,Object.assign({t:'buy_res'},r));return}
   case 'admin':{if(!bucket(s,'admin',30,10000))return;return adminOp(s,m)}
+  case 'bag_sync':{if(s.kind=='guest'||!bucket(s,'bag',12,30000))return;const u=userById(s.uid);if(u&&eco.sync(u,m))saveAcc();return}
+  case 'trade':return eco.tradeMsg(s,m);
+  case 'drop':return eco.dropMsg(s,m);
+  case 'pick':return eco.pickMsg(s,m);
+  case 'myworlds':return sendMine(s);
+  case 'world_release':{const u=userById(s.uid),id=wname(m.w);if(!u||!(u.worlds||[]).includes(id))return notify(s,'You do not own that world');u.worlds=u.worlds.filter(x=>x!=id);saveAcc();setOwner(id,'','');store.audit({ev:'world-released',w:id,by:s.uid});notify(s,'Released '+id+': it no longer counts as yours');return sendMine(s)}
+  case 'world_claim':{const u=userById(s.uid),id=s.world;if(s.kind=='guest'||!u)return notify(s,'Create an account to own worlds');const w=id&&id!='plaza'&&worlds.get(id);if(!w)return notify(s,'Enter a world first');if(R.realmStage(id)||w.ownerUid)return notify(s,w.ownerUid?'This world belongs to '+w.ownerName:'A realm belongs to its base world');if(!canOwn(u))return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first');u.worlds=(u.worlds||[]).concat(id);saveAcc();setOwner(id,u.id,u.name);notify(s,'This world is now yours');return sendMine(s)}
   }
   const wid=s.world;if(!wid)return;const w=wid=='plaza'?null:worlds.get(wid);
-  if(t=='_p'){if(!bucket(s,'p',40,1000))return;s.pres=R.cleanPres(m.d);s.pres.uid=s.uid;s.pres.n=s.name.slice(0,14);relay(wid,{t:'_p',d:s.pres,f:s.sid},s.sid);return}
+  if(t=='_p'){if(!bucket(s,'p',40,1000))return;const pr=R.cleanPres(m.d);pr.uid=s.uid;pr.n=s.name.slice(0,14);s.pres=pr;
+   // free hosts meter outbound traffic: the full look goes out when it changes (and every 5s for late joiners), movement goes out as a small delta and not at all while standing still
+   const now=Date.now(),look=JSON.stringify([pr.hat,pr.body,pr.wing,pr.boot,pr.glove,pr.lk,pr.cx,pr.lv]);if(look!==s.presLook||now-(s.presFull||0)>5000){s.presLook=look;s.presFull=now;relay(wid,{t:'_p',d:pr,f:s.sid},s.sid);return}
+   const d={dl:1,x:pr.x,y:pr.y,f:pr.f,h:pr.h,vx:pr.vx,wp:pr.wp,sw:pr.sw,fm:pr.fm,wo:pr.wo},key=JSON.stringify(d);if(key===s.presKey&&now-(s.presAt||0)<2000)return;s.presKey=key;s.presAt=now;relay(wid,{t:'_p',d,f:s.sid},s.sid);return}
   if(t=='chat'){if(!bucket(s,'chat',6,8000))return;if(isMuted(s.uid))return send(s,{t:'notice',d:{text:'You are muted',by:'Server'}});const d=m.d;if(!d||typeof d.t!='string')return;const out={n:s.name.slice(0,14),t:d.t.slice(0,80).replace(/[<>]/g,'')};if(!out.t.trim())return;if(Number.isInteger(d.e)&&d.e>=0&&d.e<64)out.e=d.e;relay(wid,{t:'chat',d:out,f:s.sid},s.sid);return}
   if(t=='x'){if(!bucket(s,'x',10,8000))return;if(isMuted(s.uid))return;const v=R.checkX(m.d,s.sid,sid=>members(wid).has(sid));if(!v)return;v.n=s.name.slice(0,14);const o=sessions.get(v.to);if(o)send(o,{t:'x',d:v,f:s.sid});return}
   if(!w)return;// plaza: no persistent edits
   if(w.meta&&w.meta.b&&w.meta.b.includes(s.uid))return;
-  if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);return}
-  if(t=='meta'){if(!bucket(s,'meta',6,8000))return;if(s.kind=='guest')return;const r=R.checkMeta(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'meta'});return}w.meta=r.v;saveWorld(w);relay(wid,{t:'meta',d:r.v,f:s.sid},s.sid);return}
-  if(t=='o'){if(!bucket(s,'o',40,8000))return;const r=R.objOp(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'o'});return}
+  if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid,s.god)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);return}
+  if(t=='meta'){if(!bucket(s,'meta',6,8000))return;if(s.kind=='guest')return;const r=R.checkMeta(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'meta'});return}
+   // placing a World Lock in an unowned world claims it, within the same limit
+   if(!w.ownerUid&&r.v){const u=userById(s.uid);if(!u||R.realmStage(wid)||!canOwn(u)){send(s,{t:'_rej',op:'meta'});return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first')}u.worlds=(u.worlds||[]).concat(wid);saveAcc();w.ownerUid=u.id;w.ownerName=u.name;relay(wid,{t:'own',d:{o:u.id,on:u.name}});sendMine(s)}
+   w.meta=r.v;saveWorld(w);relay(wid,{t:'meta',d:r.v,f:s.sid},s.sid);return}
+  if(t=='o'){if(!bucket(s,'o',40,8000))return;const r=R.objOp(w,m.d,s.uid,s.god);if(!r){send(s,{t:'_rej',op:'o'});return}
    if(r.weather){if(Date.now()-w.lastWx<cfg.wxCooldownMs){send(s,{t:'notice',d:{text:'The weather machines are recharging ('+Math.ceil((cfg.wxCooldownMs-(Date.now()-w.lastWx))/1000)+'s)',by:'Server'}});return}if(w.weather==r.weather)return;setWeather(w,r.weather,s.name);store.audit({ev:'weather',w:wid,by:s.uid,wx:r.weather});return}
    if(r.changed)saveWorld(w);for(const b of r.bcast||[])relay(wid,{t:'o',d:b,f:s.sid});for(const b of r.reply||[])send(s,{t:'o',d:b,f:s.sid});return}
  }
  // ---------- http + ws plumbing
- let clientHtml=null;const html=()=>{try{const st=fs.statSync(cfg.client);if(!clientHtml||clientHtml.m!=st.mtimeMs)clientHtml={m:st.mtimeMs,b:fs.readFileSync(cfg.client)};return clientHtml.b}catch(_){return null}};
+ let clientHtml=null;const html=()=>{try{const st=fs.statSync(cfg.client);if(!clientHtml||clientHtml.m!=st.mtimeMs){const b=Buffer.from(fs.readFileSync(cfg.client,'utf8').replace('RB_HOSTED=false','RB_HOSTED=true'));clientHtml={m:st.mtimeMs,b,z:zlib.gzipSync(b),tag:'"'+Math.round(st.mtimeMs).toString(36)+'"'}}return clientHtml}catch(_){return null}};
  const server=http.createServer((q,r)=>{const u=(q.url||'/').split('?')[0];const h={'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store'};
-  if(u=='/'||u=='/index.html'){const b=html();if(!b){r.writeHead(404,h);return r.end('client file missing')}r.writeHead(200,Object.assign({'Content-Type':'text/html; charset=utf-8'},h));return r.end(b)}
+  if(u=='/'||u=='/index.html'){const c=html();if(!c){r.writeHead(404,h);return r.end('client file missing')}const hh=Object.assign({},h,{'Cache-Control':'no-cache',ETag:c.tag,Vary:'Accept-Encoding'});if(q.headers['if-none-match']==c.tag){r.writeHead(304,hh);return r.end()}const gz=/\bgzip\b/.test(q.headers['accept-encoding']||'');r.writeHead(200,Object.assign({'Content-Type':'text/html; charset=utf-8'},hh,gz?{'Content-Encoding':'gzip'}:{}));return r.end(gz?c.z:c.b)}
   if(u=='/health'){r.writeHead(200,Object.assign({'Content-Type':'application/json','Access-Control-Allow-Origin':'*'},h));return r.end(JSON.stringify({ok:true,game:'rootbound',players:sessions.size,uptime:Math.round((Date.now()-t0)/1000),ownerConfigured:!!owner}))}
   if(u=='/api/worlds'){r.writeHead(200,Object.assign({'Content-Type':'application/json','Access-Control-Allow-Origin':'*'},h));return r.end(JSON.stringify(listWorlds().filter(x=>!x.priv)))}
   r.writeHead(404,h);r.end('not found')});
  server.on('upgrade',(req,sock,head)=>{if((req.url||'').split('?')[0]!='/ws'){sock.end('HTTP/1.1 404 Not Found\r\n\r\n');return}
-  const ip=String(req.socket.remoteAddress||'');if(sessions.size>=cfg.maxConns||(ipCount.get(ip)||0)>=cfg.maxConnsPerIp){sock.end('HTTP/1.1 503 Service Unavailable\r\n\r\n');return}
+  // behind a host's proxy every socket comes from the proxy: use the address it reports, or one visitor's limit would hit everyone
+  const hd=req.headers,ip=String(cfg.trustProxy&&(hd['cf-connecting-ip']||hd['true-client-ip']||String(hd['x-forwarded-for']||'').split(',')[0].trim())||req.socket.remoteAddress||'');if(sessions.size>=cfg.maxConns||(ipCount.get(ip)||0)>=cfg.maxConnsPerIp){sock.end('HTTP/1.1 503 Service Unavailable\r\n\r\n');return}
   const conn=upgrade(req,sock,head,{maxPayload:65536,originOk:o=>!cfg.origins||cfg.origins.includes(o)});if(!conn)return;
   const s={sid:'p'+(++sidN).toString(36)+crypto.randomBytes(2).toString('hex'),conn,ip,uid:'',name:'',kind:'',owner:false,world:null,pres:{},rate:{},strikes:0,last:Date.now()};sessions.set(s.sid,s);ipCount.set(ip,(ipCount.get(ip)||0)+1);
   conn.onmessage=raw=>{s.last=Date.now();onMsg(s,raw)};conn.onclose=()=>{leaveWorld(s);sessions.delete(s.sid);const n=(ipCount.get(ip)||1)-1;if(n<=0)ipCount.delete(ip);else ipCount.set(ip,n)};
@@ -160,8 +196,11 @@ function createServer(opts={}){
   for(const[id,w]of worlds){if(!w.members.size&&now-w.emptySince>300000){if(w.dirty)saveWorld(w,true);worlds.delete(id)}}},15000);hb.unref&&hb.unref();
  function listen(){return new Promise(res=>server.listen(cfg.port,cfg.host,()=>res(server.address().port)))}
  function close(){clearInterval(hb);for(const w of worlds.values())if(w.dirty)saveWorld(w,true);for(const k of store.flush());try{store.writeJSON(store.p('accounts.json'),accounts);store.writeJSON(store.p('bans.json'),bans);store.writeJSON(store.p('sessions.json'),sess)}catch(_){}
-  for(const s of sessions.values())try{s.conn.close(1001)}catch(_){}return new Promise(r=>server.close(()=>r()))}
+  for(const s of sessions.values())try{s.conn.close(1001)}catch(_){}const flushed=cfg.cloud?cfg.cloud.flush().catch(e=>console.error('cloud save failed:',e.message)):Promise.resolve();return Promise.all([flushed,new Promise(r=>server.close(()=>r()))]).then(()=>{})}
  return{server,listen,close,cfg,store,worlds,sessions}}
 module.exports={createServer};
-if(require.main===module){const s=createServer();s.listen().then(p=>{console.log('Rootbound server on http://localhost:'+p+'  (data: '+s.cfg.dataDir+')');const ow=s.store.readJSON(s.store.p('owner.json'),null);console.log(ow?'Owner account configured: '+ow.name:'WARNING: no owner configured. Run: node server/cli.js set-owner <AccountName>')});
- const stop=()=>{s.close().then(()=>process.exit(0))};process.on('SIGINT',stop);process.on('SIGTERM',stop)}
+if(require.main===module)(async()=>{const dir=ENV.DATA_DIR||path.join(__dirname,'data'),cloud=require('./cloud').fromEnv(dir);
+ // the saves must be back on disk before anything reads them; if the database cannot be reached, stop (the host restarts us) rather than start empty and overwrite it
+ if(cloud){const n=await cloud.restore();console.log('Cloud saves restored: '+n+' files')}else console.log('No cloud store set: saves live only in '+dir);
+ const s=createServer({cloud});const p=await s.listen();console.log('Rootbound server on http://localhost:'+p+'  (data: '+s.cfg.dataDir+')');const ow=s.store.readJSON(s.store.p('owner.json'),null);console.log(ow?'Owner account configured: '+ow.name:'WARNING: no owner configured. Set OWNER_NAME + OWNER_PASSWORD or run: node server/cli.js set-owner <AccountName>');
+ const stop=()=>{s.close().then(()=>process.exit(0))};process.on('SIGINT',stop);process.on('SIGTERM',stop)})().catch(e=>{console.error('Server failed to start:',e.message);process.exit(1)});

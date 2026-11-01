@@ -20,7 +20,7 @@ const SHOP7=(()=>{
  function has(id){const it=byId.get(id);if(!it)return false;
   if(it.cat=='weapons'&&it.legacy)return !!(own[it.ref]);if(it.cat=='gear'&&it.legacy)return !!(typeof ownW!='undefined'&&ownW[it.ref]);
   if(it.stack)return count(id)>0;
-  if(srvMode())return !!(srv.owned[id]);return !!st.own[id]}
+  if(srvMode()&&!window.RB_CREATIVE)return !!(srv.owned[id]);return !!st.own[id]}
  const count=id=>{const it=byId.get(id);if(!it)return 0;if(it.stack){const k=+it.ref;return typeof cnt=='function'?cnt(k):0}return has(id)?1:0};
  function grantLocal(it,q){q=q||1;
   if(it.cat=='weapons'){if(it.legacy||true)own[it.ref]=1;st.own[it.id]=1}

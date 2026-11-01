@@ -3,7 +3,7 @@
 (()=>{const X=UI6.ext,el=id=>document.getElementById(id),esc=UI6.esc;
  X.post=(tab,body)=>{if(tab=='plates'){try{X.postPlates(body)}catch(e){console.error(e)}}};
  const CATS=[['general','General','◎','Theme, name and save data'],['graphics','Graphics','✧','Quality and visual effects'],['audio','Audio','♪','Music, effects and interface sounds'],['controls','Controls','⌘','Camera and key reference'],['interface','Interface','▣','HUD size, opacity and panels'],['access','Accessibility','◐','Motion, shake and contrast']];
- const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 · 2','Block slots'],['Mouse wheel · 3','Cycle weapons and tools'],['4 – 8','Pip · Pebble · Glimmer · Twiggy · Bubbles (tools)'],['9','Your last weapon'],['X','Swap weapon ⇄ tool'],['Q R Z Shift F','Gear skills'],['E','Use / talk'],['G','Tool guide · beside a door or object: set it up'],['C','Character hub'],['I / Tab','Inventory (you can keep walking while it is open)'],['B','Emote'],['J','Quest journal'],['H','Show / hide quest tracker'],['M','Music on / off'],['+ / − / 0','Zoom in / out / reset'],['Enter','Chat'],['F3','FPS counter']];
+ const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 · 2','Block slots'],['Mouse wheel · 3','Cycle weapons and tools'],['4 – 8','Pip · Pebble · Glimmer · Twiggy · Bubbles (tools)'],['9','Your last weapon'],['X','Swap weapon ⇄ tool'],['Q R Z Shift F','Gear skills'],['E','Use / talk'],['G','Tool guide · beside a door or object: set it up'],['C','Character hub'],['I / Tab','Inventory (you can keep walking while it is open)'],['B','Emote'],['J','Quest journal'],['H','Show / hide quest tracker'],['M','Music on / off'],['+ / − / 0','Zoom in / out / reset'],['V','Hold the wrench: click a player to trade'],['Enter','Chat'],['F3','FPS counter']];
  const row=(id,label,desc,ctl)=>'<div class="srow7" data-k="'+esc((label+' '+desc).toLowerCase())+'"><div class="sl7"><label for="'+id+'">'+label+'</label><small>'+desc+'</small></div><div class="sc7">'+ctl+'</div></div>';
  const tog=(id,on,lbl)=>'<input type="checkbox" role="switch" class="rb-toggle" id="'+id+'"'+(on?' checked':'')+' aria-label="'+esc(lbl)+'">';
  const rng=(id,min,max,v,u)=>'<input type="range" id="'+id+'" min="'+min+'" max="'+max+'" value="'+Math.round(v)+'"><output id="'+id+'n">'+Math.round(v)+(u==null?'%':u)+'</output>';
@@ -16,6 +16,7 @@
     +row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>'),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
+    +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
     +row('sb','Bloom & glow','Soft light around bright blocks and magic',tog('sb',o.bloom,'Bloom'))
     +row('sunc','Uncapped frame rate','Desktop app: run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
     +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
@@ -50,7 +51,7 @@
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
   q('sv').oninput=e=>{o.vfx=e.target.value/100;lab('sv',e.target.value);try{QM.apply(QM.cur.id,true)}catch(_){}celSave()};
-  tg('sb',v=>o.bloom=v?1:0);tg('sunc',v=>{try{localStorage.setItem('rb_fps_uncapped',v?'1':'0')}catch(_){}try{say('Restart Rootbound to apply the frame rate setting')}catch(_){}});tg('sw',v=>o.wxOn=v?1:0);tg('sst',v=>o.still=v?1:0);tg('sci',v=>o.cine=v?1:0);
+  tg('sb',v=>o.bloom=v?1:0);tg('shfx',v=>o.hideFx=v?1:0);tg('sunc',v=>{try{localStorage.setItem('rb_fps_uncapped',v?'1':'0')}catch(_){}try{say('Restart Rootbound to apply the frame rate setting')}catch(_){}});tg('sw',v=>o.wxOn=v?1:0);tg('sst',v=>o.still=v?1:0);tg('sci',v=>o.cine=v?1:0);
   // audio: drive the original menu sliders so every listener (music engine, ambience) reacts exactly as before
   const drive=(id,v)=>{const m=el(id);if(m){m.value=v;m.dispatchEvent(new Event('input'))}};
   q('smv').oninput=e=>{lab('smv',e.target.value);if(el('ov'))drive('ov',e.target.value);else{OPT.mv=e.target.value/100;saveP()}};

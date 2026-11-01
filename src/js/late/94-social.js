@@ -4,7 +4,7 @@
 const EMOTES=[['wave','👋','Wave'],['dance','💃','Dance'],['cheer','🎉','Cheer'],['heart','💖','Heart'],['bow','🙇','Bow'],['sit','🪑','Sit'],['laugh','😄','Laugh'],['think','💭','Think']];
 function chatIn6(m){try{const d=m.data;if(!d||typeof d.t!='string')return false;const who=String(d.n||'').slice(0,14);if(X6.mute.includes(who.toLowerCase()))return false;
  const t=performance.now(),b=(chatIn6.b=chatIn6.b||{}),q=(b[m.peer]=(b[m.peer]||[]).filter(x=>t-x<6000));if(q.length>=6)return false;q.push(t);
- if(d.e!=null&&X6.emotes){const em=EMOTES[d.e|0];if(em){const r=rp[m.peer];if(r)try{VFX.burst(r.x,r.y-10,['#ffd36a','#fff'],8,100,1,.6,8)}catch(_){}}}
+ if(d.e!=null&&X6.emotes&&!(cel.opt&&cel.opt.hideFx)){const em=EMOTES[d.e|0];if(em){const r=rp[m.peer];if(r)try{VFX.burst(r.x,r.y-10,['#ffd36a','#fff'],8,100,1,.6,8)}catch(_){}}}
  return true}catch(_){return false}}
 const SOC6=(()=>{
  const rate={};const MUTE={};const mkPanel=()=>{let e=document.getElementById('socui');if(!e){e=document.createElement('div');e.id='socui';e.className='objpanel';document.body.appendChild(e)}return e};

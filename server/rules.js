@@ -28,16 +28,22 @@ function cleanObj(o){if(!o||typeof o!='object')return null;const t=o.t|0;if(!ODE
  else if(d.k=='sign')r.c.tx=s(c.tx,80);else if(d.k=='tele'){r.c.lb=s(c.lb,12).replace(/[^A-Za-z0-9_ -]/g,'');r.c.ac=i(c.ac,0,3,0)}else if(d.k=='waystone')r.c.nm=s(c.nm,16);else if(d.k=='lamp')r.c.on=c.on?1:0;else if(d.cat=='wx')r.c.ac=i(c.ac,0,3,2);
  const st=o.s&&typeof o.s=='object'?o.s:{};r.s={on:st.on?1:0};return r}
 function cleanObjMap(e){const out={};if(!e||typeof e!='object')return out;let n=0;for(const k of Object.keys(e)){if(++n>1500)break;const kk=+k;if(!i32(kk)||kk<0||kk>=W*H)continue;const o=cleanObj(e[k]);if(o)out[kk]=o}return out}
+// a world with an owner but no World Lock placed is still theirs: nobody else builds in it (no lock tile, so x/y stay unset)
+const effMeta=world=>world.meta||(world.ownerUid?{o:world.ownerUid,on:world.ownerName||'',f:[],t:[],b:[],pub:0,pr:0}:null);
+// realms: '<base>-inf', -gal, -sea, -cry. Same names as the client's WORD9 (long names: 9 letters + a 3-char hash)
+const REALM=['','-inf','-gal','-sea','-cry'];const realmStage=n=>{if(typeof n!='string'||n.length<5)return 0;for(let i=1;i<REALM.length;i++)if(n.endsWith(REALM[i]))return i;return 0};
+const h32=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
+const stName=(b,i)=>{if(!i)return b;const s=REALM[i];return b.length<=12?b+s:b.slice(0,9)+(h32(b)%46656).toString(36).padStart(3,'0')+s};
 const need=o=>{const d=ODEF[o.t];return d.cat=='door'||d.cat=='tele'||d.cat=='cont'||d.cat=='wx'?o.c.ac|0:d.k=='lamp'||d.k=='switch'?ROLE.TRUST:ROLE.VIS};
 const canUse=(meta,o,uid)=>{const r=roleOf(meta,uid);return r>ROLE.BAN&&r>=need(o)||!meta};
 const canConfig=(meta,uid)=>{const r=roleOf(meta,uid);return r>=ROLE.BUILD||!meta};
 const tileAt=(world,k)=>{const a=world.edits[k];return a?a[0]:0};
 // world: {edits, meta, objs}
 function applyEdit(world,k,a){world.edits[k]=a;const b=a[0];if(isObjId(b)){if(!world.objs[k]||world.objs[k].t!=b)world.objs[k]=objDefaults(b)}else if(world.objs[k])delete world.objs[k]}
-function checkEdit(world,d,uid){if(!validEdit(d))return false;const meta=world.meta;if(meta&&!(meta.o==uid||meta.pub||(meta.f||[]).includes(uid)))return false;if(meta&&meta.b&&meta.b.includes(uid))return false;if(meta&&d.k==meta.y*W+meta.x&&d.a[0]!=17&&meta.o!=uid)return false;return true}
-function checkMeta(world,d,uid){const v=cleanMeta(d);if(v===undefined)return false;if(world.meta)return world.meta.o==uid&&(v===null||v.o==world.meta.o)?{v}:false;return v!==null&&uid!==''&&v.o==uid?{v}:false}
+function checkEdit(world,d,uid,god){if(!validEdit(d))return false;if(god)return true;const meta=effMeta(world);if(meta&&!(meta.o==uid||meta.pub||(meta.f||[]).includes(uid)))return false;if(meta&&meta.b&&meta.b.includes(uid))return false;if(meta&&d.k==meta.y*W+meta.x&&d.a[0]!=17&&meta.o!=uid)return false;return true}
+function checkMeta(world,d,uid){const v=cleanMeta(d);if(v===undefined)return false;if(world.ownerUid&&world.ownerUid!=uid)return false;if(world.meta)return world.meta.o==uid&&(v===null||v.o==world.meta.o)?{v}:false;return v!==null&&uid!==''&&v.o==uid?{v}:false}
 // object ops: returns {bcast:[msgs], reply:[msgs], changed} or false
-function objOp(world,d,uid,weatherCb){if(!d||typeof d!='object'||typeof d.op!='string')return false;const k=d.k|0;if(!(k>=0&&k<W*H))return false;const t=tileAt(world,k);if(!isObjId(t))return false;let o=world.objs[k];if(!o)o=world.objs[k]=objDefaults(t);const meta=world.meta;
+function objOp(world,d,uid,god){if(!d||typeof d!='object'||typeof d.op!='string')return false;const k=d.k|0;if(!(k>=0&&k<W*H))return false;const t=tileAt(world,k);if(!isObjId(t))return false;let o=world.objs[k];if(!o)o=world.objs[k]=objDefaults(t);const meta=god?null:effMeta(world);
  if(d.op=='cfg'){if(!canConfig(meta,uid))return false;const v=cleanObj(d.v);if(!v||v.t!=t)return false;if(ODEF[v.t].cat=='cont')v.c.it=o.c.it;world.objs[k]=v;return{bcast:[{op:'cfg',k,v}],changed:1}}
  if(d.op=='st'){if(!canUse(meta,o,uid))return false;const s=d.s&&typeof d.s=='object'?d.s:{};const df=ODEF[o.t];if(df.k=='lamp'||df.k=='switch'){o.s.on=s.on?1:0;if(df.k=='lamp')o.c.on=o.s.on}return{bcast:[{op:'st',k,s:{on:o.s.on,open:s.open?1:0},by:uid}],changed:1}}
  if(d.op=='wx'){const df=ODEF[o.t];if(df.cat!='wx'||!canUse(meta,o,uid))return false;if(d.reset){if(!canConfig(meta,uid))return false;return{weather:'default',k}}return{weather:df.wx,k}}
@@ -52,7 +58,6 @@ function cleanPres(d,allowWpn){const o={};if(!d||typeof d!='object')return o;con
  if(d.lk&&typeof d.lk=='object'){const hx=v=>/^#[0-9a-f]{6}$/i.test(v)?v:null,l=d.lk;o.lk={skin:hx(l.skin)||'#f1c9a0',hair:hx(l.hair)||'#3a2a1a',shirt:hx(l.shirt)||'#3c6fd1',pants:hx(l.pants)||'#2b3a5a',style:Math.max(0,Math.min(4,l.style|0))}}
  if(d.cx&&typeof d.cx=='object'){try{const s=JSON.stringify(d.cx);if(s.length<=600)o.cx=JSON.parse(s)}catch(_){}}
  return o}
-function checkX(d,fromSid,has){if(!d||typeof d!='object')return false;const OPS=['wh','tr_offer','tr_acc','tr_done','tr_fail','tr_no'];if(!OPS.includes(d.op))return false;const id=v=>String(v||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);const r={op:d.op};r.to=id(d.to);if(!r.to||r.to==fromSid||!has(r.to))return false;
- if(d.op=='wh'){r.t=String(d.t||'').slice(0,80);return r.t?r:false}r.id=id(d.id);if(!r.id)return false;
- if(d.op=='tr_offer'){const it=v=>Array.isArray(v)&&v.length==2&&i32(v[0])&&v[0]>=0&&v[0]<=999&&i32(v[1])&&v[1]>=1&&v[1]<=9999;if(!it(d.give)||!it(d.want))return false;r.give=d.give;r.want=d.want}return r}
-module.exports={W,H,ODEF,WEATHERS,ROLE,isObjId,validEdit,cleanMeta,roleOf,cleanObj,cleanObjMap,objDefaults,applyEdit,checkEdit,checkMeta,objOp,cleanPres,checkX,tileAt};
+function checkX(d,fromSid,has){if(!d||typeof d!='object')return false;if(d.op!='wh')return false;const id=v=>String(v||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);const r={op:d.op};r.to=id(d.to);if(!r.to||r.to==fromSid||!has(r.to))return false;
+ r.t=String(d.t||'').slice(0,80);return r.t?r:false}
+module.exports={W,H,ODEF,WEATHERS,ROLE,isObjId,validEdit,cleanMeta,effMeta,realmStage,stName,REALM,roleOf,cleanObj,cleanObjMap,objDefaults,applyEdit,checkEdit,checkMeta,objOp,cleanPres,checkX,tileAt};

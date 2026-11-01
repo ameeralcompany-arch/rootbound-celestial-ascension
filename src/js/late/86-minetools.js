@@ -9,6 +9,8 @@ const TOOLS8=(()=>{
   twiggy:{n:'Twiggy the Tree Axe',g:[150,230,110],tool:'tree',d:'A leafy little axe. Chops trees for extra wood and splits wooden blocks.'},
   bubbles:{n:'Bubbles the Fishing Rod',g:[120,200,255],tool:'rod',d:'A cute rod with a duck bobber. Click water to cast, click when it bites, then hold to keep the fish in the green zone and reel it in! Bait from Tackle Boxes helps.'}};
  for(const id in TL){const t=TL[id];WPN[id]={n:t.n,g:t.g,bd:1,md:0,cd:t.tool=='rod'?.25:.18,k:'tool',cost:0,fx:'',d:t.d,tool:t.tool,id};own[id]=1}
+ // the Wrench: never digs, never fights. Click a player to open their card and trade (ONL10), or a World Lock for its settings. Not a levelled tool (not in TL).
+ WPN.wrench={n:'Wrench',g:[200,210,225],bd:1,md:0,cd:.3,k:'tool',cost:0,fx:'',d:'Click another player to trade with them, or a World Lock to open its settings. Press V to hold it.',tool:'wrench',id:'wrench'};own.wrench=1;
  // ---- what kind of block is it?
  const ORE=new Set([9,10,60,61,62,65,71,72,73,74,75,76]);
  // CAT pins a block's kind when its name would mislead the regex (Geode Rock is stone, not ore); ONLY[b] is the one tool that may break b at all
@@ -20,6 +22,7 @@ const TOOLS8=(()=>{
  const inReach=(x,y)=>Math.hypot(x-P.x,y-(P.y+P.h/2))<REACH;
  function vein(tx,ty,id,n){const seen=new Set([ty*W+tx]),q=[[tx,ty]],out=[];while(q.length&&out.length<n){const[x,y]=q.shift();for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=ny*W+nx;if(nx<1||ny<1||nx>=W-1||ny>=H-1||seen.has(k))continue;seen.add(k);if(tiles[k]==id){out.push([nx,ny]);q.push([nx,ny])}}}return out}
  function use(w){wcd=w.cd/(1+bonus().atk*.5);swing=.15;const c={x:mx+cam.x,y:my+cam.y};P.f=c.x>=P.x?1:-1;
+  if(w.tool=='wrench'){try{ONL10.wrench(c)}catch(e){console.error(e)}return}
   if(w.tool=='rod'){FISH.click(c);return}
   const tk=pickTree(c.x,c.y);if(tk>=0&&Math.hypot((tk%W)*T+T/2-P.x,(tk/W|0)*T+T/2-(P.y+P.h/2))<REACH+T){const crop=typeof FARM9!='undefined'&&FARM9.isCrop(trees.get(tk));harvest(tk);if(w.tool=='tree'&&!crop&&!trees.has(tk)){const px=(tk%W)*T+T/2,py=(tk/W|0)*T;spawnDrop(px,py,5,2);ft(px,py-10,'+2 Wood','#d8ffb0')}tone(500,700,.08,'triangle',.04);return}
   const tx=Math.floor(c.x/T),ty=Math.floor(c.y/T),k=ty*W+tx;if(!inReach(tx*T+T/2,ty*T+T/2)||tx<1||ty<1||tx>=W-1||ty>=H-1)return;const b=tiles[k];if(!b)return;
@@ -47,9 +50,10 @@ const TOOLS8=(()=>{
    x.globalCompositeOperation='lighter';x.fillStyle='rgba(200,250,255,'+(.5+.5*Math.sin(t*6))+')';x.beginPath();for(let i=0;i<8;i++){const r=i%2?1.2:4,a=i*Math.PI/4;x.lineTo(L*.5+Math.cos(a)*r,-13+Math.sin(a)*r)}x.fill();x.globalCompositeOperation='source-over'},
   twiggy(x,L){x.fillStyle='#8a5a30';x.fillRect(-2,-2,L*.6,4);x.strokeRect(-2,-2,L*.6,4);x.fillStyle='#d8e0e8';x.beginPath();x.moveTo(L*.5,-2);x.quadraticCurveTo(L*.72,-12,L*.74,-2);x.lineTo(L*.74,4);x.quadraticCurveTo(L*.66,8,L*.5,4);x.closePath();x.fill();x.stroke();
    x.fillStyle='#7ad850';x.beginPath();x.ellipse(L*.46,-7,4,2.4,-.6,0,6.3);x.fill();x.stroke()},
+  wrench(x,L){x.fillStyle='#c8d2e0';x.fillRect(-2,-2.5,L*.7,5);x.strokeRect(-2,-2.5,L*.7,5);x.beginPath();x.arc(L*.76,0,8,.75,Math.PI*2-.75);x.lineTo(L*.76,0);x.closePath();x.fill();x.stroke()},
   bubbles(x,L,t){const bd=FISH.S.st=='reel'&&typeof FISHGAME!='undefined'?.25+FISHGAME.G.ten*.6:0;x.strokeStyle='#5a3a1a';x.lineWidth=3;x.beginPath();x.moveTo(-2,0);if(bd)x.quadraticCurveTo(L*.6,-L*.42,L*.95,-L*.35+bd*L*.5);else x.lineTo(L*.95,-L*.35);x.stroke();x.strokeStyle='#ffd34a';x.lineWidth=1.5;x.beginPath();x.moveTo(L*.1,-L*.04);x.lineTo(L*.22,-L*.08);x.stroke();
    x.fillStyle='#9ad8ff';x.strokeStyle='#000';x.lineWidth=1.5;x.beginPath();x.arc(L*.12,1,3.5,0,6.3);x.fill();x.stroke();if(FISH.S.st=='idle'){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=1;x.beginPath();x.moveTo(L*.95,-L*.35);x.lineTo(L*.95,-L*.35+8+Math.sin(t*3)*2);x.stroke()}}};
- {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){if(TL[id]&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';x.strokeStyle='#000';x.lineWidth=1.6;try{MODEL[id](x,L,t||0)}finally{x.restore()}return}return _dw.apply(this,arguments)}}
+ {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){if((TL[id]||id=='wrench')&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';x.strokeStyle='#000';x.lineWidth=1.6;try{MODEL[id](x,L,t||0)}finally{x.restore()}return}return _dw.apply(this,arguments)}}
  // ======================= FISHING =======================
  // fish 240-249, bait 250-252 (materials: they stack, sell, trade)
  const FISHES={240:{n:'Minnow',c:'#b8c8d0',p:4,w:30},241:{n:'Bluegill',c:'#5aa0d8',p:7,w:24},242:{n:'Rainbow Trout',c:'#ff9ac8',p:12,w:16},243:{n:'Koi',c:'#ff8a3a',p:25,w:9},244:{n:'Pufferfish',c:'#ffe07a',p:30,w:7},

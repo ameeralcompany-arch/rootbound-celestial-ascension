@@ -1,0 +1,27 @@
+# Rootbound's online server on Render's free plan. See server/DEPLOY.md for the steps.
+# Values marked sync: false are typed into Render's dashboard and never stored in this repository.
+services:
+  - type: web
+    name: rootbound
+    runtime: node
+    plan: free
+    buildCommand: "echo no build step"
+    startCommand: node server/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATA_DIR
+        value: /tmp/rootbound-data
+      - key: TRUST_PROXY
+        value: "1"
+      - key: OWNER_NAME
+        sync: false
+      - key: OWNER_PASSWORD
+        sync: false
+      - key: OWNER_EMAIL
+        sync: false
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
