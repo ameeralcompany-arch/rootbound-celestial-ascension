@@ -231,6 +231,8 @@ Every realm has one huge boss standing between its last letter and its Word Gate
 
 That is about three times a cave boss (30-200 s). Each pays once per world, and its relic is a permanent bonus the first time. World bosses are left out of the hunt page and the "Defeat every boss" wing goal.
 
+Online, the fight is a private copy on the player's computer. The server can't watch it, so a win only unlocks a one-time gem allowance on top of the normal growth limit: once per world, at most 10 a day, and not within 45 seconds of the fight starting (`WB_MIN_MS`). A win outside those limits still pays, just at the normal rate. Relics and XP live in the player's own save, as they do for cave bosses.
+
 ## Where it lives
 
 | What | File |

@@ -3,10 +3,11 @@
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),zlib=require('zlib');
 const ENV=process.env;
+const WB_GEMS=[3000,7000,12000,18000,28000],WB_DAY=10;   // what each realm's world boss pays (src/js/late/99-zzzzzzzzz-i-worldboss.js)
 function createServer(opts={}){
  const cfg=Object.assign({port:+ENV.PORT||8787,host:ENV.HOST||'0.0.0.0',dataDir:ENV.DATA_DIR||path.join(__dirname,'data'),client:ENV.CLIENT_FILE||path.join(__dirname,'..','index.html'),
   maxPlayers:+ENV.MAX_PLAYERS_PER_WORLD||24,maxWorlds:+ENV.MAX_WORLDS||500,maxWorldsPerAccount:+ENV.MAX_WORLDS_PER_ACCOUNT||5,maxConns:+ENV.MAX_CONNECTIONS||400,maxConnsPerIp:+ENV.MAX_CONNS_PER_IP||12,
-  wxCooldownMs:+ENV.WEATHER_COOLDOWN_MS||20000,origins:ENV.ALLOWED_ORIGINS?ENV.ALLOWED_ORIGINS.split(','):null,scryptN:+ENV.SCRYPT_N||16384,trustProxy:ENV.TRUST_PROXY=='1',banIps:ENV.TRUST_PROXY=='1',ownerName:ENV.OWNER_NAME||'',ownerPass:ENV.OWNER_PASSWORD||'',ownerEmail:String(ENV.OWNER_EMAIL||'').toLowerCase(),cloud:null},opts);
+  wxCooldownMs:+ENV.WEATHER_COOLDOWN_MS||20000,wbMinMs:ENV.WB_MIN_MS!=null?+ENV.WB_MIN_MS:45000,origins:ENV.ALLOWED_ORIGINS?ENV.ALLOWED_ORIGINS.split(','):null,scryptN:+ENV.SCRYPT_N||16384,trustProxy:ENV.TRUST_PROXY=='1',banIps:ENV.TRUST_PROXY=='1',ownerName:ENV.OWNER_NAME||'',ownerPass:ENV.OWNER_PASSWORD||'',ownerEmail:String(ENV.OWNER_EMAIL||'').toLowerCase(),cloud:null},opts);
  const store=new Store(cfg.dataDir);store.cloud=cfg.cloud;const t0=Date.now();const CAT=SHOP.loadCatalog();
  // ---------- accounts / owner / bans
  let accounts=store.readJSON(store.p('accounts.json'),{users:{}}),owner=store.readJSON(store.p('owner.json'),null),bans=store.readJSON(store.p('bans.json'),{bans:{},mutes:{}}),sess=store.readJSON(store.p('sessions.json'),{});if(!bans.ips)bans.ips={};
@@ -152,6 +153,10 @@ function createServer(opts={}){
    if(s.kind=='guest')return send(s,{t:'buy_res',ok:0,m:'Sign in to buy items in shared worlds',rid:String(m.rid||'')});
    const u=userById(s.uid);if(!u)return;const r=SHOP.buy(u,CAT,m);if(r.ok&&!r.dup){saveAcc();store.audit({ev:'buy',uid:s.uid,id:r.id,qty:r.qty,spent:r.spent})}send(s,Object.assign({t:'buy_res'},r));return}
   case 'admin':{if(!bucket(s,'admin',30,10000))return;return adminOp(s,m)}
+  // world boss wins: the fight runs on the player's computer, so the server can only limit what a win is worth: once per world, at most WB_DAY a day, not
+  // sooner than wbMinMs after the fight began. Too fast or over the limit just means the gems arrive at the normal rate instead.
+  case 'wb':{if(s.kind=='guest'||!bucket(s,'wb',10,60000))return;const u=userById(s.uid),id=s.world;if(!u||!id||id=='plaza')return;if(m.op=='start'){s.wbT={w:id,t:Date.now()};return}if(m.op!='win')return;const st=s.wbT;s.wbT=null;if(!st||st.w!==id||Date.now()-st.t<cfg.wbMinMs)return;
+   const wins=u.wbWins||(u.wbWins={});if(wins[id])return;const day=Math.floor(Date.now()/864e5),d=u.wbDay&&u.wbDay.d==day?u.wbDay:(u.wbDay={d:day,n:0});if(d.n>=WB_DAY)return;d.n++;wins[id]=1;SHOP.bonus(u,WB_GEMS[R.realmStage(id)]||0);saveAcc();return}
   case 'bag_sync':{if(s.kind=='guest'||!bucket(s,'bag',12,30000))return;const u=userById(s.uid);if(u&&eco.sync(u,m))saveAcc();return}
   case 'trade':return eco.tradeMsg(s,m);
   case 'drop':return eco.dropMsg(s,m);

@@ -9,6 +9,9 @@
 // world comes back too, and the boss waits at the Word Gate (L) for a rematch. Nothing is written to the world save while the world is gone
 // (the collapse is in memory only), so quitting mid-fight never loses a block.
 // The cinematic plays once per boss in full; after that hold any key to skip it. State: RB_PREFIX + 'rbwboss' {w:{world:1}, seen:{id:1}}.
+// Online the fight is a private copy on your own computer: nobody else's world collapses. They see you standing where you were, with a bubble saying what
+// you are fighting; what they build meanwhile waits and is applied when your world comes back; you send them no blocks or effects from the void. The
+// server cannot watch the fight, so a win only unlocks a one-time gem allowance for that world (server/server.js, 'wb').
 // Cost: one boss, a few dozen projectiles at most; the void sky and the boss sigils are pre-rendered; the cinematic runs on its own canvas
 // while the game loop is paused (RB_COVER). =====
 const WBOSS13=(()=>{
@@ -51,7 +54,7 @@ const WBOSS13=(()=>{
  const save=()=>{try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}};
  const bossFor=n=>{try{const sg=WORD9.stageOf(n);return WB.find(b=>b.sg==sg)||null}catch(_){return null}};
  const creative=()=>{try{return !!CRV8.on}catch(_){return false}};
- function need(n){try{if(!n||!WORD9.hasWord(n)||creative()||rm)return false;const st=WORD9.state.w[n];return !(st&&st.ok)&&!S.w[n]&&!!bossFor(n)}catch(_){return false}}
+ function need(n){try{if(!n||!WORD9.hasWord(n)||creative())return false;const st=WORD9.state.w[n];return !(st&&st.ok)&&!S.w[n]&&!!bossFor(n)}catch(_){return false}}
 
  // ================= art (feet at the origin, facing right; o: {w,h,t,fl,ph,eye,at,lx,ly}) =================
  const rot=(x,y,a)=>[x*Math.cos(a)-y*Math.sin(a),x*Math.sin(a)+y*Math.cos(a)];
@@ -271,7 +274,7 @@ const WBOSS13=(()=>{
   BOSSX.EXT.wb_prism=(m,x,gy,tel,d)=>addZ(x-T*.5,top(gy),x+T*.5,gy+2,tel,.25,'#ff9ae8',d,'down')}catch(e){console.error('WBOSS13 attacks',e)}
 
  // ================= the sequence: quake -> collapse -> cinematic -> arena -> fight -> world back =================
- let F=null,SNAP=null,VOID=null,Qd=null;const DB=[];
+ let F=null,SNAP=null,VOID=null,Qd=null,HELD=[];const DB=[];
  const hold=()=>{if(!F)return;P.x=F.px;P.y=F.py;P.vx=P.vy=0;iT=Math.max(iT,.6)};
  function start(n,first){if(F||!need(n)||n!==cur||!entered)return false;try{if(BOSS6.active()){say('Finish the fight you are in first');return false}}catch(_){}
   const b=bossFor(n);F={st:'quake',b,w:n,t0:performance.now(),px:P.x,py:P.y,first:!!first,ev:{}};try{WORD9.close()}catch(_){}
@@ -302,11 +305,12 @@ const WBOSS13=(()=>{
   const m=BOSS6.active();m.x=(x0+AW*.74)*T;m.y=b.ai=='fly'?fy*T-m.h-T*3.5:fy*T-m.h-1;m.vx=m.vy=0;F.m=m;
   const A=ARENA7.arena;if(A){A.x0=x0*T;A.x1=(x1+1)*T;A.y0=(fy-AH)*T;A.y1=(fy+1)*T;const w=A.x1-A.x0,h=A.y1-A.y0,sc=cv.height/Math.max(1,innerHeight),fz=Math.min(cv.width/(w+T),(cv.height-220*sc)/(h-T*.5));
    if(fz<ZM){const z=Math.max(.7,Math.floor(fz*20)/20);if(z<ZM){const k=ZM/z;ZM=z;try{mx*=k;my*=k}catch(_){}A.zs=z}}A.fit=w<=cv.width/ZM-T*.5&&h<=cv.height/ZM-2*110*sc/ZM}
-  F.st='fight';F.t0=performance.now();F.ev={};tone(55,110,1.2,'sawtooth',.05)}
+  F.st='fight';F.t0=performance.now();F.ev={};tone(55,110,1.2,'sawtooth',.05);netWB('start');tell('is fighting '+b.sn+'!')}
  function restore(){const s=SNAP;if(!s)return;tiles.set(s.t);hp.set(s.hp);wl.set(s.wl);trees.clear();for(const[k,v]of s.tr)trees.set(k,v);
   try{const bw=WALL9.bw;if(s.bw)for(let k=0;k<bw.length;k++)if(bw[k]!==s.bw[k])WALL9.set(k,s.bw[k])}catch(_){}drops.length=0;for(const d of s.dr)drops.push(d);
-  VOID=null;SNAP=null;DB.length=0;document.body.classList.remove('wb13v');P.x=s.px;P.y=s.py;P.vx=P.vy=0;clearFx()}
- function won(){const b=F.b;S.w[F.w]=1;save();restore();const n=F.w;F=null;try{P.hp=maxHP()}catch(_){}
+  VOID=null;SNAP=null;DB.length=0;document.body.classList.remove('wb13v');P.x=s.px;P.y=s.py;P.vx=P.vy=0;clearFx();
+  const h=HELD;HELD=[];for(const f of h)try{f()}catch(e){console.error('WBOSS13 held',e)}}
+ function won(){const b=F.b;S.w[F.w]=1;save();restore();const n=F.w;F=null;try{P.hp=maxHP()}catch(_){}tell('defeated '+b.sn+'!');
   say6('THE WORLD RETURNS','The Word Gate is open',2600);try{VFX.levelUp(P.x,P.y,b.c)}catch(_){}
   setTimeout(()=>{try{if(cur===n&&entered)WORD9.open()}catch(_){}},1600)}
  function lost(quiet){const b=F&&F.b;restore();F=null;try{P.hp=maxHP()}catch(_){}try{BOSS6.clear()}catch(_){}
@@ -317,7 +321,7 @@ const WBOSS13=(()=>{
   if(F.st=='quake'){hold();shk(.06+el*.05);if(!red()&&R()<dt*16){const x=P.x+rn(-T*14,T*14),y=P.y+P.h+rn(-T*2,T*4);try{VFX.add(0,'#bfb4aa',x,y,rn(-30,30),-rn(40,140),.7,10,4,{a:.6})}catch(_){}}if(el>2.3)collapse();return}
   if(F.st=='collapse'){hold();shk(.12);while(SI<SCH.length&&SCH[SI].t<=el)crumble(SCH[SI++].k);if(el>3.4){wipe();F.st='cine';CIN.play(F.b,{skip:!!S.seen[F.b.id],world:F.w},()=>{S.seen[F.b.id]=1;save();if(F&&F.st=='cine')arena()})}return}
   if(F.st=='fight'||F.st=='won'){const m=F.m;for(let i=mobs.length-1;i>=0;i--)if(mobs[i]!==m)mobs.splice(i,1);
-   if(F.st=='fight'){if(m.rew||(m.dead&&m.hp<=0)){F.st='won';F.t0=now;F.wait=(()=>{try{return BOSS10.left()}catch(_){return 4600}})()+1600;return}if(!mobs.includes(m)){lost();return}
+   if(F.st=='fight'){if(m.rew||(m.dead&&m.hp<=0)){F.st='won';F.t0=now;F.wait=(()=>{try{return BOSS10.left()}catch(_){return 4600}})()+1600;netWB('win');return}if(!mobs.includes(m)){lost();return}
     try{if(BOSS10.kind=='in'&&BOSS10.state.id==F.b.id){const t=BOSS10.t,e=F.ev,cx=m.x,cy=m.y+m.h/2;
      if(!e.a&&t>.05){e.a=1;VFX.wave(cx,cy,F.b.c,320,1,.3);tone(80,160,1,'sawtooth',.05)}if(!e.b&&t>1.0){e.b=1;VFX.shatter(cx,cy,[F.b.c,F.b.c2,'#fff'],40);VFX.wave(cx,cy,'#fff',420,.8,.4);shk(.2);tone(55,40,.8,'sawtooth',.08)}
      if(!e.c&&t>2.25){e.c=1;for(let i=0;i<3;i++)VFX.wave(cx,cy,i?F.b.c2:'#fff',300+i*160,.9+i*.2,.3);VFX.burst(cx,cy,[F.b.c,F.b.c2,'#fff'],50,520,2,1.2,16);shk(.32)}}}catch(_){}}
@@ -366,6 +370,15 @@ const WBOSS13=(()=>{
  {const _ba=breakAt;breakAt=function(){if(F||SNAP)return false;return _ba.apply(this,arguments)}}
  {const _pa=placeAction;placeAction=function(){if(F||SNAP){if(!placeAction.t||performance.now()-placeAction.t>1500){placeAction.t=performance.now();say('Nothing can be built in the void')}return}return _pa.apply(this,arguments)}}
  {const _lw=loadWorld;loadWorld=function(){try{abort()}catch(_){}return _lw.apply(this,arguments)}}
+
+ // ---- online: everything that would cross between your private fight and the shared world goes through here
+ function netWB(op){try{if(!rm||!rm.net)return;NET7.send({t:'wb',op});if(op=='win'&&SHOP7.serverMode)setTimeout(()=>{try{NET7.send({t:'sync',gems:Math.max(0,(gems|0)+(SHOP7.pend|0))})}catch(_){}},400)}catch(_){}}
+ function tell(t){try{if(rm&&rm.net)rm.emit('chat',{t,n:myName})}catch(_){}}
+ {const _br=bindRoom;bindRoom=function(r){if(r&&r.net){const em=r.emit,pr=r.presence,ps=r.peers;
+    r.h=new Proxy(r.h,{get(o,t){const f=o[t];if(!f||!SNAP)return f;if(t=='e'||t=='o'||t=='meta')return m=>{HELD.push(()=>f(m))};if(t=='x')return()=>{};return f}});
+    r.emit=(t,x)=>{if(SNAP&&t!='chat')return;return em(t,x)};
+    r.presence=o=>{if(SNAP&&o)o=Object.assign({},o,{x:SNAP.px|0,y:SNAP.py|0,vx:0,sw:0,fm:1});return pr(o)};
+    r.peers=()=>{const L=ps();return SNAP?L.filter(p=>p.isMe):L}}return _br.apply(this,arguments)}}
 
  // ================= the 40-second cinematic (its own canvas over the paused game) =================
  const CIN=(()=>{let C=null,prevCover=null,bg0=null;
@@ -471,5 +484,5 @@ const WBOSS13=(()=>{
   Qd.querySelector('h3').textContent=b.n;Qd.querySelector('p').innerHTML=esc(b.sn)+' took back the power of your letters and guards the Word Gate. Defeat '+him(b)+' to solve the word and open the way on.<br><small>The world falls away while you fight and comes back afterwards. Recommended level '+b.lv+'.</small>';
   Qd.style.display='flex';Qd._o=1;requestAnimationFrame(()=>{if(Qd._o)Qd.classList.add('on')});try{UIS.play('open')}catch(_){}try{for(const k in keys)keys[k]=0}catch(_){}}
  function closeQ(){if(!Qd)return;Qd._o=0;Qd.classList.remove('on');setTimeout(()=>{if(Qd&&!Qd._o)Qd.style.display='none'},180)}
- return{WB,BY,need,found,ask,start,isWB,ART,LIST,ATK,CIN,get state(){return S},get fight(){return F?{st:F.st,id:F.b.id,w:F.w,ar:F.ar}:null},get void(){return !!VOID},
+ return{WB,BY,need,found,ask,start,isWB,ART,LIST,ATK,CIN,get state(){return S},get fight(){return F?{st:F.st,id:F.b.id,w:F.w,ar:F.ar}:null},get void(){return !!VOID},get home(){return SNAP?{x:SNAP.px,y:SNAP.py}:null},get held(){return HELD.length},
   skip(){if(CIN.on)CIN.finish()},abort,clearFx,get fx(){return PR.length+BM.length+WV.length+WL.length+RG.length+EM.length+CLN.length}}})();

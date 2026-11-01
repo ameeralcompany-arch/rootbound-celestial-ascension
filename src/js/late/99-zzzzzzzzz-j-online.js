@@ -59,7 +59,7 @@ const ONL10=(()=>{
   const both=TR.me.lock&&TR.them.lock;h+='<footer><button class="btn'+(TR.me.lock?' ghost':'')+'" data-tr="lock">'+(TR.me.lock?'Unlock':'Lock in my offer')+'</button><button class="btn" data-tr="confirm"'+(both&&!TR.me.ok?'':' disabled')+'>'+(TR.me.ok?'Waiting for '+esc(TR.name):'Confirm trade')+'</button><button class="btn ghost" data-tr="cancel">Cancel</button></footer><p class="note10">Changing an offer unlocks both sides. In-game items only.</p></div>';
   e.innerHTML=h;stop(e);const x=e.querySelector('#tr10i');if(x){if(si&&[...x.options].some(o=>o.value==si))x.value=si;e.querySelector('#tr10n').value=sn}}
  NET7.on('trade',m=>{const op=m.op;if(op=='err'){say(m.m||'Trade problem');return}
-  if(op=='ask'){TR={st:'ask',id:m.id,name:m.name,give:m.give,want:m.want};snd('open');tRender();return}if(op=='asked'){TR={st:'asked',id:m.id,name:m.name};tRender();return}
+  if(op=='ask'){if(typeof WBOSS13!='undefined'&&WBOSS13.void){NET7.send({t:'trade',op:'cancel',id:m.id});return}TR={st:'ask',id:m.id,name:m.name,give:m.give,want:m.want};snd('open');tRender();return}if(op=='asked'){TR={st:'asked',id:m.id,name:m.name};tRender();return}
   if(op=='state'){TR={st:'on',id:m.id,name:m.name,me:m.me,them:m.them};tRender();return}
   if(op=='closed'){const was=TR;tClose();if(m.done){say('Trade complete');snd('buy')}else if(was)say(m.why||'Trade closed')}});
  function ask(sid,give,want){if(!live())return say('Trading needs a server');if(!acct())return say('Create an account to trade');report(true);NET7.send({t:'trade',op:'ask',to:sid,give:give||undefined,want:want||undefined})}
@@ -82,14 +82,14 @@ const ONL10=(()=>{
  const addD=(d,old)=>{if(ND.some(x=>x.id==d.id))return;ND.push({id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,vy:old?0:-220,ph:Math.random()*6,t:old?9:0,sent:0,rest:0})};
  NET7.onHello(d=>{ND.length=0;for(const x of d.dr||[])addD(x,1);try{renderWorlds()}catch(_){}});
  NET7.on('dr+',m=>addD(m.d));NET7.on('dr-',m=>{const i=ND.findIndex(x=>x.id==m.d.id);if(i>=0){const d=ND[i];ND.splice(i,1);try{burst(d.x,d.y,d.i===0?'#7ee8ff':'#fff',4,60,3,'p')}catch(_){}}});
- {const _u=updDrops;updDrops=function(dt){const r=_u.apply(this,arguments);if(!NET7.room){ND.length=0;return r}const now=performance.now();for(const d of ND){d.t+=dt;const tx=Math.floor(d.x/T);
+ {const _u=updDrops;updDrops=function(dt){const r=_u.apply(this,arguments);if(!NET7.room){ND.length=0;return r}if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;const now=performance.now();for(const d of ND){d.t+=dt;const tx=Math.floor(d.x/T);
     if(d.rest&&!solidAt(tx,Math.floor((d.y+12)/T)))d.rest=0;if(!d.rest){d.vy+=1500*dt;d.y+=d.vy*dt;const ty=Math.floor((d.y+9)/T);if(d.vy>0&&solidAt(tx,ty)){d.y=ty*T-9;d.vy=0;d.rest=1}if(d.y>H*T){d.y=H*T-20;d.rest=1}}
     if(d.t>1.6&&now-d.sent>1500&&Math.hypot(P.x-d.x,P.y+30-d.y)<44){d.sent=now;NET7.send({t:'pick',id:d.id})}}return r}}
- {const _d=drawDrops;drawDrops=function(now){const r=_d.apply(this,arguments);for(const d of ND){const px=d.x-cam.x,py=d.y-cam.y+Math.sin(now/260+d.ph)*2.5;if(px<-30||px>cv.width/ZM+30)continue;
+ {const _d=drawDrops;drawDrops=function(now){const r=_d.apply(this,arguments);if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;for(const d of ND){const px=d.x-cam.x,py=d.y-cam.y+Math.sin(now/260+d.ph)*2.5;if(px<-30||px>cv.width/ZM+30)continue;
     if(d.i===0){g.save();g.translate(px,py);g.fillStyle='#5fd0ff';g.strokeStyle='#06304a';g.lineWidth=2;g.beginPath();g.moveTo(0,-9);g.lineTo(8,-2);g.lineTo(0,9);g.lineTo(-8,-2);g.closePath();g.fill();g.stroke();g.restore()}
     else{try{if(!ICONC[d.i])iconURL(d.i);const c=ICONC[d.i];if(c)g.drawImage(c,px-11,py-11,22,22)}catch(_){}}
     if(d.n>1){g.font='700 11px '+FONT;g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=3;g.strokeText(d.n,px+6,py+12);g.fillText(d.n,px+6,py+12)}}return r}}
- function drop(k,n){if(!live())return false;if(!acct()){say('Create an account to drop items');return true}report(true);NET7.send({t:'drop',i:k,n});say('Dropped '+n+' × '+nm(k));snd('close');return true}
+ function drop(k,n){if(!live())return false;if(typeof WBOSS13!='undefined'&&WBOSS13.void){say('Nothing can be dropped in the void');return true}if(!acct()){say('Create an account to drop items');return true}report(true);NET7.send({t:'drop',i:k,n});say('Dropped '+n+' × '+nm(k));snd('close');return true}
  // ---- hide other players' effects: their auras, wings and sparkles are simply not drawn (their character still is)
  const hideFx=()=>{try{return !!cel.opt.hideFx}catch(_){return false}};
  window.RBFXQ=q=>{if(!hideFx())return q;const c=q&&q.cx?Object.assign({},q.cx,{w:-1,a:0,fx:{au:'',ch:'',ws:''}}):q&&q.cx;return Object.assign({},q,{cx:c,wing:'',wo:0,fm:0})};

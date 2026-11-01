@@ -12,6 +12,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  await B.exposeFunction('sendToHost',async m=>{return A.evaluate(m=>{if(m.t=='x')SOC6.remote(m.d,'pb');else if(m.t=='chat')chatIn6({peer:'pb',data:m.d});return true},m)});
  await A.evaluate(()=>{window.__sent=[];cur='fort';meta=null;rm={isHost:true,id:'pa',ps:{pb:{n:'Bea',uid:window.IB,lv:5}},conns:[],presence(){},peers(){return[{peer:'pa',isMe:true,presence:{n:'Ann',uid:window.IA}},{peer:'pb',isMe:false,presence:{n:'Bea',uid:window.IB,lv:5,cx:{t:0}}}]},emit(t,d){relayToB({t,d,f:'pa'})}};myName='Ann'});
  await B.evaluate(()=>{cur='fort';rm={isHost:false,id:'pb',hc:{peer:"pa"},presence(){},ps:{pa:{n:'Ann',uid:window.IA}},peers(){return[{peer:'pb',isMe:true,presence:{n:'Bea',uid:window.IB}},{peer:'pa',isMe:false,presence:{n:'Ann',uid:window.IA,lv:20,cx:{t:0}}}]},emit(t,d){sendToHost({t,d})}};myName='Bea'});
+ await A.waitForTimeout(1000);/* the fake world puts you 30 m below the surface, and the depth record pays gems on the next frames: let that land before gems are set */
  // trade: Ann gives 5 wood(id5), wants 3 gems(id0)
  await A.evaluate(()=>{inv={5:10};gems=0});await B.evaluate(()=>{inv={};gems=10});
  await B.evaluate(()=>{SOC6.cmd('/trade ann 0 3 5 5')});await B.waitForTimeout(200);

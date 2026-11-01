@@ -10,7 +10,9 @@ function ensure(u){if(!u.shop||typeof u.shop!='object')u.shop={};const s=u.shop;
 function view(u){const s=ensure(u);return{gems:Math.floor(s.g),owned:s.owned}}
 // The server cannot watch gameplay, so gem *growth* is rate-limited (burst + per minute). Spending always goes through buy().
 function sync(u,gems,now){const s=ensure(u);now=now||Date.now();s.allow=Math.min(BURST,s.allow+Math.max(0,now-s.t)/60000*PER_MIN);s.t=now;gems=Math.floor(+gems);if(!Number.isFinite(gems)||gems<0||gems>MAX_GEMS)return view(u);
- if(gems>s.g){const inc=Math.min(gems-s.g,Math.floor(s.allow));s.g+=inc;s.allow-=inc}else s.g=gems;return view(u)}
+ if(gems>s.g){const want=gems-s.g,fromB=Math.min(want,Math.floor(s.bonus||0)),inc=fromB+Math.min(want-fromB,Math.floor(s.allow));s.g+=inc;s.bonus=(s.bonus||0)-fromB;s.allow-=inc-fromB}else s.g=gems;return view(u)}
+// one big earned reward (a world boss): allowed once on top of the rate limit, and kept until a sync uses it
+function bonus(u,n){const s=ensure(u);s.bonus=Math.min(MAX_GEMS,(s.bonus||0)+Math.max(0,+n||0));return s.bonus}
 function buy(u,cat,m,now){const s=ensure(u);const rid=String(m.rid||'').slice(0,40);
  if(!rid)return{ok:0,m:'Missing request id'};
  if(s.rids[rid])return Object.assign({},s.rids[rid],{dup:1});
@@ -23,4 +25,4 @@ function buy(u,cat,m,now){const s=ensure(u);const rid=String(m.rid||'').slice(0,
  s.g-=total;s.owned[it.id]=(s.owned[it.id]|0)+qty;
  const res={ok:1,rid,id:it.id,qty,spent:total,gems:Math.floor(s.g),owned:s.owned[it.id]};
  s.rids[rid]=res;const keys=Object.keys(s.rids);if(keys.length>40)for(const k of keys.slice(0,keys.length-40))delete s.rids[k];return res}
-module.exports={loadCatalog,ensure,view,sync,buy,BURST,PER_MIN};
+module.exports={loadCatalog,ensure,view,sync,bonus,buy,BURST,PER_MIN};
