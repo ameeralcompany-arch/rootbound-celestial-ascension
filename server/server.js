@@ -3,6 +3,7 @@
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),zlib=require('zlib');
 const ENV=process.env;
+const WORLDS_A_DAY=10;   // new worlds one account may make in a day (claiming them is limited separately, to 5 at a time)
 const ACCOUNT_GEN=1;   // raise this by one to reset every account again when the server next starts
 const WB_GEMS=[3000,7000,12000,18000,28000],WB_DAY=10;   // what each realm's world boss pays (src/js/late/99-zzzzzzzzz-i-worldboss.js)
 function createServer(opts={}){
@@ -69,9 +70,10 @@ function createServer(opts={}){
   if(s.world==id)return;
   if(banned(s.uid))return send(s,{t:'enter_err',m:'You are banned from this server'});const pass=s.owner||s.summon===id;
   let w=null;if(id!='plaza'){const sg=R.realmStage(id);if(sg&&!worldExists(id)){const b=wname(baseRaw),bw=b&&R.stName(b,sg)==id&&!R.realmStage(b)&&worldExists(b)?loadWorld(b,false):null;if(!bw)return send(s,{t:'enter_err',m:'Enter the base world of this realm first'});if(!bucket(s,'realm',8,60000))return send(s,{t:'enter_err',m:'Slow down'});w=loadWorld(id,true,bw.ownerUid);if(!w)return send(s,{t:'enter_err',m:'The server has reached its world limit'});w.ownerName=bw.ownerName;w.base=b;saveWorld(w,true)}else if(!worldExists(id)){if(!create)return send(s,{t:'enter_err',m:'That world does not exist yet. Use Create to make it.'});if(s.kind!='user'&&s.kind!='owner')return send(s,{t:'enter_err',m:'Create an account to make new worlds (guests can join existing ones).'});if(sg)return send(s,{t:'enter_err',m:'World names cannot end in a realm suffix'});
-    const u=userById(s.uid);if(u&&!canOwn(u))return send(s,{t:'enter_err',m:'You already own '+cfg.maxWorldsPerAccount+' worlds, the most one person can have. Release one first.'});
+    const u=userById(s.uid);
     if(!bucket(s,'create',3,60000))return send(s,{t:'enter_err',m:'Slow down: too many worlds created'});
-    w=loadWorld(id,true,s.uid);if(!w)return send(s,{t:'enter_err',m:'The server has reached its world limit'});if(u){u.worlds=(u.worlds||[]).concat(id);saveAcc();sendMine(s)}}
+    if(u&&!isOwnerUid(u.id)){const day=Math.floor(Date.now()/864e5),d=u.mkDay&&u.mkDay.d==day?u.mkDay:(u.mkDay={d:day,n:0});if(d.n>=WORLDS_A_DAY)return send(s,{t:'enter_err',m:'You have made '+WORLDS_A_DAY+' new worlds today. Try again tomorrow.'});d.n++;saveAcc()}
+    w=loadWorld(id,true);if(!w)return send(s,{t:'enter_err',m:'The server has reached its world limit'})}   // a new world belongs to nobody: a World Lock is what claims it
    else{w=loadWorld(id,false);if(!w)return send(s,{t:'enter_err',m:'World data could not be loaded'})}
    const gate=w.base&&loadWorld(w.base,false)||w;if(gate.meta&&gate.meta.b&&gate.meta.b.includes(s.uid)&&!pass)return send(s,{t:'enter_err',m:'You are banned from this world'});
    if(gate.meta&&gate.meta.pr&&!(gate.meta.o==s.uid||(gate.meta.f||[]).includes(s.uid)||(gate.meta.t||[]).includes(s.uid))&&!pass)return send(s,{t:'enter_err',m:'This world is private'})}
@@ -80,7 +82,7 @@ function createServer(opts={}){
   send(s,{t:'joined',sid:s.sid,w:id,uid:s.uid,name:s.name,owner:!!s.owner,kind:s.kind});send(s,{t:'_hello',d:helloFor(s,id)});relay(id,{t:'_p',d:s.pres,f:s.sid},s.sid);if(id!='plaza'){mbElect(id);const wm=worlds.get(id);if(wm)send(s,{t:'mhost',d:{sid:wm.mobHost||''}})}}
  // ---------- world ownership: up to cfg.maxWorldsPerAccount per person (the server owner has no cap); a world's realms belong to its owner and do not count
  const canOwn=u=>isOwnerUid(u.id)||(u.worlds||[]).length<cfg.maxWorldsPerAccount;
- function setOwner(id,uid,name){const ids=[id];for(let i=1;i<R.REALM.length;i++)if(worldExists(R.stName(id,i)))ids.push(R.stName(id,i));for(const x of ids){const w=loadWorld(x,false);if(!w)continue;w.ownerUid=uid;w.ownerName=name;if(!uid)w.meta=null;saveWorld(w);relay(x,{t:'own',d:{o:uid,on:name,clearLock:uid?0:1}})}}
+ function setOwner(id,uid,name){const ids=[id];for(let i=1;i<R.REALM.length;i++)if(worldExists(R.stName(id,i)))ids.push(R.stName(id,i));for(const x of ids){const w=loadWorld(x,false);if(!w)continue;w.ownerUid=uid;w.ownerName=name;if(!uid&&w.meta){const k=w.meta.y*R.W+w.meta.x;if(w.edits[k]&&w.edits[k][0]==17){R.applyEdit(w,k,[0,0,0,0]);relay(x,{t:'e',d:{k,a:[0,0,0,0]}})}w.meta=null}saveWorld(w);relay(x,{t:'own',d:{o:uid,on:name,clearLock:uid?0:1}})}}
  function sendMine(s){const u=userById(s.uid);if(!u)return;send(s,{t:'myworlds',list:(u.worlds||[]).map(id=>({id,pop:members(id).size})),max:isOwnerUid(u.id)?0:cfg.maxWorldsPerAccount})}
  const notify=(s,text)=>send(s,{t:'notice',d:{text,by:'Server'}});
  function setGod(s,u,on){const sh=SHOP.ensure(u);if(on&&!u.god){sh.realG=sh.g;sh.g=Math.max(sh.g,999999)}else if(!on&&u.god){sh.g=Number.isFinite(sh.realG)?sh.realG:sh.g;delete sh.realG}u.god=on?1:0;s.god=!!on;saveAcc();send(s,{t:'god',on:on?1:0});sendWallet(s,u)}
@@ -175,8 +177,7 @@ function createServer(opts={}){
   case 'drop':return eco.dropMsg(s,m);
   case 'pick':return eco.pickMsg(s,m);
   case 'myworlds':return sendMine(s);
-  case 'world_release':{const u=userById(s.uid),id=wname(m.w);if(!u||!(u.worlds||[]).includes(id))return notify(s,'You do not own that world');u.worlds=u.worlds.filter(x=>x!=id);saveAcc();setOwner(id,'','');store.audit({ev:'world-released',w:id,by:s.uid});notify(s,'Released '+id+': it no longer counts as yours');return sendMine(s)}
-  case 'world_claim':{const u=userById(s.uid),id=s.world;if(s.kind=='guest'||!u)return notify(s,'Create an account to own worlds');const w=id&&id!='plaza'&&worlds.get(id);if(!w)return notify(s,'Enter a world first');if(R.realmStage(id)||w.ownerUid)return notify(s,w.ownerUid?'This world belongs to '+w.ownerName:'A realm belongs to its base world');if(!canOwn(u))return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first');u.worlds=(u.worlds||[]).concat(id);saveAcc();setOwner(id,u.id,u.name);notify(s,'This world is now yours');return sendMine(s)}
+  case 'world_release':{const u=userById(s.uid),id=wname(m.w);if(!u||!(u.worlds||[]).includes(id))return notify(s,'You do not own that world');const rw=loadWorld(id,false),hadLock=!!(rw&&rw.meta);u.worlds=u.worlds.filter(x=>x!=id);saveAcc();setOwner(id,'','');if(hadLock)eco.give(s,u,17,1);store.audit({ev:'world-released',w:id,by:s.uid});notify(s,'Released '+id+': it no longer counts as yours');return sendMine(s)}
   }
   const wid=s.world;if(!wid)return;const w=wid=='plaza'?null:worlds.get(wid);
   if(t=='_p'){if(!bucket(s,'p',40,1000))return;const pr=R.cleanPres(m.d);pr.uid=s.uid;pr.n=s.name.slice(0,14);s.pres=pr;
@@ -192,9 +193,11 @@ function createServer(opts={}){
   if(w&&t=='mh'){if(!bucket(s,'mh',150,10000))return;const h=w.mobHost&&sessions.get(w.mobHost),d=m.d;if(h&&h!==s&&d&&Number.isFinite(+d.id)&&Number.isFinite(+d.n))send(h,{t:'mh',d:{id:+d.id,n:Math.max(0,Math.min(1e7,+d.n)),k:d.k?1:0},f:s.sid});return}
   if(w&&t=='mb_away'){s.mbAway=!!m.d;mbElect(wid);return}
   if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid,s.god)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);return}
-  if(t=='meta'){if(!bucket(s,'meta',6,8000))return;if(s.kind=='guest')return;const r=R.checkMeta(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'meta'});return}
+  if(t=='meta'){if(!bucket(s,'meta',6,8000))return;if(s.kind=='guest')return;const r=R.checkMeta(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'meta'});return}if(r.v)r.v.on=s.name;
    // placing a World Lock in an unowned world claims it, within the same limit
-   if(!w.ownerUid&&r.v){const u=userById(s.uid);if(!u||R.realmStage(wid)||!canOwn(u)){send(s,{t:'_rej',op:'meta'});return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first')}u.worlds=(u.worlds||[]).concat(wid);saveAcc();w.ownerUid=u.id;w.ownerName=u.name;relay(wid,{t:'own',d:{o:u.id,on:u.name}});sendMine(s)}
+   if(!w.ownerUid&&r.v){const u=userById(s.uid);if(!u||R.realmStage(wid)||!canOwn(u)){send(s,{t:'_rej',op:'meta'});return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first')}u.worlds=(u.worlds||[]).concat(wid);saveAcc();setOwner(wid,u.id,u.name);sendMine(s)}
+   // taking the lock away frees the world (and its realms) again
+   if(r.v===null&&w.ownerUid){const o=userById(w.ownerUid);if(o){o.worlds=(o.worlds||[]).filter(x=>x!=wid);saveAcc()}w.meta=null;setOwner(wid,'','');sendMine(s)}
    w.meta=r.v;saveWorld(w);relay(wid,{t:'meta',d:r.v,f:s.sid},s.sid);return}
   if(t=='o'){if(!bucket(s,'o',40,8000))return;const r=R.objOp(w,m.d,s.uid,s.god);if(!r){send(s,{t:'_rej',op:'o'});return}
    if(r.weather){if(Date.now()-w.lastWx<cfg.wxCooldownMs){send(s,{t:'notice',d:{text:'The weather machines are recharging ('+Math.ceil((cfg.wxCooldownMs-(Date.now()-w.lastWx))/1000)+'s)',by:'Server'}});return}if(w.weather==r.weather)return;setWeather(w,r.weather,s.name);store.audit({ev:'weather',w:wid,by:s.uid,wx:r.weather});return}

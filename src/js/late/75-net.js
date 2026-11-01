@@ -38,7 +38,7 @@ const NET7=(()=>{
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
   if(t=='worlds'){list=m.list||[];noRf=1;try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}noRf=0;return}
-  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it and become its owner.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
+  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Owner','Tools are in the top bar · type /help for commands',2600);return}
   if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}

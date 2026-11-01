@@ -32,7 +32,7 @@ const state=p=>ev(p,()=>({lvl:lvl|0,gems:gems|0,acct:RB_ACCT.id,auth:NET7.auth&&
   await ev(P,()=>{SHOP7.st.pend=500;SHOP7.save();saveP()});await P.reload();await enterGame(P);await sleep(1900);s=await state(P);ok('gems an older version moved to pending come back to the offline save',s.gems>=g9+500,s);await ev(P,()=>{gems=99999;saveP()});
   await login(P,'newbie');await P.waitForFunction(()=>(lvl|0)==9,null,{timeout:12000}).catch(()=>{});s=await state(P);ok('signing back in brings back the account',s.lvl==9,s);
   // a world owned before the reset
-  await ev(P,()=>NET7.go('oldland',true));await P.waitForFunction(()=>NET7.world=='oldland',null,{timeout:8000});await sleep(400);const k0=await ev(P,()=>{const k=5*W+20;tiles[k]=3;pushEdit(k);return k});await sleep(500);
+  await ev(P,()=>NET7.go('oldland',true));await P.waitForFunction(()=>NET7.world=='oldland',null,{timeout:8000});await sleep(400);await ev(P,()=>(()=>{const x=(P.x/T|0)+3;let y=0;for(let yy=0;yy<H;yy++)if(tiles[yy*W+x]){y=yy-1;break}const k=y*W+x;tiles[k]=17;hp[k]=99;setMeta({x,y,o:myId,on:(NET7.auth&&NET7.auth.name)||myName,f:[],pub:0});pushEdit(k)})());await sleep(400);const k0=await ev(P,()=>{const k=5*W+20;tiles[k]=3;pushEdit(k);return k});await sleep(500);
   const O=await open(b,url,'O');await login(O,'Boss','owner-password-1');s=await state(O);ok('the owner signs in',(await ev(O,()=>NET7.owner)),s);await ev(O,()=>{lvl=33;saveP();ACCT13.upload(true)});await sleep(700);const oid=await ev(O,()=>RB_ACCT.id);
   // ---- the reset
   await S.close();await sleep(500);const before=JSON.parse(fs.readFileSync(path.join(dir,'worlds','oldland.json'),'utf8'));ok('(the world had an owner)',!!before.ownerUid);

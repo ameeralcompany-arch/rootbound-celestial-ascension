@@ -48,7 +48,7 @@ These stay in Render's dashboard. They are never in the repository or in the gam
 | `/give name item [amount]` | Gives items or gems. Item is `gems`, a number, or a name like `iron_ore`. `me` means you |
 | `/kick name`, `/smute name [minutes]`, `/sunmute name`, `/announce text` | Removes, silences or unsilences a player, or messages everyone |
 
-Everyone can use `/trade name [giveItem n wantItem n]`, `/drop item [amount]`, `/claim` (take an ownerless world) and the wrench (press **V**, click a player).
+Everyone can use `/trade name [giveItem n wantItem n]`, `/drop item [amount]` and the wrench (press **V**, click a player). To claim a world with no owner, place a World Lock in it.
 
 ## Limits worth knowing
 

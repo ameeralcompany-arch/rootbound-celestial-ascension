@@ -23,8 +23,8 @@ const hash=p=>ev(p,()=>{let h=0;for(let i=0;i<tiles.length;i++)h=(h*31+tiles[i])
   await ev(A,()=>{UI6.open&&UI6.open('settings')});await sleep(300);ok('no game-mode switch in Settings',await ev(A,()=>!document.getElementById('crv8s')));await ev(A,()=>{try{UI6.close&&UI6.close()}catch(_){}});
   await signup(A,'annie');await signup(B,'beatrix');await ev(O,p=>NET7.send({t:'login',name:'Boss',pass:p}),PW);await O.waitForFunction(()=>typeof RB_ACCT!='undefined'&&RB_ACCT.id&&NET7.owner,null,{timeout:8000});
   // ---- worlds: same terrain for everyone, owned
-  await go(A,'annland',true);await go(B,'annland');await go(O,'annland');await sleep(500);
-  ok('the world creator owns it, and the client knows',await ev(A,()=>canEdit()&&RB_OWN.on=='annie'));
+  await go(A,'annland',true);await go(B,'annland');await go(O,'annland');await sleep(500);await ev(A,()=>(()=>{const x=(P.x/T|0)+3;let y=0;for(let yy=0;yy<H;yy++)if(tiles[yy*W+x]){y=yy-1;break}const k=y*W+x;tiles[k]=17;hp[k]=99;setMeta({x,y,o:myId,on:(NET7.auth&&NET7.auth.name)||myName,f:[],pub:0});pushEdit(k)})());await sleep(500);
+  ok('whoever locks it owns it, and the client knows',await ev(A,()=>canEdit()&&RB_OWN.on=='annie'));
   ok('a visitor cannot edit an owned world, and is told why',await ev(B,()=>!canEdit()&&/annie/.test(lockMsg())));
   const K=await ev(A,()=>{const x=(P.x/T|0)+6;let y=0;for(let yy=0;yy<H;yy++)if(tiles[yy*W+x]){y=yy-1;break}return y*W+x});await ev(A,k=>{tiles[k]=3;pushEdit(k)},K);await sleep(700);
   ok('a block placed by the owner reaches everyone',await ev(B,k=>tiles[k]==3,K)&&await ev(O,k=>tiles[k]==3,K));

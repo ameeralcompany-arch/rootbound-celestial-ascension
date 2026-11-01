@@ -2573,7 +2573,7 @@ function harvest(k){const t=trees.get(k);if(!t)return;if(!canEdit()){if(performa
  else{const n=(2+(Math.random()*3|0))*(wp=='sickle'?2:1);spawnDrop(px,py-60,t.r,n);if(Math.random()<.7+bonus().seed+(wp=='sickle'?.2:0))spawnDrop(px,py-60,100+t.r,1+(Math.random()<.3?1:0));spawnDrop(px,py-60,'gem',Math.round(5+Math.random()*7));stat('harvest',1);burst(px,py-60,BLK[t.r][1],26,230,6);burst(px,py-60,'#6fcf5a',14,200,5);burst(px,py-60,'#ffe9a0',10,160,3,'p');rings.push({x:px,y:py-50,c:'#ffe9a0',t:performance.now()});ft(px,py-70,'+'+n+' '+BLK[t.r][0],'#fff');shake=Math.max(shake,.08);snd(520,.2,'triangle',.07);snd(780,.25,'triangle',.05);G('harvest')}}
 function placeAction(){if(wrench())return;const it=bar[sel];if(!it||cnt(it)<1)return;const tx=Math.floor((mx+cam.x)/T),ty=Math.floor((my+cam.y)/T);if(tx<1||ty<1||tx>=W-1||ty>=H-1)return;
  if(Math.hypot(tx*T+T/2-P.x,ty*T+T/2-(P.y+P.h/2))>REACH)return;const k=ty*W+tx;
- if(it>=200)return;if(!canEdit()){if(performance.now()-lockWarned>1500){lockWarned=performance.now();say(lockMsg())}return}if(it<100){if(tiles[k]||trees.has(k))return;if(it==17){if(meta||cur=='plaza')return say('This world already has a World Lock');setMeta({x:tx,y:ty,o:myId,on:myName,f:[],pub:0});G('lockplace')}stat('place',1);if(SOLID6[it]&&tx*T<P.x+P.w/2&&(tx+1)*T>P.x-P.w/2&&ty*T<P.y+P.h&&(ty+1)*T>P.y)return;addI(it,-1);tiles[k]=it;hp[k]=BLK[it][2];pop.set(k,performance.now());pushEdit(k);burst(tx*T+T/2,ty*T+T/2,BLK[it][1],8,90,4);rings.push({x:tx*T+T/2,y:ty*T+T/2,c:'#fff',t:performance.now()});snd(240,.09,'square',.06);G('place');return}
+ if(it>=200)return;if(!canEdit()){if(performance.now()-lockWarned>1500){lockWarned=performance.now();say(lockMsg())}return}if(it<100){if(tiles[k]||trees.has(k))return;if(it==17){if(meta||cur=='plaza')return say('This world already has a World Lock');try{if(ONL10.lockBlock())return}catch(_){}setMeta({x:tx,y:ty,o:myId,on:(typeof NET7!='undefined'&&NET7.online&&NET7.auth&&NET7.auth.name)||myName,f:[],pub:0});G('lockplace')}stat('place',1);if(SOLID6[it]&&tx*T<P.x+P.w/2&&(tx+1)*T>P.x-P.w/2&&ty*T<P.y+P.h&&(ty+1)*T>P.y)return;addI(it,-1);tiles[k]=it;hp[k]=BLK[it][2];pop.set(k,performance.now());pushEdit(k);burst(tx*T+T/2,ty*T+T/2,BLK[it][1],8,90,4);rings.push({x:tx*T+T/2,y:ty*T+T/2,c:'#fff',t:performance.now()});snd(240,.09,'square',.06);G('place');return}
  const n=it-100,tk=pickTree((mx+cam.x),(my+cam.y)),tr=tk>=0?trees.get(tk):null;
  if(tr){if(tr.s==n||prog(tr)>=1||tr.r!=tr.s)return;const r=REC[[tr.s,n].sort((a,b)=>a-b).join('+')];if(!r)return say('These seeds will not splice');addI(it,-1);tr.r=Math.random()<.06?9:r;tr.p=Date.now();pushEdit(tk);burst(tk%W*T+T/2,(tk/W|0)*T-30,BLK[tr.r][1],24,200,5);snd(523,.2,'triangle');snd(784,.3,'triangle',.05);say('Spliced into '+BLK[tr.r][0]+' tree');return}
  if(tiles[k]||trees.has(k)||!solidAt(tx,ty+1))return;addI(it,-1);trees.set(k,{s:n,r:n,p:Date.now()});pushEdit(k);burst(tx*T+T/2,ty*T+T-6,'#6fcf5a',8,70,3);snd(330,.1,'triangle',.05);G('plant');xpGain('farm',3);stat('plant',1)}
@@ -6672,7 +6672,7 @@ const NET7=(()=>{
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
   if(t=='worlds'){list=m.list||[];noRf=1;try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}noRf=0;return}
-  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it and become its owner.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
+  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Owner','Tools are in the top bar · type /help for commands',2600);return}
   if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}
@@ -19551,11 +19551,10 @@ const ONL10=(()=>{
   '/sunmute':a=>a[1]?adm('unmute',{who:a[1]}):say('Usage: /sunmute name'),
   '/announce':a=>a[1]?adm('announce',{text:a.slice(1).join(' '),scope:'all'}):say('Usage: /announce message'),
   '/give':a=>{if(!a[1]||!a[2])return say('Usage: /give name item [amount]  (item: gems, a number or a name like iron_ore)');const i=itemId(a[2]);if(i==null)return say('No item called '+a[2]);return adm('give',{who:a[1]=='me'&&NET7.auth?NET7.auth.name:a[1],item:i,n:Math.max(1,Math.floor(+a[3]||1))})}};
- const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  /claim  ·  owner: /god /pull /summon /ban /unban /give /kick /smute /announce';
+ const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  place a World Lock to claim a world  ·  owner: /god /pull /summon /ban /unban /give /kick /smute /announce';
  {const _c=SOC6.cmd;SOC6.cmd=function(t){const a=String(t).trim().split(/\s+/),c=a[0].toLowerCase();
    if(OWNER[c]){OWNER[c](a);return true}
    if(c=='/help'||c=='/?'){const r=_c.apply(this,arguments);say(HELP2);return r}
-   if(c=='/claim'){NET7.online?NET7.send({t:'world_claim'}):say('Connect to the server first');return true}
    if(c=='/drop'){const i=itemId(a[1]);if(i==null||!live())say(live()?'Usage: /drop item [amount]':'Dropping for others needs a server');else drop(i,Math.max(1,Math.floor(+a[2]||1)));return true}
    if(c=='/trade'&&live()){typed(a);return true}
    return _c.apply(this,arguments)}}
@@ -19634,9 +19633,11 @@ const ONL10=(()=>{
    r.innerHTML='<h3>Realms of '+esc(WORD9.label(b))+'</h3>'+rows;for(const e of r.querySelectorAll('.rl10'))e.onclick=()=>{if(e.classList.contains('lock10')){say(e.dataset.why);snd('error');return}enterWorld(e.dataset.rl)}}
   const o=$('wmine');if(!acct()){o.innerHTML='';return}const lim=mine.max?mine.list.length+' of '+mine.max:mine.list.length+'';
   o.innerHTML='<h3>Worlds you own ('+lim+')</h3>'+(mine.list.map(w=>'<div class="wr mine10" data-mw="'+esc(w.id)+'"><span><b>'+esc(w.id)+'</b>'+(w.pop?'<br><small>'+w.pop+' here</small>':'')+'</span><button class="btn ghost" data-rel="'+esc(w.id)+'">Release</button></div>').join('')||'<div class="rb-empty">None yet. Type a new name above to make your first world.</div>');
-  for(const e of o.querySelectorAll('.mine10'))e.onclick=async ev=>{const rel=ev.target.closest('[data-rel]');if(!rel)return enterWorld(e.dataset.mw);if(await DLG7.confirm('Release “'+rel.dataset.rel+'”?','It stays saved, but it is no longer yours and anyone can claim it.','Release'))NET7.send({t:'world_release',w:rel.dataset.rel})}}
+  for(const e of o.querySelectorAll('.mine10'))e.onclick=async ev=>{const rel=ev.target.closest('[data-rel]');if(!rel)return enterWorld(e.dataset.mw);if(await DLG7.confirm('Release “'+rel.dataset.rel+'”?','It stays saved, but it is no longer yours: your World Lock comes back to your bag, and anyone can lock the world.','Release'))NET7.send({t:'world_release',w:rel.dataset.rel})}}
  {const _r=renderWorlds;renderWorlds=function(){const r=_r.apply(this,arguments);try{panels()}catch(e){console.error('ONL10 panels',e)}return r}}
- return{drop,wrench:wrenchAt,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();
+ // a World Lock claims the world, so tell the player here if the server would refuse it, before the lock leaves their hands
+ function lockBlock(){if(!live())return false;let m='';if(!acct())m='Create an account to lock a world';else{try{if(WORD9.stageOf(cur))m='A realm belongs to its base world: place your lock there'}catch(_){}if(!m&&window.RB_OWN&&RB_OWN.o&&RB_OWN.o!=myId)m='This world belongs to '+RB_OWN.on;if(!m&&!NET7.owner&&mine.max&&mine.list.length>=mine.max&&!(window.RB_OWN&&RB_OWN.o==myId))m='You already own '+mine.max+' worlds. Release one first'}if(m){say(m);return true}return false}
+ return{drop,lockBlock,wrench:wrenchAt,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();
 
 /* ========== LATE: 99-zzzzzzzzz-k-accounts.js ========== */
 // ===== ACCT13: each account's progress lives on the server, so it follows the account to any computer and a reset really starts everyone over. Signing in

@@ -21,11 +21,10 @@ const ONL10=(()=>{
   '/sunmute':a=>a[1]?adm('unmute',{who:a[1]}):say('Usage: /sunmute name'),
   '/announce':a=>a[1]?adm('announce',{text:a.slice(1).join(' '),scope:'all'}):say('Usage: /announce message'),
   '/give':a=>{if(!a[1]||!a[2])return say('Usage: /give name item [amount]  (item: gems, a number or a name like iron_ore)');const i=itemId(a[2]);if(i==null)return say('No item called '+a[2]);return adm('give',{who:a[1]=='me'&&NET7.auth?NET7.auth.name:a[1],item:i,n:Math.max(1,Math.floor(+a[3]||1))})}};
- const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  /claim  ·  owner: /god /pull /summon /ban /unban /give /kick /smute /announce';
+ const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  place a World Lock to claim a world  ·  owner: /god /pull /summon /ban /unban /give /kick /smute /announce';
  {const _c=SOC6.cmd;SOC6.cmd=function(t){const a=String(t).trim().split(/\s+/),c=a[0].toLowerCase();
    if(OWNER[c]){OWNER[c](a);return true}
    if(c=='/help'||c=='/?'){const r=_c.apply(this,arguments);say(HELP2);return r}
-   if(c=='/claim'){NET7.online?NET7.send({t:'world_claim'}):say('Connect to the server first');return true}
    if(c=='/drop'){const i=itemId(a[1]);if(i==null||!live())say(live()?'Usage: /drop item [amount]':'Dropping for others needs a server');else drop(i,Math.max(1,Math.floor(+a[2]||1)));return true}
    if(c=='/trade'&&live()){typed(a);return true}
    return _c.apply(this,arguments)}}
@@ -104,6 +103,8 @@ const ONL10=(()=>{
    r.innerHTML='<h3>Realms of '+esc(WORD9.label(b))+'</h3>'+rows;for(const e of r.querySelectorAll('.rl10'))e.onclick=()=>{if(e.classList.contains('lock10')){say(e.dataset.why);snd('error');return}enterWorld(e.dataset.rl)}}
   const o=$('wmine');if(!acct()){o.innerHTML='';return}const lim=mine.max?mine.list.length+' of '+mine.max:mine.list.length+'';
   o.innerHTML='<h3>Worlds you own ('+lim+')</h3>'+(mine.list.map(w=>'<div class="wr mine10" data-mw="'+esc(w.id)+'"><span><b>'+esc(w.id)+'</b>'+(w.pop?'<br><small>'+w.pop+' here</small>':'')+'</span><button class="btn ghost" data-rel="'+esc(w.id)+'">Release</button></div>').join('')||'<div class="rb-empty">None yet. Type a new name above to make your first world.</div>');
-  for(const e of o.querySelectorAll('.mine10'))e.onclick=async ev=>{const rel=ev.target.closest('[data-rel]');if(!rel)return enterWorld(e.dataset.mw);if(await DLG7.confirm('Release “'+rel.dataset.rel+'”?','It stays saved, but it is no longer yours and anyone can claim it.','Release'))NET7.send({t:'world_release',w:rel.dataset.rel})}}
+  for(const e of o.querySelectorAll('.mine10'))e.onclick=async ev=>{const rel=ev.target.closest('[data-rel]');if(!rel)return enterWorld(e.dataset.mw);if(await DLG7.confirm('Release “'+rel.dataset.rel+'”?','It stays saved, but it is no longer yours: your World Lock comes back to your bag, and anyone can lock the world.','Release'))NET7.send({t:'world_release',w:rel.dataset.rel})}}
  {const _r=renderWorlds;renderWorlds=function(){const r=_r.apply(this,arguments);try{panels()}catch(e){console.error('ONL10 panels',e)}return r}}
- return{drop,wrench:wrenchAt,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();
+ // a World Lock claims the world, so tell the player here if the server would refuse it, before the lock leaves their hands
+ function lockBlock(){if(!live())return false;let m='';if(!acct())m='Create an account to lock a world';else{try{if(WORD9.stageOf(cur))m='A realm belongs to its base world: place your lock there'}catch(_){}if(!m&&window.RB_OWN&&RB_OWN.o&&RB_OWN.o!=myId)m='This world belongs to '+RB_OWN.on;if(!m&&!NET7.owner&&mine.max&&mine.list.length>=mine.max&&!(window.RB_OWN&&RB_OWN.o==myId))m='You already own '+mine.max+' worlds. Release one first'}if(m){say(m);return true}return false}
+ return{drop,lockBlock,wrench:wrenchAt,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();

@@ -33,7 +33,7 @@ const kill=p=>ev(p,()=>{const m=BOSS6.active();iT=99;m.shield=0;m.hp=1;P.hp=maxH
   c1.send({t:'wb',op:'start'});await sleep(900);c1.send({t:'wb',op:'win'});await sleep(80);const w2=await sync(c1,20000);ok('the same world pays only once',w2<w1+200,{w1,w2});
   const g=await new C(port).connect();await g.wait(m=>m.t=='server');await g.rpc({t:'guest',name:'Gus'},x=>x.t=='auth');await enter(g,'solveland');g.send({t:'wb',op:'start'});await sleep(900);g.send({t:'wb',op:'win'});await sleep(100);ok('a guest has no wallet to pay',true);g.close();c1.close();await sleep(60);
   // ---- two players in one world
-  const A=await client(b,url,'Ann'),B=await client(b,url,'Bea');await signup(A,'annie');await signup(B,'beatrix');await go(B,'bossland',true);await go(A,'bossland');await sleep(500);
+  const A=await client(b,url,'Ann'),B=await client(b,url,'Bea');await signup(A,'annie');await signup(B,'beatrix');await go(B,'bossland',true);await ev(B,()=>(()=>{const x=(P.x/T|0)+3;let y=0;for(let yy=0;yy<H;yy++)if(tiles[yy*W+x]){y=yy-1;break}const k=y*W+x;tiles[k]=17;hp[k]=99;setMeta({x,y,o:myId,on:(NET7.auth&&NET7.auth.name)||myName,f:[],pub:0});pushEdit(k)})());await sleep(400);await go(A,'bossland');await sleep(500);
   ok('world bosses are on in online worlds',await ev(A,()=>!!rm&&rm.net&&WBOSS13.need(cur)));
   // Bea owns the world and builds; Ann is a visitor and fights
   ok('the fighter is a visitor who cannot edit this world',await ev(A,()=>!canEdit())&&await ev(B,()=>canEdit()));await ev(A,()=>{window.__rl=0;const _l=loadWorld;loadWorld=function(){window.__rl++;return _l.apply(this,arguments)}});
