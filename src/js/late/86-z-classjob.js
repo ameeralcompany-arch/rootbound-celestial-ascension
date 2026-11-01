@@ -19,7 +19,7 @@ const CJOB=(()=>{
  // counted up from the class's lowest rarity, so every class has weapons it can use at class level 1
  const rarOf=id=>{let r='common';try{r=(typeof WPNRAR=='function'?WPNRAR(id):WPN[id].rar)||'common'}catch(_){}return r=='exclusive'?'mythic':r},minR={};
  function creq(id){const w=WPN[id];if(!w||w.myth||w.k=='tool'||id=='fist')return 0;const k=clsOf(id);if(!k)return 0;
-  if(minR[k]==null){let m=99;for(const q of Object.keys(WPN))if(clsOf(q)==k&&!WPN[q].myth&&WPN[q].k!='tool'&&!WPN[q].hid)m=Math.min(m,CREQ[rarOf(q)]||1);minR[k]=m==99?1:m}
+  if(minR[k]==null){let m=99;for(const q of Object.keys(WPN))if(clsOf(q)==k&&!WPN[q].myth&&WPN[q].k!='tool'&&!WPN[q].hid&&!WPN[q].ars)m=Math.min(m,CREQ[rarOf(q)]||1);/* the arsenal (ARS10) doesn't move the baseline, so weapons you own keep their class level */minR[k]=m==99?1:m}
   return Math.max(1,(CREQ[rarOf(id)]||1)-minR[k]+1)}
  function blocks(id){if(!S.cur||free()||!id||id=='fist')return false;const w=WPN[id];if(!w||w.k=='tool')return false;const k=clsOf(id);if(!k)return false;if(k!==S.cur)return true;return CLASS7.lv(k)<creq(id)}
  const master=k=>{try{const n=NPC2.list().find(n=>n.cls==k);return n?n.n:'its class master'}catch(_){return'its class master'}};

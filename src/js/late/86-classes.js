@@ -39,7 +39,7 @@ const CLASS7=(()=>{
  const BYK={fist:'brawler',knuckle:'brawler',pan:'brawler',sword:'knight',spear:'knight',bow:'archer',wand:'mage',staff:'mage',scythe:'reaper',sickle:'reaper',hammer:'stormcaller',maul:'berserker',flail:'berserker',shuriken:'ninja',chakram:'ninja',glaive:'ninja',whip:'druid',gun:'gunslinger'};
  for(const k in C)C[k].ids.push('myth_'+k);   // each class's mythic scythe (99-zzzzzzzzz-2-mythic.js)
  const OF={};for(const k in C)for(const id of C[k].ids)OF[id]=k;
- const of=w=>w?(OF[w.id]||BYK[w.k]||null):null;
+ const of=w=>w?(OF[w.id]||(w.cls&&C[w.cls]?w.cls:null)||BYK[w.k]||null):null;   // w.cls: the arsenal's own class (99-zzzzzzzzz-d-arsenal.js)
  const S={lv:{},xp:{}};for(const k in C){S.lv[k]=1;S.xp[k]=0}
  let dirty=false;
  function load(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc4')||'null')}catch(_){}if(!o||typeof o!='object')return;

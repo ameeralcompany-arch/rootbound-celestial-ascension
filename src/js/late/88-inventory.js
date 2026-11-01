@@ -41,7 +41,7 @@ const INV7=(()=>{
  function items(){const out=[];
   for(const k of Object.keys(inv).map(Number).filter(k=>cnt(k)>0&&(MAT[k]||BLK[k%100]||BLK[k])).sort((a,b)=>a-b))out.push({k,t:kind(k),n:cnt(k),own:1,worn:isWorn(k)});
   for(const id in WEAR){const w=WEAR[id];out.push({k:'a:'+id,t:'wear',own:!!ownW[id],lock:lvl<w.lv&&!ownW[id],worn:wear[w.s]==id})}
-  const ws=Object.keys(WPN).filter(id=>!(WPN[id].hid&&!own[id])).map(id=>'w:'+id).sort(ITEM7.wcmp);
+  const ws=Object.keys(WPN).filter(id=>!((WPN[id].hid||WPN[id].ars)&&!own[id])).map(id=>'w:'+id).sort(ITEM7.wcmp)/* arsenal weapons (ARS10) show here once owned; the store lists them all */;
   for(const k of ws){const id=k.slice(2),w=WPN[id];out.push({k,t:kind(k),own:!!own[id],lock:lvl<(w.lv|0),worn:heldW(id)})}
   try{const cw=curWingK();for(const w of WINGS){let o=false;try{o=!!wingOwned(w)}catch(_){}if(o)out.push({k:'wing:'+w.id,t:'wings',own:1,worn:cw==='wing:'+w.id})}}catch(_){}
   try{for(const it of SHOP7.items)if((it.cat=='charms'||it.cat=='effects')&&SHOP7.has(it.id))out.push({k:'id:'+it.id,t:'charms',own:1,worn:SHOP7.equipped(it.id),sub:it.cat=='effects'?(it.sub||'effect'):'charm'})}catch(_){}
