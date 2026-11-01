@@ -18055,7 +18055,13 @@ const BIOME17=(()=>{
   for(const q of BEA){if(q.st!='wave')continue;q.t+=dt;q.nx-=dt;const live=q.ms.filter(m=>m.hp>0&&!m.dead&&mobs.includes(m));
    if(q.sp<q.want&&(q.nx<=0||!live.length)){spawnW(q,q.want-q.sp)}
    else if(q.sp>=q.want&&!live.length)light(q);
-   if(Math.abs((q.x+.5)*T-P.x)>T*26||Math.abs(q.y*T-P.y)>T*18){q.st='idle';for(const m of live)m.wv=null;q.ms=[];try{say('The '+LAY.bi[q.i].bea[0].toLowerCase()+' dims... come back and try again')}catch(_){}}}
+   // the wave stays near its beacon: a monster that strays is steered back, one that gets far (flyers drifting off, walkers falling into a
+   // shaft) is brought back beside it, so a wave can always be finished
+   const bx=(q.x+.5)*T,by=q.y*T;for(const m of live){const dx=m.x-bx,dy=m.y+m.h/2-by;if(Math.abs(dx)>T*14||Math.abs(dy)>T*9){const sp=spot(q,MK[m.k]&&MK[m.k].fly);try{VFX.burst(m.x,m.y+m.h/2,[LAY.bi[q.i].c],8,140,1,.4,8)}catch(_){}m.x=sp.x;m.y=MK[m.k]&&MK[m.k].fly?sp.y:sp.y+T-m.h-2;m.vx=m.vy=0}
+    else if(Math.abs(dx)>T*7||Math.abs(dy)>T*5){m.vx=(m.vx||0)*.8-Math.sign(dx)*60;if(MK[m.k]&&MK[m.k].fly)m.vy=(m.vy||0)*.8-Math.sign(dy)*50}}
+   // leaving the beacon for good (not just a few steps of chasing) lets the wave fade: warn first, then reset after ~6 s away
+   if(Math.abs(bx-P.x)>T*26||Math.abs(by-P.y)>T*20){q.away=(q.away||0)+dt;if(q.away>1.5&&!q.warned){q.warned=1;try{say('Stay near the '+LAY.bi[q.i].bea[0].toLowerCase()+' or its wave will fade')}catch(_){}}
+    if(q.away>6){q.st='idle';q.away=0;q.warned=0;for(const m of live)m.wv=null;q.ms=[];try{say('The '+LAY.bi[q.i].bea[0].toLowerCase()+' dims... come back and try again')}catch(_){}}}else{q.away=0;q.warned=0}}
   doneT-=dt;if(doneT<=0){doneT=.25;const r=rec(cur);if(!r.done&&r.c.every(Boolean)){let ok=0;try{ok=WORD9.state.w[cur]&&WORD9.state.w[cur].ok}catch(_){}if(ok)worldReward()}}
   saveT-=dt;if(saveT<=0){saveT=3;if(dirty)save()}
   uiT-=dt;if(uiT<=0){uiT=.25;panel()}}
