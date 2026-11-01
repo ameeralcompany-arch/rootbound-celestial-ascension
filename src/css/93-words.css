@@ -9,7 +9,7 @@
 #wl9 em{font:700 10px var(--font-ui);font-style:normal;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
 #wl9 em.go{color:#c98a12;animation:wl9pulse 1.6s ease-in-out infinite}#wl9 em.ok{color:#2f9a5a}
 #wl9.full{box-shadow:0 0 0 1px rgba(255,214,120,.55),0 0 18px rgba(255,200,90,.35),var(--sh-2)!important}
-#wl9.inf .t{color:#e2552a}
+#wl9.inf .t{color:#e2552a}#wl9.gal .t{color:#b48cff}#wl9.sea .t{color:#3ab8e8}#wl9.cry .t{color:#ff8ad8}
 #wl9.nudge{animation:wl9shake .4s ease}
 @keyframes wl9rb{to{background-position:300% 0,0 0}}
 @keyframes wl9pulse{50%{opacity:.55}}

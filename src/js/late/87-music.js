@@ -42,6 +42,23 @@ const MUS7=(()=>{
   combat:{n:'Gentle fight',songs:[
    {id:'brave-steps',bpm:88,key:9,sc:'min',feel:'beat',prog:C([[0,'m7'],[8,'maj7'],[3,'maj7'],[10,'d9']]),lead:'keys'},
    {id:'small-courage',bpm:92,key:2,sc:'dor',feel:'beat',prog:C([[0,'m9'],[5,'d9'],[10,'maj7'],[7,'m7']]),lead:'box'}]},
+  // the realms (Inferno, Galaxy, Abyssal Sea, Crystal Realm: REALM10.mood()): their own songs everywhere in the realm, and their own battle song
+  inferno:{n:'Inferno',songs:[
+   {id:'ember-march',bpm:98,key:5,sc:'hira',feel:'drive',prog:C([[0,'m9'],[1,'maj7'],[10,'m7'],[7,'sus']]),lead:'koto',dark:1},
+   {id:'ash-and-iron',bpm:94,key:2,sc:'min',feel:'drive',prog:C([[0,'m11'],[8,'maj7'],[5,'m9'],[7,'d9']]),lead:'mar',dark:1}]},
+  inferno_f:{n:'Inferno battle',songs:[{id:'molten-clash',bpm:112,key:0,sc:'hira',feel:'drive',prog:C([[0,'m7'],[1,'maj7'],[8,'maj7'],[7,'sus']]),lead:'koto'}]},
+  realm_gal:{n:'Galaxy',songs:[
+   {id:'nebula-drift',bpm:58,key:2,sc:'lyd',feel:'ambient',prog:C([[0,'maj9'],[2,'add9'],[7,'maj7'],[9,'m9']]),lead:'arp'},
+   {id:'zero-gravity',bpm:70,key:7,sc:'lyd',feel:'soft',prog:C([[0,'add9'],[4,'m7'],[2,'d9'],[7,'sus']]),lead:'bell'}]},
+  realm_gal_f:{n:'Galaxy battle',songs:[{id:'supernova-run',bpm:104,key:9,sc:'dor',feel:'beat',prog:C([[0,'m9'],[10,'maj7'],[5,'d9'],[7,'sus']]),lead:'arp'}]},
+  realm_sea:{n:'Abyssal Sea',cave:1,songs:[
+   {id:'whale-song',bpm:54,key:3,sc:'dor',feel:'ambient',prog:C([[0,'m9'],[5,'d9'],[3,'maj7'],[10,'sus']]),lead:'bell',whale:1},
+   {id:'coral-lullaby',bpm:62,key:8,sc:'maj',feel:'soft',prog:C([[0,'maj9'],[9,'m7'],[5,'add9'],[7,'sus']]),lead:'glass',whale:1}]},
+  realm_sea_f:{n:'Abyss battle',cave:1,songs:[{id:'riptide',bpm:100,key:4,sc:'min',feel:'drive',prog:C([[0,'m9'],[8,'maj9'],[3,'maj7'],[10,'d9']]),lead:'mar'}]},
+  realm_cry:{n:'Crystal Realm',songs:[
+   {id:'prism-waltz',bpm:72,key:11,sc:'lyd',feel:'brush',prog:C([[0,'maj9'],[2,'d9'],[4,'m7'],[7,'add9']]),lead:'glass'},
+   {id:'glass-garden',bpm:66,key:4,sc:'hira',feel:'soft',prog:C([[0,'m9'],[8,'maj9'],[3,'add9'],[10,'sus']]),lead:'box'}]},
+  realm_cry_f:{n:'Crystal battle',songs:[{id:'shatterpoint',bpm:108,key:1,sc:'lyd',feel:'beat',prog:C([[0,'maj7'],[2,'d9'],[9,'m9'],[7,'sus']]),lead:'glass'}]},
   // underground (20 m and deeper): a curious cave groove with marimba, water drops and a cave echo...
   mine:{n:'Echo Caves',cave:1,songs:[
    {id:'glimmer-tunnels',bpm:84,key:4,sc:'dor',feel:'cave',prog:C([[0,'m9'],[10,'maj7'],[8,'maj9'],[10,'sus']]),lead:'mar'},
@@ -68,6 +85,8 @@ const MUS7=(()=>{
  const bass=(fr,t,d,v)=>{voice(fr,t,d,'sine',v,.02);voice(fr*2,t,d*.5,'triangle',v*.12,.02)};
  // underground: a woody marimba, falling water drops into the cave echo, hand-drum and rim sounds
  const mar=(fr,t,v)=>{voice(fr,t,.55,'sine',v,.003,cave);voice(fr*4,t,.09,'sine',v*.3,.002);voice(fr*10,t,.03,'sine',v*.08,.001)};
+ const glass=(fr,t,v)=>{voice(fr*2,t,2.6,'sine',v,.06,wet);voice(fr*4.01,t,1.4,'sine',v*.32,.04,wet);voice(fr*6.02,t,.6,'sine',v*.12,.02,wet)};
+ const whale=(t,root)=>{const o=ctx.createOscillator(),g=ctx.createGain(),f=hz(root,-12+[0,3,7][(R()*3)|0]);o.type='sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+1.6);o.frequency.exponentialRampToValueAtTime(f*1.12,t+3.4);env(g,t,.9,3.8,.03);o.connect(g);g.connect(cave);o.start(t);o.stop(t+4)};
  const drip=t=>{const f=900+R()*1500,o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.9,t+.06);env(g,t,.003,.22,.022);o.connect(g);g.connect(cave);o.start(t);o.stop(t+.3)};
  const hand=(t,v,lo)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(lo?150:230,t);o.frequency.exponentialRampToValueAtTime(lo?80:150,t+.12);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.22)};
  function kick(t,v){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(100,t);o.frequency.exponentialRampToValueAtTime(40,t+.16);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.24);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.3)}
@@ -92,8 +111,9 @@ const MUS7=(()=>{
    if(s==7&&d.feel!='ambient'&&R()<.25)bass(hz(song.root+rt,-12+q[1]),t,e8,.05);
    // melody (rests in the first bar of each section so the chords breathe)
    if(bar%8!=0||s>2){const ni=mel[s],m2=(bar&1)?mutate(mel,song.sc):mel;const idx=(bar&1)?m2[s]:ni;
-    if(idx>=0&&R()<(d.feel=='ambient'?.5:.9)){const oct=(sect==3?12:0)+(R()<.12?12:0),f=hz(song.root,song.sc[idx]+12+oct),v=(d.lead=='bell'?.03:d.lead=='arp'?.026:.032)*hv;
-     d.lead=='box'?box(f,t,v):d.lead=='koto'?koto(f,t,v*1.1):d.lead=='bell'?bellv(f,t,v):d.lead=='arp'?pluck(f,t,v):d.lead=='mar'?mar(f,t,v*1.25):rhodes(f,t,v*1.15,1.4)}}
+    if(idx>=0&&R()<(d.feel=='ambient'?.5:.9)){const oct=(sect==3?12:0)+(R()<.12?12:0),f=hz(song.root,song.sc[idx]+12+oct),v=(d.lead=='bell'?.03:d.lead=='arp'?.026:d.lead=='glass'?.024:.032)*hv;
+     d.lead=='box'?box(f,t,v):d.lead=='koto'?koto(f,t,v*1.1):d.lead=='bell'?bellv(f,t,v):d.lead=='arp'?pluck(f,t,v):d.lead=='mar'?mar(f,t,v*1.25):d.lead=='glass'?glass(f,t,v):rhodes(f,t,v*1.15,1.4)}}
+   if(d.whale&&s==0&&bar%4==1&&R()<.8)whale(t,song.root);
    if(d.lead=='mar'&&s%2==1&&R()<.6){const n=q[(s+bar)%q.length];mar(hz(song.root+rt,n+24),t,.014*hv)}   // a soft marimba arpeggio under the tune
    if(d.lead=='arp'&&(s%2==0)){const n=q[(s/2+bar)%q.length|0];pluck(hz(song.root+rt,n+24),t,.016*hv)}
    // drums
@@ -122,13 +142,14 @@ const MUS7=(()=>{
   setTimeout(()=>{mood=m2;song=null;fading=0;gap=0;nextT=ctx.currentTime+.2;try{const c=MOODS[m2]&&MOODS[m2].cave,tt=ctx.currentTime;caveSend.gain.setTargetAtTime(c?.32:0,tt,.4);lp.frequency.setTargetAtTime(c?2100:2600,tt,.4)}catch(_){}fadeIn()},1700)}
  // tiles below the surface under the player (the depth zones count the same way)
  const depthNow=()=>{try{const tx=Math.max(0,Math.min(W-1,Math.floor(P.x/T)));return Math.floor((P.y+P.h)/T)-sh(tx)}catch(_){return 0}};
- function detect(){try{if(!entered)return;let m='plaza';const e=ENV7.target,dep=depthNow();
-  if(dep>=46)m='deep';else if(dep>=20)m='mine';
+ function detect(){try{if(!entered)return;let m='plaza';const e=ENV7.target,dep=depthNow();let rm=null;try{rm=typeof REALM10!='undefined'?REALM10.mood():null}catch(_){}if(rm&&!MOODS[rm])rm=null;
+  if(rm)m=rm;
+  else if(dep>=46)m='deep';else if(dep>=20)m='mine';
   else if(e&&e!='default'&&MOODS[e])m=e;
   else if(wxN=='storm')m='storm';else if(wxN=='rain')m='rain';else if(wxN=='snow')m='snow';
   else if(night>.6)m='night';else if(wxN=='cloud')m='cloud';
   let fight=false;try{if(BOSS6.active())fight=true}catch(_){}for(const k of mobs){if(Math.abs(k.x-P.x)<420&&Math.abs(k.y-P.y)<300){fight=true;break}}
-  const now=performance.now();if(fight)holdUntil=now+7000;if(now<holdUntil)m='combat';want=m;if(m!=last){last=m;switchTo(m)}}catch(_){}}
+  const now=performance.now();if(fight)holdUntil=now+7000;if(now<holdUntil)m=rm&&MOODS[rm+'_f']?rm+'_f':'combat';want=m;if(m!=last){last=m;switchTo(m)}}catch(_){}}
  // a fight's music hold (7 s after the last monster) doesn't follow you into another world
  {const _lw=loadWorld;loadWorld=function(){holdUntil=0;return _lw.apply(this,arguments)}}
  return{calm(){holdUntil=0},start,get mood(){return mood},get want(){return want},get on(){return on},get song(){return song&&song.id},get played(){return played.slice()},MOODS,detect,endSong,force(m){want=m;last=m;switchTo(m)},newSong,depthNow}})();

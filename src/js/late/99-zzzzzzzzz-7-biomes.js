@@ -22,7 +22,7 @@ const BIOME17=(()=>{
  const cvs=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
  const norm=n=>String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
  const creative=()=>{try{return !!(typeof RB_CREATIVE!='undefined'&&RB_CREATIVE)||!!CRV8.on}catch(_){return false}};
- const isWorld=n=>{n=norm(n);try{return WORD9.hasWord(n)}catch(_){return n!='plaza'&&!/-inf$/.test(n)}};
+ const isWorld=n=>{n=norm(n);try{return WORD9.isBase(n)}catch(_){return n!='plaza'&&!/-(inf|gal|sea|cry)$/.test(n)}};
  const tone=(a,b,d,ty,v,dl)=>{try{SFX7.tone(a,b,d,ty,v,dl)}catch(_){}};
  const BAND=30,TOP=6,N=3,ROM=['I','II','III','IV','V'],STARS=['','Gentle','Fair','Tough','Fierce','Mythic'];
  // 3-letter words with no common anagram, so the Word Gate never refuses a fair answer

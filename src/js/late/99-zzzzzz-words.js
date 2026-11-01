@@ -6,6 +6,9 @@
 // by clicking the strip). Solved at level 15+ it takes you to "<World> · Inferno" (world name + '-inf'): the same terrain burnt to ash,
 // basalt and magma stone, lava instead of water (it burns, except in creative), embers in a red sky and four new, much stronger monsters
 // (Molten Slime, Ember Imp with fireballs, Hellhound, Obsidian Golem) with better drops. Below level 15 an Inferno is refused.
+// The realm chain: every world leads on, word by word: <World> (3 letters) → Inferno (3) → Galaxy (4) → Abyssal Sea (5) → Crystal Realm (8).
+// Each realm hides its own word that opens the next one (levels 15 / 25 / 35 / 45 to enter); solving the Crystal Realm's word completes the
+// world's Celestial Ascension. The realms' terrain, sky, monsters and ambience live in REALM10 (99-zzzzzzzzz-c-realms.js).
 // Cost: letters/glow/rainbow/sparkle frames are pre-rendered once; per frame at most 7 letters, the visible lava tiles (one pattern fill each),
 // <=40 ember sprites and a few fireballs; the Inferno sky is three cached canvases. Nothing per frame is O(world). =====
 const WORD9=(()=>{
@@ -21,13 +24,21 @@ const WORD9=(()=>{
  const KEY=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpword';let S={w:{},inf:{}};
  try{const o=JSON.parse(localStorage.getItem(KEY())||'null');if(o&&typeof o=='object'){if(o.w&&typeof o.w=='object')for(const n in o.w){const v=o.w[n];if(v&&typeof v=='object')S.w[norm(n)]={got:Array.isArray(v.got)?v.got.filter(i=>Number.isInteger(i)&&i>=0&&i<8):[],ok:v.ok?1:0,tr:Math.max(0,Math.min(99,v.tr|0))}}if(o.inf&&typeof o.inf=='object')for(const n in o.inf)if(typeof o.inf[n]=='string')S.inf[norm(n)]=norm(o.inf[n])}}catch(_){}
  const save=()=>{try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}},stOf=n=>S.w[n]||(S.w[n]={got:[],ok:0,tr:0}),peek=n=>S.w[n]||{got:[],ok:0,tr:0};
- // ---- worlds: '<base>-inf' is the Inferno of <base> (long names: 9 letters + a 3-char hash)
+ // ---- worlds: '<base>-inf' is the Inferno of <base>, then '-gal', '-sea', '-cry' (long names: 9 letters + a 3-char hash)
  const isInf=n=>typeof n=='string'&&n.length>4&&/-inf$/.test(n);
- function infName(b){b=norm(b);const n=b.length<=12?b+'-inf':b.slice(0,9)+(h32(b)%46656).toString(36).padStart(3,'0')+'-inf';S.inf[n]=b;return n}
+ const CH=[{s:'',lv:0,t:''},{s:'-inf',lv:15,t:'Inferno'},{s:'-gal',lv:25,t:'Galaxy'},{s:'-sea',lv:35,t:'Abyssal Sea'},{s:'-cry',lv:45,t:'Crystal Realm'}];
+ const stageOf=n=>{if(typeof n!='string'||n.length<5)return 0;for(let i=1;i<CH.length;i++)if(n.endsWith(CH[i].s))return i;return 0};
+ function stName(b,i){b=norm(b);if(!i)return b;const s=CH[i].s,n=b.length<=12?b+s:b.slice(0,9)+(h32(b)%46656).toString(36).padStart(3,'0')+s;S.inf[n]=b;return n}
+ const infName=b=>stName(b,1);
  const baseOf=n=>S.inf[n]||n.slice(0,-4)||'plaza',pretty=n=>n=='plaza'?'The Plaza':String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
- const label=n=>isInf(n)?pretty(baseOf(n))+' · Inferno':pretty(n),hasWord=n=>n!='plaza'&&!isInf(n);
+ const label=n=>{const s=stageOf(n);return s?pretty(baseOf(n))+' · '+CH[s].t:pretty(n)},hasWord=n=>n!='plaza',isBase=n=>n!='plaza'&&!stageOf(n);
+ const baseCur=()=>stageOf(cur)?baseOf(cur):cur,nextName=()=>{const s=stageOf(cur);return s+1<CH.length?stName(baseCur(),s+1):null},lvOf=n=>CH[stageOf(n)].lv;
+ // each realm's word: longer every realm, no common anagrams (the gate only takes the exact word)
+ const RW={1:['IMP','HOT','AXE','JET'],2:['NOVA','VOID','GLOW','MOON','HALO','AURA'],3:['WHALE','SHARK','SQUID','SHELL','KRILL','DEPTH'],4:['SAPPHIRE','AMETHYST','DIAMONDS','OBSIDIAN','EMERALDS','SPARKLES','CRYSTALS']};
+ const TT=['Hidden word','Ember word','Star word','Tide word','Crystal word'],SUB=['','Lava burns · the monsters here hit hard','Low gravity · cosmic monsters roam the stars','You can breathe down here · swim with the tide','Living crystal · the hardest realm of all'];
+ const DESC=['','lava, fire and far stronger monsters','a world adrift among the stars: low gravity, star blocks and cosmic monsters','a sunken world under the ocean: swim freely among reefs, kelp and abyssal beasts','a glittering world of living crystal, the hardest realm of all'];
  // biome worlds (BIOME17) hide a 3-letter word, one letter per biome; worlds whose hunt had started before keep their word
- const wordFor=n=>{try{const b=BIOME17.wordOf(n);if(b)return b}catch(_){}return WORDS[Math.floor(rr((h32(n)^0x5eed)>>>0)()*WORDS.length)]};
+ const wordFor=n=>{const s=stageOf(n);if(s){const a=RW[s];return a[Math.floor(rr((h32(n)^0x5eed)>>>0)()*a.length)]}try{const b=BIOME17.wordOf(n);if(b)return b}catch(_){}return WORDS[Math.floor(rr((h32(n)^0x5eed)>>>0)()*WORDS.length)]};
  let INF=false,L=[],WORD='';
  // ---- blocks
  BLK[LETTER]=['Letter Block','#ffe27a',2];BLK[ASH]=['Ash','#6a6266',3];BLK[BASALT]=['Basalt','#3c3b43',6];BLK[MAGMA]=['Magma Stone','#d2481c',8];BLK[SCORCH]=['Scorched Earth','#4e2e26',3];
@@ -73,8 +84,8 @@ const WORD9=(()=>{
  // ---- HUD strip (scrambled slots) + the letter flying into it
  let SE=null,shown=null;const reduce=()=>{try{return document.documentElement.getAttribute('data-reduce')=='true'||matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}};
  function ens(){if(SE)return SE;SE=document.createElement('div');SE.id='wl9';SE.className='pn';SE.setAttribute('role','button');SE.title='Hidden word letters (L: Word Gate)';SE.style.display='none';SE.onclick=()=>open();document.body.appendChild(SE);return SE}
- function strip(){const el=ens();if(INF){el.className='pn inf';el.innerHTML='<span class="t">Inferno</span><em>Lava burns · the door leads home</em>';return}el.className='pn';if(!L.length){el.innerHTML='';return}
-  const st=peek(cur),n=gotN();let h='<span class="t">Hidden word</span><span class="sl">';for(const l of L){const g=st.got.includes(l.i);h+='<i class="'+(g?'on':'')+'" data-i="'+l.i+'">'+(g?l.ch:'')+'</i>'}
+ function strip(){const el=ens(),sg=stageOf(cur);el.className='pn'+(sg?' '+['','inf','gal','sea','cry'][sg]:'');if(!L.length){el.innerHTML=INF?'<span class="t">Inferno</span><em>Lava burns · the door leads home</em>':'';return}
+  const st=peek(cur),n=gotN();let h='<span class="t">'+TT[sg]+'</span><span class="sl">';for(const l of L){const g=st.got.includes(l.i);h+='<i class="'+(g?'on':'')+'" data-i="'+l.i+'">'+(g?l.ch:'')+'</i>'}
   h+='</span>'+(st.ok?'<em class="ok">Gate open · L</em>':n>=L.length?'<em class="go">Word Gate · L</em>':'<em>'+n+'/'+L.length+'</em>');el.innerHTML=h;el.classList.toggle('full',n>=L.length)}
  function vis(){const el=ens(),v=!!(entered&&(L.length||INF)&&menuEl.style.display=='none'&&!document.body.classList.contains('c7w-on'));if(v!==shown){shown=v;el.style.display=v?'':'none'}}
  function fly(l,x,y){if(reduce()||!SE||SE.style.display=='none')return;const sl=SE.querySelector('i[data-i="'+l.i+'"]');if(!sl)return;const r=sl.getBoundingClientRect(),k=innerWidth/cv.width*ZM,sx=(x-cam.x)*k,sy=(y-cam.y)*k;
@@ -82,42 +93,45 @@ const WORD9=(()=>{
   requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform='translate('+(r.left+r.width/2-sx)+'px,'+(r.top+r.height/2-sy)+'px) scale(.6)';f.style.opacity='.2'}));setTimeout(()=>f.remove(),800)}
  // ---- the Word Gate modal (same look as the shared dialogs)
  let MD=null,mode='',openF=false,cT=0;
- function open(){if(INF||!L.length||!entered)return false;const st=peek(cur),n=gotN();if(n<L.length&&!st.ok){say('Find every letter first  ·  '+n+'/'+L.length+' found');if(SE){SE.classList.remove('nudge');void SE.offsetWidth;SE.classList.add('nudge')}return false}
+ function open(){if(!L.length||!entered)return false;const st=peek(cur),n=gotN();if(n<L.length&&!st.ok){say('Find every letter first  ·  '+n+'/'+L.length+' found');if(SE){SE.classList.remove('nudge');void SE.offsetWidth;SE.classList.add('nudge')}return false}
   if(!MD){MD=document.createElement('div');MD.id='wg9';MD.innerHTML='<div class="box" role="dialog" aria-modal="true" aria-labelledby="wg9t"></div>';document.body.appendChild(MD);MD.addEventListener('mousedown',e=>{if(e.target===MD)close()})}
   try{mdL=mdR=false}catch(_){}clearTimeout(cT);render(st.ok?'done':'ask');MD.style.display='flex';void MD.offsetWidth;MD.classList.add('on');openF=true;try{UIS.play('open')}catch(_){}return true}
  function close(){if(!MD||!openF)return;openF=false;MD.classList.remove('on');try{UIS.play('close')}catch(_){}clearTimeout(cT);cT=setTimeout(()=>{if(MD&&!openF)MD.style.display='none'},200);try{document.activeElement&&document.activeElement.blur()}catch(_){}}
  const isOpen=()=>openF;
- function render(m){mode=m;const st=peek(cur),box=MD.firstChild,tl=L.map(l=>'<i>'+l.ch+'</i>').join(''),inf=label(infName(cur)),lv=lvl|0;
+ function render(m){mode=m;const st=peek(cur),box=MD.firstChild,tl=L.map(l=>'<i>'+l.ch+'</i>').join(''),nx=nextName(),inf=nx?label(nx):'',lv=lvl|0,LVN=nx?lvOf(nx):0,ns=nx?stageOf(nx):0;
   if(m=='ask')box.innerHTML='<h3 id="wg9t">The Word Gate</h3><p>You found every hidden letter of this world. Put them in the right order to open the gate.</p><div class="tl">'+tl+'</div>'
    +'<label>Your word ('+L.length+' letters)<input id="wg9i" type="text" maxlength="'+(L.length+4)+'" autocomplete="off" spellcheck="false" autocapitalize="characters"></label>'
    +'<p class="hint"'+(st.tr>=2?'':' hidden')+'>Hint: it starts with <b>'+WORD[0]+'</b></p><p class="err" aria-live="polite"></p><div class="acts"><button data-x>Cancel</button><button data-ok class="pri">Open the gate</button></div>';
-  else box.innerHTML='<h3 id="wg9t">The gate is open</h3><p>The word was <b class="rw">'+WORD+'</b>.</p>'+(lv<LV?'<p>Beyond it lies <b>'+esc(inf)+'</b>: lava, fire and far stronger monsters. You need <b>level '+LV+'</b> to go (you are level '+lv+'). Come back any time: press L or click the letters.</p><div class="acts"><button data-x class="pri">OK</button></div>'
-   :'<p>Beyond it lies <b>'+esc(inf)+'</b>: a burning version of this world with lava, fire and far stronger monsters.</p><div class="acts"><button data-x>Not now</button><button data-go class="pri">Enter the Inferno</button></div>');
+  else box.innerHTML='<h3 id="wg9t">The gate is open</h3><p>The word was <b class="rw">'+WORD+'</b>.</p>'+(!nx?'<p>You have conquered every realm of <b>'+esc(pretty(baseCur()))+'</b>. Your Celestial Ascension is complete!</p><div class="acts"><button data-x class="pri">OK</button></div>'
+   :lv<LVN?'<p>Beyond it lies <b>'+esc(inf)+'</b>: '+DESC[ns]+'. You need <b>level '+LVN+'</b> to go (you are level '+lv+'). Come back any time: press L or click the letters.</p><div class="acts"><button data-x class="pri">OK</button></div>'
+   :'<p>Beyond it lies <b>'+esc(inf)+'</b>: '+DESC[ns]+'.</p><div class="acts"><button data-x>Not now</button><button data-go class="pri">Enter the '+CH[ns].t+'</button></div>');
   const q=s=>box.querySelector(s);if(q('[data-x]'))q('[data-x]').onclick=close;if(q('[data-ok]'))q('[data-ok]').onclick=()=>submit(q('#wg9i').value);if(q('[data-go]'))q('[data-go]').onclick=()=>travel();
   const i=q('#wg9i');if(i)i.addEventListener('keydown',e=>{if(e.key=='Enter'){e.preventDefault();e.stopPropagation();submit(i.value)}});
   setTimeout(()=>{try{(i||q('[data-go]')||q('[data-x]')).focus()}catch(_){}},40)}
  function submit(v){if(!MD||!L.length)return false;const st=stOf(cur),g=String(v||'').toUpperCase().replace(/[^A-Z]/g,'');
   if(g==WORD){st.ok=1;save();strip();const x=P.x,y=P.y;try{VFX.levelUp(x,y,'#ffe27a');VFX.burst(x,y+20,['#ff6a8a','#ffe86a','#6aff9a','#5ad0ff','#b07aff'],40,380,2,1.2,16)}catch(_){}
    try{[0,1,2,3].forEach(i=>SFX7.tone(NOTE[i*2]||1047,(NOTE[i*2]||1047)*1.01,.32,'triangle',.07,i*.09))}catch(_){}
-   if((lvl|0)>=LV){close();try{UI6.say6('THE GATE OPENS',label(infName(cur)),2400)}catch(_){}setTimeout(travel,700)}else render('done');return true}
+   const sg=stageOf(cur),nx=nextName();if(sg){try{gain(Math.round(160*Math.pow(sg+1,1.6)),x,y-40)}catch(_){}}
+   if(!nx){close();try{UI6.say6('CELESTIAL ASCENSION','Every realm of '+pretty(baseCur())+' is yours',3600)}catch(_){}try{gain(2500,x,y-60);VFX.levelUp(x,y,'#bff6ff');VFX.burst(x,y,['#ffffff','#bff6ff','#ffd0ff','#fff3a0'],60,460,2,1.6,18)}catch(_){}return true}
+   if((lvl|0)>=lvOf(nx)){close();try{UI6.say6('THE GATE OPENS',label(nx),2400)}catch(_){}setTimeout(travel,700)}else render('done');return true}
   st.tr++;save();const box=MD.firstChild,e=box.querySelector('.err'),h=box.querySelector('.hint');if(e)e.textContent=g?'Not quite. Try again!':'Type the word first.';if(h&&st.tr>=2)h.hidden=false;
   box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake');try{SFX7.tone(330,250,.16,'sine',.05);SFX7.tone(262,200,.2,'sine',.04,.1)}catch(_){}
   const i=box.querySelector('#wg9i');if(i){i.select();i.focus()}return false}
- function travel(){if(INF||!hasWord(cur)||!peek(cur).ok)return false;if((lvl|0)<LV){say('Reach level '+LV+' to enter the Inferno');return false}const n=infName(cur);save();close();try{enterWorld(n)}catch(e){console.error('WORD9 travel',e);return false}return true}
+ function travel(){const n=nextName();if(!n||!hasWord(cur)||!peek(cur).ok)return false;const need=lvOf(n);if((lvl|0)<need){say('Reach level '+need+' to enter the '+CH[stageOf(n)].t);return false}save();close();try{enterWorld(n)}catch(e){console.error('WORD9 travel',e);return false}return true}
  addEventListener('keydown',e=>{if(isOpen()&&e.key=='Escape'){e.stopPropagation();e.preventDefault();close();return}if(e.repeat||isTextEl(e.target)||e.ctrlKey||e.metaKey||e.altKey)return;if(e.key=='l'||e.key=='L'){if(!entered||menuEl.style.display!='none'||isOpen())return;open()}},true);
  // ---- Inferno: same seed as the base world, burnt; extra lava pockets in the caves
  function burn(){const M=new Uint8Array(256);for(let i=0;i<256;i++)M[i]=i;M[1]=SCORCH;M[2]=ASH;M[3]=BASALT;M[8]=OBSID;M[42]=ASH;M[43]=SCORCH;M[48]=104;M[105]=104;M[106]=104;M[113]=0;M[15]=0;
   const R0=rr((h32(cur)^0xf1e7)>>>0);for(let k=0;k<W*H;k++){const b=tiles[k];if(!b)continue;let m=M[b];if(m==BASALT&&k>W*12&&R0()<.022)m=MAGMA;if(m!==b){tiles[k]=m;hp[k]=m?BLK[m][2]:0}}trees.clear();
   for(let i=0;i<34;i++){const x=3+(R0()*(W-6)|0),s=sh(x),y0=s+14+(R0()*Math.max(1,H-s-20)|0);if(y0>=H-4||tiles[y0*W+x])continue;let y=y0;while(y<H-3&&!tiles[(y+1)*W+x])y++;if(y>=H-3)continue;
-   let l=x,r=x;while(l>2&&!tiles[y*W+l-1]&&x-l<6)l--;while(r<W-3&&!tiles[y*W+r+1]&&r-x<6)r++;for(let xx=l;xx<=r;xx++){wl[y*W+xx]=8;const kb=(y+1)*W+xx;if(tiles[kb]&&tiles[kb]!=4){tiles[kb]=OBSID;hp[kb]=BLK[OBSID][2]}}}}
- {const _g=gen;gen=function(){const inf=cur!='plaza'&&isInf(cur);if(inf){const b=baseOf(cur);try{ws=wsOf(b);SHN=VILL9.verOf(b)==2?VILL9.terrain(ws).h:null}catch(e){console.error('WORD9 seed',e)}}
-  const r=_g.apply(this,arguments);try{if(inf){L=[];WORD='';burn()}else{try{if(typeof BIOME17!='undefined')BIOME17.shape()}catch(e){console.error('BIOME17 shape',e)}place()}}catch(e){console.error('WORD9 gen',e)}return r}}
+   let l=x,r=x;while(l>2&&!tiles[y*W+l-1]&&x-l<6)l--;while(r<W-3&&!tiles[y*W+r+1]&&r-x<6)r++;for(let xx=l;xx<=r;xx++){wl[y*W+xx]=8;const kb=(y+1)*W+xx;if(tiles[kb]&&tiles[kb]!=4&&tiles[kb]!=LETTER){tiles[kb]=OBSID;hp[kb]=BLK[OBSID][2]}}}}
+ {const _g=gen;gen=function(){const sg=cur!='plaza'?stageOf(cur):0;if(sg){const b=baseOf(cur);try{ws=wsOf(b);SHN=VILL9.verOf(b)==2?VILL9.terrain(ws).h:null}catch(e){console.error('WORD9 seed',e)}}
+  const r=_g.apply(this,arguments);try{try{if(typeof BIOME17!='undefined')BIOME17.shape()}catch(e){console.error('BIOME17 shape',e)}place();if(sg==1)burn();else if(sg>1)try{REALM10.shape(sg)}catch(e){console.error('REALM10 shape',e)}}catch(e){console.error('WORD9 gen',e)}return r}}
  let wxSet=false;
- {const _lw=loadWorld;loadWorld=function(n,e){let nm=norm(n);if(isInf(nm)&&(lvl|0)<LV){const b=baseOf(nm);n=b;e=undefined;nm=b;setTimeout(()=>{say('The Inferno needs level '+LV+' (you are level '+(lvl|0)+')');try{UI6.say6('TOO HOT TO ENTER','Reach level '+LV+' to brave the Inferno',2800)}catch(_){}},60)}
+ {const _lw=loadWorld;loadWorld=function(n,e){let nm=norm(n);const s0=stageOf(nm);if(s0&&(lvl|0)<CH[s0].lv){const b=baseOf(nm),c=CH[s0];n=b;e=undefined;nm=b;setTimeout(()=>{say('The '+c.t+' needs level '+c.lv+' (you are level '+(lvl|0)+')');try{UI6.say6(s0==1?'TOO HOT TO ENTER':'NOT STRONG ENOUGH YET','Reach level '+c.lv+' to enter the '+c.t,2800)}catch(_){}},60)}
   const r=_lw.call(this,n,e);try{INF=isInf(cur);EM.length=0;FB.length=0;sync();strip();shown=null;vis();
-   if(INF){if(!WX6.force||wxSet){WX6.force='clear';wxSet=true}try{for(const s in WX6.I)WX6.I[s]=s==WX6.force?1:0;WX6.reset()}catch(_){}try{document.getElementById('wname').textContent=label(cur)}catch(_){}const c=document.querySelector('#cine7w .c7w-card b');if(c)c.textContent=label(cur);setTimeout(()=>{try{if(INF)UI6.say6(label(cur).toUpperCase(),'Lava burns · the monsters here hit hard',3000)}catch(_){}},400)}
+   const sg=stageOf(cur);if(sg){if(!WX6.force||wxSet){WX6.force='clear';wxSet=true}try{for(const s in WX6.I)WX6.I[s]=s==WX6.force?1:0;WX6.reset()}catch(_){}try{document.getElementById('wname').textContent=label(cur)}catch(_){}const c=document.querySelector('#cine7w .c7w-card b');if(c)c.textContent=label(cur);const w0=cur;setTimeout(()=>{try{if(cur==w0)UI6.say6(label(cur).toUpperCase(),SUB[sg],3000)}catch(_){}},400)}
    else if(wxSet){WX6.force=null;wxSet=false}}catch(err){console.error('WORD9 load',err)}return r}}
- {const _ev=enterWorld;enterWorld=function(n){const nm=norm(n);if(isInf(nm)&&(lvl|0)<LV&&entered){say('The Inferno needs level '+LV+' (you are level '+(lvl|0)+')');try{UI6.say6('TOO HOT TO ENTER','Reach level '+LV+' to brave the Inferno',2800)}catch(_){}try{menuEl.style.display='none'}catch(_){}return}return _ev.apply(this,arguments)}}
+ {const _ev=enterWorld;enterWorld=function(n){const nm=norm(n),s0=stageOf(nm);if(s0&&(lvl|0)<CH[s0].lv&&entered){const c=CH[s0];say('The '+c.t+' needs level '+c.lv+' (you are level '+(lvl|0)+')');try{UI6.say6(s0==1?'TOO HOT TO ENTER':'NOT STRONG ENOUGH YET','Reach level '+c.lv+' to enter the '+c.t,2800)}catch(_){}try{menuEl.style.display='none'}catch(_){}return}return _ev.apply(this,arguments)}}
  // ---- lava (Inferno water): one pattern fill per visible tile, a pre-rendered crest on the surface, lava lights the dark
  let LTEX=null,LPAT=null,LCR=null,BUB=null;const LDK=['rgba(60,0,0,0)','rgba(60,4,0,.14)','rgba(60,4,0,.26)','rgba(50,2,0,.36)','rgba(40,0,0,.44)'];
  function mkLava(){LTEX=cvs(128,128);const x=LTEX.getContext('2d'),R2=rr(9091);x.fillStyle='#e0501a';x.fillRect(0,0,128,128);
@@ -195,9 +209,9 @@ const WORD9=(()=>{
   // letters: touching or clicking one collects it
   if(L.length){for(const l of L){if(tiles[l.k]!=LETTER)continue;const x=(l.k%W)*T,y=(l.k/W|0)*T,dx=Math.max(x-(P.x+P.w/2),(P.x-P.w/2)-(x+T),0),dy=Math.max(y-(P.y+P.h),P.y-(y+T),0);if(dx<8&&dy<8){collect(l);break}}
    if(mdL&&!showInv&&menuEl.style.display=='none'&&!isOpen()){const tx=Math.floor((mx+cam.x)/T),ty=Math.floor((my+cam.y)/T);if(tx>=0&&ty>=0&&tx<W&&ty<H&&tiles[ty*W+tx]==LETTER&&Math.hypot(tx*T+T/2-P.x,ty*T+T/2-(P.y+P.h/2))<REACH){const l=L.find(q=>q.k==ty*W+tx);if(l)collect(l)}}}
+  // no rain or snow in a realm (the world weather / machines set WX6.force after a load: keep it clear while here)
+  if(stageOf(cur)&&WX6.force!='clear'){WX6.force='clear';wxSet=true;try{for(const s in WX6.I)WX6.I[s]=s=='clear'?1:0;WX6.reset()}catch(_){}}
   if(!INF){if(FB.length)FB.length=0;if(EM.length)EM.length=0;return}
-  // no rain or snow in an Inferno (the world weather / machines set WX6.force after a load: keep it clear while here)
-  if(WX6.force!='clear'){WX6.force='clear';wxSet=true;try{for(const s in WX6.I)WX6.I[s]=s=='clear'?1:0;WX6.reset()}catch(_){}}
   if(P.hw)P.hw=false;
   const vw=cv.width/ZM,vh=cv.height/ZM,cap=QM.reduce?14:40;emT-=dt;if(emT<-.2)emT=-.2;while(emT<=0&&EM.length<cap){emT+=.07;EM.push({x:cam.x+R()*vw,y:cam.y+vh*(.2+R()*.85),vx:rn(-14,14),vy:-rn(28,80),l:rn(2.5,5.5),t:0,p:R()*6})}
   for(let i=EM.length-1;i>=0;i--){const e=EM[i];e.t+=dt;e.x+=(e.vx+Math.sin(e.t*2+e.p)*14)*dt;e.y+=e.vy*dt;if(e.t>e.l)EM.splice(i,1)}
@@ -241,6 +255,6 @@ const WORD9=(()=>{
  // the world name on the HUD reads "<World> · Inferno"
  // (the legacy HUD timer writes cur.toUpperCase() through the element's own textContent setter, see BUILD9's guard: wrap that setter)
  try{const el=document.getElementById('wname'),d=Object.getOwnPropertyDescriptor(el,'textContent')||Object.getOwnPropertyDescriptor(Node.prototype,'textContent');el._g9=1;
-  Object.defineProperty(el,'textContent',{configurable:true,get(){return d.get.call(this)},set(v){if(INF&&entered)v=label(cur);d.set.call(this,v)}})}catch(e){console.error('WORD9 hud',e)}
+  Object.defineProperty(el,'textContent',{configurable:true,get(){return d.get.call(this)},set(v){if(entered&&stageOf(cur))v=label(cur);d.set.call(this,v)}})}catch(e){console.error('WORD9 hud',e)}
  return{LETTER,ASH,BASALT,MAGMA,OBSID,SCORCH,LV,WORDS,IM,get letters(){return L.map(l=>({k:l.k,x:l.k%W,y:l.k/W|0,ch:l.ch,i:l.i}))},get word(){return WORD},get inf(){return INF},get state(){return S},
-  wordFor,isInf,infName,baseOf,label,hasWord,collect:i=>collect(L.find(l=>l.i==i)),open,close,submit,travel,isOpen,spawnAt,strip,get fireballs(){return FB.length},get thrown(){return thrown},get embers(){return EM.length}}})();
+  wordFor,isInf,infName,baseOf,label,hasWord,isBase,stageOf,stName,nextName,CH,collect:i=>collect(L.find(l=>l.i==i)),open,close,submit,travel,isOpen,spawnAt,strip,get fireballs(){return FB.length},get thrown(){return thrown},get embers(){return EM.length}}})();

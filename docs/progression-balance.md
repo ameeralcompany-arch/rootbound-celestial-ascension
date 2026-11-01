@@ -195,6 +195,26 @@ The world reward is paid once per world. At level 15, a 3★ world pays about 2,
 Worlds where the letter hunt had already started before this update keep their old word and letter spots. Their biomes and trials still
 apply, but the letters there are not sealed. The future higher-tier worlds can use more letters: one 30-depth band per letter.
 
+## 8. Realms
+
+Every world leads on, word by word (`WORD9` chain, `REALM10` themes). Each realm is the world's own terrain remade, and its hidden word
+opens the next realm:
+
+| Realm | Enter at | Word | Theme | Monsters (health / damage) |
+|---|---|---|---|---|
+| The world | any level | 3 letters | its three biomes | biome monsters |
+| Inferno | level 15 | 3 letters | ash, basalt, lava | 150–460 / 16–30 |
+| Galaxy | level 25 | 4 letters | Stardust, Nebula Rock, Star Crystal, Comet Ore; low gravity | 340–1050 / 26–46 |
+| Abyssal Sea | level 35 | 5 letters | under the ocean: swim anywhere; Seabed Silt, Abyss Stone, Glow Anemone, Tidal Ore | 560–1500 / 36–60 |
+| Crystal Realm | level 45 | 8 letters | Quartz Sand, Prism Stone, Radiant Crystal, Aurora Ore | 780–2000 / 48–74 |
+
+Each realm has three regions (for example Nebula Fields, Meteor Craters and the Asteroid Belt in the Galaxy), its own sky, music and battle
+song. Realm monsters spawn day or night, never outside their realm, and drop a material worth 90–320 gems. Realm ores drop shards worth
+60 / 85 / 120 gems.
+
+**Rewards.** Solving a realm's word pays 160 x (stage + 1)^1.6 gems (stage 1 = Inferno … 4 = Crystal Realm): about 470, 930, 1480 and
+2100. The Crystal Realm's word completes the world's **Celestial Ascension**: another 2500 gems.
+
 ## Where it lives
 
 | What | File |
@@ -208,5 +228,6 @@ apply, but the letters there are not sealed. The future higher-tier worlds can u
 | Loadouts | `src/js/late/99-zzzzzzzzz-5-loadout.js` |
 | Wardens | `src/js/late/99-zzzzzzzzz-6-guards.js` |
 | Biome worlds | `src/js/late/99-zzzzzzzzz-7-biomes.js`, `src/css/96-biomes.css` (word and letters: `99-zzzzzz-words.js`; zone display: `86-z-depths.js`) |
+| Realms | `src/js/late/99-zzzzzz-words.js` (chain, words, gates), `src/js/late/99-zzzzzzzzz-c-realms.js` (terrain, skies, monsters), `src/js/late/87-music.js` (songs) |
 
-Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.js`, `tests/balance.js`.
+Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.js`, `tests/balance.js`, `tests/realms.js`.

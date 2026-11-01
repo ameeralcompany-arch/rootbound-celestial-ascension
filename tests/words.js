@@ -83,7 +83,7 @@ const go=async w=>{await E(w=>{enterWorld(w);WX6.force='clear';mobs.length=0;try
  ok('at level 15 the solved gate offers the Inferno and takes you there',d15&&I.cur=='wordsa-inf'&&I.inf,{cur:I.cur});
  ok('the Inferno is the same terrain, burnt: ash, basalt, magma stone, obsidian, no grass/dirt/stone',I.sh==base.sh&&I.grass==0&&I.dirt==0&&I.stone==0&&I.ash>50&&I.bas>1000&&I.mag>20&&I.obs>20,{ash:I.ash,bas:I.bas,mag:I.mag,obs:I.obs});
  ok('lava instead of water (lakes + cave pockets)',I.lava>=base.water*.8&&I.lava>100,{lava:I.lava,water:base.water});
- ok('no letters in an Inferno; HUD reads "Wordsa · Inferno"; clear sky (no rain or snow)',I.letters==0&&I.lt==0&&I.wname=='Wordsa · Inferno'&&I.force=='clear',{wname:I.wname,force:I.force});
+ ok('the Inferno hides its own 3-letter word (it opens the Galaxy); HUD reads "Wordsa · Inferno"; clear sky (no rain or snow)',I.letters==3&&I.lt==3&&I.wname=='Wordsa · Inferno'&&I.force=='clear',{letters:I.letters,lt:I.lt,wname:I.wname,force:I.force});
  // monsters
  const M=await E(()=>{const N=['slime','moth','crab','cloud','bat','golem','wraith','magma','shade'],maxHp=Math.max(...N.map(k=>MK[k].hp)),maxD=Math.max(...N.map(k=>MK[k].dmg||6)),maxG=Math.max(...N.map(k=>MK[k].gem));
   const ks=Object.keys(WORD9.IM),picks=new Set();for(let i=0;i<300;i++){picks.add(pickMob(i%2?2:20))}
