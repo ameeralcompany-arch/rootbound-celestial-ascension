@@ -27,8 +27,9 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  const st=await E(async()=>{const F=TOOLS8.FISH,o={};o.bite=await __bite();const n0=__fish();F.click({x:F.S.x,y:F.S.y});o.st=F.S.st;o.on=FISHGAME.G.on;o.noFishYet=__fish()==n0;o.fid=F.S.fid;return o});
  ok('a bite + click starts the reel mini-game (no fish yet, the fish is already chosen)',st.bite=='bite'&&st.st=='reel'&&st.on==1&&st.noFishYet&&st.fid>=240&&st.fid<=249,st);
  // ---- holding pushes the zone right, releasing lets it drift left; Space counts as holding
- const mv=await E(async()=>{const G=FISHGAME.G,o={};G.force=true;const a=G.zp;await new Promise(r=>setTimeout(r,450));G.fp=G.zp+G.zw/2;o.right=G.zp-a;G.force=false;let pk=G.zp;for(let i=0;i<60;i++){await new Promise(r=>setTimeout(r,16));pk=Math.max(pk,G.zp);G.fp=G.zp+G.zw/2}o.left=G.zp-pk;G.fp=G.zp+G.zw/2;
-  G.force=null;K[' ']=1;await new Promise(r=>setTimeout(r,60));o.space=G.hold;K[' ']=0;G.force=false;return o});
+ // (progress is pinned throughout: on a slow runner the fish would otherwise be landed before these checks end)
+ const mv=await E(async()=>{const G=FISHGAME.G,o={},pin=()=>{G.fp=G.zp+G.zw/2;G.pr=.3;G.ten=0};G.force=true;const a=G.zp;for(let i=0;i<9;i++){await new Promise(r=>setTimeout(r,50));G.pr=.3;G.ten=0}pin();o.right=G.zp-a;G.force=false;let pk=G.zp;for(let i=0;i<60;i++){await new Promise(r=>setTimeout(r,16));pk=Math.max(pk,G.zp);pin()}o.left=G.zp-pk;pin();
+  G.force=null;K[' ']=1;for(let i=0;i<60&&!G.hold;i++){await new Promise(r=>setTimeout(r,16));pin()}o.space=G.hold;K[' ']=0;G.force=false;return o});
  ok('holding moves the catch zone right, releasing lets it drift left, Space also reels',mv.right>.05&&mv.left<-.05&&mv.space,mv);
  await E(()=>{const G=FISHGAME.G;G.fp=G.zp+G.zw/2;G.ft=G.fp;G.pr=.55;G.ten=.35});await p.waitForTimeout(120);await shot('fish_reel');
  // ---- keep the fish in the zone -> it is landed (exactly one fish, XP, preview popup)

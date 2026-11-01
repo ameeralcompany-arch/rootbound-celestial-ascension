@@ -86,6 +86,130 @@ jobs:
         env: {NODE_PATH: ./node_modules}
       - uses: actions/upload-artifact@v4
         with: {name: rootbound-html, path: index.html}
+  # The game-system tests, side by side with `test`. A failure here turns the run red but does not hold back the Windows build.
+  gameplay:
+    runs-on: ubuntu-latest
+    env: {NODE_PATH: ./node_modules}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - name: Build index.html from src
+        run: python3 tools/build.py
+      - name: Install Playwright
+        run: npm i playwright@1.49.0 && npx playwright install --with-deps chromium
+      - name: Test balance
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/balance.js
+      - name: Test biomes
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/biomes.js
+      - name: Test bosses
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/bosses.js
+      - name: Test break effects
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/breakfx.js
+      - name: Test building
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/building.js
+      - name: Test chests
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/chests.js
+      - name: Test cinematics
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/cine.js
+      - name: Test classes and jobs
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/classjob.js
+      - name: Test combat
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/combat.js
+      - name: Test creative
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/creative.js
+      - name: Test depths
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/depths.js
+      - name: Test farming
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/farming.js
+      - name: Test fishing
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/fishing.js
+      - name: Test gear
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/gear.js
+      - name: Test guards
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/guards.js
+      - name: Test hotbar
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/hotbar.js
+      - name: Test inventory
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/inventory.js
+      - name: Test mythic weapons
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/mythic.js
+      - name: Test NPCs
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/npc.js
+      - name: Test outfits
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/outfits.js
+      - name: Test play
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/play.js
+      - name: Test plaza
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/plaza.js
+      - name: Test quality of life
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/qol.js
+      - name: Test realms
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/realms.js
+      - name: Test still screens
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/still.js
+      - name: Test water
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/water.js
+      - name: Test words
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/words.js
+      - name: Test world bosses
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/worldboss.js
   windows:
     needs: test
     runs-on: windows-latest

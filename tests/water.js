@@ -21,7 +21,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
   wres[wn]=await E(async()=>{WX6.force='clear';mobs.length=0;const pl=SUMMER9.POOLS.slice().sort((a,b)=>b.w-a.w)[0];if(!pl)return{pools:0};P.x=((pl.xa+pl.xb)/2)*T;P.y=(pl.r-6)*T;P.vx=P.vy=0;
    await new Promise(r=>setTimeout(r,350));return{pools:SUMMER9.POOLS.length,drawn:WATER9.stats.pools,surf:WATER9.stats.surf,segs:WATER9.stats.segs,ms:+WATER9.stats.ms.toFixed(2)}})}
  ok('water draws as linked bodies in '+worlds.length+' worlds',worlds.every(w=>wres[w].pools>0&&wres[w].drawn>0&&wres[w].surf>0&&wres[w].segs>0),wres);
- ok('water drawing stays cheap (< 4 ms per frame headless)',worlds.every(w=>wres[w].ms<4),worlds.map(w=>wres[w].ms));
+ ok('water drawing stays cheap (< 4 ms per frame headless; a shared CI runner, with no GPU: 12 ms)',worlds.every(w=>wres[w].ms<(process.env.CI?12:4)),worlds.map(w=>wres[w].ms));
  const wv=await E(()=>{const h=WATER9.hgt,a=[0,1,2,3].map(i=>h(500+i*37,10,0)),b2=[0,1,2,3].map(i=>h(500+i*37,10.4,0));return{a,b:b2,diff:a.some((v,i)=>Math.abs(v-b2[i])>.05),cont:Math.abs(h(500,10,0)-h(501,10,0))<.3}});
  ok('the surface wave changes over time and is continuous in x',wv.diff&&wv.cont,wv);
  // a big flat lake in view: pixels near the surface change between frames; deep rows have no seams at tile edges

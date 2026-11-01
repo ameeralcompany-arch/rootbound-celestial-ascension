@@ -35,13 +35,13 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  // combo against a row of monsters on the right
  for(let i=0;i<60&&await E(()=>!!document.getElementById('myth9'));i++)await sleep(200);
  const c=await E(async()=>{const px=Math.floor(P.x/T),fy=Math.floor((P.y+P.h)/T);for(let x=px-6;x<=px+12;x++){for(let y=fy-7;y<fy;y++)setTile(x,y,0);setTile(x,fy,1);setTile(x,fy+1,1)}P.y=fy*T-P.h-1;P.vy=0;mobs.length=0;P.vx=0;const kk=Object.keys(MK).filter(q=>!MK[q].boss&&!MK[q].fly)[0],d=MK[kk];for(let i=0;i<4;i++)mobs.push({k:kk,x:P.x+55+i*30,y:P.y+P.h-d.h,w:d.w,h:d.h,vx:0,vy:0,hp:9000,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0});
-  const hp0=mobs.map(m=>m.hp);mx=P.x+220-cam.x;my=P.y+20-cam.y;const steps=[];let fx=0;
+  const all=mobs.slice(),hp0=all.map(m=>m.hp);/* knockback can fling one far enough to despawn it: count the monsters themselves, not who is left */mx=P.x+220-cam.x;my=P.y+20-cam.y;const steps=[];let fx=0;
   for(let s=0;s<3;s++){for(let i=0;i<60&&wcd>0;i++)await new Promise(q=>setTimeout(q,20));useWeapon();steps.push(MYTH.swing&&MYTH.swing.step);await new Promise(q=>setTimeout(q,200));fx=Math.max(fx,MYTH.fx.length)}
   for(let i=0;i<40&&!MYTH.thrown;i++)await new Promise(q=>setTimeout(q,30));const thr=!!MYTH.thrown;for(let i=0;i<120&&MYTH.thrown;i++)await new Promise(q=>setTimeout(q,30));
-  return{steps,hit:mobs.filter((m,i)=>m.hp<hp0[i]).length,fx,thr,back:!MYTH.thrown,parts:MYTH.parts.length}});
+  return{steps,hit:all.filter((m,i)=>m.hp<hp0[i]).length,fx,thr,back:!MYTH.thrown,parts:MYTH.parts.length}});
  ok('the combo chains three different moves (reap, return cut, spin)',c.steps.join()=='0,1,2',c);
  // (under a heavily loaded machine the first combo can land before the monsters settle; one retry)
- if(c.hit<3){const c2=await E(async()=>{for(const m of mobs)m.hp=9000;const hp0=mobs.map(m=>m.hp);for(let s=0;s<2;s++){for(let i=0;i<60&&wcd>0;i++)await new Promise(q=>setTimeout(q,20));useWeapon();await new Promise(q=>setTimeout(q,250))}await new Promise(q=>setTimeout(q,400));return mobs.filter((m,i)=>m.hp<hp0[i]).length});c.hit=Math.max(c.hit,c2);c.retry=c2}
+ if(c.hit<3){const c2=await E(async()=>{for(const m of mobs)m.hp=9000;const all=mobs.slice(),hp0=all.map(m=>m.hp);for(let s=0;s<2;s++){for(let i=0;i<60&&wcd>0;i++)await new Promise(q=>setTimeout(q,20));useWeapon();await new Promise(q=>setTimeout(q,250))}await new Promise(q=>setTimeout(q,400));return all.filter((m,i)=>m.hp<hp0[i]).length});c.hit=Math.max(c.hit,c2);c.retry=c2}
  ok('the swing hits the monsters along its arc and each move fires its effect',c.hit>=3&&c.fx>=1,c);
  ok('tier III: the finisher throws the scythe and it flies back',c.thr&&c.back,c);
  // a ranged class shoots instead of swinging
