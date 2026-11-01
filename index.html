@@ -9834,7 +9834,7 @@ const CLASS7=(()=>{
  const BYK={fist:'brawler',knuckle:'brawler',pan:'brawler',sword:'knight',spear:'knight',bow:'archer',wand:'mage',staff:'mage',scythe:'reaper',sickle:'reaper',hammer:'stormcaller',maul:'berserker',flail:'berserker',shuriken:'ninja',chakram:'ninja',glaive:'ninja',whip:'druid',gun:'gunslinger'};
  for(const k in C)C[k].ids.push('myth_'+k);   // each class's mythic scythe (99-zzzzzzzzz-2-mythic.js)
  const OF={};for(const k in C)for(const id of C[k].ids)OF[id]=k;
- const of=w=>w?(OF[w.id]||BYK[w.k]||null):null;
+ const of=w=>w?(OF[w.id]||(w.cls&&C[w.cls]?w.cls:null)||BYK[w.k]||null):null;   // w.cls: the arsenal's own class (99-zzzzzzzzz-d-arsenal.js)
  const S={lv:{},xp:{}};for(const k in C){S.lv[k]=1;S.xp[k]=0}
  let dirty=false;
  function load(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc4')||'null')}catch(_){}if(!o||typeof o!='object')return;
@@ -15501,14 +15501,15 @@ const SHOW7=(()=>{
   if(e.key=='ArrowLeft'){swap(-1);e.preventDefault();e.stopPropagation()}else if(e.key=='ArrowRight'){swap(1);e.preventDefault();e.stopPropagation()}
   else if(e.key=='Escape'&&entered){close();e.stopPropagation();e.preventDefault()}
   else if(e.key=='Enter'&&!e.target.closest('button,a')){const b=el.querySelector('[data-a=play]');if(b&&!b.disabled)b.click()}}
- return{open:openUI,close,render,get isOpen(){return open},get cur(){return cur},set cur(v){cur=v},nav,CHARS}})();
+ return{open(){try{if(open)close();if(!entered)ensureGame(()=>{})}catch(_){}},openUI,close,render,get isOpen(){return open},get cur(){return cur},set cur(v){cur=v},nav,CHARS}})();
 function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlgOpen=true;dlg.style.display='block';try{renderDlg()}catch(_){}try{UIS.play('open')}catch(_){}}
 // persist edits made in the appearance editor into the active character slot
 {const _cs=celSave;celSave=function(){try{if(typeof SHOW7!='undefined'&&X6&&X6.sc&&!(X6.sc.act>0&&0)){X6.sc.looks[X6.sc.act|0]=sanAp(cel.ap);x6Save()}}catch(_){}_cs()}}
-// open at launch and via the HUD Home button / H key chord
-if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{const home=()=>{if(!creatorOn){SHOW7.open();return}let tries=0,iv=setInterval(()=>{if(++tries>600){clearInterval(iv);return}if(creatorOn)return;clearInterval(iv);SHOW7.open()},300)};
- /* every launch: the story intro (CINE7) plays first, then fades into the home screen */try{CINE7.launch(home)}catch(e){console.error('CINE7',e);home()}}
-(()=>{const mkb=()=>{const g=document.querySelector('#hudbtns')||document.querySelector('#bmenu')?.parentElement;if(!g||document.getElementById('bhome'))return;const b=document.createElement('button');b.id='bhome';b.title='Home / characters';b.textContent='⌂';b.onclick=()=>{if(SHOW7.isOpen)SHOW7.close();else SHOW7.open()};g.insertBefore(b,g.firstChild)};setTimeout(mkb,400)})();
+// the home page was removed (v10): the story intro hands straight over to the game (the same as its old Play button), and there is no HUD
+// Home button. SHOW7 stays as a library (its portrait gallery code), but SHOW7.open() now just starts the game.
+if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{const home=()=>{try{SHOW7.open()}catch(_){}};
+ /* every launch: the story intro (CINE7) plays first, then the game starts */try{CINE7.launch(home)}catch(e){console.error('CINE7',e);home()}}
+// (the HUD Home button was removed with the home page)
 // ---- CHARMIG9: remove the old preset character slots from every save (any computer). Keeps slot 0 (your own look), your level, gems,
 // inventory, gear and wings untouched; if a preset was the active character, your own saved look becomes active again.
 const CHARMIG9=(()=>{function run(){try{const sc=X6&&X6.sc;if(!sc)return false;const a=sc.act|0,own=Array.isArray(sc.looks)&&sc.looks[0]&&typeof sc.looks[0]=='object'?sc.looks[0]:null,had=a>0||(Array.isArray(sc.looks)&&sc.looks.length>1)||Object.keys(sc.fav||{}).some(k=>k!='0');
