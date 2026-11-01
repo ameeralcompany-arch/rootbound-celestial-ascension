@@ -1,5 +1,17 @@
 # Rootbound
 
+## Play Rootbound
+
+**[Download for Windows](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip)** (about 110 MB), or **[play in your browser](https://rootbound-rcvi.onrender.com)** with nothing to install.
+
+1. Download `Rootbound-Windows.zip`, then right-click it and choose **Extract All**.
+2. Open the `Rootbound-win32-x64` folder and run **Rootbound.exe**. Keep it with the other files in that folder, or it will not start.
+3. If Windows says "Windows protected your PC", click **More info**, then **Run anyway**. The app is not code-signed, so Windows does not recognise it yet.
+
+The online server sleeps when nobody is playing, so the first player may wait about a minute. You can play locally while it wakes.
+
+The green **Code > Download ZIP** button gives you the source code, not the app: `Rootbound.exe` is too large for GitHub to keep with the code.
+
 A multiplayer block-building sandbox. This repo is a single static file (`index.html`), so it deploys to GitHub Pages with no build step.
 
 ## Deploy to GitHub Pages
@@ -69,7 +81,7 @@ Source: `src/` (modular) -> `python3 tools/build.py` -> `index.html`. Tests: `no
 - **Trades/whispers** go through the host relay: a modified client can cheat in a trade or read whispers addressed to others. The protocol only guarantees conservation between honest clients.
 - Guests who travel through a cross-world door leave the host's room (a room = one world).
 - Not implemented: one-way platforms/ladders, background tile layer, dungeons beyond the 3 bosses, character pose animations beyond emote bubbles/hop, private-message channel confidentiality, a ring-style "unlock cosmetics" admin command, interact-key remap.
-- Windows `.exe` is **not built**: the authoring sandbox cannot download Electron. `rootbound-win/` contains a ready Electron wrapper + `build-windows.bat`.
+- The Windows app is on the [Releases page](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest).
 
 ## Test report (what actually ran)
 Ran headless Chromium in the sandbox: `tests/run.js` 58/58, `tests/objects.js` (objects, door permissions, keys/levels, config sanitising, chest conservation, host validation, crafting, farming, save/reload persistence) all pass, `tests/social.js` (two real page instances joined by an in-memory fake room: trade conservation/decline/forgery/escrow refund, host op validation, rate limits, mute, whispers, console gating, host-only teleport) all pass.
