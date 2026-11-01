@@ -46,19 +46,23 @@ const MUS7=(()=>{
   inferno:{n:'Inferno',songs:[
    {id:'ember-march',bpm:98,key:5,sc:'hira',feel:'drive',prog:C([[0,'m9'],[1,'maj7'],[10,'m7'],[7,'sus']]),lead:'koto',dark:1},
    {id:'ash-and-iron',bpm:94,key:2,sc:'min',feel:'drive',prog:C([[0,'m11'],[8,'maj7'],[5,'m9'],[7,'d9']]),lead:'mar',dark:1}]},
-  inferno_f:{n:'Inferno battle',songs:[{id:'molten-clash',bpm:112,key:0,sc:'hira',feel:'drive',prog:C([[0,'m7'],[1,'maj7'],[8,'maj7'],[7,'sus']]),lead:'koto'}]},
+  inferno_f:{n:'Inferno battle',songs:[{id:'molten-clash',bpm:112,key:0,sc:'hira',feel:'drive',prog:C([[0,'m7'],[1,'maj7'],[8,'maj7'],[7,'sus']]),lead:'koto'},
+   {id:'cinder-storm',bpm:116,key:7,sc:'min',feel:'drive',prog:C([[0,'m9'],[10,'d9'],[8,'maj7'],[7,'sus']]),lead:'mar'}]},
   realm_gal:{n:'Galaxy',songs:[
    {id:'nebula-drift',bpm:58,key:2,sc:'lyd',feel:'ambient',prog:C([[0,'maj9'],[2,'add9'],[7,'maj7'],[9,'m9']]),lead:'arp'},
    {id:'zero-gravity',bpm:70,key:7,sc:'lyd',feel:'soft',prog:C([[0,'add9'],[4,'m7'],[2,'d9'],[7,'sus']]),lead:'bell'}]},
-  realm_gal_f:{n:'Galaxy battle',songs:[{id:'supernova-run',bpm:104,key:9,sc:'dor',feel:'beat',prog:C([[0,'m9'],[10,'maj7'],[5,'d9'],[7,'sus']]),lead:'arp'}]},
+  realm_gal_f:{n:'Galaxy battle',songs:[{id:'supernova-run',bpm:104,key:9,sc:'dor',feel:'beat',prog:C([[0,'m9'],[10,'maj7'],[5,'d9'],[7,'sus']]),lead:'arp'},
+   {id:'meteor-dash',bpm:108,key:2,sc:'lyd',feel:'beat',prog:C([[0,'maj9'],[2,'d9'],[9,'m7'],[7,'sus']]),lead:'bell'}]},
   realm_sea:{n:'Abyssal Sea',cave:1,songs:[
    {id:'whale-song',bpm:54,key:3,sc:'dor',feel:'ambient',prog:C([[0,'m9'],[5,'d9'],[3,'maj7'],[10,'sus']]),lead:'bell',whale:1},
    {id:'coral-lullaby',bpm:62,key:8,sc:'maj',feel:'soft',prog:C([[0,'maj9'],[9,'m7'],[5,'add9'],[7,'sus']]),lead:'glass',whale:1}]},
-  realm_sea_f:{n:'Abyss battle',cave:1,songs:[{id:'riptide',bpm:100,key:4,sc:'min',feel:'drive',prog:C([[0,'m9'],[8,'maj9'],[3,'maj7'],[10,'d9']]),lead:'mar'}]},
+  realm_sea_f:{n:'Abyss battle',cave:1,songs:[{id:'riptide',bpm:100,key:4,sc:'min',feel:'drive',prog:C([[0,'m9'],[8,'maj9'],[3,'maj7'],[10,'d9']]),lead:'mar'},
+   {id:'leviathan',bpm:96,key:11,sc:'dor',feel:'drive',prog:C([[0,'m11'],[5,'d9'],[10,'maj7'],[7,'sus']]),lead:'glass'}]},
   realm_cry:{n:'Crystal Realm',songs:[
    {id:'prism-waltz',bpm:72,key:11,sc:'lyd',feel:'brush',prog:C([[0,'maj9'],[2,'d9'],[4,'m7'],[7,'add9']]),lead:'glass'},
    {id:'glass-garden',bpm:66,key:4,sc:'hira',feel:'soft',prog:C([[0,'m9'],[8,'maj9'],[3,'add9'],[10,'sus']]),lead:'box'}]},
-  realm_cry_f:{n:'Crystal battle',songs:[{id:'shatterpoint',bpm:108,key:1,sc:'lyd',feel:'beat',prog:C([[0,'maj7'],[2,'d9'],[9,'m9'],[7,'sus']]),lead:'glass'}]},
+  realm_cry_f:{n:'Crystal battle',songs:[{id:'shatterpoint',bpm:108,key:1,sc:'lyd',feel:'beat',prog:C([[0,'maj7'],[2,'d9'],[9,'m9'],[7,'sus']]),lead:'glass'},
+   {id:'prism-rush',bpm:112,key:6,sc:'hira',feel:'beat',prog:C([[0,'m9'],[8,'maj9'],[3,'add9'],[10,'sus']]),lead:'box'}]},
   // underground (20 m and deeper): a curious cave groove with marimba, water drops and a cave echo...
   mine:{n:'Echo Caves',cave:1,songs:[
    {id:'glimmer-tunnels',bpm:84,key:4,sc:'dor',feel:'cave',prog:C([[0,'m9'],[10,'maj7'],[8,'maj9'],[10,'sus']]),lead:'mar'},

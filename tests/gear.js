@@ -31,7 +31,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
  r=await E(()=>{const s={},rr={};for(const id of GEAR8.IDS){s[WEAR[id].s]=1;rr[SHOP7.byId.get('wear_'+id).rar]=1}return{slots:Object.keys(s).sort().join(),rars:Object.keys(rr).length}});
  ok('new wearables cover hat/body/boot/glove across 4+ rarities',r.slots=='body,boot,glove,hat'&&r.rars>=4,r);
  // ---- the Anonymous set: mythic, the most expensive cosmetics, aura draws, skills
- r=await E(()=>{const m=SHOP7.byId.get('wear_anonmask'),s=SHOP7.byId.get('wear_anonsuit');const cos=SHOP7.items.filter(i=>i.cat!='weapons'&&!i.id.startsWith('wear_anon'));const top=Math.max(...cos.map(i=>i.price));
+ r=await E(()=>{const m=SHOP7.byId.get('wear_anonmask'),s=SHOP7.byId.get('wear_anonsuit');const cos=SHOP7.items.filter(i=>i.cat!='weapons'&&!i.id.startsWith('wear_anon')&&!(typeof GEAR10!='undefined'&&GEAR10.SET[i.ref]));/* the v10 aura sets (GEAR10) are priced on their own */const top=Math.max(...cos.map(i=>i.price));
   return{rar:m.rar=='mythic'&&s.rar=='mythic',tier:SHOP7.RAR.indexOf('mythic')>SHOP7.RAR.indexOf('legendary'),most:s.price>top&&m.price>top,top,suit:s.price,mask:m.price,feat:m.feat&&s.feat,item7:ITEM7.rar('a:anonsuit')=='mythic'}});
  ok('Anonymous Mask + Cloak are mythic, mythic ranks above legendary, and they are the most expensive cosmetics in the store',r.rar&&r.tier&&r.most&&r.feat&&r.item7,r);
  r=await E(()=>{const base={hat:'',body:'',boot:'',glove:'',wing:''};const plain=__char(Object.assign({},base,{hat:'witchhat'})),one=__char(Object.assign({},base,{hat:'anonmask'})),full=__char(Object.assign({},base,{hat:'anonmask',body:'anonsuit'}));
@@ -54,7 +54,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
  // ---- store UI shows the mythic tiles
  await E(()=>{STORE7.open();STORE7.setFilter({cat:'gear',sort:'pd',q:'',rar:'all',owned:false})});await p.waitForTimeout(500);
  r=await E(()=>{const c=[...document.querySelectorAll('#store7 .card')];const f=c[0];return{first:f&&f.dataset.id,myth:c.filter(x=>x.dataset.rar=='mythic').length,bg:f&&getComputedStyle(f).backgroundImage.includes('gradient'),pulse:f&&getComputedStyle(f,'::before').animationName}});
- ok('store: the mythic Anonymous tiles lead the gear shelf with the obsidian treatment',r.first=='wear_anonsuit'&&r.myth==2&&r.bg&&r.pulse=='g8pulse',r);await E(()=>STORE7.close());
+ ok('store: the mythic Anonymous tiles lead the gear shelf with the obsidian treatment',r.first=='wear_anonsuit'&&r.myth>=2&&r.bg&&r.pulse=='g8pulse',r);await E(()=>STORE7.close());
  // ---- body type
  r=await E(()=>{const o={};o.opts=AP.hair.length==10&&AP.gd.length==3;delete cel.ap.gd;cel.ap.hair=0;
   const ap0=sanAp(cel.ap),cl=__portrait(null,ap0),sp0=__char({});o.san=ap0.gd===0;

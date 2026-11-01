@@ -15,6 +15,6 @@ const ECON14=(()=>{
  let n=0;try{for(const i of SHOP7.items){const t=target(i);if(t==null||!(i.price>0))continue;if(i.base==null)i.base=i.price;i.price=r5(.3*i.base+.7*t);n++;
    // the item's own cost follows, so the catalog stays consistent everywhere
    try{if(i.cat=='weapons'&&WPN[i.ref])WPN[i.ref].cost=i.price;else if(i.cat=='gear'&&WEAR[i.ref])WEAR[i.ref].cost=i.price;else if(i.cat=='wings'){const w=WINGS.find(q=>q.id==i.ref);if(w&&'cost' in w)w.cost=i.price}}catch(_){}}}catch(e){console.error('ECON14',e)}
- // the Anonymous set stays the store's flagship: priced above every other non-weapon item
- try{const top=Math.max(...SHOP7.items.filter(i=>i.cat!='weapons'&&!i.id.startsWith('wear_anon')).map(i=>i.price||0));for(const[id,k]of[['wear_anonmask',1.06],['wear_anonsuit',1.12]]){const i=SHOP7.byId.get(id);if(i){i.price=Math.max(i.price,r5(top*k));if(WEAR[i.ref])WEAR[i.ref].cost=i.price}}}catch(_){}
+ // the Anonymous set stays the store's flagship: priced above every other non-weapon item (the v10 aura sets, GEAR10, are priced on their own)
+ try{const top=Math.max(...SHOP7.items.filter(i=>i.cat!='weapons'&&!i.id.startsWith('wear_anon')&&!(typeof GEAR10!='undefined'&&GEAR10.SET[i.ref])).map(i=>i.price||0));for(const[id,k]of[['wear_anonmask',1.06],['wear_anonsuit',1.12]]){const i=SHOP7.byId.get(id);if(i){i.price=Math.max(i.price,r5(top*k));if(WEAR[i.ref])WEAR[i.ref].cost=i.price}}}catch(_){}
  return{income,target,MIN,TYP,CAT,repriced:n}})();
