@@ -23,6 +23,12 @@ These stay in Render's dashboard. They are never in the repository or in the gam
 
 **4. Optional: the desktop app and GitHub Pages copy.** They stay single-player until they know the address. Put it in `RB_SERVER` near the top of `src/legacy.html`, rebuild and publish.
 
+## Accounts and monsters
+
+- **Each account has its own save, kept on the server.** A new account always starts at level 1, and it follows the account to any computer. The offline save on a computer stays separate.
+- **Resetting every account:** raise `ACCOUNT_GEN` in `server/server.js` by one and deploy. It runs once when the server starts: every account and saved progress is deleted, the owner is recreated, and worlds stay but belong to nobody. This cannot be undone.
+- **Monsters are shared.** One player's computer runs each world's monsters and sends their positions about 5 times a second, only while at least two players are in that world. This uses some of the free bandwidth, roughly 10 MB an hour per player. Bosses, letter wardens, totem waves, rifts and vault guards stay personal.
+
 ## What the free plan means
 
 - **It sleeps.** After 15 minutes with nobody connected the server stops, and the next visitor waits about a minute while it starts. Nobody is cut off while they are playing, because game traffic keeps it awake.

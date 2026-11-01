@@ -60,7 +60,9 @@ function createServer(opts={}){
  const relay=(wid,m,exceptSid)=>{const raw=JSON.stringify(m);for(const sid of members(wid)){if(sid===exceptSid)continue;const s=sessions.get(sid);if(s&&s.conn&&!s.conn.closed&&s.conn.backlog<2e6)s.conn.send(raw)}};
  function bucket(s,k,cap,ms){const now=Date.now(),a=(s.rate[k]=(s.rate[k]||[]).filter(x=>now-x<ms));if(a.length>=cap)return false;a.push(now);return true}
  const isMuted=uid=>{const u=bans.mutes[uid];if(!u)return false;if(u<Date.now()){delete bans.mutes[uid];return false}return true};
- function leaveWorld(s){if(!s.world)return;eco.leaving(s);const id=s.world;const set=members(id);set.delete(s.sid);relay(id,{t:'_x',f:s.sid});s.world=null;const w=worlds.get(id);if(w){if(!w.members.size){w.emptySince=Date.now();if(w.dirty)saveWorld(w,true)}}}
+ function leaveWorld(s){if(!s.world)return;eco.leaving(s);const id=s.world;const set=members(id);set.delete(s.sid);relay(id,{t:'_x',f:s.sid});s.mbAway=false;s.world=null;const w=worlds.get(id);if(w){if(!w.members.size){w.emptySince=Date.now();if(w.dirty)saveWorld(w,true)}}mbElect(id)}
+ // who runs this world's monsters: the current host if still here, else the first player who is not in a private fight
+ function mbElect(id){const w=id=='plaza'?null:worlds.get(id);if(!w)return;const c=w.mobHost&&sessions.get(w.mobHost);if(c&&c.world===id&&!c.mbAway)return;let pick='';for(const sid of w.members){const o=sessions.get(sid);if(o&&o.world===id&&!o.mbAway){pick=sid;break}}if(pick!==(w.mobHost||'')){w.mobHost=pick;relay(id,{t:'mhost',d:{sid:pick}})}}
  function helloFor(s,id){const pl={};for(const sid of members(id)){if(sid==s.sid)continue;const o=sessions.get(sid);if(o)pl[sid]=o.pres}pl[s.sid]=s.pres;
   if(id=='plaza')return{w:'plaza',edits:{},pl,wx:'default',dr:plazaDrops};const w=worlds.get(id);const e=Object.assign({},w.edits);if(w.meta)e.m=w.meta;if(Object.keys(w.objs).length)e.o=w.objs;return{w:id,edits:e,pl,wx:w.weather,rev:w.rev,g:w.g,own:w.ownerUid?{o:w.ownerUid,on:w.ownerName}:null,dr:w.drops}}
  function enter(s,idRaw,create,baseRaw){const id=wname(idRaw);if(!id)return send(s,{t:'enter_err',m:'Invalid world name'});
@@ -75,7 +77,7 @@ function createServer(opts={}){
    if(gate.meta&&gate.meta.pr&&!(gate.meta.o==s.uid||(gate.meta.f||[]).includes(s.uid)||(gate.meta.t||[]).includes(s.uid))&&!pass)return send(s,{t:'enter_err',m:'This world is private'})}
   if(members(id).size>=cfg.maxPlayers&&!pass)return send(s,{t:'enter_err',m:'World is full ('+cfg.maxPlayers+' players)'});
   leaveWorld(s);s.summon='';s.world=id;members(id).add(s.sid);s.pres={n:s.name,uid:s.uid,x:0,y:0,f:1};s.presLook=s.presKey='';
-  send(s,{t:'joined',sid:s.sid,w:id,uid:s.uid,name:s.name,owner:!!s.owner,kind:s.kind});send(s,{t:'_hello',d:helloFor(s,id)});relay(id,{t:'_p',d:s.pres,f:s.sid},s.sid)}
+  send(s,{t:'joined',sid:s.sid,w:id,uid:s.uid,name:s.name,owner:!!s.owner,kind:s.kind});send(s,{t:'_hello',d:helloFor(s,id)});relay(id,{t:'_p',d:s.pres,f:s.sid},s.sid);if(id!='plaza'){mbElect(id);const wm=worlds.get(id);if(wm)send(s,{t:'mhost',d:{sid:wm.mobHost||''}})}}
  // ---------- world ownership: up to cfg.maxWorldsPerAccount per person (the server owner has no cap); a world's realms belong to its owner and do not count
  const canOwn=u=>isOwnerUid(u.id)||(u.worlds||[]).length<cfg.maxWorldsPerAccount;
  function setOwner(id,uid,name){const ids=[id];for(let i=1;i<R.REALM.length;i++)if(worldExists(R.stName(id,i)))ids.push(R.stName(id,i));for(const x of ids){const w=loadWorld(x,false);if(!w)continue;w.ownerUid=uid;w.ownerName=name;if(!uid)w.meta=null;saveWorld(w);relay(x,{t:'own',d:{o:uid,on:name,clearLock:uid?0:1}})}}
@@ -185,6 +187,10 @@ function createServer(opts={}){
   if(t=='x'){if(!bucket(s,'x',10,8000))return;if(isMuted(s.uid))return;const v=R.checkX(m.d,s.sid,sid=>members(wid).has(sid));if(!v)return;v.n=s.name.slice(0,14);const o=sessions.get(v.to);if(o)send(o,{t:'x',d:v,f:s.sid});return}
   if(!w)return;// plaza: no persistent edits
   if(w.meta&&w.meta.b&&w.meta.b.includes(s.uid))return;
+  // shared monsters: one player's computer runs them (see MOB14). Only that player may send positions; hits from the others go to it alone.
+  if(w&&t=='mb'){if(w.mobHost!==s.sid||!bucket(s,'mb',80,10000)||!Array.isArray(m.d)||m.d.length>80)return;relay(wid,{t:'mb',d:m.d,f:s.sid},s.sid);return}
+  if(w&&t=='mh'){if(!bucket(s,'mh',150,10000))return;const h=w.mobHost&&sessions.get(w.mobHost),d=m.d;if(h&&h!==s&&d&&Number.isFinite(+d.id)&&Number.isFinite(+d.n))send(h,{t:'mh',d:{id:+d.id,n:Math.max(0,Math.min(1e7,+d.n)),k:d.k?1:0},f:s.sid});return}
+  if(w&&t=='mb_away'){s.mbAway=!!m.d;mbElect(wid);return}
   if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid,s.god)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);return}
   if(t=='meta'){if(!bucket(s,'meta',6,8000))return;if(s.kind=='guest')return;const r=R.checkMeta(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'meta'});return}
    // placing a World Lock in an unowned world claims it, within the same limit

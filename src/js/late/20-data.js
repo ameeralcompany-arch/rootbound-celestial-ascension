@@ -1,5 +1,5 @@
 // ===== V6 data: everything tunable lives here (wings, nameplates, auras, quality presets) =====
-const CEL_VER=1;
+const CEL_VER=1;window.UPD0=updMobs;   /* the plain monster update, before any wrapper: MOB14 runs it for monsters near other players */
 // ===== WINGS (v8): one data-driven table. Every wing has a family, a rarity, a source and an art spec `a` that the
 // shape-family renderer (50-wings.js) paints procedurally. src: 'level' (milestone reward at `lvl`), 'shop' (gems, catalog
 // item wing_<id>), 'excl' (achievement only, never sold; see WINGX in 87-z-wings.js). Index order is kept stable for the
