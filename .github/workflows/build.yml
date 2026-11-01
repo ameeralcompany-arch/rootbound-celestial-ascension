@@ -7,57 +7,82 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: 20}
-      - run: python3 tools/build.py && git diff --exit-code index.html || echo "::warning::index.html was not up to date with src/ (rebuilt in CI)"
+      - name: Build index.html from src
+        run: |
+          python3 tools/build.py
+          git diff --quiet --ignore-cr-at-eol index.html || echo "::warning::index.html was not up to date with src/ (rebuilt in CI)"
       - name: JavaScript syntax check
         run: |
           node -e "const s=require('fs').readFileSync('index.html','utf8');const re=/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/g;let m,i=0;while((m=re.exec(s))){i++;try{new Function(m[1])}catch(e){console.error('script',i,e.message);process.exit(1)}}console.log('syntax ok',i,'inline scripts')"
       - name: Install Playwright
         run: npm i playwright@1.49.0 && npx playwright install --with-deps chromium
       - name: Test server (accounts, owner-only admin, worlds, weather, persistence)
+        if: ${{ !cancelled() }}
         timeout-minutes: 5
         run: bash tools/ci-test.sh tests/server.js
       - name: Test online rules (owner, ownership, ledger, trades, drops, bans, cloud saves)
+        if: ${{ !cancelled() }}
         timeout-minutes: 5
         run: bash tools/ci-test.sh tests/online-server.js
       - name: Test startup
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/boot.js
         env: {NODE_PATH: ./node_modules}
       - name: Test main UI/render
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/run.js
         env: {NODE_PATH: ./node_modules}
       - name: Test objects
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/objects.js
         env: {NODE_PATH: ./node_modules}
       - name: Test social
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/social.js
         env: {NODE_PATH: ./node_modules}
       - name: Test showcase
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/showcase.js
         env: {NODE_PATH: ./node_modules}
       - name: Test theme + settings + icons
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/theme.js
         env: {NODE_PATH: ./node_modules}
       - name: Store, items, weapons, wings, effects, music
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/store.js
         env: {NODE_PATH: ./node_modules}
       - name: Wings (8-key flight cycle, ascended wings, trails, aura pose, sprite sheets)
+        if: ${{ !cancelled() }}
         timeout-minutes: 8
         run: bash tools/ci-test.sh tests/wings.js
         env: {NODE_PATH: ./node_modules}
       - name: End-to-end (real server + 3 real browser clients, weather, persistence, restart)
+        if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/e2e.js
         env: {NODE_PATH: ./node_modules}
-      - name: Online end to end (real server + real browsers: god mode, trades, drops, realms)
+      - name: "Online end to end (real server + real browsers: god mode, trades, drops, realms)"
+        if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/online.js
+        env: {NODE_PATH: ./node_modules}
+      - name: "World bosses online (a private copy of the fight, a win is paid once)"
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/online-boss.js
+        env: {NODE_PATH: ./node_modules}
+      - name: Online server wake-up (the client waits while a sleeping server starts)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/online-wake.js
         env: {NODE_PATH: ./node_modules}
       - uses: actions/upload-artifact@v4
         with: {name: rootbound-html, path: index.html}

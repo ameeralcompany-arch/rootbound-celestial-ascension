@@ -5,6 +5,7 @@
 const {chromium}=require('playwright');const path=require('path'),fs=require('fs');
 const URL='file://'+path.resolve(__dirname,'../index.html'),EXE=process.env.CHROMIUM||'/opt/pw-browsers/chromium';
 let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(d!=null&&d!==''?'  - '+(typeof d=='string'?d:JSON.stringify(d)):''))};
+const SLOW=process.env.CI?3:1;   // cost budgets: a shared CI runner draws about 6x slower than a desktop (no GPU, few cores)
 const NEW=['voidshroud','nightforge','haloseraph','inkwraith','eyemoth','stormlance','bonelight','amethclaw'];
 const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PNG'?[b.readUInt32BE(16),b.readUInt32BE(20)]:null};
 (async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox']});
@@ -62,7 +63,7 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
  r=await E(()=>{QM.cur.wfx=0;const k='qtest',c=document.createElement('canvas').getContext('2d'),i=WINGS.findIndex(w=>w.id=='stormlance');let t=10;for(let n=0;n<60;n++){t+=.016;WingArt.draw(c,i,100,100,1,t,2,0,0,1,k,-300)}const n0=WING9.parts(k);QM.cur.wfx=3;
   for(let n=0;n<240;n++){t+=.016;WingArt.draw(c,i,100,100,1,t,2,0,0,1,k,-300)}const n3=WING9.parts(k);
   const t0=performance.now();for(let n=0;n<400;n++){t+=.016;WingArt.draw(c,i,100,100,1,t,2,0,0,1,k,-300)}const ms=(performance.now()-t0)/400;return{n0,n3,ms:+ms.toFixed(3)}});
- ok('wfx 0 sheds no particles, wfx 3 does (capped for other players), one ascended wing costs < 1 ms per draw',r.n0==0&&r.n3>0&&r.n3<=20&&r.ms<1,r);
+ ok('wfx 0 sheds no particles, wfx 3 does (capped for other players), one ascended wing costs < 1 ms per draw (CI: < '+SLOW+' ms)',r.n0==0&&r.n3>0&&r.n3<=20&&r.ms<SLOW,r);
  // ---- unequip: no aura pose, wings fold away
  r=await E(async()=>{let calls=0;const o=AC6.PZ;AC6.PZ=function(){calls++;return o.apply(this,arguments)};wingUnequip();await new Promise(r=>setTimeout(r,500));const c1=calls;await new Promise(r=>setTimeout(r,300));AC6.PZ=o;return{c1,c2:calls,w:curWing(lvl)}});
  ok('without wings the aura pose is off (no pose hook calls)',r.w===null&&r.c2==r.c1,r);
@@ -91,7 +92,8 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
   ['voidshroud','nightforge','inkwraith','bonelight','eyemoth'].every(id=>r.o[id]=='dark')&&['haloseraph','eternity','ascendant'].every(id=>r.o[id]=='light')&&r.o.phoenix=='fire'&&r.o.drakelord=='fire'&&r.o.stormlance=='storm'&&r.o.frost=='ice'&&r.o.amethclaw=='crystal'&&r.o.cosmic=='cosmic'&&r.obj=='dark'&&r.dark=='smoke'&&r.light=='glow'&&r.lacc=='star',r);
  // velocity + fade: fly right with a dark mythic wing, follow one trail particle by id
  await E(()=>{wingEquip('voidshroud');const s=window.__shaft;for(const k in K)K[k]=false;P.x=s.cx*T+T/2-4*T;P.y=s.FL*T-P.h-1;P.vx=P.vy=0;FLY7.F.sta=1});await W(400);
- await E(()=>{P.y-=30;P.vy=40;P.g=false;K[' ']=true;K.d=true});await W(450);
+ // particles are shed per frame, so a slow runner needs longer to have some to follow
+ await E(()=>{P.y-=30;P.vy=40;P.g=false;K[' ']=true;K.d=true});await W(450);await p.waitForFunction(()=>WTRAIL.counts().trail>=3&&WTRAIL.peek()&&P.vx>100,null,{timeout:5000}).catch(()=>{});
  const p1=await E(()=>({p:WTRAIL.peek(),c:WTRAIL.counts(),vx:P.vx}));await W(250);const p2=await E(id=>({p:WTRAIL.peek(id),px:P.x}),p1.p&&p1.p.id);await W(150);const p3=await E(id=>({p:WTRAIL.peek(id),px:P.x}),p1.p&&p1.p.id);
  await E(()=>{for(const k in K)K[k]=false});
  ok('dark trail in flight: particles inherit the player\'s motion (vx > 0 flying right), keep moving but stream behind (slower than you), and fade out smoothly',
@@ -119,8 +121,9 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
  ok('mythic climbs higher than legendary (>= 1.3x in 1.5 s, >= 1.5x total height); exclusive flies like mythic; peak climb stays below one tile per frame',r.cosmic.climb>=r.ascendant.climb*1.3&&r.cosmic.maxH>=r.ascendant.maxH*1.5&&r.eternity.climb>=r.cosmic.climb*.95&&Math.min(r.storm.vmin,r.ascendant.vmin,r.cosmic.vmin,r.eternity.vmin)>-900,r);
  ok('low ceiling: a mythic climb under a 3-tile roof stops at the roof (no tunnelling)',r.roof.ok,r.roof);
  // the Plaza: mythic flight works there too, stays inside the world and on screen
- await E(()=>{enterWorld('plaza')});await W(1500);await E(()=>{mobs.length=0;lvl=150;wingEquip('cosmic');for(const k in K)K[k]=false;P.vy=-60;P.g=false;FLY7.F.sta=1;K[' ']=true});
- let pz=null;const y0p=await E(()=>P.y);for(let i=0;i<12;i++){await W(100);const s=await E(()=>({y:P.y,sy:(P.y-cam.y)*ZM,vh:cv.height,on:FLY7.F.on}));if(!pz||s.y<pz.y)pz=s;if(s.sy<-10||s.sy>s.vh)pz.off=1}
+ // start well off the ground: flight needs 0.1 s in the air, and at a low frame rate a small hop lands before that. A slow runner gets more samples to climb.
+ await E(()=>{enterWorld('plaza')});await W(1500);await E(()=>{mobs.length=0;lvl=150;wingEquip('cosmic');for(const k in K)K[k]=false;P.y-=80;P.vy=-60;P.g=false;FLY7.F.sta=1;K[' ']=true});
+ let pz=null;const y0p=await E(()=>P.y);for(let i=0;i<30&&(i<12||pz.y>=y0p-60);i++){await W(100);const s=await E(()=>({y:P.y,sy:(P.y-cam.y)*ZM,vh:cv.height,on:FLY7.F.on}));if(!pz||s.y<pz.y)pz=s;if(s.sy<-10||s.sy>s.vh)pz.off=1}
  await E(()=>{for(const k in K)K[k]=false});
  ok('Plaza: mythic flight climbs, stays inside the world (y >= 0) and on screen',pz.y<y0p-60&&pz.y>=0&&!pz.off,{y0:Math.round(y0p),best:pz});
  ok('no page errors',errs.length==0,errs.slice(0,5).join(' | '));
