@@ -1,0 +1,23 @@
+/* ===== GUIDE10: the starting guide (a calm white card; pages slide with transform/opacity only) ===== */
+#guide10{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(40,46,58,.36);opacity:0;transition:opacity .2s ease}
+#guide10.on{opacity:1}
+#guide10 .box{width:min(560px,92vw);padding:26px 28px 18px;border-radius:18px;background:linear-gradient(180deg,#ffffff,#e9ecf0);color:#1c2230;border:1px solid #cfd4dc;box-shadow:0 10px 36px rgba(20,25,35,.25);transform:translateY(10px) scale(.98);transition:transform .22s cubic-bezier(.2,.8,.3,1)}
+#guide10.on .box{transform:none}
+#guide10 .pg{min-height:220px;text-align:center}
+#guide10 .pg.in{animation:g10in .26s cubic-bezier(.2,.8,.3,1)}
+@keyframes g10in{from{opacity:0;transform:translateX(calc(var(--d,1)*18px))}to{opacity:1;transform:none}}
+#guide10 .ic{font-size:44px;line-height:1;margin:4px 0 10px}
+#guide10 h3{margin:0 0 10px;font:600 28px var(--font-display,serif);font-style:italic;color:#1c2230}
+#guide10 p{margin:0 auto;max-width:460px;font:500 15px/1.6 var(--font-ui,sans-serif);color:#3a4252}
+#guide10 kbd{display:inline-block;min-width:20px;padding:1px 6px;border-radius:6px;border:1px solid #b9c0ca;background:linear-gradient(180deg,#fff,#e4e7ec);font:700 12px var(--font-ui,sans-serif);color:#1c2230;box-shadow:0 1px 0 #a9b1bd}
+#guide10 .dots{display:flex;justify-content:center;gap:7px;margin:16px 0 12px}
+#guide10 .dots i{width:8px;height:8px;border-radius:50%;background:#cfd4dc;transition:transform .2s ease,background .2s ease}
+#guide10 .dots i.on{background:#4a5262;transform:scale(1.25)}
+#guide10 .acts{display:flex;align-items:center;gap:8px}#guide10 .acts span{flex:1}
+#guide10 .acts button{padding:8px 16px;border-radius:999px;font:700 13px var(--font-ui,sans-serif);cursor:pointer}
+html[data-ureduce=true] #guide10,html[data-ureduce=true] #guide10 .box,html[data-ureduce=true] #guide10 .dots i{transition:none!important}
+html[data-ureduce=true] #guide10 .pg.in{animation:none!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10{transition:opacity .2s ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10 .box{transition:transform .22s cubic-bezier(.2,.8,.3,1)!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10 .pg.in{animation:g10in .26s cubic-bezier(.2,.8,.3,1)!important;animation-iteration-count:1!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10 .dots i{transition:transform .2s ease,background .2s ease!important}

@@ -514,6 +514,8 @@ html[data-reduce=true] *{animation-duration:.001s!important;animation-iteration-
 #bstore{width:auto!important;padding:0 14px!important;font:900 12px var(--font-ui)!important;letter-spacing:.16em;background:linear-gradient(135deg,#ff7ac8,#8a6bff)!important;color:#fff!important;border:0!important;animation:rbPulse 3.2s ease-in-out infinite}@keyframes rbPulse{0%,100%{box-shadow:0 0 0 0 rgba(160,110,255,.0)}50%{box-shadow:0 0 18px 2px rgba(160,110,255,.55)}}
 @media (max-width:860px){#store7 .main{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}#store7 nav{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}#store7 aside{border-left:0;border-top:1px solid var(--line);max-height:45vh}}
 @media (prefers-reduced-motion:reduce){#bstore{animation:none}#store7 .card{transition:none}}
+/* every skin: affordable / unaffordable prices */
+#store7 .card.cant .pr>span{color:#d9505c}#store7 .card.ok .pr>span{color:#3fbf6a}
 
 /* ========== CSS: 60-glass.css ========== */
 /* ===== Calm glass dark theme (overrides the dark tokens; light theme untouched) ===== */
@@ -2249,6 +2251,82 @@ html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[dat
 html[data-skin=clean][data-skin=clean] #store7 .card[data-rar]>:is(b,.pr),html[data-skin=clean][data-skin=clean] #store7 .card[data-rar] .pr>span{color:var(--ink)!important}
 html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7):is([data-rar=mythic],[data-rar=exclusive]){border-color:#7a6aa8!important}
 html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[data-rar=legendary]{border-color:#b8962a!important}
+/* store: a price you can't afford reads red, one you can afford reads green; locked items are dimmed */
+html[data-skin=clean][data-skin=clean] #store7 .card.cant .pr>span{color:#b8323e!important}
+html[data-skin=clean][data-skin=clean] #store7 .card.ok .pr>span{color:#2f8a4a!important}
+html[data-skin=clean] #store7 .card.lock{opacity:.6}
+html[data-skin=clean] #store7 .grid h4{color:var(--ink-2)!important}
+/* ===== light motion for the clean skin: short opacity / transform transitions only (the compositor does them without repainting, so
+   they cost nothing on the game's frame), on menus opening, toasts, buttons, cards, tabs and the hotbar. The rest of the interface stays in
+   reduced motion, and the player's own Reduce motion setting (data-ureduce) turns these off too. ===== */
+html[data-skin=clean]:not([data-ureduce=true]) :is(#store7,#store7 .shell,#inv7,#inv7 .sheet,#inv7 .panel,#hub,#hubc,#cls9,#dlg7,#dlg7 .box,#dlg,#tools7,#tools7 .sheet,#book7,#chestui,#wg9,#wg9 .box,#banner,#toast7 .t7,.rw8c){
+ transition-property:opacity,transform!important;transition-duration:.2s!important;transition-timing-function:cubic-bezier(.2,.8,.3,1)!important}
+html[data-skin=clean]:not([data-ureduce=true]) :is(button,.btn,#hudR .pn){transition-property:transform,background-color,box-shadow!important;transition-duration:.12s!important;transition-timing-function:ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) :is(#inv7 .it7,#store7 .card,.gcard7,#bar .s6,#avf10 .g button){transition-property:transform,box-shadow!important;transition-duration:.14s!important;transition-timing-function:ease!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(#hudR .pn,#store7 nav button,#inv7 nav button,#hubnav button):hover{transform:translateY(-1px)!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(#inv7 .it7,#store7 .card,.gcard7):hover{transform:translateY(-2px)!important;box-shadow:var(--sh-3)!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(button,.btn):active{transform:scale(.97)!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(#bar .s6.on,#bar .s6.sel){transform:translateY(-2px)!important}
+html[data-skin=clean]:not([data-ureduce=true]) .nind7{transition-property:transform,width,height,opacity!important;transition-duration:.18s!important}
+
+/* ========== CSS: 99-zz-frames.css ========== */
+/* ===== AVF10: the avatar frame around the HUD portrait, and the avatar picker ===== */
+#pwrap9{position:relative}
+#pframe10{position:absolute;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;pointer-events:none;z-index:2}
+#pframe10.spin{animation:avf10spin 40s linear infinite}
+@keyframes avf10spin{to{transform:rotate(360deg)}}
+html[data-ureduce=true] #pframe10.spin{animation:none!important}
+html[data-skin=clean]:not([data-ureduce=true]) #pframe10.spin{animation:avf10spin 40s linear infinite!important;animation-iteration-count:infinite!important}
+#avf10{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(40,46,58,.32);opacity:0;transition:opacity .16s ease}
+#avf10.on{opacity:1}
+#avf10 .box{width:min(860px,94vw);max-height:86vh;overflow:auto;padding:18px 22px;border-radius:16px;background:var(--surface,#fff);color:var(--ink,#1c2230);border:1px solid var(--line,#cfd4dc);box-shadow:0 8px 30px rgba(20,25,35,.22);transform:translateY(8px) scale(.98);transition:transform .18s ease}
+#avf10.on .box{transform:none}
+#avf10 header{display:flex;align-items:center;justify-content:space-between}#avf10 h3{margin:0;font:600 26px var(--font-display,serif);font-style:italic}
+#avf10 .sub{margin:4px 0 10px;color:var(--muted,#6a7383);font-size:13px}
+#avf10 h4{margin:14px 0 8px;font:700 11px var(--font-ui,sans-serif);letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#6a7383)}
+#avf10 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+#avf10 .g button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:12px;border:1px solid var(--line,#cfd4dc);background:var(--surface-2,#f4f5f7);color:var(--ink,#1c2230);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+#avf10 .g button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 12px rgba(20,25,35,.14)}
+#avf10 .g button.on{outline:2px solid #4a5262;outline-offset:1px}
+#avf10 .g button.lk{opacity:.5;cursor:default}
+#avf10 .g.fr canvas{width:72px;height:72px}
+#avf10 .g.bg button{min-height:74px;justify-content:flex-end}
+#avf10 .g b{font:700 12px var(--font-ui,sans-serif)}#avf10 .g small{font:600 10px var(--font-ui,sans-serif);color:var(--muted,#6a7383);min-height:12px}
+#avf10 .g.bg b,#avf10 .g.bg small{background:rgba(255,255,255,.75);padding:1px 6px;border-radius:6px;color:#1c2230}
+html[data-ureduce=true] #avf10,html[data-ureduce=true] #avf10 .box,html[data-ureduce=true] #avf10 .g button{transition:none!important}
+html[data-skin=clean]:not([data-ureduce=true]) #avf10{transition:opacity .16s ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) #avf10 .box{transition:transform .18s ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) #avf10 .g button{transition:transform .12s ease,box-shadow .12s ease!important}
+#avf10 .g.bg button{background:var(--bgc)!important}
+#avf10 .g small:empty{display:none}
+html[data-skin][data-skin] #avf10 .g button.on{outline:2px solid #4a5262;outline-offset:1px;color:var(--ink,#1c2230)!important}
+html[data-skin][data-skin] #avf10 .g.fr button.on{background:var(--surface-2,#f4f5f7)!important}
+html[data-skin][data-skin] #avf10 .g.bg button{background:var(--bgc)!important}
+
+/* ========== CSS: 99-zz-guide.css ========== */
+/* ===== GUIDE10: the starting guide (a calm white card; pages slide with transform/opacity only) ===== */
+#guide10{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(40,46,58,.36);opacity:0;transition:opacity .2s ease}
+#guide10.on{opacity:1}
+#guide10 .box{width:min(560px,92vw);padding:26px 28px 18px;border-radius:18px;background:linear-gradient(180deg,#ffffff,#e9ecf0);color:#1c2230;border:1px solid #cfd4dc;box-shadow:0 10px 36px rgba(20,25,35,.25);transform:translateY(10px) scale(.98);transition:transform .22s cubic-bezier(.2,.8,.3,1)}
+#guide10.on .box{transform:none}
+#guide10 .pg{min-height:220px;text-align:center}
+#guide10 .pg.in{animation:g10in .26s cubic-bezier(.2,.8,.3,1)}
+@keyframes g10in{from{opacity:0;transform:translateX(calc(var(--d,1)*18px))}to{opacity:1;transform:none}}
+#guide10 .ic{font-size:44px;line-height:1;margin:4px 0 10px}
+#guide10 h3{margin:0 0 10px;font:600 28px var(--font-display,serif);font-style:italic;color:#1c2230}
+#guide10 p{margin:0 auto;max-width:460px;font:500 15px/1.6 var(--font-ui,sans-serif);color:#3a4252}
+#guide10 kbd{display:inline-block;min-width:20px;padding:1px 6px;border-radius:6px;border:1px solid #b9c0ca;background:linear-gradient(180deg,#fff,#e4e7ec);font:700 12px var(--font-ui,sans-serif);color:#1c2230;box-shadow:0 1px 0 #a9b1bd}
+#guide10 .dots{display:flex;justify-content:center;gap:7px;margin:16px 0 12px}
+#guide10 .dots i{width:8px;height:8px;border-radius:50%;background:#cfd4dc;transition:transform .2s ease,background .2s ease}
+#guide10 .dots i.on{background:#4a5262;transform:scale(1.25)}
+#guide10 .acts{display:flex;align-items:center;gap:8px}#guide10 .acts span{flex:1}
+#guide10 .acts button{padding:8px 16px;border-radius:999px;font:700 13px var(--font-ui,sans-serif);cursor:pointer}
+html[data-ureduce=true] #guide10,html[data-ureduce=true] #guide10 .box,html[data-ureduce=true] #guide10 .dots i{transition:none!important}
+html[data-ureduce=true] #guide10 .pg.in{animation:none!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10{transition:opacity .2s ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10 .box{transition:transform .22s cubic-bezier(.2,.8,.3,1)!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10 .pg.in{animation:g10in .26s cubic-bezier(.2,.8,.3,1)!important;animation-iteration-count:1!important}
+html[data-skin=clean]:not([data-ureduce=true]) #guide10 .dots i{transition:transform .2s ease,background .2s ease!important}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -7990,7 +8068,7 @@ const STORE7=(()=>{
  const COLL=[['Void Collection','Dark violet power',['wpn_void','fx_aura_void','fx_wt_void','fx_skin_obsidian','wing_umbral']],['Blossom Collection','Soft pink spring',['wing_blossom','fx_aura_blossom','fx_spawn_bloom','fx_wt_rose','fx_skin_sakura','obj_39','charm_leaf']],['Astral Collection','Stars and moonlight',['wpn_astralkat','fx_aura_astral','wing_galaxy','obj_41','charm_moon','charm_star']],['Ember & Frost','Fire against ice',['wpn_solarfang','fx_aura_solar','fx_trail_ember','wpn_frostbite','fx_aura_frost','fx_wt_azure']]];
  const FX_COL={aura_void:['#6a2cc8','#e0c8ff','rise'],aura_solar:['#ffd24a','#fff4c4','orbit'],aura_blossom:['#ffb0cf','#fff0f6','fall'],aura_frost:['#bfe8ff','#ffffff','fall'],aura_astral:['#9fe0ff','#ffffff','orbit'],trail_ember:['#ff8a2a','#ffd24a','stream'],trail_neon:['#3ff3ff','#ff5ae8','stream'],trail_crow:['#14101e','#8a6bff','stream'],spawn_chains:['#c9b8ff','#ffffff','burst'],spawn_bloom:['#ffb0cf','#fff0f6','burst'],vic_nova:['#ffe9a0','#9fe0ff','burst'],wt_rose:['#ff7fb0','#ffd0e4','arc'],wt_azure:['#4fb4ff','#d0ecff','arc'],wt_void:['#8a4cff','#e0c8ff','arc'],skin_obsidian:['#2a2238','#7a5cff','arc'],skin_pearl:['#f2eeff','#ffffff','arc'],skin_sakura:['#ffaac8','#fff0f6','arc']};
  const WX_COL={39:['#40204a','#ff9cc8','petal'],40:['#050a24','#9fc8ff','star'],41:['#1a0a40','#ff7fe0','star'],85:['#3a8fe8','#ffd84a','petal'],86:['#4a1846','#ff9a7a','petal'],87:['#1a2366','#ffb07a','star'],88:['#120a2a','#ff4fd8','star'],89:['#02101f','#4dffb0','star']};
- let el=null,cat='featured',q='',sort='feat',rar='all',ownedOnly=0,selId=null,pv=null,raf=0,parts=[],fxLast=0,busy=0;
+ let el=null,cat='featured',q='',sort='feat',rar='all',ownedOnly=0,buyOnly=0,selId=null,pv=null,raf=0,parts=[],fxLast=0,busy=0;
  const st=()=>({gems:gems|0});
  // card pictures are canvases, drawn once per item and copied into the card: turning them into images (toDataURL) read the pixels back from
  // the GPU and froze the game for about a second the first time the store opened
@@ -8028,21 +8106,22 @@ const STORE7=(()=>{
  // ---- state helpers
  const has=it=>SHOP7.has(it.id),cnt=it=>SHOP7.count(it.id),eqd=it=>SHOP7.equipped(it.id),equipable=it=>!!SHOP7.slotOf(it);
  const stateOf=it=>it.stack?(cnt(it)>0?'Owned x'+cnt(it):''):eqd(it)?'EQUIPPED':has(it)?'OWNED':'';
+ const buyable=it=>!(!it.stack&&has(it))&&SHOP7.lvOk(it)&&gems>=it.price;
  function list(){let L=SHOP7.items.slice();
   if(cat=='featured')L=L.filter(i=>i.feat||i.new&&!i.legacy&&i.cat!='gear'&&0);else if(cat!='all')L=L.filter(i=>i.cat==cat);
   if(q){const s=q.toLowerCase();L=L.filter(i=>(i.n+' '+i.d+' '+i.cat+' '+i.rar+' '+(i.sub||'')).toLowerCase().includes(s))}
-  if(rar!='all')L=L.filter(i=>i.rar==rar);if(ownedOnly)L=L.filter(has);
+  if(rar!='all')L=L.filter(i=>i.rar==rar);if(ownedOnly)L=L.filter(has);if(buyOnly)L=L.filter(buyable);
   const pw=it=>it.cat=='weapons'?ITEM7.power('w:'+it.ref):0,pow=(a,b)=>RO[b.rar]-RO[a.rar]||pw(b)-pw(a)||a.price-b.price;/* weapons: rarity tier, then power (high first) */
   const cmp={pow,feat:cat=='weapons'?pow:(a,b)=>(b.feat|0)-(a.feat|0)||(b.new|0)-(a.new|0)||a.price-b.price,pa:(a,b)=>a.price-b.price,pd:(a,b)=>b.price-a.price,rar:(a,b)=>RO[b.rar]-RO[a.rar]||a.price-b.price,name:(a,b)=>a.n.localeCompare(b.n),neu:(a,b)=>(b.new|0)-(a.new|0)||a.price-b.price}[sort];L.sort(cmp);return L}
- function card(it){const s=stateOf(it),b=eqd(it)?'<span class="badge eq">EQUIPPED</span>':!it.stack&&has(it)?'<span class="badge own">OWNED</span>':SHOP7.isNew(it.id)?'<span class="badge new">NEW</span>':'';
-  const lk=!SHOP7.lvOk(it);return'<button class="card'+(selId==it.id?' sel':'')+(lk?' lock':'')+'" data-id="'+it.id+'" data-rar="'+it.rar+'" data-cat="'+it.cat+'" aria-label="'+esc(it.n)+', '+it.rar+', '+it.price+' gems">'+b+'<canvas class="th" data-th="'+esc(it.id)+'" aria-hidden="true"></canvas><b>'+esc(it.n)+'</b><span class="rtag">'+esc(SHOP7.RN[it.rar])+'</span>'+(it.cat=='weapons'&&WPN[it.ref]?'<span class="pw8" title="Power">⚔ '+ITEM7.power('w:'+it.ref)+'</span>':'')+'<span class="pr"><span><i class="gem"></i>'+it.price+'</span>'+(lk?'<small>Lv '+it.lv+'</small>':s&&!it.stack?'<small>✓</small>':'')+'</span></button>'}
- let lastKey='';
+ function card(it){const s=stateOf(it),b=eqd(it)?'<span class="badge eq">EQUIPPED</span>':!it.stack&&has(it)?'<span class="badge own">OWNED</span>':SHOP7.isNew(it.id)&&buyable(it)?'<span class="badge new">NEW</span>':'';
+  const lk=!SHOP7.lvOk(it),ow=!it.stack&&has(it),af=gems>=it.price;return'<button class="card'+(selId==it.id?' sel':'')+(lk?' lock':'')+(!ow&&!lk?(af?' ok':' cant'):'')+'" data-id="'+it.id+'" data-rar="'+it.rar+'" data-cat="'+it.cat+'" aria-label="'+esc(it.n)+', '+it.rar+', '+it.price+' gems">'+b+'<canvas class="th" data-th="'+esc(it.id)+'" aria-hidden="true"></canvas><b>'+esc(it.n)+'</b><span class="rtag">'+esc(SHOP7.RN[it.rar])+'</span>'+(it.cat=='weapons'&&WPN[it.ref]?'<span class="pw8" title="Power">⚔ '+ITEM7.power('w:'+it.ref)+'</span>':'')+'<span class="pr"><span><i class="gem"></i>'+it.price+'</span>'+(lk?'<small>Lv '+it.lv+'</small>':s&&!it.stack?'<small>✓</small>':'')+'</span></button>'}
+ let lastKey='';const CATBUY=new Set(['weapons','wings','effects','charms','gear','pets','weather']);
  function render(){if(!el)return;MOTION7.tick(el.querySelector('#s7g'),gems|0);el.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.c==cat));try{MOTION7.ind(el.querySelector('nav'),'button.on','v')}catch(_){}
-  const key=cat+'|'+sort+'|'+rar+'|'+ownedOnly,anim=key!=lastKey;lastKey=key; // cards cascade in when the shelf changes, not on every refresh
+  const key=cat+'|'+sort+'|'+rar+'|'+ownedOnly+'|'+buyOnly,anim=key!=lastKey;lastKey=key; // cards cascade in when the shelf changes, not on every refresh
   const g=el.querySelector('.grid');let h='';
-  if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly){h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
+  if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly&&!buyOnly){const now=SHOP7.items.filter(i=>buyable(i)&&!i.stack&&CATBUY.has(i.cat)).sort((a,b)=>a.price-b.price).slice(0,12);if(now.length)h+='<h4>You can buy now</h4><div class="cards">'+now.map(card).join('')+'</div>';h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
   else{const L=list();h+=L.length?'<div class="cards">'+L.map(card).join('')+'</div>':'<div class="empty">Nothing matches. Try a different search or filter.</div>'}
-  if(!anim)MOTION7.still(g);g.innerHTML=h;paintThumbs(g);if(anim){g.scrollTop=0;MOTION7.stagger(g,'.card,h4',16)}g.querySelectorAll('.card').forEach(c=>c.onclick=()=>select(c.dataset.id));renderDetail()}
+  if(!anim)MOTION7.still(g);g.innerHTML=h;paintThumbs(g);if(anim){g.scrollTop=0;MOTION7.stagger(g,'.card,h4',16)}g.querySelectorAll('.card').forEach(c=>{c.onclick=()=>select(c.dataset.id);c.ondblclick=()=>{select(c.dataset.id);const it=SHOP7.byId.get(c.dataset.id);if(it&&buyable(it))act('buy');else if(it&&has(it)&&equipable(it)&&!eqd(it))act('eq')}});renderDetail()}
  function renderDetail(){const a=el.querySelector('aside');const it=selId&&SHOP7.byId.get(selId);if(!it){a.innerHTML='<h3>Pick an item</h3><p>Select anything to see a live preview, what it does, and how to get it.</p>';pv=null;return}
   const owned=!it.stack&&has(it),lk=!SHOP7.lvOk(it),can=gems>=it.price;let btn='';
   if(owned){btn=equipable(it)?(eqd(it)?'<button data-a="un">Unequip</button>':'<button class="pri" data-a="eq">Equip</button>'):'<button disabled>Owned</button>'}
@@ -8059,12 +8138,12 @@ const STORE7=(()=>{
    if(total>=500||qty>1){const ok=await DLG7.confirm('Buy '+it.n+(qty>1?' x'+qty:'')+'?','This costs '+total+' gems. You have '+(gems|0)+'.','Buy for '+total);if(!ok)return}
    busy=1;const r=await SHOP7.buy(it.id,qty);busy=0;msg(r.m);if(r.ok){try{VFX.add(1,'#ffe9a0',P.x,P.y,0,-30,1,14,2)}catch(_){}if(SHOP7.slotOf(it)&&!it.stack)msg(r.m+' — press Equip to use it.')}render()}}
  function mk(){if(el)return;el=document.createElement('div');el.id='store7';el.innerHTML='<div class="shell" role="dialog" aria-modal="true" aria-label="Item store"><header><h2>STORE</h2><span class="gv"><i class="gem"></i><b id="s7g">0</b></span><button class="x" aria-label="Close store">✕</button></header>'
-  +'<div class="bar"><input id="s7s" type="search" placeholder="Search items" aria-label="Search items"><select id="s7r" aria-label="Rarity"><option value="all">All rarities</option>'+SHOP7.RAR.slice(0,6).map(r=>'<option value="'+r+'">'+SHOP7.RN[r]+'</option>').join('')+'</select><select id="s7o" aria-label="Sort"><option value="feat">Featured</option><option value="pow">Power (by rarity)</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option><option value="rar">Rarity</option><option value="name">Name</option><option value="neu">Newest</option></select><button class="chip" id="s7w">Owned only</button></div>'
+  +'<div class="bar"><input id="s7s" type="search" placeholder="Search items" aria-label="Search items"><select id="s7r" aria-label="Rarity"><option value="all">All rarities</option>'+SHOP7.RAR.slice(0,6).map(r=>'<option value="'+r+'">'+SHOP7.RN[r]+'</option>').join('')+'</select><select id="s7o" aria-label="Sort"><option value="feat">Featured</option><option value="pow">Power (by rarity)</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option><option value="rar">Rarity</option><option value="name">Name</option><option value="neu">Newest</option></select><button class="chip" id="s7b" title="Only what you can use and afford right now">Can buy now</button><button class="chip" id="s7w">Owned only</button></div>'
   +'<div class="main"><nav>'+[['featured','Featured']].concat(SHOP7.CATS.slice(1)).map(c=>'<button data-c="'+c[0]+'">'+c[1]+'</button>').join('')+'<button data-c="all">All items</button></nav><div class="grid"></div><aside></aside></div></div>';
   document.body.appendChild(el);
   el.querySelector('.x').onclick=close;el.addEventListener('mousedown',e=>{if(e.target===el)close()});
   el.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{cat=b.dataset.c;render()});
-  el.querySelector('#s7s').oninput=e=>{q=e.target.value.trim();render()};el.querySelector('#s7r').onchange=e=>{rar=e.target.value;render()};el.querySelector('#s7o').onchange=e=>{sort=e.target.value;render()};el.querySelector('#s7w').onclick=e=>{ownedOnly^=1;e.target.classList.toggle('on',!!ownedOnly);render()};
+  el.querySelector('#s7s').oninput=e=>{q=e.target.value.trim();render()};el.querySelector('#s7r').onchange=e=>{rar=e.target.value;render()};el.querySelector('#s7o').onchange=e=>{sort=e.target.value;render()};el.querySelector('#s7w').onclick=e=>{ownedOnly^=1;e.target.classList.toggle('on',!!ownedOnly);render()};el.querySelector('#s7b').onclick=e=>{buyOnly^=1;e.target.classList.toggle('on',!!buyOnly);render()};
   addEventListener('keydown',e=>{if(el.style.display!='none'&&el.style.display&&e.key=='Escape'&&!DLG7.isOpen){e.stopPropagation();close()}},true)}
  const isOpen=()=>!!el&&el.style.display=='flex';
  function loop(){if(!isOpen()){raf=0;return}const t=performance.now()/1000;if(pv&&selId){const it=SHOP7.byId.get(selId);if(it)drawPrev(pv.getContext('2d'),it,300,255,t,1,false)}raf=requestAnimationFrame(loop)}
@@ -8076,7 +8155,7 @@ const STORE7=(()=>{
  {let q=null;const step=d=>{/* never during a cinematic (see 88-inventory.js) */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:4000}),1500);return}/* one thumbnail per real idle moment, a pause between, stop if one is slow (see 88-inventory.js) */if(d.didTimeout||d.timeRemaining()<10){requestIdleCallback(step,{timeout:4000});return}const t0=performance.now();try{thumb(q.shift())}catch(_){q.length=0}if(performance.now()-t0>45)q.length=0;if(q.length)setTimeout(()=>requestIdleCallback(step,{timeout:4000}),60)};
   const warm=()=>{if(q||typeof requestIdleCallback!='function')return;try{q=SHOP7.items.slice()}catch(_){q=[]}requestIdleCallback(step,{timeout:4000})};
   const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,4500)}},1000)}
- return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,flush(){for(const k in cache)delete cache[k];if(isOpen())render()},get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;render()}}})();
+ return{open,close,get isOpen(){return isOpen()},list,select,act,render,drawPrev,flush(){for(const k in cache)delete cache[k];if(isOpen())render()},get selected(){return selId},setFilter(o){if(o.cat)cat=o.cat;if(o.q!=null)q=o.q;if(o.sort)sort=o.sort;if(o.rar)rar=o.rar;if('owned'in o)ownedOnly=o.owned?1:0;if('buy'in o)buyOnly=o.buy?1:0;render()}}})();
 
 /* ========== LATE: 80-ui.js ========== */
 // ===== V6 UI: HUD (portrait/title/wing), banner, minimap, character hub (profile, appearance, wings, nameplates, skills, settings, account) =====
@@ -8088,7 +8167,7 @@ const UI6=(()=>{
  hl.insertBefore(tt,el('pname').nextSibling);hl.appendChild(hw);
  function withCtx(ctx,fn){const o=g;g=ctx;try{fn()}finally{g=o}}
  let pkey='';
- function portrait(){const A=cel.ap,dk=document.documentElement.dataset.theme=='dark',key=JSON.stringify(A)+dk+(wear.hat||'');if(key==pkey)return;pkey=key;const x=pc.getContext('2d');x.clearRect(0,0,128,128);x.save();x.beginPath();x.arc(64,64,64,0,6.3);x.clip();const gr=x.createRadialGradient(64,44,6,64,64,72);gr.addColorStop(0,dk?'#4a3a78':'#ffffff');gr.addColorStop(.6,dk?'#2a2148':'#e6def6');gr.addColorStop(1,dk?'#181430':'#d6e2f4');x.fillStyle=gr;x.fillRect(0,0,128,128);
+ function portrait(){const A=cel.ap,dk=document.documentElement.dataset.theme=='dark',key=JSON.stringify(A)+dk+(wear.hat||'')+(typeof AVF10!='undefined'?AVF10.bgKey():'');if(key==pkey)return;pkey=key;const x=pc.getContext('2d');x.clearRect(0,0,128,128);x.save();x.beginPath();x.arc(64,64,64,0,6.3);x.clip();if(!(typeof AVF10!='undefined'&&AVF10.bg(x,dk))){const gr=x.createRadialGradient(64,44,6,64,64,72);gr.addColorStop(0,dk?'#4a3a78':'#ffffff');gr.addColorStop(.6,dk?'#2a2148':'#e6def6');gr.addColorStop(1,dk?'#181430':'#d6e2f4');x.fillStyle=gr;x.fillRect(0,0,128,128)}
   withCtx(x,()=>{x.save();const hz=wear.hat&&WEAR[wear.hat]?1:0;x.translate(64,236-hz*8);x.scale(3.4-hz*.4,3.4-hz*.4);const L=AC6.info(look,null,true);AC6.headFull(x,L,-50,0,0,wear);x.restore()});x.restore()}
  function say6(t,s,ms){const b=el('banner');b.firstChild.textContent=t;b.lastChild.textContent=s||'';b.classList.add('on');clearTimeout(say6.t);say6.t=setTimeout(()=>b.classList.remove('on'),ms||3200)}
  // ---- minimap
@@ -15419,7 +15498,7 @@ const THEME7=(()=>{
  // toasts are DOM elements now (87-uisfx, animated with the motion tokens); the legacy canvas toast keeps running but draws fully transparent
  function toastColors(){window.TK6={bg:'rgba(0,0,0,0)',bd:'rgba(0,0,0,0)',tx:'rgba(0,0,0,0)'}}
  function apply(){const o=cel.opt||{},m=o.theme||'clean',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);if(m=='aero'||m=='clean')d.setAttribute('data-skin',m);else d.removeAttribute('data-skin');d.setAttribute('data-reduce',o.reduce||m=='clean'/* the clean skin runs the interface in reduced motion */||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
-  d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
+  d.setAttribute('data-ureduce',o.reduce||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
   toastColors();try{localStorage.setItem('rbtheme',m)}catch(_){}}
  try{if(mq&&mq.addEventListener)mq.addEventListener('change',()=>{if(cel.opt.theme=='auto')apply()})}catch(_){}
  // ---- item icon plates: every icon gets a soft rounded backplate whose colour and faint motif say what kind of item it is
@@ -18739,6 +18818,162 @@ const REALM10=(()=>{
 // or hold one in the hand; drop those so nothing points at a weapon that no longer exists (the store and hotbar already skip unknown ids). =====
 (()=>{function fix(){try{for(const id of Object.keys(own))if(!WPN[id])delete own[id];if(!WPN[wp])wp='fist'}catch(_){}}
  fix();{const _lw=loadWorld;loadWorld=function(){fix();return _lw.apply(this,arguments)}}})();
+
+/* ========== LATE: 99-zzzzzzzzz-f-frames.js ========== */
+// ===== AVF10: avatar frames and portrait backgrounds. Click your portrait (top left) to choose. 14 frames, from Classic to the dark Shadow
+// Veil and the bubbly Bubblegum, and 11 backgrounds; new ones unlock as you level up (a little reward on the way). The frame is drawn once
+// to a small canvas around the portrait and only redrawn when you change it; a few frames turn slowly (a CSS transform on that canvas:
+// compositor-only, no repaint, and still when reduced motion is on). The background is painted by the portrait itself (80-ui.js asks
+// AVF10.bg). State: RB_PREFIX + 'rbframe' {f, bg, seen}. =====
+const AVF10=(()=>{
+ const TAU=Math.PI*2,K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbframe';
+ const S={f:'classic',bg:'theme',seen:{}};try{const o=JSON.parse(localStorage.getItem(K())||'null');if(o&&typeof o=='object'){if(typeof o.f=='string')S.f=o.f;if(typeof o.bg=='string')S.bg=o.bg;if(o.seen&&typeof o.seen=='object')S.seen=o.seen}}catch(_){}
+ const save=()=>{try{localStorage.setItem(K(),JSON.stringify(S))}catch(_){}};
+ // ---- frames: id, name, level to unlock, spins?; art drawn around a portrait of radius 32 in a 96x96 box (centre 48,48)
+ const FR=[['classic','Classic',1],['bubble','Bubblegum',3,1],['sakura','Sakura',5],['frost','Frost Crown',8],['neon','Neon Pulse',10,1],['ocean','Ocean Pearl',12],
+  ['inferno','Inferno',15],['kitty','Kitty',18],['galaxy','Galaxy Orbit',22,1],['crystal','Crystal Prism',26],['shadow','Shadow Veil',30,1],['dragon','Dragon Horns',35],['celestial','Celestial Halo',40,1],['royal','Royal Laurel',50]];
+ const BG=[['theme','Default',1,null],['sunrise','Sunrise',2,['#fff3d6','#ffc6a8','#f59a8c']],['mint','Mint',4,['#f0fff7','#bff0d8','#7fd4b0']],['sakura','Sakura',6,['#fff4f8','#ffd0e2','#f3a2c4']],
+  ['ocean','Ocean',9,['#e6fbff','#9fdcf2','#3f9fd0']],['candy','Candy',11,['#fff0fb','#e8d0ff','#b8e4ff']],['twilight','Twilight',14,['#ffd9b0','#c99ad8','#5a4a9a']],['ember','Ember',17,['#ffe2b0','#ff9a5a','#a83a2a']],
+  ['night','Starry night',20,['#3a4a8a','#1c2450','#0a0e24']],['aurora','Aurora',25,['#c8fff0','#5ad0c8','#2a3a7a']],['void','Void',30,['#4a2a7a','#1a0e33','#05030c']]];
+ const lv=()=>lvl|0,ok=a=>lv()>=a[2];
+ const fr=id=>FR.find(f=>f[0]==id)||FR[0],bgOf=id=>BG.find(b=>b[0]==id)||BG[0];
+ if(!ok(fr(S.f)))S.f='classic';if(!ok(bgOf(S.bg)))S.bg='theme';
+ // ---- art
+ const C=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+ function ring(x,r,w,a,b,edge){const g=x.createLinearGradient(48-r,48-r,48+r,48+r);g.addColorStop(0,a);g.addColorStop(1,b);x.lineWidth=w;x.strokeStyle=g;x.beginPath();x.arc(48,48,r,0,TAU);x.stroke();if(edge){x.lineWidth=1;x.strokeStyle=edge;x.beginPath();x.arc(48,48,r+w/2,0,TAU);x.stroke();x.beginPath();x.arc(48,48,r-w/2,0,TAU);x.stroke()}}
+ const glow=(x,cx,cy,r,c)=>{const g=x.createRadialGradient(cx,cy,0,cx,cy,r);g.addColorStop(0,c);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(cx-r,cy-r,r*2,r*2)};
+ const at=(a,r)=>[48+Math.cos(a)*r,48+Math.sin(a)*r];
+ function star(x,cx,cy,r1,r2,n,c){x.beginPath();for(let i=0;i<n*2;i++){const a=-Math.PI/2+i*Math.PI/n,r=i%2?r2:r1;x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}x.closePath();x.fillStyle=c;x.fill()}
+ function bubble(x,cx,cy,r){const g=x.createRadialGradient(cx-r*.35,cy-r*.4,r*.1,cx,cy,r);g.addColorStop(0,'rgba(255,255,255,.95)');g.addColorStop(.5,'rgba(220,240,255,.35)');g.addColorStop(1,'rgba(255,160,220,.6)');x.fillStyle=g;x.beginPath();x.arc(cx,cy,r,0,TAU);x.fill();x.lineWidth=.8;x.strokeStyle='rgba(150,120,190,.7)';x.stroke()}
+ const ART={
+  classic(x){ring(x,35,4,'#ffffff','#9aa2ae','rgba(60,66,80,.5)')},
+  bubble(x){ring(x,35,5,'#ffd0ea','#a8e8ff','rgba(200,120,180,.6)');for(let i=0;i<9;i++){const a=i/9*TAU+.3,[px,py]=at(a,38+(i%2)*3);bubble(x,px,py,2.5+(i%3)*1.4)}
+   x.save();x.translate(48,86);for(const s of[-1,1]){x.beginPath();x.moveTo(0,0);x.bezierCurveTo(s*6,-6,s*12,-2,s*10,4);x.bezierCurveTo(s*8,8,s*3,4,0,0);x.fillStyle='#7ae8ff';x.fill();x.strokeStyle='#3a8aa8';x.lineWidth=.8;x.stroke()}x.beginPath();x.arc(0,1,2.4,0,TAU);x.fillStyle='#bff6ff';x.fill();x.restore()},
+  sakura(x){ring(x,35,4,'#ffe0ec','#e88ab0','rgba(160,60,100,.5)');x.strokeStyle='#6a4030';x.lineWidth=2;x.beginPath();x.moveTo(10,70);x.quadraticCurveTo(14,52,26,44);x.stroke();
+   for(const[px,py,s]of[[12,64,1],[20,50,1.2],[28,44,.9],[80,22,1],[70,14,.8],[84,36,.9]]){x.save();x.translate(px,py);for(let i=0;i<5;i++){x.rotate(TAU/5);x.beginPath();x.ellipse(0,-3*s,1.8*s,3*s,0,0,TAU);x.fillStyle=i%2?'#ffc0d6':'#ffd8e6';x.fill()}x.beginPath();x.arc(0,0,1.2*s,0,TAU);x.fillStyle='#ffeaa0';x.fill();x.restore()}},
+  frost(x){ring(x,35,4,'#f4fbff','#8ad0f0','rgba(60,120,160,.5)');for(const[a,l]of[[-1.57,14],[-1.95,9],[-1.19,9],[-2.3,6],[-.84,6]]){const[bx,by]=at(a,36),[tx,ty]=at(a,36+l),n=[-Math.sin(a)*2.6,Math.cos(a)*2.6];
+   const g=x.createLinearGradient(bx,by,tx,ty);g.addColorStop(0,'#7ad0f0');g.addColorStop(1,'#ffffff');x.beginPath();x.moveTo(bx+n[0],by+n[1]);x.lineTo(tx,ty);x.lineTo(bx-n[0],by-n[1]);x.closePath();x.fillStyle=g;x.fill();x.strokeStyle='rgba(60,120,160,.6)';x.lineWidth=.7;x.stroke()}},
+  neon(x){glow(x,48,48,46,'rgba(40,220,255,.25)');x.lineCap='round';for(const[r,c,w,o]of[[37,'#24e0ff',3,0],[32.5,'#ff4fd8',2,1.2]]){x.strokeStyle=c;x.lineWidth=w;for(let i=0;i<6;i++){x.beginPath();x.arc(48,48,r,o+i*TAU/6,o+i*TAU/6+.8);x.stroke()}}},
+  ocean(x){ring(x,35,4,'#bff0ff','#2a8ac0','rgba(20,80,120,.5)');x.fillStyle='#4ac8ff';x.beginPath();x.moveTo(14,74);for(let px=14;px<=82;px+=4)x.lineTo(px,74+Math.sin(px*.4)*3);x.lineTo(82,86);x.lineTo(14,86);x.closePath();x.globalAlpha=.85;x.fill();x.globalAlpha=1;
+   for(let i=0;i<7;i++){const[px,py]=at(-Math.PI*.15-i*.38,37);const g=x.createRadialGradient(px-1,py-1,.3,px,py,2.6);g.addColorStop(0,'#ffffff');g.addColorStop(1,'#c8e4ee');x.fillStyle=g;x.beginPath();x.arc(px,py,2.4,0,TAU);x.fill()}},
+  inferno(x){for(let i=0;i<14;i++){const a=i/14*TAU,[bx,by]=at(a,35),[tx,ty]=at(a,44+(i%3)*3),n=[-Math.sin(a)*3,Math.cos(a)*3];const g=x.createLinearGradient(bx,by,tx,ty);g.addColorStop(0,'#ff5a1a');g.addColorStop(1,'rgba(255,220,90,0)');x.beginPath();x.moveTo(bx+n[0],by+n[1]);x.quadraticCurveTo(tx+n[0],ty+n[1],tx,ty);x.quadraticCurveTo(tx-n[0],ty-n[1],bx-n[0],by-n[1]);x.closePath();x.fillStyle=g;x.fill()}ring(x,35,4,'#ffd27a','#c8321a','rgba(90,20,10,.6)')},
+  kitty(x){ring(x,35,4,'#fff4ea','#f2b48a','rgba(140,80,50,.5)');for(const s of[-1,1]){x.beginPath();x.moveTo(48+s*12,20);x.lineTo(48+s*26,4);x.lineTo(48+s*28,26);x.closePath();x.fillStyle='#f2b48a';x.fill();x.strokeStyle='rgba(120,70,40,.7)';x.lineWidth=1;x.stroke();x.beginPath();x.moveTo(48+s*16,20);x.lineTo(48+s*24,10);x.lineTo(48+s*25,22);x.closePath();x.fillStyle='#ffc8d8';x.fill()}
+   x.strokeStyle='rgba(90,60,40,.6)';x.lineWidth=1;for(const s of[-1,1])for(const dy of[-2,2]){x.beginPath();x.moveTo(48+s*38,54+dy);x.lineTo(48+s*47,52+dy*2);x.stroke()}},
+  galaxy(x){glow(x,48,48,46,'rgba(160,110,255,.3)');ring(x,35,4,'#6a4ad8','#1a1040','rgba(200,170,255,.5)');x.strokeStyle='rgba(220,200,255,.7)';x.lineWidth=1.2;x.beginPath();x.ellipse(48,48,45,14,-.4,0,TAU);x.stroke();
+   const[px,py]=[48+Math.cos(-.4)*42,48+Math.sin(-.4)*42+4];const g=x.createRadialGradient(px-1.5,py-1.5,.5,px,py,5);g.addColorStop(0,'#ffe0b0');g.addColorStop(1,'#d2704a');x.fillStyle=g;x.beginPath();x.arc(px,py,4.4,0,TAU);x.fill();
+   for(let i=0;i<10;i++){const[sx,sy]=at(i*.63,30+(i%4)*5);star(x,sx,sy,1.8,.6,4,'#ffffff')}},
+  crystal(x){ring(x,35,4,'#e8fdff','#9a7af0','rgba(90,60,160,.5)');for(let i=0;i<4;i++){const a=i*TAU/4-Math.PI/2,[cx,cy]=at(a,37);x.save();x.translate(cx,cy);x.rotate(a+Math.PI/2);x.beginPath();x.moveTo(0,-9);x.lineTo(5,-1);x.lineTo(0,6);x.lineTo(-5,-1);x.closePath();const g=x.createLinearGradient(-5,-9,5,6);g.addColorStop(0,'#ffffff');g.addColorStop(1,i%2?'#b48cff':'#7ae8ff');x.fillStyle=g;x.fill();x.strokeStyle='rgba(60,40,110,.7)';x.lineWidth=.8;x.stroke();x.restore()}},
+  shadow(x){glow(x,48,48,47,'rgba(110,50,220,.35)');for(let i=0;i<16;i++){const a=i/16*TAU,[bx,by]=at(a,36),[tx,ty]=at(a+.06,43+(i%2)*4),n=[-Math.sin(a)*2.2,Math.cos(a)*2.2];x.beginPath();x.moveTo(bx+n[0],by+n[1]);x.lineTo(tx,ty);x.lineTo(bx-n[0],by-n[1]);x.closePath();x.fillStyle=i%2?'#1a0e2e':'#2c1a4a';x.fill()}
+   ring(x,35,5,'#3a2460','#08050f','rgba(170,120,255,.7)');for(let i=0;i<3;i++){const[px,py]=at(-1.2+i*1.1,35);glow(x,px,py,4,'rgba(200,160,255,.9)')}},
+  dragon(x){ring(x,35,5,'#a8323e','#3a0c12','rgba(242,193,78,.7)');x.strokeStyle='rgba(20,4,8,.5)';x.lineWidth=.7;for(let i=0;i<24;i++){const[px,py]=at(i/24*TAU,35);x.beginPath();x.arc(px,py,2.2,0,Math.PI);x.stroke()}
+   for(const s of[-1,1]){x.beginPath();x.moveTo(48+s*14,20);x.bezierCurveTo(48+s*22,6,48+s*36,4,48+s*42,-2);x.bezierCurveTo(48+s*34,10,48+s*26,16,48+s*22,24);x.closePath();const g=x.createLinearGradient(48+s*14,24,48+s*42,-2);g.addColorStop(0,'#c8b890');g.addColorStop(1,'#fff6dc');x.fillStyle=g;x.fill();x.strokeStyle='rgba(60,40,20,.7)';x.lineWidth=1;x.stroke()}},
+  celestial(x){glow(x,48,48,47,'rgba(255,230,150,.4)');for(let i=0;i<24;i++){const a=i/24*TAU,[bx,by]=at(a,37),[tx,ty]=at(a,i%2?43:47);x.strokeStyle='rgba(255,215,110,.85)';x.lineWidth=i%2?1:1.6;x.beginPath();x.moveTo(bx,by);x.lineTo(tx,ty);x.stroke()}
+   ring(x,35,4,'#fff6c8','#d8a23a','rgba(140,100,30,.6)');x.strokeStyle='#ffd65a';x.lineWidth=2;x.beginPath();x.ellipse(48,6,14,3.4,0,0,TAU);x.stroke();for(const[px,py]of[[18,20],[80,24],[14,72],[84,70]])star(x,px,py,3,1,4,'#fffbe0')},
+  royal(x){ring(x,35,4,'#fff0b0','#c8962a','rgba(120,80,20,.6)');for(const s of[-1,1])for(let i=0;i<7;i++){const a=Math.PI/2+s*(.35+i*.3),[px,py]=at(a,39);x.save();x.translate(px,py);x.rotate(a+s*1.3);x.beginPath();x.ellipse(0,0,2.4,5,0,0,TAU);x.fillStyle=i%2?'#e0b040':'#ffd65a';x.fill();x.restore()}
+   x.beginPath();x.moveTo(34,14);x.lineTo(38,2);x.lineTo(43,10);x.lineTo(48,0);x.lineTo(53,10);x.lineTo(58,2);x.lineTo(62,14);x.closePath();x.fillStyle='#ffd65a';x.fill();x.strokeStyle='rgba(120,80,20,.8)';x.lineWidth=1;x.stroke();for(const px of[38,48,58]){x.beginPath();x.arc(px,px==48?1:3,1.6,0,TAU);x.fillStyle='#e0284a';x.fill()}}};
+ const CA={};function art(id,s){const k=id+'|'+s;if(CA[k])return CA[k];const c=C(96*s,96*s),x=c.getContext('2d');x.scale(s,s);try{(ART[id]||ART.classic)(x)}catch(e){console.error('AVF10 art',e)}return CA[k]=c}
+ // ---- the frame on the HUD portrait
+ let cv=null,shown='';
+ function mount(){const w=document.getElementById('pwrap9')||(document.getElementById('portrait')||{}).parentNode;if(!w)return false;if(cv&&cv.isConnected&&cv.parentNode===w)return true;
+  cv=document.createElement('canvas');cv.id='pframe10';cv.setAttribute('aria-hidden','true');cv.width=cv.height=192;w.appendChild(cv);
+  w.style.cursor='pointer';w.title='Avatar: frames and backgrounds';w.addEventListener('click',e=>{e.stopPropagation();open()});shown='';return true}
+ function paint(){if(!mount())return;if(shown===S.f)return;shown=S.f;const x=cv.getContext('2d');x.clearRect(0,0,192,192);x.drawImage(art(S.f,2),0,0);cv.classList.toggle('spin',!!fr(S.f)[3]);
+  try{const r=document.querySelector('#pwrap9 .ring');if(r)r.style.opacity=S.f=='classic'?'':'0'}catch(_){}}
+ // ---- portrait background (80-ui.js calls this; false = keep the theme's own gradient)
+ function bg(x,dk){const b=bgOf(S.bg);if(!b[3])return false;const g=x.createRadialGradient(64,44,6,64,64,72);g.addColorStop(0,b[3][0]);g.addColorStop(.6,b[3][1]);g.addColorStop(1,b[3][2]);x.fillStyle=g;x.fillRect(0,0,128,128);
+  if(S.bg=='night'||S.bg=='void'||S.bg=='aurora'){x.fillStyle='rgba(255,255,255,.8)';for(let i=0;i<14;i++){const sx=(i*37)%120+4,sy=(i*53)%70+4;x.fillRect(sx,sy,1.4,1.4)}}return true}
+ const bgKey=()=>S.bg;
+ // ---- the picker (clean, light dialog; opened by clicking the portrait)
+ let el=null;
+ function open(){if(!el){el=document.createElement('div');el.id='avf10';el.innerHTML='<div class="box" role="dialog" aria-modal="true" aria-label="Avatar"><header><h3>Avatar</h3><button class="x" aria-label="Close">✕</button></header><p class="sub">Frames and backgrounds for your portrait. New ones unlock as you level up.</p><h4>Frames</h4><div class="g fr"></div><h4>Backgrounds</h4><div class="g bg"></div></div>';document.body.appendChild(el);
+   el.addEventListener('mousedown',e=>{if(e.target===el)close()});el.querySelector('.x').onclick=close;addEventListener('keydown',e=>{if(el.classList.contains('on')&&e.key=='Escape'){e.stopPropagation();close()}},true)}
+  render();el.style.display='flex';requestAnimationFrame(()=>el.classList.add('on'));try{UIS.play('open')}catch(_){}}
+ function close(){if(!el)return;el.classList.remove('on');setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},180);try{UIS.play('close')}catch(_){}}
+ function render(){const f=el.querySelector('.g.fr'),b=el.querySelector('.g.bg');
+  f.innerHTML=FR.map(a=>'<button data-f="'+a[0]+'" class="'+(a[0]==S.f?'on':'')+(ok(a)?'':' lk')+'"'+(ok(a)?'':' disabled')+'><canvas width="96" height="96"></canvas><b>'+a[1]+'</b><small>'+(ok(a)?(S.seen['f_'+a[0]]||a[2]<=1?'':'NEW'):'Level '+a[2])+'</small></button>').join('');
+  f.querySelectorAll('button').forEach(btn=>{const c=btn.querySelector('canvas').getContext('2d');c.drawImage(art(btn.dataset.f,1),0,0);btn.onclick=()=>{S.f=btn.dataset.f;S.seen['f_'+S.f]=1;save();paint();render();try{UIS.play('select')}catch(_){}}});
+  b.innerHTML=BG.map(a=>'<button data-b="'+a[0]+'" class="'+(a[0]==S.bg?'on':'')+(ok(a)?'':' lk')+'"'+(ok(a)?'':' disabled')+' style="--bgc:'+(a[3]?'radial-gradient(circle at 50% 35%,'+a[3][0]+','+a[3][1]+' 60%,'+a[3][2]+')':'linear-gradient(180deg,#ffffff,#dde1e6)')+'"><b>'+a[1]+'</b><small>'+(ok(a)?'':'Level '+a[2])+'</small></button>').join('');
+  b.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{S.bg=btn.dataset.b;S.seen['b_'+S.bg]=1;save();render();try{UIS.play('select')}catch(_){}});}
+ // ---- unlock notices: a new frame or background on level up (part of "every step is rewarded")
+ let lastLv=null;function tick(){paint();const L=lv();if(lastLv==null){lastLv=L;return}if(L>lastLv){for(const a of FR)if(a[2]>lastLv&&a[2]<=L)notify('New avatar frame: '+a[1]);for(const a of BG)if(a[2]>lastLv&&a[2]<=L)notify('New portrait background: '+a[1]);lastLv=L}}
+ function notify(t){try{say(t+' (click your portrait)')}catch(_){}}
+ setInterval(()=>{try{if(entered)tick()}catch(_){}},700);
+ return{FR,BG,ART,state:S,bg,bgKey,open,close,paint,get frame(){return S.f},set frame(v){if(fr(v)[0]==v&&ok(fr(v))){S.f=v;save();paint()}},get bgId(){return S.bg}}})();
+
+/* ========== LATE: 99-zzzzzzzzz-g-milestones.js ========== */
+// ===== MILE10: everything you do adds up to a reward. Each activity has a ladder of milestones (blocks broken and placed, monsters
+// defeated, seeds planted, harvests, fish, worlds visited, hidden letters found, words solved, totems lit, distance walked); every rung
+// pays gems and XP through the usual reward card (REW8), sized by your income at your level (ECON14: about 0.6 to 6 minutes of play) so
+// rewards stay fair at every level. The common activities start at 10, the rare ones at 1. Counts come from the game's own stats (stat())
+// and saves; nothing is paid twice, and on first run the ladders start from where you already are (no flood of old rewards).
+// State: RB_PREFIX + 'rbmile' {i:{kind:rungs reached}, walk:tiles}. =====
+const MILE10=(()=>{
+ const K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbmile';
+ const OFTEN=[10,25,50,100,200,350,500,750,1000,1500,2000,3000,4000,5000,7500,10000],RARE=[1,3,5,10,15,25,40,60,100,150,250],WALK=[100,300,600,1000,2000,3500,5000,7500,10000,15000,25000,40000];
+ const KINDS={break:['Blocks broken',OFTEN],place:['Blocks placed',OFTEN],kill:['Monsters defeated',OFTEN],plant:['Seeds planted',OFTEN],harvest:['Harvests',OFTEN],fish:['Fish caught',RARE],
+  worlds:['Worlds visited',RARE],letters:['Hidden letters found',RARE],words:['Words solved',RARE],totems:['Totems lit',RARE],walk:['Tiles walked',WALK]};
+ let S={i:{},walk:0,init:0};try{const o=JSON.parse(localStorage.getItem(K())||'null');if(o&&typeof o=='object'){if(o.i&&typeof o.i=='object')S.i=o.i;S.walk=+o.walk||0;S.init=o.init?1:0}}catch(_){}
+ const save=()=>{try{localStorage.setItem(K(),JSON.stringify(S))}catch(_){}};
+ const rungAt=(L,n)=>{let r=0;while(r<L.length&&n>=L[r])r++;if(r==L.length){let t=L[L.length-1];while(n>=t*1.5){t=Math.round(t*1.5);r++}}return r};
+ const target=(L,r)=>{if(r<L.length)return L[r];let t=L[L.length-1];for(let i=L.length;i<=r;i++)t=Math.round(t*1.5);return t};
+ // current counts
+ function count(k){try{
+  if(k=='walk')return Math.floor(S.walk);
+  if(k=='letters'){let n=0;for(const w in WORD9.state.w)n+=(WORD9.state.w[w].got||[]).length;return n}
+  if(k=='words'){let n=0;for(const w in WORD9.state.w)if(WORD9.state.w[w].ok)n++;return n}
+  if(k=='totems'){let n=0;const st=BIOME17.state.w||{};for(const w in st)n+=Object.keys(st[w].lit||{}).length;return n}
+  return (typeof stats!='undefined'&&stats[k])|0}catch(_){return 0}}
+ // the reward for a rung: minutes of income at your level (more for later rungs and rare activities), and a slice of a level in XP
+ function pay(k,r){const rare=KINDS[k][1]===RARE,L=Math.max(1,lvl|0),inc=(()=>{try{return ECON14.income(L)}catch(_){return 30+4.5*L}})();
+  const mins=Math.min(6,(rare?1.4:.6)+r*(rare?.5:.3)),g=Math.max(5,Math.round(inc*mins/5)*5),x=Math.max(5,Math.round(xpNeed(L)*Math.min(.08,.015+r*.005)));
+  try{gain(g,P.x,P.y-30)}catch(_){}try{xpGain('misc',x)}catch(_){}
+  const nm=KINDS[k][0],reached=target(KINDS[k][1],r),next=target(KINDS[k][1],r+1);
+  try{REW8.card({kind:'ach',kick:'Milestone',title:nm+' · '+reached.toLocaleString(),sub:'Next: '+next.toLocaleString(),gems:g,xp:x,tier:Math.min(5,Math.floor(r/3))});REW8.fly(P.x,P.y-20,g)}catch(_){try{say(nm+' '+reached+'! +'+g+' gems')}catch(_){}}}
+ function check(k){const L=KINDS[k][1],n=count(k),r=rungAt(L,n),have=S.i[k]|0;if(r>have){S.i[k]=r;save();for(let q=have;q<r&&q<have+2;q++)pay(k,q)}}
+ // first run: start every ladder where the player already is
+ function init(){if(S.init)return;for(const k in KINDS)S.i[k]=rungAt(KINDS[k][1],count(k));S.init=1;save()}
+ // stat() is the game's own counter for most activities
+ {const _st=stat;stat=function(k,n){const r=_st.apply(this,arguments);try{if(KINDS[k]&&entered)check(k)}catch(_){}return r}}
+ // walking (on the ground or swimming; not flying or falling), letters, words and totems are checked once a second
+ let lx=null,acc=0;
+ setInterval(()=>{try{if(!entered)return;init();if(lx!=null&&(P.g||P.sw)){const d=Math.abs(P.x-lx)/T;if(d<8)acc+=d}lx=P.x;if(acc>=1){S.walk+=acc;acc=0;check('walk');if(Math.random()<.2)save()}
+  check('letters');check('words');check('totems')}catch(_){}},1000);
+ addEventListener('beforeunload',save);
+ return{KINDS,count,check,get state(){return S},rungAt,target}})();
+
+/* ========== LATE: 99-zzzzzzzzz-h-guide.js ========== */
+// ===== GUIDE10: the starting guide. A short card deck that explains what Rootbound is and what to do: moving and tools, the hidden word
+// of every world and the realms it leads to, classes and getting stronger, and how everything you do is rewarded. It opens once for a new
+// player after the story intro (when they enter their first world) and any time with F1 or from the hub button. Pages slide with a light
+// transform/opacity transition (none with reduced motion). State: RB_PREFIX + 'rbguide' (seen). Automated test browsers skip the auto-open. =====
+const GUIDE10=(()=>{
+ const K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbguide';
+ const seen=()=>{try{return !!localStorage.getItem(K())}catch(_){return true}},mark=()=>{try{localStorage.setItem(K(),'1')}catch(_){}};
+ const kb=k=>'<kbd>'+k+'</kbd>';
+ const PAGES=[
+  ['🌱','Welcome to Rootbound','A cozy anime block adventure. Explore hand-made worlds, mine and build, fight monsters, and rise from a little sprout to a <b>Celestial Ascension</b> through ever stranger realms.'],
+  ['🎮','Moving and doing',kb('A')+' '+kb('D')+' move · '+kb('W')+' or '+kb('Space')+' jump · aim with the mouse and <b>left-click</b> to attack or use.<br>Your hotbar ('+kb('1')+'–'+kb('7')+') holds weapons and tools: only <b>tools break blocks</b>. '+kb('E')+' talks, opens and uses things · '+kb('I')+' opens your bag.'],
+  ['🔤','Every world hides a word','Shiny <b>letter blocks</b> are hidden on the surface, in caves and deep below. Each one is guarded by a <b>Letter Warden</b>. Find them all, then solve the <b>Word Gate</b> to open the next realm:<br><b>World → Inferno → Galaxy → Abyssal Sea → Crystal Realm</b>, each with a longer word, new biomes and tougher monsters.'],
+  ['🗡️','Grow stronger','Visit a <b>class master</b> in the Plaza to pick a class (Brawler, Knight, Mage, Archer and more), then press '+kb('K')+' to see it. Level up, buy gear and weapons in the <b>Store</b>, forge your class\'s <b>mythic weapon</b>, and light the <b>totems</b> in each biome.'],
+  ['🎁','Everything is rewarded','Breaking, building, fighting, farming, fishing, exploring: it all adds up to <b>milestones</b> that pay gems and XP. Quests and achievements are under '+kb('J')+', and new <b>avatar frames</b> unlock as you level (click your portrait).'],
+  ['✨','You\'re ready','Start with the <b>Getting started</b> list on the right: it walks you through your first steps. Press '+kb('F1')+' any time to read this guide again. Have fun!']];
+ let el=null,pg=0;
+ function build(){el=document.createElement('div');el.id='guide10';el.innerHTML='<div class="box" role="dialog" aria-modal="true" aria-labelledby="g10t"><div class="pg"></div><div class="dots"></div><div class="acts"><button class="skip">Skip</button><span></span><button class="back">Back</button><button class="next pri">Next</button></div></div>';
+  document.body.appendChild(el);el.querySelector('.skip').onclick=()=>close();el.querySelector('.back').onclick=()=>go(pg-1);el.querySelector('.next').onclick=()=>pg>=PAGES.length-1?close():go(pg+1);
+  el.addEventListener('mousedown',e=>{if(e.target===el)close()});
+  addEventListener('keydown',e=>{if(!el.classList.contains('on'))return;if(e.key=='Escape'){e.stopPropagation();e.preventDefault();close()}else if(e.key=='ArrowRight'||e.key=='Enter'){e.stopPropagation();e.preventDefault();pg>=PAGES.length-1?close():go(pg+1)}else if(e.key=='ArrowLeft'){e.stopPropagation();e.preventDefault();go(pg-1)}},true)}
+ function go(n,first){n=Math.max(0,Math.min(PAGES.length-1,n));const dir=n>=pg?1:-1;pg=n;const p=PAGES[n],box=el.querySelector('.pg');
+  box.innerHTML='<div class="ic" aria-hidden="true">'+p[0]+'</div><h3 id="g10t">'+p[1]+'</h3><p>'+p[2]+'</p>';box.style.setProperty('--d',dir);if(!first){box.classList.remove('in');void box.offsetWidth}box.classList.add('in');
+  el.querySelector('.dots').innerHTML=PAGES.map((_,i)=>'<i class="'+(i==n?'on':'')+'"></i>').join('');el.querySelector('.back').disabled=n==0;el.querySelector('.next').textContent=n>=PAGES.length-1?'Start playing':'Next';
+  try{UIS.play(first?'open':'tab')}catch(_){}}
+ function open(){if(!el)build();el.style.display='flex';pg=0;go(0,true);requestAnimationFrame(()=>el.classList.add('on'));try{for(const k in keys)keys[k]=0}catch(_){}}
+ function close(){if(!el)return;mark();el.classList.remove('on');setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},180);try{UIS.play('close')}catch(_){}}
+ const isOpen=()=>!!el&&el.classList.contains('on');
+ addEventListener('keydown',e=>{if(e.key=='F1'&&!e.repeat){e.preventDefault();isOpen()?close():open()}});
+ // first time: a moment after the player enters their first world (not under automated test browsers unless asked)
+ const auto=!(navigator.webdriver&&!localStorage.getItem('rb_force_guide'));
+ if(auto&&!seen()){const iv=setInterval(()=>{try{if(typeof entered!='undefined'&&entered&&!(typeof CINE7!='undefined'&&CINE7.playing)&&menuEl.style.display=='none'&&!window.RB_COVER){clearInterval(iv);setTimeout(()=>{if(!seen())open()},1200)}}catch(_){}},800)}
+ return{open,close,get isOpen(){return isOpen()},PAGES,get page(){return pg}}})();
 
 
 </script></body></html>

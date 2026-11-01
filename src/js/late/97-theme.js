@@ -8,7 +8,7 @@ const THEME7=(()=>{
  // toasts are DOM elements now (87-uisfx, animated with the motion tokens); the legacy canvas toast keeps running but draws fully transparent
  function toastColors(){window.TK6={bg:'rgba(0,0,0,0)',bd:'rgba(0,0,0,0)',tx:'rgba(0,0,0,0)'}}
  function apply(){const o=cel.opt||{},m=o.theme||'clean',t=eff(m),d=document.documentElement;d.setAttribute('data-theme',t);if(m=='aero'||m=='clean')d.setAttribute('data-skin',m);else d.removeAttribute('data-skin');d.setAttribute('data-reduce',o.reduce||m=='clean'/* the clean skin runs the interface in reduced motion */||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');
-  d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
+  d.setAttribute('data-ureduce',o.reduce||(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(_){return false}})()?'true':'false');d.setAttribute('data-contrast',o.contrast?'high':'normal');d.setAttribute('data-hidequest',o.hideQuest?'true':'false');d.setAttribute('data-hidemini',o.hideMini?'true':'false');d.style.setProperty('--hud-op',String(o.hudOp||1));
   toastColors();try{localStorage.setItem('rbtheme',m)}catch(_){}}
  try{if(mq&&mq.addEventListener)mq.addEventListener('change',()=>{if(cel.opt.theme=='auto')apply()})}catch(_){}
  // ---- item icon plates: every icon gets a soft rounded backplate whose colour and faint motif say what kind of item it is

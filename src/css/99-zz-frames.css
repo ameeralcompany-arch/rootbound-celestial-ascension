@@ -1,0 +1,32 @@
+/* ===== AVF10: the avatar frame around the HUD portrait, and the avatar picker ===== */
+#pwrap9{position:relative}
+#pframe10{position:absolute;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;pointer-events:none;z-index:2}
+#pframe10.spin{animation:avf10spin 40s linear infinite}
+@keyframes avf10spin{to{transform:rotate(360deg)}}
+html[data-ureduce=true] #pframe10.spin{animation:none!important}
+html[data-skin=clean]:not([data-ureduce=true]) #pframe10.spin{animation:avf10spin 40s linear infinite!important;animation-iteration-count:infinite!important}
+#avf10{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(40,46,58,.32);opacity:0;transition:opacity .16s ease}
+#avf10.on{opacity:1}
+#avf10 .box{width:min(860px,94vw);max-height:86vh;overflow:auto;padding:18px 22px;border-radius:16px;background:var(--surface,#fff);color:var(--ink,#1c2230);border:1px solid var(--line,#cfd4dc);box-shadow:0 8px 30px rgba(20,25,35,.22);transform:translateY(8px) scale(.98);transition:transform .18s ease}
+#avf10.on .box{transform:none}
+#avf10 header{display:flex;align-items:center;justify-content:space-between}#avf10 h3{margin:0;font:600 26px var(--font-display,serif);font-style:italic}
+#avf10 .sub{margin:4px 0 10px;color:var(--muted,#6a7383);font-size:13px}
+#avf10 h4{margin:14px 0 8px;font:700 11px var(--font-ui,sans-serif);letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#6a7383)}
+#avf10 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+#avf10 .g button{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:12px;border:1px solid var(--line,#cfd4dc);background:var(--surface-2,#f4f5f7);color:var(--ink,#1c2230);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+#avf10 .g button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 12px rgba(20,25,35,.14)}
+#avf10 .g button.on{outline:2px solid #4a5262;outline-offset:1px}
+#avf10 .g button.lk{opacity:.5;cursor:default}
+#avf10 .g.fr canvas{width:72px;height:72px}
+#avf10 .g.bg button{min-height:74px;justify-content:flex-end}
+#avf10 .g b{font:700 12px var(--font-ui,sans-serif)}#avf10 .g small{font:600 10px var(--font-ui,sans-serif);color:var(--muted,#6a7383);min-height:12px}
+#avf10 .g.bg b,#avf10 .g.bg small{background:rgba(255,255,255,.75);padding:1px 6px;border-radius:6px;color:#1c2230}
+html[data-ureduce=true] #avf10,html[data-ureduce=true] #avf10 .box,html[data-ureduce=true] #avf10 .g button{transition:none!important}
+html[data-skin=clean]:not([data-ureduce=true]) #avf10{transition:opacity .16s ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) #avf10 .box{transition:transform .18s ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) #avf10 .g button{transition:transform .12s ease,box-shadow .12s ease!important}
+#avf10 .g.bg button{background:var(--bgc)!important}
+#avf10 .g small:empty{display:none}
+html[data-skin][data-skin] #avf10 .g button.on{outline:2px solid #4a5262;outline-offset:1px;color:var(--ink,#1c2230)!important}
+html[data-skin][data-skin] #avf10 .g.fr button.on{background:var(--surface-2,#f4f5f7)!important}
+html[data-skin][data-skin] #avf10 .g.bg button{background:var(--bgc)!important}

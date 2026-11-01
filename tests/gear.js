@@ -54,7 +54,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
  // ---- store UI shows the mythic tiles
  await E(()=>{STORE7.open();STORE7.setFilter({cat:'gear',sort:'pd',q:'',rar:'all',owned:false})});await p.waitForTimeout(500);
  r=await E(()=>{const c=[...document.querySelectorAll('#store7 .card')];const f=c[0];return{first:f&&f.dataset.id,myth:c.filter(x=>x.dataset.rar=='mythic').length,bg:f&&getComputedStyle(f).backgroundImage.includes('gradient'),pulse:f&&getComputedStyle(f,'::before').animationName}});
- ok('store: the mythic Anonymous tiles lead the gear shelf with the obsidian treatment',r.first=='wear_anonsuit'&&r.myth>=2&&r.bg&&r.pulse=='g8pulse',r);await E(()=>STORE7.close());
+ r.clean=await E(()=>document.documentElement.dataset.skin=='clean');ok('store: the mythic Anonymous tiles lead the gear shelf with the obsidian treatment (the Clean skin keeps cards plain: no pulse)',r.first=='wear_anonsuit'&&r.myth>=2&&r.bg&&(r.clean?r.pulse=='none':r.pulse=='g8pulse'),r);await E(()=>STORE7.close());
  // ---- body type
  r=await E(()=>{const o={};o.opts=AP.hair.length==10&&AP.gd.length==3;delete cel.ap.gd;cel.ap.hair=0;
   const ap0=sanAp(cel.ap),cl=__portrait(null,ap0),sp0=__char({});o.san=ap0.gd===0;

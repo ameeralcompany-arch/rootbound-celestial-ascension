@@ -64,3 +64,20 @@ html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[dat
 html[data-skin=clean][data-skin=clean] #store7 .card[data-rar]>:is(b,.pr),html[data-skin=clean][data-skin=clean] #store7 .card[data-rar] .pr>span{color:var(--ink)!important}
 html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7):is([data-rar=mythic],[data-rar=exclusive]){border-color:#7a6aa8!important}
 html[data-skin=clean][data-skin=clean] :is(#store7 .card,#inv7 .it7,.gcard7)[data-rar=legendary]{border-color:#b8962a!important}
+/* store: a price you can't afford reads red, one you can afford reads green; locked items are dimmed */
+html[data-skin=clean][data-skin=clean] #store7 .card.cant .pr>span{color:#b8323e!important}
+html[data-skin=clean][data-skin=clean] #store7 .card.ok .pr>span{color:#2f8a4a!important}
+html[data-skin=clean] #store7 .card.lock{opacity:.6}
+html[data-skin=clean] #store7 .grid h4{color:var(--ink-2)!important}
+/* ===== light motion for the clean skin: short opacity / transform transitions only (the compositor does them without repainting, so
+   they cost nothing on the game's frame), on menus opening, toasts, buttons, cards, tabs and the hotbar. The rest of the interface stays in
+   reduced motion, and the player's own Reduce motion setting (data-ureduce) turns these off too. ===== */
+html[data-skin=clean]:not([data-ureduce=true]) :is(#store7,#store7 .shell,#inv7,#inv7 .sheet,#inv7 .panel,#hub,#hubc,#cls9,#dlg7,#dlg7 .box,#dlg,#tools7,#tools7 .sheet,#book7,#chestui,#wg9,#wg9 .box,#banner,#toast7 .t7,.rw8c){
+ transition-property:opacity,transform!important;transition-duration:.2s!important;transition-timing-function:cubic-bezier(.2,.8,.3,1)!important}
+html[data-skin=clean]:not([data-ureduce=true]) :is(button,.btn,#hudR .pn){transition-property:transform,background-color,box-shadow!important;transition-duration:.12s!important;transition-timing-function:ease!important}
+html[data-skin=clean]:not([data-ureduce=true]) :is(#inv7 .it7,#store7 .card,.gcard7,#bar .s6,#avf10 .g button){transition-property:transform,box-shadow!important;transition-duration:.14s!important;transition-timing-function:ease!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(#hudR .pn,#store7 nav button,#inv7 nav button,#hubnav button):hover{transform:translateY(-1px)!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(#inv7 .it7,#store7 .card,.gcard7):hover{transform:translateY(-2px)!important;box-shadow:var(--sh-3)!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(button,.btn):active{transform:scale(.97)!important}
+html[data-skin=clean][data-skin=clean]:not([data-ureduce=true]) :is(#bar .s6.on,#bar .s6.sel){transform:translateY(-2px)!important}
+html[data-skin=clean]:not([data-ureduce=true]) .nind7{transition-property:transform,width,height,opacity!important;transition-duration:.18s!important}

@@ -7,7 +7,7 @@ const UI6=(()=>{
  hl.insertBefore(tt,el('pname').nextSibling);hl.appendChild(hw);
  function withCtx(ctx,fn){const o=g;g=ctx;try{fn()}finally{g=o}}
  let pkey='';
- function portrait(){const A=cel.ap,dk=document.documentElement.dataset.theme=='dark',key=JSON.stringify(A)+dk+(wear.hat||'');if(key==pkey)return;pkey=key;const x=pc.getContext('2d');x.clearRect(0,0,128,128);x.save();x.beginPath();x.arc(64,64,64,0,6.3);x.clip();const gr=x.createRadialGradient(64,44,6,64,64,72);gr.addColorStop(0,dk?'#4a3a78':'#ffffff');gr.addColorStop(.6,dk?'#2a2148':'#e6def6');gr.addColorStop(1,dk?'#181430':'#d6e2f4');x.fillStyle=gr;x.fillRect(0,0,128,128);
+ function portrait(){const A=cel.ap,dk=document.documentElement.dataset.theme=='dark',key=JSON.stringify(A)+dk+(wear.hat||'')+(typeof AVF10!='undefined'?AVF10.bgKey():'');if(key==pkey)return;pkey=key;const x=pc.getContext('2d');x.clearRect(0,0,128,128);x.save();x.beginPath();x.arc(64,64,64,0,6.3);x.clip();if(!(typeof AVF10!='undefined'&&AVF10.bg(x,dk))){const gr=x.createRadialGradient(64,44,6,64,64,72);gr.addColorStop(0,dk?'#4a3a78':'#ffffff');gr.addColorStop(.6,dk?'#2a2148':'#e6def6');gr.addColorStop(1,dk?'#181430':'#d6e2f4');x.fillStyle=gr;x.fillRect(0,0,128,128)}
   withCtx(x,()=>{x.save();const hz=wear.hat&&WEAR[wear.hat]?1:0;x.translate(64,236-hz*8);x.scale(3.4-hz*.4,3.4-hz*.4);const L=AC6.info(look,null,true);AC6.headFull(x,L,-50,0,0,wear);x.restore()});x.restore()}
  function say6(t,s,ms){const b=el('banner');b.firstChild.textContent=t;b.lastChild.textContent=s||'';b.classList.add('on');clearTimeout(say6.t);say6.t=setTimeout(()=>b.classList.remove('on'),ms||3200)}
  // ---- minimap
