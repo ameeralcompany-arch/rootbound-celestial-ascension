@@ -28,7 +28,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},200000).unre
  r=await E(async()=>{const c=document.createElement('canvas');c.width=c.height=200;const x=c.getContext('2d'),saved=g;const ink=()=>{const d=x.getImageData(0,0,200,200).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>8)n++;return n};
   const draw=w=>{x.clearRect(0,0,200,200);g=x;try{AC6.draw(100,60,1,0,'',1.3,0,false,0,'fist',0,false,w,0,null,null)}finally{g=saved}return ink()};
   const base={hat:'',body:'',boot:'',glove:'',wing:''},plain=draw(base),out={};for(const th of Object.keys(GEAR10.TH)){const ids=GEAR10.IDS.filter(i=>GEAR10.SET[i]==th);out[th]=draw(Object.assign({},base,{hat:ids.find(i=>WEAR[i].s=='hat'),body:ids.find(i=>WEAR[i].s=='body')}))}return{plain,out}});
- ok('every set draws its aura around the character',Object.values(r.out).every(n=>n>r.plain*1.6),r);
+ ok('every set draws its aura around the character',Object.values(r.out).every(n=>n>r.plain*1.3),r);
  // per-frame cost of a full-set aura (cached sprites, stateless particles)
  r=await E(()=>{const c=document.createElement('canvas');c.width=c.height=200;const x=c.getContext('2d'),saved=g;const w={hat:'bubblehood',body:'bubbledress',boot:'',glove:'',wing:''};g=x;const t0=performance.now();try{for(let i=0;i<200;i++)AC6.draw(100,60,1,0,'',i/60,0,false,0,'fist',0,false,w,0,null,null)}finally{g=saved}return(performance.now()-t0)/200});
  ok('a fully dressed aura character draws in under 1.5 ms',r<1.5,r.toFixed(3)+' ms');

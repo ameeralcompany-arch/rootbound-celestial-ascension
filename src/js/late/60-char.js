@@ -10,48 +10,94 @@ const AC6=(()=>{
  // hair table: back = shape behind head; top = spike count/height; bang = fringe drop; side = part offset
  const HS=[{back:'short',top:5,th:10,bang:5,sw:1},{back:'tail',top:3,th:6,bang:5,sw:1},{back:'short',top:0,th:0,bang:7,sw:-1},{back:'shoulder',top:6,th:13,bang:6,sw:1},{back:'none',top:3,th:5,bang:3,sw:1},{back:'long',top:4,th:8,bang:6,sw:1},{back:'none',top:0,th:2,bang:3,sw:1},{back:'shoulder',top:2,th:4,bang:8,sw:-1},{back:'straight',top:0,th:0,bang:6,sw:1},{back:'twin',top:0,th:2,bang:6,sw:-1}]; // 8 long straight, 9 twin tails (v8)
  const HSN=HS.map(h=>Object.assign({},h,{top:0})); // same styles without the top spikes (worn under hoods/caps)
- function hairBack(g,h,hy,hair,hs,t){const c=hair,sw=hs;
-  if(h.back=='none')return;if(h.back=='twin'){for(const s of[-1,1])celf(g,()=>{const x0=s<0?-8.6:7.6,sx=s<0?-1:1,w=Math.sin(t*2.4+s)*1.2;g.beginPath();g.moveTo(x0-sx*1.5,hy-9);g.bezierCurveTo(x0+sx*6,hy-11,x0+sx*7.5-sw*.4,hy+6,x0+sx*4.5-sw*.7+w,hy+26);g.bezierCurveTo(x0+sx*2-sw*.4,hy+16,x0+sx*1.4,hy+4,x0-sx*1.2,hy-3);g.closePath()},c,1.1);return}celf(g,()=>{g.beginPath();
-   if(h.back=='tail'){g.moveTo(-5,hy-6);g.bezierCurveTo(-14-sw*.5,hy-6,-22-sw,hy+6,-17-sw*1.6,hy+22);g.bezierCurveTo(-13-sw,hy+12,-10,hy+8,-6,hy+6)}
-   else if(h.back=='long'){g.moveTo(-9,hy-4);g.bezierCurveTo(-16-sw*.3,hy+6,-14-sw*.6,hy+20,-11-sw,hy+30);g.lineTo(5,hy+28);g.bezierCurveTo(8,hy+16,9,hy+4,8,hy-4)}
-   else if(h.back=='straight'){g.moveTo(-9,hy-4);g.bezierCurveTo(-13.5,hy+8,-12.5,hy+24,-10.5-sw*.7,hy+38);g.lineTo(5,hy+36);g.bezierCurveTo(8,hy+20,9.4,hy+6,8,hy-4)}
-   else if(h.back=='shoulder'){g.moveTo(-9,hy-4);g.bezierCurveTo(-14,hy+6,-13-sw*.3,hy+14,-11-sw*.5,hy+17);g.lineTo(6,hy+15);g.bezierCurveTo(9,hy+8,9,hy+2,8,hy-4)}
-   else{g.moveTo(-8,hy-4);g.quadraticCurveTo(-11,hy+6,-6,hy+10);g.lineTo(6,hy+9);g.quadraticCurveTo(9,hy+4,8,hy-4)}g.closePath()},c,1.1)}
- function hairFront(g,h,hy,hair,hs,t,air){const dn=h.bang,sw=h.sw;
-  // skull cap
-  celf(g,()=>{g.beginPath();g.moveTo(-10.6,hy+1);g.bezierCurveTo(-12,hy-10,-6,hy-15,1,hy-15);g.bezierCurveTo(8,hy-15,12,hy-9,10.8,hy+1);g.lineTo(9,hy-3.5);
-   // fringe: jagged locks along the brow
-   const n=5;for(let i=n;i>=0;i--){const u=i/n,X=-9+u*18,tipY=hy-3+dn*(.55+.45*Math.sin(i*1.9+1)),mx=X+sw*2.2+hs*.05;g.lineTo(mx,tipY+(i%2?1.5:0));g.lineTo(X-1.7,hy-6.5)}
-   g.closePath()},hair,1.1);
-  // spikes on top
-  if(h.top){celf(g,()=>{g.beginPath();g.moveTo(-9,hy-8);const n=h.top;for(let i=0;i<n;i++){const u=(i+.5)/n,X=-9+u*18,Hh=h.th*(.7+.5*Math.sin(i*2.3+.7)+(air?.15:0));g.lineTo(X-2.2,hy-11);g.lineTo(X+sw*3.2+hs*.25,hy-12-Hh);g.lineTo(X+2.2,hy-11)}g.lineTo(9,hy-8);g.closePath()},hair,1)}
-  // sheen
-  g.save();g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1.3;g.beginPath();g.moveTo(-5,hy-11);g.quadraticCurveTo(0,hy-14,5,hy-11);g.stroke();g.restore()}
- function eye(g,x,y,sx,es,col,blink,far){const w=(es==3?3.1:2.7)*sx,ht=es==3?4.6:es==1?3.2:3.8;
-  if(blink){g.strokeStyle=OL;g.lineWidth=1.5;g.beginPath();g.moveTo(x-w,y+.5);g.quadraticCurveTo(x,y+2.2,x+w,y);g.stroke();return}
-  g.save();g.beginPath();g.moveTo(x-w,y-ht*.4);g.quadraticCurveTo(x,y-ht*1.05,x+w,y-ht*(es==2?.1:.4));g.quadraticCurveTo(x+w*.9,y+ht*.9,x,y+ht*.95);g.quadraticCurveTo(x-w*.9,y+ht*.9,x-w,y-ht*.4);g.closePath();g.fillStyle='#f6f4ff';g.fill();g.clip();
-  const gr=g.createLinearGradient(0,y-ht,0,y+ht);gr.addColorStop(0,shade(col,-.55));gr.addColorStop(.6,col);gr.addColorStop(1,shade(col,.55));g.fillStyle=gr;g.beginPath();g.ellipse(x+.3*sx,y+.2,w*.78,ht*.92,0,0,6.3);g.fill();g.fillStyle='#0a0612';g.beginPath();g.ellipse(x+.3*sx,y+.4,w*.34,ht*.42,0,0,6.3);g.fill();
-  if(es==1){g.fillStyle='rgba(20,12,28,.35)';g.fillRect(x-w,y-ht*1.2,w*2,ht*.75)}
-  g.fillStyle='#fff';g.beginPath();g.arc(x-w*.1*sx,y-ht*.3,w*.3,0,6.3);g.fill();g.globalAlpha=.8;g.beginPath();g.arc(x+w*.4*sx,y+ht*.45,w*.17,0,6.3);g.fill();g.restore();
-  g.strokeStyle=OL;g.lineWidth=1.7;g.lineCap='round';g.beginPath();g.moveTo(x-w,y-ht*.4);g.quadraticCurveTo(x,y-ht*1.1,x+w,y-ht*(es==2?.1:.4));g.stroke();g.beginPath();g.moveTo(x+w,y-ht*(es==2?.1:.4));g.lineTo(x+w+1.6*sx,y-ht*(es==2?.1:.4)-.9);g.stroke()}
+ // ---- v10 anime head: hair built from tapered locks (gradient, strand lines, angel-ring shine, pointed tips that sway), a soft 3/4 face with
+ // warm line art and soft skin shading, big layered anime eyes (iris gradient, catch-lights, lashes). Same signatures as before.
+ const hgr=(g,c,y0,y1)=>{const gr=g.createLinearGradient(0,y0,0,y1);gr.addColorStop(0,shade(c,.22));gr.addColorStop(.45,c);gr.addColorStop(1,shade(c,-.38));return gr};
+ const hline=c=>shade(c,-.62);
+ // a tapered, curved lock from a root (half width w) to a tip; bend pushes the middle sideways
+ function lock(g,x0,y0,x1,y1,w,bend){const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,mx=(x0+x1)/2+nx*bend,my=(y0+y1)/2+ny*bend;
+  g.moveTo(x0+nx*w,y0+ny*w);g.quadraticCurveTo(mx+nx*w*.7,my+ny*w*.7,x1,y1);g.quadraticCurveTo(mx-nx*w*.7,my-ny*w*.7,x0-nx*w,y0-ny*w);g.closePath()}
+ // several overlapping shapes as one mass: the outline is stroked under the fills, so no inner lines show
+ function massFill(g,parts,ln,fill){g.beginPath();for(const p of parts)p();g.strokeStyle=ln;g.lineWidth=1.8;g.stroke();g.fillStyle=fill;for(const p of parts){g.beginPath();p();g.fill()}}
+ function hairFill(g,c,y0,y1,path,lw){g.beginPath();path();g.fillStyle=hgr(g,c,y0,y1);g.fill();g.strokeStyle=hline(c);g.lineWidth=lw||.9;g.stroke()}
+ function strands(g,c,pts,a){g.strokeStyle=shade(c,-.45);g.globalAlpha=a||.55;g.lineWidth=.45;g.beginPath();for(const p of pts){g.moveTo(p[0],p[1]);g.quadraticCurveTo(p[2],p[3],p[4],p[5])}g.stroke();g.globalAlpha=1}
+ const hh=i=>{const v=Math.sin(i*12.9898+7.3)*43758.5453;return v-Math.floor(v)};
+ function hairBack(g,h,hy,hair,hs,t){const c=hair,sw=hs,wv=Math.sin(t*2.2)*.9;
+  if(h.back=='none')return;
+  if(h.back=='twin'){for(const s of[-1,1]){const x0=s<0?-8.8:7.8,sx=s,w=Math.sin(t*2.4+s)*1.4;
+    hairFill(g,c,hy-10,hy+28,()=>{g.moveTo(x0-sx*1.5,hy-9);g.bezierCurveTo(x0+sx*6.4,hy-11,x0+sx*8-sw*.4,hy+6,x0+sx*5.6-sw*.7+w,hy+22);g.lineTo(x0+sx*4.4-sw*.8+w,hy+27);g.lineTo(x0+sx*3.4-sw*.6+w,hy+21.6);g.lineTo(x0+sx*1.8-sw*.7+w,hy+25);g.bezierCurveTo(x0+sx*1.6-sw*.4,hy+14,x0+sx*1.2,hy+4,x0-sx*1.2,hy-3);g.closePath()});
+    strands(g,c,[[x0+sx*2,hy-6,x0+sx*6,hy+6,x0+sx*4.4+w,hy+20],[x0+sx*.6,hy-2,x0+sx*3.4,hy+10,x0+sx*2.6+w,hy+20]]);
+    g.fillStyle=shade(c,-.2);g.beginPath();g.ellipse(x0+sx*.4,hy-8.6,2.2,1.6,0,0,6.3);g.fill()}return}
+  // the back mass ends in pointed locks
+  const tips=(xa,xb,y,n,d)=>{for(let i=1;i<=n;i++){const u=i/n,x=xa+(xb-xa)*u,xm=xa+(xb-xa)*(u-.5/n);g.lineTo(xm-sw*.4+wv*(1-u),y+d*(.7+.6*hh(i+n)));g.lineTo(x,y-(i<n?1.2:0))}};
+  let y1=hy+10;
+  hairFill(g,c,hy-8,hy+30,()=>{
+   if(h.back=='tail'){g.moveTo(-5,hy-6);g.bezierCurveTo(-14-sw*.5,hy-7,-22-sw,hy+5,-18.6-sw*1.6+wv,hy+20);g.lineTo(-17-sw*1.6+wv,hy+25);g.lineTo(-15.4-sw*1.2+wv,hy+19);g.lineTo(-13.2-sw+wv,hy+22);g.bezierCurveTo(-12.4-sw,hy+12,-10,hy+8,-6,hy+6);y1=hy+24}
+   else if(h.back=='long'){g.moveTo(-9,hy-4);g.bezierCurveTo(-16-sw*.3,hy+6,-14.6-sw*.6,hy+20,-11.6-sw,hy+28);tips(-11.6-sw,5,hy+28,5,4);g.bezierCurveTo(8,hy+16,9,hy+4,8,hy-4);y1=hy+32}
+   else if(h.back=='straight'){g.moveTo(-9,hy-4);g.bezierCurveTo(-13.6,hy+8,-12.6,hy+24,-11-sw*.7,hy+36);tips(-11-sw*.7,5,hy+36,6,3.4);g.bezierCurveTo(8,hy+20,9.4,hy+6,8,hy-4);y1=hy+39}
+   else if(h.back=='shoulder'){g.moveTo(-9,hy-4);g.bezierCurveTo(-14.4,hy+6,-13.4-sw*.3,hy+13,-11.4-sw*.5,hy+16);tips(-11.4-sw*.5,6.4,hy+16,5,3.4);g.bezierCurveTo(9,hy+8,9,hy+2,8,hy-4);y1=hy+19}
+   else{g.moveTo(-8.6,hy-4);g.quadraticCurveTo(-11.6,hy+5,-8,hy+9);tips(-8,6.4,hy+9,4,2.6);g.quadraticCurveTo(9.4,hy+4,8,hy-4);y1=hy+12}
+   g.closePath()});
+  const L=Math.max(4,y1-hy-4);if(h.back!='tail')strands(g,c,[[-6,hy-2,-9-sw*.3,hy+L*.5,-8-sw*.6,hy+L],[-2,hy-2,-4,hy+L*.5,-3.6-sw*.5,hy+L*.9],[3,hy-2,2.6,hy+L*.5,2-sw*.3,hy+L*.85]],.5)}
+ function hairFront(g,h,hy,hair,hs,t,air){const dn=h.bang,sw=h.sw,c=hair,ln=hline(c),wv=Math.sin(t*2.6)*.45+hs*.05;
+  // spikes on top (curved, tapered; their roots sit under the cap). Outline stroked under the fill: overlapping locks read as one mass
+  if(h.top){const P0=[],n=h.top;for(let i=0;i<n;i++){const u=(i+.5)/n,X=-8.6+u*17.2,Hh=h.th*(.75+.45*Math.sin(i*2.3+.7)+(air?.15:0)),ry=hy-12+Math.abs(u-.5)*5;P0.push(()=>lock(g,X,ry,X+sw*(3+u*1.6)+hs*.25,ry-4-Hh,2.6,sw*1.2))}massFill(g,P0,ln,hgr(g,c,hy-14-h.th*1.2,hy-8))}
+  // cap over the skull + side locks framing the face + the fringe (tapered locks from the hairline, swept to one side, a little uneven)
+  const sl=h.back=='none'?3.6:h.back=='short'?6:9.6,n=7,P1=[];
+  P1.push(()=>{g.moveTo(-10.9,hy+1.4);g.bezierCurveTo(-12.4,hy-10.6,-6.4,hy-16.6,1,hy-16.6);g.bezierCurveTo(8.6,hy-16.6,12.6,hy-10,11.1,hy+1.4);g.lineTo(9.8,hy-5.8);g.quadraticCurveTo(0,hy-12.2,-9.4,hy-5.6);g.closePath()});
+  P1.push(()=>lock(g,9.8,hy-9,11.2+sw*.6+wv,hy-1+sl,2.2,-1.2),()=>lock(g,-9.8,hy-9,-11+wv*.6,hy-2+sl*.9,2.2,1.2));
+  const tipsF=[];for(let i=0;i<n;i++){const u=i/(n-1),rx=-9.2+u*18.4,ry=hy-12.4+Math.abs(u-.5)*5.2,len=dn*(.5+.42*hh(i*3+1))+(i%2?0:1.4),tx=rx+sw*(1.8+u*1.4)+wv,ty=hy-5.4+len;const bd=sw*(.9+hh(i)*.8);P1.push(()=>lock(g,rx-sw*.6,ry,tx,ty,2.5,bd));tipsF.push([rx-sw*.6,ry+2,tx,ty])}
+  massFill(g,P1,ln,hgr(g,c,hy-17,hy+Math.max(4,sl)));
+  // a soft shade line down each fringe lock separates the locks
+  g.strokeStyle=shade(c,-.42);g.globalAlpha=.6;g.lineWidth=.5;g.beginPath();for(const[x0,y0,x1,y1]of tipsF){g.moveTo(x0+(x1-x0)*.5,y0+(y1-y0)*.5);g.quadraticCurveTo(x0+(x1-x0)*.7+sw*.3,y0+(y1-y0)*.72,x1-(x1-x0)*.1,y1-(y1-y0)*.1)}g.stroke();g.globalAlpha=1;
+  strands(g,c,[[-4,hy-15.4,-7,hy-12.4,-8.4,hy-9],[1,hy-16,0,hy-13.4,-1.2,hy-11.4],[5,hy-15.4,7.6,hy-12.4,8.6,hy-9]],.4);
+  // fine strands inside the fringe, then the angel-ring shine
+  g.save();g.lineCap='round';g.strokeStyle='rgba(255,255,255,.42)';g.lineWidth=1.5;g.setLineDash([3.2,1.3]);g.beginPath();g.moveTo(-6.6,hy-11.2);g.quadraticCurveTo(.6,hy-15.4,7.6,hy-11);g.stroke();g.setLineDash([]);
+  g.strokeStyle='rgba(255,255,255,.22)';g.lineWidth=.7;g.beginPath();g.moveTo(-4.6,hy-9.4);g.quadraticCurveTo(.8,hy-12.6,5.8,hy-9.2);g.stroke();g.restore()}
+ // big layered anime eyes. es: 0 sharp, 1 calm (half-lidded), 2 fierce, 3 round
+ function eye(g,x,y,sx,es,col,blink,far){const w=(es==3?3.3:es==0?3.1:3)*sx,ht=es==3?5:es==1?3.6:es==2?3.9:4.4,ln='#2a1418';
+  if(blink){g.strokeStyle=ln;g.lineWidth=1.3;g.lineCap='round';g.beginPath();g.moveTo(x-w,y+.6);g.quadraticCurveTo(x,y+2.4,x+w,y+.2);g.stroke();g.lineWidth=.6;g.beginPath();g.moveTo(x+w,y+.2);g.lineTo(x+w+1.2*sx,y-.6);g.stroke();return}
+  const tilt=es==2?-.25:es==0?-.15:0,tOut=y-ht*(es==2?.05:.42),tIn=y-ht*(.42+tilt);
+  const shape=()=>{g.beginPath();g.moveTo(x-w,tIn);g.quadraticCurveTo(x-w*.1,y-ht*1.06,x+w,tOut);g.quadraticCurveTo(x+w*.92,y+ht*.86,x+w*.1,y+ht*.92);g.quadraticCurveTo(x-w*.88,y+ht*.88,x-w,tIn);g.closePath()};
+  g.save();shape();g.fillStyle='#fbf8ff';g.fill();g.clip();
+  g.fillStyle='rgba(120,90,140,.28)';g.fillRect(x-w-1,y-ht*1.2,w*2+2,ht*.62);
+  const ix=x+.35*sx,iy=y+.35,iw=w*.8,ih=ht*.96;const gr=g.createLinearGradient(0,iy-ih,0,iy+ih);gr.addColorStop(0,shade(col,-.62));gr.addColorStop(.42,shade(col,-.12));gr.addColorStop(.78,col);gr.addColorStop(1,shade(col,.6));
+  g.fillStyle=gr;g.beginPath();g.ellipse(ix,iy,iw,ih,0,0,6.3);g.fill();g.strokeStyle=shade(col,-.7);g.lineWidth=.55;g.stroke();
+  g.fillStyle=shade(col,-.78);g.beginPath();g.ellipse(ix,iy+.2,iw*.42,ih*.48,0,0,6.3);g.fill();
+  g.globalAlpha=.55;g.fillStyle=shade(col,.75);g.beginPath();g.ellipse(ix,iy+ih*.62,iw*.62,ih*.22,0,0,6.3);g.fill();g.globalAlpha=1;
+  if(es==1){g.fillStyle='rgba(30,16,36,.32)';g.fillRect(x-w-1,y-ht*1.3,w*2+2,ht*.82)}
+  g.fillStyle='#fff';g.beginPath();g.ellipse(ix-iw*.32,iy-ih*.42,iw*.36,ih*.24,-.3,0,6.3);g.fill();g.globalAlpha=.9;g.beginPath();g.arc(ix+iw*.42,iy+ih*.36,iw*.17,0,6.3);g.fill();g.globalAlpha=.6;g.beginPath();g.arc(ix-iw*.5,iy+ih*.2,iw*.1,0,6.3);g.fill();g.restore();
+  // upper lash line (thick, winged at the outer corner), lower lash, crease
+  g.lineCap='round';g.strokeStyle=ln;g.lineWidth=1.65;g.beginPath();g.moveTo(x-w-.2,tIn+.3);g.quadraticCurveTo(x-w*.1,y-ht*1.14,x+w,tOut);g.stroke();
+  g.lineWidth=1.1;g.beginPath();g.moveTo(x+w,tOut);g.lineTo(x+w+1.5*sx,tOut-1.1);g.moveTo(x+w*.55,y-ht*.98);g.lineTo(x+w*.82+.9*sx,y-ht*1.28);g.stroke();
+  g.lineWidth=.5;g.strokeStyle='rgba(42,20,24,.7)';g.beginPath();g.moveTo(x-w*.4,y+ht*.9);g.quadraticCurveTo(x+w*.2,y+ht*1.02,x+w*.86,y+ht*.66);g.stroke();
+  g.strokeStyle='rgba(120,60,60,.35)';g.lineWidth=.45;g.beginPath();g.moveTo(x-w*.6,y-ht*1.28);g.quadraticCurveTo(x,y-ht*1.5,x+w*.8,y-ht*1.12);g.stroke()}
  function head(g,L,hy,t,air,blink,hs,sx){
-  const skin=L.skin,hair=L.hair,h=HS[L.hs];
-  // neck
-  const gd=L.gd|0,nk=gd==1?3.3:gd==2?2.4:2.8;celf(g,poly(g,[-nk,hy+7,nk,hy+7,nk+.4,hy+14,-nk-.4,hy+14]),shade(skin,-.08),.9);
-  // face: angular jaw
-  celf(g,()=>{g.beginPath();g.moveTo(-9.6,hy-4);g.bezierCurveTo(-10,hy+3,-7,hy+8,-3,hy+10.6);g.lineTo(1.2,hy+11.2);g.bezierCurveTo(6,hy+9,9.8,hy+5,10,hy-3);g.bezierCurveTo(10,hy-9,-9.6,hy-9,-9.6,hy-4);g.closePath()},skin,1.1);
-  // ear
-  g.fillStyle=shade(skin,-.15);g.strokeStyle=OL;g.lineWidth=.9;g.beginPath();g.ellipse(-9.4,hy+1.5,1.8,2.6,0,0,6.3);g.fill();g.stroke();
-  const ey=hy+1.2,es=L.es;eye(g,-2.6,ey,.85,es,L.eyeCol,blink,1);eye(g,5.6,ey,1,es,L.eyeCol,blink,0);
-  // female: fuller upper lash line + flicked lashes; male: heavier brows (gd 0 = classic look, unchanged)
-  if(gd==2&&!blink){const ht=es==3?4.6:es==1?3.2:3.8;g.strokeStyle=OL;g.lineCap='round';for(const[x,w,s]of[[5.6,es==3?3.1:2.7,1],[-2.6,(es==3?3.1:2.7)*.85,.85]]){const yt=ey-ht*(es==2?.1:.4);g.lineWidth=2.3;g.beginPath();g.moveTo(x-w*.2,ey-ht*.95);g.quadraticCurveTo(x+w*.6,ey-ht*.9,x+w,yt);g.stroke();g.lineWidth=1;g.beginPath();g.moveTo(x+w,yt);g.lineTo(x+w+1.9*s,yt-2);g.moveTo(x+w*.55,yt-ht*.45);g.lineTo(x+w*.9+1.2*s,yt-ht*.45-1.9);g.stroke()}}
-  // brows
-  g.strokeStyle=shade(hair,-.5);g.lineWidth=gd==1?2:gd==2?1.2:1.5;g.lineCap='round';const bt=es==2?2.2:es==1?-.3:.6;g.beginPath();g.moveTo(-6,ey-5.6+bt);g.lineTo(-0.6,ey-6.2-bt*.3);g.stroke();g.beginPath();g.moveTo(2.6,ey-6.2-bt*.3);g.lineTo(8.6,ey-5.4+bt);g.stroke();
-  // nose + mouth
-  g.strokeStyle=shade(skin,-.4);g.lineWidth=.9;g.beginPath();g.moveTo(3.6,ey+3.6);g.lineTo(4.4,ey+5);g.stroke();g.strokeStyle=gd==2?'#c4485e':'#8e4a52';g.lineWidth=gd==2?1.3:1.1;g.beginPath();g.moveTo(1.8,hy+8);g.quadraticCurveTo(3.4,hy+8.6,5,hy+7.8);g.stroke();
-  g.fillStyle=gd==1?'rgba(255,120,150,.16)':gd==2?'rgba(255,120,150,.42)':'rgba(255,120,150,.32)';g.beginPath();g.ellipse(-5.6,hy+5.2,2.6,1.5,0,0,6.3);g.ellipse(7.4,hy+5.2,2.6,1.5,0,0,6.3);g.fill();
-  // jaw shade
-  g.fillStyle='rgba(60,30,70,.12)';g.beginPath();g.moveTo(-8,hy+4);g.quadraticCurveTo(-4,hy+10,1,hy+10.8);g.lineTo(-3,hy+7);g.closePath();g.fill()}
+  const skin=L.skin,hair=L.hair,h=HS[L.hs],fl=shade(skin,-.55);
+  // neck (shadowed under the chin)
+  const gd=L.gd|0,nk=gd==1?3.3:gd==2?2.4:2.8;g.beginPath();g.moveTo(-nk,hy+7);g.lineTo(nk,hy+7);g.lineTo(nk+.4,hy+14);g.lineTo(-nk-.4,hy+14);g.closePath();g.fillStyle=shade(skin,-.1);g.fill();g.strokeStyle=fl;g.lineWidth=.8;g.stroke();
+  g.fillStyle=shade(skin,-.3);g.beginPath();g.moveTo(-nk,hy+8);g.lineTo(nk,hy+8);g.lineTo(nk,hy+10.4);g.quadraticCurveTo(0,hy+12.2,-nk,hy+10.4);g.closePath();g.fill();
+  // face: soft 3/4 shape with a small pointed chin (men a squarer jaw)
+  const jw=gd==1?1:0,face=()=>{g.beginPath();g.moveTo(-9.8,hy-3);g.bezierCurveTo(-10.2,hy+3.6,-7.6+jw,hy+8.4,-2.8+jw*.6,hy+10.6);g.quadraticCurveTo(1.2,hy+12.3+jw*.2,3.4+jw*.6,hy+11.4);g.bezierCurveTo(7.8+jw,hy+9.2,10.4,hy+4.8,10.4,hy-1.6);g.bezierCurveTo(10.4,hy-10.6,-9.8,hy-10.6,-9.8,hy-3);g.closePath()};
+  face();const sg=g.createLinearGradient(-10,0,10.4,0);sg.addColorStop(0,shade(skin,-.16));sg.addColorStop(.35,skin);sg.addColorStop(1,shade(skin,.06));g.fillStyle=sg;g.fill();
+  g.save();face();g.clip();g.fillStyle='rgba(120,60,70,.16)';g.beginPath();g.ellipse(0,hy-9,13,5.6,0,0,6.3);g.fill();g.fillStyle='rgba(255,255,255,.22)';g.beginPath();g.ellipse(6.6,hy+3,3.2,4.4,-.3,0,6.3);g.fill();
+  g.fillStyle='rgba(110,50,60,.13)';g.beginPath();g.moveTo(-9,hy+3);g.quadraticCurveTo(-5,hy+9.6,1.2,hy+11.4);g.lineTo(-4,hy+6.4);g.closePath();g.fill();g.restore();
+  face();g.strokeStyle=fl;g.lineWidth=.95;g.stroke();
+  // ear (mostly under the hair)
+  g.fillStyle=shade(skin,-.12);g.strokeStyle=fl;g.lineWidth=.75;g.beginPath();g.ellipse(-9.3,hy+1.6,1.6,2.4,0,0,6.3);g.fill();g.stroke();g.strokeStyle='rgba(120,60,60,.4)';g.beginPath();g.arc(-9.1,hy+1.6,.9,-1.2,1.4);g.stroke();
+  // soft blush (with the little anime hatch lines)
+  const ba=gd==1?.14:gd==2?.38:.28;for(const[bx,by]of[[-5.4,hy+5.4],[7.4,hy+5.2]]){const rg=g.createRadialGradient(bx,by,0,bx,by,3.2);rg.addColorStop(0,'rgba(255,110,140,'+ba+')');rg.addColorStop(1,'rgba(255,110,140,0)');g.fillStyle=rg;g.fillRect(bx-3.4,by-3.4,6.8,6.8)}
+  if(gd==2){g.strokeStyle='rgba(230,90,120,.35)';g.lineWidth=.4;g.beginPath();for(let i=0;i<3;i++){g.moveTo(6.4+i*1,hy+4.6);g.lineTo(5.8+i*1,hy+5.8)}g.stroke()}
+  const ey=hy+1.4,es=L.es;eye(g,-2.8,ey,.8,es,L.eyeCol,blink,1);eye(g,5.4,ey,1,es,L.eyeCol,blink,0);
+  // female: fuller lashes; male: heavier brows
+  if(gd==2&&!blink){g.strokeStyle='#2a1418';g.lineCap='round';g.lineWidth=.8;for(const[x,w,s]of[[5.4,3,1],[-2.8,2.4,.8]]){const yt=ey-(es==3?5:4.4)*.42;g.beginPath();g.moveTo(x+w,yt);g.lineTo(x+w+2*s,yt-1.9);g.moveTo(x+w*.7,yt-1.2);g.lineTo(x+w+1.2*s,yt-3.1);g.moveTo(x+w*.3,yt-1.8);g.lineTo(x+w*.5+.5*s,yt-3.4);g.stroke()}}
+  // brows (thin, tapered; the fringe falls over them)
+  g.strokeStyle=shade(hair,-.5);g.lineCap='round';const bt=es==2?2.2:es==1?-.3:.6,bw=gd==1?1.05:gd==2?.7:.85;
+  for(const[a,b2,c2,d2]of[[-6.2,ey-6.6+bt,-.8,ey-7.4-bt*.3],[2.4,ey-7.4-bt*.3,8.8,ey-6.4+bt]]){g.lineWidth=bw;g.beginPath();g.moveTo(a,b2);g.quadraticCurveTo((a+c2)/2,Math.min(b2,d2)-.9,c2,d2);g.stroke()}
+  // nose: a tiny shadow and a glint; mouth: a small soft smile
+  g.strokeStyle=shade(skin,-.3);g.lineWidth=.6;g.beginPath();g.moveTo(4.9,ey+4);g.lineTo(4.3,ey+4.9);g.stroke();g.fillStyle='rgba(255,255,255,.45)';g.beginPath();g.arc(4.3,ey+3.7,.35,0,6.3);g.fill();
+  g.strokeStyle=gd==2?'#c4485e':'#8e4a52';g.lineWidth=gd==2?1.1:.95;g.beginPath();g.moveTo(1.6,hy+8.2);g.quadraticCurveTo(3.4,hy+9.1,5.2,hy+7.9);g.stroke();
+  if(gd==2){g.fillStyle='rgba(220,90,110,.35)';g.beginPath();g.ellipse(3.5,hy+9.1,1.3,.5,0,0,6.3);g.fill()}}
  function drawBody(g,L,o){
   const {t,vx,air,f,sw,wpn,fm,wr}=o,so=o.sit,sd=so?Math.max(0,21-so.h/.9):0,sl=so&&so.lean||0;if(sd)g.translate(0,sd);if(sl){g.translate(0,-21);g.rotate(-sl);g.translate(0,21)}// sitting (92-zz-summer.js): body lowered onto the seat (h = seat height) and leaned back on loungers (lean); legs bent down, or straight out when reclining
   const run=Math.abs(vx)>10,ph=t*(run?14:2.4),ls=run?Math.sin(ph):0,as=run?Math.sin(ph+3.1):0,breath=run?0:Math.sin(t*2.2)*.5,bob=(run?Math.abs(Math.sin(ph))*-2.7:breath*.8)+(air?-1:0);
