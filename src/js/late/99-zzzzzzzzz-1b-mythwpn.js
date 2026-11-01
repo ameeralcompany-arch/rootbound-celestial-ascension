@@ -75,7 +75,7 @@
  A.weapon=function(g,k,tier,L,t,o){const th=TH[k]||TH.reaper,ty=th.type||'scythe';if(ty=='scythe')return A.scythe(g,k,tier,L,t,o);tier=Math.max(1,Math.min(5,tier|0));o=o||{};t=t||0;g.save();g.scale(L/100,L/100);g.lineJoin='round';g.lineCap='round';
   if(tier>=4||o.aura)aura(g,ty=='gauntlet'||ty=='chakram'||ty=='gun'?20:60,0,ty=='bow'?70:60,th.pal[0],t,tier);try{D[ty](g,k,tier,t,o)}catch(e){if(!A.weapon.e){A.weapon.e=1;console.error('MYART weapon',ty,e)}}g.restore()};
  // ---- class emblem: a small round logo per class (inventory badges, the Classes rail, weapon cards)
- const EMB={};A.emblem=function(k,S){S=S||48;const key=k+'|'+S;if(EMB[key])return EMB[key];const th=TH[k]||TH.reaper,[m,l,d,a]=th.pal,c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d'),r=S/2;g.lineJoin='round';
+ const EMB={};A.emblem=function(k,S){S=S||48;const key=k+'|'+S;if(EMB[key])return EMB[key];const th=TH[k]||TH.reaper,[m,l,d,a]=th.pal,c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d',{willReadFrequently:true}),r=S/2;g.lineJoin='round';
   const bg=g.createRadialGradient(r*.8,r*.7,1,r,r,r);bg.addColorStop(0,A.mix(m,'#ffffff',.15));bg.addColorStop(.55,d);bg.addColorStop(1,'#050307');g.fillStyle=bg;g.beginPath();g.arc(r,r,r*.86,0,TAU);g.fill();
   g.strokeStyle=A.metal(g,0,0,S,S,k,.15);g.lineWidth=S*.09;g.beginPath();g.arc(r,r,r*.86,0,TAU);g.stroke();g.strokeStyle=OL;g.lineWidth=Math.max(1,S*.025);g.beginPath();g.arc(r,r,r*.96,0,TAU);g.stroke();
   g.save();g.translate(r,r);if(th.mot=='crow')A.crow(g,0,0,r*.62,0,'#f0e8ff',1);else if(th.mot=='ink')A.ink(g,0,0,r*.3,'#eaf6ff',3);else A.motif(g,k,0,0,r*.42,-.5,1.2,A.mix(l,'#ffffff',.35));g.restore();

@@ -155,10 +155,10 @@ const CLART=(()=>{
  A.banner=banner;
  // ---- miniatures of each world (rail chips, the CLASSES button): painted in idle time, kept as image URLs in one style sheet
  const MW=180,MH=60,MINI={};let css=null;
- function mini(k){if(MINI[k])return MINI[k];const d=1.5,c=document.createElement('canvas');c.width=320*d;c.height=180*d;const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);
+ function mini(k){if(MINI[k])return MINI[k];const d=1.5,c=document.createElement('canvas');c.width=320*d;c.height=180*d;const g=c.getContext('2d',{willReadFrequently:true});g.setTransform(d,0,0,d,0,0);
   try{(W[k]||W.reaper)(g,320,180,pal(k))}catch(_){}
   // paint the world at 16:9, then frame the band around its landmark (upper right) to the chip
-  const c2=document.createElement('canvas');c2.width=MW*d;c2.height=MH*d;const g2=c2.getContext('2d');g2.drawImage(c,c.width*.36,c.height*.1,c.width*.64,c.height*.5,0,0,c2.width,c2.height);
+  const c2=document.createElement('canvas');c2.width=MW*d;c2.height=MH*d;const g2=c2.getContext('2d',{willReadFrequently:true});g2.drawImage(c,c.width*.36,c.height*.1,c.width*.64,c.height*.5,0,0,c2.width,c2.height);
   const gr=g2.createLinearGradient(0,0,c2.width,0);gr.addColorStop(0,'rgba(0,0,0,.55)');gr.addColorStop(.6,'rgba(0,0,0,.15)');gr.addColorStop(1,'rgba(0,0,0,.05)');g2.fillStyle=gr;g2.fillRect(0,0,c2.width,c2.height);
   return MINI[k]=c2.toDataURL('image/jpeg',.82)}
  // one style sheet with every miniature, rewritten only when it changes (rewriting it is DOM work)

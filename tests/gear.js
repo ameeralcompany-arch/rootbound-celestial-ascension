@@ -68,9 +68,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
  ok('hub Appearance tab has a Body type switch that sets the look',r.row&&r.gd==2&&r.on,r);await E(()=>{UI6.close();celSave();saveP()});
  const q=await boot();r=await q.evaluate(()=>({gd:cel.ap.gd,hair:cel.ap.hair,look0:X6.sc.looks[X6.sc.act|0]&&X6.sc.looks[X6.sc.act|0].gd}));
  ok('body type persists across a reload (live look + character slot)',r.gd==2&&r.look0==2,r);
- await q.evaluate(()=>{SHOW7.open();SHOW7.cur=0;SHOW7.render()});await q.waitForTimeout(500);
- r=await q.evaluate(()=>{const b=document.querySelector('#show [data-gd="1"]');if(!b)return{btn:false};b.click();return{btn:true,slot:X6.sc.looks[0].gd,on:!!document.querySelector('#show [data-gd="1"].on')}});
- ok('home screen offers Male / Female for your character',r.btn&&r.slot==1&&r.on,r);await q.evaluate(()=>SHOW7.close());
+ // (the home screen and its Male / Female switch were removed; the hub Appearance tab's Body type switch is checked above)
  // ---- old saves: an appearance saved before v8 (no gd) loads unchanged and renders the classic look
  await q.evaluate(()=>{Object.assign(cel.ap,{hair:3,eyes:2,outfit:1,acc:1,cape:2,eyeCol:4,hairCol:'#aa3344',skinCol:'#eebb99',outCol:'#224466',trimCol:'#ddcc88'});delete cel.ap.gd;const raw=JSON.parse(JSON.stringify(cel));delete raw.ap.gd;localStorage.setItem('rbc',JSON.stringify(raw));try{X6.sc.looks[X6.sc.act|0]=Object.assign({},raw.ap);x6Save()}catch(_){}});await q.close();
  const q2=await boot();r=await q2.evaluate(()=>{const A=cel.ap;const want={hair:3,eyes:2,outfit:1,acc:1,cape:2,eyeCol:4,hairCol:'#aa3344',skinCol:'#eebb99',outCol:'#224466',trimCol:'#ddcc88'};

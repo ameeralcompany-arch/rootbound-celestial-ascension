@@ -20,7 +20,7 @@ const INV7=(()=>{
  const wingOf=k=>{try{return wingById(k.slice(5))}catch(_){return null}},shopOf=k=>{try{return SHOP7.byId.get(k.slice(3))}catch(_){return null}};
  const nameOf=k=>{try{if(typeof k!='string')return iname(k);if(k.startsWith('w:'))return WPN[k.slice(2)].n;if(k[0]=='a')return WEAR[k.slice(2)].n;if(k.startsWith('wing:')){const w=wingOf(k);return w?(w.n||w.name||w.id):k}if(k.startsWith('id:'))return(shopOf(k)||{}).n||k}catch(_){}return String(k)};
  const TH={};function thumb(k){if(TH[k])return TH[k];let it=null;if(k.startsWith('wing:'))it={id:'wing_'+k.slice(5),cat:'wings',ref:k.slice(5)};else it=shopOf(k);if(!it)return'';
-  try{const c=document.createElement('canvas');c.width=132;c.height=106;STORE7.drawPrev(c.getContext('2d'),it,132,106,.8,.45,true);return TH[k]=c.toDataURL()}catch(_){return''}}
+  try{const c=document.createElement('canvas');c.width=132;c.height=106;STORE7.drawPrev(c.getContext('2d',{willReadFrequently:true}),it,132,106,.8,.45,true);return TH[k]=c.toDataURL()}catch(_){return''}}
  const iconOf=k=>{try{return typeof k=='string'&&(k.startsWith('wing:')||k.startsWith('id:'))?thumb(k):iconURL(k)}catch(_){return''}};
  const costOf=k=>{try{if(typeof k=='string'&&k.startsWith('id:'))return(shopOf(k)||{}).price|0;return ITEM7.value(k)}catch(_){return 0}};
  const tierOf=k=>{try{if(typeof k=='string'&&k.startsWith('id:')){const it=shopOf(k);return Math.max(0,ITEM7.RAR.indexOf(it.rar=='exclusive'?'mythic':it.rar))}if(typeof k=='string'&&k.startsWith('wing:')){const w=wingOf(k),r=w&&w.rar;const t=ITEM7.RAR.indexOf(r=='exclusive'?'mythic':r);return t>=0?t:Math.min(5,Math.floor(((w&&w.lvl)|0)/25))}return ITEM7.tier(k)}catch(_){return 0}};
@@ -41,7 +41,7 @@ const INV7=(()=>{
  function items(){const out=[];
   for(const k of Object.keys(inv).map(Number).filter(k=>cnt(k)>0&&(MAT[k]||BLK[k%100]||BLK[k])).sort((a,b)=>a-b))out.push({k,t:kind(k),n:cnt(k),own:1,worn:isWorn(k)});
   for(const id in WEAR){const w=WEAR[id];out.push({k:'a:'+id,t:'wear',own:!!ownW[id],lock:lvl<w.lv&&!ownW[id],worn:wear[w.s]==id})}
-  const ws=Object.keys(WPN).filter(id=>!((WPN[id].hid||WPN[id].ars)&&!own[id])).map(id=>'w:'+id).sort(ITEM7.wcmp)/* arsenal weapons (ARS10) show here once owned; the store lists them all */;
+  const ws=Object.keys(WPN).filter(id=>!(WPN[id].hid&&!own[id])).map(id=>'w:'+id).sort(ITEM7.wcmp);
   for(const k of ws){const id=k.slice(2),w=WPN[id];out.push({k,t:kind(k),own:!!own[id],lock:lvl<(w.lv|0),worn:heldW(id)})}
   try{const cw=curWingK();for(const w of WINGS){let o=false;try{o=!!wingOwned(w)}catch(_){}if(o)out.push({k:'wing:'+w.id,t:'wings',own:1,worn:cw==='wing:'+w.id})}}catch(_){}
   try{for(const it of SHOP7.items)if((it.cat=='charms'||it.cat=='effects')&&SHOP7.has(it.id))out.push({k:'id:'+it.id,t:'charms',own:1,worn:SHOP7.equipped(it.id),sub:it.cat=='effects'?(it.sub||'effect'):'charm'})}catch(_){}

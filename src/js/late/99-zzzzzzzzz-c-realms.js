@@ -55,6 +55,16 @@ const REALM10=(()=>{
   else if(b==254){lin('#6a5a92','#2e2450');for(let i=0;i<3;i++){const cx=9+Rb()*(T-18),cy=9+Rb()*(T-18),cc=i%2?'#9affd8':'#ff9ae8';glowDot(cx,cy,10,i%2?'rgba(150,255,210,.5)':'rgba(255,150,230,.5)');facet([[cx,cy-6],[cx+5,cy],[cx,cy+6],[cx-5,cy]],cc);facet([[cx,cy-6],[cx+5,cy],[cx,cy]],'rgba(255,255,255,.7)')}}
   x.strokeStyle='rgba(0,0,0,.42)';x.lineWidth=2.5;x.strokeRect(1.25,1.25,T-2.5,T-2.5);x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=1.5;x.beginPath();x.moveTo(3.5,T-5);x.lineTo(3.5,3.5);x.lineTo(T-5,3.5);x.stroke();return c}
  {const _bs=blockSprite;blockSprite=function(b,v){if(TL[b])return paint(b,v);return _bs.apply(this,arguments)}}
+ // item keys 200+ are materials, so a realm block (its tile id is 228+) can't be an item itself: like the biome blocks it breaks into a
+ // buildable block (the ores drop their shard, which is a material). Without this, a dropped Stardust had no material art and the frame
+ // that drew it threw, leaving the screen black.
+ const DROPR={228:66,229:67,232:9,234:8,235:77,236:59,238:68,239:12,253:9};
+ {const _sd=spawnDrop;spawnDrop=function(x,y,it,n){if(typeof it=='number'&&DROPR[it]!=null)it=DROPR[it];return _sd.call(this,x,y,it,n)}}
+ // items picked up before the fix: turn them into their blocks (bag and hotbar)
+ function fixInv(){try{for(const k in DROPR){const q=inv[k]|0;if(q>0){inv[DROPR[k]]=(inv[DROPR[k]]|0)+q;delete inv[k]}if(inv[k]===0)delete inv[k];for(let i=0;i<bar.length;i++)if(bar[i]==+k)bar[i]=DROPR[k]}}catch(_){}}
+ fixInv();
+ // a material without art never takes the frame down: a known block draws as its block, anything else draws nothing
+ {const _mi=matIcon;matIcon=function(x,k,S){if(typeof k=='number'&&k>=200&&!MAT[k]){try{if(BLK[k])x.drawImage(blockSprite(k,0),S*.12,S*.1,S*.76,S*.76)}catch(_){}return}return _mi.apply(this,arguments)}}
  // ---- regions: each realm's world is split in three, in an order from the world's name
  const RG={2:[['nebula','Nebula Fields'],['craters','Meteor Craters'],['belt','Asteroid Belt']],3:[['reef','Coral Reef'],['kelp','Kelp Forest'],['trench','Abyssal Trench']],4:[['amethyst','Amethyst Fields'],['peaks','Prism Peaks'],['glimmer','Frozen Glimmer']]};
  const order=(n,s)=>{const r=rr((h32(n)^0x2e61)>>>0),a=RG[s].slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -82,7 +92,28 @@ const REALM10=(()=>{
    else if(id=='peaks'){const n=ri(4,8);for(let i=0;i<n;i++){const cx=ri(x0+4,x1-4);if(!safe(cx))continue;const y0=top(cx),hh=ri(6,12),w=ri(2,4);for(let j=0;j<hh;j++){const hw=Math.round(w*(1-j/hh));for(let x=cx-hw;x<=cx+hw;x++){const k=(y0-1-j)*W+x;if(y0-1-j<3)break;if(free(k))put(k,253)}}}}
    else if(id=='glimmer'){for(let x=x0;x<x1;x++){const y=top(x);if(nat(tiles[y*W+x])&&safe(x))put(y*W+x,214);for(let yy=y+6;yy<H-6;yy++){const k=yy*W+x;if(tiles[k-W]&&nat(tiles[k-W])&&free(k)&&Rg()<.12){const h=ri(1,4);for(let j=0;j<h;j++){const q=k+j*W;if(!free(q))break;put(q,253)}}}}}}
   // theme pass: natural blocks take the realm's blocks; its ore runs through the rock below the surface layers
-  const M=MAPS[s],ore=ORE[s],rock=ROCK[s];for(let k=0;k<W*H;k++){const b=tiles[k];if(!b||b==LETTER)continue;const m=M[b];if(m===undefined)continue;let n=m;if(n==rock&&k>W*14&&Rg()<.022)n=ore;tiles[k]=n;hp[k]=n?BLK[n][2]:0}}
+  const M=MAPS[s],ore=ORE[s],rock=ROCK[s];for(let k=0;k<W*H;k++){const b=tiles[k];if(!b||b==LETTER)continue;const m=M[b];if(m===undefined)continue;let n=m;if(n==rock&&k>W*14&&Rg()<.022)n=ore;tiles[k]=n;hp[k]=n?BLK[n][2]:0}deep(s)}
+ // ---- underground biomes: every realm (the Inferno too) has two below its surface regions, by depth (tiles below the surface): the first
+ // from 10 to 38, the second from 38 down to the bedrock. Each has its own rock, caverns lined with its accent block (some flooded: lava in
+ // the Inferno), crystal geodes and ore veins; the depth panel (DEPTH8) names it, tints it and fills it with its motes and ambience; the
+ // deeper one favours the realm's toughest monster.
+ // Biome blocks 210-227 (BIOME17) break into plain blocks and their ores into shards, like in the first-tier worlds.
+ const DB={1:[{n:'Ashen Caverns',c:'#ff8a4a',m:'embers',h:'Scorched caves with flooded lava pools and magma geodes',rock:99,acc:19,core:79,ore:79,op:.03,liq:1,tint:'rgba(255,90,30,.07)'},{n:'Molten Core',c:'#ff5a2a',m:'embers',h:'The burning heart: basalt, magma veins and lava lakes',rock:78,acc:79,core:79,ore:79,op:.06,liq:1,tint:'rgba(255,60,20,.12)'}],
+  2:[{n:'Nebula Caves',c:'#b48cff',m:'glint',h:'Aurora-veined caverns full of star crystal geodes',rock:229,acc:67,core:232,ore:233,op:.03,liq:0,tint:'rgba(150,90,255,.08)'},{n:'Void Depths',c:'#6a4ad8',m:'glint',h:'Dark galaxy stone, rich in comet ore',rock:66,acc:229,core:232,ore:233,op:.05,liq:0,tint:'rgba(30,8,70,.2)'}],
+  3:[{n:'Pearl Grottos',c:'#4fe0d0',m:'bubbles',h:'Flooded coral grottos with pearl geodes',rock:222,acc:223,core:224,ore:237,op:.03,liq:1,tint:'rgba(60,200,220,.07)'},{n:'Midnight Trench',c:'#2a6ad8',m:'bubbles',h:'Abyss stone lit by glow anemones, tidal ore everywhere',rock:235,acc:236,core:237,ore:237,op:.05,liq:1,tint:'rgba(4,14,48,.22)'}],
+  4:[{n:'Geode Hollows',c:'#b48cff',m:'glint',h:'Amethyst caverns and prism geodes (Geode Rock needs the Rock tool)',rock:219,acc:220,core:221,ore:254,op:.03,liq:0,tint:'rgba(180,120,255,.08)'},{n:'Frost Prism Depths',c:'#7ae0ff',m:'snow',h:'Frozen caves of packed ice and radiant crystal',rock:213,acc:214,core:253,ore:215,op:.035,liq:1,tint:'rgba(120,220,255,.1)'}]};
+ const ROCKY=new Set([3,77,78,99,19,229,235,239,66,222,213,219]);
+ const bandOf=d=>d<10?-1:d<38?0:1;
+ function deep(s){const B=DB[s];if(!B)return;const Rg=rr((h32(cur)^(0x3d11+s*131))>>>0),ri=(a,b)=>a+Math.floor(Rg()*Math.max(1,b-a));
+  const put=(k,b)=>{if(tiles[k]==LETTER||tiles[k]==4)return;tiles[k]=b;hp[k]=b?BLK[b][2]:0;if(b)wl[k]=0};
+  // the band rock and its ore veins
+  for(let x=1;x<W-1;x++){const y0=sh(x);for(let y=y0+10;y<H-3;y++){const k=y*W+x,b0=tiles[k];if(!b0||!ROCKY.has(b0))continue;const bd=B[bandOf(y-y0)];put(k,Rg()<bd.op?bd.ore:bd.rock)}}
+  // caverns lined with the accent block (some flooded), then crystal geodes
+  for(let bi=0;bi<2;bi++){const bd=B[bi];for(let i=0;i<9;i++){const cx=ri(4,W-4),y0=sh(cx),cy=y0+(bi?ri(42,Math.max(43,H-y0-8)):ri(14,34)),rx=ri(3,8),ry=ri(2,4);if(cy>=H-5)continue;
+    for(let dy=-ry-1;dy<=ry+1;dy++)for(let dx=-rx-1;dx<=rx+1;dx++){const x=cx+dx,y=cy+dy;if(x<2||x>=W-2||y<sh(x)+9||y>=H-4)continue;const k=y*W+x,e=(dx*dx)/(rx*rx)+(dy*dy)/(ry*ry);
+     if(e<=1){if(tiles[k]==LETTER||tiles[k]==4)continue;tiles[k]=0;hp[k]=0;wl[k]=bd.liq&&dy>=ry*.34?8:0}else if(e<=1.7&&tiles[k]&&Rg()<.6)put(k,bd.acc)}}
+   for(let i=0;i<7;i++){const cx=ri(4,W-4),y0=sh(cx),cy=y0+(bi?ri(42,Math.max(43,H-y0-7)):ri(13,35)),r=ri(2,4);if(cy>=H-5)continue;
+    for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){const x=cx+dx,y=cy+dy;if(x<2||x>=W-2||y<sh(x)+9||y>=H-4)continue;const k=y*W+x,d=Math.hypot(dx,dy);if(d>r+.4)continue;if(d>r-.8)put(k,bd.acc);else if(Rg()<.55)put(k,bd.core);else{if(tiles[k]!=LETTER&&tiles[k]!=4){tiles[k]=0;hp[k]=0}}}}}}
  // ---- skies (cached canvases + parallax)
  const SKY={};
  function mkSky(s){const S0=cvs(640,360),x=S0.getContext('2d'),r=rr(4242+s*7),grd=(stops)=>{const gr=x.createLinearGradient(0,0,0,360);stops.forEach(q=>gr.addColorStop(q[0],q[1]));x.fillStyle=gr;x.fillRect(0,0,640,360)};
@@ -144,7 +175,7 @@ const REALM10=(()=>{
   cry_wyrm:{n:'Geode Wyrm',c:'#ff8ad8',hp:1500,dmg:66,gem:130,w:80,h:34,ai:'fly',fly:1,spm:1.2,s:4,d:[305,'Wyrm Scale','#ff9ae8',260]}};
  const POOL={2:[['gal_wisp',3],['gal_stalker',3],['gal_ram',2.5],['gal_titan',1.2]],3:[['sea_jelly',3],['sea_angler',2.6],['sea_shark',2.4],['sea_kraken',1.1]],4:[['cry_sprite',3],['cry_spider',2.6],['cry_golem',1.2],['cry_wyrm',1.6]]};
  for(const k in MON){const d=MON[k];MK[k]=Object.assign({min:9999,max:9999,realm:d.s},d);delete MK[k].d;delete MK[k].s;MAT[d.d[0]]={n:d.d[1],c:d.d[2],p:d.d[3]};MOBMAT[k]=d.d[0]}
- {const _pm=pickMob;pickMob=function(dp){const s=sg();if(s<2)return _pm.apply(this,arguments);const pool=POOL[s];let t=0;for(const p of pool)t+=p[1];let r=R()*t;for(const p of pool){r-=p[1];if(r<=0)return p[0]}return pool[0][0]}}
+ {const _pm=pickMob;pickMob=function(dp){const s=sg();if(s<2)return _pm.apply(this,arguments);const pool=POOL[s],wt=(p,i)=>p[1]*(dp>=38&&i==3?2.5:1);let t=0;pool.forEach((p,i)=>t+=wt(p,i));let r=R()*t;for(let i=0;i<pool.length;i++){r-=wt(pool[i],i);if(r<=0)return pool[i][0]}return pool[0][0]}}
  {const _md=mobDrops;mobDrops=function(m){const r=_md.apply(this,arguments);try{const d=MK[m.k];if(d&&d.realm){for(let i=0;i<d.realm+1;i++)spawnDrop(m.x,m.y,'gem',3+d.realm);if(R()<.35)spawnDrop(m.x,m.y,ORE[d.realm],1);if(R()<.2)spawnDrop(m.x,m.y,[73,74,75,76][R()*4|0],1)}}catch(_){}return r}}
  // ---- monster art (vector, drawn per frame: sharp at any resolution); the glows are cached sprites per colour
  const GLC={};const glowSp=c=>GLC[c]||(GLC[c]=(()=>{const q=cvs(96,96),x=q.getContext('2d'),gr=x.createRadialGradient(48,48,2,48,48,48);gr.addColorStop(0,c);gr.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gr;x.fillRect(0,0,96,96);return q})());
@@ -231,7 +262,10 @@ const REALM10=(()=>{
  const bolt=(x,y,a,v,c,dmg,sz,l)=>{PB.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:l||2.6,c,dmg,sz:sz||26});shots++};
  const tone=(a,b,d,ty,v,dl)=>{try{SFX7.tone(a,b,d,ty,v,dl)}catch(_){}};
  function moveX(m,dx){const s=Math.sign(dx);let left=Math.abs(dx);while(left>0){const st=Math.min(4,left)*s,nx=m.x+st+s*m.w/2;if(solidAt(Math.floor(nx/T),Math.floor((m.y+m.h-6)/T))||solidAt(Math.floor(nx/T),Math.floor((m.y+m.h*.4)/T)))return false;m.x+=st;left-=4}return true}
- function tick(dt){if(!entered)return;const s=sg();if(s<2){if(PB.length)PB.length=0;if(MO.length)MO.length=0;return}
+ let band=-2,bandT=0;
+ function tick(dt){if(!entered)return;const s=sg();
+  bandT-=dt;if(s>=1&&bandT<=0){bandT=.4;const tx=Math.max(0,Math.min(W-1,Math.floor(P.x/T))),b=bandOf(Math.floor((P.y+P.h)/T)-sh(tx));if(b!==band)band=b}
+  if(s<2){if(PB.length)PB.length=0;if(MO.length)MO.length=0;return}
   // Galaxy: low gravity (about half: big, floaty jumps); the Abyss swims through inWater above
   if(s==2&&!P.g&&!P.sw&&P.hp>0)P.vy-=760*dt;
   // region name when you cross into another region
@@ -273,7 +307,7 @@ const REALM10=(()=>{
   g2.globalAlpha=1;for(const f of PB){const sp=boltSp(f.c),z=f.sz;g2.drawImage(sp,f.x-cx-z/2,f.y-cy-z/2,z,z);g2.globalAlpha=.45;g2.drawImage(sp,f.x-f.vx*.03-cx-z*.35,f.y-f.vy*.03-cy-z*.35,z*.7,z*.7);g2.globalAlpha=1}
   g2.restore()}
  {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.apply(this,arguments);try{tick(dt)}catch(e){if(!REALM10.e2){REALM10.e2=1;console.error('REALM10 tick',e)}}};BOSS6.drawProj=function(g2,cx,cy){_d.apply(this,arguments);try{draw(g2,cx,cy)}catch(e){if(!REALM10.e3){REALM10.e3=1;console.error('REALM10 draw',e)}}}}
- {const _lw=loadWorld;loadWorld=function(){PB.length=0;MO.length=0;lastReg=null;const r=_lw.apply(this,arguments);try{if(sg()<2){REG=null;KELP=[]}}catch(_){}return r}}
+ {const _lw=loadWorld;loadWorld=function(){PB.length=0;MO.length=0;lastReg=null;band=-2;fixInv();const r=_lw.apply(this,arguments);try{const s=sg();if(DB[s])DEPTH8.theme(DB[s].map((b,i)=>({n:b.n,c:b.c,h:b.h,d0:i?38:10,d1:i?999:38,m:b.m,z:'r'+s+'_'+i,em:d=>b.n+' · '+WORD9.label(cur)+' · '+d+' m deep'})))}catch(e){console.error('REALM10 depth zones',e)}try{if(sg()<2){REG=null;KELP=[]}}catch(_){}return r}}
  // music: each realm (and the Inferno) has its own songs (87-music.js)
  const mood=()=>{const s=sg();return s==1?'inferno':s==2?'realm_gal':s==3?'realm_sea':s==4?'realm_cry':null};
- return{TL,MON,POOL,RG,shape,mood,regionAt,get stage(){return sg()},get region(){const r=regionAt(P.x/T);return r?r[1]:null},get kelp(){return KELP.length},get bolts(){return PB.length},get shots(){return shots},get motes(){return MO.length}}})();
+ return{TL,MON,POOL,RG,DB,shape,deep,mood,regionAt,get biome(){const s=sg();return DB[s]&&band>=0?DB[s][band].n:null},get stage(){return sg()},get region(){const r=regionAt(P.x/T);return r?r[1]:null},get kelp(){return KELP.length},get bolts(){return PB.length},get shots(){return shots},get motes(){return MO.length}}})();

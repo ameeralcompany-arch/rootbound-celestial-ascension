@@ -209,21 +209,13 @@ opens the next realm:
 | Crystal Realm | level 45 | 8 letters | Quartz Sand, Prism Stone, Radiant Crystal, Aurora Ore | 780–2000 / 48–74 |
 
 Each realm has three regions (for example Nebula Fields, Meteor Craters and the Asteroid Belt in the Galaxy), its own sky, music and battle
-song. Realm monsters spawn day or night, never outside their realm, and drop a material worth 90–320 gems. Realm ores drop shards worth
+song. Underground every realm has two biomes, by depth (10-38 m, then 38 m to the bedrock): Ashen Caverns and Molten Core (Inferno),
+Nebula Caves and Void Depths (Galaxy), Pearl Grottos and Midnight Trench (Abyssal Sea), Geode Hollows and Frost Prism Depths (Crystal
+Realm), each with its own rock, caverns, geodes and ore; the deeper one favours the realm's toughest monster. Realm monsters spawn day or night, never outside their realm, and drop a material worth 90–320 gems. Realm ores drop shards worth
 60 / 85 / 120 gems.
 
 **Rewards.** Solving a realm's word pays 160 x (stage + 1)^1.6 gems (stage 1 = Inferno … 4 = Crystal Realm): about 470, 930, 1480 and
 2100. The Crystal Realm's word completes the world's **Celestial Ascension**: another 2500 gems.
-
-## 9. The grand arsenal
-
-Every class has 21 more weapons (`ARS10`, 273 in all): 4 common, 4 uncommon, 4 rare, 4 epic, 3 legendary and 2 mythic, with levels
-spread through each rarity (common 1-7, uncommon 6-15, rare 14-25, epic 24-35, legendary 34-46, mythic 46-58). Each weapon is a move
-(slash, thrust, bolt, nova, quake, sky strike, boomerang, chain lightning, beam, dash, vortex, orbiting blades, whip lash) with modifiers,
-plus an element; no two weapons of a class share a move and an element. Their base damage is measured, not guessed:
-`node tools/arsenal-measure.js` runs every arsenal weapon through the balance simulator, places its power on the curve of its rarity
-(rising with level, inside the gap between the rarities below and above) and writes the K and base-damage tables. The class level needed
-to use one follows its rarity, counted from the class's original weapons, so weapons you already own keep their requirement.
 
 ## Where it lives
 
@@ -238,7 +230,6 @@ to use one follows its rarity, counted from the class's original weapons, so wea
 | Loadouts | `src/js/late/99-zzzzzzzzz-5-loadout.js` |
 | Wardens | `src/js/late/99-zzzzzzzzz-6-guards.js` |
 | Biome worlds | `src/js/late/99-zzzzzzzzz-7-biomes.js`, `src/css/96-biomes.css` (word and letters: `99-zzzzzz-words.js`; zone display: `86-z-depths.js`) |
-| Arsenal | `src/js/late/99-zzzzzzzzz-d-arsenal.js`, `tools/arsenal-measure.js` |
 | Realms | `src/js/late/99-zzzzzz-words.js` (chain, words, gates), `src/js/late/99-zzzzzzzzz-c-realms.js` (terrain, skies, monsters), `src/js/late/87-music.js` (songs) |
 
-Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.js`, `tests/balance.js`, `tests/realms.js`, `tests/arsenal.js`.
+Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.js`, `tests/balance.js`, `tests/realms.js`.
