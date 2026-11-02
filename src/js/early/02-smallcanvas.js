@@ -4,4 +4,8 @@
 // its context is created gets willReadFrequently (CPU-backed) unless the caller chose options itself: drawing it onto the game canvas is
 // unchanged (the browser uploads it once and reuses the texture), and reading it back costs about 1 ms. =====
 (()=>{const gc=HTMLCanvasElement.prototype.getContext;
- HTMLCanvasElement.prototype.getContext=function(t,o){if(t=='2d'&&o==null&&this.width*this.height<=25600&&!this.isConnected)o={willReadFrequently:true};return gc.call(this,t,o)}})();
+ HTMLCanvasElement.prototype.getContext=function(t,o){if(t=='2d'&&o==null&&this.width*this.height<=25600&&!this.isConnected){o={willReadFrequently:true};this._rbCpu=1}return gc.call(this,t,o)};
+ // A repeating pattern is different: every fill with a CPU-backed canvas uploads it again, which took the Inferno's lava from 144 fps down to 12, and
+ // the slowdown stayed after leaving the realm. So a pattern is made from a copy of the canvas that lives on the graphics card.
+ const cp=CanvasRenderingContext2D.prototype.createPattern;
+ CanvasRenderingContext2D.prototype.createPattern=function(im,rep){if(im&&im._rbCpu&&im.width&&im.height){const c=document.createElement('canvas');c.width=im.width;c.height=im.height;c.getContext('2d',{alpha:true}).drawImage(im,0,0);im=c}return cp.call(this,im,rep)}})();

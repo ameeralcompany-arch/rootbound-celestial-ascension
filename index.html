@@ -3256,7 +3256,11 @@ const RB_GOD=(function(){let on=false;const SKIP=/^(rbw_|rbopt$|rbidx$|rbid$|rbt
 // its context is created gets willReadFrequently (CPU-backed) unless the caller chose options itself: drawing it onto the game canvas is
 // unchanged (the browser uploads it once and reuses the texture), and reading it back costs about 1 ms. =====
 (()=>{const gc=HTMLCanvasElement.prototype.getContext;
- HTMLCanvasElement.prototype.getContext=function(t,o){if(t=='2d'&&o==null&&this.width*this.height<=25600&&!this.isConnected)o={willReadFrequently:true};return gc.call(this,t,o)}})();
+ HTMLCanvasElement.prototype.getContext=function(t,o){if(t=='2d'&&o==null&&this.width*this.height<=25600&&!this.isConnected){o={willReadFrequently:true};this._rbCpu=1}return gc.call(this,t,o)};
+ // A repeating pattern is different: every fill with a CPU-backed canvas uploads it again, which took the Inferno's lava from 144 fps down to 12, and
+ // the slowdown stayed after leaving the realm. So a pattern is made from a copy of the canvas that lives on the graphics card.
+ const cp=CanvasRenderingContext2D.prototype.createPattern;
+ CanvasRenderingContext2D.prototype.createPattern=function(im,rep){if(im&&im._rbCpu&&im.width&&im.height){const c=document.createElement('canvas');c.width=im.width;c.height=im.height;c.getContext('2d',{alpha:true}).drawImage(im,0,0);im=c}return cp.call(this,im,rep)}})();
 
 try{Object.assign(OPT,JSON.parse(localStorage.getItem('rbopt')||'{}'));if(OPT.name)myName=OPT.name;const rs=readSave(),p=rs&&rs.p;if(rs&&rs.key!='rbp')try{say('Save was damaged. Restored your backup.')}catch(_){}if(p){inv=p.inv||inv;gems=p.gems|0;own=p.own||own;ownW=p.ownW||{};wear=p.wear||wear;wp=own[p.wp]?p.wp:'fist';bar=p.bar||bar;Object.assign(done,p.done||{});xp=p.xp|0;lvl=p.lvl||1;Object.assign(prof,p.prof||{});Object.assign(wUp,p.wUp||{});Object.assign(wK,p.wK||{});qs=p.qs||[];look=p.look||look;made=!!p.made;Object.assign(stats,p.stats||{});achD=p.achD||{};seenW=p.seenW||{};Object.assign(pst,p.pst||{});Object.assign(relics,p.relics||{});Object.assign(bossK,p.bossK||{});evoH.push(...(p.evoH||[]));Object.assign(dly,p.dly||{});SAVED=p}}catch(_){}if(!qs.length)qs=[newQuest(),newQuest(),newQuest()];
 RSC=OPT.rs||1;ZM=OPT.zm||1;rs();$('orr').value=String(RSC);$('orr').onchange=e=>{RSC=+e.target.value;OPT.rs=RSC;saveP();rs()};$('nm').value=myName;$('ov').value=OPT.mv*100;$('os').value=OPT.sv*100;$('oq').value=OPT.q;$('osh').checked=!!OPT.sh;
