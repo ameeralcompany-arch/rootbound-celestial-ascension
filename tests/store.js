@@ -137,5 +137,11 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  {const q=await ctx.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));await q.goto(FILE);await q.waitForTimeout(1200);await q.getByText('START ADVENTURE',{exact:false}).first().click().catch(()=>{});await q.waitForTimeout(1200);
   const o=await q.evaluate(async()=>{enterWorld('wxtest');await new Promise(r=>setTimeout(r,800));return{t:ENV7.target,x6:X6.wx.wxtest}});await q.close();
   ok('a v9 weather scene is still on after a reload of the world',o.t=='aurora'&&o.x6=='aurora'&&!qe.length,JSON.stringify(o)+qe.join('|'))}
+ // --- the first opening in a fresh page: icons still loading must not rebuild the whole store (it froze the game for many seconds), and every card ends up painted
+ {const q=await ctx.newPage();const qe=[];q.on('pageerror',e=>qe.push(e.message));await q.goto(FILE);await q.waitForTimeout(1200);await q.getByText('START ADVENTURE',{exact:false}).first().click().catch(()=>{});await q.waitForTimeout(800);
+  const o=await q.evaluate(async()=>{STORE7.open({cat:'all'});const g=document.querySelector('#store7 .grid');let rebuilds=0;const ob=new MutationObserver(l=>{if(l.some(m=>m.addedNodes.length))rebuilds++});ob.observe(g,{childList:true});
+   const left=()=>g.querySelectorAll('canvas.th:not([data-done])').length,t0=performance.now();while(left()&&performance.now()-t0<25000)await new Promise(r=>setTimeout(r,50));await new Promise(r=>setTimeout(r,200));ob.disconnect();
+   const all=[...g.querySelectorAll('canvas.th')],blank=all.filter(c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=3;i<d.length;i+=4)if(d[i]>20)return false;return true}).map(c=>c.dataset.th);STORE7.close();return{cards:all.length,left:left(),rebuilds,blank:blank.slice(0,6)}});await q.close();
+  ok('first opening: the store is not rebuilt while its icons load, and every card ends up painted',o.cards>100&&o.left==0&&o.rebuilds==0&&o.blank.length==0&&!qe.length,JSON.stringify(o)+qe.join('|'))}
  ok('no page errors in the whole run',errs.length==0,errs.slice(0,3).join(' | '));
  await b.close();console.log(fails?'FAILURES '+fails:'all store tests passed');process.exit(fails?1:0)})();

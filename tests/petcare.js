@@ -128,7 +128,7 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  const hu=await E(async({hx,gy})=>{const d=PET10.S.pets.find(p=>p.id=='pdog');const r=PET10.RT.get('pdog');r.x=(hx-.5)*T;r.y=(gy-1)*T;P.x=r.x+30;
   const o={h0:+PET10.hunger(d).toFixed(3),hun0:PET10.hungry(d)};PET10.timeShift(1.2*3600e3);o.h1=+PET10.hunger(d).toFixed(2);o.hun1=PET10.hungry(d);PET10.timeShift(2.1*3600e3);o.h2=+PET10.hunger(d).toFixed(2);o.hun2=PET10.hungry(d);
   await _gw(.4);o.mood=r.mood;o.play=PET10.play('pdog');for(const k of[PET10.FOOD,PET10.TREAT])inv[k]=0;o.nofood=PET10.feed('pdog');o.hap0=Math.round(PET10.happy(d));return o},yard);
- ok('hunger rises over (mocked) real time: fine after 1 h, hungry after 2 h',hu.h0<.01&&!hu.hun0&&hu.h1>.5&&hu.h1<.7&&!hu.hun1&&hu.h2>=1&&hu.hun2,hu);
+ ok('hunger rises over (mocked) real time: fine after 1 h, hungry after 2 h',hu.h0<.05/* the real clock also runs: .05 is 6 min, a slow runner gets here later */&&!hu.hun0&&hu.h1>.5&&hu.h1<.7&&!hu.hun1&&hu.h2>=1&&hu.hun2,hu);
  ok('a hungry pet looks sad and refuses to play; feeding without food is refused',hu.mood=='sad'&&!hu.play.ok&&/hungry/.test(hu.play.m)&&!hu.nofood.ok,{mood:hu.mood,play:hu.play.m,nofood:hu.nofood.m});
  await E(()=>{addI(PET10.FOOD,3);addI(PET10.TREAT,1);PET10.open('pdog',null)});await W8(200);
  await p.click('#petui [data-a=feed]');await W8(200);

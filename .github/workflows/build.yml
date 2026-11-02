@@ -178,6 +178,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/outfits.js
+      - name: Test pet care
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/petcare.js
       - name: Test play
         if: ${{ !cancelled() }}
         timeout-minutes: 10
@@ -198,6 +202,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/still.js
+      - name: Test tools
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/tools.js
       - name: Test water
         if: ${{ !cancelled() }}
         timeout-minutes: 10

@@ -10,7 +10,9 @@ const STORE7=(()=>{
  // card pictures are canvases, drawn once per item and copied into the card: turning them into images (toDataURL) read the pixels back from
  // the GPU and froze the game for about a second the first time the store opened
  const cache={};let missing=0;function thumb(it){if(cache[it.id])return cache[it.id];let c=null;missing=0;try{const z=it.cat=='gear'?2:1;c=document.createElement('canvas');c.width=132*z;c.height=106*z;const x=c.getContext('2d',{willReadFrequently:false});drawPrev(x,it,132*z,106*z,.8,.45,true)}catch(_){c=null}if(missing||!c)return c;return cache[it.id]=c}
- function paintThumbs(root){root.querySelectorAll('canvas.th').forEach(cv=>{const it=SHOP7.byId.get(cv.dataset.th);if(!it)return;const t=thumb(it);if(!t)return;cv.width=t.width;cv.height=t.height;try{cv.getContext('2d').drawImage(t,0,0)}catch(_){}})}
+ function paintThumbs(root){root.querySelectorAll('canvas.th:not([data-done])').forEach(cv=>{const it=SHOP7.byId.get(cv.dataset.th);if(!it)return;const t=thumb(it);if(!t)return;cv.width=t.width;cv.height=t.height;try{cv.getContext('2d').drawImage(t,0,0)}catch(_){}if(cache[it.id]===t)cv.dataset.done=1})}
+ // an item's icon finished loading: paint the cards still waiting, once per frame. Rebuilding the whole store for each icon froze the first opening for many seconds
+ let thumbF=0;function thumbsLater(){if(thumbF)return;thumbF=requestAnimationFrame(()=>{thumbF=0;if(isOpen())paintThumbs(el.querySelector('.grid'))})}
  function silhouette(x,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='rgba(70,60,110,.55)';x.beginPath();x.arc(0,-34,11,0,6.3);x.fill();x.beginPath();x.moveTo(-13,-20);x.lineTo(13,-20);x.lineTo(10,22);x.lineTo(-10,22);x.closePath();x.fill();x.fillRect(-9,22,7,26);x.fillRect(2,22,7,26);x.restore()}
  function sparkle(x,px,py,c,r,a){x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;x.fillStyle=c;x.beginPath();x.arc(px,py,r,0,6.3);x.fill();x.restore()}
  function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
@@ -37,7 +39,7 @@ const STORE7=(()=>{
    const sl=WEAR[ref].s,wr=Object.assign({},typeof wear!='undefined'?wear:{},{wing:''});wr[sl]=ref;const s=k*(sl=='hat'?3.6:2.75);x.save();x.translate(cx,sl=='hat'?H*1.3:H*.93);x.scale(s,s);x.beginPath();x.rect(-70,-91,140,100);x.clip();
    const o=g;g=x;try{AC6.draw(0,-54,1,0,'',t,0,false,'',typeof wp!='undefined'?wp:'fist',0,0,wr,false,typeof look!='undefined'?look:null,null)}finally{g=o}x.restore()}
   else{let u=null;const key=it.cat=='gear'?'a:'+ref:it.cat=='seeds'?+ref:+ref;try{u=iconURL(key)}catch(_){}
-   if(u){let im=cache['i'+key];if(!im){im=cache['i'+key]=new Image();im.onload=()=>{try{delete cache[it.id];if(isOpen())render()}catch(_){}};im.src=u}if(!im.complete)missing=1;const s=Math.min(W,H)*.62,by=still?0:Math.sin(t*2)*4;if(im.complete)x.drawImage(im,cx-s/2,cy-s*.65+by,s,s)}}
+   if(u){let im=cache['i'+key];if(!im){im=cache['i'+key]=new Image();im.onload=()=>{try{delete cache[it.id];if(isOpen())thumbsLater()}catch(_){}};im.src=u}if(!im.complete)missing=1;const s=Math.min(W,H)*.62,by=still?0:Math.sin(t*2)*4;if(im.complete)x.drawImage(im,cx-s/2,cy-s*.65+by,s,s)}}
   }catch(e){}
   if(!still){for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.l-=.016;if(p.l<=0||parts.length>160){parts.splice(i,1);continue}p.x+=p.vx*.016;p.y+=p.vy*.016;sparkle(x,p.x,p.y,p.c,p.r,Math.min(1,p.l*2))}}}
  // ---- state helpers
