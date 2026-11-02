@@ -126,6 +126,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/cine.js
+      - name: Test intro song
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/introsong.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10
@@ -228,6 +232,7 @@ jobs:
       - name: Package
         run: |
           copy index.html desktop\index.html
+          Copy-Item audio desktop\audio -Recurse -Force
           cd desktop
           npm install
           npx electron-packager . Rootbound --platform=win32 --arch=x64 --out=dist --overwrite

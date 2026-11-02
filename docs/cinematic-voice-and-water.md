@@ -2,6 +2,36 @@
 
 How the launch intro (`src/js/late/89-z-cine.js`) is voiced, timed and drawn, and how to upgrade it to studio voice-over.
 
+## The song
+
+The intro plays `audio/intro-song.mp3` (3.9 MB) and its position is the story's clock. The file sits next to `index.html` rather than inside it:
+embedded, it would make every page load about 5 MB bigger, even for a player who has already heard it. The server hosts it at
+`/audio/intro-song.mp3`, GitHub Pages and a repository checkout find it beside the page, and the desktop app packs the `audio` folder.
+Anyone with only `index.html` gets the older synthesized score instead.
+
+Measured from the file: exactly 100 BPM (a beat is 0.6 s, a bar 2.4 s).
+
+| Song | What is in it | Story |
+|---|---|---|
+| 0:00 | soft piano, no drums | the World Tree, the lantern night |
+| 0:16 | building bar | the Eclipse starts, and it shatters on the drums at 0:18.39 |
+| 0:18 | drums in | the islands fall, six guardians, a hundred years |
+| 0:37 | brighter | Episode 1: you wake, your first friend, your class |
+| 0:56 | hit | Episode 2: your wings burst open, the first flight's bonk at 1:02.19, practice, the depths |
+| 1:15 | fuller | Episode 3: the secret word, the Warden rises on 1:25.59, you get back up on 1:33.99 |
+| 1:35 | | Episode 4: the campfire, the levels (MYTHIC on 1:48.39), the montage |
+| 1:54 | peak | Final Episode: six guardians fall on six beats, the charge, the duel with an impact on each beat |
+| 2:15.69 | last hit, drums stop | the seed goes into the roots and the light bursts out |
+| 2:16 | solo piano | the islands rise, the lantern on the same hill as the start |
+| 2:37.59 | last chord | the title lands |
+| 2:40.2 | the chord dying away | a voice says the name |
+| 2:43 | silence | into the game |
+
+`SONG.cuts` in the code holds those times. To change them, keep each one on the beat grid (18.39 + a multiple of 0.3).
+
+The last word uses `audio/rootbound-voice.mp3` if that file exists, otherwise the computer's own voice (`VOX12`), which is synthesized.
+To use a real recording, save it under that name and rebuild the desktop app; no code changes.
+
 ## 1. Voice-over
 
 ### What was wrong

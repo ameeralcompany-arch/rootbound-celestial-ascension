@@ -2,25 +2,25 @@
 const {chromium}=require('playwright');const path=require('path');let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?'  - '+x:''));if(!c)fails++};
 const URL='file://'+path.resolve(__dirname,'../index.html');
 setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},180000).unref();
-(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});
- const page=async(o={})=>{const ctx=await b.newContext({viewport:{width:1280,height:720},reducedMotion:o.rm||'no-preference'});if(o.force)await ctx.addInitScript(()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}let n=0;window.p0spoke=()=>n;try{const sp=speechSynthesis.speak.bind(speechSynthesis);speechSynthesis.speak=u=>{n++;return sp(u)}}catch(_){}});const p=await ctx.newPage();p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/CINE7/.test(m.text()))p.errs.push(m.text())});p.ctx=ctx;await p.goto(URL);return p};
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox','--mute-audio','--autoplay-policy=no-user-gesture-required']});
+ const page=async(o={})=>{const ctx=await b.newContext({viewport:{width:1280,height:720},reducedMotion:o.rm||'no-preference'});if(o.force)await ctx.addInitScript(()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}let n=0;window.p0spoke=()=>n;try{speechSynthesis.speak=u=>{n++;setTimeout(()=>{try{u.onend&&u.onend({})}catch(_){}},20)}}catch(_){}});const p=await ctx.newPage();p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/CINE7/.test(m.text()))p.errs.push(m.text())});p.ctx=ctx;await p.goto(URL);return p};
  // 1. automated browsers skip the intro (tests keep working)
  {const p=await page();await p.waitForTimeout(900);ok('webdriver skips the launch intro',await p.evaluate(()=>!CINE7.playing&&!document.getElementById('cine7')&&!SHOW7.isOpen));await p.ctx.close()}
  // 2. forced launch: the story plays, pauses the game, swallows keys, then hands straight over to the game (no home page) and cleans up
  {const p=await page({force:true});await p.waitForFunction(()=>CINE7.playing,null,{timeout:15000});
   const s=await p.evaluate(()=>({cover:window.RB_COVER,st:CINE7.state,z:+getComputedStyle(document.getElementById('cine7')).zIndex,home:SHOW7.isOpen}));
-  ok('intro plays at launch over everything, game paused',s.cover===true&&s.z>2147483000&&!s.home&&s.st.total>=118&&s.st.total<=126,JSON.stringify(s));
+  ok('intro plays at launch over everything, game paused',s.cover===true&&s.z>2147483000&&!s.home&&s.st.total>=140&&s.st.total<=155,JSON.stringify(s));
   const keyed=await p.evaluate(()=>{let got=0;const h=()=>got++;addEventListener('keydown',h);dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));dispatchEvent(new KeyboardEvent('keyup',{key:'Escape'}));dispatchEvent(new KeyboardEvent('keydown',{key:'e'}));removeEventListener('keydown',h);return got});
   ok('a tap does not skip the intro (game handlers do not see keys)',keyed==0&&await p.evaluate(()=>CINE7.playing));
   await p.waitForFunction(()=>!CINE7.state.prep,null,{timeout:15000});   // the unseen warm-up (art + rehearsal) is over: the story clock runs
   const sc=[];for(const u of await p.evaluate(()=>CINE7.STORY.map(s=>s[3]+s[1]*.5))){await p.evaluate(u=>CINE7.seek(u),u);await p.waitForTimeout(60);sc.push(await p.evaluate(()=>CINE7.state.scene))}
-  ok('all twenty-two scenes render (classes, depths, biome word, warden, levels, the guardians fall, restoration)',new Set(sc).size==22,sc.join(','));
+  ok('all twenty-five scenes render (classes, depths, biome word, warden, levels, the guardians fall, the duel, restoration, the way home)',new Set(sc).size==25,sc.join(','));
   const px=await p.evaluate(()=>{const c=document.getElementById('cine7'),x=document.createElement('canvas');x.width=64;x.height=36;const g=x.getContext('2d');g.drawImage(c,0,0,64,36);const d=g.getImageData(0,0,64,36).data;let n=0;for(let i=0;i<d.length;i+=4)if(d[i]+d[i+1]+d[i+2]>60)n++;return n});ok('intro canvas has artwork',px>200,px);
   await p.evaluate(()=>CINE7.seek(CINE7.state.total-.8));await p.waitForTimeout(2200);
   const e=await p.evaluate(()=>({gone:!document.getElementById('cine7'),playing:CINE7.playing,home:SHOW7.isOpen,cover:window.RB_COVER,hb:!!document.getElementById('bhome')}));
   ok('intro ends straight into the game (no home page) and removes its canvas',e.gone&&!e.playing&&!e.home&&!e.hb,JSON.stringify(e));
   const vo=await p.evaluate(()=>({log:VOX12.log.length,spoke:p0spoke(),caps:CINE7.STORY.filter(s=>s[2]).length,lens:CINE7.STORY.every(s=>s[1]==s[4])}));
-  ok('the intro is silent (no narrator); the story lines still show as captions and every scene keeps its designed length',vo.log==0&&vo.spoke==0&&vo.caps>=15&&vo.lens,JSON.stringify(vo));
+  ok('no narrator over the song (a seek past the last word stays silent); the story lines still show as captions and every scene keeps its designed length',vo.log==0&&vo.spoke==0&&vo.caps>=15&&vo.lens,JSON.stringify(vo));
   ok('intro: no page errors',p.errs.length==0,p.errs.join('|'));await p.ctx.close()}
  // 2b. holding Space (1.2 s) skips straight to the hand-over into the game
  {const p=await page({force:true});await p.waitForFunction(()=>CINE7.playing&&!CINE7.state.prep,null,{timeout:15000});await p.waitForTimeout(300);
@@ -28,7 +28,7 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
   const h=await p.evaluate(()=>({playing:CINE7.playing,home:SHOW7.isOpen,gone:!document.getElementById('cine7')}));
   ok('holding Space fills the skip ring, then skips into the game',mid&&mid.held>.3&&mid.on&&!h.playing&&!h.home&&h.gone,JSON.stringify({mid,h}));await p.ctx.close()}
  // 3. reduced motion shortens (does not remove) the story
- {const p=await page({force:true,rm:'reduce'});await p.waitForFunction(()=>CINE7.playing,null,{timeout:15000});const st=await p.evaluate(()=>CINE7.state);ok('reduced motion: same story, quicker visuals',st.k<1&&st.total>=118&&st.total<=126,JSON.stringify(st));await p.ctx.close()}
+ {const p=await page({force:true,rm:'reduce'});await p.waitForFunction(()=>CINE7.playing&&!CINE7.state.prep,null,{timeout:15000});await p.waitForTimeout(400);const st=await p.evaluate(()=>CINE7.state);ok('reduced motion: same story, still in time with the song, no push on the beat',st.song&&st.k==1&&st.total>=140&&st.total<=155&&st.push=='',JSON.stringify(st));await p.ctx.close()}
  // 4. world entry card + boss cinematics inside the game
  {const p=await page();await p.waitForTimeout(700);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}lvl=40});await p.waitForTimeout(400);
   await p.evaluate(()=>enterWorld('cinetest'));await p.waitForTimeout(150);
