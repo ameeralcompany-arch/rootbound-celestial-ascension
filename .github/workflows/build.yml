@@ -244,7 +244,7 @@ jobs:
           cd desktop
           npm install
           npx electron-packager . Rootbound --platform=win32 --arch=x64 --out=dist --overwrite --asar
-          node harden.js distRootbound-win32-x64Rootbound.exe
+          node harden.js dist\Rootbound-win32-x64\Rootbound.exe
           copy Rootbound-Safe-Mode.bat dist\Rootbound-win32-x64\
         shell: pwsh
       - name: Launch the packaged app and verify the game reaches its first frame
