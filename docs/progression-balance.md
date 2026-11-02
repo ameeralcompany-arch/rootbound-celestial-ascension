@@ -217,6 +217,12 @@ Realm), each with its own rock, caverns, geodes and ore; the deeper one favours 
 **Rewards.** Solving a realm's word pays 160 x (stage + 1)^1.6 gems (stage 1 = Inferno … 4 = Crystal Realm): about 470, 930, 1480 and
 2100. The Crystal Realm's word completes the world's **Celestial Ascension**: another 2500 gems.
 
+### Realm biomes
+
+Every realm works like the first world, with one biome per letter of its own word: Inferno 3, Galaxy 4, Abyssal Sea 5, Crystal Realm 8. Each biome has its own rock, ore, two monsters and three beacons. Its trial frees its letter, and a Letter Warden then guards that letter (wardens get 30% tougher per realm).
+
+Trials stay the same size in every realm: 12-20 monsters and 6-10 ore from the first biome to the last, plus 3 beacons, so realms with more letters take longer overall. Bands are thinner where there are more biomes: 30 tiles for 3, 22 for 4, 18 for 5, 11 for 8. Tiles are one byte and almost all ids are taken, so these biomes are new combinations of existing blocks.
+
 ## 9. World bosses
 
 Every realm has one huge boss standing between its last letter and its Word Gate (WBOSS13, `99-zzzzzzzzz-i-worldboss.js`). Base HP and the level each is tuned for, with simulated kill times per class (`tests/balance.js`, 60% uptime):

@@ -16,7 +16,7 @@ const GUARD16=(()=>{
  const creative=()=>{try{return !!(typeof RB_CREATIVE!='undefined'&&RB_CREATIVE)||!!CRV8.on}catch(_){return false}};
  const cleared=(w,i)=>(S[w]||[]).includes(i);
  const STY=['charger','hopper','caster'],COL={charger:['#ff7a4a','#ffd0b0','#5a1a0a'],hopper:['#5ad88a','#d8ffe4','#0a3a1a'],caster:['#b48cff','#ece0ff','#2a1050']};
- const hpOf=L=>Math.round(400+90*Math.max(1,L)),dmgOf=L=>Math.round(8+.9*Math.max(1,L));
+ const rk=()=>{try{return 1+.3*WORD9.stageOf(cur)}catch(_){return 1}},hpOf=L=>Math.round((400+90*Math.max(1,L))*rk()),dmgOf=L=>Math.round((8+.9*Math.max(1,L))*rk());   // tougher in each later realm
  const gemsOf=L=>Math.round(3*(30+4.5*Math.max(1,L))),xpOf=L=>Math.round(.08*xpNeed(Math.max(1,L)));
  let alertT=0,wCur=null,wT=0;const G=[],ORB=[];   // live wardens, caster orbs
  const liveG=i=>G.find(g=>g.i==i&&g.m&&g.m.hp>0&&!g.m.dead);

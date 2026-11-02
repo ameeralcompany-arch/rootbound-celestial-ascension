@@ -14,6 +14,8 @@
 //   biome trial   4 min of income in gems, 5% of a level in XP, class XP
 //   world         (10 + 6 x difficulty) min of income in gems, (20 + 8 x difficulty)% of a level in XP, class XP and depth materials
 // Worlds where the letter hunt had already started keep their old word and letter spots; the biomes and trials still apply there.
+// The realms work the same way, with one biome per letter of their own longer words (99-zzzzzzzzz-m-realmbiomes.js): the bands get thinner so they all
+// fit, and the trials stay the same size overall (tier).
 // The DEPTH8 zone indicator, tint, motes and ambience follow the biomes in a biome world. State: RB_PREFIX + 'rbbiome'. =====
 const BIOME17=(()=>{
  const R=Math.random,TAU=Math.PI*2,OL='rgba(20,15,40,.9)';
@@ -22,9 +24,10 @@ const BIOME17=(()=>{
  const cvs=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
  const norm=n=>String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
  const creative=()=>{try{return !!(typeof RB_CREATIVE!='undefined'&&RB_CREATIVE)||!!CRV8.on}catch(_){return false}};
- const isWorld=n=>{n=norm(n);try{return WORD9.isBase(n)}catch(_){return n!='plaza'&&!/-(inf|gal|sea|cry)$/.test(n)}};
+ const isWorld=n=>{n=norm(n);try{return WORD9.hasWord(n)}catch(_){return n!='plaza'}};
+ const stageOf=n=>{try{return WORD9.stageOf(n)|0}catch(_){return 0}};
  const tone=(a,b,d,ty,v,dl)=>{try{SFX7.tone(a,b,d,ty,v,dl)}catch(_){}};
- const BAND=30,TOP=6,N=3,ROM=['I','II','III','IV','V'],STARS=['','Gentle','Fair','Tough','Fierce','Mythic'];
+ let BAND=30,N=3;const TOP=6,ROM=['I','II','III','IV','V','VI','VII','VIII'],BANDS={3:30,4:22,5:18,8:11},STAGES={},STARS=['','Gentle','Fair','Tough','Fierce','Mythic'];
  // 3-letter words with no common anagram, so the Word Gate never refuses a fair answer
  const WORDS3=['SUN','SKY','GEM','KEY','OAK','FOX','BEE','ICE','ELF','AXE','BOW','CUP','HAT','JAM','LOG','PIE','EGG','FIG','FIN','IVY','JOY','HEN','JET','YAK','KIT','ZOO','TOY','BUG','WEB','HUG','FUN'];
  // ---- the six biomes. rock / soil / acc / ore are tile ids; mob: [kind, look (classic shape), name, colour, ai, hp, dmg, gem, w, h, extra]
@@ -54,6 +57,8 @@ const BIOME17=(()=>{
    bea:['Ember Brazier','Ember Braziers','Rekindle','brazier'],
    mob:[['b_toad','slime','Cinder Toad','#d0603a','hop',48,8,8,42,32,{jp:680,sx:220,cd:.9}],['b_fmoth','moth','Flame Moth','#ffb05a','fly',28,7,7,32,28,{spm:1.3}]]}];
  const TILE={},ORE=new Set(),KIND={},DROP={};
+ // a realm's biomes: existing blocks in new combinations, so only the monsters and the ore's trial are registered
+ function addStage(s,list){STAGES[s]=list;for(const b of list){ORE.add(b.ore);for(const q of b.mob){const[k,look,n,c,ai,hp,dmg,gem,w,h,x]=q;KIND[k]={b,look,base:{hp,dmg,gem}};MK[k]=Object.assign({c,hp,dmg,gem,w,h,ai,n,min:9999,max:9999,bio:1,look},ai=='fly'?{fly:1}:{},x||{});try{MOBMAT[k]=b.mat||b.ore}catch(_){}}}}
  const SOFT=()=>(BLK[1]||[0,0,3])[2],HARD=()=>(BLK[3]||[0,0,6])[2];
  for(const b of BI){for(const id in b.tl){const t=b.tl[id],n=+id;TILE[n]={n:t[0],c:t[1],s:t[2],b};BLK[n]=[t[0],t[1],t[2]=='rock'?HARD():t[2]=='ore'?Math.round(HARD()*1.6):t[2]=='crys'?Math.round(HARD()*1.2):SOFT()];
    try{PRICE[n]=t[2]=='ore'?b.sh[1]:4;LVREQ[n]=0;SOLID6[n]=1}catch(_){}
@@ -70,58 +75,64 @@ const BIOME17=(()=>{
  try{const o=JSON.parse(localStorage.getItem(SK())||'null');if(o&&o.w&&typeof o.w=='object')S=o}catch(_){}
  let dirty=0;const save=()=>{dirty=0;try{localStorage.setItem(SK(),JSON.stringify(S))}catch(_){}};
  function rec(n){n=norm(n);let r=S.w[n];if(!r){let old=0;try{const st=WORD9.state.w[n];old=st&&((st.got&&st.got.length)||st.ok)?1:0}catch(_){}r=S.w[n]={bw:old?0:1,lit:{},k:[0,0,0],o:[0,0,0],c:[0,0,0],done:0};save()}
-  for(const f of['k','o','c'])if(!Array.isArray(r[f]))r[f]=[0,0,0];if(!r.lit||typeof r.lit!='object')r.lit={};return r}
+  const cnt=(STAGES[stageOf(n)]||[0,0,0]).length;for(const f of['k','o','c']){if(!Array.isArray(r[f]))r[f]=[];while(r[f].length<cnt)r[f].push(0)}if(!r.lit||typeof r.lit!='object')r.lit={};return r}
  // ---- world layout from its name: which three biomes (in band order) and the difficulty
- function layout(n){n=norm(n);const Rn=rr((h32(n)^0xb10e)>>>0),ids=[0,1,2,3,4,5];for(let i=5;i>0;i--){const j=Math.floor(Rn()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}
-  const q=Rn(),diff=q<.2?1:q<.45?2:q<.7?3:q<.88?4:5;return{bi:ids.slice(0,N).map(i=>BI[i]),diff,bands:ids.slice(0,N).map((_,i)=>({d0:TOP+i*BAND,d1:TOP+(i+1)*BAND}))}}
- const wordOf=n=>{if(!isWorld(n))return null;const r=rec(n);return r.bw?WORDS3[h32(norm(n)+'#w3')%WORDS3.length]:null};
- const needK=i=>12+4*i,needO=i=>6+2*i,NB=3;
+ function layout(n){n=norm(n);const pool=STAGES[stageOf(n)]||BI,cnt=pool===BI?3:pool.length,band=BANDS[cnt]||Math.floor(90/cnt),Rn=rr((h32(n)^0xb10e)>>>0),ids=pool.map((_,i)=>i);for(let i=ids.length-1;i>0;i--){const j=Math.floor(Rn()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}
+  const q=Rn(),diff=q<.2?1:q<.45?2:q<.7?3:q<.88?4:5;return{bi:ids.slice(0,cnt).map(i=>pool[i]),diff,band,bands:ids.slice(0,cnt).map((_,i)=>({d0:TOP+i*band,d1:TOP+(i+1)*band}))}}
+ const wordOf=n=>{if(!isWorld(n)||stageOf(n))return null;const r=rec(n);return r.bw?WORDS3[h32(norm(n)+'#w3')%WORDS3.length]:null};
+ const tier=i=>N<=3?i:i*2/(N-1),needK=i=>12+Math.round(4*tier(i)),needO=i=>6+Math.round(2*tier(i)),NB=3;   // tier: how hard biome i is, from 0 to 2 however many biomes there are
  const bandOfDepth=d=>{if(d<TOP)return -1;return Math.min(N-1,Math.floor((d-TOP)/BAND))};
  let LAY=null,ON=false,BEA=[],LSP=null,LCH=[];
  // ---- terrain: re-skin the bands, carve each biome's features, beacon chambers and letter chambers. Runs right after the base terrain
  // (WORD9's gen wrapper), before the letters are placed and before saved edits apply.
- const CARVE=new Set([1,3,77,...Object.keys(TILE).map(Number).filter(n=>!ORE.has(n))]);
- function shape(){LAY=null;ON=false;BEA=[];LSP=null;LCH=[];if(!isWorld(cur))return;const lay=layout(cur);LAY=lay;ON=true;const r=rec(cur),Rg=rr((h32(cur)^0x5a9e)>>>0),ri=(a,b)=>a+Math.floor(Rg()*Math.max(1,b-a));
+ const CARVE=new Set([1,3,77,...Object.keys(TILE).map(Number).filter(n=>!ORE.has(n))]),ORE0=new Set(ORE);   // what the first worlds may carve: realm blocks only count in their own realm, so a world's layout never shifts
+ function shape(){LAY=null;ON=false;BEA=[];LSP=null;LCH=[];if(!isWorld(cur))return;const lay=layout(cur);LAY=lay;ON=true;N=lay.bi.length;BAND=lay.band;const rlm=stageOf(cur)>0,CV=rlm?new Set(CARVE):CARVE,OR=rlm?ORE:ORE0;if(rlm)for(const b of lay.bi)for(const t of[b.rock,b.soil,b.acc])CV.add(t);const r=rec(cur),Rg=rr((h32(cur)^0x5a9e)>>>0),ri=(a,b)=>a+Math.floor(Rg()*Math.max(1,b-a));
   const S0=new Int16Array(W),J=new Int8Array(W);for(let x=0;x<W;x++){S0[x]=sh(x);J[x]=Math.round(Math.sin(x*.21+lay.diff)*1.2+Math.sin(x*.07+3.1)*1.3)}
   const bandAt=(x,y)=>{if(x<1||x>=W-1||y>=H-2)return -1;const d=y-S0[x]-J[x];return d<TOP?-1:Math.min(N-1,Math.floor((d-TOP)/BAND))};
   const inB=(x,y,i)=>bandAt(x,y)==i,T0=(x,y)=>tiles[y*W+x],put=(x,y,b)=>{const k=y*W+x;tiles[k]=b;hp[k]=b?BLK[b][2]:0;if(b)wl[k]=0};
   const noise=(x,y,o)=>Math.sin(x*.31+y*.17+o)+Math.sin(x*.13-y*.29+o*1.7)+Math.sin((x+y)*.11+o*2.3);
   // 1. re-skin: stone and deepslate become the biome rock, dirt its soil, blobs / layers of its accent block
   for(let y=TOP;y<H-2;y++)for(let x=1;x<W-1;x++){const i=bandAt(x,y);if(i<0)continue;const b=lay.bi[i],k=y*W+x,t=tiles[k];if(t!=3&&t!=77&&t!=1)continue;
-   let nb=t==1?b.soil:b.rock;if(t!=1){const v=noise(x,y,i*5+lay.diff);if(b.id=='dune'?((y+Math.round(Math.sin(x*.1)*2))%7)<2:v>(b.id=='crystal'?2.05:1.65))nb=b.acc}put(x,y,nb)}
+   let nb=t==1?b.soil:b.rock;if(t!=1){const v=noise(x,y,i*5+lay.diff);if((b.fx||b.id)=='dune'?((y+Math.round(Math.sin(x*.1)*2))%7)<2:v>((b.fx||b.id)=='crystal'?2.05:1.65))nb=b.acc}put(x,y,nb)}
   // 2. features
   const area=(x0,y0,x1,y1,ok)=>{for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){if(x<2||x>W-3||y<2||y>H-4)return false;const t=T0(x,y);if(t&&!ok(t))return false;if(wl[y*W+x])return false}return true};
-  const rockish=t=>CARVE.has(t)||ORE.has(t)||t==9||t==10||(t>=71&&t<=76);
-  const floorAir=(x,y)=>!T0(x,y)&&!wl[y*W+x]&&T0(x,y+1)&&CARVE.has(T0(x,y+1));
+  const rockish=t=>CV.has(t)||OR.has(t)||t==9||t==10||(t>=71&&t<=76);
+  const floorAir=(x,y)=>!T0(x,y)&&!wl[y*W+x]&&T0(x,y+1)&&CV.has(T0(x,y+1));
   lay.bi.forEach((b,i)=>{const d0=TOP+i*BAND,d1=d0+BAND,yAt=x=>S0[x]+d0+ri(3,BAND-3);
-   if(b.id=='moss'){for(let n=0;n<6;n++){const cx=ri(8,W-8),cy=yAt(cx),rx=4+Rg()*4,ry=2.5+Rg()*1.6;for(let y=Math.floor(cy-ry);y<=cy+ry;y++)for(let x=Math.floor(cx-rx);x<=cx+rx;x++)if(inB(x,y,i)&&((x-cx)/rx)**2+((y-cy)/ry)**2<1&&CARVE.has(T0(x,y)))put(x,y,0)}}
-   if(b.id=='crystal'){for(let n=0;n<4;n++){const cx=ri(10,W-10),cy=yAt(cx),rad=4+Rg()*2.2;if(!area(Math.floor(cx-rad),Math.floor(cy-rad),Math.ceil(cx+rad),Math.ceil(cy+rad),rockish))continue;
-     for(let y=Math.floor(cy-rad);y<=cy+rad;y++)for(let x=Math.floor(cx-rad);x<=cx+rad;x++){const dd=Math.hypot(x-cx,y-cy);if(dd<rad-1.5)put(x,y,0);else if(dd<rad&&CARVE.has(T0(x,y)))put(x,y,b.acc)}
+   if((b.fx||b.id)=='moss'){for(let n=0;n<6;n++){const cx=ri(8,W-8),cy=yAt(cx),rx=4+Rg()*4,ry=2.5+Rg()*1.6;for(let y=Math.floor(cy-ry);y<=cy+ry;y++)for(let x=Math.floor(cx-rx);x<=cx+rx;x++)if(inB(x,y,i)&&((x-cx)/rx)**2+((y-cy)/ry)**2<1&&CV.has(T0(x,y)))put(x,y,0)}}
+   if((b.fx||b.id)=='crystal'){for(let n=0;n<4;n++){const cx=ri(10,W-10),cy=yAt(cx),rad=4+Rg()*2.2;if(!area(Math.floor(cx-rad),Math.floor(cy-rad),Math.ceil(cx+rad),Math.ceil(cy+rad),rockish))continue;
+     for(let y=Math.floor(cy-rad);y<=cy+rad;y++)for(let x=Math.floor(cx-rad);x<=cx+rad;x++){const dd=Math.hypot(x-cx,y-cy);if(dd<rad-1.5)put(x,y,0);else if(dd<rad&&CV.has(T0(x,y)))put(x,y,b.acc)}
      for(let x=Math.floor(cx-rad+2);x<=cx+rad-2;x++){let y=Math.floor(cy);while(y<H-3&&!T0(x,y+1))y++;if(!T0(x,y)&&Rg()<.35)put(x,y,52)}}}
-   if(b.id=='dune'){for(let n=0;n<2;n++){const x0=ri(10,W-22),y1=yAt(x0+5),y0=y1-5;if(!area(x0-1,y0-1,x0+11,y1+1,rockish))continue;
+   if((b.fx||b.id)=='dune'){for(let n=0;n<2;n++){const x0=ri(10,W-22),y1=yAt(x0+5),y0=y1-5;if(!area(x0-1,y0-1,x0+11,y1+1,rockish))continue;
      for(let y=y0;y<=y1;y++)for(let x=x0;x<=x0+10;x++){const edge=y==y0||y==y1||x==x0||x==x0+10;put(x,y,edge?45:0)}
      for(const x of[x0,x0+10]){put(x,y1-1,0);put(x,y1-2,0)}put(x0+3,y1-1,64);put(x0+7,y1-1,64);if(Rg()<.6)put(x0+5,y1-1,10)}}
    for(let y=d0;y<H-3;y++)for(let x=2;x<W-2;x++){if(!inB(x,y,i))continue;const k=y*W+x;
-    if(b.id=='frost'){if(!tiles[k]&&wl[k]){wl[k]=0;put(x,y,b.acc);continue}if(!tiles[k]&&!wl[k]&&CARVE.has(T0(x,y-1))&&!T0(x,y+1)&&Rg()<.07){put(x,y,b.acc);if(!T0(x,y+2)&&Rg()<.5)put(x,y+1,b.acc)}}
+    if((b.fx||b.id)=='frost'){if(!tiles[k]&&wl[k]){wl[k]=0;put(x,y,b.acc);continue}if(!tiles[k]&&!wl[k]&&CV.has(T0(x,y-1))&&!T0(x,y+1)&&Rg()<.07){put(x,y,b.acc);if(!T0(x,y+2)&&Rg()<.5)put(x,y+1,b.acc)}}
     if(!floorAir(x,y))continue;const f=Rg();
-    if(b.id=='moss'){if(f<.5)put(x,y+1,42);else if(f<.54)put(x,y,63)}
-    else if(b.id=='frost'){if(f<.25)put(x,y+1,b.acc)}
-    else if(b.id=='reef'){if(f<.3)put(x,y+1,b.acc);else if(f<.36)put(x,y,59)}
-    else if(b.id=='ember'){if(f<.3)put(x,y+1,b.acc);else if(f<.37){put(x,y,54);if(!T0(x,y-1)&&Rg()<.5)put(x,y-1,54)}}}
-   if(b.id=='reef'){for(let n=0;n<14;n++){for(let t=0;t<40;t++){const x=ri(4,W-4),y=yAt(x);if(!inB(x,y,i)||!floorAir(x,y))continue;let l=x,rr2=x;while(l>2&&x-l<8&&!T0(l-1,y)&&T0(l-1,y+1))l--;while(rr2<W-3&&rr2-x<8&&!T0(rr2+1,y)&&T0(rr2+1,y+1))rr2++;
+    if((b.fx||b.id)=='moss'){if(f<.5)put(x,y+1,42);else if(f<.54)put(x,y,63)}
+    else if((b.fx||b.id)=='frost'){if(f<.25)put(x,y+1,b.acc)}
+    else if((b.fx||b.id)=='reef'){if(f<.3)put(x,y+1,b.acc);else if(f<.36)put(x,y,59)}
+    else if((b.fx||b.id)=='ember'){if(f<.3)put(x,y+1,b.acc);else if(f<.37){put(x,y,54);if(!T0(x,y-1)&&Rg()<.5)put(x,y-1,54)}}}
+   if((b.fx||b.id)=='reef'){for(let n=0;n<14;n++){for(let t=0;t<40;t++){const x=ri(4,W-4),y=yAt(x);if(!inB(x,y,i)||!floorAir(x,y))continue;let l=x,rr2=x;while(l>2&&x-l<8&&!T0(l-1,y)&&T0(l-1,y+1))l--;while(rr2<W-3&&rr2-x<8&&!T0(rr2+1,y)&&T0(rr2+1,y+1))rr2++;
      if(rr2-l<2)continue;for(let xx=l;xx<=rr2;xx++)wl[y*W+xx]=8;break}}}
-   if(b.id=='ember'){for(let y=d0;y<H-3;y++)for(let x=2;x<W-2;x++)if(inB(x,y,i)&&T0(x,y)==b.rock&&Rg()<.012)put(x,y,62)}
+   if((b.fx||b.id)=='ember'){for(let y=d0;y<H-3;y++)for(let x=2;x<W-2;x++)if(inB(x,y,i)&&T0(x,y)==b.rock&&Rg()<.012)put(x,y,62)}
    // ore veins
-   for(let n=0;n<26;n++){for(let t=0;t<30;t++){let x=ri(3,W-3),y=yAt(x);if(!inB(x,y,i)||T0(x,y)!=b.rock)continue;const len=2+Math.floor(Rg()*3);for(let s=0;s<len;s++){if(inB(x,y,i)&&CARVE.has(T0(x,y)))put(x,y,b.ore);x+=Math.round(Rg()*2-1);y+=Math.round(Rg()*2-1)}break}}});
+   for(let n=0,nv=Math.max(16,Math.round(26*BAND/30));n<nv;n++){for(let t=0;t<30;t++){let x=ri(3,W-3),y=yAt(x);if(!inB(x,y,i)||T0(x,y)!=b.rock)continue;const len=2+Math.floor(Rg()*3);for(let s=0;s<len;s++){if(inB(x,y,i)&&CV.has(T0(x,y)))put(x,y,b.ore);x+=Math.round(Rg()*2-1);y+=Math.round(Rg()*2-1)}break}}});
   // 3. chambers: 3 beacon chambers per biome (one per third of the map), then a letter chamber deep in each biome (biome-word worlds)
   const used=[];const far=(x,y,d)=>used.every(u=>Math.abs(u.x-x)>d||Math.abs(u.y-y)>8);
   function chamber(i,x0,x1,dmin,dmax,hw,hh,minD){const b=lay.bi[i];let best=null;for(let t=0;t<70;t++){const x=ri(x0,x1);if(x<hw+3||x>W-hw-4)continue;const y=S0[x]+TOP+i*BAND+ri(dmin,dmax);if(y>H-5||!far(x,y,minD))continue;
     if(area(x-hw-1,y-hh-1,x+hw+1,y+1,rockish)){best={x,y};break}if(!best&&t>50)best={x,y}}
    if(!best)return null;const{x,y}=best;for(let yy=y-hh;yy<y;yy++)for(let xx=x-hw;xx<=x+hw;xx++){if((yy==y-hh)&&(xx==x-hw||xx==x+hw))continue;const t=T0(xx,yy);if(!t||rockish(t)){put(xx,yy,0);wl[yy*W+xx]=0}}
    for(let xx=x-hw;xx<=x+hw;xx++){const t=T0(xx,y);if(!t||rockish(t))put(xx,y,b.rock)}used.push(best);return best}
-  for(let i=0;i<N;i++)for(let j=0;j<NB;j++){const s=(W-16)/NB,c=chamber(i,Math.floor(8+j*s),Math.floor(8+(j+1)*s),6,BAND-4,3,4,10);if(c){const id=i+'-'+j;BEA.push({id,i,j,x:c.x,y:c.y,st:r.lit[id]?'lit':'idle',t:0,ms:[],sp:0,want:0,nx:0})}}
-  if(r.bw){LSP=[];for(let i=0;i<N;i++){const c=chamber(i,8,W-8,18,BAND-3,4,4,14);if(c){LCH.push(c);LSP.push((c.y-1)*W+c.x+3)}else LSP.push(-1)}}}
+  for(let i=0;i<N;i++)for(let j=0;j<NB;j++){const s=(W-16)/NB,c=chamber(i,Math.floor(8+j*s),Math.floor(8+(j+1)*s),Math.min(6,BAND-5),BAND-4,3,4,10);if(c){const id=i+'-'+j;BEA.push({id,i,j,x:c.x,y:c.y,st:r.lit[id]?'lit':'idle',t:0,ms:[],sp:0,want:0,nx:0})}}
+  if(r.bw){LSP=[];for(let i=0;i<N;i++){const c=chamber(i,8,W-8,Math.min(18,BAND-5),BAND-3,4,4,14);if(c){LCH.push(c);LSP.push((c.y-1)*W+c.x+3)}else LSP.push(-1)}}}
  const letterSpots=(n,cnt)=>ON&&norm(n)==cur&&LSP&&cnt==N?LSP.slice():null;
+ // after a realm has been themed (burnt, regions, lava pockets): beacons and letters keep a clear, dry chamber
+ function after(){if(!ON)return;const drain=(c,hw)=>{for(let yy=c.y-9;yy<=c.y;yy++)for(let xx=c.x-hw-7;xx<=c.x+hw+7;xx++)if(xx>=1&&xx<W-1&&yy>=1&&yy<H-2)wl[yy*W+xx]=0};
+  const clr=(c,hw)=>{for(let yy=c.y-4;yy<c.y;yy++)for(let xx=c.x-hw;xx<=c.x+hw;xx++){if(xx<1||xx>=W-1||yy<1)continue;const k=yy*W+xx;if(tiles[k]&&tiles[k]!=18&&tiles[k]!=4){tiles[k]=0;hp[k]=0}trees.delete(k)}for(let xx=c.x-hw;xx<=c.x+hw;xx++){const k=c.y*W+xx;if(xx>=1&&xx<W-1&&!tiles[k]){tiles[k]=LAY.bi[c.i==null?0:c.i].rock;hp[k]=BLK[tiles[k]][2]}}};
+  for(const q of BEA){drain(q,3);clr(q,3)}LCH.forEach((c,i)=>{drain(c,4);c.i=i;clr(c,4)})}
+ // a monster for this depth when the depth has a biome (the realms ask before using their own surface monsters)
+ const pick=dp=>{if(!ON||creative())return null;const i=bandOfDepth(dp);if(i<0||R()>=.82)return null;return LAY.bi[i].mob[R()<.6?0:1][0]};
  // ---- seals: the biome's letter stays sealed (and its warden asleep) until the biome's trial is done
  const sealed=(w,i)=>{if(creative()||!ON||norm(w)!=cur||!(i>=0&&i<N))return false;const r=rec(cur);return !!r.bw&&!r.c[i]};
  let lockT=0;function locks(w,l){if(!l||!sealed(w,l.i))return false;const n=performance.now();if(n-lockT>2400){lockT=n;const b=LAY.bi[l.i],p=prog(l.i);
@@ -130,7 +141,7 @@ const BIOME17=(()=>{
  function prog(i){const r=rec(cur);return{nb:BEA.filter(q=>q.i==i).length,lit:BEA.filter(q=>q.i==i&&r.lit[q.id]).length,k:Math.min(needK(i),r.k[i]|0),nk:needK(i),o:Math.min(needO(i),r.o[i]|0),no:needO(i),done:!!r.c[i]}}
  // ---- monster strength: base x player level x biome depth x world difficulty (refreshed every two seconds)
  function refresh(){if(!LAY)return;const L=Math.max(1,lvl|0),df=LAY.diff;LAY.bi.forEach((b,i)=>{for(const q of b.mob){const k=q[0],bs=KIND[k].base,d=MK[k];
-   d.hp=Math.round(bs.hp*(1+.07*(L-1))*(1+.4*i)*(1+.2*(df-1)));d.dmg=Math.round(bs.dmg*(1+.025*(L-1))*(1+.25*i)*(1+.12*(df-1)));d.gem=Math.round(bs.gem*(1+.5*i)*(1+.15*(df-1)))}})}
+   const ti=tier(i);d.hp=Math.round(bs.hp*(1+.07*(L-1))*(1+.4*ti)*(1+.2*(df-1)));d.dmg=Math.round(bs.dmg*(1+.025*(L-1))*(1+.25*ti)*(1+.12*(df-1)));d.gem=Math.round(bs.gem*(1+.5*ti)*(1+.15*(df-1)))}})}
  {const _pm=pickMob;pickMob=function(dp){try{if(ON&&!creative()){const i=bandOfDepth(dp);if(i>=0&&R()<.82){const b=LAY.bi[i];return b.mob[R()<.6?0:1][0]}}}catch(_){}return _pm.apply(this,arguments)}}
  // ---- trial progress: kills, ore, beacons
  const income=L=>{try{return ECON14.income(L)}catch(_){return 30+4.5*Math.max(1,L)}};
@@ -148,7 +159,7 @@ const BIOME17=(()=>{
  function worldReward(){const r=rec(cur),df=LAY.diff,L=Math.max(1,lvl|0),gm=Math.round(income(L)*(10+6*df)),x2=Math.round((.2+.08*df)*xpNeed(L));r.done=1;save();
   const items=[[262,3],[263,2]];if(df>=2)items.push([264,2]);if(df>=3)items.push([268,1]);if(df>=4)items.push([265,2]);if(df>=5)items.push([269,1],[266,1]);
   gems+=gm;try{stat('gems',gm)}catch(_){}try{xpGain('fight',x2)}catch(_){}try{const c=CLASS7.cur();if(c)CLASS7.gainXp(c,100*df+3*L)}catch(_){}for(const[k,n]of items)try{addI(k,n)}catch(_){}
-  try{const q=REW8;q.celebrate(P.x,P.y+P.h/2,'#ffe27a',{d:2,s:1.2,n:40});q.fly(P.x,P.y,gm);q.fan('ach');q.card({kind:'world',kick:'World conquered · '+'★'.repeat(df)+' '+STARS[df],title:label(cur),sub:'All three biomes cleared and the Word Gate opened',gems:gm,xp:x2,items:items.slice(-4),tier:df>=4?4:3,showTier:1})}catch(_){try{say('World conquered! +'+gm+' gems')}catch(__){}}
+  try{const q=REW8;q.celebrate(P.x,P.y+P.h/2,'#ffe27a',{d:2,s:1.2,n:40});q.fly(P.x,P.y,gm);q.fan('ach');q.card({kind:'world',kick:'World conquered · '+'★'.repeat(df)+' '+STARS[df],title:label(cur),sub:'All '+N+' biomes cleared and the Word Gate opened',gems:gm,xp:x2,items:items.slice(-4),tier:df>=4?4:3,showTier:1})}catch(_){try{say('World conquered! +'+gm+' gems')}catch(__){}}
   try{UI6.say6('WORLD CONQUERED',label(cur)+' · '+'★'.repeat(df),3200)}catch(_){}[523,659,784,1047].forEach((f,i)=>tone(f,f*1.01,.35,'triangle',.06,i*.12))}
  const label=n=>{try{return WORD9.label(n)}catch(_){return n}};
  const rewardFor=(df,L)=>({gems:Math.round(income(L)*(10+6*df)),xp:Math.round((.2+.08*df)*xpNeed(L))});
@@ -158,7 +169,7 @@ const BIOME17=(()=>{
   return{x:(q.x+(R()<.5?-2:2)+.5)*T,y:(q.y-2)*T}}
  function spawnW(q,n){const b=LAY.bi[q.i];for(let j=0;j<n;j++){const k=b.mob[(q.sp+j)%2][0],d=MK[k],sp=spot(q,d.fly),m={k,x:sp.x,y:d.fly?sp.y:sp.y+T-d.h-2,w:d.w,h:d.h,vx:0,vy:0,hp:d.hp,fl:0,burn:0,slow:0,ph:R()*6,t:R(),dir:R()<.5?-1:1,fade:0,g:false,wall:0,wv:q.id};
    try{mobs.push(m)}catch(_){}if(!mobs.includes(m))Array.prototype.push.call(mobs,m);q.ms.push(m);try{VFX.burst(m.x,m.y+m.h/2,[b.c,b.l],10,180,1,.5,8)}catch(_){}}q.sp+=n}
- function wake(q){if(q.st!='idle'||rec(cur).lit[q.id])return false;const b=LAY.bi[q.i];q.st='wave';q.t=0;q.ms=[];q.sp=0;q.want=3+q.i+(LAY.diff>=4?1:0);q.nx=3.5;spawnW(q,Math.ceil(q.want/2));refresh();
+ function wake(q){if(q.st!='idle'||rec(cur).lit[q.id])return false;const b=LAY.bi[q.i];q.st='wave';q.t=0;q.ms=[];q.sp=0;q.want=3+Math.round(tier(q.i))+(LAY.diff>=4?1:0);q.nx=3.5;spawnW(q,Math.ceil(q.want/2));refresh();
   try{UI6.say6(b.bea[0].toUpperCase(),'Defeat the wave to '+b.bea[2].toLowerCase()+' it',2200)}catch(_){}try{VFX.wave((q.x+.5)*T,q.y*T,b.c,T*3,.5,1)}catch(_){}tone(196,147,.5,'sawtooth',.04);tone(392,294,.4,'triangle',.03,.1);return true}
  function light(q){const r=rec(cur),b=LAY.bi[q.i];q.st='lit';r.lit[q.id]=1;save();const x=(q.x+.5)*T,y=(q.y-1)*T;
   try{VFX.burst(x,y,[b.c,b.l,'#ffffff'],30,320,1,.9,14);VFX.wave(x,y,b.l,T*2.6,.6,1)}catch(_){}try{ft(x,y-30,b.bea[0]+' '+prog(q.i).lit+'/'+prog(q.i).nb,b.l)}catch(_){}try{gain(8,x,y-44)}catch(_){}
@@ -247,7 +258,12 @@ const BIOME17=(()=>{
   else if(m.k=='b_jelly'){g.strokeStyle='rgba(255,170,230,.85)';g.lineWidth=2.4;g.lineCap='round';for(let i=0;i<4;i++){const sx=(i-1.5)*7;g.beginPath();g.moveTo(sx,-4);g.quadraticCurveTo(sx+Math.sin(t*4+i)*5,8,sx+Math.sin(t*3+i)*3,16);g.stroke()}}
   else if(m.k=='b_toad'){g.fillStyle='#ffb040';for(const[sx,sy]of[[-.3,.7],[.25,.85],[.05,.5]]){g.beginPath();g.arc(sx*m.w,-sy*m.h,3,0,TAU);g.fill()}}
   else if(m.k=='b_fmoth'){g.globalCompositeOperation='lighter';for(let i=0;i<3;i++){const fh=8+Math.sin(t*12+i*2)*3;g.fillStyle=i%2?'rgba(255,150,50,.8)':'rgba(255,210,90,.8)';g.beginPath();g.ellipse(-dir*(6+i*5),-m.h*.5+i*2,3,fh/2,0,0,TAU);g.fill()}g.globalCompositeOperation='source-over'}
+  else if(d.tr=='spikes'){for(const s of[-1,0,1])spike(s*m.w*.28,top+4,4,s?10:14,MYMIX(d.c))}
+  else if(d.tr=='flames'){g.globalCompositeOperation='lighter';for(let i=0;i<3;i++){const fh=9+Math.sin(t*12+i*2)*3;g.fillStyle=i%2?'rgba(255,140,50,.8)':'rgba(255,215,100,.8)';g.beginPath();g.ellipse((i-1)*m.w*.22,top+2,3.2,fh/2,0,0,TAU);g.fill()}g.globalCompositeOperation='source-over'}
+  else if(d.tr=='orbit'){g.globalCompositeOperation='lighter';for(let i=0;i<3;i++){const a=t*2.2+i*TAU/3;g.fillStyle='rgba(255,255,255,.85)';g.fillRect(Math.cos(a)*m.w*.65-2,-m.h*.55+Math.sin(a)*7-2,4,4)}g.globalCompositeOperation='source-over'}
+  else if(d.tr=='bubbles'){g.strokeStyle='rgba(220,250,255,.8)';g.lineWidth=1.6;for(let i=0;i<3;i++){const u=(t*.6+i/3)%1;g.globalAlpha=m.fade*(1-u);g.beginPath();g.arc((i-1)*m.w*.25,top-u*18,2+i,0,TAU);g.stroke()}g.globalAlpha=m.fade}
   g.restore()}
+ const MYMIX=c=>{try{return mixc(c,1.35)}catch(_){return c}};
  // ---- beacon art: the body in the world layer (lit beacons also light the cave), the glow, wave ring and prompt after the lighting
  const vis=q=>{const x=(q.x+.5)*T-cam.x,y=q.y*T-cam.y,vw=cv.width/ZM,vh=cv.height/ZM;return x>-T*2&&y>-T*3&&x<vw+T*2&&y<vh+T*2};
  function body(q,x,y,t){const b=LAY.bi[q.i],on=q.st=='lit',wv=q.st=='wave',dim=(a,k)=>{try{return MYART.mix(a,'#6a6478',k)}catch(_){return '#7a7488'}},c=on||wv?b.c:dim(b.c,.55),l=on?b.l:dim(b.l,.5),pulse=wv?.5+.5*Math.sin(t*8):on?1:0,ty=b.bea[3];g.save();g.translate(x,y);g.scale(1.35,1.35);g.lineJoin='round';g.lineWidth=2;g.strokeStyle=OL;
@@ -268,7 +284,7 @@ const BIOME17=(()=>{
    if(q.st=='wave'){g2.save();g2.strokeStyle=b.c;g2.globalAlpha=.6;g2.lineWidth=2;g2.setLineDash([6,5]);g2.lineDashOffset=-t*20;g2.beginPath();g2.ellipse(x,y-4,T*2.6,T*.5,0,0,TAU);g2.stroke();g2.restore()}
    if(q.st=='idle'&&nearB(q,T*2.4)){g2.save();g2.font="800 12px Montserrat,'Segoe UI',sans-serif";g2.textAlign='center';const s='E · '+b.bea[2]+' the '+b.bea[0],w2=g2.measureText(s).width+16;g2.fillStyle='rgba(16,12,28,.82)';g2.beginPath();g2.roundRect(x-w2/2,y-T*1.9-12,w2,20,10);g2.fill();g2.fillStyle=b.l;g2.fillText(s,x,y-T*1.9+2);g2.restore()}}}
  {const _d=BOSS6.drawProj;BOSS6.drawProj=function(g2,cx,cy){_d.call(this,g2,cx,cy);try{over(g2,cx,cy)}catch(e){if(!BIOME17.e5){BIOME17.e5=1;console.error('BIOME17 over',e)}}}}
- return{BI,BAND,TOP,N,WORDS3,layout,wordOf,letterSpots,shape,locks,sealed,prog,rec,needK,needO,bandOfDepth,refresh,rewardFor,wake,use,
+ return{BI,get BAND(){return BAND},TOP,get N(){return N},addStage,after,pick,STAGES,WORDS3,layout,wordOf,letterSpots,shape,locks,sealed,prog,rec,needK,needO,bandOfDepth,refresh,rewardFor,wake,use,
   get on(){return ON},get lay(){return LAY},get beacons(){return BEA.map(q=>({id:q.id,i:q.i,x:q.x,y:q.y,st:q.st,want:q.want,live:q.ms.filter(m=>m.hp>0&&!m.dead).length}))},get chambers(){return LCH.slice()},get state(){return S},
   // tests / creative tools: finish a biome's trial parts at once
   finish(i){if(!ON)return false;const r=rec(cur);for(const q of BEA)if(q.i==i){r.lit[q.id]=1;q.st='lit'}r.k[i]=needK(i);r.o[i]=needO(i);check(i);return !!r.c[i]},

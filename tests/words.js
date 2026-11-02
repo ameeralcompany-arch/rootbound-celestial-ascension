@@ -87,9 +87,9 @@ const go=async w=>{await E(w=>{WBOSS13.need=()=>false;enterWorld(w);WX6.force='c
  // monsters
  const M=await E(()=>{const N=['slime','moth','crab','cloud','bat','golem','wraith','magma','shade'],maxHp=Math.max(...N.map(k=>MK[k].hp)),maxD=Math.max(...N.map(k=>MK[k].dmg||6)),maxG=Math.max(...N.map(k=>MK[k].gem));
   const ks=Object.keys(WORD9.IM),picks=new Set();for(let i=0;i<300;i++){picks.add(pickMob(i%2?2:20))}
-  return{ks,maxHp,maxD,maxG,str:ks.every(k=>MK[k].hp>maxHp&&MK[k].dmg>maxD&&MK[k].gem>=maxG*.8),picks:[...picks],onlyInf:[...picks].every(k=>ks.includes(k)),fly:ks.some(k=>MK[k].fly),art:ks.map(k=>k)}});
+  return{ks,maxHp,maxD,maxG,str:ks.every(k=>MK[k].hp>maxHp&&MK[k].dmg>maxD&&MK[k].gem>=maxG*.8),picks:[...picks],onlyInf:[...picks].every(k=>/^inf_/.test(k)),fly:ks.some(k=>MK[k].fly),art:ks.map(k=>k)}});
  ok('4 new monsters, each with more HP and damage than any normal one, one of them flying',M.ks.length==4&&M.str&&M.fly,M.ks.map(k=>k).join());
- ok('only the new monsters spawn in an Inferno (surface and caves)',M.onlyInf&&M.picks.length==4,M.picks);
+ ok('only the Inferno\'s own monsters spawn in an Inferno (surface and caves, biomes included)',M.onlyInf&&M.picks.length>=4,M.picks);
  const sp=await E(async()=>{mobs.length=0;let n=0;for(let i=0;i<40&&mobs.length<6;i++){if(spawnMob())n++}await new Promise(r=>setTimeout(r,300));return{n,kinds:[...new Set(mobs.map(m=>m.k))],all:mobs.every(m=>MK[m.k].inf)}});
  ok('spawning in the Inferno makes Inferno monsters',sp.n>0&&sp.all,sp);
  const dr=await E(()=>{mobs.length=0;drops.length=0;const k='inf_golem',m=WORD9.spawnAt(k,P.x+T*3,P.y);hurtMob(m,99999,null,0);const ms=drops.filter(d=>d.k==MOBMAT[k]).length,gm=drops.filter(d=>d.k=='gem').reduce((a,d)=>a+d.n,0);return{ms,gm,name:MAT[MOBMAT[k]].n}});

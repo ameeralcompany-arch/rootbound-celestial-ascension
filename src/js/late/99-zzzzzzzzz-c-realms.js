@@ -93,15 +93,7 @@ const REALM10=(()=>{
    else if(id=='glimmer'){for(let x=x0;x<x1;x++){const y=top(x);if(nat(tiles[y*W+x])&&safe(x))put(y*W+x,214);for(let yy=y+6;yy<H-6;yy++){const k=yy*W+x;if(tiles[k-W]&&nat(tiles[k-W])&&free(k)&&Rg()<.12){const h=ri(1,4);for(let j=0;j<h;j++){const q=k+j*W;if(!free(q))break;put(q,253)}}}}}}
   // theme pass: natural blocks take the realm's blocks; its ore runs through the rock below the surface layers
   const M=MAPS[s],ore=ORE[s],rock=ROCK[s];for(let k=0;k<W*H;k++){const b=tiles[k];if(!b||b==LETTER)continue;const m=M[b];if(m===undefined)continue;let n=m;if(n==rock&&k>W*14&&Rg()<.022)n=ore;tiles[k]=n;hp[k]=n?BLK[n][2]:0}deep(s)}
- // ---- underground biomes: every realm (the Inferno too) has two below its surface regions, by depth (tiles below the surface): the first
- // from 10 to 38, the second from 38 down to the bedrock. Each has its own rock, caverns lined with its accent block (some flooded: lava in
- // the Inferno), crystal geodes and ore veins; the depth panel (DEPTH8) names it, tints it and fills it with its motes and ambience; the
- // deeper one favours the realm's toughest monster.
- // Biome blocks 210-227 (BIOME17) break into plain blocks and their ores into shards, like in the first-tier worlds.
- const DB={1:[{n:'Ashen Caverns',c:'#ff8a4a',m:'embers',h:'Scorched caves with flooded lava pools and magma geodes',rock:99,acc:19,core:79,ore:79,op:.03,liq:1,tint:'rgba(255,90,30,.07)'},{n:'Molten Core',c:'#ff5a2a',m:'embers',h:'The burning heart: basalt, magma veins and lava lakes',rock:78,acc:79,core:79,ore:79,op:.06,liq:1,tint:'rgba(255,60,20,.12)'}],
-  2:[{n:'Nebula Caves',c:'#b48cff',m:'glint',h:'Aurora-veined caverns full of star crystal geodes',rock:229,acc:67,core:232,ore:233,op:.03,liq:0,tint:'rgba(150,90,255,.08)'},{n:'Void Depths',c:'#6a4ad8',m:'glint',h:'Dark galaxy stone, rich in comet ore',rock:66,acc:229,core:232,ore:233,op:.05,liq:0,tint:'rgba(30,8,70,.2)'}],
-  3:[{n:'Pearl Grottos',c:'#4fe0d0',m:'bubbles',h:'Flooded coral grottos with pearl geodes',rock:222,acc:223,core:224,ore:237,op:.03,liq:1,tint:'rgba(60,200,220,.07)'},{n:'Midnight Trench',c:'#2a6ad8',m:'bubbles',h:'Abyss stone lit by glow anemones, tidal ore everywhere',rock:235,acc:236,core:237,ore:237,op:.05,liq:1,tint:'rgba(4,14,48,.22)'}],
-  4:[{n:'Geode Hollows',c:'#b48cff',m:'glint',h:'Amethyst caverns and prism geodes (Geode Rock needs the Rock tool)',rock:219,acc:220,core:221,ore:254,op:.03,liq:0,tint:'rgba(180,120,255,.08)'},{n:'Frost Prism Depths',c:'#7ae0ff',m:'snow',h:'Frozen caves of packed ice and radiant crystal',rock:213,acc:214,core:253,ore:215,op:.035,liq:1,tint:'rgba(120,220,255,.1)'}]};
+ const DB={};   // underground biomes now come from BIOME17 (99-zzzzzzzzz-m-realmbiomes.js), one per letter of the realm's word
  const ROCKY=new Set([3,77,78,99,19,229,235,239,66,222,213,219]);
  const bandOf=d=>d<10?-1:d<38?0:1;
  function deep(s){const B=DB[s];if(!B)return;const Rg=rr((h32(cur)^(0x3d11+s*131))>>>0),ri=(a,b)=>a+Math.floor(Rg()*Math.max(1,b-a));
@@ -175,7 +167,7 @@ const REALM10=(()=>{
   cry_wyrm:{n:'Geode Wyrm',c:'#ff8ad8',hp:1500,dmg:66,gem:130,w:80,h:34,ai:'fly',fly:1,spm:1.2,s:4,d:[305,'Wyrm Scale','#ff9ae8',260]}};
  const POOL={2:[['gal_wisp',3],['gal_stalker',3],['gal_ram',2.5],['gal_titan',1.2]],3:[['sea_jelly',3],['sea_angler',2.6],['sea_shark',2.4],['sea_kraken',1.1]],4:[['cry_sprite',3],['cry_spider',2.6],['cry_golem',1.2],['cry_wyrm',1.6]]};
  for(const k in MON){const d=MON[k];MK[k]=Object.assign({min:9999,max:9999,realm:d.s},d);delete MK[k].d;delete MK[k].s;MAT[d.d[0]]={n:d.d[1],c:d.d[2],p:d.d[3]};MOBMAT[k]=d.d[0]}
- {const _pm=pickMob;pickMob=function(dp){const s=sg();if(s<2)return _pm.apply(this,arguments);const pool=POOL[s],wt=(p,i)=>p[1]*(dp>=38&&i==3?2.5:1);let t=0;pool.forEach((p,i)=>t+=wt(p,i));let r=R()*t;for(let i=0;i<pool.length;i++){r-=wt(pool[i],i);if(r<=0)return pool[i][0]}return pool[0][0]}}
+ {const _pm=pickMob;pickMob=function(dp){const s=sg();if(s<2)return _pm.apply(this,arguments);try{const b=BIOME17.pick(dp);if(b)return b}catch(_){}const pool=POOL[s],wt=(p,i)=>p[1]*(dp>=38&&i==3?2.5:1);let t=0;pool.forEach((p,i)=>t+=wt(p,i));let r=R()*t;for(let i=0;i<pool.length;i++){r-=wt(pool[i],i);if(r<=0)return pool[i][0]}return pool[0][0]}}
  {const _md=mobDrops;mobDrops=function(m){const r=_md.apply(this,arguments);try{const d=MK[m.k];if(d&&d.realm){for(let i=0;i<d.realm+1;i++)spawnDrop(m.x,m.y,'gem',3+d.realm);if(R()<.35)spawnDrop(m.x,m.y,ORE[d.realm],1);if(R()<.2)spawnDrop(m.x,m.y,[73,74,75,76][R()*4|0],1)}}catch(_){}return r}}
  // ---- monster art (vector, drawn per frame: sharp at any resolution); the glows are cached sprites per colour
  const GLC={};const glowSp=c=>GLC[c]||(GLC[c]=(()=>{const q=cvs(96,96),x=q.getContext('2d'),gr=x.createRadialGradient(48,48,2,48,48,48);gr.addColorStop(0,c);gr.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gr;x.fillRect(0,0,96,96);return q})());
@@ -310,4 +302,4 @@ const REALM10=(()=>{
  {const _lw=loadWorld;loadWorld=function(){PB.length=0;MO.length=0;lastReg=null;band=-2;fixInv();const r=_lw.apply(this,arguments);try{const s=sg();if(DB[s])DEPTH8.theme(DB[s].map((b,i)=>({n:b.n,c:b.c,h:b.h,d0:i?38:10,d1:i?999:38,m:b.m,z:'r'+s+'_'+i,em:d=>b.n+' · '+WORD9.label(cur)+' · '+d+' m deep'})))}catch(e){console.error('REALM10 depth zones',e)}try{if(sg()<2){REG=null;KELP=[]}}catch(_){}return r}}
  // music: each realm (and the Inferno) has its own songs (87-music.js)
  const mood=()=>{const s=sg();return s==1?'inferno':s==2?'realm_gal':s==3?'realm_sea':s==4?'realm_cry':null};
- return{TL,MON,POOL,RG,DB,shape,deep,mood,regionAt,get biome(){const s=sg();return DB[s]&&band>=0?DB[s][band].n:null},get stage(){return sg()},get region(){const r=regionAt(P.x/T);return r?r[1]:null},get kelp(){return KELP.length},get bolts(){return PB.length},get shots(){return shots},get motes(){return MO.length}}})();
+ return{TL,MON,POOL,RG,DB,shape,deep,mood,regionAt,get biome(){try{const i=BIOME17.on?BIOME17.bandOfDepth(Math.floor((P.y+P.h)/T)-sh(Math.max(0,Math.min(W-1,Math.floor(P.x/T))))):-1;return i>=0?BIOME17.layout(cur).bi[i].n:null}catch(_){return null}},get stage(){return sg()},get region(){const r=regionAt(P.x/T);return r?r[1]:null},get kelp(){return KELP.length},get bolts(){return PB.length},get shots(){return shots},get motes(){return MO.length}}})();
