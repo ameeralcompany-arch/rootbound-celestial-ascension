@@ -1,4 +1,4 @@
-const {app,BrowserWindow,Menu,dialog}=require('electron');const path=require('path');const fs=require('fs');
+const {app,BrowserWindow,Menu,dialog,session}=require('electron');const path=require('path');const fs=require('fs');
 // RB_TEST_OFFSCREEN=1 (automated tests): the window renders normally but sits off-screen, never takes focus and has no taskbar button
 const OFF=process.env.RB_TEST_OFFSCREEN=='1';if(OFF)require('electron').app.commandLine.appendSwitch('disable-features','CalculateNativeWinOcclusion');
 const argv=process.argv,SMOKE=argv.includes('--smoke'),SAFE=argv.includes('--safe-mode')||fs.existsSync(path.join(path.dirname(process.execPath),'safe-mode.txt'));
@@ -23,6 +23,9 @@ function create(){
  let tries=0;w.webContents.on('did-fail-load',(_e,code,desc,url)=>{log('did-fail-load '+code+' '+desc+' '+url);/* -3 = load aborted by a reload/navigation: harmless */if(code!==-3&&!SMOKE&&!OFF&&tries<3){tries++;setTimeout(()=>{if(!w.isDestroyed())w.loadFile(path.join(__dirname,'index.html'))},1500*tries)}});
  w.webContents.on('render-process-gone',(_e,d)=>{log('render-process-gone '+JSON.stringify(d));if(!SMOKE&&!SAFE&&!OFF){app.relaunch({args:process.argv.slice(1).concat('--safe-mode')});app.exit(0)}});
  w.webContents.setWindowOpenHandler(()=>({action:'deny'}));
+ // the window only ever shows the game: no navigating away, no embedded pages, no camera, microphone or the like
+ w.webContents.on('will-navigate',(e,u)=>{if(!String(u).startsWith('file:'))e.preventDefault()});w.webContents.on('will-attach-webview',e=>e.preventDefault());
+ {const OK=new Set(['fullscreen','pointerLock','clipboard-sanitized-write']);session.defaultSession.setPermissionRequestHandler((_c,p,cb)=>cb(OK.has(p)));session.defaultSession.setPermissionCheckHandler((_c,p)=>OK.has(p))}
  // F11 toggles fullscreen (the app menu is hidden, so add it back by hand)
  w.webContents.on('before-input-event',(e,i)=>{if(i.type=='keyDown'&&i.key=='F11'){w.setFullScreen(!w.isFullScreen());e.preventDefault()}});
  w.loadFile(path.join(__dirname,'index.html'));

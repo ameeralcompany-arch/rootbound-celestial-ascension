@@ -59,5 +59,5 @@ function cleanPres(d,allowWpn){const o={};if(!d||typeof d!='object')return o;con
  if(d.cx&&typeof d.cx=='object'){try{const s=JSON.stringify(d.cx);if(s.length<=600)o.cx=JSON.parse(s)}catch(_){}}
  return o}
 function checkX(d,fromSid,has){if(!d||typeof d!='object')return false;if(d.op!='wh')return false;const id=v=>String(v||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);const r={op:d.op};r.to=id(d.to);if(!r.to||r.to==fromSid||!has(r.to))return false;
- r.t=String(d.t||'').slice(0,80);return r.t?r:false}
+ r.t=String(d.t||'').slice(0,80).replace(/[<>]/g,'');return r.t?r:false}
 module.exports={W,H,ODEF,WEATHERS,ROLE,isObjId,validEdit,cleanMeta,effMeta,realmStage,stName,REALM,roleOf,cleanObj,cleanObjMap,objDefaults,applyEdit,checkEdit,checkMeta,objOp,cleanPres,checkX,tileAt};

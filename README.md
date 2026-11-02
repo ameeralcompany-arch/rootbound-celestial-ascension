@@ -6,7 +6,9 @@
 
 1. Download `Rootbound-Windows.zip`, then right-click it and choose **Extract All**.
 2. Open the `Rootbound-win32-x64` folder and run **Rootbound.exe**. Keep it with the other files in that folder, or it will not start.
-3. If Windows says "Windows protected your PC", click **More info**, then **Run anyway**. The app is not code-signed, so Windows does not recognise it yet.
+3. Windows may warn that the publisher could not be verified, or say "Windows protected your PC" (click **More info**, then **Run anyway**). The app is not code-signed yet, so Windows cannot tell who made it.
+
+**No warning at all:** [play in your browser](https://rootbound-rcvi.onrender.com), and to keep it on your computer use the browser's **Install** button in the address bar, or **Settings > General > Install Rootbound** in the game. It gets its own window and icon.
 
 The online server sleeps when nobody is playing, so the first player may wait about a minute. You can play locally while it wakes.
 

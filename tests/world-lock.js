@@ -4,7 +4,7 @@ const path=require('path'),fs=require('fs'),os=require('os');
 const {chromium}=require('playwright');const {createServer}=require('../server/server');
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&x!==''?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},200000).unref();
-const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rblock-'));const S=createServer({port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});const errs=[];
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rblock-'));const S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});const errs=[];
 const ev=(p,f,a)=>p.evaluate(f,a);
 const enterGame=async p=>{await p.waitForFunction(()=>typeof NET7!='undefined'&&NET7.online,null,{timeout:15000});await p.waitForTimeout(300);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});await p.waitForTimeout(300)};
 async function client(b,url,tag){const ctx=await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();p.on('pageerror',e=>errs.push(tag+': '+e.message.slice(0,200)));await p.goto(url);await enterGame(p);return p}

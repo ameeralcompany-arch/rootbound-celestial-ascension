@@ -130,6 +130,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/introsong.js
+      - name: Test security
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/security.js
       - name: Test intro film
         if: ${{ !cancelled() }}
         timeout-minutes: 10
@@ -239,7 +243,8 @@ jobs:
           Copy-Item audio desktop\audio -Recurse -Force
           cd desktop
           npm install
-          npx electron-packager . Rootbound --platform=win32 --arch=x64 --out=dist --overwrite
+          npx electron-packager . Rootbound --platform=win32 --arch=x64 --out=dist --overwrite --asar
+          node harden.js distRootbound-win32-x64Rootbound.exe
           copy Rootbound-Safe-Mode.bat dist\Rootbound-win32-x64\
         shell: pwsh
       - name: Launch the packaged app and verify the game reaches its first frame

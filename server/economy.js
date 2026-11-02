@@ -11,9 +11,9 @@ function ensure(u){if(!u.bag||typeof u.bag!='object')u.bag={};const b=u.bag;if(!
 function count(u,i){return i===0?Math.floor(SHOP.ensure(u).g):(ensure(u).i[i]|0)}
 function add(u,i,n){if(i===0){const s=SHOP.ensure(u);s.g=Math.max(0,s.g+n);return}const b=ensure(u),v=(b.i[i]|0)+n;if(v>0)b.i[i]=Math.min(MAXN,v);else delete b.i[i]}
 // a client report: ignored when it predates a server-made change (seq), otherwise decreases apply and growth spends the allowance
-function sync(u,inv,seq,now){const b=ensure(u);if(seq!==b.seq||!inv||typeof inv!='object')return false;now=now||Date.now();b.allow=Math.min(BURST,b.allow+Math.max(0,now-b.t)/60000*PER_MIN);b.t=now;const seen=new Set();let n=0;
+function sync(u,inv,seq,now){const b=ensure(u);b.over=0;if(seq!==b.seq||!inv||typeof inv!='object')return false;now=now||Date.now();b.allow=Math.min(BURST,b.allow+Math.max(0,now-b.t)/60000*PER_MIN);b.t=now;const seen=new Set();let n=0;
  for(const k of Object.keys(inv)){if(++n>MAXKEYS)break;const i=+k,v=inv[k];if(!okItem(i)||i===0||!Number.isInteger(v)||v<0||v>MAXN)continue;seen.add(i);const have=b.i[i]|0;
-  if(v>have){const inc=Math.min(v-have,Math.floor(b.allow));if(inc>0){b.i[i]=have+inc;b.allow-=inc}}else if(v<have){if(v>0)b.i[i]=v;else delete b.i[i]}}
+  if(v>have){const inc=Math.min(v-have,Math.floor(b.allow));if(inc>0){b.i[i]=have+inc;b.allow-=inc}b.over+=v-have-Math.max(0,inc)}else if(v<have){if(v>0)b.i[i]=v;else delete b.i[i]}}
  for(const k of Object.keys(b.i))if(!seen.has(+k))delete b.i[k];return true}
 function cleanDrops(a){return(Array.isArray(a)?a:[]).slice(0,MAX_DROPS).map(d=>d&&okItem(d.i)&&okN(d.n)&&typeof d.id=='string'&&Number.isFinite(d.x)&&Number.isFinite(d.y)?{id:d.id.slice(0,20),i:d.i,n:d.n,x:d.x,y:d.y}:null).filter(Boolean)}
 function createEconomy({send,sessions,userById,saveAcc,relay,dropsOf,touchWorld,bucket,audit,rid}){

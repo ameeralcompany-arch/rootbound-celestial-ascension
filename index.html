@@ -55,7 +55,8 @@ var mo=new MutationObserver(function(){if(document.body){mo.disconnect();start()
 })();
 </script>
 
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600;700&family=Montserrat:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap" onload="this.onload=null;this.rel='stylesheet'" onerror="window.RBDIAG&&RBDIAG.assets.push('fonts (optional, using system fonts)')">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600;700&family=Montserrat:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap">
+<script>(function(){var l=document.querySelector('link[rel=preload][as=style]');if(!l)return;l.onload=function(){l.onload=null;l.rel='stylesheet'};l.onerror=function(){window.RBDIAG&&RBDIAG.assets.push('fonts (optional, using system fonts)')}})()</script>
 <meta name="description" content="Rootbound: a multiplayer block-building sandbox you can play with a room code.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E">
 <script id="rb-config">
@@ -6668,6 +6669,7 @@ const NET7=(()=>{
  function startPing(){clearInterval(hbT);hbT=setInterval(()=>{if(Date.now()-lastPong>40000){try{ws.close()}catch(_){}return}send({t:'ping',n:Date.now()})},12000)}
  // ---- message handling
  function onMsg(m){const t=m.t;
+  if(t=='chpass'){if(m.ok&&m.token)lsSet('rbtok',m.token);say6&&say6('Change password',m.ok?'Your password was changed':String(m.m||'That did not work'),4000);return}
   if(t=='server'){info={max:m.max,ownerConfigured:m.ownerConfigured};lastPong=Date.now();startPing();beginAuth();return}
   if(t=='pong'){lastPong=Date.now();return}
   if(HH[t]){try{HH[t](m)}catch(e){console.error(e)}return}
@@ -6728,13 +6730,14 @@ const NET7=(()=>{
   if(online)h+='<span class="nsub">'+esc(auth.name)+(auth.kind=='guest'?' · guest':auth.owner?' · owner':'')+'</span>';else if(url)h+='<span class="nsub">'+esc(url.replace(/^wss?:\/\//,'').replace(/\/ws$/,''))+'</span>';h+='</div>';
   if(err&&!online)h+='<div class="nerr">'+esc(err)+'</div>';
   if(!online&&st=='offline')h+='<p class="nmsg">Worlds you open now are saved on this device only. Connect to a Rootbound server to play in shared worlds that stay saved for everyone.</p><div class="nrow"><input id="nsrv" placeholder="Server address, e.g. play.example.com" value="'+esc(lsGet('rbsrv')||'')+'" maxlength="120"><button id="nco">Connect</button></div>';
-  if(online){h+='<div class="nrow">'+(auth.kind=='guest'?'<button id="nli">Sign in</button><button id="nre">Create account</button>':'<button id="nlo">Sign out</button>')+'<button id="ndc">Disconnect</button></div>'}
+  if(online){h+='<div class="nrow">'+(auth.kind=='guest'?'<button id="nli">Sign in</button><button id="nre">Create account</button>':'<button id="npw">Change password</button><button id="nlo">Sign out</button>')+'<button id="ndc">Disconnect</button></div>'}
   h+='</div>';el.innerHTML=h;const b=id=>el.querySelector('#'+id);
   if(b('nco'))b('nco').onclick=()=>{const v=b('nsrv').value.trim();if(!v)return;lsSet('rbsrv',v);authDone.g=0;connect(norm(v),true)};
   if(b('nsrv'))b('nsrv').onkeydown=e=>{if(e.key=='Enter')b('nco').click()};
   if(b('ndc'))b('ndc').onclick=()=>{try{if(ACCT13.leave(true))return}catch(_){}toOffline();say('Disconnected. Playing offline.')};
   if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
-  if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
+  if(b('npw'))b('npw').onclick=changePw;if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
+ async function changePw(){const v=await DLG7.open({title:'Change password',text:'This also signs you out on every other device.',fields:[{k:'o',label:'Current password',type:'password',max:128},{k:'p',label:'New password',type:'password',ph:'at least 8 characters',max:128},{k:'q',label:'New password again',type:'password',max:128}],ok:'Change password'});if(!v)return;if(v.p!==v.q){say6&&say6('Change password','The new passwords do not match',3500);return}send({t:'chpass',old:v.o,pass:v.p})}
  async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:''},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
   authDone.g=1;send({t:reg?'register':'login',name:v.n,pass:v.p});
   // the answer arrives as an 'auth' message; a failure keeps the guest session
@@ -13987,6 +13990,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
 /* ========== LATE: 90-settings-organize.js ========== */
 // ===== Settings: six clear categories (General, Graphics, Audio, Controls, Interface, Accessibility) + search.
 // Every control changes a real option and persists (cel.opt + celSave, or the legacy OPT + saveP for audio/zoom/shake). =====
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=e});
 (()=>{const X=UI6.ext,el=id=>document.getElementById(id),esc=UI6.esc;
  X.post=(tab,body)=>{if(tab=='plates'){try{X.postPlates(body)}catch(e){console.error(e)}}};
  const CATS=[['general','General','◎','Theme, name and save data'],['graphics','Graphics','✧','Quality and visual effects'],['audio','Audio','♪','Music, effects and interface sounds'],['controls','Controls','⌘','Camera and key reference'],['interface','Interface','▣','HUD size, opacity and panels'],['access','Accessibility','◐','Motion, shake and contrast']];
@@ -14000,7 +14004,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   const S={
    general:row('sth','Theme','Clean white and grey (fastest), aqua glass, pearl daylight or the plum night palette',sel('sth',[['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'clean'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
-    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+((()=>{try{return NET7.online||!!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
+    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+(window.RB_INSTALL?row('sinst','Install Rootbound','Add the game to your computer from the browser, with its own window and icon','<button class="hbtn" id="sinst">Install</button>'):'')+((()=>{try{return NET7.online||!!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
@@ -14035,6 +14039,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   q('snm').onchange=e=>{const n=e.target.value.trim().slice(0,14);if(n){myName=n;try{$('nm').value=n;saveP()}catch(_){}}else e.target.value=myName};q('snm').onkeydown=e=>e.stopPropagation();
   if(q('ssd'))q('ssd').onclick=()=>UI6.open('account');
   if(q('sintro'))q('sintro').onclick=()=>{try{INTRO60.replay()}catch(_){}};
+  if(q('sinst'))q('sinst').onclick=()=>{const e=window.RB_INSTALL;window.RB_INSTALL=null;try{e&&e.prompt()}catch(_){}};
   // graphics
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
@@ -14747,7 +14752,7 @@ const SOC6=(()=>{
  const send=(o)=>{if(rm)rm.emit('x',o)};
  function offer(name,gi,gn,wi,wn){const p=byName(name);if(!p){say('No such player here');return}if(T6.out&&Date.now()-T6.out.t<15000){say('Finish your current offer first');return}if(!have(gi,gn)){say('You do not have that');return}
   const id=Math.random().toString(36).slice(2,10);T6.out={id,to:p.peer,give:[gi,gn],want:[wi,wn],t:Date.now()};send({op:'tr_offer',to:p.peer,id,give:[gi,gn],want:[wi,wn],n:myName});say('Offer sent to '+p.presence.n+' ('+gn+' '+nameOf(gi)+' for '+wn+' '+nameOf(wi)+')')}
- function showInbound(){const o=T6.inn;if(!o)return;const e=mkPanel();e.innerHTML='<h3>Trade offer</h3><p><b>'+esc(o.n)+'</b> gives you <b>'+o.give[1]+' × '+esc(nameOf(o.give[0]))+'</b><br>and wants <b>'+o.want[1]+' × '+esc(nameOf(o.want[0]))+'</b></p><p style="color:#bcb0d8;font-size:12px">'+(have(o.want[0],o.want[1])?'You have it.':'<span style="color:#ff8a8a">You do not have enough.</span>')+' Nothing changes until you confirm. Trades are for in-game items only.</p><div class="row"><button id="tr_y">Accept</button> <button id="tr_n">Decline</button></div>';e.style.display='block';
+ function showInbound(){const o=T6.inn;if(!o)return;const e=mkPanel();e.innerHTML='<h3>Trade offer</h3><p><b>'+esc(o.n)+'</b> gives you <b>'+(o.give[1]|0)+' × '+esc(nameOf(o.give[0]))+'</b><br>and wants <b>'+(o.want[1]|0)+' × '+esc(nameOf(o.want[0]))+'</b></p><p style="color:#bcb0d8;font-size:12px">'+(have(o.want[0],o.want[1])?'You have it.':'<span style="color:#ff8a8a">You do not have enough.</span>')+' Nothing changes until you confirm. Trades are for in-game items only.</p><div class="row"><button id="tr_y">Accept</button> <button id="tr_n">Decline</button></div>';e.style.display='block';
   e.querySelector('#tr_y').onclick=accept;e.querySelector('#tr_n').onclick=()=>decline()}
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  function accept(){const o=T6.inn;if(!o||Date.now()-o.t>20000){say('Offer expired');closeP();T6.inn=null;return}if(!have(o.want[0],o.want[1])){say('You do not have enough');return}

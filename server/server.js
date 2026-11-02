@@ -9,12 +9,17 @@ const WB_GEMS=[3000,7000,12000,18000,28000],WB_DAY=10;   // what each realm's wo
 function createServer(opts={}){
  const cfg=Object.assign({port:+ENV.PORT||8787,host:ENV.HOST||'0.0.0.0',dataDir:ENV.DATA_DIR||path.join(__dirname,'data'),client:ENV.CLIENT_FILE||path.join(__dirname,'..','index.html'),
   maxPlayers:+ENV.MAX_PLAYERS_PER_WORLD||24,maxWorlds:+ENV.MAX_WORLDS||500,maxWorldsPerAccount:+ENV.MAX_WORLDS_PER_ACCOUNT||5,maxConns:+ENV.MAX_CONNECTIONS||400,maxConnsPerIp:+ENV.MAX_CONNS_PER_IP||12,
-  wxCooldownMs:+ENV.WEATHER_COOLDOWN_MS||20000,wbMinMs:ENV.WB_MIN_MS!=null?+ENV.WB_MIN_MS:45000,origins:ENV.ALLOWED_ORIGINS?ENV.ALLOWED_ORIGINS.split(','):null,scryptN:+ENV.SCRYPT_N||16384,trustProxy:ENV.TRUST_PROXY=='1',banIps:ENV.TRUST_PROXY=='1',ownerName:ENV.OWNER_NAME||'',ownerPass:ENV.OWNER_PASSWORD||'',ownerEmail:String(ENV.OWNER_EMAIL||'').toLowerCase(),cloud:null},opts);
+  wxCooldownMs:+ENV.WEATHER_COOLDOWN_MS||20000,wbMinMs:ENV.WB_MIN_MS!=null?+ENV.WB_MIN_MS:45000,origins:ENV.ALLOWED_ORIGINS?ENV.ALLOWED_ORIGINS.split(','):null,scryptN:+ENV.SCRYPT_N||16384,trustProxy:ENV.TRUST_PROXY=='1',banIps:ENV.TRUST_PROXY=='1',regPerIp:+ENV.REG_PER_IP||10,authPerIp:+ENV.AUTH_PER_IP||60,profBudget:+ENV.PROFILE_BUDGET||180e6,limitLoopback:false,csp:true,ownerName:ENV.OWNER_NAME||'',ownerPass:ENV.OWNER_PASSWORD||'',ownerEmail:String(ENV.OWNER_EMAIL||'').toLowerCase(),cloud:null},opts);
  const store=new Store(cfg.dataDir);store.cloud=cfg.cloud;const t0=Date.now();const CAT=SHOP.loadCatalog();
  // ---------- accounts / owner / bans
  let accounts=store.readJSON(store.p('accounts.json'),{users:{}}),owner=store.readJSON(store.p('owner.json'),null),bans=store.readJSON(store.p('bans.json'),{bans:{},mutes:{}}),sess=store.readJSON(store.p('sessions.json'),{});if(!bans.ips)bans.ips={};
  const saveAcc=()=>store.later('acc',()=>store.writeJSON(store.p('accounts.json'),accounts)),saveBans=()=>store.later('bans',()=>store.writeJSON(store.p('bans.json'),bans)),saveSess=()=>store.later('sess',()=>store.writeJSON(store.p('sessions.json'),sess));
  const hashTok=t=>crypto.createHash('sha256').update(t).digest('hex');
+ // limits that follow an address rather than a connection, so reconnecting does not reset them (this machine itself is exempt unless asked)
+ const ipHits=new Map();function ipBucket(ip,k,cap,ms){if(!cfg.limitLoopback&&/^(::ffff:)?127\.|^::1$/.test(ip))return true;const key=k+'|'+ip,now=Date.now(),a=(ipHits.get(key)||[]).filter(x=>now-x<ms);if(a.length>=cap){ipHits.set(key,a);return false}a.push(now);ipHits.set(key,a);return true}
+ // passwords anyone would guess first
+ const WEAK=new Set(['password','password1','password123','12345678','123456789','1234567890','qwertyui','qwerty123','11111111','00000000','iloveyou','rootbound','rootbound1','minecraft','growtopia','letmein1','abcd1234','admin123']);
+ const pwProblem=(pw,name)=>{if(pw.length<8||pw.length>128)return 'Password must be 8-128 characters';const l=pw.toLowerCase();if(WEAK.has(l)||l==String(name).toLowerCase()||/^(.)\1+$/.test(pw))return 'That password is too easy to guess. Pick another one';return ''};
  const nameKey=n=>String(n).toLowerCase();
  function hashPw(pw){const salt=crypto.randomBytes(16);const h=crypto.scryptSync(pw,salt,32,{N:cfg.scryptN,r:8,p:1});return{s:salt.toString('hex'),h:h.toString('hex'),N:cfg.scryptN}}
  function checkPw(pw,rec){try{const h=crypto.scryptSync(pw,Buffer.from(rec.s,'hex'),32,{N:rec.N||16384,r:8,p:1});return crypto.timingSafeEqual(h,Buffer.from(rec.h,'hex'))}catch(_){return false}}
@@ -43,13 +48,13 @@ function createServer(opts={}){
  // worlds saved before the world grew were 100 tiles wide: move each tile key to its new index (x,y unchanged)
  function migrateWorld(j){const ow=j.W||100,re=k=>Math.floor(k/ow)*R.W+(k%ow),mv=o=>{const r={};if(o&&typeof o=='object')for(const k of Object.keys(o)){const n=+k;if(Number.isInteger(n)&&n>=0)r[re(n)]=o[k]}return r};j.edits=mv(j.edits);j.objs=mv(j.objs);j.W=R.W}
  function loadWorld(id,create,ownerUid){let w=worlds.get(id);if(w)return w;const j=store.readJSON(wfile(id),null);
-  if(j&&j.id==id){if(j.W!==R.W)migrateWorld(j);w={id,name:j.name||id,created:j.created||Date.now(),ownerUid:j.ownerUid||'',ownerName:j.ownerName||(j.ownerUid&&(userById(j.ownerUid)||{}).name)||'',base:j.base||'',g:j.g===1||j.g===2?j.g:Object.keys(j.edits||{}).length?1:2,drops:ECON.cleanDrops(j.drops),edits:{},meta:R.cleanMeta(j.meta)||null,objs:R.cleanObjMap(j.objs),weather:R.WEATHERS.includes(j.weather)?j.weather:'default',rev:j.rev|0,updated:j.updated||0,lastWx:0};
+  if(j&&j.id==id){if(j.W!==R.W)migrateWorld(j);w={id,name:j.name||id,lockPaid:j.lockPaid==null?(j.meta?1:0):(j.lockPaid?1:0),created:j.created||Date.now(),ownerUid:j.ownerUid||'',ownerName:j.ownerName||(j.ownerUid&&(userById(j.ownerUid)||{}).name)||'',base:j.base||'',g:j.g===1||j.g===2?j.g:Object.keys(j.edits||{}).length?1:2,drops:ECON.cleanDrops(j.drops),edits:{},meta:R.cleanMeta(j.meta)||null,objs:R.cleanObjMap(j.objs),weather:R.WEATHERS.includes(j.weather)?j.weather:'default',rev:j.rev|0,updated:j.updated||0,lastWx:0};
    for(const k of Object.keys(j.edits||{})){if(R.validEdit({k:+k,a:j.edits[k]}))w.edits[k]=j.edits[k]}}
   else if(create){if(countWorlds()>=cfg.maxWorlds)return null;w={id,name:id,created:Date.now(),ownerUid:ownerUid||'',ownerName:ownerUid?(userById(ownerUid)||{}).name||'':'',base:'',g:2,drops:[],edits:{},meta:null,objs:{},weather:'default',rev:0,updated:Date.now(),lastWx:0};}
   else return null;
   w.members=new Set();w.dirty=false;w.emptySince=Date.now();worlds.set(id,w);if(create&&!j){saveWorld(w,true);store.audit({ev:'world-created',w:id,by:ownerUid})}return w}
  function countWorlds(){try{return fs.readdirSync(store.p('worlds')).filter(f=>f.endsWith('.json')).length}catch(_){return worlds.size}}
- function saveWorld(w,now){w.dirty=true;const doSave=()=>{w.dirty=false;w.rev++;w.updated=Date.now();store.writeJSON(wfile(w.id),{v:1,W:R.W,id:w.id,name:w.name,created:w.created,ownerUid:w.ownerUid,ownerName:w.ownerName,base:w.base,g:w.g,drops:w.drops,weather:w.weather,rev:w.rev,updated:w.updated,meta:w.meta,objs:w.objs,edits:w.edits})};if(now)doSave();else store.later('w:'+w.id,doSave)}
+ function saveWorld(w,now){w.dirty=true;const doSave=()=>{w.dirty=false;w.rev++;w.updated=Date.now();store.writeJSON(wfile(w.id),{v:1,W:R.W,id:w.id,lockPaid:w.lockPaid?1:0,name:w.name,created:w.created,ownerUid:w.ownerUid,ownerName:w.ownerName,base:w.base,g:w.g,drops:w.drops,weather:w.weather,rev:w.rev,updated:w.updated,meta:w.meta,objs:w.objs,edits:w.edits})};if(now)doSave();else store.later('w:'+w.id,doSave)}
  const worldExists=id=>worlds.has(id)||fs.existsSync(wfile(id));
  function listWorlds(){const out=[];let files=[];try{files=fs.readdirSync(store.p('worlds')).filter(f=>f.endsWith('.json')).map(f=>f.slice(0,-5))}catch(_){}
   for(const id of files){if(R.realmStage(id))continue;const w=worlds.get(id);let info;if(w)info={id,pop:w.members.size,owner:w.ownerName||(w.meta?w.meta.on:''),weather:w.weather,rev:w.rev,updated:w.updated,priv:!!(w.meta&&w.meta.pr)};else{try{const st=fs.statSync(wfile(id));info={id,pop:0,owner:'',weather:'default',rev:0,updated:st.mtimeMs,priv:false,cold:1}}catch(_){continue}}out.push(info)}
@@ -123,11 +128,12 @@ function createServer(opts={}){
  const NAMECHK=/^[A-Za-z0-9_-]{3,16}$/;
  const authFail={};
  function loginThrottle(key,lim){const a=authFail[key];if(a&&a.until&&Date.now()>a.until){delete authFail[key];return false}return !!a&&a.n>=lim}
- function failed(key,lim){const a=authFail[key]||(authFail[key]={n:0,until:0});a.n++;if(a.n>=lim)a.until=Date.now()+60000}
+ function failed(key,lim){const a=authFail[key]||(authFail[key]={n:0,until:0,first:Date.now()});a.n++;if(a.n>=lim)a.until=Date.now()+60000}
  function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token,gen:accounts.gen|0,prev:(u.prof&&u.prof.rev)|0});signedIn(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
  // what every sign-in gets: wallet, bag, the owner's god mode if it was left on, the owned-world list
  function signedIn(s,u){sendWallet(s,u);eco.signedIn(s,u);s.god=!!(s.owner&&u.god);if(s.god)send(s,{t:'god',on:1});sendMine(s)}
  function sendWallet(s,u){if(!u)return;send(s,Object.assign({t:'wallet'},SHOP.view(u)))}
+ const watched=new Map();function watch(s,u,what,over){if(!(over>300))return;const k=u.id+what,now=Date.now();if(now-(watched.get(k)||0)<300000)return;watched.set(k,now);if(watched.size>5000)watched.clear();store.audit({ev:'cheat-watch',what,over,uid:u.id,name:u.name,ip:s.ip})}
  function onMsg(s,raw){let m;if(raw.length>20000&&!/^\{"t":"(e|o|meta|_p)"/.test(raw.slice(0,12)))return;try{m=JSON.parse(raw)}catch(_){if(++s.strikes>8)s.conn.close(1008);return}
   if(!m||typeof m.t!='string')return;
   if(!bucket(s,'all',300,5000)){if(++s.strikes>20)s.conn.close(1008);return}
@@ -135,14 +141,15 @@ function createServer(opts={}){
   switch(t){
   case 'guest':{if(s.uid)return;if(!bucket(s,'auth',10,60000))return;if(ipBanned(s.ip))return send(s,{t:'auth',ok:0,m:'You are banned from this server'});const base=String(m.name||'Player').replace(/[^A-Za-z0-9_-]/g,'').slice(0,8)||'Player';s.uid='g'+crypto.randomBytes(4).toString('hex');s.name='~'+base;s.kind='guest';s.owner=false;send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:'guest',owner:false});return}
   case 'register':{if(s.uid&&s.kind!='guest')return;if(!bucket(s,'auth',10,60000))return send(s,{t:'auth',ok:0,m:'Too many attempts. Wait a minute.'});const name=String(m.name||''),pw=String(m.pass||'');
-   if(ipBanned(s.ip))return send(s,{t:'auth',ok:0,m:'You are banned from this server'});if(!nameOk(name))return send(s,{t:'auth',ok:0,m:'Name: 3-16 letters, numbers, _ or -'});if(pw.length<8||pw.length>128)return send(s,{t:'auth',ok:0,m:'Password must be 8-128 characters'});
+   if(ipBanned(s.ip))return send(s,{t:'auth',ok:0,m:'You are banned from this server'});if(!nameOk(name))return send(s,{t:'auth',ok:0,m:'Name: 3-16 letters, numbers, _ or -'});{const bad=pwProblem(pw,name);if(bad)return send(s,{t:'auth',ok:0,m:bad})}
    if(RESERVED.includes(nameKey(name))||(owner&&nameKey(owner.name)==nameKey(name))||accounts.users[nameKey(name)])return send(s,{t:'auth',ok:0,m:'That name is not available'});
    if(Object.keys(accounts.users).length>=20000)return send(s,{t:'auth',ok:0,m:'Registration closed'});
+   if(!ipBucket(s.ip,'reg',cfg.regPerIp,3600e3)){store.audit({ev:'reg-limited',ip:s.ip});return send(s,{t:'auth',ok:0,m:'Too many new accounts from this connection. Try again later.'})}
    const u=createAccount(name,pw,'player');setAuth(s,u);return}
-  case 'login':{if(!bucket(s,'auth',10,60000))return send(s,{t:'auth',ok:0,m:'Too many attempts. Wait a minute.'});const name=String(m.name||''),pw=String(m.pass||'');const key=nameKey(name)+'|'+s.ip,ik='ip:'+s.ip,uk=nameKey(name);
-   if(loginThrottle(key,5)||loginThrottle(ik,40))return send(s,{t:'auth',ok:0,m:'Too many failed attempts. Try again in a minute.'});
+  case 'login':{if(!bucket(s,'auth',10,60000))return send(s,{t:'auth',ok:0,m:'Too many attempts. Wait a minute.'});const name=String(m.name||'').slice(0,80),pw=String(m.pass||'').slice(0,256);const key=nameKey(name)+'|'+s.ip,ik='ip:'+s.ip,uk=nameKey(name),ak='acct:'+uk;if(!ipBucket(s.ip,'auth',cfg.authPerIp,60000))return send(s,{t:'auth',ok:0,m:'Too many attempts. Wait a minute.'});
+   if(loginThrottle(key,5)||loginThrottle(ik,40)||loginThrottle(ak,30))return send(s,{t:'auth',ok:0,m:'Too many failed attempts. Try again in a minute.'});
    // the owner may sign in with OWNER_EMAIL instead of the account name
-   const u=accounts.users[cfg.ownerEmail&&uk==cfg.ownerEmail&&owner?nameKey(owner.name):uk];if(!u||!checkPw(pw,u.pw)){failed(key,5);failed(ik,40);store.audit({ev:'login-failed',name:name.slice(0,16),ip:s.ip});return send(s,{t:'auth',ok:0,m:'Wrong name or password'})}
+   const u=accounts.users[cfg.ownerEmail&&uk==cfg.ownerEmail&&owner?nameKey(owner.name):uk];if(!u||!checkPw(pw,u.pw)){failed(key,5);failed(ik,40);failed(ak,30);store.audit({ev:'login-failed',name:name.slice(0,16),ip:s.ip});return send(s,{t:'auth',ok:0,m:'Wrong name or password'})}
    if(banned(u.id)||(ipBanned(s.ip)&&!isOwnerUid(u.id)))return send(s,{t:'auth',ok:0,m:'This account is banned'});
    for(const o of sessions.values())if(o.uid==u.id&&o!==s){send(o,{t:'_kick',m:'Signed in from another place'});o.conn.close(1000)}
    setAuth(s,u);return}
@@ -150,6 +157,7 @@ function createServer(opts={}){
    for(const o of sessions.values())if(o.uid==u.id&&o!==s){send(o,{t:'_kick',m:'Signed in from another place'});o.conn.close(1000)}
    s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1,gen:accounts.gen|0,prev:(u.prof&&u.prof.rev)|0});signedIn(s,u);return}
   case 'logout':{const h=hashTok(String(m.token||''));if(sess[h]){delete sess[h];saveSess()}return}
+  case 'chpass':{const no=x=>send(s,{t:'chpass',ok:0,m:x});if(s.kind!='user'&&s.kind!='owner')return no('Sign in first');if(!bucket(s,'auth',10,60000)||!ipBucket(s.ip,'auth',cfg.authPerIp,60000))return no('Too many attempts. Wait a minute.');if(s.owner)return no('The owner password is set on the host (OWNER_PASSWORD)');const u=userById(s.uid);if(!u)return;const ak='pw:'+s.uid;if(loginThrottle(ak,5))return no('Too many failed attempts. Try again in a minute.');if(!checkPw(String(m.old||'').slice(0,256),u.pw)){failed(ak,5);store.audit({ev:'chpass-failed',uid:s.uid,ip:s.ip});return no('Your current password is not right')}const np=String(m.pass||''),bad=pwProblem(np,u.name);if(bad)return no(bad);u.pw=hashPw(np);for(const k of Object.keys(sess))if(sess[k].uid===u.id)delete sess[k];for(const o of sessions.values())if(o.uid===u.id&&o!==s){send(o,{t:'_kick',m:'Your password was changed'});o.conn.close(1000)}saveAcc();saveSess();store.audit({ev:'chpass',uid:s.uid,ip:s.ip});return send(s,{t:'chpass',ok:1,token:newToken(u.id,30*86400e3)})}
   }
   if(!s.uid)return;// everything below requires an identity (account or guest)
   switch(t){
@@ -157,27 +165,27 @@ function createServer(opts={}){
   case 'worlds':{if(!bucket(s,'wl',10,10000))return;return send(s,{t:'worlds',list:listWorlds().filter(x=>!x.priv).sort((a,b)=>b.pop-a.pop||(b.updated||0)-(a.updated||0)).slice(0,200),max:cfg.maxPlayers})}
   case 'enter':if(!bucket(s,'enter',12,30000))return send(s,{t:'enter_err',m:'Slow down'});return enter(s,m.w,!!m.create,m.base);
   case 'leave':return leaveWorld(s);
-  case 'sync':{if(s.kind=='guest'||!bucket(s,'sync',12,60000))return;const u=userById(s.uid);if(!u)return;SHOP.sync(u,m.gems);sendWallet(s,u);saveAcc();return}
+  case 'sync':{if(s.kind=='guest'||!bucket(s,'sync',12,60000))return;const u=userById(s.uid);if(!u)return;SHOP.sync(u,m.gems);watch(s,u,'gems',Math.floor(+m.gems)-SHOP.view(u).gems);sendWallet(s,u);saveAcc();return}
   case 'wallet':{if(s.kind=='guest')return send(s,{t:'wallet',gems:0,owned:{},guest:1});const u=userById(s.uid);return sendWallet(s,u)}
   case 'buy':{if(!bucket(s,'buy',10,10000))return send(s,{t:'buy_res',ok:0,m:'Slow down',rid:String(m.rid||'')});
    if(s.kind=='guest')return send(s,{t:'buy_res',ok:0,m:'Sign in to buy items in shared worlds',rid:String(m.rid||'')});
    const u=userById(s.uid);if(!u)return;const r=SHOP.buy(u,CAT,m);if(r.ok&&!r.dup){saveAcc();store.audit({ev:'buy',uid:s.uid,id:r.id,qty:r.qty,spent:r.spent})}send(s,Object.assign({t:'buy_res'},r));return}
   case 'admin':{if(!bucket(s,'admin',30,10000))return;return adminOp(s,m)}
   // each account's save: the game's own keys, sent in pieces when they change. A copy based on an older version than the server's is refused (another computer saved since).
-  case 'prof_put':{if(s.kind=='guest'||!bucket(s,'prof',120,60000))return;const u=userById(s.uid),i=m.i|0,n=m.n|0;if(!u||n<1||n>80||i<0||i>=n||typeof m.d!='string')return;let q=s.pput;if(!q||q.id!==m.id||q.n!==n)q=s.pput={id:m.id,n,parts:[],got:0};if(q.parts[i]==null){q.parts[i]=m.d;q.got++}if(q.got<n)return;s.pput=null;
+  case 'prof_put':{if(s.kind=='guest'||!bucket(s,'prof',120,60000))return;const u=userById(s.uid),i=m.i|0,n=m.n|0;if(!u||n<1||n>80||i<0||i>=n||typeof m.d!='string')return;let q=s.pput;if(!q||q.id!==m.id||q.n!==n)q=s.pput={id:m.id,n,parts:[],got:0};if(q.parts[i]==null){q.parts[i]=m.d;q.got++;q.size=(q.size||0)+m.d.length;if(q.size>1.5e6){s.pput=null;return}}if(q.got<n)return;s.pput=null;
    const txt=q.parts.join('');if(txt.length>1.5e6)return;let keys;try{keys=JSON.parse(txt)}catch(_){return}if(!keys||typeof keys!='object'||Array.isArray(keys))return;for(const k in keys)if(!/^[A-Za-z0-9_.:-]{1,64}$/.test(k)||typeof keys[k]!='string')return;
-   const rev=(u.prof&&u.prof.rev)|0;if((m.base|0)!==rev)return send(s,{t:'prof_stale',rev});u.prof={rev:rev+1};store.writeJSON(store.p('profiles',u.id+'.json'),{rev:rev+1,keys,t:Date.now()});saveAcc();return send(s,{t:'prof_ok',rev:rev+1})}
+   const rev=(u.prof&&u.prof.rev)|0;if((m.base|0)!==rev)return send(s,{t:'prof_stale',rev});const pf=store.p('profiles',u.id+'.json');let was=0;try{was=fs.statSync(pf).size}catch(_){}if(profBytes()-was+txt.length>cfg.profBudget){store.audit({ev:'profile-budget-full',uid:s.uid});return send(s,{t:'notice',d:{text:'The server is out of room for saves right now. Your progress is safe on this computer.',by:'Server'}})}u.prof={rev:rev+1};store.writeJSON(pf,{rev:rev+1,keys,t:Date.now()});profTotal+=txt.length-was;saveAcc();return send(s,{t:'prof_ok',rev:rev+1})}
   case 'prof_get':{if(s.kind=='guest'||!bucket(s,'profg',12,60000))return;const u=userById(s.uid);if(!u)return;const j=store.readJSON(store.p('profiles',u.id+'.json'),null);if(j&&j.keys)send(s,{t:'prof',rev:j.rev|0,gen:accounts.gen|0,keys:j.keys});return}
   // world boss wins: the fight runs on the player's computer, so the server can only limit what a win is worth: once per world, at most WB_DAY a day, not
   // sooner than wbMinMs after the fight began. Too fast or over the limit just means the gems arrive at the normal rate instead.
   case 'wb':{if(s.kind=='guest'||!bucket(s,'wb',10,60000))return;const u=userById(s.uid),id=s.world;if(!u||!id||id=='plaza')return;if(m.op=='start'){s.wbT={w:id,t:Date.now()};return}if(m.op!='win')return;const st=s.wbT;s.wbT=null;if(!st||st.w!==id||Date.now()-st.t<cfg.wbMinMs)return;
    const wins=u.wbWins||(u.wbWins={});if(wins[id])return;const day=Math.floor(Date.now()/864e5),d=u.wbDay&&u.wbDay.d==day?u.wbDay:(u.wbDay={d:day,n:0});if(d.n>=WB_DAY)return;d.n++;wins[id]=1;SHOP.bonus(u,WB_GEMS[R.realmStage(id)]||0);saveAcc();return}
-  case 'bag_sync':{if(s.kind=='guest'||!bucket(s,'bag',12,30000))return;const u=userById(s.uid);if(u&&eco.sync(u,m))saveAcc();return}
+  case 'bag_sync':{if(s.kind=='guest'||!bucket(s,'bag',12,30000))return;const u=userById(s.uid);if(u&&eco.sync(u,m)){watch(s,u,'items',u.bag.over|0);saveAcc()}return}
   case 'trade':return eco.tradeMsg(s,m);
   case 'drop':return eco.dropMsg(s,m);
   case 'pick':return eco.pickMsg(s,m);
   case 'myworlds':return sendMine(s);
-  case 'world_release':{const u=userById(s.uid),id=wname(m.w);if(!u||!(u.worlds||[]).includes(id))return notify(s,'You do not own that world');const rw=loadWorld(id,false),hadLock=!!(rw&&rw.meta);u.worlds=u.worlds.filter(x=>x!=id);saveAcc();setOwner(id,'','');if(hadLock)eco.give(s,u,17,1);store.audit({ev:'world-released',w:id,by:s.uid});notify(s,'Released '+id+': it no longer counts as yours');return sendMine(s)}
+  case 'world_release':{const u=userById(s.uid),id=wname(m.w);if(!u||!(u.worlds||[]).includes(id))return notify(s,'You do not own that world');const rw=loadWorld(id,false),hadLock=!!(rw&&rw.meta&&rw.lockPaid);u.worlds=u.worlds.filter(x=>x!=id);saveAcc();setOwner(id,'','');if(hadLock)eco.give(s,u,17,1);store.audit({ev:'world-released',w:id,by:s.uid});notify(s,'Released '+id+': it no longer counts as yours');return sendMine(s)}
   }
   const wid=s.world;if(!wid)return;const w=wid=='plaza'?null:worlds.get(wid);
   if(t=='_p'){if(!bucket(s,'p',40,1000))return;const pr=R.cleanPres(m.d);pr.uid=s.uid;pr.n=s.name.slice(0,14);s.pres=pr;
@@ -198,36 +206,46 @@ function createServer(opts={}){
    if(!w.ownerUid&&r.v){const u=userById(s.uid);if(!u||R.realmStage(wid)||!canOwn(u)){send(s,{t:'_rej',op:'meta'});return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first')}u.worlds=(u.worlds||[]).concat(wid);saveAcc();setOwner(wid,u.id,u.name);sendMine(s)}
    // taking the lock away frees the world (and its realms) again
    if(r.v===null&&w.ownerUid){const o=userById(w.ownerUid);if(o){o.worlds=(o.worlds||[]).filter(x=>x!=wid);saveAcc()}w.meta=null;setOwner(wid,'','');sendMine(s)}
+   // a lock put down comes out of the server's own ledger (the client took it from its inventory too), so only a lock really paid for is handed back on release
+   if(r.v&&!w.meta){const u=userById(s.uid);if(s.god)w.lockPaid=1;else if(u&&ECON.count(u,17)>=1){ECON.add(u,17,-1);saveAcc();w.lockPaid=1}else{w.lockPaid=0;store.audit({ev:'lock-unpaid',uid:s.uid,w:wid})}}else if(r.v===null)w.lockPaid=0;
    w.meta=r.v;saveWorld(w);relay(wid,{t:'meta',d:r.v,f:s.sid},s.sid);return}
   if(t=='o'){if(!bucket(s,'o',40,8000))return;const r=R.objOp(w,m.d,s.uid,s.god);if(!r){send(s,{t:'_rej',op:'o'});return}
    if(r.weather){if(Date.now()-w.lastWx<cfg.wxCooldownMs){send(s,{t:'notice',d:{text:'The weather machines are recharging ('+Math.ceil((cfg.wxCooldownMs-(Date.now()-w.lastWx))/1000)+'s)',by:'Server'}});return}if(w.weather==r.weather)return;setWeather(w,r.weather,s.name);store.audit({ev:'weather',w:wid,by:s.uid,wx:r.weather});return}
    if(r.changed)saveWorld(w);for(const b of r.bcast||[])relay(wid,{t:'o',d:b,f:s.sid});for(const b of r.reply||[])send(s,{t:'o',d:b,f:s.sid});return}
  }
  // ---------- http + ws plumbing
- let clientHtml=null;const html=()=>{try{const st=fs.statSync(cfg.client);if(!clientHtml||clientHtml.m!=st.mtimeMs){const b=Buffer.from(fs.readFileSync(cfg.client,'utf8').replace('RB_HOSTED=false','RB_HOSTED=true'));clientHtml={m:st.mtimeMs,b,z:zlib.gzipSync(b),tag:'"'+Math.round(st.mtimeMs).toString(36)+'"'}}return clientHtml}catch(_){return null}};
+ let profTotal=null;const profBytes=()=>{if(profTotal==null){profTotal=0;try{for(const f of fs.readdirSync(store.p('profiles')))if(f.endsWith('.json'))profTotal+=fs.statSync(store.p('profiles',f)).size}catch(_){}}return profTotal};
+ // sent with the game page. Scripts: only the exact inline scripts of this build (their hashes); other sites can't frame it; it can only talk to itself.
+ const pageHeaders=b=>{const hs=[];const re=/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;let m;const txt=b.toString('utf8');while((m=re.exec(txt)))hs.push("'sha256-"+crypto.createHash('sha256').update(m[1].replace(/\r\n?/g,'\n'),'utf8').digest('base64')+"'");return{'Content-Security-Policy':"default-src 'self'; script-src "+hs.join(' ')+"; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",'X-Frame-Options':'DENY','Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=(), usb=()','Cross-Origin-Opener-Policy':'same-origin','Strict-Transport-Security':'max-age=15552000'}};
+ let wlCache=null;const publicWorlds=()=>{const now=Date.now();if(!wlCache||now-wlCache.t>5000)wlCache={t:now,j:JSON.stringify(listWorlds().filter(x=>!x.priv))};return wlCache.j};
+ let clientHtml=null;const html=()=>{try{const st=fs.statSync(cfg.client);if(!clientHtml||clientHtml.m!=st.mtimeMs){const b=Buffer.from(fs.readFileSync(cfg.client,'utf8').replace('RB_HOSTED=false','RB_HOSTED=true').replace('</head>','<link rel="manifest" href="/manifest.webmanifest"></head>'));clientHtml={m:st.mtimeMs,b,z:zlib.gzipSync(b),sec:cfg.csp?pageHeaders(b):{},tag:'"'+Math.round(st.mtimeMs).toString(36)+'"'}}return clientHtml}catch(_){return null}};
  const server=http.createServer((q,r)=>{const u=(q.url||'/').split('?')[0];const h={'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store'};
-  if(u=='/'||u=='/index.html'){const c=html();if(!c){r.writeHead(404,h);return r.end('client file missing')}const hh=Object.assign({},h,{'Cache-Control':'no-cache',ETag:c.tag,Vary:'Accept-Encoding'});if(q.headers['if-none-match']==c.tag){r.writeHead(304,hh);return r.end()}const gz=/\bgzip\b/.test(q.headers['accept-encoding']||'');r.writeHead(200,Object.assign({'Content-Type':'text/html; charset=utf-8'},hh,gz?{'Content-Encoding':'gzip'}:{}));return r.end(gz?c.z:c.b)}
+  if(u=='/'||u=='/index.html'){const c=html();if(!c){r.writeHead(404,h);return r.end('client file missing')}const hh=Object.assign({},h,c.sec,{'Cache-Control':'no-cache',ETag:c.tag,Vary:'Accept-Encoding'});if(q.headers['if-none-match']==c.tag){r.writeHead(304,hh);return r.end()}const gz=/\bgzip\b/.test(q.headers['accept-encoding']||'');r.writeHead(200,Object.assign({'Content-Type':'text/html; charset=utf-8'},hh,gz?{'Content-Encoding':'gzip'}:{}));return r.end(gz?c.z:c.b)}
   if(u=='/audio/intro-song.mp3'||u=='/audio/rootbound-voice.mp3'||u=='/audio/intro-cinematic.mp4'){const f=path.join(path.dirname(cfg.client),u.slice(1));let st=null;try{st=fs.statSync(f)}catch(_){}if(!st){r.writeHead(404,h);return r.end('not found')}
    const tag='"'+Math.round(st.mtimeMs).toString(36)+'-'+st.size.toString(36)+'"',hh=Object.assign({},h,{'Content-Type':u.endsWith('.mp4')?'video/mp4':'audio/mpeg','Accept-Ranges':'bytes','Cache-Control':'public, max-age=86400',ETag:tag});if(q.headers['if-none-match']==tag){r.writeHead(304,hh);return r.end()}
    const m=/^bytes=(\d*)-(\d*)$/.exec(q.headers.range||'');let a=0,b=st.size-1;if(m&&(m[1]||m[2])){if(m[1]){a=+m[1];if(m[2])b=Math.min(b,+m[2])}else a=Math.max(0,st.size-(+m[2]));if(a>b){r.writeHead(416,Object.assign({},hh,{'Content-Range':'bytes */'+st.size}));return r.end()}hh['Content-Range']='bytes '+a+'-'+b+'/'+st.size;r.writeHead(206,Object.assign(hh,{'Content-Length':b-a+1}))}else r.writeHead(200,Object.assign(hh,{'Content-Length':st.size}));
    if(q.method=='HEAD')return r.end();return fs.createReadStream(f,{start:a,end:b}).on('error',()=>r.destroy()).pipe(r)}
+  if(u=='/manifest.webmanifest'){r.writeHead(200,Object.assign({},h,{'Content-Type':'application/manifest+json','Cache-Control':'public, max-age=3600'}));return r.end(JSON.stringify({name:'Rootbound',short_name:'Rootbound',description:'A 2D anime block sandbox: every world has a story.',id:'/',start_url:'/',scope:'/',display:'fullscreen',display_override:['fullscreen','standalone'],background_color:'#050816',theme_color:'#050816',icons:[{src:'/icons/icon-192.png',sizes:'192x192',type:'image/png',purpose:'any'},{src:'/icons/icon-512.png',sizes:'512x512',type:'image/png',purpose:'any'}]}))}
+  if(u=='/icons/icon-192.png'||u=='/icons/icon-512.png'){let d=null;try{d=fs.readFileSync(path.join(path.dirname(cfg.client),u.slice(1)))}catch(_){}if(!d){r.writeHead(404,h);return r.end('not found')}r.writeHead(200,Object.assign({},h,{'Content-Type':'image/png','Cache-Control':'public, max-age=86400'}));return r.end(d)}
   if(u=='/health'){r.writeHead(200,Object.assign({'Content-Type':'application/json','Access-Control-Allow-Origin':'*'},h));return r.end(JSON.stringify({ok:true,game:'rootbound',players:sessions.size,uptime:Math.round((Date.now()-t0)/1000),ownerConfigured:!!owner}))}
-  if(u=='/api/worlds'){r.writeHead(200,Object.assign({'Content-Type':'application/json','Access-Control-Allow-Origin':'*'},h));return r.end(JSON.stringify(listWorlds().filter(x=>!x.priv)))}
+  if(u=='/api/worlds'){r.writeHead(200,Object.assign({'Content-Type':'application/json','Access-Control-Allow-Origin':'*'},h));return r.end(publicWorlds())}
   r.writeHead(404,h);r.end('not found')});
  server.on('upgrade',(req,sock,head)=>{if((req.url||'').split('?')[0]!='/ws'){sock.end('HTTP/1.1 404 Not Found\r\n\r\n');return}
   // behind a host's proxy every socket comes from the proxy: use the address it reports, or one visitor's limit would hit everyone
-  const hd=req.headers,ip=String(cfg.trustProxy&&(hd['cf-connecting-ip']||hd['true-client-ip']||String(hd['x-forwarded-for']||'').split(',')[0].trim())||req.socket.remoteAddress||'');if(sessions.size>=cfg.maxConns||(ipCount.get(ip)||0)>=cfg.maxConnsPerIp){sock.end('HTTP/1.1 503 Service Unavailable\r\n\r\n');return}
+  const hd=req.headers,ip=String(cfg.trustProxy&&(hd['cf-connecting-ip']||hd['true-client-ip']||String(hd['x-forwarded-for']||'').split(',').pop().trim())||req.socket.remoteAddress||'');if(sessions.size>=cfg.maxConns||(ipCount.get(ip)||0)>=cfg.maxConnsPerIp){sock.end('HTTP/1.1 503 Service Unavailable\r\n\r\n');return}
   const conn=upgrade(req,sock,head,{maxPayload:65536,originOk:o=>!cfg.origins||cfg.origins.includes(o)});if(!conn)return;
-  const s={sid:'p'+(++sidN).toString(36)+crypto.randomBytes(2).toString('hex'),conn,ip,uid:'',name:'',kind:'',owner:false,world:null,pres:{},rate:{},strikes:0,last:Date.now()};sessions.set(s.sid,s);ipCount.set(ip,(ipCount.get(ip)||0)+1);
+  const s={sid:'p'+(++sidN).toString(36)+crypto.randomBytes(2).toString('hex'),conn,ip,uid:'',name:'',kind:'',owner:false,world:null,pres:{},rate:{},strikes:0,last:Date.now(),born:Date.now()};sessions.set(s.sid,s);ipCount.set(ip,(ipCount.get(ip)||0)+1);
   conn.onmessage=raw=>{s.last=Date.now();onMsg(s,raw)};conn.onclose=()=>{leaveWorld(s);sessions.delete(s.sid);const n=(ipCount.get(ip)||1)-1;if(n<=0)ipCount.delete(ip);else ipCount.set(ip,n)};
   send(s,{t:'server',v:1,max:cfg.maxPlayers,ownerConfigured:!!owner,time:Date.now()})});
- const hb=setInterval(()=>{const now=Date.now();for(const s of sessions.values()){if(now-s.last>45000){s.conn.close(1001);continue}s.conn.ping()}
+ const hb=setInterval(()=>{const now=Date.now();for(const s of sessions.values()){if(now-s.last>45000||(!s.uid&&now-s.born>60000)){s.conn.close(1001);continue}s.conn.ping()}
+  for(const k of Object.keys(authFail))if(!authFail[k].until&&authFail[k].first&&now-authFail[k].first>3600e3||authFail[k].until&&now>authFail[k].until)delete authFail[k];for(const[k,a]of ipHits)if(!a.length||now-a[a.length-1]>3600e3)ipHits.delete(k);{let ch=false;for(const k of Object.keys(sess))if(sess[k].exp<now){delete sess[k];ch=true}if(ch)saveSess()}
   for(const[id,w]of worlds){if(!w.members.size&&now-w.emptySince>300000){if(w.dirty)saveWorld(w,true);worlds.delete(id)}}},15000);hb.unref&&hb.unref();
  function listen(){return new Promise(res=>server.listen(cfg.port,cfg.host,()=>res(server.address().port)))}
  function close(){clearInterval(hb);for(const w of worlds.values())if(w.dirty)saveWorld(w,true);for(const k of store.flush());try{store.writeJSON(store.p('accounts.json'),accounts);store.writeJSON(store.p('bans.json'),bans);store.writeJSON(store.p('sessions.json'),sess)}catch(_){}
   for(const s of sessions.values())try{s.conn.close(1001)}catch(_){}const flushed=cfg.cloud?cfg.cloud.flush().catch(e=>console.error('cloud save failed:',e.message)):Promise.resolve();return Promise.all([flushed,new Promise(r=>server.close(()=>r()))]).then(()=>{})}
  return{server,listen,close,cfg,store,worlds,sessions}}
 module.exports={createServer};
+if(require.main===module)process.on('uncaughtException',e=>console.error('uncaught:',e&&e.stack||e)),process.on('unhandledRejection',e=>console.error('unhandled:',e&&e.stack||e));
 if(require.main===module)(async()=>{const dir=ENV.DATA_DIR||path.join(__dirname,'data'),cloud=require('./cloud').fromEnv(dir);
  // the saves must be back on disk before anything reads them; if the database cannot be reached, stop (the host restarts us) rather than start empty and overwrite it
  if(cloud){const n=await cloud.restore();console.log('Cloud saves restored: '+n+' files')}else console.log('No cloud store set: saves live only in '+dir);

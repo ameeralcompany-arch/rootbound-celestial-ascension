@@ -13,7 +13,7 @@ const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window
  ok('the film ships beside the game',fs.existsSync(MP4)&&fs.statSync(MP4).size>5e6&&fs.statSync(MP4).size<60e6,{mb:Math.round(fs.statSync(MP4).size/1e5)/10});
 
  // the server hosts it the way a video player needs
- {const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rb-vid-'));const S=createServer({port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.resolve(__dirname,'../index.html')});const port=await S.listen();
+ {const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rb-vid-'));const S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.resolve(__dirname,'../index.html')});const port=await S.listen();
   const u='http://127.0.0.1:'+port+'/audio/intro-cinematic.mp4',a=await get(u,{}),r=await get(u,{Range:'bytes=100-199'});
   ok('the server hosts the film as a video',a.s==200&&a.h['content-type']=='video/mp4'&&a.n==fs.statSync(MP4).size,{s:a.s,t:a.h['content-type']});
   ok('and answers partial requests (a player needs them to start and seek)',r.s==206&&r.n==100,{s:r.s,n:r.n});await S.close()}
