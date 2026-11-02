@@ -18,7 +18,7 @@ function create(){
  // the game always opens full-screen (F11 still switches to a window and back); test runs stay off-screen and windowed
  const show=()=>{if(OFF)w.showInactive();else{w.show();if(!SMOKE)w.setFullScreen(true)}};
  w.once('ready-to-show',show);setTimeout(()=>{if(!w.isDestroyed()&&!w.isVisible())show()},4000);
- w.webContents.on('console-message',(_e,lvl,msg)=>{if(lvl>=2)log('console: '+msg.slice(0,300))});
+ w.webContents.on('console-message',e=>{if(e.level=='warning'||e.level=='error')log('console: '+String(e.message).slice(0,300))});
  // no error windows for the player: a failed load is logged and quietly retried (a file being replaced by an update can briefly fail)
  let tries=0;w.webContents.on('did-fail-load',(_e,code,desc,url)=>{log('did-fail-load '+code+' '+desc+' '+url);/* -3 = load aborted by a reload/navigation: harmless */if(code!==-3&&!SMOKE&&!OFF&&tries<3){tries++;setTimeout(()=>{if(!w.isDestroyed())w.loadFile(path.join(__dirname,'index.html'))},1500*tries)}});
  w.webContents.on('render-process-gone',(_e,d)=>{log('render-process-gone '+JSON.stringify(d));if(!SMOKE&&!SAFE&&!OFF){app.relaunch({args:process.argv.slice(1).concat('--safe-mode')});app.exit(0)}});
