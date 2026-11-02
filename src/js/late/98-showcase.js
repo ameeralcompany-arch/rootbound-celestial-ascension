@@ -100,7 +100,7 @@ function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlg
 // the home page was removed (v10): the story intro hands straight over to the game (the same as its old Play button), and there is no HUD
 // Home button. SHOW7 stays as a library (its portrait gallery code), but SHOW7.open() now just starts the game.
 if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{const home=()=>{try{SHOW7.open()}catch(_){}};
- /* every launch: the story intro (CINE7) plays first, then the game starts */try{CINE7.launch(home)}catch(e){console.error('CINE7',e);home()}}
+ /* every launch: the intro film (INTRO60, or the CINE7 story when it can't play) comes first, then the game starts */try{INTRO60.launch(home)}catch(e){console.error('INTRO60',e);home()}}
 // (the HUD Home button was removed with the home page)
 // ---- CHARMIG9: remove the old preset character slots from every save (any computer). Keeps slot 0 (your own look), your level, gems,
 // inventory, gear and wings untouched; if a preset was the active character, your own saved look becomes active again.

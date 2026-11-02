@@ -1,6 +1,22 @@
 # Opening cinematic: voice, pacing, water and props
 
-How the launch intro (`src/js/late/89-z-cine.js`) is voiced, timed and drawn, and how to upgrade it to studio voice-over.
+## The intro film (what plays first now)
+
+The game opens with a 43.5-second film, `audio/intro-cinematic.mp4` (24 MB, 1080p, 24 fps, sound included), played by `src/js/late/97-z-introvideo.js`. It sits next to `index.html` like the song; the server hosts it at `/audio/intro-cinematic.mp4`, and the desktop app packs the `audio` folder. "Press any key to skip" and a Skip button come up after 3 seconds. Settings > General > Intro film replays it.
+
+Every picture in it is footage of the real game: its worlds, hero, wings, town, interface and boss. Nothing is painted for the film. `tools/shoot.js` in the separate `Documents/rootbound-video` project plays the game off-screen in a throwaway save, on a virtual clock so each frame is perfect at 24 fps, and films each shot (`node tools/shoot.js <repo> public/film`). `src/Cine/Film.tsx` cuts them together with slow push-ins, dissolves, a filmic grade and the title. `tools/cutsong.js` makes the sound. Then render with `npx remotion render RootboundFilm out/video.mp4 --crf=21 --muted`, add the sound with `npx remotion ffmpeg -y -i out/video.mp4 -i public/intro-song-cut.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 160k -movflags +faststart -shortest out/intro-cinematic.mp4`, and copy that file over the one in `audio/`.
+
+The story intro below stays as the fallback, for when the film can't play (only `index.html` was copied, a browser without H.264, a connection too slow to start it within 8 s). `localStorage.rb_story_intro` asks for it directly.
+
+| Film | Song | Footage |
+|---|---|---|
+| 0:00 | 0:00 piano | black, then the moonlit pond and the town at night |
+| 0:06 | | the Crystal Realm, the Galaxy, the Abyssal Sea, the Inferno |
+| 0:12.6 | | the hero on the cliff above the lake |
+| 0:18.39 | 0:18.39 drums | the World Tree, World Gate, town, mining with the real interface, flying the Inferno, sunset, the world collapsing, Thornmaw |
+| 0:30.39 | 2:09.69 peak | the wings open, the hero rises |
+| 0:36.39 | 2:15.69 last hit | the flash, then the world, then a moment of silence |
+| 0:38.1 | 2:37.59 last chord | ROOTBOUND over the Galaxy's sky |
 
 ## The song
 

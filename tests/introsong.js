@@ -6,7 +6,7 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
 const FILE='file://'+path.resolve(__dirname,'../index.html'),MP3=path.resolve(__dirname,'../audio/intro-song.mp3');
 const get=(url,headers,method)=>new Promise((res,rej)=>{const q=http.request(url,{headers,method:method||'GET'},r=>{let n=0;r.on('data',d=>n+=d.length);r.on('end',()=>res({s:r.statusCode,h:r.headers,n}))});q.on('error',rej);q.end()});
 // never out loud: the song is muted (--mute-audio) and the computer's voice is replaced by a recorder
-const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window.SAID=[];try{speechSynthesis.speak=u=>{SAID.push(u.text);setTimeout(()=>{try{u.onend&&u.onend({})}catch(_){}},20)}}catch(_){}};
+const INIT=()=>{try{localStorage.setItem('rb_force_launch','1');localStorage.setItem('rb_story_intro','1')}catch(_){}window.SAID=[];try{speechSynthesis.speak=u=>{SAID.push(u.text);setTimeout(()=>{try{u.onend&&u.onend({})}catch(_){}},20)}}catch(_){}};
 (async()=>{
  const launch=(free)=>chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox','--mute-audio'].concat(free?['--autoplay-policy=no-user-gesture-required']:[])});
  const b=await launch(true);

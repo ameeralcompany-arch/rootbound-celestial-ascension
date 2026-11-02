@@ -130,6 +130,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/introsong.js
+      - name: Test intro film
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/introvideo.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10
