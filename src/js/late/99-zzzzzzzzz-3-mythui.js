@@ -8,7 +8,7 @@
 const MYUI=(()=>{
  const A=MYART,TH=A.TH,TAU=Math.PI*2,R=Math.random,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const red=()=>{try{return !!(cel.opt.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(_){return false}};
- const UNL=['Forged: the three-move combo','The first move hits 30% harder and wider','The finisher throws the scythe; it swings back','Hits echo with small bursts','A doubled finisher that heals you on hit','Mythic Awakening: every effect 20% larger and stronger'];
+ const UNL=['Forged: the three-move combo','The first move hits 30% harder and wider','The finisher throws the scythe; it swings back','Hits echo with small bursts','Transcendent: a doubled finisher that heals you on hit, then a fourth strike, Supernova','Mythic Awakening: every effect 20% larger and stronger'];
  const CROWN_Y=150,CROWN_S=6.2;   // where the crown piece sits on the hero portrait (SHOWART design space)
  const FXN={crescent:'◐',pillar:'▮',vortex:'◉',chains:'∞',flock:'≋',splash:'✺',bolts:'ϟ',stars:'✦',shards:'▲',ring:'◎'};
  // ---- the Mythic card

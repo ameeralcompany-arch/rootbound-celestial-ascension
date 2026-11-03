@@ -87,12 +87,13 @@ const MYTH=(()=>{
  // the combo chains while a swing is still finishing, or within 0.75 s of the last one
  function attack(w){const k=w.myth,now=performance.now()/1000;if(THR)return;
   try{if(CJOB.blocks(w.id)){say(CJOB.why(w.id));return}}catch(_){}
-  step=(SW||now-lastEnd<.75)&&step<2&&step>=0?step+1:0;const pf=prof(k),o=pivot(),wx=mx+cam.x,wy=my+cam.y,aim=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(aim)>=0?1:-1;
-  const f=P.f,base=f>0?aim:Math.PI-aim,tr=tier(k)||1;
+  const tr=tier(k)||1,last=tr>=5?3:2;step=(SW||now-lastEnd<.75)&&step<last&&step>=0?step+1:0;const st4=step==3,sv=step;if(st4)step=2;const pf=prof(k),o=pivot(),wx=mx+cam.x,wy=my+cam.y,aim=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(aim)>=0?1:-1;
+  const f=P.f,base=f>0?aim:Math.PI-aim;
   if(pf.ranged){const r=RMV[step];SW={k,w,step,t:0,dur:r[0],a0:aim,a1:aim,mul:r[1]*(tr>=5&&step==2?1.25:1),hit:new Set(),fx:false,aim,f,tr,tail:[],pf,shot:false}}
   else{// angles are built for facing right and mirrored for facing left
    const mv=pf.mv[step],mir=a=>f>0?a:Math.PI-a,a0=mir(base+mv[1]),a1=mir(base+mv[2]);
    SW={k,w,step,t:0,dur:mv[0]*(k=='ninja'?.85:1),a0,a1,mul:mv[3]*(tr>=5&&step==2?1.25:1),hit:new Set(),fx:false,aim,f,tr,tail:[],pf}}
+  if(st4){SW.mul*=.8;SW.nova=1}step=sv;if(step==2||st4){try{HITSTOP(st4?90:60)}catch(_){}}
   let cdv=(SW.dur+.04)/(1+bonus().atk);try{const cl=CLASS7.cur();if(cl){const bo=CLASS7.bon(cl,CLASS7.lv(cl));if(bo.spd>0)cdv/=1+bo.spd}}catch(_){}wcd=cdv;swing=.22;
   try{DEPTH8.strike(wx,wy)}catch(_){}
   try{if(pf.ranged){const f0=pf.ranged=='arrow'?620:pf.ranged=='bullet'?260:900;SFX7.tone(f0,f0*.6,.16,'triangle',.04);noise(.08,pf.ranged=='bullet'?700:2400,.06)}else{noise(step==2?.32:.16,step==2?900:1500,.08);snd(step==2?160:220+R()*40,.12,'triangle',.035,.6)}}catch(_){}}
@@ -127,6 +128,7 @@ const MYTH=(()=>{
     cast(mv,s.k,s.w,o,s.aim,s.f,s.mul*m1*(s.tr>=6?1.2:1),(s.tr>=5&&s.step==2?1.4:1)*(1+.05*(s.tr-1))*(m1>1?1.15:1)*(s.tr>=6?1.2:1));
     if(s.tr>=3&&s.step==2&&!pf.thr)cast('echo:'+mv,s.k,s.w,o,s.aim,s.f,s.mul,1);   // tier III: the finisher echoes (throwing weapons are thrown instead)
     if(s.tr>=5&&s.step==2)cast(mv,s.k,s.w,o,s.aim+(s.f>0?-.4:.4),s.f,s.mul*.6,1)}
+   if(s.nova&&!s.nv&&s.t>=s.dur*.5){s.nv=1;FX.push({k:'ring',x:o.x,y:o.y,t:0,life:.5,r:T*3.4,th:s.k,w:s.w,mul:.7,hit:new Set()});try{const d=COSM.D[s.k];burst(o.x,o.y,d.rim,red()?8:34,380,6);burst(o.x,o.y,d.star,red()?3:16,240,4,'p');VFX.wave(o.x,o.y,d.neb[0],T*4,.55,.6);ft(P.x,P.y-40,'Supernova!',d.rim);SFX7.tone(180,720,.3,'sawtooth',.04);shake=Math.max(shake,red()?0:.22)}catch(_){}}
    if(s.t>=s.dur){lastEnd=performance.now()/1000;if(s.step==2&&s.tr>=3&&pf.thr)throwIt(s.k,s.w);SW=null}}
   if(THR)thrTick(dt);
   for(let i=FX.length-1;i>=0;i--){const e=FX[i];if(fxTick(e,dt))FX.splice(i,1)}
@@ -286,13 +288,13 @@ const MYTH=(()=>{
     const tw=Math.min(1,(t-flashT-.12)/.35);if(tw>0){g2.globalAlpha=tw;g2.textAlign='center';g2.fillStyle=A.rgba(p[1],.9);g2.font='600 '+Math.round(12*sc+4)+"px Montserrat,'Segoe UI',sans-serif";g2.fillText((from?'ASCENSION':'AWAKENING').split('').join(' '),cxs,h*.12+10);
      const big=Math.round(64*sc+18);g2.font='900 italic '+big+"px Montserrat,'Segoe UI',sans-serif";const gr=g2.createLinearGradient(0,h*.8-big,0,h*.8);gr.addColorStop(0,'#ffffff');gr.addColorStop(.5,A.mix(p[1],'#ffffff',.3));gr.addColorStop(.55,p[0]);gr.addColorStop(1,'#ffffff');g2.fillStyle=gr;
      g2.fillText('TIER '+RN[to],cxs,h*.82);g2.font='700 '+Math.round(18*sc+6)+"px Montserrat,'Segoe UI',sans-serif";g2.fillStyle='#ffffff';g2.fillText(th.n,cxs,h*.82+Math.round(30*sc+10));
-     g2.font='500 italic '+Math.round(13*sc+5)+"px 'Cormorant Garamond',Georgia,serif";g2.fillStyle=A.rgba('#ffffff',.85);g2.fillText(from?'You have been ascended to a new level of '+th.noun+'.':'The scythe has chosen you.',cxs,h*.82+Math.round(56*sc+18))}}
+     g2.font='500 italic '+Math.round(13*sc+5)+"px 'Cormorant Garamond',Georgia,serif";g2.fillStyle=A.rgba('#ffffff',.85);g2.fillText(from?'You have been ascended to a new level of '+th.noun+'.':'The '+th.noun+' has chosen you.',cxs,h*.82+Math.round(56*sc+18))}}
    // the flash
    const fl=Math.max(0,1-Math.abs(t-flashT)/.22);if(fl>0){g2.globalAlpha=fl*(red2?.5:1);g2.fillStyle='#ffffff';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
    // fade out at the end
    if(t>dur-.35){g2.globalAlpha=Math.min(1,(t-(dur-.35))/.35);g2.fillStyle='#06040a';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
    if(t<dur)requestAnimationFrame(fr);else{for(const ev of evs)removeEventListener(ev,block,{capture:true});cv2.remove();window.RB_COVER=cover0;SC=null;
-    try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic scythe is in your hand.':'Damage +'+Math.round(DMG*100*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?' · the finisher throws the scythe':to==4?' · hits echo with bursts':to==5?' · a doubled finisher that heals':' · Mythic Awakening'),3200)}catch(_){}
+    try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic '+th.noun+' is in your hand.':'Damage +'+Math.round(DMG*100*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?(prof(k).thr?' · the finisher throws the '+th.noun:' · the finisher strikes twice'):to==4?' · hits echo with bursts':to==5?' · a doubled finisher that heals':' · Mythic Awakening'),3200)}catch(_){}
     try{if(typeof CLS9!='undefined'&&CLS9.isOpen())CLS9.refresh&&CLS9.refresh()}catch(_){}}};
   requestAnimationFrame(fr)}
  return{DMG,MAXT,reqs,LVS:LV,api:{onHit,part,sparks,glow,hitArea,near,gyAt,pivot,FX,live,cast},prof,drawCrown,ID,KOF,TH,tier,next,check,ascend,access,scene,LV,GEMS,MATS,RN,get S(){return S},save,setOutfit(v){S.out=v?1:0;save()},get outfit(){return S.out},outfitK,attack,get swing(){return SW},get thrown(){return THR},fx:FX,parts:PT,PROF}})();

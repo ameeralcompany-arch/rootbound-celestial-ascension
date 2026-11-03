@@ -5,7 +5,7 @@ try{RBDIAG.stage('late-scripts-loaded')}catch(_){}
 (function(){let last=performance.now(),fpsC=0,fpsT=last,acc=0,lastDraw=0;
  const menu=()=>{try{return !!(entered&&((typeof INV7!='undefined'&&INV7.isOpen)||(typeof STORE7!='undefined'&&STORE7.isOpen)||(typeof CLS9!='undefined'&&CLS9.isOpen())||(typeof UI6!='undefined'&&UI6.on)))}catch(_){return false}};
  function loop(n){const raw=n-last;last=n;
-  if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const dt=Math.min(.05,raw/1000);window.FDT=dt;
+  if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const hs=window.HS_T>0;if(hs)window.HS_T-=raw/1000;const dt=Math.min(.05,raw/1000)*(hs?.06:1);window.FDT=dt;
   const dn=!menu()||n-lastDraw>=32;if(dn)lastDraw=n;try{update(dt);evTick(dt);BOSS6.tick(dt);try{OBJ6.tick(dt)}catch(_){}DAILY6.tick(dt);VFX.update(dt);if(dn)draw();if(window.RBDIAG&&!RBDIAG.ready)RBDIAG.done();
    if(entered&&dn){const w=cv.width,hh=cv.height;g.save();g.scale(ZM,ZM);VFX.draw(g,cam.x,cam.y,w/ZM,hh/ZM);BOSS6.drawProj(g,cam.x,cam.y);g.restore();POST6.run(w,hh);UI6.minimap(n)}}catch(e){if(!loop.err){loop.err=1;console.error(e)}
    // a frame that throws mid-draw skips its g.restore(): without this the world zoom stacks up and stays stuck (and the view goes blank)

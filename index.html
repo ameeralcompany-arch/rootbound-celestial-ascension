@@ -2309,6 +2309,7 @@ html[data-skin] body #cls9 .c9brand,html[data-skin] body #cls9 .c9logo{color:#ef
 html[data-skin] body #cls9#cls9#cls9 > .c9wrap,html[data-skin] body #cls9#cls9#cls9 > .c9fx{background:none!important;background-image:none!important;box-shadow:none!important;border:0!important}
 #cls9 .c9art:not(.hero) .c9ban{display:none}
 #cls9 .c9art .c9ban{z-index:3}
+html[data-skin] body #cls9#cls9 .c9side{background:none!important;background-image:none!important;border:0!important;box-shadow:none!important}
 
 /* ========== CSS: 99-zz-equip.css ========== */
 /* EQM9: the Character Equipment menu (C) */
@@ -16420,7 +16421,7 @@ try{RBDIAG.stage('late-scripts-loaded')}catch(_){}
 (function(){let last=performance.now(),fpsC=0,fpsT=last,acc=0,lastDraw=0;
  const menu=()=>{try{return !!(entered&&((typeof INV7!='undefined'&&INV7.isOpen)||(typeof STORE7!='undefined'&&STORE7.isOpen)||(typeof CLS9!='undefined'&&CLS9.isOpen())||(typeof UI6!='undefined'&&UI6.on)))}catch(_){return false}};
  function loop(n){const raw=n-last;last=n;
-  if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const dt=Math.min(.05,raw/1000);window.FDT=dt;
+  if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const hs=window.HS_T>0;if(hs)window.HS_T-=raw/1000;const dt=Math.min(.05,raw/1000)*(hs?.06:1);window.FDT=dt;
   const dn=!menu()||n-lastDraw>=32;if(dn)lastDraw=n;try{update(dt);evTick(dt);BOSS6.tick(dt);try{OBJ6.tick(dt)}catch(_){}DAILY6.tick(dt);VFX.update(dt);if(dn)draw();if(window.RBDIAG&&!RBDIAG.ready)RBDIAG.done();
    if(entered&&dn){const w=cv.width,hh=cv.height;g.save();g.scale(ZM,ZM);VFX.draw(g,cam.x,cam.y,w/ZM,hh/ZM);BOSS6.drawProj(g,cam.x,cam.y);g.restore();POST6.run(w,hh);UI6.minimap(n)}}catch(e){if(!loop.err){loop.err=1;console.error(e)}
    // a frame that throws mid-draw skips its g.restore(): without this the world zoom stacks up and stays stuck (and the view goes blank)
@@ -17825,12 +17826,13 @@ const MYTH=(()=>{
  // the combo chains while a swing is still finishing, or within 0.75 s of the last one
  function attack(w){const k=w.myth,now=performance.now()/1000;if(THR)return;
   try{if(CJOB.blocks(w.id)){say(CJOB.why(w.id));return}}catch(_){}
-  step=(SW||now-lastEnd<.75)&&step<2&&step>=0?step+1:0;const pf=prof(k),o=pivot(),wx=mx+cam.x,wy=my+cam.y,aim=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(aim)>=0?1:-1;
-  const f=P.f,base=f>0?aim:Math.PI-aim,tr=tier(k)||1;
+  const tr=tier(k)||1,last=tr>=5?3:2;step=(SW||now-lastEnd<.75)&&step<last&&step>=0?step+1:0;const st4=step==3,sv=step;if(st4)step=2;const pf=prof(k),o=pivot(),wx=mx+cam.x,wy=my+cam.y,aim=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(aim)>=0?1:-1;
+  const f=P.f,base=f>0?aim:Math.PI-aim;
   if(pf.ranged){const r=RMV[step];SW={k,w,step,t:0,dur:r[0],a0:aim,a1:aim,mul:r[1]*(tr>=5&&step==2?1.25:1),hit:new Set(),fx:false,aim,f,tr,tail:[],pf,shot:false}}
   else{// angles are built for facing right and mirrored for facing left
    const mv=pf.mv[step],mir=a=>f>0?a:Math.PI-a,a0=mir(base+mv[1]),a1=mir(base+mv[2]);
    SW={k,w,step,t:0,dur:mv[0]*(k=='ninja'?.85:1),a0,a1,mul:mv[3]*(tr>=5&&step==2?1.25:1),hit:new Set(),fx:false,aim,f,tr,tail:[],pf}}
+  if(st4){SW.mul*=.8;SW.nova=1}step=sv;if(step==2||st4){try{HITSTOP(st4?90:60)}catch(_){}}
   let cdv=(SW.dur+.04)/(1+bonus().atk);try{const cl=CLASS7.cur();if(cl){const bo=CLASS7.bon(cl,CLASS7.lv(cl));if(bo.spd>0)cdv/=1+bo.spd}}catch(_){}wcd=cdv;swing=.22;
   try{DEPTH8.strike(wx,wy)}catch(_){}
   try{if(pf.ranged){const f0=pf.ranged=='arrow'?620:pf.ranged=='bullet'?260:900;SFX7.tone(f0,f0*.6,.16,'triangle',.04);noise(.08,pf.ranged=='bullet'?700:2400,.06)}else{noise(step==2?.32:.16,step==2?900:1500,.08);snd(step==2?160:220+R()*40,.12,'triangle',.035,.6)}}catch(_){}}
@@ -17865,6 +17867,7 @@ const MYTH=(()=>{
     cast(mv,s.k,s.w,o,s.aim,s.f,s.mul*m1*(s.tr>=6?1.2:1),(s.tr>=5&&s.step==2?1.4:1)*(1+.05*(s.tr-1))*(m1>1?1.15:1)*(s.tr>=6?1.2:1));
     if(s.tr>=3&&s.step==2&&!pf.thr)cast('echo:'+mv,s.k,s.w,o,s.aim,s.f,s.mul,1);   // tier III: the finisher echoes (throwing weapons are thrown instead)
     if(s.tr>=5&&s.step==2)cast(mv,s.k,s.w,o,s.aim+(s.f>0?-.4:.4),s.f,s.mul*.6,1)}
+   if(s.nova&&!s.nv&&s.t>=s.dur*.5){s.nv=1;FX.push({k:'ring',x:o.x,y:o.y,t:0,life:.5,r:T*3.4,th:s.k,w:s.w,mul:.7,hit:new Set()});try{const d=COSM.D[s.k];burst(o.x,o.y,d.rim,red()?8:34,380,6);burst(o.x,o.y,d.star,red()?3:16,240,4,'p');VFX.wave(o.x,o.y,d.neb[0],T*4,.55,.6);ft(P.x,P.y-40,'Supernova!',d.rim);SFX7.tone(180,720,.3,'sawtooth',.04);shake=Math.max(shake,red()?0:.22)}catch(_){}}
    if(s.t>=s.dur){lastEnd=performance.now()/1000;if(s.step==2&&s.tr>=3&&pf.thr)throwIt(s.k,s.w);SW=null}}
   if(THR)thrTick(dt);
   for(let i=FX.length-1;i>=0;i--){const e=FX[i];if(fxTick(e,dt))FX.splice(i,1)}
@@ -18024,13 +18027,13 @@ const MYTH=(()=>{
     const tw=Math.min(1,(t-flashT-.12)/.35);if(tw>0){g2.globalAlpha=tw;g2.textAlign='center';g2.fillStyle=A.rgba(p[1],.9);g2.font='600 '+Math.round(12*sc+4)+"px Montserrat,'Segoe UI',sans-serif";g2.fillText((from?'ASCENSION':'AWAKENING').split('').join(' '),cxs,h*.12+10);
      const big=Math.round(64*sc+18);g2.font='900 italic '+big+"px Montserrat,'Segoe UI',sans-serif";const gr=g2.createLinearGradient(0,h*.8-big,0,h*.8);gr.addColorStop(0,'#ffffff');gr.addColorStop(.5,A.mix(p[1],'#ffffff',.3));gr.addColorStop(.55,p[0]);gr.addColorStop(1,'#ffffff');g2.fillStyle=gr;
      g2.fillText('TIER '+RN[to],cxs,h*.82);g2.font='700 '+Math.round(18*sc+6)+"px Montserrat,'Segoe UI',sans-serif";g2.fillStyle='#ffffff';g2.fillText(th.n,cxs,h*.82+Math.round(30*sc+10));
-     g2.font='500 italic '+Math.round(13*sc+5)+"px 'Cormorant Garamond',Georgia,serif";g2.fillStyle=A.rgba('#ffffff',.85);g2.fillText(from?'You have been ascended to a new level of '+th.noun+'.':'The scythe has chosen you.',cxs,h*.82+Math.round(56*sc+18))}}
+     g2.font='500 italic '+Math.round(13*sc+5)+"px 'Cormorant Garamond',Georgia,serif";g2.fillStyle=A.rgba('#ffffff',.85);g2.fillText(from?'You have been ascended to a new level of '+th.noun+'.':'The '+th.noun+' has chosen you.',cxs,h*.82+Math.round(56*sc+18))}}
    // the flash
    const fl=Math.max(0,1-Math.abs(t-flashT)/.22);if(fl>0){g2.globalAlpha=fl*(red2?.5:1);g2.fillStyle='#ffffff';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
    // fade out at the end
    if(t>dur-.35){g2.globalAlpha=Math.min(1,(t-(dur-.35))/.35);g2.fillStyle='#06040a';g2.fillRect(0,0,w,h);g2.globalAlpha=1}
    if(t<dur)requestAnimationFrame(fr);else{for(const ev of evs)removeEventListener(ev,block,{capture:true});cv2.remove();window.RB_COVER=cover0;SC=null;
-    try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic scythe is in your hand.':'Damage +'+Math.round(DMG*100*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?' · the finisher throws the scythe':to==4?' · hits echo with bursts':to==5?' · a doubled finisher that heals':' · Mythic Awakening'),3200)}catch(_){}
+    try{UI6.say6(th.n+' · Tier '+RN[to],to==1?'Forged. Your mythic '+th.noun+' is in your hand.':'Damage +'+Math.round(DMG*100*(to-1))+'%'+(to==2?' · the first cut fires a crescent':to==3?(prof(k).thr?' · the finisher throws the '+th.noun:' · the finisher strikes twice'):to==4?' · hits echo with bursts':to==5?' · a doubled finisher that heals':' · Mythic Awakening'),3200)}catch(_){}
     try{if(typeof CLS9!='undefined'&&CLS9.isOpen())CLS9.refresh&&CLS9.refresh()}catch(_){}}};
   requestAnimationFrame(fr)}
  return{DMG,MAXT,reqs,LVS:LV,api:{onHit,part,sparks,glow,hitArea,near,gyAt,pivot,FX,live,cast},prof,drawCrown,ID,KOF,TH,tier,next,check,ascend,access,scene,LV,GEMS,MATS,RN,get S(){return S},save,setOutfit(v){S.out=v?1:0;save()},get outfit(){return S.out},outfitK,attack,get swing(){return SW},get thrown(){return THR},fx:FX,parts:PT,PROF}})();
@@ -18233,7 +18236,7 @@ const MYMV=(()=>{
 const MYUI=(()=>{
  const A=MYART,TH=A.TH,TAU=Math.PI*2,R=Math.random,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const red=()=>{try{return !!(cel.opt.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(_){return false}};
- const UNL=['Forged: the three-move combo','The first move hits 30% harder and wider','The finisher throws the scythe; it swings back','Hits echo with small bursts','A doubled finisher that heals you on hit','Mythic Awakening: every effect 20% larger and stronger'];
+ const UNL=['Forged: the three-move combo','The first move hits 30% harder and wider','The finisher throws the scythe; it swings back','Hits echo with small bursts','Transcendent: a doubled finisher that heals you on hit, then a fourth strike, Supernova','Mythic Awakening: every effect 20% larger and stronger'];
  const CROWN_Y=150,CROWN_S=6.2;   // where the crown piece sits on the hero portrait (SHOWART design space)
  const FXN={crescent:'◐',pillar:'▮',vortex:'◉',chains:'∞',flock:'≋',splash:'✺',bolts:'ϟ',stars:'✦',shards:'▲',ring:'◎'};
  // ---- the Mythic card
@@ -18446,6 +18449,77 @@ const COSM=(()=>{
  function stop(){if(raf)cancelAnimationFrame(raf);raf=0;cur=null;cv=null}
  {const _a=MYUI.after,_s=MYUI.stop;MYUI.after=function(el,k){const r=_a.apply(this,arguments);try{attach(el,k)}catch(e){console.error('COSM attach',e)}return r};MYUI.stop=function(){stop();return _s.apply(this,arguments)}}
  return{D,stage,STN,sprite,nebula,heart,get view(){return view},set view(v){view=v},get cur(){return cur},get preview(){return pv}}})();
+
+/* ========== LATE: 99-zzzzzzzzz-3c-classfeel.js ========== */
+// ===== FEEL15: what a class feels like in the hand. Hit-stop on the blows that matter; a named third-hit finisher for every class's ordinary weapons (it only looks and sounds:
+// damage stays as measured in the balance tests); an entrance when your class changes; Early / Mid / End stages of a class with a mark under your feet. =====
+const FEEL15=(()=>{
+ const red=()=>{try{return !!(cel.opt.reduce||QM.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(_){return false}};
+ const D=COSM.D,R=Math.random,TAU=Math.PI*2;
+ // ---- hit-stop: for a few hundredths of a second the world slows almost to a stop (99-loop.js reads this)
+ let lastStop=0;function stop(ms){if(red()||window.HS_OFF)return;const n=performance.now();if(n-lastStop<140)return;lastStop=n;window.HS_T=Math.max(window.HS_T||0,ms/1000)}
+ window.HITSTOP=stop;
+ {const _hm=hurtMob;hurtMob=function(m,d,w,ang){const was=m&&m.hp>0;const r=_hm.apply(this,arguments);try{if(was&&m.hp<=0&&w){stop(m.boss?110:42)}}catch(_){}return r}}
+ // ---- finishers: every third hit in a row with a class weapon
+ const FIN={brawler:['Knockout','#ff8a3a',-1],knight:['Oathstrike','#ffe48a',1],samurai:['Iaido','#ff9ac0',1],archer:['Trueshot','#cfc4ff',1],mage:['Overload','#c88aff',-1],demon:['Bloodletting','#ff4a64',-1],reaper:['Last Hour','#b48cff',1],elementalist:['Confluence','#7ad8ff',-1],stormcaller:['Thunderclap','#8ad4ff',1],berserker:['Rampage','#ff6a3a',-1],ninja:['Vanish','#7fefe0',1],druid:['Overgrowth','#8affb0',-1],gunslinger:['Last Round','#ffd27e',1]};
+ let chain=0,chainT=0,chainK=null;
+ function finisher(k){const f=FIN[k],d=D[k];if(!f||window.HS_OFF)return;const dir=P.f||1,x=P.x+dir*T*1.6,y=P.y+P.h*.45;let near=false;try{near=mobs.some(m=>!m.dead&&m.hp>0&&Math.hypot(m.x-x,m.y+m.h/2-y)<T*3)}catch(_){}
+  try{ft(P.x,P.y-30,f[0]+'!',f[1])}catch(_){}
+  try{burst(x,y,f[1],red()?6:18,260,5);burst(x,y,d.star,red()?2:8,170,3,'p');rings.push({x,y,c:f[1],t:performance.now()})}catch(_){}
+  try{VFX.wave(x,y,f[1],T*2.4,.34,.5)}catch(_){}
+  try{const b=f[2]>0?660:330;SFX7.tone(b,b*2,.14,'triangle',.05);SFX7.tone(b*1.5,b*.75,.2,'sine',.04,.06)}catch(_){}
+  if(near){stop(60);try{if(!red())shake=Math.max(shake,.1)}catch(_){}}}
+ {const _uw=useWeapon;useWeapon=function(){const c0=wcd;const r=_uw.apply(this,arguments);try{const w=WPN[wp];if(w&&!w.myth&&w.k!='tool'&&w.id!='fist'&&c0<=0&&wcd>0){const k=CLASS7.of(w),n=performance.now();if(k&&FIN[k]){if(k==chainK&&n-chainT<1400)chain++;else chain=1;chainK=k;chainT=n;if(chain>=3){chain=0;finisher(k)}}}}catch(e){if(!FEEL15.e){FEEL15.e=1;console.error('FEEL15',e)}}return r}}
+ // ---- when your class changes: a short entrance in its colours, and its own chord
+ let lastCls=undefined,lastStage={};const NOTES=[262,294,330,349,392,440,494,523,587,659,698,784,880];
+ function entrance(k){const d=D[k];if(!d)return;const i=Object.keys(D).indexOf(k),b=NOTES[i%NOTES.length];try{const c=d.neb[0],x=P.x,y=P.y+P.h*.5;burst(x,y,c,red()?6:24,240,5);burst(x,y,d.star,red()?2:12,150,3,'p');rings.push({x,y,c:d.rim,t:performance.now()});VFX.wave(x,y,c,T*3,.5,.45)}catch(_){}
+  try{SFX7.tone(b,b,.12,'triangle',.04);SFX7.tone(b*1.25,b*1.25,.14,'triangle',.04,.08);SFX7.tone(b*1.5,b*1.5,.22,'sine',.045,.17)}catch(_){}
+  try{ft(P.x,P.y-44,CLASS7.C[k].n,d.rim)}catch(_){}}
+ // ---- Early / Mid / End
+ const STG=['','Early','Mid','End'],stageOf=L=>L>=50?3:L>=25?2:1;CLASS7.stage=k=>stageOf(CLASS7.lv(k));CLASS7.stageName=k=>STG[stageOf(CLASS7.lv(k))];
+ const STXT={2:'Your class mark awakens. New weapons and its level 25 passive are open.',3:'Your class mark is complete. The Mythic forge is open to you.'};
+ function watch(){if(typeof entered=='undefined'||!entered)return;let k=null;try{k=CLASS7.cur()}catch(_){}if(lastCls===undefined){lastCls=k;for(const q in D)lastStage[q]=stageOf(CLASS7.lv(q));return}
+  if(k!==lastCls){lastCls=k;if(k)entrance(k)}
+  for(const q in D){const s=stageOf(CLASS7.lv(q));if(s>(lastStage[q]||1)){lastStage[q]=s;try{UI6.say6(CLASS7.C[q].n+' · '+STG[s]+' stage',STXT[s],3600)}catch(_){}try{entrance(q)}catch(_){}}else if(s<lastStage[q])lastStage[q]=s}}
+ setInterval(()=>{try{watch()}catch(_){}},250);
+ // the class mark under your feet while you hold a class weapon. Drawn only for you for now.
+ function mark(now){if(typeof entered=='undefined'||!entered)return;let k=null;try{k=CLASS7.cur()}catch(_){}if(!k||!D[k])return;const s=stageOf(CLASS7.lv(k));if(s<2)return;const d=D[k],t=now/1000,x=P.x-cam.x,y=P.y+P.h-cam.y-2;g.save();g.globalCompositeOperation='lighter';g.translate(x,y);g.scale(1,.3);g.strokeStyle=d.rim;g.globalAlpha=.42;g.lineWidth=1.6;g.beginPath();g.arc(0,0,26,0,TAU);g.stroke();
+   if(s>=3){g.globalAlpha=.3;g.beginPath();g.arc(0,0,33,0,TAU);g.stroke();g.fillStyle=d.star;g.globalAlpha=.85;for(let i=0;i<3;i++){const q=t*1.1+i*TAU/3;g.beginPath();g.arc(Math.cos(q)*33,Math.sin(q)*33,2.2,0,TAU);g.fill()}}g.restore()}
+ {const _dn=drawNPCs;drawNPCs=function(now){try{mark(now)}catch(_){}return _dn.apply(this,arguments)}}
+ // ---- reaching a new Mythic stage is announced as such
+ {const _a=MYTH.ascend;MYTH.ascend=function(k){const t0=MYTH.tier(k),r=_a.apply(this,arguments);try{const t1=MYTH.tier(k);if(r&&COSM.stage(t1)>COSM.stage(t0||1)&&t0>0){const s=COSM.stage(t1);setTimeout(()=>{try{UI6.say6(MYART.TH[k].n+' · Stage '+['','I','II','III'][s],COSM.STN[s]+(s==3?': a fourth strike joins the combo.':': an orbit ring wakes around its heart.'),3600)}catch(_){}},3800)}}catch(_){}return r}}
+ MYTH.stage=k=>{const t=MYTH.tier(k);return t?COSM.stage(t):0};
+ return{FIN,stop,finisher,entrance,stageOf,watch}})();
+// ===== SHOW15: each class's Mythic floats in front of its master's house in the plaza, slowly turning over a pool of its own light. It is drawn for everyone in the same place, is not
+// a block, so nothing is in the way, and only the ones on screen cost anything. E beside it (or the master's dialog) opens that weapon's page on the Classes screen. =====
+const SHOW15=(()=>{
+ const TAU=Math.PI*2,D=COSM.D;
+ const red=()=>{try{return !!(cel.opt.reduce||QM.reduce)}catch(_){return false}};
+ const spots=()=>{try{return PLZ7.HS.map(h=>({k:h.c,npc:h.npc,x:(h.x0+h.w/2)*T,y:(PLZ7.S-4.8)*T,gy:PLZ7.S*T}))}catch(_){return[]}};
+ let SP=null;const list=()=>SP||(SP=spots());
+ const POOL={};function pool(k){if(POOL[k])return POOL[k];const c=document.createElement('canvas');c.width=150;c.height=46;const x=c.getContext('2d'),d=D[k];x.translate(75,23);x.scale(1,.3);const g2=x.createRadialGradient(0,0,0,0,0,72);g2.addColorStop(0,MYART.rgba(d.rim,.75));g2.addColorStop(.5,MYART.rgba(d.neb[0],.3));g2.addColorStop(1,MYART.rgba(d.neb[0],0));x.fillStyle=g2;x.beginPath();x.arc(0,0,72,0,TAU);x.fill();return POOL[k]=c}
+ // a patch of its own night sky behind the weapon, so it reads against any wall
+ const DISC={};function disc(k){if(DISC[k])return DISC[k];const c=document.createElement('canvas');c.width=c.height=220;const x=c.getContext('2d'),d=D[k],n=COSM.nebula(k);x.save();x.beginPath();x.arc(110,110,108,0,TAU);x.clip();x.drawImage(n,-50,-50,320,320);x.restore();x.globalCompositeOperation='destination-in';const gr=x.createRadialGradient(110,110,30,110,110,108);gr.addColorStop(0,'rgba(0,0,0,.92)');gr.addColorStop(.6,'rgba(0,0,0,.62)');gr.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gr;x.fillRect(0,0,220,220);return DISC[k]=c}
+ function drawOne(s,t,vis){const k=s.k,d=D[k],sx=s.x-cam.x,sy=s.y-cam.y,mo=red()?0:1,fy=Math.sin(t*1.2+s.x)*5*mo;
+  // the beam of light from the ground, then the pool
+  g.save();g.globalCompositeOperation='lighter';const gy=s.gy-cam.y;g.globalAlpha=.8;g.drawImage(pool(k),sx-75,gy-23);
+  const gr=g.createLinearGradient(0,sy,0,gy);gr.addColorStop(0,MYART.rgba(d.rim,0));gr.addColorStop(1,MYART.rgba(d.rim,.2));g.fillStyle=gr;g.beginPath();g.moveTo(sx-9,sy);g.lineTo(sx+9,sy);g.lineTo(sx+30,gy);g.lineTo(sx-30,gy);g.closePath();g.fill();g.restore();
+  // the weapon, turning like a thing on a slow string
+  const th=MYART.TH[k],ty=th.type||'scythe',sp=COSM.sprite(k,6,90),b=sp?sp.pts.b:[-30,-30,100,30],cxx=(b[0]+b[2])/2,cyy=(b[1]+b[3])/2,ext=Math.max(b[2]-b[0],b[3]-b[1]),L=Math.min(175,19000/Math.max(50,ext));g.drawImage(disc(k),sx-110,sy+fy-110);
+  g.save();g.translate(sx,sy+fy);g.rotate(-1.2+Math.sin(t*.5+s.x)*.07*mo);g.scale(1,mo?.86+.14*Math.cos(t*.7+s.x):1);g.translate(-cxx*L/100,-cyy*L/100);try{MYART.weapon(g,k,6,L,mo?t:0,{aura:1})}catch(e){if(!SHOW15.e){SHOW15.e=1;console.error('SHOW15',e)}}g.restore();
+  // a few motes rising around it
+  if(mo){g.save();g.globalCompositeOperation='lighter';g.fillStyle=d.star;for(let i=0;i<6;i++){const q=(t*.28+i/6+s.x*.01)%1,a=i*1.05+t*.4;g.globalAlpha=(1-q)*.8;g.fillRect(sx+Math.cos(a)*(22+i*4),gy-q*190,1.8,1.8)}g.restore()}
+  if(vis<T*5){g.save();g.textAlign='center';g.globalAlpha=Math.min(1,(T*5-vis)/(T*2));g.font="700 italic 14px 'Cormorant Garamond',Georgia,serif";g.lineWidth=3;g.strokeStyle='rgba(6,4,20,.8)';g.fillStyle='#fff';g.strokeText(th.n,sx,sy-112);g.fillText(th.n,sx,sy-112);g.restore()}}
+ function draw(now){if(typeof cur=='undefined'||cur!='plaza')return;const t=now/1000,vw=cv.width/(typeof ZM!='undefined'?ZM:1);for(const s of list()){const sx=s.x-cam.x;if(sx<-170||sx>vw+170)continue;drawOne(s,t,Math.abs(s.x-P.x))}}
+ {const _dn=drawNPCs;drawNPCs=function(now){try{draw(now)}catch(e){if(!SHOW15.e){SHOW15.e=1;console.error('SHOW15',e)}}return _dn.apply(this,arguments)}}
+ function nearSpot(){if(typeof cur=='undefined'||cur!='plaza')return null;let b=null,bd=T*2.2;for(const s of list()){const d=Math.abs(s.x-P.x);if(d<bd&&Math.abs(s.gy-(P.y+P.h))<T*2.5){bd=d;b=s}}return b}
+ const inspect=k=>{try{closeDlg()}catch(_){}try{CLS9.open(k)}catch(e){console.error('SHOW15',e)}};
+ {const _i=interact;interact=function(){if(!dlgOpen&&!creatorOn&&!showInv&&menuEl.style.display=='none'){let npc=null;try{npc=nearNPC()}catch(_){}const s=nearSpot();if(s&&!npc){inspect(s.k);return}}return _i.apply(this,arguments)}}
+ {const _pt=OBJ6.promptText;OBJ6.promptText=function(npc){const r=_pt.apply(this,arguments);if(r||npc)return r;const s=nearSpot();return s?'Press E to inspect '+MYART.TH[s.k].n:r}}
+ // the master's dialog gets a button for it
+ {const _c=NPC2.classHTML;NPC2.classHTML=function(n){const h=_c.apply(this,arguments);try{if(n&&n.cls&&MYART.TH[n.cls])return h+'<div class="rw"><div style="flex:1"><b>'+MYART.TH[n.cls].n+'</b><small>The Mythic '+MYART.TH[n.cls].noun+' of this house'+(MYTH.tier(n.cls)?' · yours, Tier '+MYTH.RN[MYTH.tier(n.cls)]:' · not forged yet')+'</small></div><button data-a="talk:myth">Inspect</button></div>'}catch(_){}return h}}
+ {const _da=dlgAct;dlgAct=function(a){if(a=='talk:myth'){try{inspect(curNPC.cls)}catch(_){}return}return _da.apply(this,arguments)}}
+ return{list,draw,nearSpot,inspect}})();
 
 /* ========== LATE: 99-zzzzzzzzz-4-econ.js ========== */
 // ===== ECON14: prices follow progress. A power item (weapons, gear, wings, charms; weather machines and effects lighter) costs about as many

@@ -61,7 +61,7 @@ const SIMLIB=`window.SIM=(()=>{let vt=1e9,on=false,seed=1;const rnd0=Math.random
   for(let r=0;r<6;r++){const a=o.rows.filter(x=>x.r==r).sort((p,q)=>p.lv-q.lv);for(let i=1;i<a.length;i++)if(a[i].lv>a[i-1].lv&&a[i].p<a[i-1].p)o.bad.push('lv '+a[i].id)}
   o.gunLv=GUN9.IDS.every((id,i,L)=>!i||WPOWER(id)>=WPOWER(L[i-1]));return o});
  ok('WPOWER: every weapon has a power and a rarity; power is monotonic in rarity (common < ... < mythic) and in level',wp.bad.length==0&&wp.gunLv&&wp.n>=60,wp.bad);
- await E(SIMLIB);await E(()=>{QM.setting('high');enterWorld('baltest')});await Wt(1500);
+ await E(SIMLIB);await E(()=>{window.HS_OFF=1;/* hit-stop freezes monsters and player alike: on this test's clock it would read as lost damage */QM.setting('high');enterWorld('baltest')});await Wt(1500);
  const meas=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&WPN[id].k!='tool'&&!WPN[id].myth)o[id]=SIM.weapon(id);return o});
  const val=(v,force)=>{const r=force==null?v.far>=.5*v.near:force,S=r?(v.near+v.far)/2:v.near,A=Math.min(3.5,r?(v.nearA+v.farA)/Math.max(1e-6,v.near+v.far):v.nearA/Math.max(1e-6,v.near));return{r,S,V:S*(1+.15*(A-1))*(r?1.1:1)}};
  const info=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&!WPN[id].myth)o[id]={rar:WPNRAR(id),p:WPOWER(id),cls:CLASS7.of(WPN[id]),lv:WPN[id].lv|0};return{o,C:Object.fromEntries(Object.entries(CLASS7.C).map(([k,c])=>[k,c.ids.filter(id=>WPN[id]&&!WPN[id].myth)]))}});
