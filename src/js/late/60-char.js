@@ -115,6 +115,7 @@ const AC6=(()=>{
   const swing=sw>0?1-sw/.22:-1,armA=swing>=0?-2.1+3.5*swing:null;
   // aura pose with wings (60-z-aurapose.js): pa = flight pose weight (arms spread, legs together and trailing), pg = grounded levitation (arms open)
   const pz=o.pz,pa=pz?pz.air:0,pg=pz?pz.arms:0,lp=(a,b,k)=>a+(b-a)*k;let fax=-8-as*2.2,fay=hip-3-as*.8;if(pa||pg){fax=lp(lp(fax,-11.5,pg),-16,pa);fay=lp(lp(fay,hip-3.5,pg),sh+12,pa)}
+  const bw=fm&&wpn!='fist'&&WPN[wpn]&&WPN[wpn].k=='bow'&&typeof BOW15!='undefined'?BOW15.pose(o):null;let bhx=0,bhy=0;if(bw){bhx=3+Math.cos(bw.a)*23;bhy=sh+6+Math.sin(bw.a)*23;fax=bhx;fay=bhy}
   limb(g,-5-ash,sh+3,fax,fay,4.4,shade(ac,-.2));hand(fax,fay+1,2.4);
   // --- legs
   for(const s of[-1,1]){const lx=s*2.8,lift=air?-5:Math.max(0,s*ls)*5;let fx=lx+(air?s*3:s*ls*6),fy=-2-lift;if(pa){fx=lp(fx,s>0?-4.5:-7.8,pa);fy=lp(fy,s>0?-.5:-3.8,pa)}else if(pg)fx=lp(fx,lx*.55,pg*.7);const pc=lc?shade(lc,s<0?-.2:0):of==2||of==5?shade(oc,-.15):shade(L.pants,s<0?-.2:0);
@@ -160,10 +161,10 @@ const AC6=(()=>{
   g.restore();
   // --- near arm (+ weapon)
   const hx=6+ash,hy2=sh+4;let hxp,hyp;
-  if(armA!=null&&fm){hxp=hx+Math.cos(armA)*15;hyp=hy2+Math.sin(armA)*15}else{hxp=9+as*2.2;hyp=hip-2+as*.8;if(pa||pg){hxp=lp(lp(hxp,11.5,pg),16,pa);hyp=lp(lp(hyp,hip-3,pg),sh+9,pa)}}
+  if(bw){const nb=BOW15.nock(bw);hxp=bhx-Math.cos(bw.a)*nb;hyp=bhy-Math.sin(bw.a)*nb}else if(armA!=null&&fm){hxp=hx+Math.cos(armA)*15;hyp=hy2+Math.sin(armA)*15}else{hxp=9+as*2.2;hyp=hip-2+as*.8;if(pa||pg){hxp=lp(lp(hxp,11.5,pg),16,pa);hyp=lp(lp(hyp,hip-3,pg),sh+9,pa)}}
   if(wpn!='fist'&&!fm){g.save();g.translate(-6,sh+4);g.rotate(-2.35);g.scale(.58,.58);drawWeapon(g,wpn,44,0);g.restore()}
   limb(g,hx,hy2-1,hxp,hyp,4.6,ac);if(GB)G7.put(g,GB,'shoulder',0,sh);
-  if(wpn!='fist'&&fm){g.save();g.translate(hxp,hyp);g.rotate(armA!=null?armA+.15:-.6+Math.sin(t*3)*.05);drawWeapon(g,wpn,WPN[wpn].k=='sword'?44:WPN[wpn].k=='scythe'?46:WPN[wpn].k=='glaive'?34:40,t);g.restore()}
+  if(bw){g.save();g.translate(bhx,bhy);g.rotate(bw.a);BOW15.art(g,wpn,bw.pull,t);g.restore()}else if(wpn!='fist'&&fm){g.save();g.translate(hxp,hyp);g.rotate(armA!=null?armA+.15:-.6+Math.sin(t*3)*.05);drawWeapon(g,wpn,WPN[wpn].k=='sword'?44:WPN[wpn].k=='scythe'?46:WPN[wpn].k=='glaive'?34:40,t);g.restore()}
   hand(hxp,hyp+.6,2.6);
   if(fm&&sw>0&&wpn=='fist'){g.fillStyle=L.skin;g.beginPath();g.arc(hxp+8*(1-sw/.22),hyp,4,0,6.3);g.fill();g.stroke()}
  }
@@ -191,7 +192,7 @@ const AC6=(()=>{
   if(pz&&api.PZG)api.PZG(g,pz,cx,feet-ly,t);
   g.save();g.translate(cx,feet-ly);if(pz&&pz.lean){g.translate(0,-30);g.rotate(pz.lean*f);g.translate(0,30)}g.imageSmoothingEnabled=true;{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
-  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
+  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,me:local,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.05)WingArt.idleFx(WINGS[wingIdx],cx+cam.x,cy+cam.y+10+Math.random()*30,f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}
@@ -414,7 +415,7 @@ const GEAR7=(()=>{
   x.restore();return true}
  // front view (home portrait): hoods get a symmetric version, everything else uses the 3/4 art
  function front(g,id,t){const d=D[id];if(!d)return;g.lineJoin='round';g.lineCap='round';if(d.front){d.front(g);return}if(d.hatB)d.hatB.f(g);d.hatF.f(g)}
- return{D,has,begin,put,putR,putSkew,hat,tail,boot,glove,icon,front,legs:id=>id&&D[id]&&D[id].legs,cover:id=>!!(id&&D[id]&&D[id].cover),paws:id=>!!(id&&D[id]&&D[id].paws),flush(){SC.clear()},get size(){return SC.size}}})();
+ return{D,has,begin,put,putR,putSkew,hat,tail,boot,glove,icon,front,sprNow:(id,part,k)=>has(id,part)?spr(id,part,bucket(k)):null,legs:id=>id&&D[id]&&D[id].legs,cover:id=>!!(id&&D[id]&&D[id].cover),paws:id=>!!(id&&D[id]&&D[id].paws),flush(){SC.clear()},get size(){return SC.size}}})();
 drawChar=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){AC6.draw(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q)};
 nameTag=function(){};
 // compact, validated cosmetic block for multiplayer presence

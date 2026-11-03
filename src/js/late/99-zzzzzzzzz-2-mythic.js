@@ -85,7 +85,7 @@ const MYTH=(()=>{
  function swept(m,o,a,b,rmax){const dx=m.x-o.x,dy=m.y+m.h/2-o.y,d=Math.hypot(dx,dy),rr=Math.max(m.w,m.h)*.5;if(d>rmax+rr||d<10)return false;let an=Math.atan2(dy,dx);const lo=Math.min(a,b)-.18-rr/Math.max(30,d),hi=Math.max(a,b)+.18+rr/Math.max(30,d);
   an+=TAU*Math.round(((lo+hi)/2-an)/TAU);return an>=lo&&an<=hi}
  // the combo chains while a swing is still finishing, or within 0.75 s of the last one
- function attack(w){const k=w.myth,now=performance.now()/1000;if(THR)return;
+ function attack(w){const k=w.myth,now=performance.now()/1000;if(THR)return;if((lvl|0)<(w.lv|0)){if(now-(attack.warned||0)>1.5){attack.warned=now;say('Reach level '+w.lv+' to use '+w.n);try{UIS.play('error')}catch(_){}}wcd=.35;return}
   try{if(CJOB.blocks(w.id)){say(CJOB.why(w.id));return}}catch(_){}
   const tr=tier(k)||1,last=tr>=5?3:2;step=(SW||now-lastEnd<.75)&&step<last&&step>=0?step+1:0;const st4=step==3,sv=step;if(st4)step=2;const pf=prof(k),o=pivot(),wx=mx+cam.x,wy=my+cam.y,aim=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(aim)>=0?1:-1;
   const f=P.f,base=f>0?aim:Math.PI-aim;
@@ -125,7 +125,8 @@ const MYTH=(()=>{
    if(!pf.ranged){for(const m of mobs)if(live(m)&&!s.hit.has(m)&&swept(m,o,pa,ca,T*pf.rad*(1+.06*(s.tr-1)))){s.hit.add(m);onHit(s.k,m,ca+(s.a1>s.a0?1:-1)*Math.PI/2,s.mul,s.w)}
     s.tail.push(ca);if(s.tail.length>9)s.tail.shift();if(!red()&&R()<.7){const L=pf.len*.7;part(o.x+Math.cos(ca)*L,o.y+Math.sin(ca)*L,(R()-.5)*40,(R()-.5)*40,.3,3,TH[s.k].pal[1],false,s.k)}}
    if(!s.fx&&s.t>=s.dur*(pf.ranged?.15:.42)){s.fx=true;const mv=TH[s.k].mv[s.step][1],m1=s.tr>=2&&s.step==0?1.3:1;   // tier II: the first move hits 30% harder and wider
-    cast(mv,s.k,s.w,o,s.aim,s.f,s.mul*m1*(s.tr>=6?1.2:1),(s.tr>=5&&s.step==2?1.4:1)*(1+.05*(s.tr-1))*(m1>1?1.15:1)*(s.tr>=6?1.2:1));
+    cast(mv,s.k,s.w,pf.ranged=='arrow'?BOW15.origin(mx+cam.x,my+cam.y):o,s.aim,s.f,s.mul*m1*(s.tr>=6?1.2:1),(s.tr>=5&&s.step==2?1.4:1)*(1+.05*(s.tr-1))*(m1>1?1.15:1)*(s.tr>=6?1.2:1));
+    try{FLOW15.sig(mv,s.k,pf.ranged=='arrow'?BOW15.origin(mx+cam.x,my+cam.y):o,s.aim,s.f)}catch(_){}
     if(s.tr>=3&&s.step==2&&!pf.thr)cast('echo:'+mv,s.k,s.w,o,s.aim,s.f,s.mul,1);   // tier III: the finisher echoes (throwing weapons are thrown instead)
     if(s.tr>=5&&s.step==2)cast(mv,s.k,s.w,o,s.aim+(s.f>0?-.4:.4),s.f,s.mul*.6,1)}
    if(s.nova&&!s.nv&&s.t>=s.dur*.5){s.nv=1;FX.push({k:'ring',x:o.x,y:o.y,t:0,life:.5,r:T*3.4,th:s.k,w:s.w,mul:.7,hit:new Set()});try{const d=COSM.D[s.k];burst(o.x,o.y,d.rim,red()?8:34,380,6);burst(o.x,o.y,d.star,red()?3:16,240,4,'p');VFX.wave(o.x,o.y,d.neb[0],T*4,.55,.6);ft(P.x,P.y-40,'Supernova!',d.rim);SFX7.tone(180,720,.3,'sawtooth',.04);shake=Math.max(shake,red()?0:.22)}catch(_){}}
@@ -170,15 +171,14 @@ const MYTH=(()=>{
  // ---- drawing (world space, on top of the characters)
  function draw(g2,cx,cy){const t=performance.now()/1000;g2.save();
   // the swing: an anime smear along the blade tip, then the scythe itself
-  if(SW){const s=SW,o=pivot(),ox=o.x-cx,oy=o.y-cy,p=TH[s.k].pal,ca=angAt(s),tl=s.tail,rr=s.pf.len*.75;
-   if(s.pf.ranged){const kick=Math.max(0,1-Math.abs(s.t/s.dur-.2)*5)*6;g2.save();g2.translate(ox-Math.cos(s.aim)*kick,oy-Math.sin(s.aim)*kick);g2.rotate(s.aim);if(Math.cos(s.aim)<0)g2.scale(1,-1);g2.translate(-s.pf.len*s.pf.piv,0);A.weapon(g2,s.k,s.tr,s.pf.len,t);g2.restore()}
-   else{if(tl.length>1){g2.globalCompositeOperation='lighter';for(let i=1;i<tl.length;i++){const a0=tl[i-1],a1=tl[i],al=i/tl.length;g2.beginPath();g2.arc(ox,oy,rr,Math.min(a0,a1),Math.max(a0,a1));g2.arc(ox,oy,rr*.35,Math.max(a0,a1),Math.min(a0,a1),true);g2.closePath();g2.fillStyle=A.rgba(p[0],.28*al);g2.fill()}
-    g2.beginPath();g2.arc(ox,oy,rr*1.02,Math.min(tl[0],ca),Math.max(tl[0],ca));g2.strokeStyle=A.rgba(p[1],.85);g2.lineWidth=3;g2.stroke();g2.globalCompositeOperation='source-over'}
+  if(SW){const s=SW,o=pivot(),ox=o.x-cx,oy=o.y-cy,p=TH[s.k].pal,ca=angAt(s),tl=s.tail,rr=s.pf.len*.75*(A.VIS||1);
+   if(s.pf.ranged=='arrow'){/* the archer's own stance holds the bow (BOW15) */}else if(s.pf.ranged){const kick=Math.max(0,1-Math.abs(s.t/s.dur-.2)*5)*6;g2.save();g2.translate(ox-Math.cos(s.aim)*kick,oy-Math.sin(s.aim)*kick);g2.rotate(s.aim);if(Math.cos(s.aim)<0)g2.scale(1,-1);g2.translate(-s.pf.len*s.pf.piv,0);A.weapon(g2,s.k,s.tr,s.pf.len,t);g2.restore()}
+   else{if(tl.length>1){try{FLOW15.smear(g2,ox,oy,rr,tl[0],ca,s.k,s.step)}catch(_){}}
    drawHeld(g2,s.k,s.tr,ox,oy,ca,s.a1>s.a0,t)}}
   if(THR){const q=THR,L=prof(q.k).len;g2.save();g2.translate(q.x-cx,q.y-cy);g2.rotate(q.rot);g2.globalCompositeOperation='lighter';g2.globalAlpha=.4;g2.drawImage(glow(TH[q.k].pal[0]),-50,-50,100,100);g2.globalAlpha=1;g2.globalCompositeOperation='source-over';g2.translate(-L*.5,0);A.weapon(g2,q.k,tier(q.k),L,t);g2.restore()}
   for(const e of FX)if(!(e.del>0))fxDraw(g2,e,cx,cy,t);
   // particles
-  g2.globalCompositeOperation='lighter';for(const p of PT)if(!p.mo){g2.globalAlpha=Math.min(1,p.l/p.ml*1.5);const s=p.s*2.4;g2.drawImage(glow(p.c),p.x-cx-s,p.y-cy-s,s*2,s*2)}
+  g2.globalCompositeOperation='lighter';for(const p of PT)if(!p.mo){g2.globalAlpha=Math.min(.55,p.l/p.ml*.8);const s=p.s*2;g2.drawImage(glow(p.c),p.x-cx-s,p.y-cy-s,s*2,s*2)}
   g2.globalCompositeOperation='source-over';for(const p of PT)if(p.mo){g2.globalAlpha=Math.min(1,p.l/p.ml*1.5);A.motif(g2,p.k,p.x-cx,p.y-cy,p.s,p.a,t)}
   g2.globalAlpha=1;g2.restore()}
  function drawHeld(g2,k,tr,ox,oy,a,cw,t){const pf=prof(k);g2.save();g2.translate(ox,oy);g2.rotate(a);if(cw)g2.scale(1,-1);g2.translate(-pf.len*pf.piv,0);A.weapon(g2,k,tr,pf.len,t);g2.restore()}
@@ -221,10 +221,10 @@ const MYTH=(()=>{
     if(!e.small)for(let i=0;i<12;i++){const q=i/12*TAU+e.t;g.beginPath();g.moveTo(x+Math.cos(q)*rr*.7,y+Math.sin(q)*rr*.7);g.lineTo(x+Math.cos(q)*rr*1.05,y+Math.sin(q)*rr*1.05);g.strokeStyle=A.rgba(p[1],.6);g.lineWidth=2;g.stroke()}break}}
   g.restore()}
  // ---- the scythe in the hand (the default holder pose) and on the back; hidden while our own swing or throw draws it
- {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const k=KOF[id];if(!k)return _dw.apply(this,arguments);if(HIDE)return;x.save();try{const big=L>=100,pf=prof(k),s=big?Math.min(1.25,pf.hs*.62):pf.hs;x.translate(big?-L*s*pf.piv:-L*pf.ho,0);A.weapon(x,k,tier(k)||1,L*s,t||0)}finally{x.restore()}}}
+ {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const k=KOF[id];if(!k)return _dw.apply(this,arguments);if(HIDE)return;x.save();try{const big=L>=100,pf=prof(k),s=big?Math.min(1.25,pf.hs*.62):pf.hs;x.translate(big?-L*s*pf.piv:-L*pf.ho,0);if(!big&&pf==PROF.scythe)x.scale(1,-1);/* in the resting hand the blade faces forward, away from the face */A.weapon(x,k,tier(k)||1,L*s,t||0)}finally{x.restore()}}}
  // ---- the mythic outfit
  const cape=[];let capeK=null;
- function outfitK(){if(!S.out)return null;try{const w=WPN[wp];if(w&&w.myth&&tier(w.myth)>=1)return w.myth;const c=CLASS7.cur();if(c&&tier(c)>=1)return c}catch(_){}return null}
+ function outfitK(){if(!S.out)return null;try{if((WEAR[wear.body]||{}).my||(WEAR[wear.hat]||{}).my)return null;const w=WPN[wp];if(w&&w.myth&&tier(w.myth)>=1)return w.myth;const c=CLASS7.cur();if(c&&tier(c)>=1)return c}catch(_){}return null}
  function outfitTick(dt){const k=outfitK();if(k!==capeK){capeK=k;cape.length=0}if(!k||!entered)return;const ax=P.x-(P.f||1)*5,ay=P.y+22;
   if(!cape.length)for(let i=0;i<7;i++)cape.push({x:ax,y:ay+i*6,px:ax,py:ay+i*6});cape[0].x=cape[0].px=ax;cape[0].y=cape[0].py=ay;
   const wind=-(P.vx||0)*.9-(P.f||1)*18;for(let i=1;i<cape.length;i++){const c=cape[i],vx=(c.x-c.px)*.94,vy=(c.y-c.py)*.94;c.px=c.x;c.py=c.y;c.x+=vx+wind*dt*dt*12+Math.sin(performance.now()/300+i)*.15;c.y+=vy+900*dt*dt}
@@ -233,7 +233,7 @@ const MYTH=(()=>{
   if(!red()&&R()<dt*3)part(P.x+(R()-.5)*30,P.y+R()*50,(R()-.5)*20,-30-R()*30,1.2,5,TH[k].pal[0],R()<.5,k)}
  function drawCape(g2,k,cx,cy){if(cape.length<2)return;const p=TH[k].pal,ox=cx-P.x,oy=cy-P.y,f=P.f||1;g2.save();g2.lineJoin='round';const L=[],Rt=[];
   for(let i=0;i<cape.length;i++){const c=cape[i],w=10+i*2,n=cape[Math.min(cape.length-1,i+1)],m2=cape[Math.max(0,i-1)],dx=n.x-m2.x,dy=n.y-m2.y,d=Math.hypot(dx,dy)||1;L.push([c.x+ox-dy/d*w,c.y+oy+dx/d*w]);Rt.push([c.x+ox+dy/d*w,c.y+oy-dx/d*w])}
-  g2.beginPath();g2.moveTo(L[0][0],L[0][1]);for(const q of L)g2.lineTo(q[0],q[1]);const tat=k=='reaper'||k=='demon'||k=='ninja';const end=cape[cape.length-1];
+  g2.beginPath();g2.moveTo(L[0][0],L[0][1]);for(let i=1;i<L.length;i++){const a=L[i-1],b=L[i];g2.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2)}const tat=k=='reaper'||k=='demon'||k=='ninja';const end=cape[cape.length-1];
   if(tat){for(let i=0;i<4;i++){const u=i/3,bx=L[L.length-1][0]+(Rt[Rt.length-1][0]-L[L.length-1][0])*u,by=L[L.length-1][1]+(Rt[Rt.length-1][1]-L[L.length-1][1])*u;g2.lineTo(bx,by+(i%2?0:9))}}
   for(let i=Rt.length-1;i>=0;i--)g2.lineTo(Rt[i][0],Rt[i][1]);g2.closePath();const gr=g2.createLinearGradient(cx,cy+20,end.x+ox,end.y+oy);gr.addColorStop(0,A.mix(TH[k].out.cape,p[0],.25));gr.addColorStop(1,TH[k].out.cape);g2.fillStyle=gr;g2.fill();
   g2.strokeStyle=A.OL;g2.lineWidth=1.2;g2.stroke();g2.strokeStyle=A.rgba(p[3],.9);g2.lineWidth=1.2;g2.beginPath();for(const q of Rt)g2.lineTo(q[0],q[1]);g2.stroke();g2.restore()}

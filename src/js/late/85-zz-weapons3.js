@@ -20,7 +20,7 @@ const WFX9=(()=>{
   chainwand(w,a,o){PR.push({k:'chains',x:o.x,y:o.y,t:0,life:1.1,w,hit:new Set()})},
   crowbow(w,a,o){for(let i=0;i<5;i++)PR.push({k:'crow',x:o.x,y:o.y,a:a+(i-2)*.07,sp:520+R()*120,l:2,ph:R()*6,sw:(i-2)*.9,w,hit:new Set(),del:i*.05})},
   icebow(w,a,o){PR.push({k:'iarrow',x:o.x,y:o.y,vx:Math.cos(a)*1050,vy:Math.sin(a)*1050,l:2.5,w,hit:0})}};
- function use(w){const cdm=over>0?.5:1;wcd=w.cd*cdm/(1+bonus().atk);swing=.22;const wx=mx+cam.x,wy=my+cam.y,o=pos(),a=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(a)>=0?1:-1;sfx(w.id);try{FX7.weaponAnim(w.id)}catch(_){}BEH[w.id](w,a,o)}
+ function use(w){const cdm=over>0?.5:1;wcd=w.cd*cdm/(1+bonus().atk);swing=.22;const wx=mx+cam.x,wy=my+cam.y,o=w.k=='bow'&&typeof BOW15!='undefined'?BOW15.origin(wx,wy):pos(),a=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(wx>=P.x?0:Math.PI)>=0?1:-1;sfx(w.id);try{if(w.k!='bow')FX7.weaponAnim(w.id)}catch(_){}BEH[w.id](w,a,o);if(w.k=='bow')swing=0}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&BEH[w.id]&&own[w.id]){use(w);return}return _uw.apply(this,arguments)}}
  const near=(x,y,rng,ex)=>{let b=null,bd=rng;for(const m of mobs){if(!live(m)||(ex&&ex.has(m)))continue;const d=Math.hypot(m.x-x,m.y+m.h/2-y);if(d<bd){bd=d;b=m}}return b};
  const wall=(x,y)=>solidAt(Math.floor(x/T),Math.floor(y/T));

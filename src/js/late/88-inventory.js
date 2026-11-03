@@ -57,7 +57,7 @@ const INV7=(()=>{
  // equip / unequip any key. Returns true when something changed.
  function equip(k){const t=kind(k);
   if(t=='weapons'||t=='tools'){const id=k.slice(2),w=WPN[id];if(!own[id]){say('You do not own '+w.n+' yet');snd('error');return false}if(lvl<(w.lv|0)){say('Reach level '+w.lv+' to use '+w.n);snd('error');return false}if(HB())HB().equip(k);else wp=id;try{renderBar()}catch(_){}snd('select');return true}
-  if(t=='wear'){const id=k.slice(2),w=WEAR[id];if(!ownW[id]){say('Buy '+w.n+' first');snd('error');return false}wear[w.s]=id;try{G('wear')}catch(_){}try{renderSkills()}catch(_){}snd('select');try{HB()&&HB().render()}catch(_){}return true}
+  if(t=='wear'){const id=k.slice(2),w=WEAR[id];if(!ownW[id]){say('Buy '+w.n+' first');snd('error');return false}{const m=typeof GEAR15!='undefined'?GEAR15.why(id):'';if(m){say(m);snd('error');return false}}wear[w.s]=id;try{G('wear')}catch(_){}try{renderSkills()}catch(_){}snd('select');try{HB()&&HB().render()}catch(_){}return true}
   if(t=='wings'){let ok=false;try{ok=wingEquip(k.slice(5))}catch(_){}if(!ok){snd('error');return false}snd('select');return true}
   if(t=='charms'){try{return!!SHOP7.equip(k.slice(3))}catch(_){return false}}
   if(t=='mats'){say('Materials are for crafting and selling');return false}

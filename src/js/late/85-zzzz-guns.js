@@ -94,7 +94,7 @@ const GUN9=(()=>{
  const muzzle=(a,len)=>{MX=HX+Math.cos(a)*len;MY=HY+Math.sin(a)*len};
  const kickB=v=>{SH.kick=Math.min(2,SH.kick+v)};
  const flash=(a,c,s)=>{const f=fx('flash',MX,MY,a,.07,0,c);f.s=s||1;f.sp=spr('flash:'+c);if(vok())VFX.add(0,c,MX,MY,Math.cos(a)*40,Math.sin(a)*40,.12,18*(s||1),4,O1)};
- const MUZ={popgun:27,revolver:31,shotgun:34,smg:28,moonpistol:31,sniper:44,rocket:31,prismcannon:34,raijinbow:12};
+ const MUZ={popgun:27,revolver:31,shotgun:34,smg:28,moonpistol:31,sniper:44,rocket:31,prismcannon:34,raijinbow:6};
  // ---- moves
  const BEH={
   popgun(w,a){muzzle(a,MUZ.popgun);shoot('heart',MX,MY,a+(R()-.5)*.05,980,.9,w,1,6);flash(a,'#ff9ac8',.8);kickB(.5);S('popgun')},
@@ -294,7 +294,7 @@ const GUN9=(()=>{
    ICONC[k]=c;return ICON[k]=c.toDataURL()}}
  // ---- weapon use (wraps the existing chain: these weapons never reach the legacy swing, so they never dig)
  function use(w){if(!lvOk(w)){warnLv(w);S('denied');wcd=.35;return}const cdm=over>0?.5:1;wcd=w.cd*cdm/(1+bonus().atk);
-  const cxw=mx+cam.x,cyw=my+cam.y;P.f=cxw>=P.x?1:-1;handAt();const ranged=AIM.has(w.id)||w.id=='lumistaff',a=ranged?Math.atan2(cyw-HY,cxw-HX):Math.atan2(cyw-(P.y+23),cxw-P.x);
+  const cxw=mx+cam.x,cyw=my+cam.y;P.f=cxw>=P.x?1:-1;handAt();if(w.k=='bow'&&typeof BOW15!='undefined'){const q=BOW15.origin(cxw,cyw);HX=q.x;HY=q.y}const ranged=AIM.has(w.id)||w.id=='lumistaff',a=ranged?Math.atan2(cyw-HY,cxw-HX):Math.atan2(cyw-(P.y+23),cxw-P.x);
   if(ranged){if(swing<=0)swing=0;SH.last=performance.now()} // 0 = weapon out in the hand, no melee swing arc
   else{swing=.22;slashes.push({x:P.x,y:P.y+23,a,t:performance.now(),w});try{FX7.weaponAnim(w.id)}catch(_){}
    const tk=pickTree(cxw,cyw);if(tk>=0&&Math.hypot((tk%W)*T+T/2-P.x,(tk/W|0)*T+T/2-(P.y+P.h/2))<REACH+T){harvest(tk);return}

@@ -12,8 +12,7 @@ const FEEL15=(()=>{
  let chain=0,chainT=0,chainK=null;
  function finisher(k){const f=FIN[k],d=D[k];if(!f||window.HS_OFF)return;const dir=P.f||1,x=P.x+dir*T*1.6,y=P.y+P.h*.45;let near=false;try{near=mobs.some(m=>!m.dead&&m.hp>0&&Math.hypot(m.x-x,m.y+m.h/2-y)<T*3)}catch(_){}
   try{ft(P.x,P.y-30,f[0]+'!',f[1])}catch(_){}
-  try{burst(x,y,f[1],red()?6:18,260,5);burst(x,y,d.star,red()?2:8,170,3,'p');rings.push({x,y,c:f[1],t:performance.now()})}catch(_){}
-  try{VFX.wave(x,y,f[1],T*2.4,.34,.5)}catch(_){}
+  try{const FK={brawler:'uppercut',knight:'cleave',samurai:'iaido',archer:'pierce',mage:'missiles',demon:'splash',reaper:'harvest',elementalist:'prism',stormcaller:'chain',berserker:'whirl',ninja:'clones',druid:'whip',gunslinger:'ricochet'};const a=Math.atan2(my+cam.y-y,mx+cam.x-x);FLOW15.sig(FK[k],k,{x:P.x,y:P.y+P.h*.45},a,dir,x,y)}catch(_){}
   try{const b=f[2]>0?660:330;SFX7.tone(b,b*2,.14,'triangle',.05);SFX7.tone(b*1.5,b*.75,.2,'sine',.04,.06)}catch(_){}
   if(near){stop(60);try{if(!red())shake=Math.max(shake,.1)}catch(_){}}}
  {const _uw=useWeapon;useWeapon=function(){const c0=wcd;const r=_uw.apply(this,arguments);try{const w=WPN[wp];if(w&&!w.myth&&w.k!='tool'&&w.id!='fist'&&c0<=0&&wcd>0){const k=CLASS7.of(w),n=performance.now();if(k&&FIN[k]){if(k==chainK&&n-chainT<1400)chain++;else chain=1;chainK=k;chainT=n;if(chain>=3){chain=0;finisher(k)}}}}catch(e){if(!FEEL15.e){FEEL15.e=1;console.error('FEEL15',e)}}return r}}
@@ -36,7 +35,11 @@ const FEEL15=(()=>{
  // ---- reaching a new Mythic stage is announced as such
  {const _a=MYTH.ascend;MYTH.ascend=function(k){const t0=MYTH.tier(k),r=_a.apply(this,arguments);try{const t1=MYTH.tier(k);if(r&&COSM.stage(t1)>COSM.stage(t0||1)&&t0>0){const s=COSM.stage(t1);setTimeout(()=>{try{UI6.say6(MYART.TH[k].n+' · Stage '+['','I','II','III'][s],COSM.STN[s]+(s==3?': a fourth strike joins the combo.':': an orbit ring wakes around its heart.'),3600)}catch(_){}},3800)}}catch(_){}return r}}
  MYTH.stage=k=>{const t=MYTH.tier(k);return t?COSM.stage(t):0};
- return{FIN,stop,finisher,entrance,stageOf,watch}})();
+ // ---- a Mythic needs player level 35, and once used it stays out in your hand for a minute
+ for(const k in D){const w=WPN[MYTH.ID(k)];if(w)w.lv=35}
+ let mythT=-1e9;{const _uw=useWeapon;useWeapon=function(){const w=WPN[wp],c0=wcd,r=_uw.apply(this,arguments);try{if(w&&w.myth&&c0<=0&&wcd>0&&(lvl|0)>=(w.lv|0))mythT=performance.now()}catch(_){}return r}}
+ {const _u=update;update=function(dt){_u.apply(this,arguments);try{const w=WPN[wp];if(w&&w.myth&&performance.now()-mythT<60000&&swing<-.5)swing=-.5}catch(_){}}}
+ return{FIN,stop,finisher,entrance,stageOf,watch,get mythT(){return mythT},set mythT(v){mythT=v}}})();
 // ===== SHOW15: each class's Mythic floats in front of its master's house in the plaza, slowly turning over a pool of its own light. It is drawn for everyone in the same place, is not
 // a block, so nothing is in the way, and only the ones on screen cost anything. E beside it (or the master's dialog) opens that weapon's page on the Classes screen. =====
 const SHOW15=(()=>{

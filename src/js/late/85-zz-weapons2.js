@@ -27,8 +27,8 @@ const WFX8=(()=>{
   gravitystaff(w,a,o){PR.push({k:'orb',x:o.x,y:o.y,vx:Math.cos(a)*560,vy:Math.sin(a)*560-120,l:4.5,b:0,w,r:11})},
   galeshuriken(w,a,o){for(let i=-1;i<=1;i++){const q=a+i*.24;PR.push({k:'shur',x:o.x,y:o.y,vx:Math.cos(q)*720,vy:Math.sin(q)*720,l:1.5,w,rc:1,rot:R()*6,hit:new Set()})}},
   titanmaul(w,a,o){const gy=gyAt(P.x,P.y+P.h-4);breakLine({x:P.x,y:P.y+23},Math.PI/2,T*2.6,bdOf(w));for(const d of[-1,1])PR.push({k:'quake',x:P.x,d,sp:560,l:.85,w,hit:new Set(),gy});shake=Math.max(shake,QM.reduce?0:.22);VFX.wave(P.x,gy,'#ff9a4a',200,.5,.3);spark(P.x,gy-6,'#ffb06a',16,220)}};
- function use(w){const cdm=over>0?.5:1;wcd=w.cd*cdm/(1+bonus().atk);swing=.22;const wx=mx+cam.x,wy=my+cam.y,o=pos(),a=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(a)>=0?1:-1;sfx(w.id);
-  try{FX7.weaponAnim(w.id)}catch(_){}BEH[w.id](w,a,o)}
+ function use(w){const cdm=over>0?.5:1;wcd=w.cd*cdm/(1+bonus().atk);swing=.22;const wx=mx+cam.x,wy=my+cam.y,bowed=w.k=='bow'&&typeof BOW15!='undefined',o=bowed?BOW15.origin(wx,wy):pos(),a=Math.atan2(wy-o.y,wx-o.x);P.f=wx>=P.x?1:-1;if(bowed)swing=0;sfx(w.id);
+  try{FX7.weaponAnim(w.id)}catch(_){}BEH[w.id](w,a,w.k=='bow'&&typeof BOW15!='undefined'?BOW15.origin(wx,wy):o)}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&BEH[w.id]&&own[w.id]){use(w);return}return _uw.apply(this,arguments)}}
  function tick(dt){const o=pos();for(let i=PR.length-1;i>=0;i--){const p=PR[i];let dead=false;
   if(p.k=='spear'){p.t-=dt;dead=p.t<=0;p.x=o.x;p.y=o.y}

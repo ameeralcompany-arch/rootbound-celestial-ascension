@@ -51,7 +51,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
   t=ripe(true,FARM9.OVER+5000);o.wilt=FARM9.wilted(t,Date.now());c0=cnt(280);harvest(k);o.gotW=cnt(280)-c0;
   await new Promise(r=>setTimeout(r,50));return o},spot);
  ok('perfect harvest (watered + golden ring): 3 stars = double yield, gems, Farming XP, harvest stat, crop removed',hv.perf&&hv.gotP>=4&&hv.gotP<=6&&hv.gemsP>0&&hv.statH==1&&hv.xp&&hv.gone,hv);
- ok('an unwatered off-beat harvest gives the base yield; a crop left ripe too long wilts (half yield)',!hv.perf2&&hv.gotN>=2&&hv.gotN<=3&&hv.wilt&&hv.gotW>=1&&hv.gotW<=2,hv);
+ ok('an unwatered off-beat harvest gives the base yield; a crop left ripe too long wilts (no stars, still the base yield)',!hv.perf2&&hv.gotN>=2&&hv.gotN<=3&&hv.wilt&&hv.gotW>=2&&hv.gotW<=3,hv);
  // harvest burst screenshot
  await E(({gy,x0})=>{const G=FARM9.CROPS[83].grow*1000,PER=FARM9.PER,PW=FARM9.PW,k=(gy-1)*W+x0+2;trees.set(k,{s:83,r:83,p:Date.now()-G-(PER-PW/2),w:1});pushEdit(k);harvest(k)},spot);await p.waitForTimeout(220);await shot('farm_harvest');
  // milestones + reward card

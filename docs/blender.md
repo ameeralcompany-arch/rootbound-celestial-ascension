@@ -48,3 +48,14 @@ Don't add the game's own text or interface to a sheet, and check a new sheet at 
 - `execute_blender_code` can run any Python in Blender, and Python can touch files. `BLENDER_MCP_SAFE_MODE=1` blocks that, along with saving and exporting.
 - `generate_3d` and the asset libraries are off, and may cost credits or carry their own licences. Ask before turning them on.
 - From inside Claude, uv needs `UV_PYTHON_INSTALL_DIR` and `UV_CACHE_DIR` outside AppData (already set in the `blender` entry in Claude's settings).
+
+
+## Textures
+
+`tools/blender/render_textures.py` renders the grey textures the game tints in its own colours: nebula clouds, dust lanes, water caustics and cloth folds. It needs no window:
+
+```bash
+blender -b --factory-startup --python tools/blender/render_textures.py -- <out dir> 512
+```
+
+Then `node tools/embed-textures.js <out dir>` writes them into `src/js/late/00-tex.js`, so they travel inside the page.

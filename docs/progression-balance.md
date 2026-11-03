@@ -286,3 +286,10 @@ Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.
 **Finishers.** Every third hit in a row with a class's ordinary weapon is a named finisher (`FEEL15.FIN`). It only looks and sounds: damage stays as measured by `tests/balance.js`, which turns these effects off because their sparks use the same random numbers it seeds. `tests/cosmic.js` checks that a finisher changes no health and no gems.
 
 **In the plaza.** Each master's house shows its class's Mythic at Transcendent, the same for everyone (`SHOW15`). It isn't a block, so nothing is in your way. E beside it, or Inspect in the master's dialog, opens that weapon on the Classes screen.
+
+
+**Mythic weapons need player level 35.** Once used, one stays out in your hand for a minute. Its picture is painted once from `MYD` and kept, so a Mythic in the hand costs one image plus a few sparks a frame.
+
+**Mythic outfits.** Every class has a headpiece and a body piece at level 35, Mythic rarity (`GEAR15`). A class's outfit also needs that class to be learned; players with no class yet can wear any. Watery, Bubbly (Sea Foam) and Anonymous Phantom are open to all, with level 35 boots and gloves. No piece beats the best store armour (Inferno: 30% armour, 18% damage). Prices come from the same ECON14 formula as the rest of the store.
+
+**New wings.** Eight more in the store, at prices from the same formula.
