@@ -46,7 +46,7 @@ const CLS9=(()=>{
    '<div class="c9v c9vl" aria-hidden="true">Class '+pad(i+1)+' / '+pad(KEYS.length)+'</div><div class="c9v c9vr" aria-hidden="true">'+esc(c.n)+' · #Lv'+L+'</div>'+
    '<div class="c9art" aria-hidden="true"><canvas class="c9heroc"></canvas></div>'+
    '<section class="c9hero"><div class="c9eye"><span>'+pad(i+1)+'</span><span>'+ws.length+' weapons</span><span>'+(hand?'in your hand':st.t=='active'?'your class':'')+'</span></div>'+
-   '<h1 class="c9title">'+esc(c.n)+'<em>.</em></h1><p class="c9sub">'+esc(pname.toLowerCase())+' edition</p></section>'+
+   '<h1 class="c9title">'+esc(c.n)+'<em>.</em></h1><p class="c9sub">'+esc(pname.toLowerCase())+' edition · '+esc((()=>{try{return CLASS7.stageName(k)}catch(_){return''}})())+' stage'+(L<25?' · Mid at level 25':L<50?' · End at level 50':'')+'</p></section>'+
    '<aside class="c9side"><div class="c9orb c9lv" title="'+(L>=CLASS7.MAX?'Max level':Math.floor(xp)+' / '+need+' XP to the next level')+'">'+ring(f)+'<b>'+L+'</b><small>Level · '+(L>=CLASS7.MAX?'max':Math.floor(f*100)+'%')+'</small></div>'+
    '<button class="c9orb c9st" data-a="st" data-st="'+st.t+'"'+(st.t=='switch'||st.t=='learn'?'':' aria-disabled="true"')+'><b>'+st.lab+'</b><small>'+esc(st.sub)+'</small></button></aside>'+
    '<main class="c9body"><div class="c9col">'+(typeof MYUI!='undefined'?MYUI.section(k):'')+

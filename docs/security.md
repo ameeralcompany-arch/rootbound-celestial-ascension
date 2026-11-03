@@ -32,3 +32,14 @@ What protects the game, and what cannot be protected. `tests/security.js` attack
 - **The Windows warning.** Only a code-signing certificate tied to a verified identity removes the "Unknown Publisher" message. Nothing in the app can do it.
 - **A player's own computer.** Malware there can read that player's session.
 - **Large floods of traffic.** The free host has no protection of its own beyond what its provider gives.
+
+
+## Player safety
+
+- **Chat words.** `server/moderation.js` masks a short list of abusive words on the server, so no client can skip it. It reads through look-alike characters and matches whole words only, so "class" and "Scunthorpe" stay as they are.
+- **Block.** The Block button or `/block name` hides that name's chat on your screen and makes the server refuse their trade requests. `/unblock name` undoes it. The list is saved on your account.
+- **Report.** The Report button sends the reason and that player's recent chat in that world to the owner's Tools panel, under Reports. Limit: 5 reports an hour per player. Reports are kept in `reports.json` and also written to the audit log.
+
+## What the server does not check
+
+Equipping is client-side: what you wear is sent to other players as part of your presence, and the server doesn't check it against what you own. Store purchases and gem growth are checked. Moving equipment to server authority would be a separate project, because the game's fights also run on the player's computer.

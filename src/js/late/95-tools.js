@@ -2,7 +2,7 @@
 // Nothing here can grant privileges. If NET7.owner is false the button does not exist; if it is forced into the DOM, the server still answers "Not authorized".
 const TOOLS7=(()=>{
  const esc=DLG7.esc;let btn=null,el=null,tab='players',rid=0,pend={},cache={};
- const TABS=[['players','Players'],['worlds','Worlds'],['weather','Weather'],['announce','Announce'],['server','Server'],['bans','Bans'],['audit','Audit log']];
+ const TABS=[['players','Players'],['worlds','Worlds'],['weather','Weather'],['announce','Announce'],['server','Server'],['bans','Bans'],['audit','Audit log'],['reports','Reports']];
  function req(op,data,ms){return new Promise(res=>{const id='r'+(++rid);pend[id]=res;if(!NET7.send(Object.assign({t:'admin',op,rid:id},data||{}))){delete pend[id];return res({ok:0,m:'Not connected'})}setTimeout(()=>{if(pend[id]){delete pend[id];res({ok:0,m:'The server did not answer'})}},ms||8000)})}
  function res(m){const f=pend[m.rid];if(f){delete pend[m.rid];f(m)}}
  function sync(){const on=NET7.owner;if(on&&!btn){btn=document.createElement('button');btn.id='btools';btn.className='pn';btn.textContent='TOOLS';btn.title='Creator tools (owner only)';btn.onclick=()=>toggle();const hr=document.getElementById('hudR');(hr||document.body).insertBefore(btn,hr?hr.firstChild:null)}
@@ -18,6 +18,7 @@ const TOOLS7=(()=>{
   const out=await VIEW[tab]();if(my!=tab||!el)return;b.innerHTML=out.h;if(out.bind)out.bind(b)}
  const msg=(r,okTxt)=>{if(r.ok){say(okTxt||r.m||'Done')}else say(r.m||'Failed');return r}
  const VIEW={
+  async reports(){const r=await req('reports');const L=r&&r.data||[];return{h:'<div class="bar2"><b>'+L.length+'</b> recent reports <button id="t7rf">Refresh</button></div>'+(L.length?'<table><tr><th>When</th><th>About</th><th>From</th><th>What happened</th><th>They said</th></tr>'+L.map(x=>'<tr><td>'+esc(new Date(x.ts||0).toLocaleString())+'</td><td>'+esc(x.who)+'</td><td>'+esc(x.by)+'</td><td>'+esc(x.why)+'</td><td>'+esc((x.said||[]).join(' / '))+'</td></tr>').join('')+'</table>':'<p>Nothing reported.</p>'),bind(b){const q=b.querySelector('#t7rf');if(q)q.onclick=render}}},
   async players(){const r=await req('players');if(!r.ok)return{h:'<p class="bad">'+esc(r.m)+'</p>'};const L=r.data||[];
    return{h:'<div class="bar2"><b>'+L.length+'</b> online <button id="t7rf">Refresh</button></div><table><tr><th>Name</th><th>Type</th><th>World</th><th></th></tr>'+L.map(p=>'<tr><td>'+esc(p.name)+'</td><td>'+esc(p.kind)+'</td><td>'+esc(p.world||'—')+'</td><td class="ac">'+(p.kind=='owner'?'<small>you</small>':'<button data-a="goto" data-w="'+esc(p.sid)+'">Bring</button><button data-a="mute" data-w="'+esc(p.sid)+'">Mute</button><button data-a="kick" data-w="'+esc(p.sid)+'">Kick</button><button class="dg" data-a="ban" data-w="'+esc(p.sid)+'">Ban</button>')+'</td></tr>').join('')+'</table>',
     bind(b){b.querySelector('#t7rf').onclick=render;b.querySelectorAll('button[data-a]').forEach(x=>x.onclick=async()=>{const a=x.dataset.a,w=x.dataset.w,nm=(L.find(p=>p.sid==w)||{}).name||w;

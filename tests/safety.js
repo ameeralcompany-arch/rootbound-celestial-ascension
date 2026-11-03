@@ -17,6 +17,9 @@ let fails=0;const ok=(n,c,x)=>{console.log((c?'  ok   ':'  FAIL ')+n+(c||x==null
  // report
  await B.evaluate(()=>{NET7.send({t:'report',who:'annsafe',why:'being rude'})});const rf=path.join(dir,'reports.json');for(let i=0;i<40&&!fs.existsSync(rf);i++)await B.waitForTimeout(100);await B.waitForTimeout(200);const rep=JSON.parse(fs.readFileSync(rf,'utf8'));
  ok('a report reaches the owner with what they said',rep.list.length==1&&rep.list[0].who=='annsafe'&&rep.list[0].by=='beasafe'&&rep.list[0].said.length>=1&&!/fuck/.test(rep.list[0].said[0]),rep.list[0]);
+ // equipment set through the menu reaches other players
+ const worn=await A.evaluate(async()=>{const id=Object.keys(WEAR).find(i=>WEAR[i].s=='hat');ownW[id]=1;EQM9.show();if(EQM9.selected!='hat')EQM9.select('hat');const r=EQM9.equipIt('a:'+id);EQM9.close();return{id,r}});await B.waitForTimeout(700);const seen=await B.evaluate(()=>{const o=SOC6.byName('annsafe');return o&&o.presence&&o.presence.hat});ok('what you equip in the C menu is what other players see',worn.r&&seen==worn.id,{worn,seen});
+ const off=await A.evaluate(()=>{EQM9.show();if(EQM9.selected!='hat')EQM9.select('hat');const r=EQM9.unequipIt();EQM9.close();return r});await B.waitForTimeout(700);const gone=await B.evaluate(()=>{const o=SOC6.byName('annsafe');return o&&o.presence&&o.presence.hat});ok('and taking it off too',off&&!gone,{off,gone});
  // block stops trade requests
  const ask=async()=>{const r=await A.evaluate(()=>{const o=SOC6.byName('beasafe');if(!o)return null;NET7.send({t:'trade',op:'ask',to:o.peer});return o.peer});await B.waitForTimeout(500);return{r,got:await B.evaluate(()=>!!ONL10.trade)}};
  const before=await ask();ok('before blocking, a trade request arrives',before.got,before);await A.evaluate(()=>NET7.send({t:'trade',op:'cancel'}));await B.evaluate(()=>{try{NET7.send({t:'trade',op:'cancel'})}catch(_){}});await B.waitForTimeout(400);

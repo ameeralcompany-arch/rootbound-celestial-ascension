@@ -255,3 +255,34 @@ Online, the fight is a private copy on the player's computer. The server can't w
 | Realms | `src/js/late/99-zzzzzz-words.js` (chain, words, gates), `src/js/late/99-zzzzzzzzz-c-realms.js` (terrain, skies, monsters), `src/js/late/87-music.js` (songs) |
 
 Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.js`, `tests/balance.js`, `tests/realms.js`.
+
+
+## Economy rules added in the November 2026 update
+
+**Prices have one home.** The results of the `ECON14` formula are stored in `tools/econ-prices.json` and baked into `server/catalog.json` by `tools/gen-catalog.py`. The game and the server read the same list, so the store charges what it shows. `tests/economy.js` fails if they ever differ. To change a price, edit that file and regenerate the catalog.
+
+**Your own blocks pay nothing.** A block you placed gives itself back when broken, but no gems, seeds, mining XP or tool XP (`wasPlaced` in `src/legacy.html`). This closes the place-and-break income that reached about 157,000 gems an hour.
+
+**Purchases survive a bad connection.** A purchase keeps one request id until it is answered, so asking again can't charge twice; a late answer still delivers the item, and coming back online settles it from the server's record. Syncing pauses while an answer is on its way.
+
+**Online rewards pay.** World goals, world events, hunts, the Sky Run and the Book pay online too; the server's growth limit (a burst of 1,500 plus 600 a minute) already bounds them. Anything over the limit shows next to your balance as "+N arriving".
+
+**Every level pays.** `income(L)` gems for a level, three times that every 5th level, ten times every 25th. The level card shows it and names the next thing you unlock. A jump of more than 10 levels at once is a save loading and pays nothing.
+
+**Sinks and pace.**
+- Bosses pay in full the first time, then a quarter, at most once every 10 minutes per boss. XP is not limited.
+- A tree takes `20 + 3 × block price` seconds to grow (mixed seeds 30 + the average), capped at 20 extra minutes. Crops are unchanged.
+- Weapon upgrades go to +15. Levels 11–15 add 6% damage each instead of 18%, and cost far more.
+- Respec costs `100 + 20 × level`.
+- A wilted crop loses its star bonus but no longer halves the base harvest.
+- Missing a day halves the daily streak instead of wiping it.
+
+## Classes and Mythic weapons
+
+**Mythic stages.** Tiers I–II are Stage I (Awakened), III–IV Stage II (Ascended), V–VI Stage III (Transcendent). Each stage changes the weapon's picture (`COSM` in `src/js/late/99-zzzzzzzzz-3b-cosmic.js`). Transcendent adds a fourth strike, Supernova, after the three-move combo.
+
+**Class stages.** Class levels 1–24 are Early, 25–49 Mid, 50+ End (`CLASS7.stage`). Mid and End show a mark under your feet while you hold that class's weapon. The mark is drawn only on your own screen so far.
+
+**Finishers.** Every third hit in a row with a class's ordinary weapon is a named finisher (`FEEL15.FIN`). It only looks and sounds: damage stays as measured by `tests/balance.js`, which turns these effects off because their sparks use the same random numbers it seeds. `tests/cosmic.js` checks that a finisher changes no health and no gems.
+
+**In the plaza.** Each master's house shows its class's Mythic at Transcendent, the same for everyone (`SHOW15`). It isn't a block, so nothing is in your way. E beside it, or Inspect in the master's dialog, opens that weapon on the Classes screen.
