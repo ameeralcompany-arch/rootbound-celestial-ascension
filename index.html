@@ -14660,11 +14660,12 @@ const REW8=(()=>{
  // ---- level up: pillar + rays + confetti + a rolling number + fanfare
  let lvEl=null,lvT=0,prevL=0;
  // the level card waits for a world-entry title card to finish (both sit top-centre; together the text overlapped)
- // every level pays about a minute of play at that level, every 5th three minutes, every 25th ten. A jump of many levels at once is a save loading, not a level-up.
+ // every level pays about a minute of play at that level, every 5th three minutes, every 25th ten. Only XP you earned pays: a save loading or a creative session ending changes your level without paying.
  const esc7=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
  function levelGems(L){const inc=30+4.5*L;return Math.round(inc*(L%25==0?10:L%5==0?3:1))}
  function nextUnlock(L){try{let best=null;for(const i of SHOP7.items){if(!(i.lv>L)||i.cat=='blocks'||i.cat=='objects'||i.cat=='seeds')continue;if(!best||i.lv<best.lv)best=i}return best}catch(_){return null}}
- function levelUp(a,b){if(!levelUp.paid||levelUp.paid[1]!=b){let g=0;if(b-a<=10)for(let L=a+1;L<=b;L++)g+=levelGems(L);levelUp.paid=[g,b];if(g>0){gems+=g;try{stat('gems',g)}catch(_){}try{saveP()}catch(_){}}}
+ let paid=[0,0];{const _x=xpGain;xpGain=function(){const a=lvl|0,r=_x.apply(this,arguments),b=lvl|0;if(b>a){let g=0;for(let L=a+1;L<=b;L++)g+=levelGems(L);paid=[g,b];if(g>0){gems+=g;try{stat('gems',g)}catch(_){}try{saveP()}catch(_){}}}return r}}
+ function levelUp(a,b){levelUp.paid=paid[1]==b?paid:[0,b];
   if(document.getElementById('cine7w')&&(levelUp.w=(levelUp.w|0)+1)<16){clearTimeout(levelUp.wt);levelUp.wt=setTimeout(()=>levelUp(a,b),200);return}levelUp.w=0;
   const x=P.x,y=P.y+P.h;celebrate(x,y,'#ffd24a',{d:2,s:1.3,n:48,sp:22,w:190});fan('level');lvT=performance.now()+2700;
   if(!lvEl||!lvEl.isConnected){lvEl=document.createElement('div');lvEl.id='rw8lv';lvEl.setAttribute('role','status');document.body.appendChild(lvEl)}

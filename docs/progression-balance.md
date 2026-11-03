@@ -267,7 +267,7 @@ Tests: `tests/mythic.js`, `tests/guards.js`, `tests/biomes.js`, `tests/classjob.
 
 **Online rewards pay.** World goals, world events, hunts, the Sky Run and the Book pay online too; the server's growth limit (a burst of 1,500 plus 600 a minute) already bounds them. Anything over the limit shows next to your balance as "+N arriving".
 
-**Every level pays.** `income(L)` gems for a level, three times that every 5th level, ten times every 25th. The level card shows it and names the next thing you unlock. A jump of more than 10 levels at once is a save loading and pays nothing.
+**Every level pays.** `income(L)` gems for a level, three times that every 5th level, ten times every 25th. The level card shows it and names the next thing you unlock. Only earned XP pays, so loading a save or leaving creative mode pays nothing.
 
 **Sinks and pace.**
 - Bosses pay in full the first time, then a quarter, at most once every 10 minutes per boss. XP is not limited.

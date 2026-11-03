@@ -26,11 +26,11 @@ async function enter(p,url){await p.addInitScript(()=>{if(!localStorage.getItem(
  // ---- holding right-click against yourself does not farm the place counter
  ok('standing in the way of a block does not count as placing it',/SOLID6\[it\][^;]*return;stat\('place',1\);addI\(it,-1\)/.test(fs.readFileSync(path.resolve(__dirname,'..','index.html'),'utf8')));
  // ---- every level pays, and the card says so
- const lv=await E(async()=>{const g0=gems,l0=lvl;lvl=l0+1;await new Promise(r=>setTimeout(r,500));const a=gems-g0;try{document.getElementById('cine7w').remove()}catch(_){}await new Promise(r=>setTimeout(r,500));const card=(document.querySelector('#rw8lv')||{}).textContent||'';const g1=gems;lvl=24;await new Promise(r=>setTimeout(r,200));const g2=gems;lvl=25;await new Promise(r=>setTimeout(r,500));const b=gems-g2,g3=gems;lvl=500;await new Promise(r=>setTimeout(r,200));const c=gems-g3;lvl=l0;return{a,l0,card,b,c}});
+ const lv=await E(async()=>{const up=()=>{xp=0;xpGain('',xpNeed(lvl))};const g0=gems,l0=lvl;up();await new Promise(r=>setTimeout(r,500));const a=gems-g0;try{document.getElementById('cine7w').remove()}catch(_){}await new Promise(r=>setTimeout(r,500));const card=(document.querySelector('#rw8lv')||{}).textContent||'';const g1=gems;lvl=24;await new Promise(r=>setTimeout(r,200));const g2=gems;up();await new Promise(r=>setTimeout(r,500));const b=gems-g2,g3=gems;lvl=30;await new Promise(r=>setTimeout(r,200));const c=gems-g3;lvl=l0;return{a,l0,card,b,c}});
  ok('a level-up pays about a minute of play',lv.a==Math.round(30+4.5*(lv.l0+1))*((lv.l0+1)%5==0?3:1),JSON.stringify(lv));
  ok('the level card shows the gems and what comes next',/\+[\d,]+ gems/.test(lv.card)&&/Next at level/.test(lv.card),lv.card);
  ok('level 25 pays ten minutes of play',lv.b>=Math.round((30+4.5*25)*10),lv.b);
- ok('a big jump from loading a save pays nothing',lv.c==0,lv.c);
+ ok('a level change from loading a save pays nothing',lv.c==0,lv.c);
  // ---- trees take longer the dearer the seed
  const tr=await E(()=>({dirt:need({s:1,r:1}),gold:need({s:10,r:10}),crystal:need({s:9,r:9}),mix:need({s:1,r:10}),crop:need({s:301,r:301})}));
  ok('a dirt tree still grows in under half a minute',tr.dirt<30,JSON.stringify(tr));ok('a gold tree takes minutes',tr.gold>=240,JSON.stringify(tr));ok('crops keep their own timing',tr.crop==20,JSON.stringify(tr));
