@@ -2,7 +2,7 @@
 
 ## Play Rootbound
 
-**[Download for Windows](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip)** (about 110 MB), or **[play in your browser](https://rootbound-rcvi.onrender.com)** with nothing to install.
+**[Download for Windows](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip)** (about 180 MB), or **[play in your browser](https://rootbound-rcvi.onrender.com)** with nothing to install.
 
 1. Download `Rootbound-Windows.zip`, then right-click it and choose **Extract All**.
 2. Open the `Rootbound-win32-x64` folder and run **Rootbound.exe**. Keep it with the other files in that folder, or it will not start.

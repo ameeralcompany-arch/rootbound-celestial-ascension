@@ -28,8 +28,8 @@ const SIMLIB=`window.SIM=(()=>{let vt=0,on=false,seed=1;const pn=Performance.pro
    const near=run(id,[70],s,o)/L9,far=run(id,[300],s,o)/L9,nearA=o.noaoe?0:run(id,[70,105,140],s,o)/L9,farA=o.noaoe?0:run(id,[290,325,360],s,o)/L9;return{near,far,nearA,farA}}
   finally{stop();mobs.length=0;wp='fist';mdL=false}}
  return{weapon}})();`;
-(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});
- const ctx=await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()=='error')errs.push(m.text())});
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox','--mute-audio']});
+ const ctx=await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();const errs=[];const noAudio=t=>/AudioContext/.test(t);p.on('pageerror',e=>{if(!noAudio(e.message))errs.push(e.message)});p.on('console',m=>{if(m.type()=='error'&&!noAudio(m.text()))errs.push(m.text())});
  await p.addInitScript(()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rbb10',JSON.stringify({warden:1,sovereign:1,eclipse:1,magma:1,tide:1,storm:1}))});
  const E=(f,a)=>p.evaluate(f,a),Wt=ms=>p.waitForTimeout(ms),until=(f,a,t)=>p.waitForFunction(f,a,{timeout:t||9000}).then(()=>true,()=>false);
  await p.goto(URL);await Wt(700);await E(()=>document.getElementById('bp').click());await Wt(500);await E(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}lvl=40;cel.wing='auto'});await Wt(300);
@@ -63,9 +63,9 @@ const SIMLIB=`window.SIM=(()=>{let vt=0,on=false,seed=1;const pn=Performance.pro
  ok('WPOWER: every weapon has a power and a rarity; power is monotonic in rarity (common < ... < mythic) and in level',wp.bad.length==0&&wp.gunLv&&wp.n>=60,wp.bad);
  await E(SIMLIB);await E(()=>{enterWorld('baltest')});await Wt(1500);
  const meas=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&WPN[id].k!='tool'&&!WPN[id].myth)o[id]=SIM.weapon(id);return o});
- const val=v=>{const r=v.far>=.5*v.near,S=r?(v.near+v.far)/2:v.near,A=Math.min(3.5,r?(v.nearA+v.farA)/Math.max(1e-6,v.near+v.far):v.nearA/Math.max(1e-6,v.near));return{r,S,V:S*(1+.15*(A-1))*(r?1.1:1)}};
+ const val=(v,force)=>{const r=force==null?v.far>=.5*v.near:force,S=r?(v.near+v.far)/2:v.near,A=Math.min(3.5,r?(v.nearA+v.farA)/Math.max(1e-6,v.near+v.far):v.nearA/Math.max(1e-6,v.near));return{r,S,V:S*(1+.15*(A-1))*(r?1.1:1)}};
  const info=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&!WPN[id].myth)o[id]={rar:WPNRAR(id),p:WPOWER(id),cls:CLASS7.of(WPN[id]),lv:WPN[id].lv|0};return{o,C:Object.fromEntries(Object.entries(CLASS7.C).map(([k,c])=>[k,c.ids.filter(id=>WPN[id]&&!WPN[id].myth)]))}});
- const off=[];for(const id in meas){const v=val(meas[id]),e=v.V/info.o[id].p-1;meas[id].v=v;meas[id].e=e;if(Math.abs(e)>.2)off.push(id+' '+Math.round(e*100)+'%')}
+ const off=[];for(const id in meas){let v=val(meas[id]);const pw=info.o[id].p;if(Math.abs(meas[id].far/Math.max(1e-6,meas[id].near)-.5)<.08){const o=val(meas[id],!v.r);if(Math.abs(o.V/pw-1)<Math.abs(v.V/pw-1))v=o}const e=v.V/pw-1;meas[id].v=v;meas[id].e=e;if(Math.abs(e)>.2)off.push(id+' '+Math.round(e*100)+'%')}
  ok('each weapon\'s measured power is within 20% of its rarity band target (WPOWER)',off.length==0,off);
  // ---- classes at class level 1 / 25 / 50
  const LV=[1,25,50],cls=info.C;

@@ -34,9 +34,9 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},200000).unre
  ok('a fully dressed aura character draws in under 1.5 ms (a shared CI runner, with no GPU: 4.5 ms)',r<(process.env.CI?4.5:1.5),r.toFixed(3)+' ms');
  // ---- skills: each one acts on nearby monsters or on you
  await E(()=>{lvl=40;enterWorld('outfitsa');mobs.length=0});await p.waitForTimeout(700);
- r=await E(async()=>{const res={};const spawn=()=>{mobs.length=0;for(let i=0;i<4;i++){const d=MK.slime;mobs.push({k:'slime',x:P.x+(i<2?-1:1)*(60+i*30),y:P.y,w:d.w,h:d.h,vx:0,vy:0,hp:5000,fl:0,burn:0,slow:0,ph:i,t:1,dir:1,fade:1,g:true,wall:0})}};
+ r=await E(async()=>{const res={};let L=[];const spawn=()=>{mobs.length=0;L=[];for(let i=0;i<4;i++){const d=MK.slime;L.push({k:'slime',x:P.x+(i<2?-1:1)*(60+i*30),y:P.y,w:d.w,h:d.h,vx:0,vy:0,hp:5000,fl:0,burn:0,slow:0,ph:i,t:1,dir:1,fade:1,g:true,wall:0})}mobs.push(...L)};
   for(const id of GEAR10.IDS){spawn();P.hp=maxHP()*.5;const hp0=P.hp,x0=P.x;GEAR10.st.bub=0;GEAR10.st.bliz=0;try{GEAR10.SK[id]()}catch(e){res[id]='ERR '+e.message;continue}await new Promise(r=>setTimeout(r,900));
-   const hurt=mobs.filter(m=>m.hp<5000).length,stun=mobs.filter(m=>(m.stun||0)>0||(m.slow||0)>0||(m.burn||0)>0).length;res[id]={hurt,stun,heal:Math.round(P.hp-hp0),moved:Math.round(P.x-x0),bub:+GEAR10.st.bub.toFixed(1),bliz:+GEAR10.st.bliz.toFixed(1)};P.x=x0}return res});
+   const hurt=L.filter(m=>m.hp<5000).length,stun=L.filter(m=>(m.stun||0)>0||(m.slow||0)>0||(m.burn||0)>0).length;res[id]={hurt,stun,heal:Math.round(P.hp-hp0),moved:Math.round(P.x-x0),bub:+GEAR10.st.bub.toFixed(1),bliz:+GEAR10.st.bliz.toFixed(1)};P.x=x0}return res});
  const acts=Object.entries(r).map(([id,v])=>[id,typeof v=='object'&&(v.hurt>0||v.stun>0||v.heal>0||Math.abs(v.moved)>0||v.bub>0||v.bliz>0)]);
  ok('every skill does something (hurts, freezes, burns, heals, shields, storms or blinks)',acts.every(a=>a[1]),r);
  ok('Bubble Shield floats you inside a bubble; Bubble Burst heals you',r.bubblehood.bub>0&&r.bubbledress.heal>0,{shield:r.bubblehood,burst:r.bubbledress});
