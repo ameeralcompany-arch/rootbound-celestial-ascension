@@ -138,6 +138,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/sprites.js
+      - name: Test cosmic class weapons
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/cosmic.js
       - name: Test economy rules
         if: ${{ !cancelled() }}
         timeout-minutes: 10

@@ -1,0 +1,36 @@
+/* COSM: the cosmic weapon showcase on the Classes screen, and a night sky for the whole screen */
+html[data-skin] body #cls9{background:radial-gradient(70% 90% at 22% 40%,color-mix(in srgb,var(--m,#7a3ce0) 26%,#07061a),#05040f 70%)!important;color:#efeaff}
+html[data-skin] body #cls9 .c9bg{display:none!important}
+#cls9 .c9art{border-radius:18px;overflow:hidden;box-shadow:0 0 0 1px color-mix(in srgb,var(--m,#a080ff) 40%,rgba(255,255,255,.12)),0 18px 50px rgba(0,0,0,.5)}
+#cls9 .c9cos{position:absolute;inset:0;width:100%;height:100%;display:block}
+#cls9 .c9capt{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;color:#fff;font-family:Montserrat,system-ui,sans-serif}
+html[data-skin] body #cls9 .c9capt button{pointer-events:auto;cursor:pointer;color:#efeaff!important;background:rgba(10,8,28,.62)!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:none!important;font:600 11px Montserrat,system-ui,sans-serif}
+#cls9 .c9cb{align-self:flex-end;display:flex;gap:5px;padding:10px}
+html[data-skin] body #cls9 .c9cb button{padding:5px 11px;border-radius:99px}
+html[data-skin] body #cls9 .c9cb button[aria-pressed=true]{background:color-mix(in srgb,var(--m,#a080ff) 62%,#16122e)!important;border-color:rgba(255,255,255,.5)!important}
+#cls9 .c9cc{padding:40px 16px 12px;background:linear-gradient(180deg,rgba(4,3,14,0),rgba(4,3,14,.82) 34%,rgba(4,3,14,.94))}
+#cls9 .c9capt .c9cc small{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--l,#e0d0ff) 80%,#fff)}
+#cls9 .c9capt h3{margin:2px 0 4px;font:700 29px/1.04 'Cormorant Garamond',Georgia,serif;color:#fff;text-shadow:0 0 18px var(--m,#a080ff)}
+#cls9 .c9capt p{margin:0 0 6px;font-size:12px;line-height:1.42;color:#d9d2f2}
+#cls9 .c9capt .c9cs b{color:var(--a,#ffd98a);font-weight:700;margin-right:3px}
+#cls9 .c9cst{display:flex;gap:5px;margin:8px 0 6px}
+html[data-skin] body #cls9 .c9cst button{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 2px;border-radius:9px;font-weight:700;font-size:12px}
+#cls9 .c9cst span{font-size:9px;font-weight:500;letter-spacing:.03em;opacity:.8}
+html[data-skin] body #cls9 .c9cst button.got{border-color:var(--a,#ffd98a)!important}
+html[data-skin] body #cls9 .c9cst button.on{background:color-mix(in srgb,var(--m,#a080ff) 58%,#16122e)!important;box-shadow:0 0 14px color-mix(in srgb,var(--m,#a080ff) 60%,transparent)!important}
+#cls9 .c9capt .c9cf{font-size:10px;letter-spacing:.03em;text-transform:none;color:#b9b0dc}
+#cls9 .c9art.hero .c9cc{display:none}
+/* the cards were built for a dark screen: readable text on the night sky, whatever the theme */
+html[data-skin] body #cls9 .c9title{color:#fff!important;-webkit-text-fill-color:#fff!important;background:none!important;text-shadow:0 0 26px var(--m,#a080ff),0 2px 0 rgba(0,0,0,.4)!important}
+html[data-skin] body #cls9 .c9sub,html[data-skin] body #cls9 .c9eye,html[data-skin] body #cls9 .c9v,html[data-skin] body #cls9 .c9meta{color:#c9c0ea!important}
+html[data-skin] body #cls9 .c9card{background:linear-gradient(180deg,rgba(24,20,48,.82),rgba(10,8,26,.88))!important;color:#e6e0fa}
+html[data-skin] body #cls9 .c9card h3,html[data-skin] body #cls9 .c9card b{color:#fff!important}
+html[data-skin] body #cls9 .c9card h4,html[data-skin] body #cls9 .c9card small,html[data-skin] body #cls9 .c9card p,html[data-skin] body #cls9 .c9card span,html[data-skin] body #cls9 .c9card em,html[data-skin] body #cls9 .c9card label{color:#cfc8ec}
+html[data-skin] body #cls9 .c9top nav button,html[data-skin] body #cls9 .c9x,html[data-skin] body #cls9 .c9orb,html[data-skin] body #cls9 .c9c{background:rgba(20,16,44,.78)!important;color:#efeaff!important;border-color:rgba(255,255,255,.2)!important;box-shadow:none!important}
+html[data-skin] body #cls9 .c9c b,html[data-skin] body #cls9 .c9orb b,html[data-skin] body #cls9 .c9orb small,html[data-skin] body #cls9 .c9c small,html[data-skin] body #cls9 .c9c em{color:#efeaff!important}
+html[data-skin] body #cls9 .c9c.on{background:color-mix(in srgb,var(--m,#a080ff) 50%,#16122e)!important}
+html[data-skin] body #cls9 .c9brand,html[data-skin] body #cls9 .c9logo{color:#efeaff!important}
+#cls9 .c9cb{align-self:flex-start}
+html[data-skin] body #cls9#cls9#cls9 > .c9wrap,html[data-skin] body #cls9#cls9#cls9 > .c9fx{background:none!important;background-image:none!important;box-shadow:none!important;border:0!important}
+#cls9 .c9art:not(.hero) .c9ban{display:none}
+#cls9 .c9art .c9ban{z-index:3}
