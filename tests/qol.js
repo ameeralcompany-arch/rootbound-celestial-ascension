@@ -10,7 +10,9 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},200000).unre
  await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}enterWorld('qolw')});await p.waitForTimeout(2500);const E=(f,a)=>p.evaluate(f,a);
  // ---- avatar frames
  let r=await E(()=>({n:AVF10.FR.length,bgs:AVF10.BG.length,cv:!!document.getElementById('pframe10'),dark:AVF10.FR.some(f=>f[0]=='shadow'),bubbly:AVF10.FR.some(f=>f[0]=='bubble')}));
- ok('14 avatar frames (a dark Shadow Veil and a bubbly Bubblegum among them) and 11 portrait backgrounds; the frame sits on the HUD portrait',r.n==14&&r.bgs==11&&r.cv&&r.dark&&r.bubbly,r);
+ ok('21 avatar frames (a dark Shadow Veil and a bubbly Bubblegum among them) and 12 portrait backgrounds; the frame sits on the HUD portrait',r.n==21&&r.bgs==12&&r.cv&&r.dark&&r.bubbly,r);
+ r=await E(()=>{const ids=['moonrose','moondrape','pearlfall','nightcrown','moonjewel','lightlord','chronicle'],o={};for(const id of ids){const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d');let ink=0;try{AVF10.ART[id](x);const d=x.getImageData(0,0,96,96).data;for(let i=3;i<d.length;i+=4)if(d[i]>0)ink++;const hole=x.getImageData(48,48,1,1).data[3];o[id]={ink,hole}}catch(e){o[id]={err:e.message}}}return o});
+ ok('the 7 moonlit frames all draw, and leave the portrait in the middle clear',Object.values(r).length==7&&Object.values(r).every(v=>v.ink>2000&&v.hole==0),r);
  await E(()=>{lvl=1});await p.click('#pwrap9');await p.waitForTimeout(400);
  r=await E(()=>{const el=document.getElementById('avf10'),lk=el.querySelector('button[data-f="shadow"]');return{open:el.classList.contains('on'),locked:lk.disabled}});
  ok('clicking the portrait opens the avatar picker; frames above your level are locked',r.open&&r.locked,r);

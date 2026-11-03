@@ -9,8 +9,8 @@ const GOAL7=(()=>{
  function rec(id){return db[id]||(db[id]={p:{},d:[]})}
  function view(id){const r=db[id]||{p:{},d:[]};return goalsOf(id).map(g=>({...g,v:Math.min(g.n,r.p[g.key]|0),done:r.d.includes(g.i)}))}
  function add(id,k,n){if(!id||!(n>0))return;const gs=goalsOf(id).filter(g=>g.key==k);if(!gs.length)return;const r=rec(id);r.p[k]=(r.p[k]|0)+n;
-  for(const g of gs){if(!r.d.includes(g.i)&&r.p[k]>=g.n){r.d.push(g.i);const pay=online()?0:g.gems;if(pay)gems+=pay;try{say('World goal done: '+g.text+(pay?'  +'+pay+' gems':''))}catch(_){}try{UIS.play('buy')}catch(_){}
-    if(r.d.length>=3&&!r.all){r.all=1;const b=online()?0:150;if(b)gems+=b;try{say('World mastered: '+(typeof PLN7!='undefined'?PLN7.info(id).label||id:id)+(b?'  +'+b+' gems':''))}catch(_){}}}}
+  for(const g of gs){if(!r.d.includes(g.i)&&r.p[k]>=g.n){r.d.push(g.i);const pay=g.gems;if(pay)gems+=pay;try{say('World goal done: '+g.text+(pay?'  +'+pay+' gems':''))}catch(_){}try{UIS.play('buy')}catch(_){}
+    if(r.d.length>=3&&!r.all){r.all=1;const b=150;if(b)gems+=b;try{say('World mastered: '+(typeof PLN7!='undefined'?PLN7.info(id).label||id:id)+(b?'  +'+b+' gems':''))}catch(_){}}}}
   save()}
  const html=id=>view(id).map(g=>'<div class="gl7'+(g.done?' ok':'')+'"><span>'+(g.done?'✓ ':'')+g.text+'</span><i><b style="width:'+Math.round(g.v/g.n*100)+'%"></b></i><small>'+g.v+' / '+g.n+(online()?'':' · +'+g.gems+' gems')+'</small></div>').join('');
  return{goalsOf,view,add,html,get db(){return db},reload:load}})();

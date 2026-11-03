@@ -86,10 +86,15 @@ const REW8=(()=>{
  // ---- level up: pillar + rays + confetti + a rolling number + fanfare
  let lvEl=null,lvT=0,prevL=0;
  // the level card waits for a world-entry title card to finish (both sit top-centre; together the text overlapped)
- function levelUp(a,b){if(document.getElementById('cine7w')&&(levelUp.w=(levelUp.w|0)+1)<16){clearTimeout(levelUp.wt);levelUp.wt=setTimeout(()=>levelUp(a,b),200);return}levelUp.w=0;
+ // every level pays about a minute of play at that level, every 5th three minutes, every 25th ten. A jump of many levels at once is a save loading, not a level-up.
+ const esc7=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+ function levelGems(L){const inc=30+4.5*L;return Math.round(inc*(L%25==0?10:L%5==0?3:1))}
+ function nextUnlock(L){try{let best=null;for(const i of SHOP7.items){if(!(i.lv>L)||i.cat=='blocks'||i.cat=='objects'||i.cat=='seeds')continue;if(!best||i.lv<best.lv)best=i}return best}catch(_){return null}}
+ function levelUp(a,b){if(!levelUp.paid||levelUp.paid[1]!=b){let g=0;if(b-a<=10)for(let L=a+1;L<=b;L++)g+=levelGems(L);levelUp.paid=[g,b];if(g>0){gems+=g;try{stat('gems',g)}catch(_){}try{saveP()}catch(_){}}}
+  if(document.getElementById('cine7w')&&(levelUp.w=(levelUp.w|0)+1)<16){clearTimeout(levelUp.wt);levelUp.wt=setTimeout(()=>levelUp(a,b),200);return}levelUp.w=0;
   const x=P.x,y=P.y+P.h;celebrate(x,y,'#ffd24a',{d:2,s:1.3,n:48,sp:22,w:190});fan('level');lvT=performance.now()+2700;
   if(!lvEl||!lvEl.isConnected){lvEl=document.createElement('div');lvEl.id='rw8lv';lvEl.setAttribute('role','status');document.body.appendChild(lvEl)}
-  lvEl.innerHTML='<i class="rw8ray" aria-hidden="true"></i><small>Level up</small><div class="rw8num"><span class="rw8roll"><i>'+a+'</i><i>'+b+'</i></span></div><em>+'+2*(b-a)+' stat points · health restored</em>';
+  lvEl.innerHTML='<i class="rw8ray" aria-hidden="true"></i><small>Level up</small><div class="rw8num"><span class="rw8roll"><i>'+a+'</i><i>'+b+'</i></span></div><em>+'+2*(b-a)+' stat points · health restored'+(levelUp.paid[0]?' · +'+levelUp.paid[0].toLocaleString()+' gems':'')+'</em>'+(n=>n?'<small class="rw8nx">Next at level '+n.lv+': '+esc7(n.n)+'</small>':'')(nextUnlock(b));
   lvEl.classList.remove('on','off');void lvEl.offsetWidth;lvEl.classList.add('on');clearTimeout(levelUp.t);clearTimeout(levelUp.t2);levelUp.t=setTimeout(()=>lvEl.classList.add('off'),2300);levelUp.t2=setTimeout(()=>lvEl.classList.remove('on','off'),2800)}
  // ---- per frame
  function tick(dt){counter(dt);watchMsg();for(let i=FL.length-1;i>=0;i--){const f=FL[i];f.t+=dt;if(f.t>=f.d){FL.splice(i,1);land(f)}}if(!FL.length&&pend)pend=0;

@@ -25,11 +25,6 @@ const GUN9=(()=>{
  for(const id of IDS){const d=D[id];WPN[id]={id,n:d[0],k:d[1],bd:1,md:d[2],cd:d[3],lv:d[4],cost:d[5],rar:d[6],g:d[7],fx:'',d:d[8],move:d[9],gun:GUNS.has(id)?1:0}}
  const lvOk=w=>!w||(w.lv|0)<=(lvl|0);
  let warnT=0;const warnLv=w=>{const n=performance.now();if(n-warnT<1200)return;warnT=n;try{say('Reach level '+w.lv+' to use '+w.n)}catch(_){}try{UIS.play('error')}catch(_){}};
- // ---- store: the new weapons join the catalog as local items (ownership lives in `own`, like the legacy weapons)
- try{for(const id of IDS){const w=WPN[id],cid='wpn_'+id;if(SHOP7.byId.has(cid))continue;const it={id:cid,cat:'weapons',n:w.n,price:w.cost,rar:w.rar,stack:0,ref:id,lv:w.lv,d:w.d,how:'store',legacy:1,new:1,feat:id=='popgun'||id=='sniper'||id=='rocket'?1:0,local:1};SHOP7.items.push(it);SHOP7.byId.set(cid,it)}
-  const _b=SHOP7.buy;SHOP7.buy=async function(id,qty){const it=SHOP7.byId.get(id);if(!it||!it.local)return _b.apply(this,arguments);const sf=n=>{try{UIS.play(n)}catch(_){}};
-   if(!SHOP7.lvOk(it)){sf('error');return{ok:0,m:'Requires level '+it.lv}}if(own[it.ref]){sf('error');return{ok:0,m:'You already own this'}}if(gems<it.price){sf('error');return{ok:0,m:'Not enough gems ('+it.price+' needed)'}}
-   gems-=it.price;SHOP7.grantLocal(it,1);sf(it.rar=='epic'||it.rar=='legendary'||it.rar=='mythic'?'rare':'buy');return{ok:1,qty:1,m:'Purchased '+it.n}}}catch(e){console.error('GUN9 store',e)}
  // ---- helpers
  const live=m=>!m.dead&&m.hp>0,rad=m=>Math.max(m.w,m.h)*.5,cy0=m=>m.y+m.h/2;
  const solid=(x,y)=>solidAt(Math.floor(x/T),Math.floor(y/T));

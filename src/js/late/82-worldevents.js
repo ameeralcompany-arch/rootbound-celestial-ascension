@@ -18,10 +18,10 @@ const WEV7=(()=>{
  function current(now){const n=Math.floor(now/SLOT);for(const k of[n-1,n]){const e=eventFor(k);if(e&&now>=e.t0&&now<e.t1)return e}return null}
  const fmt=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
  function ensureHud(){if(hud)return;hud=document.createElement('div');hud.style.cssText='position:fixed;top:128px;left:50%;transform:translateX(-50%);padding:6px 14px;border-radius:12px;background:rgba(30,20,60,.78);color:#fff;font:700 14px system-ui,sans-serif;z-index:40;pointer-events:none;display:none;white-space:nowrap';document.body.appendChild(hud)}
- function start(e){claimed.delete(e.id);riftMobs=[];riftT=0;riftDone=false;meteors=[];mDone=new Set();traded=0;
+ function start(e){riftMobs=[];riftT=0;riftDone=false;meteors=[];mDone=new Set();traded=0;
   if(e.kind=='meteor'){const R=mk(e.seed);for(let i=0;i<14;i++)meteors.push({id:i,at:e.t0+2500+i*3000+R()*1500,x:Math.max(2*T,Math.min((W-2)*T,e.x+(R()-.5)*T*28)),dur:1500})}
   try{say(NAMES[e.kind]+' has appeared in this world!');SFX7.tone(520,880,.4,'sine',.06);SFX7.tone(780,1320,.4,'sine',.05,.18)}catch(_){}}
- function reward(g,msg){if(!srv()&&g)gems+=g;try{say(msg+(g&&!srv()?'  +'+g+' gems':''));saveP()}catch(_){}}
+ function reward(g,msg){if(g)gems+=g;try{say(msg+(g?'  +'+g+' gems':''));saveP()}catch(_){}}
  // ---- per frame
  function tick(dt){if(!entered||cur=='plaza'||creatorOn||(typeof WBOSS13!='undefined'&&WBOSS13.void)){ev=null;if(hud&&hud._on!==0){hud._on=0;hud.style.display='none'}return}ensureHud();const now=Date.now();
   if(now-lastCheck>500){lastCheck=now;const e=current(now);if((e&&e.id)!==(ev&&ev.id)){ev=e;if(e)start(e);else{riftMobs=[];meteors=[]}}}
@@ -34,7 +34,7 @@ const WEV7=(()=>{
    try{burst(m.x,gy,'#ffb25a',26,260,6);burst(m.x,gy,'#fff',10,180,4,'p');rings.push({x:m.x,y:gy,c:'#ff9a3a',t:performance.now()});shake=Math.max(shake,.12);snd(70,.35,'sawtooth',.1,.4)}catch(_){}
    for(const q of mobs){if(q.hp>0&&Math.hypot(q.x-m.x,q.y+q.h/2-gy)<T*2.6){try{hurtMob(q,40,null,Math.atan2(q.y-gy,q.x-m.x))}catch(_){}}}
    if(Math.hypot(P.x-m.x,P.y+P.h/2-gy)<T*1.8&&iT<=0){P.hp-=10*(1-Math.min(.8,bonus().arm));iT=1;P.vx=(P.x>m.x?1:-1)*320;P.vy=-380;hurtF=.4}
-   if(!srv()&&!claimed.has(ev.id+':'+m.id)){claimed.add(ev.id+':'+m.id);spawnDrop(m.x,gy-20,'gem',4+(m.id%4)*2);if(m.id%3==0)spawnDrop(m.x+10,gy-20,9,1)}}}
+   if(!claimed.has(ev.id+':'+m.id)){claimed.add(ev.id+':'+m.id);spawnDrop(m.x,gy-20,'gem',4+(m.id%4)*2);if(m.id%3==0)spawnDrop(m.x+10,gy-20,9,1)}}}
  function spawnRift(){const alive=riftMobs.filter(m=>m.hp>0&&mobs.includes(m)).length;if(alive>=4)return;const kinds=['bat','wraith','moth'],k=kinds[(Math.random()*3)|0],d=MK[k];if(!d)return;const x=ev.x+(Math.random()-.5)*T*4,y=groundY(ev.tx)-T*2.5-(d.fly?T:0);
   const m={k,x,y,w:d.w,h:d.h,vx:0,vy:0,hp:d.hp,fl:0,burn:0,slow:0,ph:Math.random()*6,t:1,dir:1,fade:0,g:false,wall:0,rift:1};mobs.push(m);riftMobs.push(m);try{burst(x,y+d.h/2,'#b88cff',12,160,5,'p')}catch(_){}}
  function tickRift(dt,now){if(riftDone)return;riftT+=dt;if(riftT>4.5&&riftMobs.length<8){riftT=0;spawnRift()}
@@ -56,7 +56,7 @@ const WEV7=(()=>{
  function label(x,y,txt){g.save();g.font='700 12px system-ui,sans-serif';g.textAlign='center';g.lineWidth=3;g.strokeStyle='rgba(0,0,0,.65)';g.fillStyle='#fff';g.strokeText(txt,x,y);g.fillText(txt,x,y);g.restore()}
  // ---- E interaction
  function interactEv(){if(!ev||cur=='plaza'||creatorOn)return false;const gy=groundY(ev.tx);if(Math.hypot(P.x-ev.x,P.y+P.h/2-(gy-T))>T*3.2)return false;
-  if(ev.kind=='spirit'&&!claimed.has(ev.id)){claimed.add(ev.id);P.hp=maxHP();reward(80,'The blossom spirit smiles. You feel fully restored.');if(!srv())addI(101,2);try{burst(ev.x,gy-T*1.7,'#ffc9db',34,240,6,'p');SFX7.tone(700,1400,.4,'sine',.06)}catch(_){}return true}
+  if(ev.kind=='spirit'&&!claimed.has(ev.id)){claimed.add(ev.id);P.hp=maxHP();reward(80,'The blossom spirit smiles. You feel fully restored.');addI(101,2);try{burst(ev.x,gy-T*1.7,'#ffc9db',34,240,6,'p');SFX7.tone(700,1400,.4,'sine',.06)}catch(_){}return true}
   if(ev.kind=='trader'&&traded<3){if(srv()){try{say('The merchant only trades in offline / guest play.')}catch(_){}return true}if(gems<250){try{say('The merchant wants 250 gems.')}catch(_){}return true}gems-=250;traded++;const pool=[1,3,7,8,11,12,13,14,16,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59],k=pool[(Math.random()*pool.length)|0],n=8+((Math.random()*8)|0);addI(k,n);try{say('Bought a bundle: '+n+' x '+BLK[k][0]);saveP();SFX7.tone(500,900,.2,'triangle',.06)}catch(_){}return true}
   return false}
  {const _i=interact;interact=function(){if(!dlgOpen&&interactEv())return;return _i.apply(this,arguments)}}

@@ -1288,7 +1288,7 @@ const CINE7=(()=>{
  function bossBars(c){killB();const w=shell('c7b out',c||'#ffd36a');w.innerHTML=BARS;document.body.appendChild(w);B7={w,tms:[],kind:'out'};nextF(w,'bars');later(()=>killB(),6000)}
  // defeat card (o.cine: shown by BOSS10's outro, which already runs the slow motion and the flash)
  function bossWin(m,b,first,o){const cine=!!(o&&o.cine),keep=cine&&B7&&B7.kind=='out';killB();const c=b.c||'#ffd36a',red=reduce(),D=cine?(red?2.4:3.0):(red?2.4:3.4);if(!red&&!cine)slow(1150);
-  const rw='+'+(b.gems|0).toLocaleString()+' gems   ·   +'+(b.xp|0).toLocaleString()+' XP'+(first&&b.rn?'   ·   Relic: '+b.rn:'');
+  const rw=((b.gems|0)?'+'+(b.gems|0).toLocaleString()+' gems':'Gems ready again in a few minutes')+'   ·   +'+(b.xp|0).toLocaleString()+' XP'+(first&&b.rn?'   ·   Relic: '+b.rn:'');
   const w=shell('c7b win'+(red?' red':'')+(cine?' nf':'')+(keep?' b0 bars':''),c);w.innerHTML='<i class="c7b-flash"></i>'+BARS+'<div class="c7b-card"><span class="c7b-stripe"></span><em>'+esc(b.n)+'</em><b>Boss Defeated</b><small>'+esc(rw)+'</small>'+(first&&b.rd?'<small class="c7b-rd">'+esc(b.rn+': '+b.rd)+'</small>':'')+'</div>';
   w.querySelector('.c7b-stripe').style.background='linear-gradient(90deg,transparent,'+rgba('#3a2a08',.85)+' 22%,'+rgba(mix(c,'#000000',.55),.85)+' 78%,transparent)';
   document.body.appendChild(w);B7={w,m,tms:[],kind:'win'};if(keep)requestAnimationFrame(()=>requestAnimationFrame(()=>w.classList.remove('b0')));if(!keep)nextF(w,'bars');nextF(w,'on');

@@ -19,7 +19,7 @@ const DEEP7=(()=>{
     if(id){set(x,y,id);if(R()<.55)for(const[dx,dy]of[[1,0],[0,1],[-1,0]])if(tiles[(y+dy)*W+x+dx]==3&&R()<.5)set(x+dx,y+dy,id)}}
    else if(t==0&&tiles[(y+1)*W+x]==3&&dep>10){const r=R();if(r<.05)set(x,y,63);else if(r<.075&&dep>14)set(x,y,64)}}}}}
  // bonus loot when one is broken
- {const _ba=breakAt;breakAt=function(x,y,dmg){const b=x>=0&&y>=0&&x<W&&y<H?tiles[y*W+x]:0;const r=_ba.apply(this,arguments);try{const d=D[b];if(r&&d&&!tiles[y*W+x]){const px=x*T+T/2,py=y*T+T/2,n=d.g[0]+Math.round(Math.random()*(d.g[1]-d.g[0]));spawnDrop(px,py,'gem',n);xpGain('mine',d.xp);ft(px,py-12,'+'+n+' gems','#8ff3ff');
+ {const _ba=breakAt;breakAt=function(x,y,dmg){const b=x>=0&&y>=0&&x<W&&y<H?tiles[y*W+x]:0,nat=!wasPlaced(y*W+x);const r=_ba.apply(this,arguments);try{const d=D[b];if(r&&d&&nat&&!tiles[y*W+x]){const px=x*T+T/2,py=y*T+T/2,n=d.g[0]+Math.round(Math.random()*(d.g[1]-d.g[0]));spawnDrop(px,py,'gem',n);xpGain('mine',d.xp);ft(px,py-12,'+'+n+' gems','#8ff3ff');
    if(b==64){const m=[200,201,202].find(k=>MAT[k]);if(m&&Math.random()<.6)spawnDrop(px,py,m,1+(Math.random()*2|0))}
    if(d.heal){P.hp=Math.min(maxHP(),P.hp+maxHP()*d.heal);ft(px,py-26,'Healed','#9dffb4')}
    burst(px,py,d.c,16,220,5);burst(px,py,'#fff',6,120,3,'p');try{UIS.play('buy')}catch(_){}try{stat('deep',1)}catch(_){}}}catch(_){}return r}}

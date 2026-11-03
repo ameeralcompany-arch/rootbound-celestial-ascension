@@ -28,7 +28,7 @@ const RUN7=(()=>{
   if(k==0&&state!='run'){state='run';t0=now;toast=now+1200;try{SFX7.tone(520,780,.15,'sine',.05)}catch(_){}}
   else if(k==0&&state=='run'){t0=now}
   else if(state=='run'&&k==N-1){const ms=now-t0;state='done';let msg='Sky Run finished: '+fmt(ms);if(best==null||ms<best){best=ms;msg+=' (new best!)'}
-   if(ms<90000&&!title){title=true;if(!srv())gems+=150;msg+='  Title: Sky Runner'+(srv()?'':'  +150 gems')}save();try{say(msg);saveP();burst(P.x,P.y,'#ffd24a',30,220,6,'p');SFX7.tone(660,1320,.35,'sine',.07)}catch(_){}toast=now+3500}
+   if(ms<90000&&!title){title=true;gems+=150;msg+='  Title: Sky Runner  +150 gems'}save();try{say(msg);saveP();burst(P.x,P.y,'#ffd24a',30,220,6,'p');SFX7.tone(660,1320,.35,'sine',.07)}catch(_){}toast=now+3500}
   else if(state=='run'&&onGround){state='idle';toast=now+1500;hudEl.textContent='Fell! Ride the Sky Beam to try again';}
   else if(state=='done'&&onGround){state='idle'}
   if(state=='run'){hudEl.style.display='block';hudEl.textContent='Sky Run  '+fmt(now-t0)+(best?'   best '+fmt(best):'')}

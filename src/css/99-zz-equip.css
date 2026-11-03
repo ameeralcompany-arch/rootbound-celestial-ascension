@@ -1,0 +1,75 @@
+/* EQM9: the Character Equipment menu (C) */
+#eq9{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(6,5,18,0);transition:background .16s ease;color:#ece8f8;font-family:Montserrat,system-ui,'Segoe UI',sans-serif}
+#eq9.on{display:flex}
+#eq9.show{background:rgba(6,5,18,.62)}
+#eq9 .eq9box{width:min(1020px,100%);max-height:calc(100vh - 36px);overflow:auto;background:radial-gradient(90% 70% at 50% 34%,rgba(92,62,170,.3),rgba(92,62,170,0) 70%),linear-gradient(165deg,#16122c,#0c0a1c 62%,#100b24);border:1px solid rgba(184,160,255,.26);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);padding:18px 22px 14px;opacity:0;transform:translateY(10px) scale(.985);transition:opacity .16s ease,transform .18s cubic-bezier(.2,.8,.3,1)}
+#eq9.show .eq9box{opacity:1;transform:none}
+#eq9 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+#eq9 h3{margin:0;font:700 26px 'Cormorant Garamond',Georgia,serif;letter-spacing:.02em;color:#f4efff}
+#eq9 .eq9nm{font-weight:600;font-size:13px;color:#cfc4f0}
+#eq9 .eq9lv{font-size:12px;color:#a99bd8;margin-left:6px}
+#eq9 .eq9hd{display:flex;gap:8px;align-items:center}
+#eq9 .eq9hub,#eq9 .eq9x{font:600 12px Montserrat,system-ui,sans-serif;color:#e4dcff;background:rgba(255,255,255,.06);border:1px solid rgba(184,160,255,.28);border-radius:9px;padding:8px 12px;cursor:pointer;transition:background .12s}
+#eq9 .eq9x{width:34px;padding:8px 0}
+#eq9 .eq9hub:hover,#eq9 .eq9x:hover{background:rgba(184,160,255,.2)}
+#eq9 .eq9body{display:grid;grid-template-columns:minmax(210px,1fr) minmax(220px,300px) minmax(210px,1fr);gap:14px;align-items:center}
+#eq9 .eq9L,#eq9 .eq9R{display:flex;flex-direction:column;gap:9px}
+#eq9 .eq9mid{display:flex;justify-content:center;background:radial-gradient(closest-side,rgba(150,120,255,.2),rgba(150,120,255,0));border-radius:50%}
+#eq9 .eq9mid canvas{width:min(300px,100%);height:auto;display:block}
+.eq9s{--r:rgba(184,160,255,.22);--rg:rgba(0,0,0,0);display:flex;align-items:center;gap:11px;width:100%;text-align:left;color:inherit;background:rgba(255,255,255,.045);border:1px solid var(--r);border-radius:12px;padding:8px 10px;cursor:pointer;transition:transform .12s ease,background .12s ease,box-shadow .16s ease;box-shadow:0 0 14px var(--rg);font-family:inherit}
+.eq9s:hover,.eq9s:focus-visible{background:rgba(184,160,255,.14);transform:translateY(-1px);outline:none;box-shadow:0 0 18px var(--rg),0 0 0 1px var(--r)}
+.eq9s.empty{border-style:dashed;background:rgba(255,255,255,.02);opacity:.78}
+.eq9ic{flex:none;width:46px;height:46px;border-radius:9px;background:rgba(0,0,0,.34);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.eq9ic img{max-width:44px;max-height:44px;display:block}
+.eq9g{font-style:normal;font-size:20px;opacity:.55}
+.eq9t{min-width:0;display:flex;flex-direction:column;gap:2px}
+.eq9t small{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a99bd8}
+.eq9t b{font-size:13.5px;font-weight:600;color:#f1ecff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.eq9s.empty .eq9t b{color:#8e83b8;font-weight:500}
+[data-rar=common].eq9s{--r:rgba(190,190,205,.3)}
+[data-rar=uncommon].eq9s{--r:rgba(112,214,132,.5)}
+[data-rar=rare].eq9s{--r:rgba(92,170,255,.55)}
+[data-rar=epic].eq9s{--r:rgba(186,120,255,.65);--rg:rgba(186,120,255,.16)}
+[data-rar=legendary].eq9s{--r:rgba(255,190,84,.72);--rg:rgba(255,190,84,.2)}
+[data-rar=mythic].eq9s{--r:rgba(255,106,190,.8);--rg:rgba(255,106,190,.28)}
+#eq9 .eq9tot{margin-top:12px;padding-top:10px;border-top:1px solid rgba(184,160,255,.16)}
+#eq9 .eq9tot h4{margin:0;font:700 17px 'Cormorant Garamond',Georgia,serif;color:#f1ecff}
+.eq9sub{margin:2px 0 7px;font-size:11.5px;color:#a99bd8}
+#eq9 .eq9tot dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:3px 18px;margin:0}
+#eq9 dl div,#eq9tip dl div{display:flex;justify-content:space-between;gap:12px}
+#eq9 dt,#eq9tip dt{font-size:12px;color:#bdb2e0}
+#eq9 dd,#eq9tip dd{margin:0;font-size:12px;font-weight:600;color:#fff}
+#eq9 footer{margin-top:10px;font-size:11px;color:#8e83b8;text-align:center}
+#eq9 kbd{font:600 10px Montserrat,sans-serif;padding:1px 5px;border-radius:4px;border:1px solid rgba(184,160,255,.35)}
+#eq9tip{position:fixed;left:0;top:0;z-index:9001;width:290px;max-width:calc(100vw - 20px);pointer-events:none;display:none;background:linear-gradient(170deg,#1c1738,#0e0b20);border:1px solid rgba(184,160,255,.42);border-radius:12px;padding:12px 13px;color:#ece8f8;font-family:Montserrat,system-ui,sans-serif;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+#eq9tip.on{display:block}
+#eq9tip h5{margin:0 0 3px;font:700 17px/1.12 'Cormorant Garamond',Georgia,serif;color:#fff}
+#eq9tip h5[data-rar=uncommon]{color:#8ae29c}#eq9tip h5[data-rar=rare]{color:#88c0ff}#eq9tip h5[data-rar=epic]{color:#cfa2ff}#eq9tip h5[data-rar=legendary]{color:#ffd27e}#eq9tip h5[data-rar=mythic]{color:#ff9ed6}
+.eq9th{display:flex;gap:10px;align-items:center;margin-bottom:7px}
+.eq9tp{flex:none;width:48px;height:48px;border-radius:9px;background:rgba(0,0,0,.34);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.eq9tp img{max-width:46px;max-height:46px}
+.eq9r{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:1px 7px;border-radius:99px;background:rgba(255,255,255,.1);color:#ddd}
+.eq9r[data-rar=uncommon]{background:rgba(112,214,132,.2);color:#a6efb5}.eq9r[data-rar=rare]{background:rgba(92,170,255,.22);color:#b0d4ff}.eq9r[data-rar=epic]{background:rgba(186,120,255,.25);color:#dcbcff}.eq9r[data-rar=legendary]{background:rgba(255,190,84,.22);color:#ffdc9c}.eq9r[data-rar=mythic]{background:rgba(255,106,190,.25);color:#ffb6e0}
+.eq9th small{font-size:10.5px;color:#a99bd8}
+.eq9d{margin:0 0 8px;font-size:12px;line-height:1.42;color:#cfc6ec}
+.eq9no{color:#8e83b8}
+#eq9tip dl{margin:0 0 6px;display:flex;flex-direction:column;gap:3px}
+.eq9n{margin-top:6px;font-size:11.5px;line-height:1.4;color:#d7cef2}
+.eq9n b{display:block;color:#f3d48a;font-weight:600;margin-bottom:1px}
+#eq9tip .eq9m{margin-top:8px;padding-top:6px;border-top:1px solid rgba(184,160,255,.16)}
+#eq9tip .eq9m dt,#eq9tip .eq9m dd{font-size:11px;font-weight:500;color:#a99bd8}
+@media (max-width:760px){#eq9 .eq9body{grid-template-columns:1fr}#eq9 .eq9mid{order:-1}#eq9 .eq9mid canvas{width:190px}}
+@media (prefers-reduced-motion:reduce){#eq9,#eq9 .eq9box,.eq9s{transition:none}#eq9 .eq9box{transform:none}}
+/* the clean theme styles every button and rarity label; inside this menu the dark look wins */
+html[data-skin] body #eq9 .eq9s{background:rgba(255,255,255,.045)!important;color:#ece8f8!important;border:1px solid var(--r)!important;box-shadow:0 0 14px var(--rg)!important;border-radius:12px!important;min-height:0!important;text-shadow:none!important}
+html[data-skin] body #eq9 .eq9s:hover,html[data-skin] body #eq9 .eq9s:focus-visible{background:rgba(184,160,255,.14)!important;box-shadow:0 0 18px var(--rg),0 0 0 1px var(--r)!important}
+html[data-skin] body #eq9 .eq9s.empty{border-style:dashed!important;background:rgba(255,255,255,.02)!important}
+html[data-skin] body #eq9 .eq9t b{color:#f1ecff!important;background:none!important}
+html[data-skin] body #eq9 .eq9s.empty .eq9t b{color:#8e83b8!important}
+html[data-skin] body #eq9 .eq9ic{background:rgba(0,0,0,.36)!important}
+html[data-skin] body #eq9 .eq9hub,html[data-skin] body #eq9 .eq9x{background:rgba(255,255,255,.06)!important;color:#e4dcff!important;border:1px solid rgba(184,160,255,.28)!important;box-shadow:none!important;text-shadow:none!important}
+html[data-skin] body #eq9 .eq9hub:hover,html[data-skin] body #eq9 .eq9x:hover{background:rgba(184,160,255,.2)!important}
+html[data-skin] body #eq9 kbd{background:rgba(255,255,255,.07)!important;color:#e4dcff!important;box-shadow:none!important}
+html[data-skin] body #eq9tip h5{background:none!important;box-shadow:none!important;padding:0!important}
+html[data-skin] body #eq9tip .eq9tp{background:rgba(0,0,0,.36)!important;border:0!important;box-shadow:none!important}
+#rw8lv .rw8nx{display:block;margin-top:4px;font-size:12px;font-weight:600;opacity:.82;letter-spacing:.02em}

@@ -16,9 +16,9 @@ const HUNT7=(()=>{
    const gr=g.createRadialGradient(0,0,1,0,0,22+prox*14);gr.addColorStop(0,'rgba(190,170,255,'+(.25+.5*prox)*pl+')');gr.addColorStop(1,'rgba(140,110,255,0)');g.fillStyle=gr;g.fillRect(-40,-40,80,80);g.globalCompositeOperation='source-over';
    g.globalAlpha=.25+.75*prox;g.fillStyle='#e9e1ff';g.strokeStyle='#8a6bff';g.lineWidth=1.5;g.rotate(t*.7+i);g.beginPath();g.moveTo(0,-7);g.lineTo(5,0);g.lineTo(0,7);g.lineTo(-5,0);g.closePath();g.fill();g.stroke();g.restore()}}
  function take(i){if(found[i])return;found[i]=1;const p=pos(i);let msg='Spirit Stone found! '+count()+' / '+SPOTS.length;
-  if(!srv()){gems+=50;msg+='  +50 gems'}
+  gems+=50;msg+='  +50 gems';
   try{burst(p.x,p.y,'#c9b8ff',24,200,6,'p');rings.push({x:p.x,y:p.y,c:'#c9b8ff',t:performance.now()});SFX7.tone(660,1320,.35,'sine',.07);SFX7.tone(990,1980,.4,'sine',.05,.12)}catch(_){}
-  if(count()>=SPOTS.length&&!title){title=true;if(!srv())gems+=500;msg='All Spirit Stones found!'+(srv()?'':'  +500 gems')+'  Title: Stone Seeker'}
+  if(count()>=SPOTS.length&&!title){title=true;gems+=500;msg='All Spirit Stones found!  +500 gems  Title: Stone Seeker'}
   save();try{say(msg);saveP()}catch(_){}}
  const _dn=drawNPCs;drawNPCs=function(now){try{draw(now)}catch(_){}return _dn(now)};
  return{SPOTS,found:()=>({...found}),count,take,pos,get title(){return title},hint(){const i=SPOTS.findIndex((_,k)=>!found[k]);return i<0?'You found them all!':'A stone hides '+SPOTS[i][2]+'.'},reset(){found={};title=false;save()}}})();

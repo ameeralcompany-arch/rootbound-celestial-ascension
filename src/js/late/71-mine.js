@@ -54,8 +54,8 @@ const MINE7=(()=>{
     if(left>0){if(R0()<.5)try{ft(px,py-14,'Restocking... '+Math.ceil(left)+'s','#bfe6ff')}catch(_){}try{SFX7.tone(330,300,.08,'sine',.03)}catch(_){}return true}
     boxCd.set(cur+':'+k,now+6000);let r=Math.random(),id=250;for(const[i,c]of BAITS){if(r<c){id=i;break}r-=c}const n=id==250?1+(Math.random()*3|0):1;spawnDrop(px,py-10,id,n);
     try{ft(px,py-18,'+'+n+' '+MAT[id].n,'#9fe6ff')}catch(_){}burst(px,py,'#8fd0ff',10,160,4);burst(px,py,'#ffe9a0',5,110,3,'p');try{SFX7.tone(520,880,.12,'sine',.04);SFX7.tone(880,1320,.14,'sine',.03,.08)}catch(_){}return true}
-   const r=_ba.apply(this,arguments);
-   try{const d=D[b];if(r&&d&&d.g&&inb&&!tiles[k]){const px=x*T+T/2,py=y*T+T/2,n=d.g[0]+Math.round(Math.random()*(d.g[1]-d.g[0]));spawnDrop(px,py,'gem',n);xpGain('mine',d.xp);ft(px,py-12,'+'+n+' gems','#8ff3ff');burst(px,py,d.c,14,200,5);burst(px,py,'#fff',6,120,3,'p');try{UIS.play('buy')}catch(_){}}}catch(_){}
+   const nat=!wasPlaced(k),r=_ba.apply(this,arguments);
+   try{const d=D[b];if(r&&d&&d.g&&inb&&nat&&!tiles[k]){const px=x*T+T/2,py=y*T+T/2,n=d.g[0]+Math.round(Math.random()*(d.g[1]-d.g[0]));spawnDrop(px,py,'gem',n);xpGain('mine',d.xp);ft(px,py-12,'+'+n+' gems','#8ff3ff');burst(px,py,d.c,14,200,5);burst(px,py,'#fff',6,120,3,'p');try{UIS.play('buy')}catch(_){}}}catch(_){}
    return r}}
  const R0=Math.random;
  // ---- world saves made when the world was 100 tiles wide: move every tile key to its new index (x,y stay the same)

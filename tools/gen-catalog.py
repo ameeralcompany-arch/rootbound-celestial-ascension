@@ -136,6 +136,12 @@ ids=[i['id'] for i in items]; assert len(ids)==len(set(ids)),'duplicate ids'
 for i in items:
     assert i['price']>0 and i['rar'] in('common','uncommon','rare','epic','legendary','mythic','exclusive'),i
 feat=['wing_galaxy','wing_voidshroud','wing_haloseraph','wpn_solarfang','wpn_astralkat','obj_41','wing_moth','fx_aura_void','charm_raven','wpn_crimsonrift','wear_anonmask','wear_anonsuit','charm_cinder','fx_brk_phantom','pet_fox']
+# ---- the prices the game actually charges (the ECON14 model, see src/js/late/99-zzzzzzzzz-4-econ.js) and the 14 guns and bows
+E=json.load(open(os.path.join(R,'tools/econ-prices.json')))
+items+=E['extra']
+for i in items:
+    if i['id'] in E['prices']: i['price']=E['prices'][i['id']]
+feat+=['wpn_popgun','wpn_sniper','wpn_rocket']
 for i in items: i['feat']=1 if i['id'] in feat else 0
 json.dump({'v':1,'items':items},open(os.path.join(R,'server/catalog.json'),'w'),separators=(',',':'))
 print(len(items),'items')

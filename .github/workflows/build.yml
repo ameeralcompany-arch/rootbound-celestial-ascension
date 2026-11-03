@@ -138,6 +138,14 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/sprites.js
+      - name: Test economy rules
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/economy.js
+      - name: Test equipment menu
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/equipmenu.js
       - name: Test intro film
         if: ${{ !cancelled() }}
         timeout-minutes: 10

@@ -94,10 +94,10 @@ const TOOLLV=(()=>{
  {const _t=SFX7.tone;SFX7.tone=function(){if(U&&U.mute)return;return _t.apply(this,arguments)}}
  {const _G=G;G=function(){if(U)U.mute=false;return _G.apply(this,arguments)}}
  {const _h=harvest;harvest=function(k){const had=trees.has(k),r=_h.apply(this,arguments);if(U&&U.ph==1){if(had&&!trees.has(k)&&!(typeof FARM9!='undefined'&&FARM9.lastCrop===k))U.tree=k;U.mute=true}return r}}
- {const _ba=breakAt;breakAt=function(x,y,dmg){const inb=x>=0&&y>=0&&x<W&&y<H,k=y*W+x,b=inb?tiles[k]:0,mine=!!(U&&U.ph==1&&!U.hit&&b),vb=!U&&!!VN&&b&&b==VN.b&&dmg>=100&&performance.now()<VN.until;
+ {const _ba=breakAt;breakAt=function(x,y,dmg){const inb=x>=0&&y>=0&&x<W&&y<H,k=y*W+x,b=inb?tiles[k]:0,mine=!!(U&&U.ph==1&&!U.hit&&b),vb=!U&&!!VN&&b&&b==VN.b&&dmg>=100&&performance.now()<VN.until,nat=!wasPlaced(k);
    if(!mine&&!vb)return _ba.apply(this,arguments);Q.q++;let r;try{r=_ba.apply(this,arguments)}finally{Q.q--}
-   try{const broken=!!r&&!tiles[k];if(mine){const cat=catOf(b);U.hit={x,y,k,b,cat,good:fits(U.tool,cat),r:!!r,broken};U.mute=true;if(r&&!broken&&b==94&&U.tool=='ore'&&lvl(U.id)>=7)hp[k]=Math.min(hp[k],BLK[94][2]/3)}
-    else if(broken){const i=VN.i++;try{MSFX8.vein(i,VN.n,b)}catch(_){}addXP('glimmer',XP.vein)}}catch(e){console.error('TOOLLV',e)}return r}}
+   try{const broken=!!r&&!tiles[k];if(mine){const cat=catOf(b);U.hit={x,y,k,b,cat,good:fits(U.tool,cat),r:!!r,broken,nat};U.mute=true;if(r&&!broken&&b==94&&U.tool=='ore'&&lvl(U.id)>=7)hp[k]=Math.min(hp[k],BLK[94][2]/3)}
+    else if(broken){const i=VN.i++;try{MSFX8.vein(i,VN.n,b)}catch(_){}if(nat)addXP('glimmer',XP.vein)}}catch(e){console.error('TOOLLV',e)}return r}}
  function bfs(tx,ty,id,n){const seen=new Set([ty*W+tx]),q=[[tx,ty]],out=[];while(q.length&&out.length<n){const[x,y]=q.shift();for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=ny*W+nx;if(nx<1||ny<1||nx>=W-1||ny>=H-1||seen.has(k))continue;seen.add(k);if(tiles[k]==id){out.push([nx,ny]);q.push([nx,ny])}}}return out}
  const fl=(x,y,t,c)=>{try{ft(x,y,t,c)}catch(_){}};
  const gemDrop=(l,x,y)=>{if(R()<gemCh(l)){const n=(l>=9?2:1)+(R()*3|0);spawnDrop(x,y,'gem',n);fl(x,y-30,'+'+n+' gems found','#9ff0ff');return true}return false};
@@ -112,7 +112,7 @@ const TOOLLV=(()=>{
   if(u.tree>=0){try{MSFX8.tree()}catch(_){}if(u.tool=='tree'){const px=(u.tree%W)*T+T/2,py=(u.tree/W|0)*T,ex=wood(l)-2;addXP(u.id,XP.tree);if(ex>0){spawnDrop(px,py,5,ex);fl(px,py-26,'+'+ex+' bonus wood','#e8ffc8')}gemDrop(l,px,py)}return}
   const h=u.hit;if(!h||!h.r)return;if(!h.good){try{MSFX8.wrong(h.cat)}catch(_){}return}
   if(!h.broken){try{MSFX8.play('hit',h.cat,h.b,{pr:h.b==94?1-hp[h.k]/BLK[94][2]:0})}catch(_){}return}
-  try{MSFX8.play('break',h.cat,h.b)}catch(_){}if(h.b==70)return;
+  try{MSFX8.play('break',h.cat,h.b)}catch(_){}if(h.b==70||!h.nat)return;
   addXP(u.id,h.b==94?XP.geode:h.b==93?XP.cache:XP[h.cat]||2);perks(u.id,h,l,h.x*T+T/2,h.y*T+T/2)}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(!(w&&w.k=='tool'&&own[w.id])||w.tool=='rod'||w.tool=='wrench')return _uw.apply(this,arguments);const u=U={id:w.id,tool:w.tool,ph:1,hit:null,mute:false,tree:-1};
    try{return _uw.apply(this,arguments)}finally{U=null;try{after(u)}catch(e){console.error('TOOLLV',e)}}}}
