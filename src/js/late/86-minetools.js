@@ -61,7 +61,7 @@ const TOOLS8=(()=>{
  const BAIT={250:{n:'Worm Bait',c:'#e88a7a',p:3,luck:1,wait:[2.5,5]},251:{n:'Glow Bait',c:'#7affe0',p:12,luck:2,wait:[2,4]},252:{n:'Golden Bait',c:'#ffd34a',p:40,luck:3,wait:[1.4,3]}};
  for(const id in FISHES){const f=FISHES[id];MAT[id]={n:f.n,c:f.c,p:f.p}}for(const id in BAIT){const b=BAIT[id];MAT[id]={n:b.n,c:b.c,p:b.p}}
  const FISH=(()=>{const S={st:'idle',x:0,y:0,vx:0,vy:0,t:0,bait:0,dip:0,tip:{x:0,y:0}};
-  const best=()=>[252,251,250].find(k=>cnt(k)>0)||0;
+  const best=()=>{let h=0;try{h=bar[sel]}catch(_){}if(h>=250&&h<=252&&cnt(h)>0)return h;return[252,251,250].find(k=>cnt(k)>0)||0};
   const tipPos=()=>({x:P.x+P.f*40,y:P.y+4});
   function reset(msg){S.st='idle';S.dip=0;S.land=0;try{if(FISHGAME.G.on)FISHGAME.end()}catch(_){}if(msg)try{say(msg)}catch(_){}}
   function cast(c){const o=tipPos(),dx=Math.max(-T*7,Math.min(T*7,c.x-o.x)),flight=.55+Math.abs(dx)/(T*14);S.x=o.x;S.y=o.y;S.vx=dx/flight;S.vy=(c.y-o.y)/flight-.5*900*flight;S.vy=Math.max(-900,Math.min(200,S.vy));S.st='cast';S.t=2.5;S.bait=best();tone(700,400,.18,'sine',.03);try{SFX7.tone(1200,600,.12,'sine',.015,.05)}catch(_){}}

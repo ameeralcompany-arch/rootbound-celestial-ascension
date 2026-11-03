@@ -104,7 +104,7 @@ const FARM9=(()=>{
  const Q=[];let lastCrop=-1;
  function reap(k,t){const now=Date.now(),c=t.s,cr=CROPS[c],px=(k%W)*T+T/2,py=(k/W|0)*T+T,wl=wilted(t,now),pf=!wl&&perfectNow(t,now),st=wl?0:1+(t.w>0?1:0)+(pf?1:0);
   lastCrop=k;trees.delete(k);pushEdit(k);
-  const base=cr.y[0]+(R()*(cr.y[1]-cr.y[0]+1)|0),n=Math.max(1,Math.round(base*[.5,1,1.5,2][st])),mat=PROD[c][0];addI(mat,n);
+  const base=cr.y[0]+(R()*(cr.y[1]-cr.y[0]+1)|0),n=Math.max(1,Math.round(base*[1,1,1.5,2][st])),mat=PROD[c][0];addI(mat,n);
   let sd=pf?1+(R()<.3?1:0):R()<.6?1:0;if(sd)addI(100+c,sd);
   const g=Math.round((cr.gem[0]+R()*(cr.gem[1]-cr.gem[0]))*(.5+st*.5));try{gain(g,px,py-60)}catch(_){gems+=g}
   try{xpGain('farm',Math.round(cr.xp*(.6+st*.4)))}catch(_){}try{qProgress('harvest',1)}catch(_){}try{stat('harvest',1)}catch(_){}try{G('harvest')}catch(_){}

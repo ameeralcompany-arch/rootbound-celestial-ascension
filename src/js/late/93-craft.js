@@ -16,7 +16,20 @@ const RECIPES=[
  {id:'crystal',n:'Crystal',out:[9,1],in:[[6,3],[202,1]],secs:12,lv:6},
  {id:'shard',n:'Star Shard',out:[231,1],in:[[207,2],[209,1]],secs:20,lv:12},
  {id:'key',n:'Gate Key',out:[230,1],in:[[10,2],[9,1]],secs:15,lv:5},
- {id:'portal',n:'Magic Portal',out:[23,1],in:[[9,3],[231,1]],secs:30,lv:14}];
+ {id:'portal',n:'Magic Portal',out:[23,1],in:[[9,3],[231,1]],secs:30,lv:14},
+ {id:'worm',n:'Worm Bait',out:[250,3],in:[[201,1],[240,1]],secs:4,lv:1},
+ {id:'glowbait',n:'Glow Bait',out:[251,2],in:[[202,2],[260,1]],secs:6,lv:6},
+ {id:'goldbait',n:'Golden Bait',out:[252,2],in:[[247,1],[10,1]],secs:10,lv:12},
+ {id:'petfood',n:'Pet Food',out:[610,3],in:[[283,1]],secs:5,lv:3},
+ {id:'fishfood',n:'Pet Food',out:[610,2],in:[[241,2]],secs:5,lv:3},
+ {id:'pettreat',n:'Pet Treat',out:[611,2],in:[[284,1],[203,1]],secs:8,lv:6},
+ {id:'key2',n:'Gate Key',out:[230,1],in:[[205,3],[206,2]],secs:15,lv:8},
+ {id:'shard2',n:'Star Shard',out:[231,1],in:[[212,1],[215,1],[218,1]],secs:20,lv:12},
+ {id:'shard3',n:'Star Shard',out:[231,1],in:[[221,1],[224,1],[227,1]],secs:20,lv:14},
+ {id:'compost',n:'Compost',out:[1,2],in:[[249,1]],secs:3,lv:1}];
+// what a material is for, read from the recipes and the Mythic tributes, never written by hand
+function matUses(k){const u=[...new Set(RECIPES.filter(r=>r.in.some(i=>i[0]==k)).map(r=>r.n))];let t=false;try{t=isTribute(k)}catch(_){}return{craft:u,tribute:t}}
+function isTribute(k){try{return MYTH.MATS.some(l=>l.some(q=>q[0]==k))}catch(_){return false}}
 const recipeById=id=>RECIPES.find(r=>r.id==id);
 const CRAFT6=(()=>{let el=null,open=false;
  const mk=()=>{if(!el){el=document.createElement('div');el.id='craftui';el.className='objpanel';document.body.appendChild(el)}};

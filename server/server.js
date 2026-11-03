@@ -1,6 +1,7 @@
 'use strict';
 // Rootbound persistent multiplayer server. Zero dependencies (Node 18+). See server/README.md.
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
+const {cleanText}=require('./moderation');
 const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),zlib=require('zlib');
 const ENV=process.env;
 const WORLDS_A_DAY=10;   // new worlds one account may make in a day (claiming them is limited separately, to 5 at a time)
@@ -90,6 +91,7 @@ function createServer(opts={}){
  function setOwner(id,uid,name){const ids=[id];for(let i=1;i<R.REALM.length;i++)if(worldExists(R.stName(id,i)))ids.push(R.stName(id,i));for(const x of ids){const w=loadWorld(x,false);if(!w)continue;w.ownerUid=uid;w.ownerName=name;if(!uid&&w.meta){const k=w.meta.y*R.W+w.meta.x;if(w.edits[k]&&w.edits[k][0]==17){R.applyEdit(w,k,[0,0,0,0]);relay(x,{t:'e',d:{k,a:[0,0,0,0]}})}w.meta=null}saveWorld(w);relay(x,{t:'own',d:{o:uid,on:name,clearLock:uid?0:1}})}}
  function sendMine(s){const u=userById(s.uid);if(!u)return;send(s,{t:'myworlds',list:(u.worlds||[]).map(id=>({id,pop:members(id).size})),max:isOwnerUid(u.id)?0:cfg.maxWorldsPerAccount})}
  const notify=(s,text)=>send(s,{t:'notice',d:{text,by:'Server'}});
+ const chatLog={},reports=store.readJSON(store.p('reports.json'),{list:[]});if(!Array.isArray(reports.list))reports.list=[];
  function setGod(s,u,on){const sh=SHOP.ensure(u);if(on&&!u.god){sh.realG=sh.g;sh.g=Math.max(sh.g,999999)}else if(!on&&u.god){sh.g=Number.isFinite(sh.realG)?sh.realG:sh.g;delete sh.realG}u.god=on?1:0;s.god=!!on;saveAcc();send(s,{t:'god',on:on?1:0});sendWallet(s,u)}
  const eco=ECON.createEconomy({send,sessions,userById,saveAcc:()=>saveAcc(),relay:(w,m)=>relay(w,m),dropsOf:id=>id=='plaza'?plazaDrops:(worlds.get(id)||{drops:[]}).drops,touchWorld:id=>{const w=worlds.get(id);if(w)saveWorld(w)},bucket:(s,k,c,ms)=>bucket(s,k,c,ms),audit:o=>store.audit(o),rid:()=>crypto.randomBytes(2).toString('hex')});
  // ---------- admin (OWNER ONLY, verified server-side on every call)
@@ -97,6 +99,7 @@ function createServer(opts={}){
   if(!s.owner||!isOwnerUid(s.uid)||s.kind!='owner'){store.audit({ev:'admin-denied',uid:s.uid,op:String(m.op).slice(0,24),ip:s.ip});return no('Not authorized')}
   const op=String(m.op||'');const find=q=>{q=String(q||'').toLowerCase();for(const o of sessions.values())if(o.sid==q||o.uid==q||o.name.toLowerCase()==q)return o;return null};const A=(o)=>store.audit(Object.assign({ev:'admin',op,by:s.name},o||{}));const acc=q=>accounts.users[nameKey(String(q||''))];
   switch(op){
+  case 'reports':return ok('ok',reports.list.slice(-60).reverse());
   case 'players':return ok('ok',[...sessions.values()].map(o=>({sid:o.sid,uid:o.uid,name:o.name,kind:o.kind,world:o.world})));
   case 'stats':return ok('ok',{players:sessions.size,worlds:listWorlds().length,loaded:worlds.size,uptime:Math.round((Date.now()-t0)/1000),mem:Math.round(process.memoryUsage().rss/1e6)});
   case 'kick':{const o=find(m.who);if(!o||isOwnerUid(o.uid))return no('Player not found');send(o,{t:'_kick',m:String(m.reason||'Removed by the server owner').slice(0,80)});A({who:o.name});setTimeout(()=>o.conn.close(1000),150);return ok('Kicked '+o.name)}
@@ -180,6 +183,9 @@ function createServer(opts={}){
   // sooner than wbMinMs after the fight began. Too fast or over the limit just means the gems arrive at the normal rate instead.
   case 'wb':{if(s.kind=='guest'||!bucket(s,'wb',10,60000))return;const u=userById(s.uid),id=s.world;if(!u||!id||id=='plaza')return;if(m.op=='start'){s.wbT={w:id,t:Date.now()};return}if(m.op!='win')return;const st=s.wbT;s.wbT=null;if(!st||st.w!==id||Date.now()-st.t<cfg.wbMinMs)return;
    const wins=u.wbWins||(u.wbWins={});if(wins[id])return;const day=Math.floor(Date.now()/864e5),d=u.wbDay&&u.wbDay.d==day?u.wbDay:(u.wbDay={d:day,n:0});if(d.n>=WB_DAY)return;d.n++;wins[id]=1;SHOP.bonus(u,WB_GEMS[R.realmStage(id)]||0);saveAcc();return}
+  // player safety: blocking stops trade requests from that name (chat from them is already hidden by the client); a report goes to the owner with what that player recently said in that world
+  case 'block':{if(s.kind=='guest'||!bucket(s,'block',20,60000))return;const u=userById(s.uid);if(!u)return;const n=String(m.name||'').toLowerCase().slice(0,14);if(!n)return;u.blocks=(u.blocks||[]).filter(x=>x!=n);if(m.on!==false){u.blocks.push(n);if(u.blocks.length>200)u.blocks.shift()}saveAcc();return}
+  case 'report':{if(s.kind=='guest')return notify(s,'Sign in to send a report');if(!bucket(s,'report',5,3600000))return notify(s,'You have sent a lot of reports. Please wait a while.');const who=String(m.who||'').slice(0,14);if(!who)return;const low=who.toLowerCase(),e={ts:new Date().toISOString(),by:s.name,who,why:String(m.why||'').replace(/[<>]/g,'').slice(0,160),world:s.world||'',said:(chatLog[s.world]||[]).filter(l=>l[0].toLowerCase()==low).slice(-6).map(l=>l[1])};reports.list.push(e);if(reports.list.length>500)reports.list.shift();store.later('reports',()=>store.writeJSON(store.p('reports.json'),reports));store.audit(Object.assign({op:'report'},e));return notify(s,'Thanks. Your report has been sent.')}
   case 'bag_sync':{if(s.kind=='guest'||!bucket(s,'bag',12,30000))return;const u=userById(s.uid);if(u&&eco.sync(u,m)){watch(s,u,'items',u.bag.over|0);saveAcc()}return}
   case 'trade':return eco.tradeMsg(s,m);
   case 'drop':return eco.dropMsg(s,m);
@@ -192,7 +198,7 @@ function createServer(opts={}){
    // free hosts meter outbound traffic: the full look goes out when it changes (and every 5s for late joiners), movement goes out as a small delta and not at all while standing still
    const now=Date.now(),look=JSON.stringify([pr.hat,pr.body,pr.wing,pr.boot,pr.glove,pr.lk,pr.cx,pr.lv]);if(look!==s.presLook||now-(s.presFull||0)>5000){s.presLook=look;s.presFull=now;relay(wid,{t:'_p',d:pr,f:s.sid},s.sid);return}
    const d={dl:1,x:pr.x,y:pr.y,f:pr.f,h:pr.h,vx:pr.vx,wp:pr.wp,sw:pr.sw,fm:pr.fm,wo:pr.wo},key=JSON.stringify(d);if(key===s.presKey&&now-(s.presAt||0)<2000)return;s.presKey=key;s.presAt=now;relay(wid,{t:'_p',d,f:s.sid},s.sid);return}
-  if(t=='chat'){if(!bucket(s,'chat',6,8000))return;if(isMuted(s.uid))return send(s,{t:'notice',d:{text:'You are muted',by:'Server'}});const d=m.d;if(!d||typeof d.t!='string')return;const out={n:s.name.slice(0,14),t:d.t.slice(0,80).replace(/[<>]/g,'')};if(!out.t.trim())return;if(Number.isInteger(d.e)&&d.e>=0&&d.e<64)out.e=d.e;relay(wid,{t:'chat',d:out,f:s.sid},s.sid);return}
+  if(t=='chat'){if(!bucket(s,'chat',6,8000))return;if(isMuted(s.uid))return send(s,{t:'notice',d:{text:'You are muted',by:'Server'}});const d=m.d;if(!d||typeof d.t!='string')return;const out={n:s.name.slice(0,14),t:cleanText(d.t.slice(0,80).replace(/[<>]/g,''))};if(!out.t.trim())return;(chatLog[wid]||(chatLog[wid]=[])).push([s.name.slice(0,14),out.t]);if(chatLog[wid].length>30)chatLog[wid].shift();if(Number.isInteger(d.e)&&d.e>=0&&d.e<64)out.e=d.e;relay(wid,{t:'chat',d:out,f:s.sid},s.sid);return}
   if(t=='x'){if(!bucket(s,'x',10,8000))return;if(isMuted(s.uid))return;const v=R.checkX(m.d,s.sid,sid=>members(wid).has(sid));if(!v)return;v.n=s.name.slice(0,14);const o=sessions.get(v.to);if(o)send(o,{t:'x',d:v,f:s.sid});return}
   if(!w)return;// plaza: no persistent edits
   if(w.meta&&w.meta.b&&w.meta.b.includes(s.uid))return;

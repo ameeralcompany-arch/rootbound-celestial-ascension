@@ -3115,7 +3115,7 @@ function renderDlg(){const n=curNPC;let h=`<div class="dh"><b>${n.n}</b><small>$
  if(n.k=='talk'){try{h+=NPC2.talkHTML(n)}catch(_){}}
  else if(n.k=='shop'){h+=`<div class="tabs2"><button data-a="tab:buy" class="${shopTab=='buy'?'on':''}">Buy</button><button data-a="tab:sell" class="${shopTab=='sell'?'on':''}">Sell</button></div>`;
   if(shopTab=='buy'){for(const b of[1,8,3,5,6,7,11,15,14,12,13,17,9,10,20,21,22,27,28,29,30,31,33,34,35,36,37,38,32,23,24,25,26,39,40,41])for(const sd of(b==17||b>=20?[0]:[0,1])){const k=b+(sd?100:0),pr=buyP(k),lv=LVREQ[b]||1;h+=rowH(k,BLK[b][0]+(sd?' Seed':''),(lv>lvl?'Requires level '+lv:pr+' gems each'),[['Buy 1','buy:'+k+':1',lv>lvl||gems<pr],['Buy 10','buy:'+k+':10',lv>lvl||gems<pr*10]])}}
-  else{let any=0;for(const k of Object.keys(inv).map(Number).sort((a,b)=>a-b)){if(!cnt(k)||!(MAT[k]||PRICE[k%100]))continue;any=1;h+=rowH(k,iname(k)+' x'+cnt(k),sellP(k)+' gems each',[['Sell 1','sell:'+k+':1',0],['Sell all','sell:'+k+':all',0]])}if(!any)h+='<small>Nothing to sell yet.</small>'}}
+  else{let any=0;for(const k of Object.keys(inv).map(Number).sort((a,b)=>a-b)){if(!cnt(k)||!(MAT[k]||PRICE[k%100]))continue;any=1;h+=rowH(k,iname(k)+' x'+cnt(k),sellP(k)+' gems each'+(typeof isTribute=='function'&&isTribute(k)?' · needed for Mythic ascension':''),typeof isTribute=='function'&&isTribute(k)?[['Sell 1','sell:'+k+':1',0]]:[['Sell 1','sell:'+k+':1',0],['Sell all','sell:'+k+':all',0]])}if(!any)h+='<small>Nothing to sell yet.</small>'}}
  else if(n.k=='quest'){h+='<small>Finish tasks for gems and XP. A new task appears when you claim one.</small>';qs.forEach((q,i)=>{const done2=q.p>=q.need;h+=`<div class="rw"><div><b>${q.n}</b><small>${q.d} - ${q.p}/${q.need}</small><div class="bar"><i style="width:${q.p/q.need*100}%"></i></div><small>Reward: ${q.g} gems, ${q.x} XP</small></div><button data-a="claim:${i}"${done2?'':' disabled'}>Claim</button></div>`})}
  else if(n.k=='lock')h+=lockHTML();else{const l=wUp[wp]|0,cost=upCost(l),st=(l+1)*10;h+=rowH('w:'+wp,WPN[wp].n+'  +'+l,(l>=15?'Fully upgraded.':'Each level: +1 break power, '+(l<10?'+18%':'+6%')+' damage. Next: '+cost+' gems, '+st+' Stone. Needs level '+(3+3*l)),[[l>=15?'Max':'Upgrade','up',l>=10||gems<cost||cnt(3)<st||lvl<3+3*l]])+'<small>Equip the tool you want to improve first.</small>'}
  dlg.innerHTML=h;for(const b of dlg.querySelectorAll('[data-a]'))b.onclick=()=>dlgAct(b.dataset.a)}
@@ -9117,7 +9117,7 @@ const CHEST7=(()=>{
  const near=()=>{let b=null,bd=T*1.7;for(const c of list){if(isOpen(c))continue;const d=Math.hypot((c.tx+.5)*T-P.x,(c.ty+.5)*T-(P.y+P.h/2));if(d<bd){bd=d;b=c}}return b};
  function loot(c){const t=tierOf(c.dp),R=Math.random,px=(c.tx+.5)*T,py=(c.ty+.2)*T;const gemsN=Math.round((60+c.dp*7)*(.7+R()*.6)*(1+t*.5));
   for(let i=0;i<5;i++)spawnDrop(px+(R()-.5)*30,py,'gem',Math.max(1,Math.round(gemsN/5)));
-  const pool=[];const deep=[60,61,62,63,64,65].filter((id,k)=>c.dp>8+k*5);for(const id of deep)pool.push([id,1+t,3]);for(const k in MAT)if(!MAT[k].nochest)pool.push([+k,1,2+t]);for(const k of[1,3,5,8,9,10])pool.push([100+k,1,2]);pool.push([10,1,1+t],[9,1,2+t]);
+  for(const j of[249,610,611,612])if(MAT[j])MAT[j].nochest=1;const pool=[];const deep=[60,61,62,63,64,65].filter((id,k)=>c.dp>8+k*5);for(const id of deep)pool.push([id,1+t,3]);for(const k in MAT)if(!MAT[k].nochest)pool.push([+k,1,2+t]);for(const k of[1,3,5,8,9,10])pool.push([100+k,1,2]);pool.push([10,1,1+t],[9,1,2+t]);
   const n=3+t+(R()<.4?1:0),got=[];for(let i=0;i<n&&pool.length;i++){const p=pool[R()*pool.length|0],q=p[1]+Math.floor(R()*(p[2]-p[1]+1));spawnDrop(px+(R()-.5)*40,py-10,p[0],q);got.push(q+' '+(typeof iname=='function'?iname(p[0]):'item'))}
   xpGain('mine',20+c.dp*3);return{gemsN,got,t}}
  function open(c){if(!opened[cur])opened[cur]=[];opened[cur].push(c.i);save();c.t0=performance.now();const r=loot(c),px=(c.tx+.5)*T,py=(c.ty+.2)*T;
@@ -10296,11 +10296,11 @@ const CLASS7=(()=>{
 /* ========== LATE: 86-daily.js ========== */
 // ===== V6 daily challenges (3 per local day, streak bonus). State lives in legacy `dly`, saved with the profile. =====
 const DAILY6=(()=>{
- const POOL=[['break','Break {n} blocks',[60,140],'break'],['kill','Defeat {n} monsters',[8,20],'kill'],['place','Place {n} blocks',[50,120],'place'],['gems','Earn {n} gems',[250,700],'gems'],['harvest','Harvest {n} crops or trees',[6,14],'harvest'],['plant','Plant {n} seeds',[8,20],'plant']];
+ const POOL=[['break','Break {n} blocks',[60,140],'break'],['kill','Defeat {n} monsters',[8,20],'kill'],['place','Place {n} blocks',[50,120],'place'],['gems','Earn {n} gems',[250,700],'gems'],['harvest','Harvest {n} crops or trees',[6,14],'harvest'],['plant','Plant {n} seeds',[8,20],'plant'],['fish','Catch {n} fish',[3,8],'fish']];
  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
  const yest=()=>{const d=new Date(Date.now()-864e5);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
  const sr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
- function roll(){const day=today();if(dly.day==day&&dly.tasks.length)return;if(dly.last!=yest()&&dly.last!=day)dly.streak=0;const seed=[...day].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7),r=sr(seed),ids=POOL.map((_,i)=>i).sort(()=>r()-.5).slice(0,3);
+ function roll(){const day=today();if(dly.day==day&&dly.tasks.length)return;if(dly.last!=yest()&&dly.last!=day)dly.streak=Math.floor((dly.streak|0)/2);const seed=[...day].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7),r=sr(seed),ids=POOL.map((_,i)=>i).sort(()=>r()-.5).slice(0,3);
   dly.day=day;dly.tasks=ids.map(i=>{const p=POOL[i],need=Math.round((p[2][0]+r()*(p[2][1]-p[2][0]))/5)*5||p[2][0];return{id:p[0],need,base:stats[p[3]]|0,done:0,claimed:0,g:Math.round(need*(p[0]=='gems'?.25:p[0]=='kill'?9:p[0]=='harvest'?14:1.4)+60),x:Math.round(80+lvl*6)}});try{saveP()}catch(_){}}
  const prog=t=>{const p=POOL.find(q=>q[0]==t.id);return Math.min(t.need,Math.max(0,(stats[p[3]]|0)-t.base))};
  const label=t=>POOL.find(q=>q[0]==t.id)[1].replace('{n}',t.need);
@@ -10372,7 +10372,7 @@ const TOOLS8=(()=>{
  const BAIT={250:{n:'Worm Bait',c:'#e88a7a',p:3,luck:1,wait:[2.5,5]},251:{n:'Glow Bait',c:'#7affe0',p:12,luck:2,wait:[2,4]},252:{n:'Golden Bait',c:'#ffd34a',p:40,luck:3,wait:[1.4,3]}};
  for(const id in FISHES){const f=FISHES[id];MAT[id]={n:f.n,c:f.c,p:f.p}}for(const id in BAIT){const b=BAIT[id];MAT[id]={n:b.n,c:b.c,p:b.p}}
  const FISH=(()=>{const S={st:'idle',x:0,y:0,vx:0,vy:0,t:0,bait:0,dip:0,tip:{x:0,y:0}};
-  const best=()=>[252,251,250].find(k=>cnt(k)>0)||0;
+  const best=()=>{let h=0;try{h=bar[sel]}catch(_){}if(h>=250&&h<=252&&cnt(h)>0)return h;return[252,251,250].find(k=>cnt(k)>0)||0};
   const tipPos=()=>({x:P.x+P.f*40,y:P.y+4});
   function reset(msg){S.st='idle';S.dip=0;S.land=0;try{if(FISHGAME.G.on)FISHGAME.end()}catch(_){}if(msg)try{say(msg)}catch(_){}}
   function cast(c){const o=tipPos(),dx=Math.max(-T*7,Math.min(T*7,c.x-o.x)),flight=.55+Math.abs(dx)/(T*14);S.x=o.x;S.y=o.y;S.vx=dx/flight;S.vy=(c.y-o.y)/flight-.5*900*flight;S.vy=Math.max(-900,Math.min(200,S.vy));S.st='cast';S.t=2.5;S.bait=best();tone(700,400,.18,'sine',.03);try{SFX7.tone(1200,600,.12,'sine',.015,.05)}catch(_){}}
@@ -11046,7 +11046,7 @@ const FARM9=(()=>{
  const Q=[];let lastCrop=-1;
  function reap(k,t){const now=Date.now(),c=t.s,cr=CROPS[c],px=(k%W)*T+T/2,py=(k/W|0)*T+T,wl=wilted(t,now),pf=!wl&&perfectNow(t,now),st=wl?0:1+(t.w>0?1:0)+(pf?1:0);
   lastCrop=k;trees.delete(k);pushEdit(k);
-  const base=cr.y[0]+(R()*(cr.y[1]-cr.y[0]+1)|0),n=Math.max(1,Math.round(base*[.5,1,1.5,2][st])),mat=PROD[c][0];addI(mat,n);
+  const base=cr.y[0]+(R()*(cr.y[1]-cr.y[0]+1)|0),n=Math.max(1,Math.round(base*[1,1,1.5,2][st])),mat=PROD[c][0];addI(mat,n);
   let sd=pf?1+(R()<.3?1:0):R()<.6?1:0;if(sd)addI(100+c,sd);
   const g=Math.round((cr.gem[0]+R()*(cr.gem[1]-cr.gem[0]))*(.5+st*.5));try{gain(g,px,py-60)}catch(_){gems+=g}
   try{xpGain('farm',Math.round(cr.xp*(.6+st*.4)))}catch(_){}try{qProgress('harvest',1)}catch(_){}try{stat('harvest',1)}catch(_){}try{G('harvest')}catch(_){}
@@ -12056,7 +12056,7 @@ const INV7=(()=>{
  const tierOf=k=>{try{if(typeof k=='string'&&k.startsWith('id:')){const it=shopOf(k);return Math.max(0,ITEM7.RAR.indexOf(it.rar=='exclusive'?'mythic':it.rar))}if(typeof k=='string'&&k.startsWith('wing:')){const w=wingOf(k),r=w&&w.rar;const t=ITEM7.RAR.indexOf(r=='exclusive'?'mythic':r);return t>=0?t:Math.min(5,Math.floor(((w&&w.lvl)|0)/25))}return ITEM7.tier(k)}catch(_){return 0}};
  const RARA=k=>' data-cat="'+ITEM7.cat(k)+'" data-rar="'+ITEM7.RAR[tierOf(k)]+'"';
  const isWpn=k=>typeof k=='string'&&k.startsWith('w:');
- const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Hold it on the hotbar and click to place it; break it with a tool.';if(t=='seeds')return 'Hold it and click soil to plant. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. Used in crafting and sold at the market.';
+ const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Hold it on the hotbar and click to place it; break it with a tool.';if(t=='seeds')return 'Hold it and click soil to plant. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. '+(()=>{try{const u=matUses(k),p=[];if(u.tribute)p.push('A tribute for ascending Mythic weapons: keep it.');if(u.craft.length)p.push('Crafts: '+u.craft.join(', ')+'.');return p.length?p.join(' '):'Sold at the market.'}catch(_){return'Sold at the market.'}})();
   if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then press G beside it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Place it, then press E beside it to open it.':'A world object. Press E beside it to use it.');
   if(t=='wings'){const w=wingOf(k);return(w&&(w.d||w.desc))||'Wings: worn on your back, they let you glide and fly.'}if(t=='charms'){const it=shopOf(k);return(it&&it.d)||''}return ''};
  // ---- what is equipped: the hand (held hotbar item / weapon), the four wearable slots, wings and the charm
@@ -14026,6 +14026,7 @@ const BOSS10=(()=>{
   if(m.bs=='tele'||m.wind>0){const k=m.bs=='tele'?1-cl(m.bt/(m.bt0||.95),0,1):1-cl(m.wind/(m.wind0||.6),0,1),y=top-30-Math.abs(Math.sin(t*12))*5;
    gc.save();gc.fillStyle=k>.7&&Math.floor(t*16)%2?'#fff':'#ff3a4a';gc.strokeStyle='#0e0818';gc.lineWidth=2.5;gc.beginPath();gc.moveTo(fx,y-16);gc.lineTo(fx+13,y+8);gc.lineTo(fx-13,y+8);gc.closePath();gc.fill();gc.stroke();
    gc.fillStyle='#0e0818';gc.fillRect(fx-1.5,y-8,3,9);gc.fillRect(fx-1.5,y+3,3,3);
+   {const raw=m.wind>0&&m.wpick?m.wpick:m.at==0?'Ground Slam':m.at==1?'Volley':'',nm=String(raw).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/line$/,' Line').replace(/^./,c=>c.toUpperCase());if(nm){const big=(()=>{try{return BOSSX.BIG[m.wpick]}catch(_){return false}})();gc.font='800 13px Montserrat,system-ui,sans-serif';gc.textAlign='center';gc.lineWidth=3.5;gc.strokeStyle='rgba(8,4,18,.9)';gc.fillStyle=big?'#ffd24a':'#ffb0b8';gc.strokeText(nm,fx,y-22);gc.fillText(nm,fx,y-22)}}
    if(m.bs=='tele'&&m.at==0){const r=m.w*1.1;gc.globalAlpha=.12+.1*k;gc.fillStyle='#ff3a4a';gc.beginPath();gc.ellipse(fx,fy-2,r,12,0,0,TAU);gc.fill();gc.globalAlpha=.75;gc.strokeStyle='#ff3a4a';gc.lineWidth=2;gc.setLineDash([8,6]);gc.stroke();gc.setLineDash([]);gc.beginPath();gc.ellipse(fx,fy-2,r*k,12*k,0,0,TAU);gc.stroke()}
    if(m.bs=='tele'&&m.at==1){const ph=Math.max(1,Math.min(3,m.phase|0)),n=[6,8,10][ph-1],y0=m.y+m.h*.4-cy,a0=Math.atan2(P.y+P.h/2-(m.y+m.h*.4),P.x-m.x);gc.globalAlpha=.25+.45*k;gc.strokeStyle='#ff5a6a';gc.lineWidth=1.5;gc.setLineDash([6,7]);
     for(let i=0;i<n;i++){const a=a0+(i-(n-1)/2)*.17;gc.beginPath();gc.moveTo(fx,y0);gc.lineTo(fx+Math.cos(a)*T*7,y0+Math.sin(a)*T*7);gc.stroke()}gc.setLineDash([])}
@@ -14882,7 +14883,20 @@ const RECIPES=[
  {id:'crystal',n:'Crystal',out:[9,1],in:[[6,3],[202,1]],secs:12,lv:6},
  {id:'shard',n:'Star Shard',out:[231,1],in:[[207,2],[209,1]],secs:20,lv:12},
  {id:'key',n:'Gate Key',out:[230,1],in:[[10,2],[9,1]],secs:15,lv:5},
- {id:'portal',n:'Magic Portal',out:[23,1],in:[[9,3],[231,1]],secs:30,lv:14}];
+ {id:'portal',n:'Magic Portal',out:[23,1],in:[[9,3],[231,1]],secs:30,lv:14},
+ {id:'worm',n:'Worm Bait',out:[250,3],in:[[201,1],[240,1]],secs:4,lv:1},
+ {id:'glowbait',n:'Glow Bait',out:[251,2],in:[[202,2],[260,1]],secs:6,lv:6},
+ {id:'goldbait',n:'Golden Bait',out:[252,2],in:[[247,1],[10,1]],secs:10,lv:12},
+ {id:'petfood',n:'Pet Food',out:[610,3],in:[[283,1]],secs:5,lv:3},
+ {id:'fishfood',n:'Pet Food',out:[610,2],in:[[241,2]],secs:5,lv:3},
+ {id:'pettreat',n:'Pet Treat',out:[611,2],in:[[284,1],[203,1]],secs:8,lv:6},
+ {id:'key2',n:'Gate Key',out:[230,1],in:[[205,3],[206,2]],secs:15,lv:8},
+ {id:'shard2',n:'Star Shard',out:[231,1],in:[[212,1],[215,1],[218,1]],secs:20,lv:12},
+ {id:'shard3',n:'Star Shard',out:[231,1],in:[[221,1],[224,1],[227,1]],secs:20,lv:14},
+ {id:'compost',n:'Compost',out:[1,2],in:[[249,1]],secs:3,lv:1}];
+// what a material is for, read from the recipes and the Mythic tributes, never written by hand
+function matUses(k){const u=[...new Set(RECIPES.filter(r=>r.in.some(i=>i[0]==k)).map(r=>r.n))];let t=false;try{t=isTribute(k)}catch(_){}return{craft:u,tribute:t}}
+function isTribute(k){try{return MYTH.MATS.some(l=>l.some(q=>q[0]==k))}catch(_){return false}}
 const recipeById=id=>RECIPES.find(r=>r.id==id);
 const CRAFT6=(()=>{let el=null,open=false;
  const mk=()=>{if(!el){el=document.createElement('div');el.id='craftui';el.className='objpanel';document.body.appendChild(el)}};
@@ -14955,6 +14969,8 @@ const SOC6=(()=>{
   if(c=='/e'||c=='/emote'){const i=EMOTES.findIndex(e=>e[0]==(a[1]||'').toLowerCase());if(i<0){say('Emotes: '+EMOTES.map(e=>e[0]).join(', '));return true}emote(i);return true}
   if(c=='/w'||c=='/whisper'){const p=byName(a[1]);const m=a.slice(2).join(' ').slice(0,80);if(!p||!m){say('Usage: /w name message (room players only)');return true}send({op:'wh',to:p.peer,t:m,n:myName});say('[to '+p.presence.n+'] '+m);return true}
   if(c=='/mute'){const n=(a[1]||'').toLowerCase();if(!n){say('Usage: /mute name');return true}if(!X6.mute.includes(n))X6.mute.push(n);x6Save();say('Muted '+n);return true}
+  // blocking is a mute the server also knows about: no more trade requests from them
+  if(c=='/block'||c=='/unblock'){const n=(a[1]||'').toLowerCase();if(!n){say('Usage: '+c+' name');return true}if(c=='/block'){if(!X6.mute.includes(n))X6.mute.push(n)}else X6.mute=X6.mute.filter(x=>x!=n);x6Save();try{NET7.send({t:'block',name:n,on:c=='/block'})}catch(_){}say((c=='/block'?'Blocked ':'Unblocked ')+n);return true}
   if(c=='/unmute'){X6.mute=X6.mute.filter(x=>x!=(a[1]||'').toLowerCase());x6Save();say('Unmuted');return true}
   if(c=='/friend'){const n=(a[1]||'').slice(0,14);if(!n){say('Usage: /friend name');return true}if(!X6.friends.some(f=>f.toLowerCase()==n.toLowerCase())&&X6.friends.length<100)X6.friends.push(n);x6Save();say('Added '+n+' to friends');return true}
   if(c=='/unfriend'){X6.friends=X6.friends.filter(f=>f.toLowerCase()!=(a[1]||'').toLowerCase());x6Save();say('Removed');return true}
@@ -15161,7 +15177,7 @@ const GUIDE8=(()=>{
    sp:['Chops whole trees with bonus wood','Splits wooden blocks in one hit','From level 5 trees can drop gems'],xp:'Each tree <b>+6 XP</b> · wooden blocks <b>+2 XP</b>'},
   bubbles:{role:'A cute fishing rod with a duck bobber. It never breaks blocks.',best:()=>[240,241,242,243,247,250,251,252],slow:'It does not mine at all: it only fishes.',
    how:['Stand on dry ground next to a lake or pool (not swimming) and hold Bubbles: hotbar slot (1–7) or scroll to it.','Click the water to cast. The duck bobber flies out and floats on the surface.','Wait for the bite. When a red <b>!</b> pops up over your head and the bobber dips, click again <b>quickly</b>. Click too early and you reel in nothing; too slow and it gets away.','Then <b>reel it in</b>: hold the mouse (or Space) to push the green zone right, let go to let it drift left, and keep the fish inside it. Inside, the catch meter fills; outside, the line tension rises and at full tension the line snaps. Rarer fish fight harder; higher Bubbles levels give a bigger zone, slower fish and a tougher line.','Bait is used automatically, best first. Punch the blue <b>Tackle Boxes</b> on lake shores with your fists to get Worm, Glow and Golden Bait: better bait means sooner bites and rarer fish.'],
-   sp:['Fish sell at the shop and count for collections','Night: Moonfish · caves: Glowfin · deep caves (35 m+): Void Eel · anywhere: the rare Golden Carp','From level 5 you can catch two fish at once'],xp:'Each fish <b>+12 XP</b> plus a quarter of its price (rarer fish give more) · junk <b>+3 XP</b>'}};
+   sp:['Fish sell at the shop, and some feed your pets or craft bait','Night: Moonfish · caves: Glowfin · deep caves (35 m+): Void Eel · anywhere: the rare Golden Carp','From level 5 you can catch two fish at once'],xp:'Each fish <b>+12 XP</b> plus a quarter of its price (rarer fish give more) · junk <b>+3 XP</b>'}};
  const PAGES=[...IDS,'basics','levels','dig'],PN={basics:'Basics',levels:'Levels & shine',dig:'Where to dig'};
  let pg=null,raf=0,hinted=false;
  const B=()=>UI6.body,on=()=>UI6.on&&UI6.tab=='toolguide';
@@ -20285,8 +20301,11 @@ const ONL10=(()=>{
  // ---- the wrench tool (TOOLS8 calls this on click, key V holds it): a player opens their card, a World Lock its settings
  let pEl=null;
  function card(p){const q=p.presence;if(!pEl){pEl=document.createElement('div');pEl.id='pcard10';pEl.setAttribute('role','dialog');document.body.appendChild(pEl)}const o=NET7.owner;
-  pEl.innerHTML='<header><b>'+esc(q.n)+'</b><small>Level '+(q.lv|0)+'</small><button data-pc="x" aria-label="Close">✕</button></header><div class="pcb10"><button class="btn" data-pc="trade">Trade</button><button class="btn ghost" data-pc="friend">Add friend</button>'+(o?'<button class="btn ghost" data-pc="pull">Pull</button><button class="btn ghost" data-pc="give">Give…</button><button class="btn ghost" data-pc="kick">Kick</button><button class="btn ghost" data-pc="ban">Ban…</button>':'')+'</div>';pEl.style.display='block';
+  const blocked=n=>{try{return X6.mute.includes(String(n).toLowerCase())}catch(_){return false}};
+  pEl.innerHTML='<header><b>'+esc(q.n)+'</b><small>Level '+(q.lv|0)+'</small><button data-pc="x" aria-label="Close">✕</button></header><div class="pcb10"><button class="btn" data-pc="trade">Trade</button><button class="btn ghost" data-pc="friend">Add friend</button><button class="btn ghost" data-pc="block">'+(blocked(q.n)?'Unblock':'Block')+'</button><button class="btn ghost" data-pc="report">Report…</button>'+(o?'<button class="btn ghost" data-pc="pull">Pull</button><button class="btn ghost" data-pc="give">Give…</button><button class="btn ghost" data-pc="kick">Kick</button><button class="btn ghost" data-pc="ban">Ban…</button>':'')+'</div>';pEl.style.display='block';
   pEl.onclick=async e=>{const b=e.target.closest('[data-pc]');if(!b)return;const a=b.dataset.pc;pEl.style.display='none';
+   if(a=='block'){SOC6.cmd((blocked(q.n)?'/unblock ':'/block ')+q.n);return}
+   if(a=='report'){const v=await DLG7.open({title:'Report '+q.n,text:'The server owner will see this and what '+q.n+' recently said in this world.',fields:[{k:'why',label:'What happened?',max:160}],ok:'Send report'});if(v&&v.why&&v.why.trim()){try{NET7.send({t:'report',who:q.n,why:v.why})}catch(_){}}return}
    if(a=='trade')ask(p.peer);else if(a=='friend')SOC6.cmd('/friend '+q.n);else if(a=='pull')adm('pull',{who:p.peer});else if(a=='kick')adm('kick',{who:p.peer});
    else if(a=='give'){const v=await DLG7.open({title:'Give '+q.n,fields:[{k:'i',label:'Item (gems, a number or a name like iron_ore)',max:40},{k:'n',label:'Amount',val:'1',max:6}],ok:'Give'});if(v){const i=itemId(v.i);if(i==null)say('No such item');else adm('give',{who:p.peer,item:i,n:Math.max(1,Math.floor(+v.n||1))})}}
    else if(a=='ban'){const v=await DLG7.open({title:'Ban '+q.n,fields:[{k:'m',label:'Minutes (empty = until you unban)',max:6},{k:'r',label:'Reason',max:80}],ok:'Ban',danger:1});if(v)adm('ban',{who:p.peer,mins:+v.m||0,reason:v.r})}}}

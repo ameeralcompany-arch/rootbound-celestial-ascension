@@ -39,6 +39,8 @@ const SOC6=(()=>{
   if(c=='/e'||c=='/emote'){const i=EMOTES.findIndex(e=>e[0]==(a[1]||'').toLowerCase());if(i<0){say('Emotes: '+EMOTES.map(e=>e[0]).join(', '));return true}emote(i);return true}
   if(c=='/w'||c=='/whisper'){const p=byName(a[1]);const m=a.slice(2).join(' ').slice(0,80);if(!p||!m){say('Usage: /w name message (room players only)');return true}send({op:'wh',to:p.peer,t:m,n:myName});say('[to '+p.presence.n+'] '+m);return true}
   if(c=='/mute'){const n=(a[1]||'').toLowerCase();if(!n){say('Usage: /mute name');return true}if(!X6.mute.includes(n))X6.mute.push(n);x6Save();say('Muted '+n);return true}
+  // blocking is a mute the server also knows about: no more trade requests from them
+  if(c=='/block'||c=='/unblock'){const n=(a[1]||'').toLowerCase();if(!n){say('Usage: '+c+' name');return true}if(c=='/block'){if(!X6.mute.includes(n))X6.mute.push(n)}else X6.mute=X6.mute.filter(x=>x!=n);x6Save();try{NET7.send({t:'block',name:n,on:c=='/block'})}catch(_){}say((c=='/block'?'Blocked ':'Unblocked ')+n);return true}
   if(c=='/unmute'){X6.mute=X6.mute.filter(x=>x!=(a[1]||'').toLowerCase());x6Save();say('Unmuted');return true}
   if(c=='/friend'){const n=(a[1]||'').slice(0,14);if(!n){say('Usage: /friend name');return true}if(!X6.friends.some(f=>f.toLowerCase()==n.toLowerCase())&&X6.friends.length<100)X6.friends.push(n);x6Save();say('Added '+n+' to friends');return true}
   if(c=='/unfriend'){X6.friends=X6.friends.filter(f=>f.toLowerCase()!=(a[1]||'').toLowerCase());x6Save();say('Removed');return true}

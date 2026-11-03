@@ -142,6 +142,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/cosmic.js
+      - name: Test player safety and gameplay fixes
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/safety.js
       - name: Test economy rules
         if: ${{ !cancelled() }}
         timeout-minutes: 10
