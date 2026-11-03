@@ -10,10 +10,10 @@ const URL='file://'+path.resolve(__dirname,'../index.html');
 setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},400000).unref();
 const IDS=['warden','sovereign','eclipse','magma','tide','storm'];
 // page-side simulator: pauses the real loop, runs update + boss tick on a virtual clock, keeps the player and dummies pinned, sums the damage
-const SIMLIB=`window.SIM=(()=>{let vt=0,on=false,seed=1;const pn=Performance.prototype.now,rnd0=Math.random;
+const SIMLIB=`window.SIM=(()=>{let vt=1e9,on=false,seed=1;const rnd0=Math.random,dn0=Date.now;
  const rng=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
- function start(){if(on)return;on=true;vt=pn.call(performance);performance.now=()=>vt;window.RB_COVER=1;Math.random=rng;seed=12345}
- function stop(){if(!on)return;on=false;delete performance.now;window.RB_COVER=0;Math.random=rnd0}
+ function start(){if(on)return;on=true;performance.now=()=>vt;Date.now=()=>1.7e12+vt;window.RB_COVER=1;Math.random=rng;seed=12345}
+ function stop(){if(!on)return;on=false;delete performance.now;Date.now=dn0;window.RB_COVER=0;Math.random=rnd0}
  let x0=0,fy=0,fixL={};
  function flat(){const px=Math.floor(P.x/T);fy=Math.floor((P.y+P.h-2)/T);for(let x=px-18;x<=px+22;x++){for(let y=fy-14;y<=fy;y++){const k=y*W+x;tiles[k]=0;wl[k]=0;trees.delete(k)}for(let y=fy+1;y<=fy+3;y++){const k=y*W+x;tiles[k]=1;hp[k]=BLK[1][2]}}
   P.x=px*T+T/2;P.y=(fy+1)*T-P.h-.5;P.vx=P.vy=0;x0=P.x}
@@ -61,7 +61,7 @@ const SIMLIB=`window.SIM=(()=>{let vt=0,on=false,seed=1;const pn=Performance.pro
   for(let r=0;r<6;r++){const a=o.rows.filter(x=>x.r==r).sort((p,q)=>p.lv-q.lv);for(let i=1;i<a.length;i++)if(a[i].lv>a[i-1].lv&&a[i].p<a[i-1].p)o.bad.push('lv '+a[i].id)}
   o.gunLv=GUN9.IDS.every((id,i,L)=>!i||WPOWER(id)>=WPOWER(L[i-1]));return o});
  ok('WPOWER: every weapon has a power and a rarity; power is monotonic in rarity (common < ... < mythic) and in level',wp.bad.length==0&&wp.gunLv&&wp.n>=60,wp.bad);
- await E(SIMLIB);await E(()=>{enterWorld('baltest')});await Wt(1500);
+ await E(SIMLIB);await E(()=>{QM.setting('high');enterWorld('baltest')});await Wt(1500);
  const meas=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&WPN[id].k!='tool'&&!WPN[id].myth)o[id]=SIM.weapon(id);return o});
  const val=(v,force)=>{const r=force==null?v.far>=.5*v.near:force,S=r?(v.near+v.far)/2:v.near,A=Math.min(3.5,r?(v.nearA+v.farA)/Math.max(1e-6,v.near+v.far):v.nearA/Math.max(1e-6,v.near));return{r,S,V:S*(1+.15*(A-1))*(r?1.1:1)}};
  const info=await E(()=>{const o={};for(const id of Object.keys(WPN))if(WPN[id].md>0&&!WPN[id].myth)o[id]={rar:WPNRAR(id),p:WPOWER(id),cls:CLASS7.of(WPN[id]),lv:WPN[id].lv|0};return{o,C:Object.fromEntries(Object.entries(CLASS7.C).map(([k,c])=>[k,c.ids.filter(id=>WPN[id]&&!WPN[id].myth)]))}});
