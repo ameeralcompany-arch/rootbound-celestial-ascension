@@ -11,7 +11,9 @@ What protects the game, and what cannot be protected. `tests/security.js` attack
 
 ## The game page
 
-- A Content-Security-Policy allows only the exact inline scripts of the current build (by hash) and lets the page talk only to its own server, so injected code cannot run or send a token elsewhere. It applies to the page the server hosts. The desktop app and a GitHub Pages copy have no such header and rely on the server filtering what other players send plus the client escaping it.
+- Rootbound is a Windows app. The live server gives a browser only a download page (`server/download.html`) and hands out none of the game's files. The app has no Content-Security-Policy header and relies on the server filtering what other players send plus the client escaping it.
+- The server accepts connections only from the app, which it recognises by the app's browser identification. This stops ordinary browsers, not someone who writes their own client and fakes that identification, so everything the server already checks still matters.
+- Test runs still load the game page from a local test server, with a Content-Security-Policy that allows only the exact inline scripts of the current build (by hash). The download page has the same policy.
 - Everything other players send is filtered on the server and escaped on the client.
 - Playwright's `waitForFunction` evaluates strings in the page, which this policy blocks, so tests that use it start the server with `csp:false`. `tests/security.js` keeps it on.
 

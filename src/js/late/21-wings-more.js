@@ -16,3 +16,5 @@ WINGS.push(
   a:{L:76,parts:[{s:'mech',style:'panel',n:8,a:[-72,40],joint:'#8ae6ff'}]}},
  {id:'inkdragon',n:'Ink Dragon',fam:'dark',rar:'mythic',src:'shop',lv:58,pal:['#030305','#101016','#6a6a78','#ffffff'],sp:'#ffffff',fxk:'smoke',d:'Great wet strokes of black ink in the shape of a dragon\'s wings. They spatter as you turn.',
   a:{L:110,trail:['smoke','dust'],parts:[{s:'tier',e:['ink','ink','ink'],n:[9,8,7],len:[.7,.46,.24],wd:[.24,.26,.32],pa:[-16,104],arm:-30,glow:1}]}});
+// the same preparation 20-data.js gives the first wings: flying needs pw
+for(const w of WINGS)if(!Number.isFinite(w.pw))w.pw=Math.max(0,WRAR.indexOf(w.rar))+(w.a&&w.a.L>90?1:0);

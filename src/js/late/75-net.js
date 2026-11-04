@@ -39,7 +39,7 @@ const NET7=(()=>{
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
   if(t=='worlds'){list=m.list||[];noRf=1;try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}noRf=0;return}
-  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
+  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';/* still starting up: go to the plaza, nobody is asked anything yet */if(!entered){if(lastTry!='plaza'){go('plaza',false);return}_enterLocal('plaza');return}if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Owner','Tools are in the top bar · type /help for commands',2600);return}
   if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}
@@ -82,7 +82,7 @@ const NET7=(()=>{
  // ---- legacy entry points rebound to the network layer
  const _enterLocal=n=>{leaveNet();loadWorld(n);try{ENV7.set(X6.wx&&X6.wx[cur]||'default',{instant:true})}catch(_){}};
  enterWorld=function(n){n=String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
-  if(st=='online'){if(joinedW==n&&entered){menuEl.style.display='none';return}menuEl.style.display='none';go(n,false);return}
+  if(st=='online'){if(joinedW==n&&entered){menuEl.style.display='none';return}menuEl.style.display='none';go(n,false);if(!entered)setTimeout(()=>{if(!entered)_enterLocal('plaza')},6000);return}
   if(st=='connecting'||st=='reconnecting'){say('Still connecting to the server… playing locally for now')}
   _enterLocal(n)};
  leaveNet=function(){window.RB_OWN=null;if(room){room.dead=1;send({t:'leave'})}if(rm){rm=null}room=null;joinedW=null;guest=false;roomCode=''};
@@ -99,7 +99,7 @@ const NET7=(()=>{
   if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
   if(b('npw'))b('npw').onclick=changePw;if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
  async function changePw(){const v=await DLG7.open({title:'Change password',text:'This also signs you out on every other device.',fields:[{k:'o',label:'Current password',type:'password',max:128},{k:'p',label:'New password',type:'password',ph:'at least 8 characters',max:128},{k:'q',label:'New password again',type:'password',max:128}],ok:'Change password'});if(!v)return;if(v.p!==v.q){say6&&say6('Change password','The new passwords do not match',3500);return}send({t:'chpass',old:v.o,pass:v.p})}
- async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:''},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
+ async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:(reg?'':lsGet('rb_lastname')||'')},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
   authDone.g=1;send({t:reg?'register':'login',name:v.n,pass:v.p});
   // the answer arrives as an 'auth' message; a failure keeps the guest session
 }
@@ -119,4 +119,4 @@ const NET7=(()=>{
  // boot: try to discover a server without ever blocking the game
  async function boot(){try{let off=false;try{off=!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
- return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW}}})();
+ return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW}}})();

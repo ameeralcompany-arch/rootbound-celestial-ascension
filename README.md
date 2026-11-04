@@ -2,65 +2,21 @@
 
 ## Play Rootbound
 
-**[Download for Windows](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip)** (about 180 MB), or **[play in your browser](https://rootbound-rcvi.onrender.com)** with nothing to install.
+Rootbound is a Windows game (Windows 10 or newer). It no longer runs in a browser.
+
+**[Download for Windows](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip)** (about 180 MB)
 
 1. Download `Rootbound-Windows.zip`, then right-click it and choose **Extract All**.
-2. Open the `Rootbound-win32-x64` folder and run **Rootbound.exe**. Keep it with the other files in that folder, or it will not start.
+2. Open the extracted folder and run **Rootbound.exe**. Keep it with the other files in that folder, or it will not start.
 3. Windows may warn that the publisher could not be verified, or say "Windows protected your PC" (click **More info**, then **Run anyway**). The app is not code-signed yet, so Windows cannot tell who made it.
-
-**No warning at all:** [play in your browser](https://rootbound-rcvi.onrender.com), and to keep it on your computer use the browser's **Install** button in the address bar, or **Settings > General > Install Rootbound** in the game. It gets its own window and icon.
 
 The online server sleeps when nobody is playing, so the first player may wait about a minute. You can play locally while it wakes.
 
 The green **Code > Download ZIP** button gives you the source code, not the app: `Rootbound.exe` is too large for GitHub to keep with the code.
 
-A multiplayer block-building sandbox. This repo is a single static file (`index.html`), so it deploys to GitHub Pages with no build step.
+**Played in a browser before?** Accounts live on the server, so sign in with the same name in the app. Without an account, open the old address in that same browser, choose **Save my progress**, then in the app use **Settings > General > Backup & restore > Import save file**.
 
-## Deploy to GitHub Pages
-
-1. Create a new **public** repository on GitHub (for example `rootbound`).
-2. Upload the contents of this folder to the repository root (`index.html`, `README.md`, `.nojekyll`).
-   - Web UI: *Add file -> Upload files*, then commit.
-   - Or with git:
-     ```
-     git init && git add . && git commit -m "Rootbound"
-     git branch -M main
-     git remote add origin https://github.com/<your-user>/rootbound.git
-     git push -u origin main
-     ```
-3. In the repository go to **Settings -> Pages**. Under *Build and deployment* choose **Deploy from a branch**, branch **main**, folder **/ (root)**, and save.
-4. After a minute your game is live at `https://<your-user>.github.io/rootbound/`. Pages serves over HTTPS, which WebRTC needs.
-
-## Play with a friend
-
-1. Open the game, press **Worlds**, then **Host this world**. A 5-letter room code appears with an invite link.
-2. Send your friend the code (they press **Worlds -> Join** and type it) or the invite link (`...?room=CODE`, which joins automatically).
-3. Keep the host's tab open and visible. When the host closes it, the room closes. Up to 8 players fit in a room.
-
-World edits, chat and player positions sync live. The host's world is saved in the host's browser.
-
-## How the networking works
-
-- PeerJS opens WebRTC data channels between browsers. The free PeerJS cloud server (`0.peerjs.com`) only introduces peers; game data goes peer to peer.
-- The host relays messages and validates them (block edits, World Lock permissions, presence data).
-- Some networks (strict corporate/school Wi-Fi, some mobile carriers) block direct WebRTC and need a **TURN relay**. The file ships with the public Open Relay TURN servers as a best-effort default, but shared free relays can be slow, rate-limited or change without notice. For reliable play, put your own STUN/TURN servers in the `rb-config` block near the top of `index.html`:
-  ```js
-  window.RB_CONFIG={
-    ice:[{urls:'stun:stun.l.google.com:19302'},
-         {urls:'turn:YOUR_TURN_HOST:443',username:'USER',credential:'PASS'}],
-    peer:null   // or {host:'your-peerjs-server.example.com',port:443,path:'/',secure:true}
-  };
-  ```
-- The game will not connect from inside an embedded frame (for example the Claude artifact preview). Open the GitHub Pages URL in its own tab.
-
-## Troubleshooting
-
-| Message | Meaning |
-|---|---|
-| No room with that code | Wrong code, or the host closed the room. |
-| Timed out / server not answering | The PeerJS server or WebRTC is blocked or down. Try another network, or set your own `peer` server. |
-| PeerJS script could not be loaded | A filter blocks the CDN. The game tries jsDelivr, unpkg, then cdnjs. |
-| Room is full | The host already has 7 guests. |
+The notes below are the project's history, newest last. Older ones mention browsers, GitHub Pages and host rooms, which are gone.
 
 ---
 # V6.1 — Sandbox MMORPG expansion (this release)
@@ -224,7 +180,7 @@ Cause confirmed by reproduction: the page loaded PeerJS and Google Fonts as **re
 
 ## Online (Growtopia-style)
 
-The game runs online from one free server: **Render** (the server) and **Upstash Redis** (the saves), neither of which needs a card. **It is live at https://rootbound-rcvi.onrender.com** (setup steps: [server/DEPLOY.md](server/DEPLOY.md)). The desktop app and the GitHub Pages copy connect to the address in `RB_SERVER` (`src/legacy.html`). The page the server itself hosts is always online.
+The game runs online from one free server: **Render** (the server) and **Upstash Redis** (the saves), neither of which needs a card. Its address is https://rootbound-rcvi.onrender.com (setup steps: [server/DEPLOY.md](server/DEPLOY.md)). The Windows app connects to the address in `RB_SERVER` (`src/legacy.html`). A browser that opens the address only finds the download page, and the server only accepts connections from the app.
 
 - **Owner:** one account, set by `OWNER_NAME` + `OWNER_PASSWORD` on the host. Chat commands: `/god`, `/pull`, `/summon`, `/ban`, `/unban`, `/give`, `/kick`, `/smute`, `/sunmute`, `/announce`. The server checks every one.
 - **Creative mode is gone** as a menu option. Its powers are now `/god`, for the owner only. A player who was in creative when this update arrives gets their normal save back on load.

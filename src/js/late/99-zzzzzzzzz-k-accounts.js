@@ -13,10 +13,13 @@ const ACCT13=(()=>{
  function upload(force){if(!live||!ID)return;try{if(CRV8.on)return}catch(_){}try{saveP()}catch(_){}try{celSave()}catch(_){}
   const s=JSON.stringify(gather());if(s===last&&!force)return;if(s.length>1.2e6){console.warn('ACCT13: save too large to upload',s.length);return}
   last=s;const id=++seq,n=Math.max(1,Math.ceil(s.length/CH));for(let i=0;i<n;i++)NET7.send({t:'prof_put',id,i,n,base,d:s.slice(i*CH,(i+1)*CH)})}
+ // once the game is showing: the account and its progress are safe, only the sign-in ran out
+ function askSignIn(){let n=0;const t=setInterval(()=>{if(++n>480){clearInterval(t);return}try{if(window.RB_COVER||!entered||DLG7.isOpen)return;clearInterval(t);DLG7.confirm('Your sign-in ended','You are on this computer\'s offline save right now. Your account and its progress are safe. Sign in again to get back to them.','Sign in').then(ok=>{if(ok)NET7.signIn()})}catch(_){clearInterval(t)}},500)}
  // called by NET7 for every auth answer; true = the page is reloading, stop here
  function auth(m){if(!LS)return false;
-  if(!m.ok){if(ID&&m.expired){try{LS.removeItem('rbtok')}catch(_){}setActive('');reload();return true}return false}
-  if(m.kind=='guest'){if(ID){setActive('');reload();return true}return false}
+  if(!m.ok){if(ID&&m.expired){try{LS.removeItem('rbtok');LS.setItem('rb_relogin','1')}catch(_){}setActive('');reload();return true}return false}
+  if(m.kind=='guest'){if(ID){setActive('');reload();return true}try{if(LS.getItem('rb_relogin')){LS.removeItem('rb_relogin');askSignIn()}}catch(_){}return false}
+  try{if(m.name)LS.setItem('rb_lastname',String(m.name).slice(0,64))}catch(_){}
   if(m.uid!==ID){try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}setActive(m.uid);reload();return true}
   const g=m.gen|0,lg=LS.getItem('rbprofgen');if(lg!=null&&+lg!==g){wipe();LS.setItem('rbprofgen',String(g));LS.setItem('rbprofrev','0');try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}RB_ACCT.freeze();reload();return true}LS.setItem('rbprofgen',String(g));
   const srv=m.prev|0,mine=+LS.getItem('rbprofrev')||0;base=srv;

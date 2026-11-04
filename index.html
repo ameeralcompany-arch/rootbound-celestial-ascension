@@ -21,6 +21,8 @@ html[data-theme=dark] #rbboot i{color:#a59dbc}
 /* Boot guard: runs before everything else. Shows a loading screen at once, records startup stages and errors,
    survives blocked localStorage, and turns a stalled start into a readable diagnostic instead of a black screen. */
 (function(){
+/* Rootbound is a Windows app. In a browser the game stops here and shows the way to the download. Automated test browsers (webdriver) still run it. */
+if(!/\bElectron\//.test(navigator.userAgent)&&!navigator.webdriver){window.RB_BLOCKED=true;try{window.stop()}catch(e){}document.documentElement.innerHTML='<head><meta charset="utf-8"><title>Rootbound for Windows</title><style>html,body{margin:0;height:100%;background:#0e0b1f;color:#f1ebf8;font:16px/1.5 system-ui,sans-serif}body{display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;box-sizing:border-box}h1{margin:0 0 8px;font-size:30px}p{margin:0 0 22px;color:#b9b0d4}a{display:inline-block;padding:13px 26px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#e0559b);color:#fff;font-weight:700;text-decoration:none}</style></head><body><main id="rbgate"><h1>Rootbound is a Windows game</h1><p>It no longer runs in a browser. Download it for Windows 10 or newer.</p><a id="rbgatedl" href="https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip">Download for Windows</a></main></body>';return}
 var D=window.RBDIAG={t0:Date.now(),stages:[],errors:[],assets:[],ready:false,
  stage:function(n,info){this.stages.push({n:n,ms:Date.now()-this.t0,i:info||''});},
  /* errors are only recorded (quietly): the player never gets an error box. If the game really doesn't start, the 12 s watchdog
@@ -63,8 +65,8 @@ var mo=new MutationObserver(function(){if(document.body){mo.disconnect();start()
 /* Optional networking settings. Leave as null to use the defaults.
    ice:  your own array of WebRTC iceServers (STUN/TURN) for the best reliability.
    peer: your own PeerJS server, e.g. {host:'my-peer.example.com',port:443,path:'/',secure:true,key:'peerjs'} */
-var RB_HOSTED=false;   // the Rootbound server turns this on in the copy of the page it serves
-const RB_SERVER='https://rootbound-rcvi.onrender.com';   // the online server for the desktop app and GitHub Pages copy, e.g. 'https://rootbound.onrender.com' (see server/DEPLOY.md)
+var RB_HOSTED=false;   // on only in test runs, where a local test server hands out this page. The live server gives browsers the download page instead
+const RB_SERVER='https://rootbound-rcvi.onrender.com';   // the online server the Windows app connects to (see server/DEPLOY.md)
 window.RB_CONFIG=Object.assign({ice:null,peer:null,server:RB_SERVER,solo:!RB_HOSTED&&(!RB_SERVER||!!navigator.webdriver)},window.RB_CONFIG_OVERRIDE||{});   // solo: single-player, never connects to a server (automated test browsers stay offline)
 </script>
 <style>
@@ -3130,7 +3132,7 @@ addEventListener('keydown',e=>{ac();startBGM();if(isTextEl(e.target)&&e.target.i
  if(e.key>='1'&&e.key<='9')selBar(+e.key-1);if(k=='q')useSkill('hat');if(k=='r')useSkill('body');if(k=='z')useSkill('wing');if(e.key=='Shift')useSkill('boot');if(k=='f')useSkill('glove');if(k=='e')interact();
  if(k=='w'||k==' '||k=='arrowup')jumpPress()});
 addEventListener('keyup',e=>{const k=e.key.toLowerCase();K[k]=0;if(k=='w'||k==' '||k=='arrowup')jumpRelease()});
-cv.addEventListener('mousemove',e=>{mx=e.clientX*cv.width/innerWidth/ZM;my=e.clientY*cv.height/innerHeight/ZM});cv.addEventListener('mousedown',e=>{ac();if(e.clientY>innerHeight-34){return}if(e.button==0)mdL=true;if(e.button==2)mdR=true;e.preventDefault()});addEventListener('mouseup',e=>{if(e.button==0)mdL=false;if(e.button==2)mdR=false});cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('mousemove',e=>{mx=e.clientX*cv.width/innerWidth/ZM;my=e.clientY*cv.height/innerHeight/ZM});cv.addEventListener('mousedown',e=>{ac();if(e.button==0)mdL=true;if(e.button==2)mdR=true;e.preventDefault()});addEventListener('mouseup',e=>{if(e.button==0)mdL=false;if(e.button==2)mdR=false});cv.addEventListener('contextmenu',e=>e.preventDefault());
 cv.addEventListener('wheel',e=>{if(e.ctrlKey||e.shiftKey){setZoom(ZM*(e.deltaY>0?.9:1.1));e.preventDefault()}else{e.preventDefault();/* the wheel cycles weapons and tools (PLAY8); it only fires over the game canvas, never over a panel */if(typeof PLAY8!='undefined')PLAY8.wheel(e)}},{passive:false});
 // ---------- UI
 const menuEl=$('menu'),chatEl=$('chat'),invEl=$('inv'),gridEl=$('grid'),tabsEl=$('tabs');
@@ -3642,8 +3644,9 @@ $('crnd').onclick=()=>{const p=a=>a[Math.random()*a.length|0];look={skin:p(SKINS
 // is decided by ACCT13 (late), which reloads the page when it changes. =====
 const RB_ACCT=(()=>{let id='',ls=null,fz=false;try{ls=window.localStorage;id=ls.getItem('rb_acct')||''}catch(_){return{id:'',pre:'',free:()=>true,freeze(){}}}
  if(!/^[A-Za-z0-9_-]{1,40}$/.test(id))id='';const pre=id?'a_'+id+'_':'',free=k=>/^rb_|^rbtok$|^rbsrv$|^a_/.test(k);
- if(id){const S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem,mp=(o,k)=>{k=String(k);return o===ls&&!free(k)?pre+k:k};
-  S.getItem=function(k){return g.call(this,mp(this,k))};S.setItem=function(k,v){if(fz&&this===ls&&!free(String(k)))return;return s.call(this,mp(this,k),v)};S.removeItem=function(k){if(fz&&this===ls&&!free(String(k)))return;return r.call(this,mp(this,k))}}
+ const S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem,mp=(o,k)=>{k=String(k);return id&&o===ls&&!free(k)?pre+k:k};
+ if(id)S.getItem=function(k){return g.call(this,mp(this,k))};
+ S.setItem=function(k,v){if(fz&&this===ls&&!free(String(k)))return;return s.call(this,mp(this,k),v)};S.removeItem=function(k){if(fz&&this===ls&&!free(String(k)))return;return r.call(this,mp(this,k))};
  // freeze: a save was just replaced and the page is reloading, so the game's save-on-close must not write the old state over it
  return{id,pre,free,freeze(){fz=true}}})();
 
@@ -3900,7 +3903,7 @@ function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'nul
  cel.plate=o.plate=='auto'?'auto':n(o.plate,'auto',0,99);cel.seenW=n(o.seenW,0,0,99);cel.seenNp=n(o.seenNp,0,0,999);cel.tut=n(o.tut,0,0,9);
  const a=o.ap||{},A=cel.ap;A.hair=n(a.hair,0,0,AP.hair.length-1);A.eyes=n(a.eyes,0,0,AP.eyes.length-1);A.outfit=n(a.outfit,0,0,AP.outfit.length-1);A.acc=n(a.acc,0,0,AP.acc.length-1);A.cape=n(a.cape,1,0,AP.cape.length-1);A.eyeCol=n(a.eyeCol,0,0,AP.eyeCol.length-1);A.gd=n(a.gd,0,0,2);
  A.hairCol=col(a.hairCol,A.hairCol);A.skinCol=col(a.skinCol,A.skinCol);A.outCol=col(a.outCol,A.outCol);A.trimCol=col(a.trimCol,A.trimCol);
- const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.still=p.still==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['clean','aero','light','dark','auto'].includes(p.theme)?p.theme:'clean'}
+ const p=o.opt||{};cel.opt.qp=['auto','low','med','high','ultra','cine'].includes(p.qp)?p.qp:'auto';cel.opt.vfx=Math.max(0,Math.min(1.5,+p.vfx>=0?+p.vfx:1));cel.opt.reduce=p.reduce?1:0;cel.opt.ui=Math.max(.8,Math.min(1.4,+p.ui||1));cel.opt.bloom=p.bloom==0?0:1;cel.opt.wxOn=p.wxOn==0?0:1;cel.opt.still=p.still==0?0:1;cel.opt.fpsShow=p.fpsShow?1:0;cel.opt.cine=p.cine?1:0;cel.opt.uiv=Math.max(0,Math.min(1,+p.uiv>=0?+p.uiv:.6));cel.opt.uim=p.uim?1:0;cel.opt.theme=['night','clean','aero','light','dark','auto'].includes(p.theme)?p.theme:'night'}
 // ---- derived progression (single source of truth: character level)
 // ownership: level wings by level, shop wings by the catalog item, exclusive wings by their achievement record (WINGX)
 const wingOwned=(w,l)=>{if(!w)return false;if(w.src=='level')return (l==null?lvl:l)>=w.lvl;if(w.src=='excl'){try{return WINGX.has(w.id)}catch(_){return false}}try{return SHOP7.has('wing_'+w.id)}catch(_){return false}};
@@ -3970,6 +3973,8 @@ WINGS.push(
   a:{L:76,parts:[{s:'mech',style:'panel',n:8,a:[-72,40],joint:'#8ae6ff'}]}},
  {id:'inkdragon',n:'Ink Dragon',fam:'dark',rar:'mythic',src:'shop',lv:58,pal:['#030305','#101016','#6a6a78','#ffffff'],sp:'#ffffff',fxk:'smoke',d:'Great wet strokes of black ink in the shape of a dragon\'s wings. They spatter as you turn.',
   a:{L:110,trail:['smoke','dust'],parts:[{s:'tier',e:['ink','ink','ink'],n:[9,8,7],len:[.7,.46,.24],wd:[.24,.26,.32],pa:[-16,104],arm:-30,glow:1}]}});
+// the same preparation 20-data.js gives the first wings: flying needs pw
+for(const w of WINGS)if(!Number.isFinite(w.pw))w.pw=Math.max(0,WRAR.indexOf(w.rar))+(w.a&&w.a.L>90?1:0);
 
 /* ========== LATE: 30-quality.js ========== */
 // ===== V6 Quality manager: presets + optional adaptive downgrade; reads cel.opt =====
@@ -7305,7 +7310,7 @@ const NET7=(()=>{
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
   if(t=='worlds'){list=m.list||[];noRf=1;try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}noRf=0;return}
-  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
+  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';/* still starting up: go to the plaza, nobody is asked anything yet */if(!entered){if(lastTry!='plaza'){go('plaza',false);return}_enterLocal('plaza');return}if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Owner','Tools are in the top bar · type /help for commands',2600);return}
   if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}
@@ -7348,7 +7353,7 @@ const NET7=(()=>{
  // ---- legacy entry points rebound to the network layer
  const _enterLocal=n=>{leaveNet();loadWorld(n);try{ENV7.set(X6.wx&&X6.wx[cur]||'default',{instant:true})}catch(_){}};
  enterWorld=function(n){n=String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
-  if(st=='online'){if(joinedW==n&&entered){menuEl.style.display='none';return}menuEl.style.display='none';go(n,false);return}
+  if(st=='online'){if(joinedW==n&&entered){menuEl.style.display='none';return}menuEl.style.display='none';go(n,false);if(!entered)setTimeout(()=>{if(!entered)_enterLocal('plaza')},6000);return}
   if(st=='connecting'||st=='reconnecting'){say('Still connecting to the server… playing locally for now')}
   _enterLocal(n)};
  leaveNet=function(){window.RB_OWN=null;if(room){room.dead=1;send({t:'leave'})}if(rm){rm=null}room=null;joinedW=null;guest=false;roomCode=''};
@@ -7365,7 +7370,7 @@ const NET7=(()=>{
   if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
   if(b('npw'))b('npw').onclick=changePw;if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
  async function changePw(){const v=await DLG7.open({title:'Change password',text:'This also signs you out on every other device.',fields:[{k:'o',label:'Current password',type:'password',max:128},{k:'p',label:'New password',type:'password',ph:'at least 8 characters',max:128},{k:'q',label:'New password again',type:'password',max:128}],ok:'Change password'});if(!v)return;if(v.p!==v.q){say6&&say6('Change password','The new passwords do not match',3500);return}send({t:'chpass',old:v.o,pass:v.p})}
- async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:''},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
+ async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:(reg?'':lsGet('rb_lastname')||'')},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
   authDone.g=1;send({t:reg?'register':'login',name:v.n,pass:v.p});
   // the answer arrives as an 'auth' message; a failure keeps the guest session
 }
@@ -7385,7 +7390,7 @@ const NET7=(()=>{
  // boot: try to discover a server without ever blocking the game
  async function boot(){try{let off=false;try{off=!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
- return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW}}})();
+ return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW}}})();
 
 /* ========== LATE: 76-env.js ========== */
 // ===== ENV7: persistent world environments (Blossom / Space / Galaxy) =====
@@ -8947,12 +8952,13 @@ const UI6=(()=>{
  // Settings tab: UI6.ext.settings (90-settings-organize.js)
  function applyUi(){const s=cel.opt.ui;for(const id of['hudL','bar','skills','quest','hudR'])el(id)&&(el(id).style.zoom=s);$('fps').style.display=cel.opt.fpsShow?'block':'none'}
  // ---- account / save export & import
- function exportAll(){const o={app:'rootbound',v:1,keys:{}};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(RB_PREFIX)&&!/^pending_/.test(k)){const b=k.slice(RB_PREFIX.length);if(/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)/.test(b)&&!b.startsWith('rbp_corrupt'))o.keys[b]=localStorage.getItem(b)}}return JSON.stringify(o)}
- function importAll(txt){try{if(NET7.online||RB_ACCT.id)throw Error('online')}catch(e){if(e.message=='online')throw Error('Save files cannot be imported while online')}const o=JSON.parse(txt);if(!o||o.app!='rootbound'||typeof o.keys!='object')throw Error('Not a Rootbound backup');let n=0;for(const k in o.keys){if(!/^(rbp|rbopt|rbw_|rbidx|rbid|rbc)[A-Za-z0-9_-]{0,40}$/.test(k)||typeof o.keys[k]!='string'||o.keys[k].length>4e6)continue;try{if(k!='rbid')JSON.parse(o.keys[k])}catch(_){continue}if(k!='rbid')JSON.parse(o.keys[k]);localStorage.setItem(k,o.keys[k]);n++}return n}
+ const BK_DEVICE=/^(rb_|rbtok$|rbsrv$|rbdiag|rbp_corrupt)/,BK_JSON=/^(rbp$|rbopt$|rbidx$|rbw_|rbc\d*$|rbp_bak)/;
+ function exportAll(){const o={app:'rootbound',v:1,keys:{}};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(RB_PREFIX)){const b=k.slice(RB_PREFIX.length);if(/^rb/.test(b)&&!BK_DEVICE.test(b))o.keys[b]=localStorage.getItem(b)}}return JSON.stringify(o)}
+ function importAll(txt){if(typeof RB_ACCT!='undefined'&&RB_ACCT.id)throw Error('Save files cannot be imported while signed in. Sign out first');const o=JSON.parse(txt);if(!o||o.app!='rootbound'||typeof o.keys!='object')throw Error('Not a Rootbound backup');let n=0;for(const k in o.keys){if(!/^rb[A-Za-z0-9_-]{0,44}$/.test(k)||BK_DEVICE.test(k)||typeof o.keys[k]!='string'||o.keys[k].length>4e6)continue;if(BK_JSON.test(k)){try{JSON.parse(o.keys[k])}catch(_){continue}}localStorage.setItem(k,o.keys[k]);n++}return n}
  // save backup (the game is single-player: one save on this computer)
- function account(){if((()=>{try{return NET7.online||!!RB_ACCT.id}catch(_){return false}})()){body.innerHTML='<h3>Save Data</h3><p>Your progress is saved on the server with your account.</p>';return}body.innerHTML='<h3>Save Data</h3><p>Your progress is saved automatically on this computer.</p><div class="hrow"><button class="hbtn" id="aex">Export save file</button><button class="hbtn" id="aim">Import save file</button></div><input type="file" id="afile" accept=".json,application/json" style="display:none"><div id="amsg" class="dim"></div><p class="dim">Export a backup now and then, so you can bring your progress back if anything happens to this computer.</p>';
+ function account(){if((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()){body.innerHTML='<h3>Save Data</h3><p>Your progress is saved on the server with your account.</p>';return}body.innerHTML='<h3>Save Data</h3><p>Your progress is saved automatically on this computer.</p><div class="hrow"><button class="hbtn" id="aex">Export save file</button><button class="hbtn" id="aim">Import save file</button></div><input type="file" id="afile" accept=".json,application/json" style="display:none"><div id="amsg" class="dim"></div><p class="dim">Export a backup now and then, so you can bring your progress back if anything happens to this computer.</p>';
   el('aex').onclick=()=>{try{saveP();celSave()}catch(_){}const b=new Blob([exportAll()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rootbound-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
-  el('aim').onclick=()=>el('afile').click();el('afile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const n=importAll(String(r.result));el('amsg').textContent='Imported '+n+' entries. Reloading...';setTimeout(()=>location.reload(),700)}catch(er){el('amsg').textContent='Import failed: '+er.message}};r.readAsText(f)}}
+  el('aim').onclick=()=>el('afile').click();el('afile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const n=importAll(String(r.result));if(!n){el('amsg').textContent='No Rootbound save found in that file.';return}try{RB_ACCT.freeze()}catch(_){}el('amsg').textContent='Save imported. Restarting...';setTimeout(()=>location.reload(),700)}catch(er){el('amsg').textContent='Import failed: '+er.message}};r.readAsText(f)}}
  applyUi();
  return{open,close,say6,minimap,exportAll,importAll,get on(){return hubOn},render,applyUi,ext:EXT,TABS,get body(){return body},esc,get tab(){return tab}}})();
 // expose AC6.head for the portrait
@@ -9594,7 +9600,7 @@ const FLY7=(()=>{
   if(typeof WINGSFX!='undefined'){WINGSFX.flap(strong);return}
   const v=Math.min(.12,.07+F.tier*.004);noise(.16,520+F.tier*30,v);snd(90+F.tier*3,.14,'sine',.05,.55)}
  function step(dt,ax,busy){const w=wingNow(),hold=!busy&&(K.w||K[' ']||K.arrowup),down=K.s||K.arrowdown;
-  F.tier=w?w.pw:0;F.tk=tkOf(w);   // flight power follows rarity (and size), not the table index
+  F.tier=w?(Number.isFinite(w.pw)?w.pw:(w.pw=Math.max(0,WRAR.indexOf(w.rar))+(w.a&&w.a.L>90?1:0))):0;F.tk=tkOf(w);   // flight power follows rarity (and size), not the table index
   if(P.g||P.sw){F.air=0;F.sta=Math.min(1,F.sta+dt*1.1);if(F.on){F.on=false;WingArt.FL.on=false}F.last=0;return}
   F.air+=dt;
   const can=!!w&&!busy&&hold&&F.sta>0&&F.air>.1&&(P.vy>-150||F.on);
@@ -14602,7 +14608,6 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
 /* ========== LATE: 90-settings-organize.js ========== */
 // ===== Settings: six clear categories (General, Graphics, Audio, Controls, Interface, Accessibility) + search.
 // Every control changes a real option and persists (cel.opt + celSave, or the legacy OPT + saveP for audio/zoom/shake). =====
-addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=e});
 (()=>{const X=UI6.ext,el=id=>document.getElementById(id),esc=UI6.esc;
  const _post=X.post;X.post=(tab,body)=>{try{_post&&_post(tab,body)}catch(e){console.error(e)}if(tab=='settings'){const s=body.querySelector('#brk7'),old=s&&s.closest('.hrow'),gfx=body.querySelector('#ss-graphics');if(s&&gfx){const w=document.createElement('div');w.innerHTML=row('brk7','Break effect','What a block bursts into when you break it','');const r=w.firstChild;r.querySelector('.sc7').appendChild(s);gfx.appendChild(r);if(old)old.remove()}}if(tab=='plates'){try{X.postPlates(body)}catch(e){console.error(e)}}};
  const CATS=[['general','General','◎','Theme, name and save data'],['graphics','Graphics','✧','Quality and visual effects'],['audio','Audio','♪','Music, effects and interface sounds'],['controls','Controls','⌘','Camera and key reference'],['interface','Interface','▣','HUD size, opacity and panels'],['access','Accessibility','◐','Motion, shake and contrast']];
@@ -14616,12 +14621,12 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=
   const S={
    general:row('sth','Theme','Night is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Night (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
-    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+(window.RB_INSTALL?row('sinst','Install Rootbound','Add the game to your computer from the browser, with its own window and icon','<button class="hbtn" id="sinst">Install</button>'):'')+((()=>{try{return NET7.online||!!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
+    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
     +row('sb','Bloom & glow','Soft light around bright blocks and magic',tog('sb',o.bloom,'Bloom'))
-    +row('sunc','Uncapped frame rate','Desktop app: run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
+    +row('sunc','Uncapped frame rate','Run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
     +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
     +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
     +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars')),
@@ -14651,7 +14656,6 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=
   q('snm').onchange=e=>{const n=e.target.value.trim().slice(0,14);if(n){myName=n;try{$('nm').value=n;saveP()}catch(_){}}else e.target.value=myName};q('snm').onkeydown=e=>e.stopPropagation();
   if(q('ssd'))q('ssd').onclick=()=>UI6.open('account');
   if(q('sintro'))q('sintro').onclick=()=>{try{INTRO60.replay()}catch(_){}};
-  if(q('sinst'))q('sinst').onclick=()=>{const e=window.RB_INSTALL;window.RB_INSTALL=null;try{e&&e.prompt()}catch(_){}};
   // graphics
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
@@ -16857,10 +16861,13 @@ try{RBDIAG.stage('late-scripts-loaded')}catch(_){}
 // While a big menu covers the screen (inventory, store, classes, character/settings panels) the world keeps simulating every frame but is
 // redrawn at ~30 fps behind it: the menu (its glass, scrolling and animations) gets the time instead of a world you can barely see.
 (function(){let last=performance.now(),fpsC=0,fpsT=last,acc=0,lastDraw=0;
+ const good={x:0,y:0,ok:false},nf=v=>!Number.isFinite(v);
+ function sane(){let hit='';if(nf(P.x)||nf(P.y)||nf(P.vx)||nf(P.vy)){hit='player';if(good.ok&&(nf(P.x)||nf(P.y))){P.x=good.x;P.y=good.y}P.vx=0;P.vy=0}else{good.x=P.x;good.y=P.y;good.ok=true}
+  if(nf(ZM)||ZM<=0){hit='zoom';ZM=1}if(nf(cam.x)||nf(cam.y)){hit=hit||'camera';cam.x=P.x-cv.width/ZM/2;cam.y=P.y-cv.height/ZM/2}if(hit&&!sane.said){sane.said=1;console.warn('[rootbound] a broken '+hit+' number was repaired')}}
  const menu=()=>{try{return !!(entered&&((typeof INV7!='undefined'&&INV7.isOpen)||(typeof STORE7!='undefined'&&STORE7.isOpen)||(typeof CLS9!='undefined'&&CLS9.isOpen())||(typeof UI6!='undefined'&&UI6.on)))}catch(_){return false}};
  function loop(n){const raw=n-last;last=n;
   if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const hs=window.HS_T>0;if(hs)window.HS_T-=raw/1000;const dt=Math.min(.05,raw/1000)*(hs?.06:1);window.FDT=dt;
-  const dn=!menu()||n-lastDraw>=32;if(dn)lastDraw=n;try{update(dt);evTick(dt);BOSS6.tick(dt);try{OBJ6.tick(dt)}catch(_){}DAILY6.tick(dt);VFX.update(dt);if(dn)draw();if(window.RBDIAG&&!RBDIAG.ready)RBDIAG.done();
+  const dn=!menu()||n-lastDraw>=32;if(dn)lastDraw=n;try{update(dt);sane();evTick(dt);BOSS6.tick(dt);try{OBJ6.tick(dt)}catch(_){}DAILY6.tick(dt);VFX.update(dt);if(dn)draw();if(window.RBDIAG&&!RBDIAG.ready)RBDIAG.done();
    if(entered&&dn){const w=cv.width,hh=cv.height;g.save();g.scale(ZM,ZM);VFX.draw(g,cam.x,cam.y,w/ZM,hh/ZM);BOSS6.drawProj(g,cam.x,cam.y);g.restore();POST6.run(w,hh);UI6.minimap(n)}}catch(e){if(!loop.err){loop.err=1;console.error(e)}
    // a frame that throws mid-draw skips its g.restore(): without this the world zoom stacks up and stays stuck (and the view goes blank)
    try{if(g.reset)g.reset();else{g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over'}}catch(_){}}
@@ -19964,8 +19971,8 @@ const AERO7=(()=>{
  for(const r of document.querySelectorAll('input[type=range]'))fill(r);
  // the new default, once (players can switch back in Settings)
  try{if(!localStorage.getItem('rb_aero1'))localStorage.setItem('rb_aero1','1')}catch(_){}
- // the Night skin (css/99-zzz-night.css) is the new default, once for everyone; other themes stay in Settings
- try{if(!localStorage.getItem('rb_night1')){localStorage.setItem('rb_night1','1');cel.opt.theme='night';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
+ // the Night skin (css/99-zzz-night.css) is the new default, once for every save; other themes stay in Settings
+ try{if(!localStorage.getItem('rbnight2')){localStorage.setItem('rbnight2','1');cel.opt.theme='night';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
  return{on,fill}})();
 
 /* ========== LATE: 99-zzzzzzzzz-b-liquids.js ========== */
@@ -21130,10 +21137,13 @@ const ACCT13=(()=>{
  function upload(force){if(!live||!ID)return;try{if(CRV8.on)return}catch(_){}try{saveP()}catch(_){}try{celSave()}catch(_){}
   const s=JSON.stringify(gather());if(s===last&&!force)return;if(s.length>1.2e6){console.warn('ACCT13: save too large to upload',s.length);return}
   last=s;const id=++seq,n=Math.max(1,Math.ceil(s.length/CH));for(let i=0;i<n;i++)NET7.send({t:'prof_put',id,i,n,base,d:s.slice(i*CH,(i+1)*CH)})}
+ // once the game is showing: the account and its progress are safe, only the sign-in ran out
+ function askSignIn(){let n=0;const t=setInterval(()=>{if(++n>480){clearInterval(t);return}try{if(window.RB_COVER||!entered||DLG7.isOpen)return;clearInterval(t);DLG7.confirm('Your sign-in ended','You are on this computer\'s offline save right now. Your account and its progress are safe. Sign in again to get back to them.','Sign in').then(ok=>{if(ok)NET7.signIn()})}catch(_){clearInterval(t)}},500)}
  // called by NET7 for every auth answer; true = the page is reloading, stop here
  function auth(m){if(!LS)return false;
-  if(!m.ok){if(ID&&m.expired){try{LS.removeItem('rbtok')}catch(_){}setActive('');reload();return true}return false}
-  if(m.kind=='guest'){if(ID){setActive('');reload();return true}return false}
+  if(!m.ok){if(ID&&m.expired){try{LS.removeItem('rbtok');LS.setItem('rb_relogin','1')}catch(_){}setActive('');reload();return true}return false}
+  if(m.kind=='guest'){if(ID){setActive('');reload();return true}try{if(LS.getItem('rb_relogin')){LS.removeItem('rb_relogin');askSignIn()}}catch(_){}return false}
+  try{if(m.name)LS.setItem('rb_lastname',String(m.name).slice(0,64))}catch(_){}
   if(m.uid!==ID){try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}setActive(m.uid);reload();return true}
   const g=m.gen|0,lg=LS.getItem('rbprofgen');if(lg!=null&&+lg!==g){wipe();LS.setItem('rbprofgen',String(g));LS.setItem('rbprofrev','0');try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}RB_ACCT.freeze();reload();return true}LS.setItem('rbprofgen',String(g));
   const srv=m.prev|0,mine=+LS.getItem('rbprofrev')||0;base=srv;

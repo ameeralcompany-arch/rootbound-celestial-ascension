@@ -250,6 +250,14 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 12
         run: bash tools/ci-test.sh tests/nav.js
+      - name: Test Windows only
+        if: ${{ !cancelled() }}
+        timeout-minutes: 12
+        run: bash tools/ci-test.sh tests/winonly.js
+      - name: Test real launch
+        if: ${{ !cancelled() }}
+        timeout-minutes: 12
+        run: bash tools/ci-test.sh tests/launch.js
       - name: Test words
         if: ${{ !cancelled() }}
         timeout-minutes: 10

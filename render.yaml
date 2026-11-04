@@ -1,4 +1,4 @@
-# Rootbound's online server on Render's free plan. See server/DEPLOY.md for the steps.
+# Rootbound's online server on Render's free plan: accounts and shared worlds for the Windows app. See server/DEPLOY.md for the steps.
 # Values marked sync: false are typed into Render's dashboard and never stored in this repository.
 services:
   - type: web

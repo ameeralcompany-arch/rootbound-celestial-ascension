@@ -8,8 +8,8 @@
 /* Optional networking settings. Leave as null to use the defaults.
    ice:  your own array of WebRTC iceServers (STUN/TURN) for the best reliability.
    peer: your own PeerJS server, e.g. {host:'my-peer.example.com',port:443,path:'/',secure:true,key:'peerjs'} */
-var RB_HOSTED=false;   // the Rootbound server turns this on in the copy of the page it serves
-const RB_SERVER='https://rootbound-rcvi.onrender.com';   // the online server for the desktop app and GitHub Pages copy, e.g. 'https://rootbound.onrender.com' (see server/DEPLOY.md)
+var RB_HOSTED=false;   // on only in test runs, where a local test server hands out this page. The live server gives browsers the download page instead
+const RB_SERVER='https://rootbound-rcvi.onrender.com';   // the online server the Windows app connects to (see server/DEPLOY.md)
 window.RB_CONFIG=Object.assign({ice:null,peer:null,server:RB_SERVER,solo:!RB_HOSTED&&(!RB_SERVER||!!navigator.webdriver)},window.RB_CONFIG_OVERRIDE||{});   // solo: single-player, never connects to a server (automated test browsers stay offline)
 </script>
 <style>
@@ -394,7 +394,7 @@ addEventListener('keydown',e=>{ac();startBGM();if(isTextEl(e.target)&&e.target.i
  if(e.key>='1'&&e.key<='9')selBar(+e.key-1);if(k=='q')useSkill('hat');if(k=='r')useSkill('body');if(k=='z')useSkill('wing');if(e.key=='Shift')useSkill('boot');if(k=='f')useSkill('glove');if(k=='e')interact();
  if(k=='w'||k==' '||k=='arrowup')jumpPress()});
 addEventListener('keyup',e=>{const k=e.key.toLowerCase();K[k]=0;if(k=='w'||k==' '||k=='arrowup')jumpRelease()});
-cv.addEventListener('mousemove',e=>{mx=e.clientX*cv.width/innerWidth/ZM;my=e.clientY*cv.height/innerHeight/ZM});cv.addEventListener('mousedown',e=>{ac();if(e.clientY>innerHeight-34){return}if(e.button==0)mdL=true;if(e.button==2)mdR=true;e.preventDefault()});addEventListener('mouseup',e=>{if(e.button==0)mdL=false;if(e.button==2)mdR=false});cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('mousemove',e=>{mx=e.clientX*cv.width/innerWidth/ZM;my=e.clientY*cv.height/innerHeight/ZM});cv.addEventListener('mousedown',e=>{ac();if(e.button==0)mdL=true;if(e.button==2)mdR=true;e.preventDefault()});addEventListener('mouseup',e=>{if(e.button==0)mdL=false;if(e.button==2)mdR=false});cv.addEventListener('contextmenu',e=>e.preventDefault());
 cv.addEventListener('wheel',e=>{if(e.ctrlKey||e.shiftKey){setZoom(ZM*(e.deltaY>0?.9:1.1));e.preventDefault()}else{e.preventDefault();/* the wheel cycles weapons and tools (PLAY8); it only fires over the game canvas, never over a panel */if(typeof PLAY8!='undefined')PLAY8.wheel(e)}},{passive:false});
 // ---------- UI
 const menuEl=$('menu'),chatEl=$('chat'),invEl=$('inv'),gridEl=$('grid'),tabsEl=$('tabs');

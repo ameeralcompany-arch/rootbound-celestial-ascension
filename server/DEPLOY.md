@@ -19,9 +19,9 @@ Render's free disk is erased on every restart, so the server copies its saves to
 
 These stay in Render's dashboard. They are never in the repository or in the game file.
 
-**3. Play.** Render gives you an address like `https://rootbound.onrender.com`. Open it, go to **Worlds > Sign in**, and sign in with your owner name and password. Type `/god` in chat to check it worked.
+**3. Connect the game.** Render gives you an address like `https://rootbound.onrender.com`. Put it in `RB_SERVER` near the top of `src/legacy.html`, rebuild and release the Windows app.
 
-**4. Optional: the desktop app and GitHub Pages copy.** They stay single-player until they know the address. Put it in `RB_SERVER` near the top of `src/legacy.html`, rebuild and publish.
+**4. Play.** Open the app, go to **Worlds > Sign in**, and sign in with your owner name and password. Type `/god` in chat to check it worked. Opening the address in a browser only shows the download page: the game runs only in the Windows app.
 
 ## Accounts and monsters
 

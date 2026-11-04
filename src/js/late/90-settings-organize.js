@@ -1,6 +1,5 @@
 // ===== Settings: six clear categories (General, Graphics, Audio, Controls, Interface, Accessibility) + search.
 // Every control changes a real option and persists (cel.opt + celSave, or the legacy OPT + saveP for audio/zoom/shake). =====
-addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=e});
 (()=>{const X=UI6.ext,el=id=>document.getElementById(id),esc=UI6.esc;
  const _post=X.post;X.post=(tab,body)=>{try{_post&&_post(tab,body)}catch(e){console.error(e)}if(tab=='settings'){const s=body.querySelector('#brk7'),old=s&&s.closest('.hrow'),gfx=body.querySelector('#ss-graphics');if(s&&gfx){const w=document.createElement('div');w.innerHTML=row('brk7','Break effect','What a block bursts into when you break it','');const r=w.firstChild;r.querySelector('.sc7').appendChild(s);gfx.appendChild(r);if(old)old.remove()}}if(tab=='plates'){try{X.postPlates(body)}catch(e){console.error(e)}}};
  const CATS=[['general','General','◎','Theme, name and save data'],['graphics','Graphics','✧','Quality and visual effects'],['audio','Audio','♪','Music, effects and interface sounds'],['controls','Controls','⌘','Camera and key reference'],['interface','Interface','▣','HUD size, opacity and panels'],['access','Accessibility','◐','Motion, shake and contrast']];
@@ -14,12 +13,12 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=
   const S={
    general:row('sth','Theme','Night is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Night (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
-    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+(window.RB_INSTALL?row('sinst','Install Rootbound','Add the game to your computer from the browser, with its own window and icon','<button class="hbtn" id="sinst">Install</button>'):'')+((()=>{try{return NET7.online||!!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
+    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
     +row('sb','Bloom & glow','Soft light around bright blocks and magic',tog('sb',o.bloom,'Bloom'))
-    +row('sunc','Uncapped frame rate','Desktop app: run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
+    +row('sunc','Uncapped frame rate','Run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
     +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
     +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
     +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars')),
@@ -49,7 +48,6 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=
   q('snm').onchange=e=>{const n=e.target.value.trim().slice(0,14);if(n){myName=n;try{$('nm').value=n;saveP()}catch(_){}}else e.target.value=myName};q('snm').onkeydown=e=>e.stopPropagation();
   if(q('ssd'))q('ssd').onclick=()=>UI6.open('account');
   if(q('sintro'))q('sintro').onclick=()=>{try{INTRO60.replay()}catch(_){}};
-  if(q('sinst'))q('sinst').onclick=()=>{const e=window.RB_INSTALL;window.RB_INSTALL=null;try{e&&e.prompt()}catch(_){}};
   // graphics
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};

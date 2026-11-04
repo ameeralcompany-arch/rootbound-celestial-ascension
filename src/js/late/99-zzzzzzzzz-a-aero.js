@@ -17,6 +17,6 @@ const AERO7=(()=>{
  for(const r of document.querySelectorAll('input[type=range]'))fill(r);
  // the new default, once (players can switch back in Settings)
  try{if(!localStorage.getItem('rb_aero1'))localStorage.setItem('rb_aero1','1')}catch(_){}
- // the Night skin (css/99-zzz-night.css) is the new default, once for everyone; other themes stay in Settings
- try{if(!localStorage.getItem('rb_night1')){localStorage.setItem('rb_night1','1');cel.opt.theme='night';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
+ // the Night skin (css/99-zzz-night.css) is the new default, once for every save; other themes stay in Settings
+ try{if(!localStorage.getItem('rbnight2')){localStorage.setItem('rbnight2','1');cel.opt.theme='night';try{celSave()}catch(_){}try{THEME7.apply()}catch(_){}}}catch(_){}
  return{on,fill}})();

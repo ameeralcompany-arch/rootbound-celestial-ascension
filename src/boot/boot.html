@@ -20,6 +20,8 @@ html[data-theme=dark] #rbboot i{color:#a59dbc}
 /* Boot guard: runs before everything else. Shows a loading screen at once, records startup stages and errors,
    survives blocked localStorage, and turns a stalled start into a readable diagnostic instead of a black screen. */
 (function(){
+/* Rootbound is a Windows app. In a browser the game stops here and shows the way to the download. Automated test browsers (webdriver) still run it. */
+if(!/\bElectron\//.test(navigator.userAgent)&&!navigator.webdriver){window.RB_BLOCKED=true;try{window.stop()}catch(e){}document.documentElement.innerHTML='<head><meta charset="utf-8"><title>Rootbound for Windows</title><style>html,body{margin:0;height:100%;background:#0e0b1f;color:#f1ebf8;font:16px/1.5 system-ui,sans-serif}body{display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;box-sizing:border-box}h1{margin:0 0 8px;font-size:30px}p{margin:0 0 22px;color:#b9b0d4}a{display:inline-block;padding:13px 26px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#e0559b);color:#fff;font-weight:700;text-decoration:none}</style></head><body><main id="rbgate"><h1>Rootbound is a Windows game</h1><p>It no longer runs in a browser. Download it for Windows 10 or newer.</p><a id="rbgatedl" href="https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip">Download for Windows</a></main></body>';return}
 var D=window.RBDIAG={t0:Date.now(),stages:[],errors:[],assets:[],ready:false,
  stage:function(n,info){this.stages.push({n:n,ms:Date.now()-this.t0,i:info||''});},
  /* errors are only recorded (quietly): the player never gets an error box. If the game really doesn't start, the 12 s watchdog

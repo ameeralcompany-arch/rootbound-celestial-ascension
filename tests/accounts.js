@@ -19,7 +19,7 @@ const state=p=>ev(p,()=>({lvl:lvl|0,gems:gems|0,acct:RB_ACCT.id,auth:NET7.auth&&
   await reg(P,'newbie');let s=await state(P);ok('a new account starts at level 1 with nothing, not this computer\'s level 40',s.lvl<=1&&s.gems<1000&&s.acct,s);
   ok('its save is separate: the offline save is untouched',(await ev(P,()=>{const raw=Storage.prototype.getItem;return window.__raw=(()=>{for(let i=0;i<localStorage.length;i++)if(localStorage.key(i)=='rbp')return true;return false})()})),'');
   ok('no backup button online',await ev(P,()=>{try{UI6.open('settings')}catch(_){}const has=!!document.getElementById('ssd');try{UI6.close()}catch(_){}return !has}));
-  ok('save files cannot be imported online',await ev(P,()=>{try{UI6.open('account');const t=document.body.innerText.includes('Import save file');try{UI6.close()}catch(_){}return !t}catch(_){return true}}));
+  ok('save files cannot be imported online',await ev(P,()=>{try{UI6.open('account');const t=!!document.getElementById('aim');try{UI6.close()}catch(_){}return !t}catch(_){return true}}));
   // progress goes to the server
   await ev(P,()=>{lvl=7;gems=321;saveP();ACCT13.upload(true)});await sleep(800);const u0=JSON.parse(fs.readFileSync(path.join(dir,'profiles',(await ev(P,()=>RB_ACCT.id))+'.json'),'utf8'));ok('progress is saved on the server',u0.rev>=1&&!!u0.keys.rbp&&!Object.keys(u0.keys).some(k=>/^rbw_|^rbp_bak|^rbtok|^rb_/.test(k)),{rev:u0.rev,keys:Object.keys(u0.keys).length,size:JSON.stringify(u0).length});
   // and follows the account to another computer

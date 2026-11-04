@@ -1,7 +1,7 @@
 {
   "name": "rootbound",
   "version": "6.0.0",
-  "description": "Rootbound - single-player anime sandbox adventure",
+  "description": "Rootbound - anime block sandbox for Windows",
   "main": "main.js",
   "author": "Rootbound",
   "license": "MIT",
