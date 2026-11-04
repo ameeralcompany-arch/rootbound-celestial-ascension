@@ -88,4 +88,5 @@ const WINGSFX=(()=>{
   const hold=!busy&&(K.w||K[' ']||K.arrowup),g=!!w&&!P.g&&!P.sw&&hold&&P.vy>0&&!(typeof FLY7!='undefined'&&FLY7.F.on);
   if(g&&!gl&&gate('g',1200))play('g',w);gl=g}
  {const _p=physics;physics=function(dt,ax,busy){const r=_p.apply(this,arguments);try{step(busy)}catch(_){}return r}}
+ for(const[n,o]of[['tideveil','haloseraph'],['foamlace','eyemoth'],['nebuladrake','voidshroud'],['cometlance','stormlance'],['sakurasilk','haloseraph'],['cinderphoenix','nightforge'],['chronovane','amethclaw'],['inkdragon','inkwraith']])if(!P7[n]&&P7[o])P7[n]=P7[o];
  return{jump,flap,play,burst,P7}})();
