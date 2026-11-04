@@ -3,7 +3,7 @@ const SHOT=process.env.SHOTS||'';
 (async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox']});const p=await b.newPage({viewport:{width:1280,height:720}});const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('file://'+__dirname+'/../index.html');await p.waitForTimeout(900);
 await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(300);await p.evaluate(()=>{SHOW7.close()});await p.waitForTimeout(600);
-ok('Clean is the default: the light palette with the white/grey clean skin, interface in reduced motion, no blur on panels',await p.evaluate(()=>{const d=document.documentElement,q=document.querySelector('#hudL');return cel.opt.theme=='clean'&&d.dataset.theme=='light'&&d.dataset.skin=='clean'&&d.dataset.reduce=='true'&&(!q||getComputedStyle(q).backdropFilter=='none')}));
+ok('Night is the default: the dark palette, full interface motion, no live blur on panels',await p.evaluate(()=>{const d=document.documentElement,q=document.querySelector('#hudL');return cel.opt.theme=='night'&&d.dataset.theme=='dark'&&d.dataset.skin=='night'&&d.dataset.ureduce!='true'&&(!q||getComputedStyle(q).backdropFilter=='none')}));
 await p.evaluate(()=>UI6.open('settings'));await p.waitForTimeout(400);
 ok('settings has theme + UI sound controls',await p.evaluate(()=>!!document.getElementById('sth')&&!!document.getElementById('suv')&&!!document.getElementById('sum')));
 await p.selectOption('#sth','dark');await p.waitForTimeout(300);

@@ -35,7 +35,7 @@ async function enter(p,lv){await p.goto(URL);await p.waitForTimeout(700);await p
   ok('all wings/auras/outfits/hairstyles/accessories render',r.err.length==0&&r.n>300,r.n+' draws '+r.err.join('|'));
   const npr=await p.evaluate(()=>{const e=[];try{for(let t=0;t<40;t++)Plate.get(t,'Tester_'+t,t*15+1)}catch(x){e.push(x.message)}return e});ok('nameplate sprites render for 40 tiers',npr.length==0,npr.join('|'));await p.close()}
  // 5. hub tabs
- {const p=await page(b,guest);await enter(p,90);const t=['profile','look','wings','plates','skills','gear','quests','settings','account'];const bad=[];for(const k of t){await p.evaluate(k=>UI6.open(k),k);await p.waitForTimeout(150);if(!(await p.evaluate(()=>document.getElementById('hubbody').children.length)))bad.push(k)}ok('all 9 hub tabs render',bad.length==0,bad.join(','));
+ {const p=await page(b,guest);await enter(p,90);const t=['profile','look','wings','plates','skills','bosses','quests','ach','events','settings','account'];const bad=[];for(const k of t){await p.evaluate(k=>UI6.open(k),k);await p.waitForTimeout(150);if(!(await p.evaluate(()=>document.getElementById('hubbody').children.length)))bad.push(k)}ok('all hub tabs render',bad.length==0,bad.join(','));
   const sp=await p.evaluate(()=>{UI6.open('skills');pst.pts=3;UI6.render();document.querySelector('#hubbody button[data-k="vit"]').click();return[pst.vit,pst.pts]});ok('skill point allocation',sp[0]==1&&sp[1]==2,JSON.stringify(sp));
   const q=await p.evaluate(()=>{const a=maxHP();pst.vit+=5;return maxHP()-a});ok('vitality raises max HP',q==50,q);ok('hub: no errors',p.errs.length==0,p.errs.join('|'));await p.close()}
  // 6. bosses, relics, daily

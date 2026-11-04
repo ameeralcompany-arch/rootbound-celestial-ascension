@@ -1,0 +1,220 @@
+/* ===== The menu dock (NAV16), the map tools and the Hub's section layout. Uses the shared colour tokens, so it fits every theme. ===== */
+.n16i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.n16i .d{fill:currentColor;fill-opacity:.16}.n16i .f{fill:currentColor;stroke:none}
+#nav16{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:7;opacity:var(--hud-op,1);transition:opacity .2s}
+#nav16:hover,#nav16:focus-within{opacity:1}
+#nav16g{display:flex;flex-direction:column;gap:6px;padding:8px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh-2)}
+.n16r{display:flex;align-items:center;gap:4px}
+.n16r h5{display:none}
+.n16s{width:1px;height:26px;margin:0 3px;flex:none;background:var(--line-strong);opacity:.7}
+#nav16 .n16b{position:relative!important;left:auto!important;top:auto!important;width:42px!important;height:42px!important;padding:0!important;display:grid;place-items:center;border-radius:11px!important;color:var(--ink-2)!important;background:transparent!important;border:1px solid transparent!important;box-shadow:none!important;letter-spacing:0!important;animation:none!important;filter:none!important;cursor:pointer;transition:transform .12s ease,background-color .12s ease,color .12s ease,border-color .12s ease!important}
+#nav16 .n16b:hover{color:var(--ink)!important;background:var(--btn-bg-hover)!important;border-color:var(--line-strong)!important;transform:translateY(-2px)!important}
+#nav16 .n16b:active{transform:translateY(0) scale(.94)!important}
+#nav16 .n16b:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+#nav16 .n16b.gold{color:var(--n16-gold,#c9973a)!important}
+#nav16 .n16b.on{color:var(--n16-on,var(--accent))!important;background:var(--sel-bg)!important;border-color:var(--sel-bd)!important;box-shadow:0 0 12px -4px var(--sel-bd)!important}
+#nav16 .n16b.on:after{content:'';position:absolute;left:30%;right:30%;bottom:3px;height:2px;border-radius:2px;background:currentColor}
+.n16b .lbl{display:none}
+.n16b .bdg{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;font:800 10px/16px var(--font-ui);font-style:normal;text-align:center;color:#fff;background:linear-gradient(180deg,#ef6f93,#c43c6c);box-shadow:0 0 0 2px var(--surface-solid);pointer-events:none}
+.n16b .bdg[hidden]{display:none}
+#nav16 #nav16m{display:none!important}
+/* the Store's button keeps the dock's shape, with a gold icon (older rules paint #bstore as a big gradient pill) */
+#nav16 #bstore.n16b{width:42px!important;padding:0!important;background:transparent!important;box-shadow:none!important;color:var(--n16-gold,#c9973a)!important}
+#nav16 #bstore.n16b:hover{background:var(--btn-bg-hover)!important}
+#nav16 #bstore.n16b.on{background:var(--sel-bg)!important;box-shadow:0 0 12px -4px var(--sel-bd)!important}
+#nav16.sm #bstore.n16b{width:36px!important}
+#nav16.fold #nav16g #bstore.n16b{width:auto!important}
+/* smaller, when the hotbar leaves less room */
+#nav16.sm #nav16g{padding:6px;gap:4px}#nav16.sm .n16r{gap:2px}#nav16.sm .n16b{width:36px!important;height:36px!important}#nav16.sm .n16i{width:19px;height:19px}#nav16.sm .n16s{margin:0 2px}
+/* folded into one Menu button: it opens the same buttons, labelled and grouped */
+#nav16.fold #nav16m{display:grid!important;width:46px!important;height:46px!important;background:var(--surface)!important;border:1px solid var(--line-strong)!important;box-shadow:var(--sh-2)!important}
+#nav16.fold #nav16g{position:absolute;right:0;bottom:54px;width:min(312px,calc(100vw - 24px));max-height:calc(100vh - 90px);overflow:auto;padding:10px;display:none;gap:4px}
+#nav16.fold.open #nav16g{display:flex;animation:mo-in .18s var(--mo-ease,ease) both}
+#nav16.fold .n16r{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+#nav16.fold .n16s{display:none}
+#nav16.fold .n16r h5{display:block;grid-column:1/-1;margin:6px 2px 0;font:800 10px var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+#nav16.fold #nav16g .n16b{width:auto!important;height:58px!important;gap:2px;align-content:center}
+#nav16.fold #nav16g .n16b .lbl{display:block;font:600 10.5px var(--font-ui);white-space:nowrap}
+/* tooltip: one element, moved with transform, so it costs nothing */
+#nav16tip{position:fixed;left:0;top:0;z-index:9500;max-width:240px;padding:8px 11px;border-radius:10px;background:var(--surface-solid);border:1px solid var(--line-strong);box-shadow:var(--sh-2);color:var(--ink);pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s ease}
+#nav16tip.on{opacity:1;visibility:visible}
+#nav16tip b{display:flex;align-items:center;justify-content:space-between;gap:12px;font:700 12.5px var(--font-ui)}
+#nav16tip kbd{font:800 10px var(--font-ui);padding:1px 6px;border-radius:5px;border:1px solid var(--line-strong);color:var(--ink-2);background:var(--surface-3)}
+#nav16tip small{display:block;margin-top:3px;font:500 11.5px/1.35 var(--font-ui);color:var(--muted)}
+/* the minimap, with its tools at its side, in the top right corner; the quest tracker under it */
+html body #hudR{position:fixed;right:12px;top:calc(12px + env(safe-area-inset-top,0px));left:auto;display:flex;align-items:flex-start;gap:6px;z-index:6}
+#hudR .maptools{display:flex;flex-direction:column;gap:5px}
+html body #hudR .maptools button{width:30px!important;height:30px!important;padding:0;display:grid;place-items:center;border-radius:9px!important;color:var(--ink-2)!important;background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:var(--sh-1)!important;font-size:0;cursor:pointer;transition:transform .12s ease,color .12s ease,border-color .12s ease}
+html body #hudR .maptools button:hover{color:var(--ink)!important;border-color:var(--line-strong)!important;transform:translateY(-1px)}
+html body #hudR .maptools button:active{transform:scale(.93)}
+html body #hudR .maptools button.off{color:var(--muted)!important;opacity:.75}
+#hudR .maptools .n16i{width:17px;height:17px}
+html body #hudR #mini{position:relative;right:auto;top:auto;width:164px;height:105px;flex:none}
+html body #quest{top:calc(127px + env(safe-area-inset-top,0px))}
+html[data-hidemini=true] body #quest{top:calc(120px + env(safe-area-inset-top,0px))}
+/* the row under the character card */
+html body #ow15bt{left:12px;top:calc(146px + env(safe-area-inset-top,0px));gap:5px;display:flex;align-items:center}
+html body #ow15bt button{height:28px;min-width:32px;padding:0 9px;display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:9px!important;font:700 10.5px var(--font-ui)!important;letter-spacing:.06em;color:var(--ink-2)!important;background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:var(--sh-1)!important;cursor:pointer;transition:transform .12s ease,color .12s ease,border-color .12s ease}
+html body #ow15bt button:hover{color:var(--ink)!important;border-color:var(--line-strong)!important;transform:translateY(-1px)}
+html body #ow15bt button:active{transform:scale(.95)}
+html body #ow15bt .n16i{width:15px;height:15px}
+#dz8{top:calc(182px + env(safe-area-inset-top,0px))}
+/* narrow windows: the skills step up above the hotbar, and the world name and hidden word move into the room between the card and the map */
+/* with the old Inventory tab gone, the bottom row sits level with the dock */
+html body #bar{bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
+html body #skills{bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
+html body #skills.n16up{bottom:calc(106px + env(safe-area-inset-bottom,0px))!important}
+@media(max-width:1000px){html body #hudC,html body #wl9{left:calc(330px + (100vw - 330px - 216px)/2)!important}html body #wl9 .lb,html body #wl9>span:first-child{display:none}}
+html.n16up body #prompt{bottom:calc(176px + env(safe-area-inset-bottom,0px))}
+/* boss cinematics hide the dock with the rest of the HUD */
+body.bb10c :is(#nav16,#ow15bt){opacity:0!important;transition:opacity .35s;pointer-events:none}
+/* the Hub: a header with the section's name, tabs across the top (none when the section has one page), the page below */
+html body #hubc{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr)!important;width:min(960px,94vw)!important;height:min(660px,90vh)!important;overflow:hidden}
+#hubhead{display:flex;align-items:center;gap:10px;padding:14px 56px 10px 20px;color:var(--ink)}
+#hubhead .n16i{width:24px;height:24px;color:var(--accent)}
+#hubhead b{font:800 19px var(--font-ui);letter-spacing:.03em}
+#hubhead i{font:500 12px 'Yu Gothic UI','Yu Gothic','Meiryo','MS Gothic',sans-serif;font-style:normal;letter-spacing:.2em;color:var(--muted)}
+html body #hubnav{position:relative;display:flex!important;flex-direction:row!important;align-items:stretch;gap:2px;padding:0 16px!important;overflow-x:auto;overflow-y:hidden;background:none!important;border:0!important;border-bottom:1px solid var(--line)!important;box-shadow:none!important;scrollbar-width:none}
+html body #hubnav button{position:relative;flex:none;width:auto;padding:9px 13px!important;margin:0!important;border:0!important;border-radius:9px 9px 0 0!important;background:transparent!important;box-shadow:none!important;color:var(--muted)!important;font:700 12.5px var(--font-ui)!important;text-align:center;transform:none!important;cursor:pointer}
+html body #hubnav button:before{display:none!important}
+html body #hubnav button:hover{color:var(--ink)!important;padding-left:13px!important}
+html body #hubnav button.on{color:var(--ink)!important}
+html body #hubnav button.on:after{content:''!important;display:block!important;position:absolute!important;left:10px!important;right:10px!important;bottom:0!important;top:auto!important;width:auto!important;height:2px!important;margin:0!important;transform:none!important;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2))!important;box-shadow:none!important}
+#hubnav .nind7{display:none}
+#hubc.one #hubnav{display:none!important}#hubc.one #hubhead{border-bottom:1px solid var(--line)}
+html body #hubbody{min-height:0;overflow:auto;padding:16px 20px 22px!important}
+/* the page's own big title repeats the header: the tab already says it (a world keeps its name) */
+#hubbody:not([data-tab=world])>h3:first-child{display:none}
+html body #hubx{position:absolute;right:12px;top:12px;width:32px;height:32px;padding:0!important;border-radius:9px!important;z-index:3}
+html body #hubbody h4{margin:18px 0 8px;font:800 12px var(--font-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+html body #hubbody .bs16 h4:before,html body #hubbody .bs16 h4:after{display:none!important}
+#hubbody h4 small{font-weight:600;letter-spacing:.02em;text-transform:none;margin-left:6px}
+#hubbody>h4:first-of-type{margin-top:6px}
+/* pages: progress summary, quest rows, boss cards */
+.sum16{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:2px 0 6px}
+.sum16>div{padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
+.sum16 small{display:block;font:600 11px var(--font-ui);color:var(--muted)}.sum16 b{display:block;margin:2px 0 6px;font:800 17px var(--font-ui);font-variant-numeric:tabular-nums;color:var(--ink)}
+.ql16{display:grid;gap:6px}.ql16.two{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.q16{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:11px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.q16>div:first-child{flex:1;min-width:0}.q16 b{display:block;font:700 13px var(--font-ui)}.q16 small{display:block;margin-top:1px;font:500 11.5px/1.35 var(--font-ui);color:var(--muted)}
+.q16 .bar{height:5px;margin-top:6px;border-radius:9px;overflow:hidden;background:var(--line)}
+.q16 .n{flex:none;font:700 11.5px var(--font-ui);font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap}
+.q16 button{flex:none;white-space:nowrap}
+.q16.done{opacity:.66}.q16.done b{color:var(--ink-2)}.q16.live{border-color:var(--sel-bd);box-shadow:0 0 12px -5px var(--sel-bd)}
+.sum16 .bar{height:5px;border-radius:9px;overflow:hidden;background:var(--line)}
+.sum16 .bar i,.q16 .bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--accent),var(--accent-2))!important}
+.bl16{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:10px}
+.bs16{display:flex;gap:12px;padding:11px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);box-shadow:inset 3px 0 0 -1px var(--bc);min-width:0}
+.bs16 .pic{flex:none;width:96px;height:96px;border-radius:11px;overflow:hidden;background:#0c0c20;border:1px solid var(--line)}
+.bs16 .pic canvas{width:100%;height:100%;display:block}
+.bs16 .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.bs16 header{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+html body #hubbody .bs16 h4{margin:0;font:800 14px var(--font-ui);letter-spacing:0;text-transform:none;color:var(--ink)}
+.bs16 .diff{flex:none;font-size:11px;letter-spacing:1px;color:var(--n16-gold,#c9973a)}.bs16 .diff i{font-style:normal;opacity:.22}
+.bs16 p{margin:0;font:500 11.5px/1.35 var(--font-ui);color:var(--muted)}
+.bs16 dl{display:grid;grid-template-columns:repeat(6,auto);justify-content:space-between;gap:2px 8px;margin:2px 0}
+.bs16 dl div{min-width:0}.bs16 dt{font:600 9.5px var(--font-ui);letter-spacing:.03em;color:var(--muted)}.bs16 dd{margin:0;font:700 12px var(--font-ui);font-variant-numeric:tabular-nums}
+.bs16 .relic{padding:5px 8px;border-radius:8px;background:var(--surface-3);border:1px solid var(--line)}.bs16 .relic b{display:block;font:700 11.5px var(--font-ui)}.bs16 .relic small{display:block;font:500 11px var(--font-ui);color:var(--muted)}
+.bs16 .relic.on b{color:var(--n16-gold,#c9973a)}
+.bs16 footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}.bs16 footer small{min-width:0;font:600 11px/1.3 var(--font-ui);color:var(--ink-2)}.bs16 footer button{flex:none;white-space:nowrap}
+.bs16.won{border-color:var(--line-strong)}
+/* the Worlds panel */
+#menu #card #logo,#menu #card #tag{display:none}
+html body #menu #card{max-height:calc(100vh - 28px)!important;overflow:auto!important;box-sizing:border-box}
+/* the hotbar stays in front while the inventory is open (to assign slots), so the panel stops above it */
+html.inv6 #inv7{padding-bottom:100px;box-sizing:border-box}html.inv6 #inv7 .sheet{height:min(660px,calc(100vh - 116px))!important}
+#wtabs16{margin:-4px 0 12px}
+.whead16{display:flex;align-items:center;gap:10px;padding:0 40px 8px 0;color:var(--ink)}.whead16 .n16i{width:24px;height:24px;color:var(--accent)}.whead16 b{font:800 19px var(--font-ui);letter-spacing:.03em}.whead16 i{font:500 12px 'Yu Gothic UI','Yu Gothic','Meiryo','MS Gothic',sans-serif;font-style:normal;letter-spacing:.2em;color:var(--muted)}
+.wnav16{display:flex;gap:2px;border-bottom:1px solid var(--line)}
+html body .wnav16 button{flex:none;width:auto;padding:8px 13px!important;margin:0!important;border:0!important;border-radius:9px 9px 0 0!important;background:transparent!important;box-shadow:none!important;color:var(--muted)!important;font:700 12.5px var(--font-ui)!important;cursor:pointer}
+html body .wnav16 button:hover,html body .wnav16 button.on{color:var(--ink)!important}
+html body .wnav16 button.on{box-shadow:inset 0 -2px 0 var(--accent)!important}
+@media(max-width:720px){.bl16{grid-template-columns:minmax(0,1fr)}.ql16.two{grid-template-columns:minmax(0,1fr)}.bs16 dl{grid-template-columns:repeat(3,auto)}.bs16 .pic{width:72px;height:72px}}
+
+/* ===== NIGHT: the default skin. Deep indigo panels, soft violet and rose gradients, gold for what is selected. Panels are see-through without
+   live blur and every motion is transform or opacity, so the game keeps its frame rate. ===== */
+html[data-skin=night]:root{
+ --ink:#f2eefc;--ink-2:#cec8e6;--muted:#9c97bc;--line:rgba(166,152,232,.2);--line-strong:rgba(194,180,250,.42);
+ --accent:#b9a2ff;--accent-2:#f1a7cf;--accent-soft:rgba(185,162,255,.14);--focus:#d7c8ff;
+ --bg-page:linear-gradient(150deg,#0e0e22,#191838 60%,#131a33);
+ --surface:linear-gradient(165deg,rgba(32,29,62,.93),rgba(17,17,38,.92));--surface-solid:#1a1935;--surface-2:linear-gradient(165deg,#272552,#1b1a3a);--surface-3:linear-gradient(165deg,#201f45,#171733);--sunken:#10102a;
+ --overlay:rgba(6,6,18,.62);--glass-blur:0px;--panel:rgba(26,25,53,.94);--panel2:#201f45;--panel-hl:inset 0 1px 0 rgba(255,255,255,.06);
+ --btn-bg:linear-gradient(180deg,#312e60,#232148);--btn-bg-hover:linear-gradient(180deg,#3d3974,#2c2a58);--btn-ink:#f2eefc;
+ --btn-primary:linear-gradient(180deg,#8f73f2,#6448c6);--btn-primary-ink:#fff;
+ --sel-bg:linear-gradient(165deg,#3a3268,#2a2550);--sel-bd:#f0cf8c;--input-bg:#11112a;
+ --sh-1:0 1px 3px rgba(0,0,0,.4);--sh-2:0 8px 22px -10px rgba(0,0,0,.75);--sh-3:0 22px 54px -18px rgba(0,0,0,.85);--glow:0 0 14px -4px #b9a2ff;
+ --toast-bg:linear-gradient(165deg,#28264f,#1a1935);--toast-bd:rgba(194,180,250,.4);
+ --bg:#12122a;--pn:#1a1935;--gold:#f0cf8c;--gold2:#f7e3b4;--vio:#b9a2ff;--ice:#a9d4f5;--txt:#f2eefc;--dim:#9c97bc;--tx:#f2eefc;--mu:#9c97bc;--bd:rgba(166,152,232,.2);--ac:#b9a2ff;
+ --ed-bg:#1a1935;--ed-paper:#201f45;--ed-ink:#f2eefc;--ed-mute:#9c97bc;--ed-rule:rgba(166,152,232,.2);--ed-soft:rgba(185,162,255,.08);
+ --g-pearl:linear-gradient(165deg,rgba(32,29,62,.93),rgba(17,17,38,.92));--g-pearl-lav:linear-gradient(165deg,rgba(36,32,70,.93),rgba(19,18,42,.92));--g-lav-mist:linear-gradient(165deg,#312e60,#232148);
+ --g-blush-pearl:linear-gradient(165deg,#2d2650,#1c1a3a);--g-silver-violet:linear-gradient(165deg,#2a2850,#1b1a3a);--g-sky-lilac:linear-gradient(165deg,#262a56,#1a1b3c);
+ --g-holo:linear-gradient(120deg,#2b2758,#3a2a5c 50%,#25305c);--g-accent:linear-gradient(90deg,#8f73f2,#e78fc0);--g-accent-2:linear-gradient(90deg,#a18bf5,#efa6cc);
+ --g-sheen:none;--g-rule:linear-gradient(90deg,transparent,rgba(194,180,250,.4),transparent);--tex-dots:none;
+ --font-display:'Segoe UI Variable Display','Segoe UI','Montserrat',system-ui,sans-serif;
+ --n16-on:#f7e3b4;--n16-gold:#f0cf8c}
+html[data-skin=night] body{background:#0e0e22}
+html[data-skin=night] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+/* every panel: the same depth, a hairline border and a thin violet-to-rose line along the top */
+html[data-skin=night] :is(body .pn,#hudL,#hudC,#wl9,#quest,#toast7 .t7,#dlg,#prompt,.netcard,#mini){background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:var(--sh-2)!important}
+html[data-skin=night] :is(#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#chestui,#inv7 .sheet,#inv7 .panel,#menu #card,#book7,.objpanel,#wg9 .box,#rw8lv,.rw8c,#craftui,#petui .card,#avf10>*,#guide10>*){background:linear-gradient(165deg,rgba(30,28,60,.97),rgba(16,16,36,.97))!important;color:var(--ink)!important;border:1px solid var(--line-strong)!important;box-shadow:var(--sh-3)!important;text-shadow:none}
+html[data-skin=night] :is(#hubc,#menu #card){position:relative}
+html[data-skin=night] :is(#hubc,#menu #card):before{content:'';position:absolute;left:0;right:0;top:0;height:2px;z-index:2;background:linear-gradient(90deg,transparent,var(--accent) 22%,var(--accent-2) 78%,transparent);pointer-events:none}
+html[data-skin=night] :is(#hub,#inv7,#store7,#tools7,#book7,#wg9,#menu){background-color:var(--overlay)!important;background-image:none!important}
+html[data-skin=night] #nav16g{background:linear-gradient(165deg,rgba(30,28,60,.9),rgba(16,16,36,.88))}
+html[data-skin=night] :is(#hudL,#hudC,#quest) :is(small,span){color:inherit}
+/* top of the screen */
+html[data-skin=night] #hudL:before{border-color:rgba(194,180,250,.12)}
+html[data-skin=night] #hudTitle{color:var(--accent)!important}
+html[data-skin=night] #hudL #pwrap9 .ring{background:conic-gradient(from 200deg,#f7e3b4,#8f73f2 22%,#f1a7cf 40%,#b9a2ff 62%,#f7e3b4 80%,#8f73f2)}
+html[data-skin=night] #hudL.cls9on #pwrap9 .ring{background:conic-gradient(from 200deg,var(--clsl),var(--clsc) 20%,var(--clsd) 38%,var(--clsl) 52%,var(--clsc) 72%,var(--clsa) 88%,var(--clsl))}
+html[data-skin=night] #hudL .hpb{background:rgba(255,255,255,.08)!important}
+html[data-skin=night] #hudL .hpb i{background:linear-gradient(90deg,#d84f79,#f69ab6)!important}
+html[data-skin=night] #hudL .xp i{background:linear-gradient(90deg,#7e63ea,#a9c9f5)!important}
+html[data-skin=night] #hudC #wname{font-family:var(--font-ui);font-weight:800;font-style:normal;letter-spacing:.14em;color:var(--ink)!important}
+html[data-skin=night] #hudC #wchip{color:var(--muted)!important}
+html[data-skin=night] #quest b{font-family:var(--font-ui);font-style:normal;font-weight:800}
+html[data-skin=night] #quest .qs.cur{color:var(--ink)!important}html[data-skin=night] #quest small{color:var(--muted)!important}
+html[data-skin=night] #quest .bar{background:rgba(255,255,255,.1)!important}html[data-skin=night] #quest .bar i{background:linear-gradient(90deg,var(--accent),var(--accent-2))!important}
+html[data-skin=night] #wl9{color:var(--ink)!important}
+/* hotbar and skills */
+html[data-skin=night] #bar{background:linear-gradient(165deg,rgba(30,28,60,.9),rgba(16,16,36,.88))!important;border:1px solid var(--line)!important;box-shadow:var(--sh-2)!important}
+html[data-skin=night] #bar .s6{background:linear-gradient(165deg,#272552,#191938)!important;border:1px solid var(--line)!important;color:var(--ink)!important;box-shadow:var(--sh-1)!important}
+html[data-skin=night] #bar .s6.on,html[data-skin=night] #bar .s6.sel{border-color:var(--sel-bd)!important;box-shadow:0 0 0 1px var(--sel-bd),0 0 14px -3px var(--sel-bd)!important}
+html[data-skin=night] #skills .sk{background:linear-gradient(165deg,rgba(39,37,82,.92),rgba(22,22,48,.9))!important;border:1px solid var(--line)!important;color:var(--ink)!important;box-shadow:var(--sh-1)!important}
+html[data-skin=night] #skills .sk em{color:var(--ink-2)!important}
+/* banner: readable over any sky */
+html[data-skin=night] #banner b{font-family:var(--font-ui);font-style:normal;font-weight:800;color:#fff!important;text-shadow:0 2px 16px rgba(10,8,30,.9),0 0 26px rgba(185,162,255,.75)!important}
+html[data-skin=night] #banner span{color:#f7e3b4!important;text-shadow:0 1px 8px rgba(10,8,30,.95)!important}
+/* buttons and fields */
+html[data-skin=night] :is(button.pri,.btn.pri,.hbtn.pri){background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border-color:transparent!important}
+html[data-skin=night] :is(button,.btn,.hbtn):disabled{opacity:.5}
+html[data-skin=night] :is(select,input[type=text],input[type=search],input[type=number],input[type=password],textarea,input:not([type])){background:var(--input-bg)!important;color:var(--ink)!important;border:1px solid var(--line-strong)!important}
+html[data-skin=night] :is(input,textarea)::placeholder{color:var(--muted)!important;opacity:1}
+html[data-skin=night] select option{background:#1a1935;color:#f2eefc}
+html[data-skin=night] input[type=range]{accent-color:var(--accent)}
+html[data-skin=night] .rb-toggle:checked{background:linear-gradient(180deg,#8f73f2,#6448c6)!important}
+html[data-skin=night] .hcard{background:var(--surface-2)!important;border:1px solid var(--line)!important;color:var(--ink)!important}
+html[data-skin=night] .hcard.sel{border-color:var(--sel-bd)!important;box-shadow:0 0 12px -5px var(--sel-bd)!important}
+html[data-skin=night] .hchip{background:var(--surface-3)!important;border:1px solid var(--line)!important;color:var(--ink-2)!important}
+html[data-skin=night] .hchip.on{background:var(--sel-bg)!important;border-color:var(--sel-bd)!important;color:var(--n16-on)!important}
+/* the menus' own tabs */
+html[data-skin=night] :is(#store7 nav button.on,#inv7 nav button.on,.snav7 button.on){background:var(--sel-bg)!important;color:var(--n16-on)!important;border-color:var(--sel-bd)!important}
+/* scrollbars */
+html[data-skin=night] ::-webkit-scrollbar{width:9px;height:9px}
+html[data-skin=night] ::-webkit-scrollbar-thumb{background:rgba(194,180,250,.28);border-radius:99px;border:2px solid transparent;background-clip:padding-box}
+html[data-skin=night] ::-webkit-scrollbar-thumb:hover{background:rgba(194,180,250,.46);background-clip:padding-box}
+html[data-skin=night] ::-webkit-scrollbar-track{background:transparent}
+/* one upright type across the panels (the Classes screen keeps its own poster look) */
+html[data-skin=night] :is(h1,h2,h3,h4,.ttl,.pname7,.rw8c *):not(#cls9 *):not(#cine7 *){font-style:normal!important}
+html[data-skin=night] .pname7{font-family:var(--font-ui)!important;font-weight:800!important}
+/* the inventory's tabs fit on one line */
+html[data-skin=night] #inv7 nav button{letter-spacing:.05em!important;padding:6px 9px!important}
+/* the starting guide wrote its text in dark ink */
+html[data-skin=night] #guide10 h3{color:var(--ink)!important}html[data-skin=night] #guide10 p{color:var(--ink-2)!important}html[data-skin=night] #guide10 p b{color:var(--ink)!important}
+/* panel titles speak one language */
+html[data-skin=night] :is(#inv7 h2.ttl,#store7 header h2,#eq9 header h3){font-family:var(--font-ui)!important;font-style:normal!important;font-weight:800!important;font-size:21px!important;letter-spacing:.02em!important;text-transform:none;color:var(--ink)!important}
+html[data-skin=night] :is(#inv7 h2.ttl,#store7 header h2,#eq9 header h3):after{margin-left:10px;font:500 12px 'Yu Gothic UI','Yu Gothic','Meiryo','MS Gothic',sans-serif;letter-spacing:.2em;color:var(--muted)}
+html[data-skin=night] #inv7 h2.ttl:after{content:'持ち物'}html[data-skin=night] #store7 header h2:after{content:'商店'}html[data-skin=night] #eq9 header h3:after{content:'装備'}
+html[data-skin=night] #eq9 h4{font-family:var(--font-ui)!important;font-style:normal!important}
+/* a calm, quick entrance for every main panel */
+html[data-skin=night]:not([data-ureduce=true]) #hubhead,html[data-skin=night]:not([data-ureduce=true]) #hubnav{animation:mo-fade .16s ease both}

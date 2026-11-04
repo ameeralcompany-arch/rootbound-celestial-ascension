@@ -170,9 +170,6 @@ const CLART=(()=>{
  let qi=null;function warm(){if(qi)return;qi=A.KEYS.slice();const step=dl=>{if(busy()){setTimeout(()=>ric(step),1500);return}if(dl&&(dl.didTimeout||dl.timeRemaining()<10)){ric(step);return}const t0=performance.now();try{mini(qi.shift())}catch(_){qi.length=0}if(performance.now()-t0>45)qi.length=0;if(qi.length)setTimeout(()=>ric(step),60);else sheet()};ric(step)}
  const ric=f=>typeof requestIdleCallback=='function'?requestIdleCallback(f,{timeout:4000}):setTimeout(f,80);
  setTimeout(warm,6000);
- // the CLASSES button wears the current class's world
- let bk=null;setInterval(()=>{const b=document.getElementById('bcls');if(!b)return;let k=null;try{k=CJOB.cur}catch(_){}if(!k||!A.TH[k]){if(bk!==null){bk=null;b.classList.remove('clart');b.style.removeProperty('background')}return}
-  if(bk===k||!MINI[k])return;bk=k;b.classList.add('clart');b.style.setProperty('--clart-l',pal(k)[1]);b.style.setProperty('background','linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url('+MINI[k]+') center/cover no-repeat','important')},1000);   // the HUD buttons' own style uses !important
  // the Classes screen: the large banner hangs inside the hero frame; any miniatures not painted yet are finished on open
  {const _a=MYUI.after;MYUI.after=function(el,k){const r=_a.apply(this,arguments);try{if(Object.keys(MINI).length<A.KEYS.length){for(const q of A.KEYS)mini(q);sheet()}hang(el,k)}catch(e){if(!hang.e){hang.e=1;console.error('CLART',e)}}return r}}
  function hang(el,k){const hc=el.querySelector('.c9heroc');if(!hc||!hc.parentElement)return;const host=hc.parentElement;let c=host.querySelector('canvas.c9ban');

@@ -74,7 +74,7 @@ const CLS9=(()=>{
   el.addEventListener('wheel',e=>{const r=e.target.closest('.c9rail');if(r&&Math.abs(e.deltaY)>Math.abs(e.deltaX)){r.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
   return el}
  const isOpen=()=>!!el&&el.style.display=='block';
- function open(k){build();try{if(UI6.on)UI6.close()}catch(_){}try{if(INV7.isOpen)INV7.close()}catch(_){}try{if(SHOP7.isOpen())SHOP7.close()}catch(_){}
+ function open(k){build();try{if(UI6.on)UI6.close()}catch(_){}try{if(INV7.isOpen)INV7.close()}catch(_){}try{if(STORE7.isOpen)STORE7.close()}catch(_){}
   try{for(const q in K)K[q]=0}catch(_){}sel=C[k]?k:(()=>{try{return CLASS7.cur()||job()||KEYS[0]}catch(_){return KEYS[0]}})();
   el.style.display='block';render();void el.offsetWidth;el.classList.add('on');try{UIS.play('open')}catch(_){}try{(typeof MYUI!='undefined'?MYUI.start(el):0)}catch(_){}}
  function close(){if(!isOpen())return;el.classList.remove('on');try{(typeof MYUI!='undefined'?MYUI.stop():0)}catch(_){}try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},220)}
@@ -84,8 +84,4 @@ const CLS9=(()=>{
   e.preventDefault();e.stopImmediatePropagation()},true);
  addEventListener('keydown',e=>{if(isOpen()||e.repeat||e.ctrlKey||e.metaKey||e.altKey||(e.key!='k'&&e.key!='K'))return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.isContentEditable))return;
   try{if(!entered||dlgOpen||creatorOn)return}catch(_){}e.preventDefault();e.stopImmediatePropagation();open()},true);
- // the one CLASSES button, next to STORE
- function btn(){if(document.getElementById('bcls'))return;const hr=document.getElementById('hudR');if(!hr)return;const b=document.createElement('button');b.id='bcls';b.className='pn';b.textContent='CLASSES';b.title='Classes (K)';
-  b.onclick=()=>isOpen()?close():open();const s=document.getElementById('bstore');s&&s.nextSibling?hr.insertBefore(b,s.nextSibling):hr.insertBefore(b,hr.firstChild)}
- btn();if(document.readyState!='complete')addEventListener('load',btn);setTimeout(btn,1500);
  return{open,close,isOpen,pick,step,act,status,weapons,equip,refresh(){render.keep=true;render()},get sel(){return sel},el:()=>el}})();

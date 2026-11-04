@@ -87,7 +87,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  ok('the dock seat: sit from the bank (over the water) and stand back onto the bank',dk&&dk.sit&&Math.abs(dk.x-dk.sx)<.5&&dk.overWater&&dk.back,dk);
  // ---- placeable summer objects: in the store, buying adds the item, a placed Sun Lounger can be sat on
  const st=await E(async()=>{const ids=['obj_90','obj_91','obj_92','obj_97','obj_98'],items=ids.map(i=>SHOP7.items.find(x=>x.id==i)).filter(Boolean);gems=100000;const c0=cnt(91);const r=await SHOP7.buy('obj_91');
-  const px=Math.floor(P.x/T)+1,py=Math.floor((P.y+P.h)/T)-1,k=py*W+px;tiles[k]=90;try{pushEdit(k)}catch(_){}OBJ6.sync(k);P.x=px*T+T/2-6;P.vx=P.vy=0;await new Promise(r=>setTimeout(r,150));
+  let px=0,py=0;for(let c=12;c<W-12;c++){const gy=sh(c);if(SUMMER9.SEATS.every(s=>Math.abs(s.ex/T-c)>14)&&!tiles[(gy-1)*W+c]&&!tiles[(gy-2)*W+c]&&!tiles[(gy-1)*W+c-1]&&!wl[(gy-1)*W+c]&&solidAt(c,gy)&&solidAt(c-1,gy)){px=c;py=gy-1;break}}P.y=(py+1)*T-P.h-1;const k=py*W+px;tiles[k]=90;try{pushEdit(k)}catch(_){}OBJ6.sync(k);P.x=px*T+T/2-6;P.vx=P.vy=0;await new Promise(r=>setTimeout(r,150));
   const n=OBJ6.near(),pr=OBJ6.promptText(null);interact();const o={n:items.length,cats:items.map(i=>i.cat),bought:r&&r.ok,got:cnt(91)-c0,obj:n&&n.o.t,pr,sit:SUMMER9.SIT&&SUMMER9.SIT.n,icon:!!objIcon(90)};SUMMER9.stand();return o});
  ok('the 5 summer objects are in the store and buying one gives the item',st.n==5&&st.cats.every(c=>c=='objects')&&st.bought&&st.got==1,st);
  ok('a placed Sun Lounger object can be sat on',st.obj==90&&/Sun Lounger/.test(st.pr)&&st.sit=='Sun Lounger'&&st.icon,st);

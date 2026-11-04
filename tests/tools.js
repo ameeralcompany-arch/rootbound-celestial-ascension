@@ -101,7 +101,7 @@ async function boot(p,world){await p.goto(URL);await p.waitForTimeout(700);await
  ok('every tool page names the tool, shows how to use it, example blocks, all 10 levels and an animated preview',TOOLLV_IDS_OK(pages),pages);
  function TOOLLV_IDS_OK(o){return['pip','pebble','glimmer','twiggy','bubbles'].every(id=>o[id]&&o[id].name&&o[id].how>=3&&o[id].chips>=4&&o[id].levels==10&&o[id].lit>30)&&o.basics.len>400&&o.levels.cv==7&&o.dig.len>200}
  await p.keyboard.press('Escape');await sleep(350);ok('Escape closes the guide',await E(()=>!UI6.on));
- await p.keyboard.press('i');await sleep(350);const ib=await E(()=>!!document.querySelector('#inv7 .tg8ib'));await E(()=>document.querySelector('#inv7 .tg8ib').click());await sleep(400);
+ const ib=await E(()=>!!document.getElementById('bguide')&&!document.querySelector('#inv7 .tg8ib'));await E(()=>document.getElementById('bguide').click());await sleep(400);
  ok('the inventory has a "Tool guide" button that opens the guide',ib&&await E(()=>UI6.on&&UI6.tab=='toolguide'&&!showInv));
  await E(()=>UI6.close());await sleep(250);
  // ---- corrupt tool data never breaks a load

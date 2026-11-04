@@ -132,10 +132,9 @@ const OWN15=(()=>{
   list();con.list=list}
  function openCon(){if(!isOwner())return false;mkCon();con.classList.add('on');const i=con.querySelector('input');i.value='';con.querySelector('.ow15o').textContent='';con.list();try{for(const q in K)K[q]=0}catch(_){}setTimeout(()=>i.focus(),0);return true}
  addEventListener('keydown',e=>{if(e.key!='/'||e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.isContentEditable))return;try{if(!isOwner()||!entered||dlgOpen||menuEl.style.display!='none'||window.RB_COVER)return}catch(_){return}e.preventDefault();e.stopImmediatePropagation();openCon()},true);
- // ---- the buttons everyone has: Hub and Respawn. Owner: Owner.
+ // ---- the row under the character card: Respawn for everyone, Owner for the owner (the menu dock is NAV16).
  let rcd=0;function btns(){const hr=document.getElementById('hudR');if(!hr)return;let row=document.getElementById('ow15bt');if(!row){row=document.createElement('div');row.id='ow15bt';document.body.appendChild(row)}try{row.style.display=entered&&menuEl.style.display=='none'&&!window.RB_COVER?'flex':'none'}catch(_){}const add=(id,lab,title,fn)=>{if(document.getElementById(id))return document.getElementById(id);const b=document.createElement('button');b.id=id;b.className='pn';b.textContent=lab;b.title=title;b.onclick=fn;row.appendChild(b);return b};
    add('brsp','RESPAWN','Back to the spawn point. Keeps everything you have',()=>{const n=performance.now();if(n<rcd)return;const did=respawn();if(did)rcd=n+2500;try{UIS.play(did?'confirm':'error')}catch(_){}});
-   add('bhub','HUB','Character Hub',()=>{try{UI6.open('profile')}catch(_){}});
    const ob=document.getElementById('bown15');if(isOwner()&&!ob)add('bown15','OWNER','Owner controls (or press /)',()=>{try{UI6.open('owner')}catch(_){}});else if(!isOwner()&&ob)ob.remove();
    try{const TB=UI6.TABS,has=TB.findIndex(t=>t[0]=='owner');if(isOwner()&&has<0)TB.push(['owner','Owner']);else if(!isOwner()&&has>=0)TB.splice(has,1)}catch(_){}}
  setInterval(btns,1500);setTimeout(btns,600);

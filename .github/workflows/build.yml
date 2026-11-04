@@ -246,6 +246,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/water.js
+      - name: Test nav
+        if: ${{ !cancelled() }}
+        timeout-minutes: 12
+        run: bash tools/ci-test.sh tests/nav.js
       - name: Test words
         if: ${{ !cancelled() }}
         timeout-minutes: 10

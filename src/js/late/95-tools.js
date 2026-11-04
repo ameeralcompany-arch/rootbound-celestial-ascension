@@ -5,7 +5,7 @@ const TOOLS7=(()=>{
  const TABS=[['players','Players'],['worlds','Worlds'],['weather','Weather'],['announce','Announce'],['server','Server'],['bans','Bans'],['audit','Audit log'],['reports','Reports']];
  function req(op,data,ms){return new Promise(res=>{const id='r'+(++rid);pend[id]=res;if(!NET7.send(Object.assign({t:'admin',op,rid:id},data||{}))){delete pend[id];return res({ok:0,m:'Not connected'})}setTimeout(()=>{if(pend[id]){delete pend[id];res({ok:0,m:'The server did not answer'})}},ms||8000)})}
  function res(m){const f=pend[m.rid];if(f){delete pend[m.rid];f(m)}}
- function sync(){const on=NET7.owner;if(on&&!btn){btn=document.createElement('button');btn.id='btools';btn.className='pn';btn.textContent='TOOLS';btn.title='Creator tools (owner only)';btn.onclick=()=>toggle();const hr=document.getElementById('hudR');(hr||document.body).insertBefore(btn,hr?hr.firstChild:null)}
+ function sync(){const on=NET7.owner;if(on&&!btn){btn=document.createElement('button');btn.id='btools';btn.className='pn';btn.textContent='TOOLS';btn.title='Creator tools (owner only)';btn.onclick=()=>toggle();(document.getElementById('ow15bt')||document.body).appendChild(btn)}
   if(btn)btn.style.display=on?'':'none';if(!on&&el&&el.style.display!='none')close()}
  function mk(){if(el)return;el=document.createElement('div');el.id='tools7';el.innerHTML='<div class="sheet" role="dialog" aria-label="Creator tools"><header><div><b>CREATOR TOOLS</b><small id="t7sub"></small></div><button id="t7x" aria-label="Close">✕</button></header><nav id="t7nav"></nav><section id="t7body"></section></div>';document.body.appendChild(el);
   el.addEventListener('mousedown',e=>{if(e.target===el)close()});el.querySelector('#t7x').onclick=close;

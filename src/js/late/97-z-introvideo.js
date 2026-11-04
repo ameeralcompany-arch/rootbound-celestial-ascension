@@ -42,7 +42,7 @@ const INTRO60=(()=>{
  // a browser that blocks sound until the player has touched the page: a short prompt, then the film starts silently and the sound joins on the first click or key
  function input(){const s=S;if(!s)return false;s.hint=performance.now();if(s.st=='blocked'){s.prompt.style.display='none';tryPlay();return false}if(s.st=='late'){s.st='on';s.v.muted=false;return false}return(s.st=='on')&&s.v.currentTime>=SKIPAT}
  function skipNow(){if(S&&!S.fin){S.skipped=true;finish()}}
- function key(e){if(!S)return;if(/^Fd+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault();if(!e.repeat&&input())skipNow()}
+ function key(e){if(!S)return;if(/^F\d+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault();if(!e.repeat&&input())skipNow()}
  function keyUp(e){if(!S)return;e.stopImmediatePropagation()}
 
  function tick(){const s=S;if(!s||s.fin)return;const now=performance.now(),dt=Math.min(.1,(now-s.last)/1000);s.last=now;const v=s.v;

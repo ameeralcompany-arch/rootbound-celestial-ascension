@@ -89,10 +89,6 @@ const GUIDE8=(()=>{
  function refresh(){if(on())render()}
  addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.altKey||e.metaKey||String(e.key).toLowerCase()!='g')return;try{if(isTextEl(e.target))return}catch(_){}
   if(typeof entered=='undefined'||!entered||creatorOn||dlgOpen||menuEl.style.display!='none'||UI6.on)return;try{if(OBJ6.near())return}catch(_){}open()});
- // inventory header button (re-added whenever the inventory re-renders its sheet)
- let obs=null;function invBtn(){const s=document.querySelector('#inv7 .sheet');if(!s)return;if(!obs){obs=new MutationObserver(invBtn);obs.observe(s,{childList:true})}const hd=s.querySelector('header');if(!hd||hd.querySelector('.tg8ib'))return;
-  const btn=document.createElement('button');btn.className='tg8ib';btn.type='button';btn.title='How to use every tool (G)';btn.innerHTML='<i aria-hidden="true">?</i>Tool guide';btn.onclick=e=>{e.stopPropagation();open()};const x=hd.querySelector('.x');if(x&&x.parentNode)x.parentNode.insertBefore(btn,x);else hd.appendChild(btn)}
- try{const _o=INV7.open;INV7.open=function(){const r=_o.apply(this,arguments);try{invBtn()}catch(_){}return r}}catch(_){}
  // one-time hint
  const HK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbptgh';
  let hT=0;const hI=setInterval(()=>{try{if(hinted){clearInterval(hI);return}if(localStorage.getItem(HK())){hinted=true;clearInterval(hI);return}if(!entered||menuEl.style.display!='none'){hT=0;return}hT+=3;if(hT<15||UI6.on||showInv)return;

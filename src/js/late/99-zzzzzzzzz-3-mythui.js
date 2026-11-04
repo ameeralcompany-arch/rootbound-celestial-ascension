@@ -85,8 +85,6 @@ const MYUI=(()=>{
    cx=document.createElement('div');cx.id='cxp9';cx.innerHTML='<span class="cl"><b></b><em></em></span><div class="hpb cx"><i></i></div>';const xb=document.getElementById('xpf');const row=xb&&xb.parentNode;if(row&&row.parentNode===hl)row.after(cx);else hl.appendChild(cx);hk=undefined;cxk=''}
   // gems and wings share one row, so the class bar fits without making the card taller
   {const gv=document.getElementById('gv'),hw=document.getElementById('hudWing');if(gv&&hw&&hw.parentNode!==gv.parentNode){gv.parentNode.classList.add('gw9');gv.parentNode.appendChild(hw)}}
-  // the CHARACTER button hangs from the card's bottom edge, whatever the card's height
-  {const bh=document.getElementById('bhub');if(bh&&hl.offsetWidth){const y=Math.round(hl.getBoundingClientRect().bottom-12);if(bh._y!==y){bh._y=y;bh.style.top=y+'px'}}}
   const show=!!k&&hl.offsetWidth>0;hl.classList.toggle('cls9on',show);
   if(!show){if(hk!==null){hk=null;bc.style.display=cx.style.display='none';wrap.querySelector('.emb').hidden=true}return}
   if(hk!==k){hk=k;const p=TH[k].pal;for(const[n,v]of[['--clsc',p[0]],['--clsl',p[1]],['--clsd',p[2]],['--clsa',p[3]]])hl.style.setProperty(n,v);
