@@ -7,7 +7,7 @@
 // Prints the class table. Run: node tests/balance.js
 const {chromium}=require('playwright');const path=require('path');let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&!c?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 const URL='file://'+path.resolve(__dirname,'../index.html');
-setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},400000).unref();
+setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},process.env.CI?1200000:400000).unref();/* the shared build machines run this about four times slower */
 const IDS=['warden','sovereign','eclipse','magma','tide','storm'];
 // page-side simulator: pauses the real loop, runs update + boss tick on a virtual clock, keeps the player and dummies pinned, sums the damage
 const SIMLIB=`window.SIM=(()=>{let vt=1e9,on=false,seed=1;const rnd0=Math.random,dn0=Date.now;

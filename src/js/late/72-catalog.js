@@ -36,15 +36,16 @@ const SHOP7=(()=>{
  const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
  // a purchase whose answer has not arrived: asking again reuses its request id, so the server can never charge twice, and a late answer still delivers the item
  const open=new Map();
- function settle(it,qty,res){gems=Math.max(0,(gems|0)-(res.spent|0));if(!srv.owned)srv.owned={};srv.owned[it.id]=res.owned|0;grantLocal(it,res.qty||qty);try{renderBar&&renderBar()}catch(_){}}
+ function settle(it,qty,res){let sp=res.spent|0;if(res.dup){const fp=Math.min(st.pend,sp);st.pend-=fp;sp-=fp}gems=Math.max(0,(gems|0)-sp);if(!srv.owned)srv.owned={};srv.owned[it.id]=res.owned|0;grantLocal(it,res.qty||qty);try{renderBar&&renderBar()}catch(_){}}
  function sfx(n){try{UIS.play(n)}catch(_){}}
  async function buy(id,qty){const it=byId.get(id);if(!it)return{ok:0,m:'That item does not exist'};
   qty=it.stack?Math.max(1,Math.min(99,qty|0||1)):1;const total=it.price*qty;
   if(!lvOk(it)){sfx('error');return{ok:0,m:'Requires level '+needLv(it)}}
   if(!it.stack&&has(id)){sfx('error');return{ok:0,m:'You already own this'}}
+  if(srv&&!NET7.online){sfx('error');return{ok:0,m:'Not connected. You were not charged.'}} // a signed-in wallet lives on the server: a purchase made here would be refunded on reconnecting
   if(gems<total){sfx('error');return{ok:0,m:'Not enough gems ('+total+' needed)'}}
   if(srvMode()){const key=id+'x'+qty;let o=open.get(key);if(!o){o={id,qty,rid:rid(),was:srv.owned&&srv.owned[id]|0,t:Date.now()};open.set(key,o)}const r=o.rid,again=o.late;if(pending.has(r))return{ok:0,m:'Still buying this…'};
-   try{NET7.send({t:'sync',gems:Math.max(0,(gems|0)+st.pend)})}catch(_){} // earnings since the last sync count towards this purchase
+   if(open.size==1&&!o.late)try{NET7.send({t:'sync',gems:Math.max(0,(gems|0)+st.pend)})}catch(_){} // earnings since the last sync count towards this purchase, but never while another purchase is unresolved: the server would read the unpaid balance as earnings
    const res=await new Promise(ok=>{const t=setTimeout(()=>{pending.delete(r);o.late=1;ok({ok:0,waiting:1,m:'The server is slow to answer. If the purchase went through, the item will arrive by itself.'})},8000);pending.set(r,v=>{clearTimeout(t);ok(v)});if(!NET7.send({t:'buy',id,qty,rid:r})){clearTimeout(t);pending.delete(r);if(!again)open.delete(key);ok({ok:0,m:again?'Not connected. If the purchase went through, the item will arrive when you are back online.':'Not connected. You were not charged.'})}});
    if(res.waiting){sfx('error');return res}open.delete(key);
    // the server already has it (an earlier answer got lost): hand it over
@@ -57,7 +58,7 @@ const SHOP7=(()=>{
    const total=(gems|0)+st.pend;if(st.first){st.first=0;}
    if(m.gems!=null){const w=m.gems|0;if(total>w){st.pend=total-w}else st.pend=0;gems=w;save()}
    // came back after a lost answer: the server's record says whether that purchase happened
-   for(const[key,o]of open)if(o.late){open.delete(key);const it=byId.get(o.id);if(it&&((m.owned||{})[o.id]|0)>(o.was|0)){grantLocal(it,o.qty);if(!srv.owned)srv.owned={};srv.owned[o.id]=m.owned[o.id]|0;try{say('Purchased '+it.n)}catch(_){}}}
+   for(const[key,o]of open)if(o.late&&!pending.has(o.rid)){const it=byId.get(o.id);if(it&&((m.owned||{})[o.id]|0)>(o.was|0)){open.delete(key);grantLocal(it,o.qty);st.pend=Math.max(0,st.pend-it.price*o.qty);if(!srv.owned)srv.owned={};srv.owned[o.id]=m.owned[o.id]|0;try{say('Purchased '+it.n)}catch(_){}}}
    return}
   if(m.t=='buy_res'){const f=pending.get(m.rid);if(f){pending.delete(m.rid);f(m);return}
    for(const[key,o]of open)if(o.rid===m.rid){open.delete(key);const it=byId.get(o.id);if(m.ok&&it&&srv){settle(it,o.qty,m);sfx('buy');try{say('Purchased '+it.n)}catch(_){}}break}}}

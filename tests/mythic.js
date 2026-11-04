@@ -45,7 +45,7 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  ok('the swing hits the monsters along its arc and each move fires its effect',c.hit>=3&&c.fx>=1,c);
  ok('tier III: the finisher throws the scythe and it flies back',c.thr&&c.back,c);
  // a ranged class shoots instead of swinging
- const rg=await E(async()=>{CLASS7.S.lv.reaper=60;CLASS7.S.lv.archer=60;CJOB.become('archer');MYTH.S.t.archer=1;own.myth_archer=1;HOTBAR.equip('w:myth_archer');mobs.length=0;const kk=Object.keys(MK).filter(q=>!MK[q].boss&&!MK[q].fly)[0],d=MK[kk];let dx=T*4;while(dx>T*1.5&&solidAt(Math.floor((P.x+dx)/T),Math.floor((P.y+20)/T)))dx-=T*.5;mobs.push({k:kk,x:P.x+dx,y:P.y+P.h-d.h,w:d.w,h:d.h,vx:0,vy:0,hp:9000,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0});
+ const rg=await E(async()=>{CLASS7.S.lv.reaper=60;CLASS7.S.lv.archer=60;CJOB.become('archer');MYTH.S.t.archer=1;own.myth_archer=1;HOTBAR.equip('w:myth_archer');mobs.length=0;const kk=Object.keys(MK).filter(q=>!MK[q].boss&&!MK[q].fly)[0],d=MK[kk];let dx=T*7;while(dx>T*1.5&&solidAt(Math.floor((P.x+dx)/T),Math.floor((P.y+20)/T)))dx-=T*.5;mobs.push({k:kk,x:P.x+dx,y:P.y+P.h-d.h,w:d.w,h:d.h,vx:0,vy:0,hp:9000,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:true,wall:0});
   const m=mobs[0],h0=m.hp;mx=m.x-cam.x;my=m.y+m.h/2-cam.y;wcd=0;useWeapon();let proj=false;for(let i=0;i<40;i++){await new Promise(q=>setTimeout(q,25));proj=proj||MYTH.fx.some(e=>e.k=='proj')}return{wp,proj,hit:m.hp<h0}});
  ok('the Archer bow shoots a projectile that hits (ranged weapons shoot instead of swinging)',rg.wp=='myth_archer'&&rg.proj&&rg.hit,rg);
  await E(()=>{CLASS7.S.lv.archer=60;CJOB.become('reaper');HOTBAR.equip('w:myth_reaper')});

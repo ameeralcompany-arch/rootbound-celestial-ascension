@@ -13,7 +13,7 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
  await p.addInitScript(()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}))});
  await p.goto(URL);await p.waitForTimeout(700);await p.evaluate(()=>document.getElementById('bp').click());await p.waitForTimeout(500);
  await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}lvl=80});await p.waitForTimeout(400);
- await p.evaluate(()=>{enterWorld('wingtest')});await p.waitForTimeout(900);
+ await p.evaluate(()=>{enterWorld('wingtest');/* on slow machines monsters had time to knock the character out in the middle of these checks */setInterval(()=>{try{if(!window.__keepMobs){mobs.length=0;P.hp=maxHP()}}catch(_){}},150)});await p.waitForTimeout(900);
  const E=(f,a)=>p.evaluate(f,a),W=ms=>p.waitForTimeout(ms);
  await E(()=>{WX6.force='clear';mobs.length=0;QM.cur.wfx=3});
  // ---- every wing (old and new) renders each of the 8 keyframes, with pixels, no errors

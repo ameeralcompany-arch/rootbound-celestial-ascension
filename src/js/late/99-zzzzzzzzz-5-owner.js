@@ -14,9 +14,10 @@ const OWN15=(()=>{
  const MUSIC={owner:['The Owner Has Spawned','audio/owner-entrance.mp3'],intro:['Rootbound theme','audio/intro-song.mp3'],none:['No music','']};
  // ---- the music everyone in the world hears. One player, so a quick respawn can't stack copies.
  const au=new Audio();au.preload='auto';let fadeT=0;
- const vol=()=>{try{return Math.max(.3,Math.min(1,OPT.sv==null?.8:OPT.sv))}catch(_){return .8}};
- function playMusic(key){clearInterval(fadeT);const m=MUSIC[key];if(!m||!m[1]){au.pause();return false}try{if(!au.src.endsWith(m[1]))au.src=m[1];au.currentTime=0;au.volume=vol();const p=au.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}return true}
- function fadeMusic(ms){clearInterval(fadeT);const v0=au.volume,t0=performance.now();fadeT=setInterval(()=>{const u=(performance.now()-t0)/(ms||900);if(u>=1){clearInterval(fadeT);au.pause();au.volume=vol();return}au.volume=Math.max(0,v0*(1-u))},50)}
+ const vol=()=>{try{return mute?0:Math.max(0,Math.min(1,(OPT.mv==null?.5:OPT.mv)*2))}catch(_){return .8}};
+ {const _tm=toggleMute;toggleMute=function(){_tm.apply(this,arguments);try{au.volume=vol()}catch(_){}}}
+ let plays=0;function playMusic(key){plays++;clearInterval(fadeT);const m=MUSIC[key];if(!m||!m[1]){au.pause();return false}try{if(!au.src.endsWith(m[1]))au.src=m[1];au.currentTime=0;au.volume=vol();const p=au.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}return true}
+ function fadeMusic(ms){clearInterval(fadeT);const t0=performance.now();fadeT=setInterval(()=>{const u=(performance.now()-t0)/(ms||900);if(u>=1){clearInterval(fadeT);au.pause();au.volume=vol();return}au.volume=Math.max(0,vol()*(1-u))},50)}
  // ---- state
  const S={cine:null,fly:null,invis:false,aura:false,speed:1,hide:{},peerFly:{},skyT:-9,wingHold:0,time:null,world:null,lastEnter:{w:'',t:-1e9}};
  const TIMES={ARR:1,DES:1.3,BRK:.45};const LAND=TIMES.ARR+TIMES.DES+TIMES.BRK;
@@ -32,31 +33,32 @@ const OWN15=(()=>{
  function stopPeer(){if(!S.peer)return;S.peer=null;ann(false);fadeMusic(900)}
  function selfTick(e,dt){const t=performance.now()/1000-e.t0;if(t>=LAND+e.dur+.1||cur!==S.world&&S.world){stop();return}
   if(t<LAND){P.x=e.gx;P.y=yAt(e,t);P.vx=0;P.vy=t<TIMES.ARR?0:900;P.g=false;try{iT=Math.max(iT,1);wingOpen=1;wingFlap=Math.max(wingFlap||0,t>TIMES.ARR+TIMES.DES?1:.4)}catch(_){}window.OWN_CAM=1;window.CAMT={x:e.gx,y:e.gy-120}}
-  else{if(!e.landed){P.y=e.gy;P.vy=0;P.g=true;landFx(e);window.OWN_CAM=0;window.CAMT=null;S.aura=true;if(e.spot)bars(true)}if(e.spot&&typeof ZM=='number'){const b=e.z0*1.22,tt=t-LAND,k=tt<.8?tt/.8:tt>e.dur-.9?Math.max(0,(e.dur-tt)/.9):1;ZM=e.z0+(b-e.z0)*(k*k*(3-2*k))}}}
+  else{if(!e.landed){P.y=e.gy;P.vy=0;P.g=true;landFx(e);window.OWN_CAM=0;window.CAMT=null;if(C.aura)S.aura=true;if(e.spot)bars(true)}if(e.spot&&typeof ZM=='number'){const b=e.z0*1.22,tt=t-LAND,k=tt<.8?tt/.8:tt>e.dur-.9?Math.max(0,(e.dur-tt)/.9):1;ZM=e.z0+(b-e.z0)*(k*k*(3-2*k))}}}
  function peerTick(e){const t=performance.now()/1000-e.t0;if(t>=LAND+e.dur+.1){stopPeer();return}if(t>=LAND&&!e.landed)landFx(e)}
  // ---- flight
  const flyKeys=()=>({x:(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0),y:(K.s||K.arrowdown?1:0)-(K.w||K[' ']||K.arrowup?1:0)});
- function flyStart(){if(S.fly)return false;S.fly={x:P.x,y:P.y,vx:0,vy:-60,rise:.6};S.landing=false;send({op:'fly',v:1});return true}
+ function flyStart(){if(S.fly)return false;S.fly={w:cur,x:P.x,y:P.y,vx:0,vy:-60,rise:.6};S.landing=false;send({op:'fly',v:1});return true}
  function flyStop(){if(!S.fly)return false;S.fly=null;S.landing=true;send({op:'fly',v:0});return true}
- function flyTick(F,dt){if(F.rise>0){F.rise-=dt;F.vy=Math.min(F.vy,-180)}const k=flyKeys(),top=900*C.flyS,acc=3400*C.flyS,dec=2600;for(const[v,d]of[['vx',k.x],['vy',k.y]]){if(d)F[v]+=d*acc*dt;else{const s=Math.sign(F[v]);F[v]-=s*Math.min(Math.abs(F[v]),dec*dt)}F[v]=Math.max(-top,Math.min(top,F[v]))}F.x=Math.max(T,Math.min((W-2)*T,F.x+F.vx*dt));F.y=Math.max(T,Math.min((H-3)*T,F.y+F.vy*dt+(k.x||k.y?0:Math.sin(performance.now()/380)*.25)));P.x=F.x;P.y=F.y;P.vx=F.vx;P.vy=F.vy;P.g=false;if(F.vx)P.f=F.vx>0?1:-1;try{iT=Math.max(iT,.2);wingOpen=1;wingFlap=Math.max(wingFlap||0,Math.min(1,.3+Math.hypot(F.vx,F.vy)/top))}catch(_){}}
+ function flyTick(F,dt){if(F.w!==cur){S.fly=null;S.landing=false;send({op:'fly',v:0});return}if(F.rise>0){F.rise-=dt;F.vy=Math.min(F.vy,-180)}const k=flyKeys(),top=900*C.flyS,acc=3400*C.flyS,dec=2600;for(const[v,d]of[['vx',k.x],['vy',k.y]]){if(d)F[v]+=d*acc*dt;else{const s=Math.sign(F[v]);F[v]-=s*Math.min(Math.abs(F[v]),dec*dt)}F[v]=Math.max(-top,Math.min(top,F[v]))}F.x=Math.max(T,Math.min((W-2)*T,F.x+F.vx*dt));F.y=Math.max(T,Math.min((H-3)*T,F.y+F.vy*dt+(k.x||k.y?0:Math.sin(performance.now()/380)*.25)));P.x=F.x;P.y=F.y;P.vx=F.vx;P.vy=F.vy;P.g=false;if(F.vx)P.f=F.vx>0?1:-1;try{iT=Math.max(iT,.2);wingOpen=1;wingFlap=Math.max(wingFlap||0,Math.min(1,.3+Math.hypot(F.vx,F.vy)/top))}catch(_){}}
  const TRAIL={};function trailOf(key,x,y,on){const a=TRAIL[key]||(TRAIL[key]=[]);if(!on){if(a.length)a.length=0;return a}a.push([x,y]);if(a.length>16)a.shift();return a}
  // ---- server link
  function send(o){if(!isOwner())return false;try{return NET7.send(Object.assign({t:'ofx'},o))}catch(_){return false}}
  NET7.on('ofx',m=>{const op=m.op;if(op=='enter'){start({self:false,gx:+m.x,gy:+m.y,dur:+m.d,ann:!m.na,spot:false,name:m.n,music:MUSIC[m.m]?m.m:'owner'});return}
+  if(op=='hidden'){S.invis=true;return}
   if(op=='invis'){S.hide[m.uid]={t0:performance.now(),out:1};fxVanish(+m.x,+m.y);setTimeout(()=>{try{delete rm.ps[m.f]}catch(_){}},900);return}
-  if(op=='vis'){S.hide[m.uid]={t0:performance.now(),out:0};fxAppear(+m.x,+m.y);playMusic(MUSIC[m.m]?m.m:'owner');setTimeout(()=>{delete S.hide[m.uid];fadeMusic(1200)},Math.min(9000,au.duration*1000||9000));return}
-  if(op=='time'){S.time=m.v==null?null:+m.v;return}
+  if(op=='vis'){S.hide[m.uid]={t0:performance.now(),out:0};fxAppear(+m.x,+m.y);playMusic(MUSIC[m.m]?m.m:'owner');const pl=plays;setTimeout(()=>{delete S.hide[m.uid];if(pl==plays)fadeMusic(1200)},Math.min(9000,au.duration*1000||9000));return}
+  if(op=='time'){const v=+m.v;S.time=m.v==null||!Number.isFinite(v)?null:v;return}
   if(op=='fx'){fxPulse(+m.x,+m.y);return}});
- const _c=clock;clock=function(){return S.time!=null?S.time:_c()};
- NET7.onHello(()=>{S.time=null;const was=S.world;S.world=(typeof cur=='string'?cur:null);if(S.cine&&was!==S.world)stop(true);if(S.peer)stopPeer();if(isOwner())setTimeout(autoEnter,350)});
+ const _c=clock;clock=function(){return S.time!=null&&Number.isFinite(S.time)&&NET7.online?S.time:_c()};
+ NET7.onHello(()=>{S.time=null;const was=S.world;S.world=(typeof cur=='string'?cur:null);if(S.invis&&isOwner())send({op:'invis',x:P.x,y:P.y});if(S.cine&&was!==S.world)stop(true);if(S.peer)stopPeer();if(isOwner())setTimeout(autoEnter,350)});
  function autoEnter(){if(!isOwner()||!C.cine||S.invis)return;const now=performance.now();if(window.RB_COVER||(typeof entered!='undefined'&&!entered)||menuEl.style.display!='none'){if(!(autoEnter.tries>60)){autoEnter.tries=(autoEnter.tries|0)+1;setTimeout(autoEnter,350)}return}autoEnter.tries=0;if(S.lastEnter.w==cur&&now-S.lastEnter.t<90000)return;S.lastEnter={w:cur,t:now};entrance()}
- function entrance(preview){if(!isOwner())return false;const gy=groundBelow(P.x,P.y),gx=P.x,name=typeof myName=='string'?myName:'';start({self:true,gx,gy,dur:C.dur,ann:!!C.ann,spot:!!C.spot,name,music:C.music,preview});if(!preview)send({op:'enter',x:gx,y:gy,d:C.dur,m:C.music,na:C.ann?0:1,n:name});return true}
+ function entrance(preview){if(!isOwner()||S.invis&&!preview)return false;if(S.fly){S.fly=null;S.landing=false;send({op:'fly',v:0})}endSpot();const gy=groundBelow(P.x,P.y),gx=P.x,name=typeof myName=='string'?myName:'';start({self:true,gx,gy,dur:C.dur,ann:!!C.ann,spot:!!C.spot,name,music:C.music,preview});if(!preview)send({op:'enter',x:gx,y:gy,d:C.dur,m:C.music,na:C.ann?0:1,n:name});return true}
  // ---- vanish and reappear
  function fxVanish(x,y){const c=[VIO,GOLD];try{FLOW15.add('ripple',{x,y:y+60,r:300,w:12,n:3,c,life:.9});FLOW15.add('vortex',{x,y:y+20,r:110,n:5,spin:12,sq:.7,c,life:.8,core:1});for(let i=0;i<7;i++)FLOW15.add('beam',{x,y:y+50,a:-Math.PI*(i+.5)/7,l:170,w:7,c:[i%2?GOLD:VIO],life:.5});FLOW15.add('smoke',{x,y:y+20,r:70,s:30,c:VIO,n:8,life:.9})}catch(_){}try{burst(x,y+20,VIO,red()?10:44,280,5,'p');burst(x,y+20,WHT,red()?4:18,180,3,'p')}catch(_){}try{SFX7.tone(420,1400,.5,'sine',.05);SFX7.tone(120,60,.5,'sawtooth',.05)}catch(_){}}
  function fxAppear(x,y){const c=[GOLD,VIO];try{FLOW15.add('ripple',{x,y:y+60,r:460,w:14,n:4,c,life:1.2});FLOW15.add('vortex',{x,y:y+20,r:150,n:5,spin:-11,sq:.7,c,life:1,core:1});FLOW15.add('tongues',{x,y:y+60,r:90,h:150,n:10,c,life:.9,del:.3});FLOW15.add('feathers',{x,y:y+10,r:190,n:16,c:[GOLD,WHT],life:1.1,del:.35})}catch(_){}try{burst(x,y+20,GOLD,red()?12:50,340,5,'p')}catch(_){}try{if(!red())shake=Math.max(shake,.22)}catch(_){}}
  function fxPulse(x,y){try{FLOW15.add('ripple',{x,y:y+60,r:220,w:9,n:2,c:[GOLD,VIO],life:.7})}catch(_){}}
- let visSpot=null;
- function setInvis(on){if(!isOwner())return false;if(on==S.invis)return false;if(on){if(S.cine)stop(true);S.invis=true;S.hideSelf=performance.now();fxVanish(P.x,P.y);send({op:'invis',x:P.x,y:P.y})}else{S.invis=false;S.hideSelf=performance.now();send({op:'vis',x:P.x,y:P.y,m:C.music});fxAppear(P.x,P.y);S.wingHold=performance.now()+2500;playMusic(C.music);if(C.spot){visSpot={t0:performance.now()/1000,z0:ZM};bars(true);if(C.aura){visSpot.a0=S.aura;S.aura=true}}}return true}
+ let visSpot=null;const endSpot=()=>{if(!visSpot)return;ZM=visSpot.z0;if('a0' in visSpot)S.aura=visSpot.a0;visSpot=null;bars(false)};
+ function setInvis(on){if(!isOwner())return false;if(on==S.invis)return false;endSpot();if(on){if(S.cine)stop(true);S.invis=true;S.hideSelf=performance.now();fxVanish(P.x,P.y);send({op:'invis',x:P.x,y:P.y})}else{S.invis=false;S.hideSelf=performance.now();send({op:'vis',x:P.x,y:P.y,m:C.music});fxAppear(P.x,P.y);S.wingHold=performance.now()+2500;playMusic(C.music);if(C.spot){visSpot={t0:performance.now()/1000,z0:ZM};bars(true);if(C.aura){visSpot.a0=S.aura;S.aura=true}}}return true}
  // ---- drawing: the sky, the beam, the trail, what floats after the landing
  const rib=(g2,p,w,c,al,wf,core)=>{try{FLOW15.ribbon(g2,p,w,c,al,wf,core)}catch(_){}};
  function drawEntrance(g2,e,cx,cy,vw,vh){const t=performance.now()/1000-e.t0,x=e.gx-cx,gy=e.gy+P.h-cy;
@@ -80,17 +82,18 @@ const OWN15=(()=>{
  // ---- every character: the aura, flying trails, fading in and out, the owner's plate
  const _ad=AC6.draw;AC6.draw=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){const me=q==='me',peer=q&&typeof q=='object'?q:null,own=me?isOwner():!!(peer&&peer.own);if(!own)return _ad.apply(this,arguments);
    // hidden: nothing is drawn for others; on my own screen a faint outline so I can still play
-   let al=1,uid=peer&&peer.uid;if(me&&(S.invis||S.hideSelf)){const u=Math.min(1,(performance.now()-(S.hideSelf||0))/800);al=S.invis?1-u*.84:.16+u*.84;if(!S.invis&&u>=1)S.hideSelf=0}if(peer&&uid&&S.hide[uid]){const h=S.hide[uid],u=Math.min(1,(performance.now()-h.t0)/900);al=h.out?1-u:u}
+   let al=1,uid=peer&&peer.uid;if(me&&(S.invis||S.hideSelf)){const u=Math.min(1,(performance.now()-(S.hideSelf||0))/800);al=S.invis?1-u*.84:.16+u*.84;if(!S.invis&&u>=1)S.hideSelf=0}if(peer&&uid&&S.hide[uid]){const h=S.hide[uid],u=Math.min(1,(performance.now()-h.t0)/900);al=h.out?1-u:u;if(h.out&&performance.now()-h.t0>1500){delete S.hide[uid];al=1}}
    const auraOn=me?(S.aura&&!S.invis):!!peer.oa,base=cy+56;if(auraOn&&al>.05)try{g.save();g.globalAlpha=al;aura(g,cx,base,t,me?C.auraI:1);g.restore()}catch(_){}
    const flying=me?!!S.fly:!!(peer&&peer.ofl),tr=trailOf(me?'me':'p'+uid,cx+(typeof cam!='undefined'?cam.x:0),cy+(typeof cam!='undefined'?cam.y:0)+20,flying);if(tr.length>2&&al>.05)try{const pts=tr.map(p=>[p[0]-cam.x,p[1]-cam.y]);FLOW15.ribbon(g,pts,11,GOLD,.8*al,v=>Math.pow(v,1.7),.34);FLOW15.ribbon(g,pts,5,VIO,.7*al,v=>Math.pow(v,1.7),.3)}catch(_){}
    if(al>=1)return _ad.apply(this,arguments);const a0=g.globalAlpha,pd=Plate.draw;g.globalAlpha=a0*al;if(al<.5)Plate.draw=()=>{};try{return _ad.apply(this,arguments)}finally{g.globalAlpha=a0;Plate.draw=pd}};
  // ---- what runs every frame
- {const _u=update;update=function(dt){_u.apply(this,arguments);try{if(!isOwner()&&!S.peer&&!S.fly&&!S.cine)return;if(!S.world&&typeof cur=='string')S.world=cur;const d=Math.min(.05,window.FDT||dt||.016);if(S.cine)selfTick(S.cine,d);if(S.peer)peerTick(S.peer);if(S.fly)flyTick(S.fly,d);if(S.landing){if(P.g)S.landing=false;else P.vy=Math.min(P.vy,280)}if(S.wingHold>performance.now())try{wingOpen=1}catch(_){}
+ {const _u=update;update=function(dt){_u.apply(this,arguments);try{window.OWN_STEADY=!!(S.fly||S.cine);if(!isOwner()&&!S.peer&&!S.fly&&!S.cine&&!visSpot)return;if(!S.world&&typeof cur=='string')S.world=cur;const d=Math.min(.05,window.FDT||dt||.016);if(S.cine)selfTick(S.cine,d);if(S.peer)peerTick(S.peer);if(S.fly)flyTick(S.fly,d);if(S.landing){if(P.g)S.landing=false;else P.vy=Math.min(P.vy,280)}if(S.wingHold>performance.now())try{wingOpen=1}catch(_){}
     if(visSpot){const tt=performance.now()/1000-visSpot.t0,dur=C.dur;const b=visSpot.z0*1.22,k=tt<.8?tt/.8:tt>dur-.9?Math.max(0,(dur-tt)/.9):1;ZM=visSpot.z0+(b-visSpot.z0)*(k*k*(3-2*k));if(tt>=dur){ZM=visSpot.z0;if('a0' in visSpot)S.aura=visSpot.a0;visSpot=null;bars(false);fadeMusic(900)}}}catch(e){if(!OWN15.e2){OWN15.e2=1;console.error('OWN15',e)}}}}
  // movement speed: the owner's multiplier on the game's own sum
  {const _b=bonus;bonus=function(){const r=_b.apply(this,arguments);if(S.speed!==1&&isOwner())r.spd=(1+(r.spd||0))*S.speed-1;return r}}
  const reset=()=>{if(S.cine)stop(true);if(S.fly)S.fly=null;S.landing=false;S.speed=1;if(S.invis)setInvis(false);S.aura=false;send({op:'fly',v:0});if(visSpot){ZM=visSpot.z0;visSpot=null;bars(false)}try{window.CAMT=null}catch(_){}au.pause();ann(false)};
- function respawn(){try{const sp=(()=>{try{return OBJ6.spawnPoint()}catch(_){return null}})();const X=sp?sp.x:DX*T+T/2,Y=sp?sp.y:sh(DX)*T-P.h-2;if(S.fly)S.fly=null;S.landing=false;P.x=X;P.y=Y;P.vx=P.vy=0;P.hp=maxHP();try{iT=Math.max(iT,1);swing=-1;window.CAMT=null}catch(_){}try{burst(P.x,P.y+30,'#bfe6ff',14,180,4,'p')}catch(_){}if(isOwner()&&C.cine&&!S.invis){S.lastEnter={w:cur,t:performance.now()};setTimeout(()=>{if(isOwner())entrance()},60)}return true}catch(e){console.error('respawn',e);return false}}
+ const inFight=()=>{try{return !!(BOSS6.active()||ARENA7.arena||WBOSS13.fight)}catch(_){return false}};
+ function respawn(){try{if(inFight()){say('You cannot respawn during a boss fight');return false}const sp=(()=>{try{return OBJ6.spawnPoint()}catch(_){return null}})();const X=sp?sp.x:DX*T+T/2,Y=sp?sp.y:sh(DX)*T-P.h-2;if(S.fly)S.fly=null;S.landing=false;P.x=X;P.y=Y;P.vx=P.vy=0;try{iT=Math.max(iT,1);swing=-1;window.CAMT=null}catch(_){}try{burst(P.x,P.y+30,'#bfe6ff',14,180,4,'p')}catch(_){}if(isOwner()&&C.cine&&!S.invis){S.lastEnter={w:cur,t:performance.now()};setTimeout(()=>{if(isOwner())entrance()},60)}return true}catch(e){console.error('respawn',e);return false}}
  // ---- commands. reg() is all it takes to add one.
  const CMD=new Map();const reg=(name,usage,desc,run)=>CMD.set(name,{name,usage,desc,run});let out=null;
  const tell=m=>{try{if(out)out(m);else say(m)}catch(_){}};
@@ -103,7 +106,7 @@ const OWN15=(()=>{
  reg('land','','Come down and walk again',()=>{if(!flyStop())return'You are not flying';return'Landing'});
  reg('speed','[0.5-5]','Change how fast you move',a=>{const n=num(a[0],.5,5);if(n==null)throw Error('Speed must be a number from 0.5 to 5');S.speed=n;return'Speed '+n+'x'});
  reg('walkspeed','','Back to normal speed',()=>{S.speed=1;return'Normal speed'});
- reg('respawn','','Back to the spawn point, with your entrance',()=>{respawn();return'Respawned'});
+ reg('respawn','','Back to the spawn point, with your entrance',()=>respawn()?'Respawned':'');
  reg('hub','','Open the Character Hub',()=>{closeCon();UI6.open('profile');return''});
  reg('aura','','Your aura, on or off',()=>{S.aura=!S.aura;return'Aura '+(S.aura?'on':'off')});
  reg('wings','','Your wings, on or off',()=>{const on=!(cel.wingsOn!==0);cel.wingsOn=on?1:0;try{WSYNC.on=cel.wingsOn;celSave()}catch(_){}return'Wings '+(on?'on':'off')});
@@ -116,7 +119,7 @@ const OWN15=(()=>{
  reg('ownerinfo','','About your owner status',()=>'Owner: '+(typeof myName=='string'?myName:'')+' · confirmed by the server · entrance '+(C.cine?'on':'off')+' · music: '+MUSIC[C.music][0]);
  reg('clearfx','','Clear your effects',()=>{try{FLOW15.FX.length=0;parts.length=0}catch(_){}S.aura=false;if(S.cine)stop(true);au.pause();ann(false);return'Effects cleared'});
  reg('resetowner','','Everything back to normal',()=>{reset();return'Back to normal'});
- reg('entrance','','Play your entrance now',()=>{closeCon();entrance();return''});
+ reg('entrance','','Play your entrance now',()=>{if(S.invis)return'You are invisible. /visible brings you back with your entrance';closeCon();entrance();return''});
  async function exec(line){const a=String(line).trim().replace(/^\//,'').split(/\s+/),n=a.shift().toLowerCase(),c=CMD.get(n);if(!c)throw Error('No such command: /'+n+'. Try /help');if(!isOwner())throw Error('Only the owner can use /'+n);return c.run(a)}
  {const _c0=SOC6.cmd;SOC6.cmd=function(t){const n=String(t).trim().split(/\s+/)[0].slice(1).toLowerCase();if(CMD.has(n)&&n!='help'){if(!isOwner()){const h=_c0.apply(this,arguments);if(h)return h;say('Only the owner can use /'+n);return true}exec(t).then(m=>{if(m)say(m)},e=>say(e.message));return true}return _c0.apply(this,arguments)}}
  // ---- the console: press / as the owner
@@ -131,7 +134,7 @@ const OWN15=(()=>{
  addEventListener('keydown',e=>{if(e.key!='/'||e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.isContentEditable))return;try{if(!isOwner()||!entered||dlgOpen||menuEl.style.display!='none'||window.RB_COVER)return}catch(_){return}e.preventDefault();e.stopImmediatePropagation();openCon()},true);
  // ---- the buttons everyone has: Hub and Respawn. Owner: Owner.
  let rcd=0;function btns(){const hr=document.getElementById('hudR');if(!hr)return;let row=document.getElementById('ow15bt');if(!row){row=document.createElement('div');row.id='ow15bt';document.body.appendChild(row)}try{row.style.display=entered&&menuEl.style.display=='none'&&!window.RB_COVER?'flex':'none'}catch(_){}const add=(id,lab,title,fn)=>{if(document.getElementById(id))return document.getElementById(id);const b=document.createElement('button');b.id=id;b.className='pn';b.textContent=lab;b.title=title;b.onclick=fn;row.appendChild(b);return b};
-   add('brsp','RESPAWN','Back to the spawn point. Keeps everything you have',()=>{const n=performance.now();if(n<rcd)return;rcd=n+2500;respawn();try{UIS.play('confirm')}catch(_){}});
+   add('brsp','RESPAWN','Back to the spawn point. Keeps everything you have',()=>{const n=performance.now();if(n<rcd)return;const did=respawn();if(did)rcd=n+2500;try{UIS.play(did?'confirm':'error')}catch(_){}});
    add('bhub','HUB','Character Hub',()=>{try{UI6.open('profile')}catch(_){}});
    const ob=document.getElementById('bown15');if(isOwner()&&!ob)add('bown15','OWNER','Owner controls (or press /)',()=>{try{UI6.open('owner')}catch(_){}});else if(!isOwner()&&ob)ob.remove();
    try{const TB=UI6.TABS,has=TB.findIndex(t=>t[0]=='owner');if(isOwner()&&has<0)TB.push(['owner','Owner']);else if(!isOwner()&&has>=0)TB.splice(has,1)}catch(_){}}

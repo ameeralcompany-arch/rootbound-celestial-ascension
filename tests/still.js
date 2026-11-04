@@ -8,7 +8,8 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  await p.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}});await p.evaluate(()=>enterWorld('stilltest'));await p.waitForTimeout(2200);
  const grab=()=>p.evaluate(()=>{const x=document.createElement('canvas');x.width=160;x.height=40;const g2=x.getContext('2d');g2.drawImage(cv,0,0,cv.width,cv.height*.22,0,0,160,40);return Array.from(g2.getImageData(0,0,160,40).data)});
  const diff=(a,b)=>{let d=0;for(let i=0;i<a.length;i++)d+=Math.abs(a[i]-b[i]);return d/a.length};
- await p.evaluate(()=>{P.vx=0;const v=clock();clock=()=>v});
+ // monsters, drops and sparks flying across the top of the screen aren't the sky
+ await p.evaluate(()=>{P.vx=0;const v=clock();clock=()=>v;spawnMob=()=>false;setInterval(()=>{mobs.length=0;parts.length=0;drops.length=0;try{FLOW15.FX.length=0;rings.length=0;floats.length=0;BOSS6.clear();if(typeof WE7!='undefined')WE7.ev=null}catch(_){}},30)});await p.waitForTimeout(600);
  ok('still background is on by default',await p.evaluate(()=>cel.opt.still!=0&&STILL13.on()));
  const a1=await grab();await p.waitForTimeout(2500);const a2=await grab();ok('the sky does not move',diff(a1,a2)<.08,diff(a1,a2).toFixed(3));
  const env={};for(const e of ['blossom','galaxy','space']){await p.evaluate(e=>ENV7.set(e,{instant:true}),e);await p.waitForTimeout(1000);const x1=await grab();await p.waitForTimeout(1800);const x2=await grab();env[e]=+diff(x1,x2).toFixed(3)}

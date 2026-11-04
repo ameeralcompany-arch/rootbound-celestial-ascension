@@ -40,7 +40,7 @@ function createEconomy({send,sessions,userById,saveAcc,relay,dropsOf,touchWorld,
  function tradeMsg(s,m){const fail=x=>send(s,{t:'trade',op:'err',m:x});const op=String(m.op||'');
   if(s.kind=='guest')return fail('Create an account to trade');const u=userById(s.uid);if(!u)return;
   if(op=='ask'){if(!bucket(s,'tradeask',6,20000))return fail('Slow down');if(tradeOf.has(s.sid))return fail('Finish your current trade first');const o=sessions.get(String(m.to||''));
-   if(!o||o===s||!s.world||o.world!==s.world)return fail('That player is not in this world');if(o.kind=='guest')return fail(o.name+' needs an account to trade');{const ou=userById(o.uid);if(ou&&(ou.blocks||[]).includes(String(s.name).toLowerCase()))return fail(o.name+' is not taking trade requests')}if(tradeOf.has(o.sid))return fail(o.name+' is busy trading');
+   if(!o||o===s||!s.world||o.world!==s.world||o.oInv)return fail('That player is not in this world');if(o.kind=='guest')return fail(o.name+' needs an account to trade');{const ou=userById(o.uid);if(ou&&(ou.blocks||[]).includes(String(s.name).slice(0,14).toLowerCase()))return fail(o.name+' is not taking trade requests')}if(tradeOf.has(o.sid))return fail(o.name+' is busy trading');
    const give=seed(m.give),want=seed(m.want);if(give&&!covers(s,u,[give]))return fail('You do not have that many');
    const T={id:'t'+(++tradeN).toString(36)+rid(),a:s,b:o,on:0,oa:{it:give?[give]:[],lock:0,ok:0},ob:{it:[],lock:0,ok:0},want};trades.set(T.id,T);tradeOf.set(s.sid,T.id);tradeOf.set(o.sid,T.id);
    T.timer=setTimeout(()=>{if(trades.has(T.id)&&!T.on)end(T,'The request timed out')},ASK_MS);if(T.timer.unref)T.timer.unref();

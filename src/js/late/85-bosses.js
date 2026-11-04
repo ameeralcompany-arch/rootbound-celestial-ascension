@@ -14,10 +14,10 @@ const BOSS6=(()=>{
  const def=m=>BOSSES.find(b=>'boss_'+b.id==m.k);
  function hurtP(a,kb){if(iT>0||!(a>0))return;P.hp-=a*(1-Math.min(.8,bonus().arm+(guard>0?.5:0)));iT=.9;P.vx=kb||0;P.vy=-320;hurtF=.45;shake=Math.max(shake,QM.reduce?0:.14);snd(130,.22,'sawtooth',.07)}
  function spawn(id){if(act)return false;const b=BOSSES.find(x=>x.id==id);if(!b||cur=='plaza'){say('Bosses do not appear in the plaza');return false}
-  const k='boss_'+id,d=MK[k],online=rm?Math.max(1,rm.peers().filter(p=>p.kind=='viewer').length):1;let x,y,ok=false;
+  const k='boss_'+id,d=MK[k];let x,y,ok=false;
   for(let i=0;i<80&&!ok;i++){const tx=Math.floor(P.x/T+(Math.random()<.5?-1:1)*rn(7,13)),ty=Math.floor(P.y/T+rn(-4,4));if(tx<3||tx>W-4||ty<3||ty>H-5)continue;const cw=Math.ceil(d.w/T)+1,ch=Math.ceil(d.h/T)+1;let clear=true;for(let a=0;a<cw&&clear;a++)for(let c=0;c<ch;c++)if(solidAt(tx+a-(cw>>1),ty-c)){clear=false;break}if(!clear)continue;if(!d.fly&&!solidAt(tx,ty+1))continue;x=tx*T+T/2;y=d.fly?ty*T-d.h/2:ty*T+T-d.h-2;ok=true}
   if(!ok){say('No room for the boss here - try a wider cave');return false}
-  const hp=Math.round(d.hp*(1+.6*(online-1)));mobs.push({k,x,y,w:d.w,h:d.h,vx:0,vy:0,hp,mhp:hp,dmg:d.dmg,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:1,g:false,wall:0,boss:1,bs:'idle',bt:2.4,at:0,phase:1,sum:0});act=mobs[mobs.length-1];
+  const hp=d.hp;/* a boss fight is personal (99-zzzzzzzzz-l-sharedmobs.js), so other players in the world can't help with it */mobs.push({k,x,y,w:d.w,h:d.h,vx:0,vy:0,hp,mhp:hp,dmg:d.dmg,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:1,g:false,wall:0,boss:1,bs:'idle',bt:2.4,at:0,phase:1,sum:0});act=mobs[mobs.length-1];
   if(typeof BOSS10=='undefined'){VFX.wave(x,y+d.h,b.c,320,1.2,.3);UI6.say6(b.n.toUpperCase(),'A BOSS APPEARS',3600)}/* BOSS10's intro cinematic announces the boss */return true}
  function bossPay(b,first){if(first)return b.gems;let last={};const K=(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbbosspay';try{last=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(_){}const now=Date.now();if(now-(+last[b.id]||0)<6e5)return 0;last[b.id]=now;try{localStorage.setItem(K,JSON.stringify(last))}catch(_){}return Math.round(b.gems*.25)}
  function reward(m,b0){bossK[b0.id]=(bossK[b0.id]|0)+1;const first=!relics[b0.relic];relics[b0.relic]=1;const pay=bossPay(b0,first),b=Object.assign({},b0,{gems:pay});gems+=pay;stat('gems',pay);xpGain('fight',b.xp);try{saveP()}catch(_){}lastEnd=performance.now();

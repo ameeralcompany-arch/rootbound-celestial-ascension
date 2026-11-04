@@ -30,4 +30,4 @@ const BOW15=(()=>{
  // a shot was fired: draw the bow, and keep it up for a moment
  {const _uw=useWeapon;useWeapon=function(){const c0=wcd,r=_uw.apply(this,arguments);try{const w=WPN[wp];if(w&&w.k=='bow'&&c0<=0&&wcd>0){last=performance.now();swing=Math.min(swing,-.5)}}catch(_){}return r}}
  {const _u=update;update=function(dt){_u.apply(this,arguments);try{const w=WPN[wp];if(w&&w.k=='bow'&&performance.now()-last<3000&&swing<-.5)swing=-.5}catch(_){}}}
- return{pose,nock,art,origin,COL,get last(){return last}}})();
+ return{pose,nock,art,origin,COL,get last(){return last},get shooting(){return performance.now()-last<600}}})();

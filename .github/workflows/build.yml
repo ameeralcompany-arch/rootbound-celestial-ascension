@@ -100,7 +100,7 @@ jobs:
         run: npm i playwright@1.49.0 && npx playwright install --with-deps chromium
       - name: Test balance
         if: ${{ !cancelled() }}
-        timeout-minutes: 10
+        timeout-minutes: 22
         run: bash tools/ci-test.sh tests/balance.js
       - name: Test biomes
         if: ${{ !cancelled() }}

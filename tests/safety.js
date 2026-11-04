@@ -4,6 +4,8 @@ let fails=0;const ok=(n,c,x)=>{console.log((c?'  ok   ':'  FAIL ')+n+(c||x==null
 (async()=>{
  // ---- the word filter: abuse goes, ordinary words stay
  ok('abuse is masked',!/fuck/i.test(cleanText('fuck you'))&&!/sh1t/i.test(cleanText('sh1t game'))&&!/n[i1]gg/i.test(cleanText('n1gger')),[cleanText('fuck you'),cleanText('sh1t game')]);
+ for(const t of['fuck!','shit!!!','fuckkk','shiiit','fuuuck','raped','sh1t.','(fuck)'])ok('masks "'+t+'"',/^\*+$/.test(cleanText(t)),cleanText(t));
+ for(const t of['Kyser','fagin','Scunthorpe','cocktail','assassin','I am 100% ok!','hi!!!','rapeseed','shitake'])ok('leaves "'+t+'"',cleanText(t)==t,cleanText(t));
  for(const t of['class assignment','pass the sniper','shitake mushrooms','I love this grape soda','Scunthorpe','draper and fagus trees','hello world 123'])ok('leaves "'+t+'" alone',cleanText(t)==t,cleanText(t));
  const b=await chromium.launch({executablePath:process.env.CHROMIUM||undefined,args:['--no-sandbox','--mute-audio','--disable-gpu']});
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbsafe-'));const S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.join(__dirname,'..','index.html')});const port=await S.listen(),url='http://127.0.0.1:'+port+'/';const errs=[];

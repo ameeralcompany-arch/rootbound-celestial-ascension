@@ -87,7 +87,7 @@ const MYTH=(()=>{
  // the combo chains while a swing is still finishing, or within 0.75 s of the last one
  function attack(w){const k=w.myth,now=performance.now()/1000;if(THR)return;if((lvl|0)<(w.lv|0)){if(now-(attack.warned||0)>1.5){attack.warned=now;say('Reach level '+w.lv+' to use '+w.n);try{UIS.play('error')}catch(_){}}wcd=.35;return}
   try{if(CJOB.blocks(w.id)){say(CJOB.why(w.id));return}}catch(_){}
-  const tr=tier(k)||1,last=tr>=5?3:2;step=(SW||now-lastEnd<.75)&&step<last&&step>=0?step+1:0;const st4=step==3,sv=step;if(st4)step=2;const pf=prof(k),o=pivot(),wx=mx+cam.x,wy=my+cam.y,aim=Math.atan2(wy-o.y,wx-o.x);P.f=Math.cos(aim)>=0?1:-1;
+  const tr=tier(k)||1,last=tr>=5?3:2;step=(SW||now-lastEnd<.75)&&step<last&&step>=0?step+1:0;const st4=step==3,sv=step;if(st4)step=2;const pf=prof(k),o=pivot(),wx=mx+cam.x,wy=my+cam.y,oa=pf.ranged=='arrow'?BOW15.origin(wx,wy):o,aim=Math.atan2(wy-oa.y,wx-oa.x);P.f=wx>=P.x?1:-1;
   const f=P.f,base=f>0?aim:Math.PI-aim;
   if(pf.ranged){const r=RMV[step];SW={k,w,step,t:0,dur:r[0],a0:aim,a1:aim,mul:r[1]*(tr>=5&&step==2?1.25:1),hit:new Set(),fx:false,aim,f,tr,tail:[],pf,shot:false}}
   else{// angles are built for facing right and mirrored for facing left
@@ -149,7 +149,7 @@ const MYTH=(()=>{
  function hitArea(e,x,y,r,mul,kn,once){let n=0;for(const m of mobs)if(live(m)&&!(once&&e.hit.has(m))&&Math.hypot(m.x-x,m.y+m.h/2-y)<r+Math.max(m.w,m.h)*.5){e.hit.add(m);onHit(e.th,m,Math.atan2(m.y+m.h/2-y,m.x-x),mul,e.w,kn);n++}return n}
  function fxTick(e,dt){if(e.mm)return MYMV.tick(e,dt);if(e.del>0){e.del-=dt;return false}e.t+=dt;const p=TH[e.th].pal;
   switch(e.k){
-   case'proj':{e.x+=e.vx*dt;e.y+=e.vy*dt;if(e.kind=='arrow')e.vy+=120*dt;e.a=Math.atan2(e.vy,e.vx);for(const m of mobs)if(live(m)&&!e.hit.has(m)&&Math.hypot(m.x-e.x,m.y+m.h/2-e.y)<16+Math.max(m.w,m.h)*.5){e.hit.add(m);onHit(e.th,m,e.a,e.mul,e.w,.5);if(--e.pierce<=0){e.t=e.life;break}}
+   case'proj':{const ns=Math.max(1,Math.min(5,Math.ceil(Math.hypot(e.vx,e.vy)*dt/24))),dts=dt/ns;for(let q=0;q<ns&&e.t<e.life;q++){e.x+=e.vx*dts;e.y+=e.vy*dts;if(e.kind=='arrow')e.vy+=120*dts;e.a=Math.atan2(e.vy,e.vx);for(const m of mobs)if(live(m)&&!e.hit.has(m)&&Math.hypot(m.x-e.x,m.y+m.h/2-e.y)<16+Math.max(m.w,m.h)*.5){e.hit.add(m);onHit(e.th,m,e.a,e.mul,e.w,.5);if(--e.pierce<=0){e.t=e.life;break}}}
     if(!red()&&R()<.8)part(e.x,e.y,(R()-.5)*30,(R()-.5)*30,.3,e.kind=='orb'?5:3,p[R()<.6?0:1],e.kind=='orb'&&R()<.3,e.th);if(solidAt(Math.floor(e.x/T),Math.floor(e.y/T))){sparks(e.x,e.y,e.th,4,140);e.t=e.life}break}
    case'cres':e.x+=e.vx*dt;e.y+=e.vy*dt;hitArea(e,e.x,e.y,e.r*.7,e.mul,.8,true);if(!red()&&R()<.9)part(e.x-Math.cos(e.a)*e.r*.3,e.y-Math.sin(e.a)*e.r*.3,(R()-.5)*30,(R()-.5)*30,.4,R()<.3?6:3,p[R()<.5?0:1],R()<.25,e.th);if(solidAt(Math.floor(e.x/T),Math.floor(e.y/T)))e.t=Math.max(e.t,e.life-.08);break;
    case'pil':if(!e.done&&e.t>.1){e.done=1;hitArea(e,e.x,e.y-T*1.2,T*(e.look=='grave'?1.2:1.7)*e.sc,e.mul,1.6,true);for(const m of e.hit){if(!m.boss)m.vy=-420;if(e.burn)m.burn=Math.max(m.burn||0,3)}sparks(e.x,e.y,e.th,red()?6:18,320);try{shake=Math.max(shake,QM.reduce?0:.12)}catch(_){}}

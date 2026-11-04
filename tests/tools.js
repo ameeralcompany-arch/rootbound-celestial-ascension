@@ -85,7 +85,7 @@ async function boot(p,world){await p.goto(URL);await p.waitForTimeout(700);await
   const c=document.createElement('canvas');c.width=c.height=48;TOOLLV.set('twiggy',10,0);TOOLLV.badge(c.getContext('2d'),'twiggy',0,0,48,1.1);const px=c.getContext('2d').getImageData(0,0,48,48).data.filter((v,i)=>i%4==3&&v>0).length;TOOLLV.set('twiggy',1,0);return{a,an,b:b2,px}});
  ok('icon API for slots: decorate() puts an animated rainbow ring on a slot, badge() paints on a canvas, both clear at level 1',deco.a=='6'&&deco.an=='tl8hue'&&deco.b==null&&deco.px>50,deco);
  // ---- persistence
- await E(()=>{TOOLLV.set('pip',4,17);TOOLLV.set('glimmer',10,0);TOOLLV.set('bubbles',7,3);TOOLLV.save()});
+ await E(()=>{TOOLLV.set('pip',4,17);TOOLLV.set('glimmer',10,0);TOOLLV.set('bubbles',7,3);TOOLLV.save()});await p.waitForTimeout(400);
  await p.reload();await boot(p,'tooltest');
  const kept=await E(()=>({pip:TOOLLV.S.pip,gl:TOOLLV.lvl('glimmer'),bu:TOOLLV.lvl('bubbles'),tw:TOOLLV.lvl('twiggy'),ic:iconURL('w:glimmer').slice(-6)}));
  ok('tool levels and XP survive a reload of the saved data',kept.pip.l==4&&kept.pip.x==17&&kept.gl==10&&kept.bu==7&&kept.tw==1&&kept.ic=='#tl8-6',kept);
