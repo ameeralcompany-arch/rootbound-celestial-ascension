@@ -30,7 +30,7 @@ const Plate=(()=>{
    x.strokeStyle=gl;x.globalAlpha=.7;x.lineWidth=1;x.beginPath();x.ellipse(w/2,by+bh/2,bw/2+9,bh/2+5,0,0,6.3);x.stroke();x.globalAlpha=1;
    for(const s of[-1,1]){x.fillStyle=gl;x.beginPath();x.moveTo(s<0?bx-8:bx+bw+8,by+bh/2-7);x.lineTo(s<0?bx-1:bx+bw+1,by+bh/2);x.lineTo(s<0?bx-8:bx+bw+8,by+bh/2+7);x.lineTo(s<0?bx-4:bx+bw+4,by+bh/2);x.fill()}}
   x.restore()}
- function make(tier,name,lv,skin){const st=(typeof NPSKIN7!='undefined'&&skin&&NPSKIN7.byId[skin])?NPSKIN7.byId[skin].st:NP_STYLE(tier),mc=document.createElement('canvas').getContext('2d');mc.font='700 13px sans-serif';const nm=String(name).slice(0,14),lab='Lv '+lv,ttl=npName(tier).toUpperCase();mc.font='700 13px sans-serif';const w1=mc.measureText(lab+'  '+nm).width;mc.font='600 8.5px sans-serif';const w2=mc.measureText(ttl).width+ttl.length*1.2;
+ function make(tier,name,lv,skin){const st=(typeof NPSKIN7!='undefined'&&skin&&NPSKIN7.byId[skin])?NPSKIN7.byId[skin].st:NP_STYLE(tier),mc=document.createElement('canvas').getContext('2d');mc.font='700 13px sans-serif';const nm=String(name).slice(0,14),lab='Lv '+lv,ttl=(st.ttl||npName(tier)).toUpperCase();mc.font='700 13px sans-serif';const w1=mc.measureText(lab+'  '+nm).width;mc.font='600 8.5px sans-serif';const w2=mc.measureText(ttl).width+ttl.length*1.2;
   const w=Math.ceil(Math.max(w1,w2)+60),h=44,c=document.createElement('canvas');c.width=w*DPR;c.height=h*DPR;const x=c.getContext('2d');x.scale(DPR,DPR);
   // title ribbon above (slightly lifted), main plate below
   x.save();x.translate(0,4);frame(x,w,h-4,st);x.restore();
@@ -39,4 +39,11 @@ const Plate=(()=>{
   x.lineWidth=3;x.strokeStyle='rgba(0,0,0,.85)';x.fillStyle=st.g;x.strokeText(lab,x0,h/2+5);x.fillText(lab,x0,h/2+5);x.fillStyle='#fff';x.strokeText(nm,x0+lw+10,h/2+5);x.fillText(nm,x0+lw+10,h/2+5);
   return{c,w,h}}
  function get(tier,name,lv,skin){const k=tier+'|'+name+'|'+lv+'|'+(skin||'');let p=cache.get(k);if(!p){p=make(tier,name,lv,skin);cache.set(k,p);order.push(k);if(order.length>80)cache.delete(order.shift())}return p}
- return{get,draw(g,cx,cy,tier,name,lv,skin){const p=get(tier,name,lv,skin);g.drawImage(p.c,cx-p.w/2,cy-p.h/2,p.w,p.h)},make}})();
+ // what moves on a plate: cheap, a few shapes drawn over the cached picture
+ function live(g,cx,cy,p,kind,col){const t=performance.now()/1000,w=p.w,h=p.h,bw=w-40;g.save();g.translate(cx,cy+6);if(kind=='sheen'||kind=='holo'||kind=='owner'){const u=((t*(kind=='owner'?.5:.32))%1.4)-.2,X=-bw/2+u*bw;g.beginPath();g.rect(-bw/2,-11,bw,22);g.clip();g.globalCompositeOperation='lighter';const gr=g.createLinearGradient(X-16,0,X+16,0);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(.5,kind=='holo'?'hsla('+((t*90)%360)+',100%,75%,.55)':'rgba(255,255,255,.5)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(X-16,-11,32,22);g.restore();g.save();g.translate(cx,cy+6)}
+   g.globalCompositeOperation='lighter';if(kind=='stars'||kind=='owner'){g.fillStyle=kind=='owner'?'#ffe9a8':col;for(let i=0;i<(kind=='owner'?7:4);i++){const a=t*.8+i*6.28/(kind=='owner'?7:4),X=Math.cos(a)*(bw/2+5),Y=Math.sin(a)*13,r=1.2+.8*(.5+.5*Math.sin(t*5+i));g.beginPath();g.moveTo(X,Y-r*2);g.quadraticCurveTo(X,Y,X+r*2,Y);g.quadraticCurveTo(X,Y,X,Y+r*2);g.quadraticCurveTo(X,Y,X-r*2,Y);g.quadraticCurveTo(X,Y,X,Y-r*2);g.fill()}}
+   if(kind=='embers'||kind=='rays'){g.fillStyle=col;for(let i=0;i<6;i++){const u=(t*.5+i*.17)%1;g.globalAlpha=Math.sin(u*3.14);g.beginPath();g.arc(-bw/2+i*bw/5,-8-u*14,.9+(i%2)*.5,0,6.3);g.fill()}g.globalAlpha=1}
+   if(kind=='pulse'||kind=='owner'){const a=.35+.35*Math.sin(t*(kind=='owner'?3.4:2.4));g.globalAlpha=a;g.strokeStyle=col;g.lineWidth=1.6;g.beginPath();g.ellipse(0,0,bw/2+6,15,0,0,6.3);g.stroke();g.globalAlpha=1}
+   if(kind=='smoke'){g.globalCompositeOperation='source-over';for(let i=0;i<4;i++){const u=(t*.3+i*.25)%1;g.globalAlpha=Math.sin(u*3.14)*.3;g.fillStyle='#060608';g.beginPath();g.arc(-bw/2+i*bw/3,-10-u*12,3+u*4,0,6.3);g.fill()}g.globalAlpha=1}
+   g.restore()}
+ return{get,draw(g,cx,cy,tier,name,lv,skin){const p=get(tier,name,lv,skin);g.drawImage(p.c,cx-p.w/2,cy-p.h/2,p.w,p.h);try{const s=skin&&NPSKIN7.byId[skin];if(s&&s.anim)live(g,cx,cy,p,s.anim,s.st.a)}catch(_){}},make}})();

@@ -42,7 +42,7 @@ const UI6=(()=>{
   try{MOTION7.ind(nav,'button.on','v')}catch(_){}
   // content fades in only when the tab changes, not on every refresh inside a tab; it slides from the side the new tab is on
   const changed=tab!=lastTab;if(changed){const ix=k=>TABS.findIndex(t=>t[0]==k),d=lastTab?Math.sign(ix(tab)-ix(lastTab)):0;body.style.setProperty('--mo-dx',(d*12)+'px');lastTab=tab;body.classList.remove('tabin');void body.offsetWidth;body.classList.add('tabin');clearTimeout(render.t);render.t=setTimeout(()=>body.classList.remove('tabin'),700)}
-  (EXT[tab]||({profile,look,wings,plates,skills,gear,quests,account})[tab]||profile)();try{EXT.post&&EXT.post(tab,body)}catch(e){console.error(e)}
+  (EXT[tab]||({profile,look,wings,plates,skills,gear,quests,account})[tab]||profile)(body);try{EXT.post&&EXT.post(tab,body)}catch(e){console.error(e)}
   if(changed){let i=0;for(const c of body.children)c.style.setProperty('--i',Math.min(i++,8));body.querySelectorAll('.hgrid,.ach7').forEach(g=>MOTION7.stagger(g,':scope>*',12));body.querySelectorAll('.kv7 b').forEach(b=>{const v=+b.textContent;if(isFinite(v))MOTION7.tick(b,v,0)})}}
  function profile(){const t=npTier(lvl),w=curWing(lvl),nx=npRange(t)[1]+1,nw=WINGS.find(x=>!x.shop&&lvl<x.lvl),xpp=Math.min(100,xp/xpNeed(lvl)*100);
   body.innerHTML='<h3>Profile</h3><div class="prof"><canvas id="pv" width="220" height="286"></canvas><div><div class="psub7">✦ '+esc(npName(t))+' · Level '+lvl+'</div><div class="pname7">'+esc(myName)+'</div>'+

@@ -460,7 +460,7 @@ function sanitizeSave(p){if(!p||typeof p!='object')return null;const n=(v,d,lo,h
  p.v=SAVE_V;return p}
 function readSave(){for(const key of['rbp','rbp_bak']){let raw=null;try{raw=localStorage.getItem(key)}catch(_){}if(!raw)continue;try{const p=sanitizeSave(JSON.parse(raw));if(p)return{p,key}}catch(_){try{localStorage.setItem('rbp_corrupt_'+Date.now(),raw)}catch(_){}}}return null}
 setInterval(()=>{if(dirty&&!guest){dirty=0;try{localStorage.setItem('rbw_'+cur,JSON.stringify(edits))}catch(_){}if(dbRef)dbRef.set({e:JSON.stringify(edits)}).catch(()=>{})}saveP()},4000);
-setInterval(()=>{if(rm)rm.presence({x:P.x|0,y:P.y|0,f:P.f,n:myName,h:myHue,vx:P.vx|0,wp,sw:swing>0?1:0,fm:1,hat:wear.hat,wing:wear.wing,boot:wear.boot,glove:wear.glove,body:wear.body,lv:lvl,wo:+wingOpen.toFixed(2),uid:myId,lk:look,cx:celPres()})},100);setInterval(hud,120);
+setInterval(()=>{if(rm)rm.presence({x:P.x|0,y:P.y|0,f:P.f,n:myName,h:myHue,vx:P.vx|0,wp,sw:swing>0?1:0,fm:1,hat:wear.hat,wing:wear.wing,boot:wear.boot,glove:wear.glove,body:wear.body,lv:lvl,wo:+wingOpen.toFixed(2),uid:myId,lk:look,cx:celPres(),oa:typeof OWN15!='undefined'?OWN15.pa():0,ofl:typeof OWN15!='undefined'?OWN15.pf():0})},100);setInterval(hud,120);
 // ===================== v3 BLOCK =====================
 const WEAR={
 helmet:{s:'hat',n:'Miner Helmet',c:'#f5b82e',cost:60,lv:1,cd:20,d:'Light +90',sd:'Flare: lights the cave for 10s',b:{light:90}},

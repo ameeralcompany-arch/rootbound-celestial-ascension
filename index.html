@@ -2524,6 +2524,43 @@ html[data-skin=clean]:not([data-ureduce=true]) #guide10 .dots i{transition:trans
 #mworlds .wr.mine10 .btn{padding:4px 10px;font-size:12px}
 @media(max-width:520px){#trade10 .cols10{grid-template-columns:1fr}}
 
+/* ========== CSS: 99-zz-owner.css ========== */
+/* OWN15: the announcement, the letterbox, the command console and the owner settings */
+#ow15ann{position:fixed;left:0;right:0;top:9%;z-index:6400;text-align:center;pointer-events:none;opacity:0;transform:translateY(10px) scale(.96);transition:opacity .5s ease,transform .7s cubic-bezier(.2,.8,.2,1);color:#fff}
+#ow15ann.on{opacity:1;transform:none}
+#ow15ann b{display:block;font:700 clamp(30px,5.4vw,70px)/1.05 'Cormorant Garamond',Georgia,serif;letter-spacing:.09em;background:linear-gradient(180deg,#fff 10%,#ffe9a8 50%,#d8a83a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(255,214,120,.85)) drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+#ow15ann small{display:block;font:700 14px Montserrat,system-ui,sans-serif;letter-spacing:.34em;color:#efe6ff;text-transform:uppercase;text-shadow:0 0 12px #b48cff,0 1px 2px #000;margin-bottom:6px}
+#ow15bar{position:fixed;inset:0;z-index:6300;pointer-events:none}
+#ow15bar i{position:absolute;left:0;right:0;height:0;background:#04030c;transition:height .7s cubic-bezier(.2,.8,.2,1)}
+#ow15bar i:first-child{top:0}#ow15bar i:last-child{bottom:0}
+#ow15bar.on i{height:7.5vh}
+#ow15con{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);width:min(620px,calc(100vw - 32px));z-index:8000;display:none;color:#efe9ff;font-family:Montserrat,system-ui,sans-serif}
+#ow15con.on{display:block}
+#ow15con .ow15i{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;background:rgba(14,10,32,.95);border:1px solid rgba(255,214,120,.65);box-shadow:0 0 22px rgba(255,214,120,.25)}
+#ow15con .ow15i b{color:#ffd86a;font-size:18px}
+html[data-skin] body #ow15con input{flex:1;min-width:0;background:none!important;border:0!important;outline:none;box-shadow:none!important;color:#fff!important;font:600 15px Montserrat,system-ui,sans-serif}
+#ow15con .ow15l{display:flex;flex-direction:column;gap:2px;margin-bottom:6px;max-height:44vh;overflow:auto}
+html[data-skin] body #ow15con .ow15l button{display:flex;align-items:baseline;gap:8px;text-align:left;padding:7px 12px;border-radius:9px;color:#e8e0ff!important;background:rgba(14,10,32,.88)!important;border:1px solid rgba(180,140,255,.2)!important;cursor:pointer;box-shadow:none!important;font:500 13px Montserrat,system-ui,sans-serif}
+html[data-skin] body #ow15con .ow15l button.on,html[data-skin] body #ow15con .ow15l button:hover{background:rgba(90,60,170,.8)!important;border-color:rgba(255,214,120,.6)!important}
+#ow15con .ow15l b{color:#ffe9a8;font-weight:700}
+#ow15con .ow15l i{font-style:normal;color:#c9b4ff;font-size:11.5px}
+#ow15con .ow15l small{margin-left:auto;font-size:11.5px;color:#b9b0dc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ow15con .ow15o{margin:0 0 6px;padding:0 12px;font-size:12.5px;line-height:1.5;color:#c8ffd8;text-shadow:0 1px 3px #000;white-space:pre-line}
+#ow15con .ow15o:empty{display:none}
+#ow15con .ow15o.bad{color:#ffb4a8}
+.ow15set{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.ow15r{display:flex;align-items:center;gap:14px;padding:9px 12px;border-radius:11px;border:1px solid rgba(160,140,220,.26);background:rgba(120,100,200,.08)}
+.ow15r>div{flex:1;min-width:0}
+.ow15r b{display:block;font-weight:700}
+.ow15r small{display:block;opacity:.75;font-size:12px}
+.ow15r em{font-style:normal;font-weight:700;min-width:2.4em;text-align:right}
+.ow15t{min-width:58px;padding:6px 10px;border-radius:99px;cursor:pointer;font-weight:700}
+.ow15t[aria-pressed=true]{background:#d8a83a!important;color:#1a1020!important;border-color:#ffe9a8!important}
+#ow15bt{position:fixed;left:128px;top:129px;z-index:40;display:none;gap:6px}
+html[data-skin] body #ow15bt button{padding:5px 11px;font:700 10.5px Montserrat,system-ui,sans-serif;letter-spacing:.12em;white-space:nowrap;border-radius:99px;min-width:0;width:auto}
+html[data-skin] body #ow15bt #bown15{background:linear-gradient(180deg,#ffe9a8,#d8a83a)!important;color:#1a1020!important;border-color:#fff4c8!important}
+@media (max-width:760px){#ow15bt{left:8px;top:150px}}
+
 /* ========== CSS: 99-zz-wboss.css ========== */
 /* WBOSS13: the world boss cinematic canvas and the "fight now?" dialog */
 #wb13c{position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483000;background:#000;display:block}
@@ -2937,7 +2974,7 @@ function sanitizeSave(p){if(!p||typeof p!='object')return null;const n=(v,d,lo,h
  p.v=SAVE_V;return p}
 function readSave(){for(const key of['rbp','rbp_bak']){let raw=null;try{raw=localStorage.getItem(key)}catch(_){}if(!raw)continue;try{const p=sanitizeSave(JSON.parse(raw));if(p)return{p,key}}catch(_){try{localStorage.setItem('rbp_corrupt_'+Date.now(),raw)}catch(_){}}}return null}
 setInterval(()=>{if(dirty&&!guest){dirty=0;try{localStorage.setItem('rbw_'+cur,JSON.stringify(edits))}catch(_){}if(dbRef)dbRef.set({e:JSON.stringify(edits)}).catch(()=>{})}saveP()},4000);
-setInterval(()=>{if(rm)rm.presence({x:P.x|0,y:P.y|0,f:P.f,n:myName,h:myHue,vx:P.vx|0,wp,sw:swing>0?1:0,fm:1,hat:wear.hat,wing:wear.wing,boot:wear.boot,glove:wear.glove,body:wear.body,lv:lvl,wo:+wingOpen.toFixed(2),uid:myId,lk:look,cx:celPres()})},100);setInterval(hud,120);
+setInterval(()=>{if(rm)rm.presence({x:P.x|0,y:P.y|0,f:P.f,n:myName,h:myHue,vx:P.vx|0,wp,sw:swing>0?1:0,fm:1,hat:wear.hat,wing:wear.wing,boot:wear.boot,glove:wear.glove,body:wear.body,lv:lvl,wo:+wingOpen.toFixed(2),uid:myId,lk:look,cx:celPres(),oa:typeof OWN15!='undefined'?OWN15.pa():0,ofl:typeof OWN15!='undefined'?OWN15.pf():0})},100);setInterval(hud,120);
 // ===================== v3 BLOCK =====================
 const WEAR={
 helmet:{s:'hat',n:'Miner Helmet',c:'#f5b82e',cost:60,lv:1,cd:20,d:'Light +90',sd:'Flare: lights the cave for 10s',b:{light:90}},
@@ -4370,13 +4407,41 @@ const PLATEX7={
   const X=bx+6,Y=by+bh/2;x.fillStyle='#000';x.beginPath();x.arc(X,Y,8,0,6.3);x.fill();x.strokeStyle='#ff7aff';x.lineWidth=2;x.shadowColor='#ff5aff';x.shadowBlur=8;x.beginPath();x.arc(X,Y,8.5,0,6.3);x.stroke();x.lineWidth=1.4;x.beginPath();x.ellipse(X,Y,15,4,-.5,0,6.3);x.stroke();x.shadowBlur=0;
   x.strokeStyle='#f0a8ff';x.lineWidth=1;for(const s of[.3,.62,.86]){const X2=bx+bw*s;x.beginPath();x.moveTo(X2,by+2);x.lineTo(X2+3,by+bh*.4);x.lineTo(X2-2,by+bh*.55);x.lineTo(X2+2,by+bh-2);x.stroke()}}
 };
+PLATEX7.gen15=function(x,w,h,st,bx,by,bw,bh,rr){const cut=7,path=()=>{x.beginPath();x.moveTo(bx+cut,by);x.lineTo(bx+bw-cut,by);x.lineTo(bx+bw,by+bh/2);x.lineTo(bx+bw-cut,by+bh);x.lineTo(bx+cut,by+bh);x.lineTo(bx,by+bh/2);x.closePath()};
+ x.shadowColor=st.a;x.shadowBlur=st.orn=='owner'?16:9;path();const gr=x.createLinearGradient(bx,by,bx+bw,by+bh);gr.addColorStop(0,st.c1);gr.addColorStop(.5,st.c2);gr.addColorStop(1,st.c3);x.fillStyle=gr;x.fill();x.shadowBlur=0;
+ x.save();path();x.clip();const hl=x.createLinearGradient(0,by,0,by+bh);hl.addColorStop(0,'rgba(255,255,255,.3)');hl.addColorStop(.42,'rgba(255,255,255,.04)');hl.addColorStop(1,'rgba(0,0,0,.34)');x.fillStyle=hl;x.fillRect(bx,by,bw,bh);if(st.anim=='holo'){const ho=x.createLinearGradient(bx,by,bx+bw,by);for(const[i,c]of[[0,'rgba(255,90,160,.3)'],[.3,'rgba(255,230,90,.3)'],[.55,'rgba(90,255,180,.3)'],[.8,'rgba(90,170,255,.3)'],[1,'rgba(200,90,255,.3)']])ho.addColorStop(i,c);x.fillStyle=ho;x.fillRect(bx,by,bw,bh)}x.restore();
+ path();x.strokeStyle=st.a;x.lineWidth=1.5;x.stroke();x.strokeStyle='rgba(255,255,255,.4)';x.lineWidth=.5;x.beginPath();x.moveTo(bx+cut+3,by+2.4);x.lineTo(bx+bw-cut-3,by+2.4);x.stroke();
+ const cx=bx+bw/2,star=(X,Y,r)=>{x.beginPath();x.moveTo(X,Y-r);x.quadraticCurveTo(X,Y,X+r,Y);x.quadraticCurveTo(X,Y,X,Y+r);x.quadraticCurveTo(X,Y,X-r,Y);x.quadraticCurveTo(X,Y,X,Y-r);x.fill()};x.fillStyle=st.a;x.strokeStyle=st.a;
+ if(st.orn=='wings'||st.orn=='owner'){for(const s of[-1,1]){const X=s<0?bx+1:bx+bw-1,Y=by+bh/2;for(let i=0;i<(st.orn=='owner'?4:3);i++){x.beginPath();x.moveTo(X,Y);x.quadraticCurveTo(X+s*(6+i*3),Y-9-i*2,X+s*(14+i*4),Y-11+i*3);x.quadraticCurveTo(X+s*(8+i*2),Y-3+i,X,Y+1);x.fill()}}}
+ if(st.orn=='crown'||st.orn=='owner'){const Y=by-1,n=[-8,-4,0,4,8];x.beginPath();x.moveTo(cx-10,Y);for(const q of n){x.lineTo(cx+q,Y-(q==0?7.5:Math.abs(q)==4?5:6));x.lineTo(cx+q+(q<8?2:2),Y-1.6)}x.lineTo(cx+10,Y);x.closePath();x.fill();x.fillStyle='#fff';star(cx,Y-7.5,1.6);x.fillStyle=st.a}
+ if(st.orn=='halo'){x.lineWidth=1.3;x.beginPath();x.ellipse(cx,by-3,15,3.2,0,0,6.3);x.stroke()}
+ if(st.orn=='moon'){for(const s of[-1,1]){const X=s<0?bx-1:bx+bw+1,Y=by+bh/2;x.beginPath();x.arc(X,Y,6.5,0,6.3);x.fill();x.save();x.globalCompositeOperation='destination-out';x.beginPath();x.arc(X+s*2.6,Y-.6,5.6,0,6.3);x.fill();x.restore()}}
+ if(st.orn=='thorn'){for(let i=0;i<7;i++){const X=bx+10+i*(bw-20)/6;x.beginPath();x.moveTo(X-2,by+.5);x.lineTo(X,by-3.6-(i%2)*1.6);x.lineTo(X+2,by+.5);x.fill();x.beginPath();x.moveTo(X-2,by+bh-.5);x.lineTo(X,by+bh+3-(i%2));x.lineTo(X+2,by+bh-.5);x.fill()}}
+ if(st.orn=='stars'){for(const[X,Y,r]of[[bx-2,by+2,3],[bx+bw+2,by+bh-2,3],[bx+bw-5,by-2,2.2],[bx+5,by+bh+2,2.2]])star(X,Y,r)}
+ if(st.orn=='bracket'){x.lineWidth=1.3;for(const s of[-1,1]){const X=s<0?bx+7:bx+bw-7;x.beginPath();x.moveTo(X+s*-3,by+4);x.lineTo(X,by+4);x.lineTo(X,by+bh-4);x.lineTo(X+s*-3,by+bh-4);x.stroke()}}
+};
 const NPSKIN7=(()=>{
  const L=[{id:'fire',n:'Inferno Bar',lvl:20,st:{k:'fire',a:'#ff8a2a',g:'#ffd070'}},{id:'ice',n:'Frostglass',lvl:30,st:{k:'ice',a:'#eaf8ff',g:'#ffffff'}},{id:'ornate',n:'Celestial Ornate',lvl:55,st:{k:'ornate',a:'#e8c46a',g:'#ffe9a8'}},
   {id:'gothic',n:'Crimson Heritage',lvl:80,st:{k:'gothic',a:'#e8e0d8',g:'#ff9aa8'}},{id:'chrome',n:'Y2K Chrome',lvl:105,st:{k:'chrome',a:'#b69cff',g:'#e8f0ff'}},{id:'void',n:'Void Singularity',lvl:130,st:{k:'void',a:'#e05aff',g:'#f6c8ff'}}];
+ // the v15 collection: [id, name, family, level, colours c1 c2 c3, accent, text glow, ornament, animation]
+ const X=[['mythgold','Mythic Gilt','Mythical',25,'#3a2408','#7a5414','#2a1804','#ffd86a','#fff2c0','wings','sheen'],['mythrose','Mythic Rose','Mythical',45,'#3a0a24','#8a1e54','#20061a','#ff9ac0','#ffe4f0','thorn','embers'],['mythjade','Jade Emperor','Mythical',65,'#06302a','#127a64','#04201c','#7fefc8','#e0fff4','crown','sheen'],
+  ['celesdawn','Dawn Choir','Celestial',18,'#2a2a5a','#6a78d8','#1a1a42','#c8d8ff','#ffffff','halo','stars'],['celesnoon','Noon Seraph','Celestial',40,'#6a5418','#e8c860','#4a3a10','#fff4c8','#ffffff','wings','sheen'],['celesluna','Luna Veil','Celestial',60,'#10143a','#3a48a8','#080a24','#d8e0ff','#ffffff','moon','stars'],
+  ['divineray','Radiant Crown','Divine',50,'#5a4410','#d8b040','#3a2a08','#ffffff','#fff8d8','crown','rays'],['divinelily','White Lily','Divine',70,'#c8c4d8','#fbf8ff','#8e8aa8','#ffd86a','#fff8d8','wings','sheen'],['divineflame','Sacred Flame','Divine',90,'#5a1e08','#e8742a','#2a0c04','#ffe0a0','#fff4d8','crown','embers'],
+  ['cosnebula','Nebula Drift','Cosmic',30,'#180a3a','#5a2ad0','#0a0420','#d8b8ff','#f4e8ff','stars','stars'],['cosnova','Supernova','Cosmic',55,'#2a0830','#d0348a','#140418','#ffb0e0','#fff0fa','stars','pulse'],['cosvoid','Event Horizon','Cosmic',85,'#030208','#1a1040','#000004','#a890ff','#e6dcff','moon','pulse'],['cosaurora','Aurora Road','Cosmic',75,'#062a3a','#2ad0a8','#120a3a','#a0ffe0','#e8fff8','stars','holo'],
+  ['legember','Ember Lord','Legendary',22,'#2a0e06','#a03a10','#180604','#ff9a4a','#ffe0b8','thorn','embers'],['legstorm','Storm Herald','Legendary',38,'#081a4a','#2a68d0','#040c2a','#a8dcff','#ffffff','thorn','pulse'],['legfrost','Winter Regent','Legendary',48,'#1a4a6a','#8ad0f0','#0e2c44','#ffffff','#e8faff','crown','sheen'],
+  ['royalviolet','Violet Court','Royal',15,'#2a1048','#6a2ca8','#180828','#e8c46a','#fff0c8','crown','sheen'],['royalcrimson','Crimson Throne','Royal',34,'#3a0812','#a01c30','#20040a','#ffd86a','#fff0c8','crown','sheen'],['royalnavy','Admiralty','Royal',52,'#0a1838','#1e3a78','#060e24','#e8d8a8','#fff8e0','wings','sheen'],
+  ['shadowink','Black Ink','Shadow',12,'#08080c','#1a1a24','#020204','#d8d8e8','#ffffff','thorn','smoke'],['shadowveil','Night Veil','Shadow',42,'#0a0418','#2a1048','#04020a','#a070ff','#e0d0ff','thorn','smoke'],['shadowblood','Red Moon','Shadow',68,'#120206','#4a0a14','#080104','#ff4a64','#ffd8dc','moon','smoke'],
+  ['eternalhour','Last Hourglass','Eternal',80,'#2a2418','#8a7a4a','#14100a','#ffe9b8','#fff8e0','halo','sheen'],['eternaltide','Endless Tide','Eternal',95,'#04283a','#1f8cc0','#02141e','#bff2ff','#ffffff','halo','holo'],['eternalpetal','Unfading Petal','Eternal',110,'#3a1028','#ff7aa8','#1a0612','#ffe4ee','#fff4f8','wings','holo'],
+  ['holoprism','Holo Prism','Cosmic',100,'#2a2a48','#7a8ae0','#14142a','#ffffff','#ffffff','stars','holo'],['devcode','Developer','Developer',0,'#061a10','#0e4a30','#020c08','#5aff9a','#d0ffe0','bracket','sheen',1],['owner','THE OWNER','Exclusive Owner',0,'#1a0838','#5a2ad0','#0a0420','#ffd86a','#fff4c8','owner','owner',1]];
+ for(const q of X)L.push({id:q[0],n:q[1],cat:q[2],lvl:q[3],owner:!!q[11],anim:q[10],st:{k:'gen15',c1:q[4],c2:q[5],c3:q[6],a:q[7],g:q[8],orn:q[9],anim:q[10],ttl:q[0]=='owner'?'OWNER':q[0]=='devcode'?'DEVELOPER':q[1]}});
+ for(const q of L)if(!q.cat)q.cat='Classic';
  const byId={};for(const s of L)byId[s.id]=s;
  const K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpplskin';let c='';try{c=localStorage.getItem(K())||''}catch(_){}
- const ok=s=>!!byId[s]&&lvl>=byId[s].lvl;
- return{list:L,byId,cur:()=>ok(c)?c:null,set(v){c=v||'';try{localStorage.setItem(K(),c)}catch(_){}},ok,get raw(){return c}}})();
+ const isO=()=>{try{return !!NET7.owner}catch(_){return false}};
+ const ok=s=>!!byId[s]&&(byId[s].owner?isO():lvl>=byId[s].lvl);
+ // whose plate shows what: mine from my choice; another player's from theirs. The owner's plates only ever show for someone the server stamped as owner.
+ const of=(local,q)=>{if(local){if(ok(c))return c;return isO()?'owner':null}const own=!!(q&&q.own),sk=q&&q.cx&&q.cx.sk;if(sk&&byId[sk]&&(!byId[sk].owner||own))return sk;return own?'owner':null};
+ return{list:L,byId,of,isO,cur:()=>ok(c)?c:null,set(v){c=v||'';try{localStorage.setItem(K(),c)}catch(_){}},ok,get raw(){return c}}})();
 
 /* ========== LATE: 55-plate.js ========== */
 // ===== V6 nameplates: data-driven tiers (every 15 levels), cached sprites per (tier,name,level) =====
@@ -4411,7 +4476,7 @@ const Plate=(()=>{
    x.strokeStyle=gl;x.globalAlpha=.7;x.lineWidth=1;x.beginPath();x.ellipse(w/2,by+bh/2,bw/2+9,bh/2+5,0,0,6.3);x.stroke();x.globalAlpha=1;
    for(const s of[-1,1]){x.fillStyle=gl;x.beginPath();x.moveTo(s<0?bx-8:bx+bw+8,by+bh/2-7);x.lineTo(s<0?bx-1:bx+bw+1,by+bh/2);x.lineTo(s<0?bx-8:bx+bw+8,by+bh/2+7);x.lineTo(s<0?bx-4:bx+bw+4,by+bh/2);x.fill()}}
   x.restore()}
- function make(tier,name,lv,skin){const st=(typeof NPSKIN7!='undefined'&&skin&&NPSKIN7.byId[skin])?NPSKIN7.byId[skin].st:NP_STYLE(tier),mc=document.createElement('canvas').getContext('2d');mc.font='700 13px sans-serif';const nm=String(name).slice(0,14),lab='Lv '+lv,ttl=npName(tier).toUpperCase();mc.font='700 13px sans-serif';const w1=mc.measureText(lab+'  '+nm).width;mc.font='600 8.5px sans-serif';const w2=mc.measureText(ttl).width+ttl.length*1.2;
+ function make(tier,name,lv,skin){const st=(typeof NPSKIN7!='undefined'&&skin&&NPSKIN7.byId[skin])?NPSKIN7.byId[skin].st:NP_STYLE(tier),mc=document.createElement('canvas').getContext('2d');mc.font='700 13px sans-serif';const nm=String(name).slice(0,14),lab='Lv '+lv,ttl=(st.ttl||npName(tier)).toUpperCase();mc.font='700 13px sans-serif';const w1=mc.measureText(lab+'  '+nm).width;mc.font='600 8.5px sans-serif';const w2=mc.measureText(ttl).width+ttl.length*1.2;
   const w=Math.ceil(Math.max(w1,w2)+60),h=44,c=document.createElement('canvas');c.width=w*DPR;c.height=h*DPR;const x=c.getContext('2d');x.scale(DPR,DPR);
   // title ribbon above (slightly lifted), main plate below
   x.save();x.translate(0,4);frame(x,w,h-4,st);x.restore();
@@ -4420,7 +4485,14 @@ const Plate=(()=>{
   x.lineWidth=3;x.strokeStyle='rgba(0,0,0,.85)';x.fillStyle=st.g;x.strokeText(lab,x0,h/2+5);x.fillText(lab,x0,h/2+5);x.fillStyle='#fff';x.strokeText(nm,x0+lw+10,h/2+5);x.fillText(nm,x0+lw+10,h/2+5);
   return{c,w,h}}
  function get(tier,name,lv,skin){const k=tier+'|'+name+'|'+lv+'|'+(skin||'');let p=cache.get(k);if(!p){p=make(tier,name,lv,skin);cache.set(k,p);order.push(k);if(order.length>80)cache.delete(order.shift())}return p}
- return{get,draw(g,cx,cy,tier,name,lv,skin){const p=get(tier,name,lv,skin);g.drawImage(p.c,cx-p.w/2,cy-p.h/2,p.w,p.h)},make}})();
+ // what moves on a plate: cheap, a few shapes drawn over the cached picture
+ function live(g,cx,cy,p,kind,col){const t=performance.now()/1000,w=p.w,h=p.h,bw=w-40;g.save();g.translate(cx,cy+6);if(kind=='sheen'||kind=='holo'||kind=='owner'){const u=((t*(kind=='owner'?.5:.32))%1.4)-.2,X=-bw/2+u*bw;g.beginPath();g.rect(-bw/2,-11,bw,22);g.clip();g.globalCompositeOperation='lighter';const gr=g.createLinearGradient(X-16,0,X+16,0);gr.addColorStop(0,'rgba(255,255,255,0)');gr.addColorStop(.5,kind=='holo'?'hsla('+((t*90)%360)+',100%,75%,.55)':'rgba(255,255,255,.5)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(X-16,-11,32,22);g.restore();g.save();g.translate(cx,cy+6)}
+   g.globalCompositeOperation='lighter';if(kind=='stars'||kind=='owner'){g.fillStyle=kind=='owner'?'#ffe9a8':col;for(let i=0;i<(kind=='owner'?7:4);i++){const a=t*.8+i*6.28/(kind=='owner'?7:4),X=Math.cos(a)*(bw/2+5),Y=Math.sin(a)*13,r=1.2+.8*(.5+.5*Math.sin(t*5+i));g.beginPath();g.moveTo(X,Y-r*2);g.quadraticCurveTo(X,Y,X+r*2,Y);g.quadraticCurveTo(X,Y,X,Y+r*2);g.quadraticCurveTo(X,Y,X-r*2,Y);g.quadraticCurveTo(X,Y,X,Y-r*2);g.fill()}}
+   if(kind=='embers'||kind=='rays'){g.fillStyle=col;for(let i=0;i<6;i++){const u=(t*.5+i*.17)%1;g.globalAlpha=Math.sin(u*3.14);g.beginPath();g.arc(-bw/2+i*bw/5,-8-u*14,.9+(i%2)*.5,0,6.3);g.fill()}g.globalAlpha=1}
+   if(kind=='pulse'||kind=='owner'){const a=.35+.35*Math.sin(t*(kind=='owner'?3.4:2.4));g.globalAlpha=a;g.strokeStyle=col;g.lineWidth=1.6;g.beginPath();g.ellipse(0,0,bw/2+6,15,0,0,6.3);g.stroke();g.globalAlpha=1}
+   if(kind=='smoke'){g.globalCompositeOperation='source-over';for(let i=0;i<4;i++){const u=(t*.3+i*.25)%1;g.globalAlpha=Math.sin(u*3.14)*.3;g.fillStyle='#060608';g.beginPath();g.arc(-bw/2+i*bw/3,-10-u*12,3+u*4,0,6.3);g.fill()}g.globalAlpha=1}
+   g.restore()}
+ return{get,draw(g,cx,cy,tier,name,lv,skin){const p=get(tier,name,lv,skin);g.drawImage(p.c,cx-p.w/2,cy-p.h/2,p.w,p.h);try{const s=skin&&NPSKIN7.byId[skin];if(s&&s.anim)live(g,cx,cy,p,s.anim,s.st.a)}catch(_){}},make}})();
 
 /* ========== LATE: 56-sigil.js ========== */
 // ===== V6 sigils: ground magic circles (violet sigil / golden seraph ring references), pre-rendered, drawn with a 2.5D squash =====
@@ -4647,7 +4719,7 @@ const AC6=(()=>{
   // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
   try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy-ly,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
   // nameplate + bubble
-  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50-ly,tier,nm,lvv,local?NPSKIN7.cur():null);
+  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50-ly,tier,nm,lvv,NPSKIN7.of(local,q));
   if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-96,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-79);g.restore()}
  }
  function headFull(g,L,hy,t,air,wr){const h=HS[L.hs],GH=wr&&wr.hat&&WEAR[wr.hat]&&GEAR7.has(wr.hat,'hatF')?wr.hat:'';hairBack(g,h,hy,L.hair,0,t);if(GH){GEAR7.begin(g);GEAR7.hat(g,GH,hy,t,'B')}head(g,L,hy,t,air,false,0);hairFront(g,GH&&GEAR7.cover(GH)?HSN[L.hs]:h,hy,L.hair,0,t,air);if(GH)GEAR7.hat(g,GH,hy,t,'F')}
@@ -4867,7 +4939,7 @@ const GEAR7=(()=>{
 drawChar=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){AC6.draw(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q)};
 nameTag=function(){};
 // compact, validated cosmetic block for multiplayer presence
-function celPres(){const w=curWing(lvl),a=curAura(lvl);return{fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
+function celPres(){const w=curWing(lvl),a=curAura(lvl);return{sk:(()=>{try{return NPSKIN7.cur()||''}catch(_){return''}})(),fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
 // Sparkmouse costume skills (the base useSkill handles cooldown, ring and burst; these add the effect)
 {const _us=useSkill;useSkill=function(slot){const id=wear[slot];if((id=='sparkhood'||id=='sparksuit')&&!(cdT[slot]>0)&&!showInv&&!dlgOpen){_us.apply(this,arguments);try{if(id=='sparksuit'){P.vy=-1100;P.g=false;burst(P.x,P.y+40,'#7ff6ff',14,160,4,'p')}else{for(const m of mobs)if(Math.hypot(m.x-P.x,m.y-P.y)<T*5)hurtMob(m,12,null,0);rings.push({x:P.x,y:P.y+30,c:'#36d6e0',t:performance.now()+90});burst(P.x,P.y+24,'#fff3a0',16,220,4,'p')}}catch(_){}return}return _us.apply(this,arguments)}}
 
@@ -8617,7 +8689,7 @@ const UI6=(()=>{
   try{MOTION7.ind(nav,'button.on','v')}catch(_){}
   // content fades in only when the tab changes, not on every refresh inside a tab; it slides from the side the new tab is on
   const changed=tab!=lastTab;if(changed){const ix=k=>TABS.findIndex(t=>t[0]==k),d=lastTab?Math.sign(ix(tab)-ix(lastTab)):0;body.style.setProperty('--mo-dx',(d*12)+'px');lastTab=tab;body.classList.remove('tabin');void body.offsetWidth;body.classList.add('tabin');clearTimeout(render.t);render.t=setTimeout(()=>body.classList.remove('tabin'),700)}
-  (EXT[tab]||({profile,look,wings,plates,skills,gear,quests,account})[tab]||profile)();try{EXT.post&&EXT.post(tab,body)}catch(e){console.error(e)}
+  (EXT[tab]||({profile,look,wings,plates,skills,gear,quests,account})[tab]||profile)(body);try{EXT.post&&EXT.post(tab,body)}catch(e){console.error(e)}
   if(changed){let i=0;for(const c of body.children)c.style.setProperty('--i',Math.min(i++,8));body.querySelectorAll('.hgrid,.ach7').forEach(g=>MOTION7.stagger(g,':scope>*',12));body.querySelectorAll('.kv7 b').forEach(b=>{const v=+b.textContent;if(isFinite(v))MOTION7.tick(b,v,0)})}}
  function profile(){const t=npTier(lvl),w=curWing(lvl),nx=npRange(t)[1]+1,nw=WINGS.find(x=>!x.shop&&lvl<x.lvl),xpp=Math.min(100,xp/xpNeed(lvl)*100);
   body.innerHTML='<h3>Profile</h3><div class="prof"><canvas id="pv" width="220" height="286"></canvas><div><div class="psub7">✦ '+esc(npName(t))+' · Level '+lvl+'</div><div class="pname7">'+esc(myName)+'</div>'+
@@ -9807,7 +9879,7 @@ const ARENA7=(()=>{
   else{A.fz=A.end;A.fd=900;loseSound();try{BOSS6.clear()}catch(_){}try{CINE7.bossLose(nameOf(m))}catch(_){try{UI6.say6('DEFEATED',nameOf(m).toUpperCase()+' VANISHED INTO THE DARK',3600)}catch(_){}}}}
  // ---- camera: the whole arena when it fits, else the point between you and the boss, kept inside the arena
  let lastCur='';
- function cam(){if(cine())return;const c=A&&!A.end&&!A.pend?A:null;if(!c){if(window.CAMT)window.CAMT=null;return}
+ function cam(){if(cine()||window.OWN_CAM)return;const c=A&&!A.end&&!A.pend?A:null;if(!c){if(window.CAMT)window.CAMT=null;return}
   const vw=cv.width/ZM,vh=cv.height/ZM,hw=hudW(),hb=hudB(),xl=c.x0-T*.5+vw/2,xr=c.x1+T*.5-vw/2,yt=c.y0-hw-T*.25+vh/2,yb=c.y1+hb-vh/2;let x,y;
   if(c.fit){x=(c.x0+c.x1)/2;y=(c.y0-hw+c.y1+hb)/2}
   else{const m=c.boss,on=m&&mobs.includes(m),px=P.x,py=P.y+P.h/2,tx=px*.6+(on?m.x:px)*.4,ty=py*.6+(on?m.y+m.h/2:py)*.4;x=xl<=xr?Math.max(xl,Math.min(xr,tx)):(xl+xr)/2;y=yt<=yb?Math.max(yt,Math.min(yb,ty)):(yt+yb)/2}
@@ -14409,7 +14481,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.RB_INSTALL=
 
 /* ========== LATE: 90-z-plateskin.js ========== */
 UI6.ext.postPlates=(body)=>{const h=document.createElement('div');h.innerHTML='<h3 style="margin-top:20px">Nameplate Skins</h3><div class="hrow"><span class="dim">Special frames that replace your tier frame. They unlock by level.</span><span class="hchip'+(NPSKIN7.raw?'':' on')+'" id="skoff">Tier frame</span></div><div class="hgrid" id="skgrid"></div>';body.appendChild(h);
- const grid=h.querySelector('#skgrid');for(const s of NPSKIN7.list){const u=lvl>=s.lvl,p=Plate.get(0,myName,Math.max(1,lvl),s.id),d=document.createElement('div');d.className='hcard'+(u?'':' lock')+(NPSKIN7.raw==s.id?' sel on':'');d.innerHTML='<div class="cv" style="text-align:center;padding:10px 0"></div><b>'+s.n+'</b><small>'+(u?'Unlocked':'Locked')+' - level '+s.lvl+'</small>';const c=document.createElement('canvas');c.width=p.w*2;c.height=p.h*2;c.style.cssText='width:auto;max-width:100%;background:none';const x=c.getContext('2d');if(!u)x.globalAlpha=.35;x.drawImage(p.c,0,0,p.w*2,p.h*2);d.querySelector('.cv').appendChild(c);d.onclick=()=>{if(u){NPSKIN7.set(s.id);UI6.render()}};grid.appendChild(d)}
+ const grid=h.querySelector('#skgrid');let lastCat='';for(const s of NPSKIN7.list){if(s.owner&&!NPSKIN7.isO())continue;if(s.cat!=lastCat){lastCat=s.cat;const hd=document.createElement('h4');hd.style.cssText='grid-column:1/-1;margin:10px 0 0';hd.textContent=s.cat;grid.appendChild(hd)}const u=s.owner?true:lvl>=s.lvl,p=Plate.get(0,myName,Math.max(1,lvl),s.id),d=document.createElement('div');d.className='hcard'+(u?'':' lock')+(NPSKIN7.raw==s.id?' sel on':'');d.innerHTML='<div class="cv" style="text-align:center;padding:10px 0"></div><b>'+s.n+'</b><small>'+(s.owner?'Only you':(u?'Unlocked':'Locked')+' - level '+s.lvl)+'</small>';const c=document.createElement('canvas');c.width=p.w*2;c.height=p.h*2;c.style.cssText='width:auto;max-width:100%;background:none';const x=c.getContext('2d');if(!u)x.globalAlpha=.35;x.drawImage(p.c,0,0,p.w*2,p.h*2);d.querySelector('.cv').appendChild(c);d.onclick=()=>{if(u){NPSKIN7.set(s.id);UI6.render()}};grid.appendChild(d)}
  h.querySelector('#skoff').onclick=()=>{NPSKIN7.set('');UI6.render()}};
 
 /* ========== LATE: 91-objects.js ========== */
@@ -18945,6 +19017,152 @@ const LOAD15=(()=>{
  setInterval(()=>{try{if(!entered)return;const c=cls();if(c!==last){if(last&&lastSnap){L[last]=lastSnap}if(c&&L[c])apply(L[c]);last=c;lastSnap=c?snap():null;if(c)L[c]=lastSnap;save();return}if(c){lastSnap=snap();L[c]=lastSnap}}catch(e){if(!LOAD15.e){LOAD15.e=1;console.error('LOAD15',e)}}},1000);
  setInterval(save,8000);addEventListener('beforeunload',save);
  return{get data(){return L},snap,apply,save}})();
+
+/* ========== LATE: 99-zzzzzzzzz-5-owner.js ========== */
+// ===== OWN15: the owner's powers. Who is the owner is decided by the server alone (NET7.owner comes from its login answer, and it stamps pr.own on the owner's presence, so nobody can claim it).
+// Anything other players see goes through the server's 'ofx' message, which refuses everyone but the owner; the rest only moves the owner's own character, which the game has always left to the player's
+// computer. The entrance is built to the music: it hits 2.75 s in, and that is when you land. Nothing here ever holds the controls for longer than the descent, and every state has a time limit. =====
+const OWN15=(()=>{
+ const TAU=Math.PI*2,R=Math.random,A=MYART;
+ const isOwner=()=>{try{return !!NET7.owner}catch(_){return false}};
+ const red=()=>{try{return !!(cel.opt.reduce||QM.reduce)}catch(_){return false}};
+ const GOLD='#ffd86a',VIO='#b48cff',WHT='#ffffff';
+ // presence from the server: only the server can set these (it drops them from what clients send, then stamps its own)
+ {const _cp=cleanPres;cleanPres=function(d){const o=_cp.apply(this,arguments);if(d&&d.own==1){o.own=1;o.oa=d.oa?1:0;o.ofl=d.ofl?1:0}if(d&&typeof d.uid=='string')o.uid=d.uid.slice(0,40);return o}}
+ // ---- settings, kept on this computer
+ const SK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbowner';const DEF={cine:1,music:'owner',aura:1,auraI:1,flyS:1,ann:1,spot:1,dur:10};let C=Object.assign({},DEF);try{Object.assign(C,JSON.parse(localStorage.getItem(SK())||'{}'))}catch(_){}
+ const saveC=()=>{try{localStorage.setItem(SK(),JSON.stringify(C))}catch(_){}};
+ const MUSIC={owner:['The Owner Has Spawned','audio/owner-entrance.mp3'],intro:['Rootbound theme','audio/intro-song.mp3'],none:['No music','']};
+ // ---- the music everyone in the world hears. One player, so a quick respawn can't stack copies.
+ const au=new Audio();au.preload='auto';let fadeT=0;
+ const vol=()=>{try{return Math.max(.3,Math.min(1,OPT.sv==null?.8:OPT.sv))}catch(_){return .8}};
+ function playMusic(key){clearInterval(fadeT);const m=MUSIC[key];if(!m||!m[1]){au.pause();return false}try{if(!au.src.endsWith(m[1]))au.src=m[1];au.currentTime=0;au.volume=vol();const p=au.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}return true}
+ function fadeMusic(ms){clearInterval(fadeT);const v0=au.volume,t0=performance.now();fadeT=setInterval(()=>{const u=(performance.now()-t0)/(ms||900);if(u>=1){clearInterval(fadeT);au.pause();au.volume=vol();return}au.volume=Math.max(0,v0*(1-u))},50)}
+ // ---- state
+ const S={cine:null,fly:null,invis:false,aura:false,speed:1,hide:{},peerFly:{},skyT:-9,wingHold:0,time:null,world:null,lastEnter:{w:'',t:-1e9}};
+ const TIMES={ARR:1,DES:1.3,BRK:.45};const LAND=TIMES.ARR+TIMES.DES+TIMES.BRK;
+ const groundBelow=(x,y)=>{const tx=Math.max(1,Math.min(W-2,Math.floor(x/T)));let ty=Math.max(0,Math.floor((y+P.h)/T));for(let i=0;i<H&&ty<H-1;i++,ty++)if(solidAt(tx,ty))return ty*T-P.h-1;return y};
+ const yAt=(e,t)=>{const H0=e.gy-e.top;if(t<TIMES.ARR)return e.top;if(t<TIMES.ARR+TIMES.DES){const u=(t-TIMES.ARR)/TIMES.DES;return e.top+(H0-250)*Math.pow(u,2.1)}if(t<LAND){const u=(t-TIMES.ARR-TIMES.DES)/TIMES.BRK;return e.gy-250*Math.pow(1-u,2.4)}return e.gy};
+ // ---- the entrance. self: this is my own character. Others run the same clock from the message.
+ function ann(on,name){let el=document.getElementById('ow15ann');if(!on){if(el)el.classList.remove('on');return}if(!el){el=document.createElement('div');el.id='ow15ann';el.setAttribute('role','status');document.body.appendChild(el)}el.innerHTML='<small>'+String(name||'').replace(/[<>&]/g,'')+'</small><b>THE OWNER HAS ARRIVED</b>';void el.offsetWidth;el.classList.add('on')}
+ function bars(on){let el=document.getElementById('ow15bar');if(!el){el=document.createElement('div');el.id='ow15bar';el.innerHTML='<i></i><i></i>';document.body.appendChild(el)}el.classList.toggle('on',!!on)}
+ function start(o){if(S.cine&&S.cine.self&&o.self)stop(true);const now=performance.now()/1000,top=Math.max(T*2,o.gy-2600);const e={self:!!o.self,gx:o.gx,gy:o.gy,top,t0:now,dur:Math.max(4,Math.min(15,o.dur||10)),ann:o.ann!==false,spot:o.spot!==false,name:o.name||'',landed:false,preview:!!o.preview,music:o.music};if(o.self){S.cine=e;e.z0=typeof ZM=='number'?ZM:1;e.aura0=S.aura}else S.peer=e;playMusic(o.music||'owner');try{if(!red())shake=Math.max(shake,.05)}catch(_){}return e}
+ function landFx(e){e.landed=true;const c=[GOLD,VIO],x=e.gx,y=e.gy+P.h;try{FLOW15.add('ripple',{x,y,r:560,w:16,n:4,c,life:1.1});FLOW15.add('ripple',{x,y,r:260,w:12,n:3,c:[WHT,GOLD],life:.7});FLOW15.add('vortex',{x,y:y-40,r:190,n:4,spin:7,sq:.34,w:9,c,life:.8});FLOW15.add('tongues',{x,y,r:170,h:120,n:9,c,life:.7});FLOW15.add('feathers',{x,y:y-60,r:230,n:18,c:[GOLD,WHT],life:1.1});for(let i=0;i<7;i++){const a=-Math.PI*(i+.5)/7;FLOW15.add('beam',{x,y:y-8,a,l:300,w:6,c:[i%2?GOLD:VIO],life:.45,del:i*.012})}for(const d of[-1,1])FLOW15.add('shock',{x,y,dir:d,l:420,h:56,c,life:.6})}catch(_){}
+  try{burst(x,y-30,GOLD,red()?8:26,420,5,'p');burst(x,y-30,WHT,red()?3:10,260,3,'p')}catch(_){}try{if(!red())shake=Math.max(shake,.42);HITSTOP(70)}catch(_){}try{SFX7.tone(70,40,.7,'sawtooth',.09);SFX7.tone(900,180,.6,'sine',.05)}catch(_){}if(e.ann&&(e.self||Math.hypot(e.gx-P.x,e.gy-P.y)<T*200))ann(true,e.name)}
+ function stop(quiet){const e=S.cine;if(!e)return;S.cine=null;try{window.OWN_CAM=0;window.CAMT=null}catch(_){}if(typeof ZM=='number'&&e.z0)ZM=e.z0;bars(false);ann(false);S.aura=e.aura0;if(!quiet)fadeMusic(900);else au.pause()}
+ function stopPeer(){if(!S.peer)return;S.peer=null;ann(false);fadeMusic(900)}
+ function selfTick(e,dt){const t=performance.now()/1000-e.t0;if(t>=LAND+e.dur+.1||cur!==S.world&&S.world){stop();return}
+  if(t<LAND){P.x=e.gx;P.y=yAt(e,t);P.vx=0;P.vy=t<TIMES.ARR?0:900;P.g=false;try{iT=Math.max(iT,1);wingOpen=1;wingFlap=Math.max(wingFlap||0,t>TIMES.ARR+TIMES.DES?1:.4)}catch(_){}window.OWN_CAM=1;window.CAMT={x:e.gx,y:e.gy-120}}
+  else{if(!e.landed){P.y=e.gy;P.vy=0;P.g=true;landFx(e);window.OWN_CAM=0;window.CAMT=null;S.aura=true;if(e.spot)bars(true)}if(e.spot&&typeof ZM=='number'){const b=e.z0*1.22,tt=t-LAND,k=tt<.8?tt/.8:tt>e.dur-.9?Math.max(0,(e.dur-tt)/.9):1;ZM=e.z0+(b-e.z0)*(k*k*(3-2*k))}}}
+ function peerTick(e){const t=performance.now()/1000-e.t0;if(t>=LAND+e.dur+.1){stopPeer();return}if(t>=LAND&&!e.landed)landFx(e)}
+ // ---- flight
+ const flyKeys=()=>({x:(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0),y:(K.s||K.arrowdown?1:0)-(K.w||K[' ']||K.arrowup?1:0)});
+ function flyStart(){if(S.fly)return false;S.fly={x:P.x,y:P.y,vx:0,vy:-60,rise:.6};S.landing=false;send({op:'fly',v:1});return true}
+ function flyStop(){if(!S.fly)return false;S.fly=null;S.landing=true;send({op:'fly',v:0});return true}
+ function flyTick(F,dt){if(F.rise>0){F.rise-=dt;F.vy=Math.min(F.vy,-180)}const k=flyKeys(),top=900*C.flyS,acc=3400*C.flyS,dec=2600;for(const[v,d]of[['vx',k.x],['vy',k.y]]){if(d)F[v]+=d*acc*dt;else{const s=Math.sign(F[v]);F[v]-=s*Math.min(Math.abs(F[v]),dec*dt)}F[v]=Math.max(-top,Math.min(top,F[v]))}F.x=Math.max(T,Math.min((W-2)*T,F.x+F.vx*dt));F.y=Math.max(T,Math.min((H-3)*T,F.y+F.vy*dt+(k.x||k.y?0:Math.sin(performance.now()/380)*.25)));P.x=F.x;P.y=F.y;P.vx=F.vx;P.vy=F.vy;P.g=false;if(F.vx)P.f=F.vx>0?1:-1;try{iT=Math.max(iT,.2);wingOpen=1;wingFlap=Math.max(wingFlap||0,Math.min(1,.3+Math.hypot(F.vx,F.vy)/top))}catch(_){}}
+ const TRAIL={};function trailOf(key,x,y,on){const a=TRAIL[key]||(TRAIL[key]=[]);if(!on){if(a.length)a.length=0;return a}a.push([x,y]);if(a.length>16)a.shift();return a}
+ // ---- server link
+ function send(o){if(!isOwner())return false;try{return NET7.send(Object.assign({t:'ofx'},o))}catch(_){return false}}
+ NET7.on('ofx',m=>{const op=m.op;if(op=='enter'){start({self:false,gx:+m.x,gy:+m.y,dur:+m.d,ann:!m.na,spot:false,name:m.n,music:MUSIC[m.m]?m.m:'owner'});return}
+  if(op=='invis'){S.hide[m.uid]={t0:performance.now(),out:1};fxVanish(+m.x,+m.y);setTimeout(()=>{try{delete rm.ps[m.f]}catch(_){}},900);return}
+  if(op=='vis'){S.hide[m.uid]={t0:performance.now(),out:0};fxAppear(+m.x,+m.y);playMusic(MUSIC[m.m]?m.m:'owner');setTimeout(()=>{delete S.hide[m.uid];fadeMusic(1200)},Math.min(9000,au.duration*1000||9000));return}
+  if(op=='time'){S.time=m.v==null?null:+m.v;return}
+  if(op=='fx'){fxPulse(+m.x,+m.y);return}});
+ const _c=clock;clock=function(){return S.time!=null?S.time:_c()};
+ NET7.onHello(()=>{S.time=null;const was=S.world;S.world=(typeof cur=='string'?cur:null);if(S.cine&&was!==S.world)stop(true);if(S.peer)stopPeer();if(isOwner())setTimeout(autoEnter,350)});
+ function autoEnter(){if(!isOwner()||!C.cine||S.invis)return;const now=performance.now();if(window.RB_COVER||(typeof entered!='undefined'&&!entered)||menuEl.style.display!='none'){if(!(autoEnter.tries>60)){autoEnter.tries=(autoEnter.tries|0)+1;setTimeout(autoEnter,350)}return}autoEnter.tries=0;if(S.lastEnter.w==cur&&now-S.lastEnter.t<90000)return;S.lastEnter={w:cur,t:now};entrance()}
+ function entrance(preview){if(!isOwner())return false;const gy=groundBelow(P.x,P.y),gx=P.x,name=typeof myName=='string'?myName:'';start({self:true,gx,gy,dur:C.dur,ann:!!C.ann,spot:!!C.spot,name,music:C.music,preview});if(!preview)send({op:'enter',x:gx,y:gy,d:C.dur,m:C.music,na:C.ann?0:1,n:name});return true}
+ // ---- vanish and reappear
+ function fxVanish(x,y){const c=[VIO,GOLD];try{FLOW15.add('ripple',{x,y:y+60,r:300,w:12,n:3,c,life:.9});FLOW15.add('vortex',{x,y:y+20,r:110,n:5,spin:12,sq:.7,c,life:.8,core:1});for(let i=0;i<7;i++)FLOW15.add('beam',{x,y:y+50,a:-Math.PI*(i+.5)/7,l:170,w:7,c:[i%2?GOLD:VIO],life:.5});FLOW15.add('smoke',{x,y:y+20,r:70,s:30,c:VIO,n:8,life:.9})}catch(_){}try{burst(x,y+20,VIO,red()?10:44,280,5,'p');burst(x,y+20,WHT,red()?4:18,180,3,'p')}catch(_){}try{SFX7.tone(420,1400,.5,'sine',.05);SFX7.tone(120,60,.5,'sawtooth',.05)}catch(_){}}
+ function fxAppear(x,y){const c=[GOLD,VIO];try{FLOW15.add('ripple',{x,y:y+60,r:460,w:14,n:4,c,life:1.2});FLOW15.add('vortex',{x,y:y+20,r:150,n:5,spin:-11,sq:.7,c,life:1,core:1});FLOW15.add('tongues',{x,y:y+60,r:90,h:150,n:10,c,life:.9,del:.3});FLOW15.add('feathers',{x,y:y+10,r:190,n:16,c:[GOLD,WHT],life:1.1,del:.35})}catch(_){}try{burst(x,y+20,GOLD,red()?12:50,340,5,'p')}catch(_){}try{if(!red())shake=Math.max(shake,.22)}catch(_){}}
+ function fxPulse(x,y){try{FLOW15.add('ripple',{x,y:y+60,r:220,w:9,n:2,c:[GOLD,VIO],life:.7})}catch(_){}}
+ let visSpot=null;
+ function setInvis(on){if(!isOwner())return false;if(on==S.invis)return false;if(on){if(S.cine)stop(true);S.invis=true;S.hideSelf=performance.now();fxVanish(P.x,P.y);send({op:'invis',x:P.x,y:P.y})}else{S.invis=false;S.hideSelf=performance.now();send({op:'vis',x:P.x,y:P.y,m:C.music});fxAppear(P.x,P.y);S.wingHold=performance.now()+2500;playMusic(C.music);if(C.spot){visSpot={t0:performance.now()/1000,z0:ZM};bars(true);if(C.aura){visSpot.a0=S.aura;S.aura=true}}}return true}
+ // ---- drawing: the sky, the beam, the trail, what floats after the landing
+ const rib=(g2,p,w,c,al,wf,core)=>{try{FLOW15.ribbon(g2,p,w,c,al,wf,core)}catch(_){}};
+ function drawEntrance(g2,e,cx,cy,vw,vh){const t=performance.now()/1000-e.t0,x=e.gx-cx,gy=e.gy+P.h-cy;
+  // the sky opens for the whole world
+  const sk=t<TIMES.ARR?t/TIMES.ARR:t<LAND?1:Math.max(0,1-(t-LAND)/1.6);if(sk>0){g2.save();g2.globalCompositeOperation='lighter';const gr=g2.createLinearGradient(0,0,0,vh);gr.addColorStop(0,'rgba(255,220,140,'+.3*sk+')');gr.addColorStop(.55,'rgba(180,140,255,'+.14*sk+')');gr.addColorStop(1,'rgba(180,140,255,0)');g2.fillStyle=gr;g2.fillRect(0,0,vw,vh);g2.restore()}
+  if(t<LAND){const beamA=(t<TIMES.ARR?t/TIMES.ARR:1)*(.65+.35*Math.sin(t*16));g2.save();g2.globalCompositeOperation='lighter';const w0=40+beamA*60;const gr=g2.createLinearGradient(x-w0,0,x+w0,0);gr.addColorStop(0,'rgba(255,220,140,0)');gr.addColorStop(.5,'rgba(255,240,200,'+.5*beamA+')');gr.addColorStop(1,'rgba(255,220,140,0)');g2.fillStyle=gr;g2.fillRect(x-w0,0,w0*2,gy);g2.restore();
+    // the circle forming where the owner will land
+    g2.save();g2.translate(x,gy);g2.scale(1,.26);g2.globalCompositeOperation='lighter';g2.strokeStyle=GOLD;g2.lineWidth=5;g2.globalAlpha=.5+.5*Math.sin(t*9);const rr=60+Math.min(1,t/TIMES.ARR)*170;g2.beginPath();g2.arc(0,0,rr,0,TAU);g2.stroke();g2.lineWidth=2;g2.strokeStyle=VIO;g2.rotate(t*2);for(let i=0;i<3;i++){g2.beginPath();g2.arc(0,0,rr*(.55+i*.14),i,i+4.6);g2.stroke()}g2.restore();
+    if(t>TIMES.ARR){const y=yAt(e,t)-cy+P.h/2,y0=Math.max(-50,y-1100);const p=[];for(let i=0;i<=10;i++)p.push([x+Math.sin(i+t*30)*1.5,y0+(y-y0)*i/10]);rib(g2,p,24,GOLD,.95,v=>Math.pow(v,1.3),.4);rib(g2,p,11,VIO,.7,v=>Math.pow(v,1.6),.3);
+     // wind: long thin lines racing past the fall
+     g2.save();g2.globalCompositeOperation='lighter';g2.strokeStyle='rgba(255,255,255,.55)';g2.lineWidth=1.3;const n=red()?4:18;for(let i=0;i<n;i++){const X=x+((i*97)%(420))-210,sp=(t*1900+i*177)%(vh+200)-100;g2.beginPath();g2.moveTo(X,sp);g2.lineTo(X,sp-60-(i%5)*22);g2.stroke()}g2.restore();try{if(!red())burst(e.gx+(R()-.5)*30,yAt(e,t)+24,R()<.5?GOLD:WHT,2,140,3,'p')}catch(_){}}}
+  else{const tt=t-LAND,a=Math.max(0,1-tt/e.dur),q=Math.min(1,a*3);g2.save();g2.translate(x,gy);g2.scale(1,.24);g2.globalCompositeOperation='lighter';const gr=g2.createRadialGradient(0,0,0,0,0,300);gr.addColorStop(0,'rgba(255,220,140,'+.28*q+')');gr.addColorStop(.6,'rgba(180,140,255,'+.12*q+')');gr.addColorStop(1,'rgba(180,140,255,0)');g2.fillStyle=gr;g2.beginPath();g2.arc(0,0,300,0,TAU);g2.fill();g2.restore();
+    if(!red()){g2.save();g2.globalCompositeOperation='lighter';for(let i=0;i<26;i++){const u=(t*(.16+((i*.37)%1)*.16)+i*.13)%1,X=x+Math.sin(i*2.4+t*.4)*(70+i*7),Y=gy-u*260;g2.globalAlpha=Math.sin(u*Math.PI)*q;g2.fillStyle=i%3?GOLD:WHT;g2.beginPath();g2.arc(X,Y,1.2+(i%3)*.7,0,TAU);g2.fill()}g2.restore()}}}
+ function aura(g2,cx,base,t,I){const q=Math.max(.2,Math.min(1.6,I));g2.save();g2.globalCompositeOperation='lighter';const R0=62*q;
+   const gl=g2.createRadialGradient(cx,base-52,6,cx,base-52,110*q);gl.addColorStop(0,'rgba(255,220,150,'+.12*Math.min(1,q)+')');gl.addColorStop(.5,'rgba(180,140,255,'+.08*Math.min(1,q)+')');gl.addColorStop(1,'rgba(180,140,255,0)');g2.fillStyle=gl;g2.fillRect(cx-120*q,base-170*q,240*q,240*q);
+   for(let i=0;i<6;i++){const a=t*.5+i*TAU/6,w=5+3*Math.sin(t*2+i),s=Math.cos(a)*R0*.9;g2.globalAlpha=(.11+.07*Math.sin(t*2.4+i))*Math.min(1,q);const gb=g2.createLinearGradient(0,base,0,base-200*q);gb.addColorStop(0,i%2?GOLD:VIO);gb.addColorStop(1,'rgba(255,255,255,0)');g2.fillStyle=gb;g2.beginPath();g2.moveTo(cx+s-w,base);g2.lineTo(cx+s*1.2,base-200*q);g2.lineTo(cx+s+w,base);g2.closePath();g2.fill()}
+   g2.translate(cx,base);g2.scale(1,.28);g2.lineWidth=2.4;for(const[r,sp,c,n]of[[R0*1.4,.6,GOLD,14],[R0,-.9,VIO,10],[R0*.66,1.4,WHT,6]]){g2.save();g2.rotate(t*sp);g2.globalAlpha=.8;g2.strokeStyle=c;g2.beginPath();g2.arc(0,0,r,0,TAU);g2.stroke();for(let i=0;i<n;i++){const a=i/n*TAU;g2.beginPath();g2.moveTo(Math.cos(a)*r,Math.sin(a)*r);g2.lineTo(Math.cos(a)*(r+9),Math.sin(a)*(r+9));g2.stroke()}g2.restore()}
+   const u0=(t*.55)%1;g2.globalAlpha=(1-u0)*.7;g2.lineWidth=5*(1-u0);g2.strokeStyle=GOLD;g2.beginPath();g2.arc(0,0,R0*(.6+u0*1.8),0,TAU);g2.stroke();g2.restore();
+   if(!red()){g2.save();g2.globalCompositeOperation='lighter';for(let i=0;i<14;i++){const u=(t*.3+i*.21)%1,X=cx+Math.sin(i*2.4+t*.7)*(26+i*3)*q,Y=base-u*150*q;g2.globalAlpha=Math.sin(u*Math.PI);g2.fillStyle=i%3?GOLD:WHT;g2.beginPath();g2.arc(X,Y,1+(i%3)*.6,0,TAU);g2.fill()}g2.restore()}}
+ {const _d=BOSS6.drawProj;BOSS6.drawProj=function(g2,cx,cy){_d.apply(this,arguments);try{const vw=cv.width/(typeof ZM=='number'?ZM:1),vh=cv.height/(typeof ZM=='number'?ZM:1);if(S.cine)drawEntrance(g2,S.cine,cx,cy,vw,vh);if(S.peer)drawEntrance(g2,S.peer,cx,cy,vw,vh)}catch(e){if(!OWN15.e){OWN15.e=1;console.error('OWN15 draw',e)}}}}
+ // ---- every character: the aura, flying trails, fading in and out, the owner's plate
+ const _ad=AC6.draw;AC6.draw=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){const me=q==='me',peer=q&&typeof q=='object'?q:null,own=me?isOwner():!!(peer&&peer.own);if(!own)return _ad.apply(this,arguments);
+   // hidden: nothing is drawn for others; on my own screen a faint outline so I can still play
+   let al=1,uid=peer&&peer.uid;if(me&&(S.invis||S.hideSelf)){const u=Math.min(1,(performance.now()-(S.hideSelf||0))/800);al=S.invis?1-u*.84:.16+u*.84;if(!S.invis&&u>=1)S.hideSelf=0}if(peer&&uid&&S.hide[uid]){const h=S.hide[uid],u=Math.min(1,(performance.now()-h.t0)/900);al=h.out?1-u:u}
+   const auraOn=me?(S.aura&&!S.invis):!!peer.oa,base=cy+56;if(auraOn&&al>.05)try{g.save();g.globalAlpha=al;aura(g,cx,base,t,me?C.auraI:1);g.restore()}catch(_){}
+   const flying=me?!!S.fly:!!(peer&&peer.ofl),tr=trailOf(me?'me':'p'+uid,cx+(typeof cam!='undefined'?cam.x:0),cy+(typeof cam!='undefined'?cam.y:0)+20,flying);if(tr.length>2&&al>.05)try{const pts=tr.map(p=>[p[0]-cam.x,p[1]-cam.y]);FLOW15.ribbon(g,pts,11,GOLD,.8*al,v=>Math.pow(v,1.7),.34);FLOW15.ribbon(g,pts,5,VIO,.7*al,v=>Math.pow(v,1.7),.3)}catch(_){}
+   if(al>=1)return _ad.apply(this,arguments);const a0=g.globalAlpha,pd=Plate.draw;g.globalAlpha=a0*al;if(al<.5)Plate.draw=()=>{};try{return _ad.apply(this,arguments)}finally{g.globalAlpha=a0;Plate.draw=pd}};
+ // ---- what runs every frame
+ {const _u=update;update=function(dt){_u.apply(this,arguments);try{if(!isOwner()&&!S.peer&&!S.fly&&!S.cine)return;if(!S.world&&typeof cur=='string')S.world=cur;const d=Math.min(.05,window.FDT||dt||.016);if(S.cine)selfTick(S.cine,d);if(S.peer)peerTick(S.peer);if(S.fly)flyTick(S.fly,d);if(S.landing){if(P.g)S.landing=false;else P.vy=Math.min(P.vy,280)}if(S.wingHold>performance.now())try{wingOpen=1}catch(_){}
+    if(visSpot){const tt=performance.now()/1000-visSpot.t0,dur=C.dur;const b=visSpot.z0*1.22,k=tt<.8?tt/.8:tt>dur-.9?Math.max(0,(dur-tt)/.9):1;ZM=visSpot.z0+(b-visSpot.z0)*(k*k*(3-2*k));if(tt>=dur){ZM=visSpot.z0;if('a0' in visSpot)S.aura=visSpot.a0;visSpot=null;bars(false);fadeMusic(900)}}}catch(e){if(!OWN15.e2){OWN15.e2=1;console.error('OWN15',e)}}}}
+ // movement speed: the owner's multiplier on the game's own sum
+ {const _b=bonus;bonus=function(){const r=_b.apply(this,arguments);if(S.speed!==1&&isOwner())r.spd=(1+(r.spd||0))*S.speed-1;return r}}
+ const reset=()=>{if(S.cine)stop(true);if(S.fly)S.fly=null;S.landing=false;S.speed=1;if(S.invis)setInvis(false);S.aura=false;send({op:'fly',v:0});if(visSpot){ZM=visSpot.z0;visSpot=null;bars(false)}try{window.CAMT=null}catch(_){}au.pause();ann(false)};
+ function respawn(){try{const sp=(()=>{try{return OBJ6.spawnPoint()}catch(_){return null}})();const X=sp?sp.x:DX*T+T/2,Y=sp?sp.y:sh(DX)*T-P.h-2;if(S.fly)S.fly=null;S.landing=false;P.x=X;P.y=Y;P.vx=P.vy=0;P.hp=maxHP();try{iT=Math.max(iT,1);swing=-1;window.CAMT=null}catch(_){}try{burst(P.x,P.y+30,'#bfe6ff',14,180,4,'p')}catch(_){}if(isOwner()&&C.cine&&!S.invis){S.lastEnter={w:cur,t:performance.now()};setTimeout(()=>{if(isOwner())entrance()},60)}return true}catch(e){console.error('respawn',e);return false}}
+ // ---- commands. reg() is all it takes to add one.
+ const CMD=new Map();const reg=(name,usage,desc,run)=>CMD.set(name,{name,usage,desc,run});let out=null;
+ const tell=m=>{try{if(out)out(m);else say(m)}catch(_){}};
+ const num=(v,a,b)=>{const n=+v;return Number.isFinite(n)&&n>=a&&n<=b?n:null};
+ const WX=['default','clear','rain','storm','snow','blossom','galaxy','space','sunset','fog'];
+ reg('invisible','','Vanish in a burst of light. Nobody can see you',()=>{if(!setInvis(true))return'You are already invisible';return'You are invisible'});
+ reg('visible','','Reappear with a full entrance',()=>{if(!setInvis(false))return'You are already visible';return'You are visible'});
+ reg('invisibility','','Switch between the two',()=>{setInvis(!S.invis);return S.invis?'You are invisible':'You are visible'});
+ reg('fly','','Fly anywhere, through anything. W A S D or the arrows',()=>{if(!flyStart())return'You are already flying';return'Flying. /land to come down'});
+ reg('land','','Come down and walk again',()=>{if(!flyStop())return'You are not flying';return'Landing'});
+ reg('speed','[0.5-5]','Change how fast you move',a=>{const n=num(a[0],.5,5);if(n==null)throw Error('Speed must be a number from 0.5 to 5');S.speed=n;return'Speed '+n+'x'});
+ reg('walkspeed','','Back to normal speed',()=>{S.speed=1;return'Normal speed'});
+ reg('respawn','','Back to the spawn point, with your entrance',()=>{respawn();return'Respawned'});
+ reg('hub','','Open the Character Hub',()=>{closeCon();UI6.open('profile');return''});
+ reg('aura','','Your aura, on or off',()=>{S.aura=!S.aura;return'Aura '+(S.aura?'on':'off')});
+ reg('wings','','Your wings, on or off',()=>{const on=!(cel.wingsOn!==0);cel.wingsOn=on?1:0;try{WSYNC.on=cel.wingsOn;celSave()}catch(_){}return'Wings '+(on?'on':'off')});
+ reg('nameplate','','Choose a nameplate',()=>{closeCon();UI6.open('plates');return''});
+ reg('worldinfo','','About this world',()=>{const n=(()=>{try{return rm?rm.peers().length:1}catch(_){return 1}})();return'World '+cur+' · '+n+' here · weather '+((()=>{try{return WX6.cur||'clear'}catch(_){return'clear'}})())+' · size '+W+' x '+H});
+ reg('spawn','','Go to this world\'s spawn point',()=>{const sp=(()=>{try{return OBJ6.spawnPoint()}catch(_){return null}})();if(S.fly)S.fly=null;P.x=sp?sp.x:DX*T+T/2;P.y=sp?sp.y:sh(DX)*T-P.h-2;P.vx=P.vy=0;return'At the spawn point'});
+ reg('weather','[type]','Change this world\'s weather',async a=>{const v=String(a[0]||'').toLowerCase();if(!v)throw Error('Say which weather');const r=await TOOLS7.req('weather',{world:NET7.world||cur,weather:v});if(!r.ok)throw Error(r.m||'Could not change the weather');return r.m});
+ reg('time','[day/night]','Change this world\'s time',a=>{const v=String(a[0]||'').toLowerCase();if(!['day','night','normal'].includes(v))throw Error('Say day, night or normal');const c=v=='day'?.02:v=='night'?.5:null;S.time=c;send({op:'time',v:c});return v=='normal'?'Time runs normally again':'It is '+v});
+ reg('help','','Every owner command',()=>[...CMD.values()].map(c=>'/'+c.name+(c.usage?' '+c.usage:'')+' — '+c.desc).join('\n'));
+ reg('ownerinfo','','About your owner status',()=>'Owner: '+(typeof myName=='string'?myName:'')+' · confirmed by the server · entrance '+(C.cine?'on':'off')+' · music: '+MUSIC[C.music][0]);
+ reg('clearfx','','Clear your effects',()=>{try{FLOW15.FX.length=0;parts.length=0}catch(_){}S.aura=false;if(S.cine)stop(true);au.pause();ann(false);return'Effects cleared'});
+ reg('resetowner','','Everything back to normal',()=>{reset();return'Back to normal'});
+ reg('entrance','','Play your entrance now',()=>{closeCon();entrance();return''});
+ async function exec(line){const a=String(line).trim().replace(/^\//,'').split(/\s+/),n=a.shift().toLowerCase(),c=CMD.get(n);if(!c)throw Error('No such command: /'+n+'. Try /help');if(!isOwner())throw Error('Only the owner can use /'+n);return c.run(a)}
+ {const _c0=SOC6.cmd;SOC6.cmd=function(t){const n=String(t).trim().split(/\s+/)[0].slice(1).toLowerCase();if(CMD.has(n)&&n!='help'){if(!isOwner()){const h=_c0.apply(this,arguments);if(h)return h;say('Only the owner can use /'+n);return true}exec(t).then(m=>{if(m)say(m)},e=>say(e.message));return true}return _c0.apply(this,arguments)}}
+ // ---- the console: press / as the owner
+ let con=null;function closeCon(){if(con){con.classList.remove('on');const i=con.querySelector('input');if(i)i.blur()}}
+ function mkCon(){if(con)return;con=document.createElement('div');con.id='ow15con';con.setAttribute('role','dialog');con.setAttribute('aria-label','Owner commands');con.innerHTML='<div class="ow15l" role="listbox"></div><p class="ow15o" role="status"></p><div class="ow15i"><b>/</b><input type="text" autocomplete="off" spellcheck="false" maxlength="60" aria-label="Command"></div>';document.body.appendChild(con);const i=con.querySelector('input'),L=con.querySelector('.ow15l'),O=con.querySelector('.ow15o');let idx=0;const hist=[];let hi=-1;
+  const match=()=>{const v=i.value.trim().split(/\s+/)[0].toLowerCase();return[...CMD.values()].filter(c=>c.name.startsWith(v))};const list=()=>{const m=match();idx=Math.min(idx,Math.max(0,m.length-1));L.innerHTML=m.slice(0,9).map((c,n)=>'<button type="button" data-c="'+c.name+'" class="'+(n==idx?'on':'')+'"><b>/'+c.name+'</b>'+(c.usage?' <i>'+c.usage+'</i>':'')+'<small>'+c.desc+'</small></button>').join('')};
+  i.addEventListener('input',()=>{idx=0;list()});L.addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b){i.value=b.dataset.c+' ';i.focus();list()}});
+  const run=async()=>{const v=i.value.trim();if(!v)return;hist.unshift(v);hi=-1;out=null;O.className='ow15o';try{const m=await exec(v);O.textContent=m||'';if(m&&v.startsWith('help')){O.innerText=m}}catch(e){O.className='ow15o bad';O.textContent=e.message;try{UIS.play('error')}catch(_){}}i.value='';list()};
+  i.addEventListener('keydown',e=>{e.stopPropagation();if(e.key=='Escape'){closeCon();e.preventDefault()}else if(e.key=='Enter'){e.preventDefault();const m=match(),first=i.value.trim().split(/\s+/);if(first.length==1&&m[idx]&&m[idx].usage&&!i.value.endsWith(' ')&&m[idx].name!=first[0]){i.value=m[idx].name+' ';list();return}if(first.length==1&&m[idx]&&m[idx].name!=first[0])i.value=m[idx].name;run()}else if(e.key=='Tab'){e.preventDefault();const m=match();if(m[idx]){i.value=m[idx].name+(m[idx].usage?' ':'');list()}}else if(e.key=='ArrowDown'){e.preventDefault();idx++;list()}else if(e.key=='ArrowUp'){e.preventDefault();if(!i.value&&hist.length){hi=Math.min(hist.length-1,hi+1);i.value=hist[hi]}else idx=Math.max(0,idx-1);list()}});
+  list();con.list=list}
+ function openCon(){if(!isOwner())return false;mkCon();con.classList.add('on');const i=con.querySelector('input');i.value='';con.querySelector('.ow15o').textContent='';con.list();try{for(const q in K)K[q]=0}catch(_){}setTimeout(()=>i.focus(),0);return true}
+ addEventListener('keydown',e=>{if(e.key!='/'||e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.isContentEditable))return;try{if(!isOwner()||!entered||dlgOpen||menuEl.style.display!='none'||window.RB_COVER)return}catch(_){return}e.preventDefault();e.stopImmediatePropagation();openCon()},true);
+ // ---- the buttons everyone has: Hub and Respawn. Owner: Owner.
+ let rcd=0;function btns(){const hr=document.getElementById('hudR');if(!hr)return;let row=document.getElementById('ow15bt');if(!row){row=document.createElement('div');row.id='ow15bt';document.body.appendChild(row)}try{row.style.display=entered&&menuEl.style.display=='none'&&!window.RB_COVER?'flex':'none'}catch(_){}const add=(id,lab,title,fn)=>{if(document.getElementById(id))return document.getElementById(id);const b=document.createElement('button');b.id=id;b.className='pn';b.textContent=lab;b.title=title;b.onclick=fn;row.appendChild(b);return b};
+   add('brsp','RESPAWN','Back to the spawn point. Keeps everything you have',()=>{const n=performance.now();if(n<rcd)return;rcd=n+2500;respawn();try{UIS.play('confirm')}catch(_){}});
+   add('bhub','HUB','Character Hub',()=>{try{UI6.open('profile')}catch(_){}});
+   const ob=document.getElementById('bown15');if(isOwner()&&!ob)add('bown15','OWNER','Owner controls (or press /)',()=>{try{UI6.open('owner')}catch(_){}});else if(!isOwner()&&ob)ob.remove();
+   try{const TB=UI6.TABS,has=TB.findIndex(t=>t[0]=='owner');if(isOwner()&&has<0)TB.push(['owner','Owner']);else if(!isOwner()&&has>=0)TB.splice(has,1)}catch(_){}}
+ setInterval(btns,1500);setTimeout(btns,600);
+ // ---- the Owner tab in the Hub
+ try{UI6.ext.owner=(body)=>{if(!isOwner()||!body){if(body)body.innerHTML='<p class="dim">Only the owner can see this.</p>';return}const row=(id,lab,help,ctl)=>'<div class="ow15r"><div><b>'+lab+'</b><small>'+help+'</small></div>'+ctl+'</div>',tg=(k)=>'<button type="button" class="ow15t" data-t="'+k+'" aria-pressed="'+(C[k]?'true':'false')+'">'+(C[k]?'On':'Off')+'</button>',sl=(k,a,b,st)=>'<input type="range" data-s="'+k+'" min="'+a+'" max="'+b+'" step="'+st+'" value="'+C[k]+'" aria-label="'+k+'"><em>'+C[k]+'</em>';
+   body.innerHTML='<h3>Owner</h3><p class="dim">Confirmed by the server. Only you can see this page, and the server refuses these powers to anyone else.</p><div class="hrow"><button class="hbtn" id="ow15pv">Preview entrance</button><button class="hbtn" id="ow15cons">Open commands ( / )</button><button class="hbtn" id="ow15rs">Back to normal</button></div><div class="ow15set">'+
+    row('cine','Entrance','Play the cinematic whenever you enter a world or respawn',tg('cine'))+row('music','Entrance music','Heard by everyone in the world','<select id="ow15m" aria-label="Entrance music">'+Object.keys(MUSIC).map(k=>'<option value="'+k+'"'+(C.music==k?' selected':'')+'>'+MUSIC[k][0]+'</option>').join('')+'</select>')+row('aura','Aura after landing','The great aura during the spotlight',tg('aura'))+row('auraI','Aura strength','How large and bright',sl('auraI',.4,1.6,.1))+row('flyS','Flight speed','For /fly',sl('flyS',.4,3,.1))+row('ann','Announcement','“The owner has arrived”, for everyone',tg('ann'))+row('spot','Camera spotlight','Your camera closes in on you',tg('spot'))+row('dur','Spotlight length','Seconds after landing',sl('dur',4,15,1))+'</div>';
+   body.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const k=b.dataset.t;C[k]=C[k]?0:1;saveC();b.setAttribute('aria-pressed',C[k]?'true':'false');b.textContent=C[k]?'On':'Off'});body.querySelectorAll('[data-s]').forEach(i=>i.oninput=()=>{const k=i.dataset.s;C[k]=+i.value;saveC();i.nextElementSibling.textContent=i.value});body.querySelector('#ow15m').onchange=e=>{C.music=e.target.value;saveC()};body.querySelector('#ow15pv').onclick=()=>{UI6.close();setTimeout(()=>entrance(true),250)};body.querySelector('#ow15cons').onclick=()=>{UI6.close();setTimeout(openCon,120)};body.querySelector('#ow15rs').onclick=()=>{reset();say('Back to normal')}}}catch(e){console.error('OWN15 tab',e)}
+ return{isOwner,reg,exec,CMD,S,C,MUSIC,LAND,TIMES,entrance,start,stop,stopPeer,reset,respawn,setInvis,flyStart,flyStop,openCon,closeCon,au,pa:()=>S.aura&&!S.invis?1:0,pf:()=>S.fly?1:0,get visSpot(){return visSpot}}})();
 
 /* ========== LATE: 99-zzzzzzzzz-6-guards.js ========== */
 // ===== GUARD16: every hidden-word letter is protected by a mini-boss, a Letter Warden. Walk near a sealed letter and its warden rises beside

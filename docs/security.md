@@ -43,3 +43,10 @@ What protects the game, and what cannot be protected. `tests/security.js` attack
 ## What the server does not check
 
 Equipping is client-side: what you wear is sent to other players as part of your presence, and the server doesn't check it against what you own. Store purchases and gem growth are checked. Moving equipment to server authority would be a separate project, because the game's fights also run on the player's computer.
+
+
+## The owner
+
+Only the server decides who the owner is: the account named by the owner settings (`OWNER_NAME`). Everything the owner does that other players can see goes through the `ofx` message, which the server refuses to anyone else and records in the audit log. It also throws away any `own`, `oa` or `ofl` a client puts in its presence and stamps its own, so a modified game can't claim the owner's plate or effects. While the owner is invisible the server stops sending their presence at all, so a modified game can't reveal them either. Flight and speed move only the owner's own character, as all movement in this game is the player's own computer's job.
+
+To add an owner command: `OWN15.reg('name','[usage]','what it does',args=>'reply')`. To change the entrance music: replace `audio/owner-entrance.mp3`; the track list is `MUSIC` in `src/js/late/99-zzzzzzzzz-5-owner.js`, and new tracks also need a line in the audio route in `server/server.js`. The landing is timed to the hit 2.75 seconds into the current track (`TIMES` in the same file).

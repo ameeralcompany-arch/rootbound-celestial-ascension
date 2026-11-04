@@ -199,7 +199,7 @@ const AC6=(()=>{
   // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
   try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy-ly,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
   // nameplate + bubble
-  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50-ly,tier,nm,lvv,local?NPSKIN7.cur():null);
+  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50-ly,tier,nm,lvv,NPSKIN7.of(local,q));
   if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-96,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-79);g.restore()}
  }
  function headFull(g,L,hy,t,air,wr){const h=HS[L.hs],GH=wr&&wr.hat&&WEAR[wr.hat]&&GEAR7.has(wr.hat,'hatF')?wr.hat:'';hairBack(g,h,hy,L.hair,0,t);if(GH){GEAR7.begin(g);GEAR7.hat(g,GH,hy,t,'B')}head(g,L,hy,t,air,false,0);hairFront(g,GH&&GEAR7.cover(GH)?HSN[L.hs]:h,hy,L.hair,0,t,air);if(GH)GEAR7.hat(g,GH,hy,t,'F')}
@@ -419,6 +419,6 @@ const GEAR7=(()=>{
 drawChar=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){AC6.draw(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q)};
 nameTag=function(){};
 // compact, validated cosmetic block for multiplayer presence
-function celPres(){const w=curWing(lvl),a=curAura(lvl);return{fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
+function celPres(){const w=curWing(lvl),a=curAura(lvl);return{sk:(()=>{try{return NPSKIN7.cur()||''}catch(_){return''}})(),fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
 // Sparkmouse costume skills (the base useSkill handles cooldown, ring and burst; these add the effect)
 {const _us=useSkill;useSkill=function(slot){const id=wear[slot];if((id=='sparkhood'||id=='sparksuit')&&!(cdT[slot]>0)&&!showInv&&!dlgOpen){_us.apply(this,arguments);try{if(id=='sparksuit'){P.vy=-1100;P.g=false;burst(P.x,P.y+40,'#7ff6ff',14,160,4,'p')}else{for(const m of mobs)if(Math.hypot(m.x-P.x,m.y-P.y)<T*5)hurtMob(m,12,null,0);rings.push({x:P.x,y:P.y+30,c:'#36d6e0',t:performance.now()+90});burst(P.x,P.y+24,'#fff3a0',16,220,4,'p')}}catch(_){}return}return _us.apply(this,arguments)}}

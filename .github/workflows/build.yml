@@ -146,6 +146,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/safety.js
+      - name: Test owner system
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/owner.js
       - name: Test economy rules
         if: ${{ !cancelled() }}
         timeout-minutes: 10

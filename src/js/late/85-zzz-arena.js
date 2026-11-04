@@ -40,7 +40,7 @@ const ARENA7=(()=>{
   else{A.fz=A.end;A.fd=900;loseSound();try{BOSS6.clear()}catch(_){}try{CINE7.bossLose(nameOf(m))}catch(_){try{UI6.say6('DEFEATED',nameOf(m).toUpperCase()+' VANISHED INTO THE DARK',3600)}catch(_){}}}}
  // ---- camera: the whole arena when it fits, else the point between you and the boss, kept inside the arena
  let lastCur='';
- function cam(){if(cine())return;const c=A&&!A.end&&!A.pend?A:null;if(!c){if(window.CAMT)window.CAMT=null;return}
+ function cam(){if(cine()||window.OWN_CAM)return;const c=A&&!A.end&&!A.pend?A:null;if(!c){if(window.CAMT)window.CAMT=null;return}
   const vw=cv.width/ZM,vh=cv.height/ZM,hw=hudW(),hb=hudB(),xl=c.x0-T*.5+vw/2,xr=c.x1+T*.5-vw/2,yt=c.y0-hw-T*.25+vh/2,yb=c.y1+hb-vh/2;let x,y;
   if(c.fit){x=(c.x0+c.x1)/2;y=(c.y0-hw+c.y1+hb)/2}
   else{const m=c.boss,on=m&&mobs.includes(m),px=P.x,py=P.y+P.h/2,tx=px*.6+(on?m.x:px)*.4,ty=py*.6+(on?m.y+m.h/2:py)*.4;x=xl<=xr?Math.max(xl,Math.min(xr,tx)):(xl+xr)/2;y=yt<=yb?Math.max(yt,Math.min(yb,ty)):(yt+yb)/2}
