@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.0",
+      "type": "update",
+      "title": "Rootbound 6.13",
+      "summary": "Two-player dungeons, the Soft Glass look, cinematic polish, and the new Rootbound Launcher.",
+      "body": "Two-player dungeons, the Soft Glass look, cinematic polish, and the new Rootbound Launcher.",
+      "date": "2026-11-05",
+      "version": "6.13.0"
+    },
+    {
       "id": "two-player-dungeons",
       "type": "dungeon",
       "pin": true,
