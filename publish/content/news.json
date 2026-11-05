@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.2",
+      "type": "update",
+      "title": "Rootbound 6.13.2",
+      "summary": "Meet Lavi, your fairy guide. New: Combat Power, a weapon forge that upgrades with dungeon materials, items that explain what they're for, dungeon requirements with real drop odds, and \"What should I grind next?\". The first dungeon now opens",
+      "body": "Meet Lavi, your fairy guide. New: Combat Power, a weapon forge that upgrades with dungeon materials, items that explain what they're for, dungeon requirements with real drop odds, and \"What should I grind next?\". The first dungeon now opens at level 10. Clearing a dungeon alone now pays gems, and party clears really add theirs.",
+      "date": "2026-11-05",
+      "version": "6.13.2"
+    },
+    {
       "id": "update-6.13.1",
       "type": "update",
       "title": "Rootbound 6.13.1",
