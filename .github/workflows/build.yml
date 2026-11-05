@@ -327,7 +327,7 @@ jobs:
         timeout-minutes: 10
         run: node tests/launcher/core.js
         shell: pwsh
-      - name: Test the launcher's Start with Windows setting against the real start-up list (safe here: this machine is thrown away)
+      - name: Test the launcher's Start with Windows setting against the real start-up list (safe on this throwaway machine)
         if: ${{ !cancelled() }}
         timeout-minutes: 3
         working-directory: desktop
