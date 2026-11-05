@@ -7,7 +7,7 @@ try{(()=>{
  const DG=window.DG,R=Math.random,TAU=Math.PI*2,rn=(a,b)=>a+R()*(b-a),cl=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,k)=>a+(b-a)*k,ez=x=>{x=cl(x,0,1);return x*x*(3-2*x)},eo=x=>1-Math.pow(1-cl(x,0,1),3);
  const reduced=()=>{try{return !!(cel.opt.reduce||QM.reduce)||!DG.S.opt.fx}catch(_){return false}};
  const tone=(a,b,d,ty,v,dl,vib)=>{try{SFX7.tone(a,b,d,ty,v,dl,vib)}catch(_){}};
- const shk=v=>{try{if(DG.S.opt.shake&&!QM.reduce)shake=Math.max(shake,v)}catch(_){}};
+ const shk=v=>{try{if(DG.S.opt.shake&&!QM.reduce&&OPT.sh!==0)shake=Math.max(shake,v)}catch(_){}};
  const glo=c=>BOSS6.glo(c);
  const BR=180,TOP=181,DK=182,CRY=183,ICE=184,ACC=185,DGT=[BR,TOP,DK,CRY,ICE,ACC];
  for(const b of DGT){try{BLK[b]=['Dungeon Stone','#3a3a44',99];SOLID6[b]=1;PRICE[b]=0;LVREQ[b]=0}catch(_){}}
@@ -90,6 +90,7 @@ try{(()=>{
   B.finish=()=>{for(let i=0;i<B.solids.length;i++){}
    for(let y=2;y<H-2;y++)for(let x=2;x<W-2;x++){const k=y*W+x,b=tiles[k];if(!b)continue;if(b==DK){const near=(dx,dy)=>!tiles[(y+dy)*W+x+dx];if(near(0,-1))tiles[k]=TOP;else if(near(0,1)||near(1,0)||near(-1,0))tiles[k]=BR;else if(y>3&&!tiles[(y-2)*W+x])tiles[k]=BR}else if(b==BR&&!tiles[k-W])tiles[k]=TOP}
    return B};
+  if(DG.duoB)DG.duoB(B);
   return B}
  DG.Builder=Builder;
  function buildMap(d){tiles.fill(DK);hp.fill(99);wl.fill(0);trees.clear();pop.clear();hitAt.clear();try{WALL9.clear()}catch(_){}drops.length=0;
@@ -100,7 +101,7 @@ try{(()=>{
  const HZ=[],WV=[],PR=[],BM=[],GR=[],RG=[],WL=[],MK=[],SD=[],Q=[];let queueN=0;
  const later=(t,f)=>{Q.push({t,f})};
  const dtele=(t)=>t*((run&&run.df&&run.df.tel)||1);
- function hurtP(a,kb,o){if(!(a>0)||iT>0||!run||DG.god)return false;if(dash>0)return false;try{if(DG.creative())return false}catch(_){}const arm=Math.min(.8,(bonus().arm||0)+(guard>0?.5:0)),d=a*(1-arm);P.hp-=d;run.taken+=d;run.hits++;iT=.7;if(kb!=null)P.vx=kb;P.vy=Math.min(P.vy,o&&o.up?o.up:-260);hurtF=.42;shk(.1);try{snd(150,.2,'sawtooth',.06)}catch(_){}if(o&&o.fn)try{o.fn()}catch(_){}return true}
+ function hurtP(a,kb,o){if(!(a>0)||iT>0||!run||DG.god||DG.aimed||(DG.coop&&DG.coop.down))return false;if(dash>0)return false;try{if(DG.creative())return false}catch(_){}const arm=Math.min(.8,(bonus().arm||0)+(guard>0?.5:0)),d=a*(1-arm);P.hp-=d;run.taken+=d;run.hits++;iT=.7;if(kb!=null)P.vx=kb;P.vy=Math.min(P.vy,o&&o.up?o.up:-260);hurtF=.42;shk(.1);if(DG.coop&&DG.coop.C)DG.coop.C.rev=0;try{snd(150,.2,'sawtooth',.06)}catch(_){}if(o&&o.fn)try{o.fn()}catch(_){}return true}
  const hitsRect=(z)=>P.x+P.w/2>z.x0&&P.x-P.w/2<z.x1&&P.y+P.h>z.y0&&P.y<z.y1;
  const pcx=()=>P.x,pcy=()=>P.y+P.h/2;
  const fx={
@@ -196,16 +197,16 @@ try{(()=>{
   }}
   if(L.keyAt&&!L.keyAt.got&&Math.hypot(P.x-L.keyAt.x,P.y+P.h/2-(L.keyAt.y-T))<T*1.3)gotKey();
   for(const c of L.checks)if(!c.on&&Math.abs(P.x-c.x)<T*1.1&&Math.abs(P.y+P.h-c.y)<T*1.6){for(const o of L.checks)o.cur=0;c.on=1;c.cur=1;run.check={x:c.x,y:c.y-P.h-2};tone(660,990,.25,'sine',.05);try{VFX.wave(c.x,c.y-20,L.d.p.glow,110,.6,.5)}catch(_){}DG.ui&&DG.ui.toast('Checkpoint');try{P.hp=Math.min(maxHP(),P.hp+maxHP()*.25)}catch(_){}}
-  for(const p of L.pits)if(P.x>p.x0&&P.x<p.x1&&P.y+P.h>p.y-4&&!flyingNow()){fell(p);break}}
+  for(const p of L.pits)if(P.x>p.x0&&P.x<p.x1&&P.y+P.h>p.y-4&&!flyingNow()&&!(DG.duoInside&&DG.duoInside())){fell(p);break}}
  const flyingNow=()=>{try{return !!window.OWN_STEADY}catch(_){return false}};
- function gotKey(){const k=L.keyAt;k.got=true;const id=run.d.skey;if(cnt(id)<=0)addI(id,1);markFound(id);try{saveP()}catch(_){}run.gotKey=1;tone(660,1320,.6,'triangle',.07);tone(990,1760,.5,'sine',.05,.15);try{VFX.levelUp(P.x,P.y,run.d.p.glow)}catch(_){}DG.ui&&DG.ui.banner(DG.ITEMS[id].n,'The sealed gate will open for you');run.check={x:k.x,y:k.y-P.h-2};DG.flow.objective()}
+ function gotKey(){const k=L.keyAt;k.got=true;const id=run.d.skey;if(cnt(id)<=0)addI(id,1);markFound(id);try{saveP()}catch(_){}run.gotKey=1;tone(660,1320,.6,'triangle',.07);tone(990,1760,.5,'sine',.05,.15);try{VFX.levelUp(P.x,P.y,run.d.p.glow)}catch(_){}DG.ui&&DG.ui.banner(DG.ITEMS[id].n,'The sealed gate will open for you');run.check={x:k.x,y:k.y-P.h-2};DG.flow.objective();if(DG.coop)DG.coop.key()}
  function markFound(id){const S=DG.S;if(!S.found[id]){S.found[id]=1;DG.save()}}DG.markFound=markFound;
  function fell(p){run.falls=(run.falls|0)+1;try{hurtF=.3}catch(_){}P.x=run.check.x;P.y=run.check.y;P.vx=P.vy=0;iT=Math.max(iT,1);resetGad();try{const a=Math.min(P.hp-1,maxHP()*.06);if(a>0&&!DG.god)P.hp-=a}catch(_){}tone(200,80,.35,'sine',.05);DG.ui&&DG.ui.toast('Back to the checkpoint');try{VFX.burst(P.x,P.y+P.h/2,[run.d.p.glow,'#fff'],18,220,1,.6,10)}catch(_){}}
  DG.resetGad=()=>resetGad();
  // ---- collision against what moves: land on top of platforms, ride them, and be stopped by doors and walls
  {const _m=moveE;moveE=function(e,dt){if(e!==P||!run)return _m.apply(this,arguments);const pf=P.y+P.h;_m.apply(this,arguments);if(dash>0)P.vy=0;
    for(const q of PL){if(P.x+P.w*.4<q.x||P.x-P.w*.4>q.x+q.w)continue;const f=P.y+P.h,top=q.y;if(P.vy>=-1&&pf<=top+Math.max(7,Math.abs(q.dy)+6)&&f>=top-Math.max(2,-q.dy)){P.y=top-P.h-.01;P.vy=0;P.g=true;P.x+=q.dx;P.dgPlat=q;break}}
-   for(const s of L.solids){if(!s.on)continue;if(P.x+P.w/2>s.x0&&P.x-P.w/2<s.x1&&P.y+P.h>s.y0+2&&P.y<s.y1-2){if(pf<=s.y0+8&&P.vy>=0&&!s.gate&&s.temp){P.y=s.y0-P.h-.01;P.vy=0;P.g=true;continue}const cx=(s.x0+s.x1)/2;if(P.x<cx){P.x=s.x0-P.w/2-.01;if(P.vx>0)P.vx=0}else{P.x=s.x1+P.w/2+.01;if(P.vx<0)P.vx=0}P.wall=1}}}}
+   for(const s of L.solids){if(!s.on)continue;if(P.x+P.w/2>s.x0&&P.x-P.w/2<s.x1&&P.y+P.h>s.y0+2&&P.y<s.y1-2){if(pf<=s.y0+8&&P.vy>=0&&!s.gate&&s.temp){P.y=s.y0-P.h-.01;P.vy=0;P.g=true;continue}const cx=(s.x0+s.x1)/2,my=Math.floor((P.y+P.h/2)/T),lx=s.x0-P.w/2-.01,rx=s.x1+P.w/2+.01,free=(nx)=>!solidAt(Math.floor((nx-P.w/2)/T),my)&&!solidAt(Math.floor((nx+P.w/2)/T),my);let toR=P.x>=cx;if(toR&&!free(rx))toR=false;else if(!toR&&!free(lx))toR=true;const nx=toR?rx:lx;if(!free(nx)&&s.temp){P.y=s.y0-P.h-.01;P.vy=Math.min(P.vy,0)}else{P.x=nx;if(toR?P.vx<0:P.vx>0)P.vx=0}P.wall=1}}}}
  // ---- the moves every dungeon needs: wall jump, Shift dash, ice underfoot, shifting gravity. In a trial wings cannot fly or glide (the trial has to mean something), and only one air jump counts.
  let wallT=0,wallD=0,wallLock=0,dashCD=0;
  const inTrial=()=>!!(run&&run.room&&run.room.kind=='trial');
@@ -298,15 +299,15 @@ try{(()=>{
  {const _dp=drawPrecip;drawPrecip=function(){if(run)return;return _dp.apply(this,arguments)}}
  {const _da=drawAmbient;drawAmbient=function(){if(run)return;return _da.apply(this,arguments)}}
  {const _ds=drawSky;drawSky=function(w,hh,now){if(!run)return _ds.apply(this,arguments);try{DG.art.sky(run.d,w,hh,now);g.save();g.scale(ZM,ZM);DG.art.back(L,g,cam.x,cam.y,now);g.restore()}catch(e){if(!drawSky.e){drawSky.e=1;console.error('DG sky',e)}_ds.apply(this,arguments)}}}
- {const _dr=BOSS6.drawProj;BOSS6.drawProj=function(c,cx,cy){_dr.apply(this,arguments);if(!run||!L)return;try{const now=performance.now(),vw=cv.width/ZM,vh=cv.height/ZM;drawGad(c,cx,cy,now);DG.art.front&&DG.art.front(L,c,cx,cy,now);drawIllus(c,cx,cy);drawFx(c,cx,cy,now);drawAmb(c,cx,cy,now);drawLight(c,cx,cy,now,vw,vh);DG.boss&&DG.boss.draw&&DG.boss.draw(c,cx,cy,now)}catch(e){if(!drawFx.e){drawFx.e=1;console.error('DG draw',e)}}}}
+ {const _dr=BOSS6.drawProj;BOSS6.drawProj=function(c,cx,cy){_dr.apply(this,arguments);if(!run||!L)return;try{const now=performance.now(),vw=cv.width/ZM,vh=cv.height/ZM;drawGad(c,cx,cy,now);DG.art.front&&DG.art.front(L,c,cx,cy,now);drawIllus(c,cx,cy);drawFx(c,cx,cy,now);drawAmb(c,cx,cy,now);drawLight(c,cx,cy,now,vw,vh);DG.boss&&DG.boss.draw&&DG.boss.draw(c,cx,cy,now);if(DG.coop)DG.coop.draw(c,cx,cy,now)}catch(e){if(!drawFx.e){drawFx.e=1;console.error('DG draw',e)}}}}
  // the world-boss guards, world events, biomes, drops and trades already step aside for the void; a dungeon asks for the same treatment
  DG.voidNow=()=>!!run;
  // ---- leaving by any other road (summoned, world changed): the run ends quietly
  {const _lw=loadWorld;loadWorld=function(n,e){if(run&&!DG.loading){const was=run;endRun(true)}return _lw.apply(this,arguments)}}
  // ---- E: what is in front of you
  {const _i=interact;interact=function(){if(run&&!dlgOpen&&!DG.locked){const a=nearby();if(a){a.go();return}return}return _i.apply(this,arguments)}}
- function nearby(){if(!L)return null;for(const q of L.portals)if(Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2.2)return{t:'Leave the dungeon (E)',go:()=>DG.ui.askLeave()};for(const q of L.gates)if(!q.open&&Math.abs(P.x-q.x)<T*2.2&&Math.abs(P.y+P.h-q.y)<T*3)return{t:q.key?(cnt(q.key)>0?'Open the sealed gate (E)':'Sealed. It needs the '+DG.ITEMS[q.key].n):'Open (E)',go:()=>tryGate(q)};for(const q of L.chests)if(!q.open&&!q.hid&&Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2)return{t:'Open the chest (E)',go:()=>DG.rew.open(q)};return null}
- function tryGate(q){if(q.key&&cnt(q.key)<=0&&!DG.unlockAll){say('You need the '+DG.ITEMS[q.key].n+'. It waits at the end of the trial');try{UIS.play('error')}catch(_){}return}q.open=true;q.t=0;q.sol.on=0;tone(60,30,1.4,'sawtooth',.08);tone(140,220,1,'sine',.04,.2);shk(.25);DG.ui&&DG.ui.banner('The gate opens','');DG.flow.objective()}
+ function nearby(){if(!L)return null;if(DG.coop&&DG.coop.on){const a=DG.coop.near();if(a)return a}for(const q of L.portals)if(Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2.2)return{t:'Leave the dungeon (E)',go:()=>DG.ui.askLeave()};for(const q of L.gates)if(!q.open&&Math.abs(P.x-q.x)<T*2.2&&Math.abs(P.y+P.h-q.y)<T*3)return{t:q.key?(cnt(q.key)>0?'Open the sealed gate (E)':'Sealed. It needs the '+DG.ITEMS[q.key].n):'Open (E)',go:()=>tryGate(q)};for(const q of L.chests)if(!q.open&&!q.hid&&Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2)return{t:'Open the chest (E)',go:()=>DG.rew.open(q)};return null}
+ function tryGate(q){if(DG.coop&&DG.coop.gateBlock(q))return;if(q.key&&cnt(q.key)<=0&&!DG.unlockAll&&!(DG.coop&&DG.coop.C&&DG.coop.C.quiet)){say('You need the '+DG.ITEMS[q.key].n+'. It waits at the end of the trial');try{UIS.play('error')}catch(_){}return}q.open=true;q.t=0;q.sol.on=0;tone(60,30,1.4,'sawtooth',.08);tone(140,220,1,'sine',.04,.2);shk(.25);DG.ui&&DG.ui.banner('The gate opens','');DG.flow.objective();if(DG.coop)DG.coop.gate(q)}
  // ---- saving a run's place in the world you came from
  function currentRet(){return{w:cur,x:P.x,y:P.y,net:(()=>{try{return !!NET7.world}catch(_){return false}})()}}
  let RET=null;
@@ -316,7 +317,7 @@ try{(()=>{
   const go=()=>beginRun(d,di,o);
   // the first time plays the full film; later on you can replay it from the dungeon's page
   if(o.skipCine||DG.S.opt.auto&&DG.S.seen[id]){go();return true}
-  const seen=!!DG.S.seen[id];if(seen&&!o.cine){go();return true}
+  const seen=!!DG.S.seen[id];
   if(DG.cine&&DG.cine.has(id)){DG.cine.play(id,{skip:seen,done(){DG.S.seen[id]=1;DG.save();go()}});return true}go();return true}
  function beginRun(d,di,o){RET=currentRet();try{DG.ui&&DG.ui.closeAll()}catch(_){}const df=DG.DIFF[di]||DG.DIFF.normal;
   fx.clear();for(const k in groups)delete groups[k];AM.length=0;
@@ -328,16 +329,16 @@ try{(()=>{
   const vw=cv.width/ZM,vh=cv.height/ZM;cam.x=cl(P.x-vw/2,0,W*T-vw);cam.y=cl(P.y-vh/2,-200,H*T-vh);
   // doors of the fight rooms: stand in the passages either side
   for(const r of L.rooms)if(r.kind=='fight'||r.kind=='boss'){r.doors=[{x0:(r.x0-.6)*T,x1:(r.x0+.2)*T,y0:(r.fy-5)*T,y1:r.fy*T,on:0,o:1,temp0:1},{x0:(r.x1-.2)*T,x1:(r.x1+.6)*T,y0:(r.fy-5)*T,y1:r.fy*T,on:r.kind=='fight'?1:0,o:r.kind=='fight'?0:1}];if(r.kind=='boss')r.doors.pop();for(const s of r.doors)L.solids.push(s)}
-  run.t0=performance.now();DG.flow.begin();DG.music&&DG.music.enter(d);DG.ui&&DG.ui.runOn(run);say('');return true}
- function endRun(quiet){const r=run;run=null;L=null;B0=null;fx.clear();DGCAM.reset();PL.length=0;AM.length=0;document.body.classList.remove('dgon');try{DG.boss&&DG.boss.stop()}catch(_){}try{DG.mobs&&DG.mobs.clear()}catch(_){}try{DG.ui&&DG.ui.runOff()}catch(_){}try{DG.music&&DG.music.leave()}catch(_){}flushArt();mobs.length=0;P.dgGrav=null;P.dgSlip=0;window.OWN_CAM=0;window.CAMT=null;try{iT=Math.max(iT,1)}catch(_){}return r}
+  run.t0=performance.now();DG.flow.begin();DG.music&&DG.music.enter(d);DG.ui&&DG.ui.runOn(run);say('');if(DG.coop)DG.coop.begun();return true}
+ function endRun(quiet){if(DG.coop)DG.coop.ended();const r=run;run=null;L=null;B0=null;fx.clear();DGCAM.reset();PL.length=0;AM.length=0;document.body.classList.remove('dgon');try{DG.boss&&DG.boss.stop()}catch(_){}try{DG.mobs&&DG.mobs.clear()}catch(_){}try{DG.ui&&DG.ui.runOff()}catch(_){}try{DG.music&&DG.music.leave()}catch(_){}flushArt();mobs.length=0;P.dgGrav=null;P.dgSlip=0;window.OWN_CAM=0;window.CAMT=null;try{iT=Math.max(iT,1)}catch(_){}return r}
  // leave: back to where you came from
- function leave(){if(!run)return;endRun();const ret=RET;RET=null;try{P.hp=maxHP()}catch(_){}const w=ret?ret.w:'plaza';try{enterWorld(w)}catch(e){console.error('DG leave',e);try{loadWorld('plaza')}catch(_){}}
+ function leave(){if(!run)return;if(DG.coop)DG.coop.left();endRun();const ret=RET;RET=null;try{P.hp=maxHP()}catch(_){}const w=ret?ret.w:'plaza';try{enterWorld(w)}catch(e){console.error('DG leave',e);try{loadWorld('plaza')}catch(_){}}
   if(ret){let n=0;const tryPos=()=>{if(++n>40)return;if(cur===w&&entered&&!isDGW(cur)){P.x=ret.x;P.y=ret.y;P.vx=P.vy=0;return}setTimeout(tryPos,150)};tryPos()}}
  // what ticks: wrapped around the monster update so the game's own knock-out rule never sees a dungeon death
  {const _um=updMobs;updMobs=function(dt){if(!run||!L)return _um.apply(this,arguments);
    // the game's own monster loop must not move our monsters
    const keep=[];for(let i=mobs.length-1;i>=0;i--)if(mobs[i].dgx){keep.push(mobs[i]);mobs.splice(i,1)}_um.apply(this,arguments);for(let i=keep.length-1;i>=0;i--)mobs.push(keep[i]);
-   const now=performance.now()/1000;dashCD-=dt;try{tickGad(dt,now);tickFx(dt);tickAmb(dt);tickCam(dt);DG.mobs&&DG.mobs.tick(dt);DG.boss&&DG.boss.tick(dt);DG.flow.tick(dt);for(const q of L.gates)if(q.open)q.t+=dt;for(const r of L.rooms)if(r.doors)for(const s of r.doors){const want=s.on?0:1;s.o+=(want-s.o)*Math.min(1,dt*7)}}catch(e){if(!updMobs.e){updMobs.e=1;console.error('DG tick',e)}}
+   const now=performance.now()/1000;dashCD-=dt;if(!flyingNow()&&!DG.locked){const tx=Math.floor(P.x/T),my=Math.floor((P.y+P.h*.5)/T),inRock=solidAt(tx,my)&&solidAt(tx,my-1);if(P.g&&!inRock&&Number.isFinite(P.x)&&Number.isFinite(P.y))run.safe={x:P.x,y:P.y};if(inRock||!Number.isFinite(P.y)||!Number.isFinite(P.x)||P.y<T*3){const q=run.safe||run.check;P.x=q.x;P.y=q.y;P.vx=P.vy=0;run.unstuck=(run.unstuck|0)+1}}try{tickGad(dt,now);tickFx(dt);tickAmb(dt);tickCam(dt);if(DG.coop)DG.coop.tick(dt);DG.mobs&&DG.mobs.tick(dt);DG.boss&&DG.boss.tick(dt);DG.flow.tick(dt);for(const q of L.gates)if(q.open)q.t+=dt;for(const r of L.rooms)if(r.doors)for(const s of r.doors){const want=s.on?0:1;s.o+=(want-s.o)*Math.min(1,dt*7)}}catch(e){if(!updMobs.e){updMobs.e=1;console.error('DG tick',e)}}
    if(P.hp<=0&&run)DG.flow.died();}}
  // ---- a safety net: never left inside rock (a stray teleport, the old respawn button), never stuck with a dead run
  setInterval(()=>{try{if(!run||!L||flyingNow()||DG.locked)return;const tx=Math.floor(P.x/T),ty=Math.floor((P.y+P.h/2)/T);if(solidAt(tx,ty)&&solidAt(tx,ty-1)&&solidAt(tx,ty+1)){P.x=run.check.x;P.y=run.check.y;P.vx=P.vy=0;say('Back to the checkpoint')}}catch(_){}},900);

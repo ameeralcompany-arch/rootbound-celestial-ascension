@@ -24,6 +24,19 @@ Ten dungeons, level 15 to endgame. A dungeon is a private world on the player's 
 - `p4-dg-ui.js`: Dungeons page, HUD, results. `p5-dg-music.js`: the synthesised score. `p6-dg-cine.js`: the film engine (`DG.cine.reg`). `p7-dg-rewards.js`: drops, chest, forging, wings, plates, titles, weeklies, owner commands.
 - `q*-dg-<id>.js`: one file per dungeon: scene, map, monsters, boss, film. `q1-dg-ruins.js` is the pattern to copy.
 
+## Two players
+
+Two players at most, in a party (the Party tab on the Dungeons page, signed-in accounts only). `server/party.js` owns the party, relays play only between the two members of a live run, keeps a member's seat for two minutes after a dropped connection, and pays a run's reward once per account.
+
+The map comes from the dungeon's own seed, so both computers build the same one. The leader's computer runs the monsters and bosses (`r1-dg-coop.js`); the other shows copies. When something attacks, both computers run that attack aimed at the same player, and each computer only ever hurts its own player. A blow on a copy goes to the leader, who decides what it did. If the leader leaves, the other computer takes over and the monsters shrink to a one-player fight.
+
+- At zero health you go down instead of leaving. The other player holds E beside you for three seconds; being hit stops it. Both down: back to the checkpoint.
+- Before each sealed gate a duo run gets a chamber, deep in the rock under the gate because the maps fill the world's width: plates, dual switches, crystal sequences, a synchronised trial, a bridge, a rescue path. Solo runs never have these rooms. `r2-dg-duo.js`.
+- Bosses add mechanics per phase: seal crystals, burning mark, ice, twin shadows, cosmic seals (`BMT`).
+- Enemies get about 1.55 to 1.9 times the health, not double, and hit 8% softer (`K_HP`).
+
+`tests/duo.js` plays this with two separate clients on a real server. Its bot teleports between rooms and lands blows directly rather than walking and aiming. It has not yet been played by two people over the internet.
+
 ## Balance
 
 Health is `seconds to kill x damage per second`, not a hand-picked number. Expected damage comes from the rarity band of the gear expected at that dungeon times the level bonus. Abyssal uses the strongest weapon in the game's own table. The player's real damage moves it by a quarter, capped both ways. Damage is a share of expected health. `/dungeontest` shows every number. Real fight lengths are checked by `tests/dungeon-fights.js`.

@@ -11,7 +11,7 @@
  const num=(v,d)=>v==null||isNaN(v)?d:+v;
  X.settings=function(){const body=UI6.body,o=cel.opt,preset=['auto',...QPRE.map(p=>p.id)];
   const S={
-   general:row('sth','Theme','Night is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Night (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
+   general:row('sth','Theme','Soft Glass is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Soft Glass (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
     +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
@@ -21,7 +21,13 @@
     +row('sunc','Uncapped frame rate','Run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
     +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
     +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
-    +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars')),
+    +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars'))
+    +row('sperf','Performance mode','Turns everything below down at once and takes the lowest graphics. For older computers',tog('sperf',o.perf,'Performance mode'))
+    +row('sblr','Background blur','The frosted look behind large panels. Off also makes panels solid',sel('sblr',[['high','High'],['med','Medium'],['off','Off']],o.blur||'med'))
+    +row('spq','Particle effects','How many sparks, embers and motes are drawn',sel('spq',[['high','High'],['med','Medium'],['low','Low']],o.pq||'high'))
+    +row('sshq','Shadows','Soft shadows under panels',sel('sshq',[['high','High'],['med','Medium'],['low','Low']],o.shq||'high'))
+    +row('scq','Cinematic effects','Particles and sharpness in dungeon films',sel('scq',[['2','High'],['1','Medium'],['0','Low']],(()=>{try{return DG.S.opt.cq==null?2:DG.S.opt.cq}catch(_){return 2}})()))
+    +row('suan','Interface animations','Panels and buttons ease in and out',tog('suan',o.uianim!==0,'Interface animations')),
    audio:row('smv','Music','Background music volume',rng('smv',0,100,num(OPT.mv,.5)*100))
     +row('ssv','Sound effects','Blocks, combat and world sounds',rng('ssv',0,100,num(OPT.sv,1)*100))
     +row('sav','Ambience','Wind, rain and cave atmosphere',rng('sav',0,100,num(OPT.av,1)*100))
@@ -35,7 +41,7 @@
     +row('smm','Minimap','Small map in the top right corner',tog('smm',!o.hideMini,'Minimap'))
     +row('sf','FPS counter','Frames per second, top left',tog('sf',o.fpsShow,'FPS counter')),
    access:row('sr','Reduced motion','Calmer menus, less shake and flashing, fewer particles',tog('sr',o.reduce,'Reduced motion'))
-    +row('ssh','Screen shake','How much the camera shakes on impacts',rng('ssh',0,100,num(OPT.sh,1)*100))
+    +row('ssh','Camera shake','How much the camera shakes on impacts. All the way down turns it off',rng('ssh',0,100,num(OPT.sh,1)*100))
     +row('sct','Stronger contrast','Darker secondary text and clearer outlines',tog('sct',o.contrast,'Stronger contrast'))};
   body.innerHTML='<h3>Settings</h3><div class="set7"><nav class="snav7" aria-label="Setting categories">'+CATS.map(([k,n,g],i)=>'<button data-sc="'+k+'" class="'+(i?'':'on')+'"><i>'+g+'</i>'+n+'</button>').join('')+'</nav><div class="smain7"><div class="setq7"><input type="search" id="setq7" placeholder="Search settings…" aria-label="Search settings" autocomplete="off"><span class="dim" id="setn7"></span></div>'
    +CATS.map(([k,n,g,d])=>'<section class="ssec7" id="ss-'+k+'"><h4><i>'+g+'</i>'+n+'<small>'+d+'</small></h4>'+S[k]+'</section>').join('')+'<p class="dim snote7" id="sempty7" hidden>No settings match.</p></div></div>';
@@ -68,6 +74,7 @@
   tg('sqt',v=>o.hideQuest=v?0:1);tg('smm',v=>o.hideMini=v?0:1);tg('sf',v=>o.fpsShow=v?1:0);
   // accessibility
   tg('sr',v=>o.reduce=v?1:0);tg('sct',v=>o.contrast=v?1:0);
+  {const fx=()=>{celSave();try{UIFX.apply()}catch(_){}},pick=(id,k)=>{const e=q(id);if(e)e.onchange=()=>{o[k]=e.value;fx()}};tg('sperf',v=>{o.perf=v?1:0;fx()});pick('sblr','blur');pick('spq','pq');pick('sshq','shq');tg('suan',v=>{o.uianim=v?1:0;fx()});const c=q('scq');if(c)c.onchange=()=>{try{DG.S.opt.cq=+c.value;DG.save()}catch(_){}}}
   q('ssh').oninput=e=>{OPT.sh=e.target.value/100;lab('ssh',e.target.value);try{const c=el('osh');if(c)c.checked=OPT.sh>0;saveP()}catch(_){}};
   // category nav: scrolls to the section; the highlight follows the scroll position
   const nav=body.querySelector('.snav7'),secs=[...body.querySelectorAll('.ssec7')],mark=k=>nav.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.sc==k));

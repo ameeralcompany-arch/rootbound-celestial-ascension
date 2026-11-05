@@ -2,7 +2,7 @@
 // Rootbound persistent multiplayer server. Zero dependencies (Node 18+). See server/README.md.
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {cleanText}=require('./moderation');
-const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),zlib=require('zlib');
+const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),PARTY=require('./party'),zlib=require('zlib');
 const ENV=process.env;
 const WORLDS_A_DAY=10;   // new worlds one account may make in a day (claiming them is limited separately, to 5 at a time)
 const ACCOUNT_GEN=1;   // raise this by one to reset every account again when the server next starts
@@ -95,6 +95,7 @@ function createServer(opts={}){
  const shown=set=>{let n=0;for(const sid of set){const o=sessions.get(sid);if(!o||!o.oInv)n++}return n};
  const chatLog=Object.create(null),reports=store.readJSON(store.p('reports.json'),{list:[]});if(!Array.isArray(reports.list))reports.list=[];
  function setGod(s,u,on){const sh=SHOP.ensure(u);if(on&&!u.god){sh.realG=sh.g;sh.g=Math.max(sh.g,999999)}else if(!on&&u.god){sh.g=Number.isFinite(sh.realG)?sh.realG:sh.g;delete sh.realG}u.god=on?1:0;s.god=!!on;saveAcc();send(s,{t:'god',on:on?1:0});sendWallet(s,u)}
+ const parties=PARTY.createParties({send,sessions,userById,saveAcc:()=>saveAcc(),bonus:(u,n)=>SHOP.bonus(u,n),bucket:(s,k,n,ms)=>bucket(s,k,n,ms),minRunMs:cfg.dgMinMs,graceMs:cfg.dgGraceMs});
  const eco=ECON.createEconomy({send,sessions,userById,saveAcc:()=>saveAcc(),relay:(w,m)=>relay(w,m),dropsOf:id=>id=='plaza'?plazaDrops:(worlds.get(id)||{drops:[]}).drops,touchWorld:id=>{const w=worlds.get(id);if(w)saveWorld(w)},bucket:(s,k,c,ms)=>bucket(s,k,c,ms),audit:o=>store.audit(o),rid:()=>crypto.randomBytes(2).toString('hex')});
  // ---------- admin (OWNER ONLY, verified server-side on every call)
  function adminOp(s,m){const rid=m.rid,ok=(msg,data)=>send(s,{t:'admin_res',rid,ok:1,m:msg,data}),no=msg=>send(s,{t:'admin_res',rid,ok:0,m:msg});
@@ -136,7 +137,7 @@ function createServer(opts={}){
  function failed(key,lim){const a=authFail[key]||(authFail[key]={n:0,until:0,first:Date.now()});a.n++;if(a.n>=lim)a.until=Date.now()+60000}
  function setAuth(s,u,tokenTtl){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';s.oInv=s.owner?ownerHidden:false;const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token,gen:accounts.gen|0,prev:(u.prof&&u.prof.rev)|0});signedIn(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
  // what every sign-in gets: wallet, bag, the owner's god mode if it was left on, the owned-world list
- function signedIn(s,u){sendWallet(s,u);eco.signedIn(s,u);s.god=!!(s.owner&&u.god);if(s.god)send(s,{t:'god',on:1});sendMine(s)}
+ function signedIn(s,u){parties.onAuth(s);sendWallet(s,u);eco.signedIn(s,u);s.god=!!(s.owner&&u.god);if(s.god)send(s,{t:'god',on:1});sendMine(s)}
  function sendWallet(s,u){if(!u)return;send(s,Object.assign({t:'wallet'},SHOP.view(u)))}
  const watched=new Map();function watch(s,u,what,over){if(!(over>300))return;const k=u.id+what,now=Date.now();if(now-(watched.get(k)||0)<300000)return;watched.set(k,now);if(watched.size>5000)watched.clear();store.audit({ev:'cheat-watch',what,over,uid:u.id,name:u.name,ip:s.ip})}
  function onMsg(s,raw){let m;if(raw.length>20000&&!/^\{"t":"(e|o|meta|_p)"/.test(raw.slice(0,12)))return;try{m=JSON.parse(raw)}catch(_){if(++s.strikes>8)s.conn.close(1008);return}
@@ -171,6 +172,8 @@ function createServer(opts={}){
   case 'enter':if(!bucket(s,'enter',12,30000))return send(s,{t:'enter_err',m:'Slow down'});return enter(s,m.w,!!m.create,m.base);
   case 'leave':return leaveWorld(s);
   case 'sync':{if(s.kind=='guest'||!bucket(s,'sync',12,60000))return;const u=userById(s.uid);if(!u)return;SHOP.sync(u,m.gems);watch(s,u,'gems',Math.floor(+m.gems)-SHOP.view(u).gems);sendWallet(s,u);saveAcc();return}
+  case 'party':return parties.msg(s,m);
+  case 'pg':return parties.relay(s,m);
   case 'wallet':{if(s.kind=='guest')return send(s,{t:'wallet',gems:0,owned:{},guest:1});const u=userById(s.uid);return sendWallet(s,u)}
   case 'buy':{if(!bucket(s,'buy',10,10000))return send(s,{t:'buy_res',ok:0,m:'Slow down',rid:String(m.rid||'')});
    if(s.kind=='guest')return send(s,{t:'buy_res',ok:0,m:'Sign in to buy items in shared worlds',rid:String(m.rid||'')});
@@ -251,7 +254,7 @@ function createServer(opts={}){
   const hd=req.headers,ip=String(cfg.trustProxy&&(hd['cf-connecting-ip']||hd['true-client-ip']||String(hd['x-forwarded-for']||'').split(',').pop().trim())||req.socket.remoteAddress||'');if(sessions.size>=cfg.maxConns||(ipCount.get(ip)||0)>=cfg.maxConnsPerIp){sock.end('HTTP/1.1 503 Service Unavailable\r\n\r\n');return}
   const conn=upgrade(req,sock,head,{maxPayload:65536,originOk:o=>!cfg.origins||cfg.origins.includes(o)});if(!conn)return;
   const s={sid:'p'+(++sidN).toString(36)+crypto.randomBytes(2).toString('hex'),conn,ip,uid:'',name:'',kind:'',owner:false,world:null,pres:{},rate:{},strikes:0,last:Date.now(),born:Date.now()};sessions.set(s.sid,s);ipCount.set(ip,(ipCount.get(ip)||0)+1);
-  conn.onmessage=raw=>{s.last=Date.now();onMsg(s,raw)};conn.onclose=()=>{leaveWorld(s);sessions.delete(s.sid);const n=(ipCount.get(ip)||1)-1;if(n<=0)ipCount.delete(ip);else ipCount.set(ip,n)};
+  conn.onmessage=raw=>{s.last=Date.now();onMsg(s,raw)};conn.onclose=()=>{try{parties.onClose(s)}catch(e){console.error('party',e)}leaveWorld(s);sessions.delete(s.sid);const n=(ipCount.get(ip)||1)-1;if(n<=0)ipCount.delete(ip);else ipCount.set(ip,n)};
   send(s,{t:'server',v:1,max:cfg.maxPlayers,ownerConfigured:!!owner,time:Date.now()})});
  const hb=setInterval(()=>{const now=Date.now();for(const s of sessions.values()){if(now-s.last>45000||(!s.uid&&now-s.born>60000)){s.conn.close(1001);continue}s.conn.ping()}
   for(const k of Object.keys(authFail))if(!authFail[k].until&&authFail[k].first&&now-authFail[k].first>3600e3||authFail[k].until&&now>authFail[k].until)delete authFail[k];for(const[k,a]of ipHits)if(!a.length||now-a[a.length-1]>3600e3)ipHits.delete(k);{let ch=false;for(const k of Object.keys(sess))if(sess[k].exp<now){delete sess[k];ch=true}if(ch)saveSess()}

@@ -146,7 +146,8 @@ try{(()=>{
     {name:'eruptions3',wind:.65,rec:.6,start(m,X){},fire(m,X){const f=X.fl();for(let i=0;i<5;i++)geyser(X.clX(P.x+(i-2)*T*3.4),f,.8+i*.14,m,X);X.shk(.14)}},
     {name:'skyfire2',wind:.6,rec:.5,w(m){return m.air>1?3:.4},start(m,X){},fire(m,X){for(let i=0;i<4;i++)fx.later(i*.18,()=>fx.c(P.x+rn(-T*2,T*2),P.y+P.h/2+rn(-T,T),T*1.9,.75,.24,{c:HOT,dmg:X.dmg(m,.9),kind:'fire',snd:0}))}}]],
   // the entrance: the lava starts to work, the floor gives way to fire, and he walks up out of it
-  intro(I,m,X){const r=I.room,cxr=(r.x0+r.x1)*T/2,fy=r.fy*T;m.x=(r.x0+32)*T;m.y=fy-m.h;m.rise=0;m.f=-1;I.cam([{x:(r.x0+6)*T,y:fy-T*7,z:1,dur:.1},{x:cxr,y:fy-T*9,z:.95,dur:2.6},{x:m.x-T*2,y:fy-T*7,z:1.08,dur:1.8,hold:.4},{x:m.x,y:fy-m.h*.72,z:1.32,dur:1.6,hold:1},{x:m.x-T*3,y:fy-T*7,z:1.05,dur:.8,hold:1.6}]);
+  intro(I,m,X){const r=I.room,cxr=(r.x0+r.x1)*T/2,fy=r.fy*T;m.x=(r.x0+32)*T;m.y=fy-m.h;m.rise=0;m.f=-1;I.cam([{x:(r.x1-6)*T,y:fy-T*2.4,z:1.32,dur:.1},{x:cxr,y:fy-T*3,z:1.24,dur:2.6},{x:m.x+T*2,y:fy-T*4,z:1.12,dur:1.8,hold:.4},{x:m.x,y:fy-m.h*.72,z:1.42,dur:1.6,hold:1},{x:m.x-T*3,y:fy-T*7,z:1.02,dur:.8,hold:1.6}]);
+   for(let i=0;i<44;i++)I.at(.3+i*.09,()=>{const x=rn(r.x0+3,r.x1-3)*T;fx.shot(x,fy-2,rn(-6,6),-rn(26,64),{r:rn(4,12),c:i%3?FI:FL,dmg:0,ghost:1,l:rn(.5,.9)})});
    I.at(.3,()=>{DG.music.sfx('lava',1);fx.ground(r.x0*T,r.x1*T,fy,{life:5.6,c:FI,dmg:0,h:T*.7})});I.at(2.6,()=>DG.music.sfx('lava',1.2));
    for(let i=0;i<16;i++)I.at(.4+i*.19,()=>{const x=rn(r.x0+3,r.x1-3)*T;X.burst(x,fy-2,[FI,FL],9,150+i*8);X.shk(.03+i*.004)});
    I.at(3.1,()=>DG.music.sfx('rumble'));for(let i=0;i<12;i++)I.at(3.2+i*.17,()=>{const x=(r.x0+3+((i*17)%40))*T;fx.z(x-T*1.1,fy-T*(5+i%4*2),x+T*1.1,fy+2,.12,.5,{c:FI,dmg:0,kind:'fire',snd:0});DG.shk(.08)});

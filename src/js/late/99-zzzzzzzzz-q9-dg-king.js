@@ -123,7 +123,7 @@ try{(()=>{
    [kingsfall,decree,reach,crownblades,rebuke,court,sentence,muster,tithe,kingdomsEnd],
    [kingsfall,voidstep,execution,crownblades,rebuke,court,sentence,tithe,kingdomsEnd,decree,oathward,muster]],
   // the entrance: a dead hall, three tolls of a bell, and then the thing on the throne remembers it is a king
-  intro(I,m,X){const r=I.room,fy=r.fy*T,tx=(r.x0+33)*T;m.x=tx;m.y=fy-m.h;m.rise=0;m.f=-1;m.thr=tx;m.vx=0;DG.run.lightK=1.5;I.cam([{x:(r.x0+6)*T,y:fy-T*8,z:1,dur:.1},{x:(r.x0+r.x1)*T/2,y:fy-T*10,z:.92,dur:3},{x:tx-T*2,y:fy-T*6,z:1.2,dur:2.2,hold:.6},{x:tx,y:fy-m.h*.72,z:1.5,dur:2,hold:1.2},{x:tx-T*3,y:fy-T*7,z:1.05,dur:.9,hold:2}]);
+  intro(I,m,X){const r=I.room,fy=r.fy*T,tx=(r.x0+33)*T;m.x=tx;m.y=fy-m.h;m.rise=0;m.f=-1;m.thr=tx;m.vx=0;DG.run.lightK=1.5;I.cam([{x:(r.x0+8)*T,y:fy-T*6,z:.86,dur:.1},{x:tx-T*7,y:fy-T*6.5,z:1,dur:4.2},{x:tx-T,y:fy-T*6,z:1.22,dur:1.4,hold:.3},{x:tx,y:fy-m.h*.72,z:1.58,dur:2,hold:1.2},{x:tx-T*3,y:fy-T*7,z:1.05,dur:.9,hold:2}]);
    for(const[k,t0]of[[0,.5],[1,2],[2,3.5]])I.at(t0,()=>{DG.music.sfx('bell',.7-k*.08);X.shk(.05)});for(let i=0;i<20;i++)I.at(.3+i*.28,()=>X.burst(tx+rn(-T*9,T*9),fy-rn(0,T*3),['#04020a','#1a1028',V],5,70));
    for(let i=0;i<=20;i++)I.at(4+i*.06,()=>{m.rise=.3*i/20});I.at(4,()=>{DG.music.sfx('eye',1);DG.run.lightK=1.2});I.at(5,()=>{DG.music.sfx('rumble',.9);X.burst(tx,fy-m.h*.5,[V,SL],16,200)});for(let i=0;i<=44;i++)I.at(5.2+i*.06,()=>{m.rise=.3+.7*i/44});
    I.at(8,()=>{DG.music.sfx('boom',.9);DG.music.sfx('roar',.7);X.shk(.5);X.wave(tx,fy,V,T*14,1,.3);for(const s of[-1,1])X.burst(tx+s*T*3,fy,[SL,V],22,260);DG.run.lightK=1})},

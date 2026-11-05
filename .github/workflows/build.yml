@@ -254,6 +254,14 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 12
         run: bash tools/ci-test.sh tests/winonly.js
+      - name: Test two-player dungeons (two real clients on a real server)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 12
+        run: bash tools/ci-test.sh tests/duo.js
+      - name: Test the Soft Glass interface
+        if: ${{ !cancelled() }}
+        timeout-minutes: 8
+        run: bash tools/ci-test.sh tests/glass.js
       - name: Test dungeons
         if: ${{ !cancelled() }}
         timeout-minutes: 15

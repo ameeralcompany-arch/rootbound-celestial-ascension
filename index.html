@@ -2367,6 +2367,20 @@ body.dgon #dghud{display:block}
 @keyframes dgin{from{opacity:0;transform:translateY(-6px)}}#dgbb.on{animation-name:dgbbin}@keyframes dgbbin{from{opacity:0}}@keyframes dgpop{from{opacity:0;transform:scale(.8)}}
 @media (prefers-reduced-motion:reduce){#dgbb.on,#dgres.on,#dgres .it,#dgres .first{animation:none}}
 
+/* the two-player party */
+#dginv{position:fixed;right:18px;top:86px;z-index:2147483000;width:280px;padding:14px 16px;border-radius:14px;color:#f3efff;font:600 13px/1.35 system-ui,sans-serif;background:linear-gradient(160deg,rgba(38,34,58,.94),rgba(20,18,34,.94));border:1px solid rgba(214,204,255,.28);box-shadow:0 14px 40px rgba(4,2,16,.5)}
+#dginv b{display:block;font-size:15px}#dginv small{color:#c9c2e6}#dginv .act{display:flex;gap:8px;margin-top:10px}#dginv button{flex:1;padding:8px;border-radius:9px;border:1px solid rgba(214,204,255,.3);background:rgba(255,255,255,.07);color:#fff;font:700 13px system-ui,sans-serif;cursor:pointer}#dginv .yes{background:linear-gradient(180deg,#b9a8ff,#8d78e8);color:#17112e;border:0}
+#dgmate{position:fixed;left:14px;top:112px;z-index:60;width:210px;display:none;padding:7px 11px;border-radius:12px;color:#f0ebff;font:600 12px/1.3 system-ui,sans-serif;background:linear-gradient(160deg,rgba(38,34,58,.78),rgba(20,18,34,.66));border:1px solid rgba(214,204,255,.2);pointer-events:none}
+#dgmate b{font-size:13px}#dgmate .st{float:right;color:#ffc0a0;font-size:11px}#dgmate .hp{height:6px;margin-top:5px;border-radius:4px;background:rgba(0,0,0,.45);overflow:hidden}#dgmate .hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#9fe8c0,#7fe0ff);transition:width .18s ease}#dgmate.down{border-color:rgba(255,140,120,.7)}#dgmate.down .hp i{background:#ff8a7a}
+.duop .seats{display:grid;grid-template-columns:1fr 1fr;gap:14px}.duop .pcard{padding:14px;border-radius:14px;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(214,204,255,.18);text-align:center;min-height:320px}.duop .pcard canvas{display:block;margin:0 auto;width:180px;height:180px}.duop .pcard h5{margin:6px 0 2px;font:800 17px system-ui,sans-serif;color:#fff}.duop .pcard small{display:block;color:#c9c2e6}.duop .pcard .ti{color:#ffe2a0}.duop .crown{color:#ffd77a}.duop .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#8a8498;margin-right:5px}.duop .dot.on{background:#8fe8b0}
+.duop dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:10px 0 0;text-align:left;font-size:12px}.duop dt{color:#a9a2c6}.duop dd{margin:0;color:#f0ebff}.duop .empty{display:flex;flex-direction:column;justify-content:center;align-items:center}.duop .inv{display:flex;gap:6px;margin-top:10px}.duop .inv input{width:150px;padding:8px 10px;border-radius:9px;border:1px solid rgba(214,204,255,.3);background:rgba(0,0,0,.25);color:#fff}
+.duop .pact{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:12px}.duop .pact p{margin:0;color:#c9c2e6;flex:1 1 260px}.duop .pinv{display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:12px;border-radius:12px;background:rgba(185,168,255,.16);border:1px solid rgba(214,204,255,.3)}.duop .pinv b{flex:1}
+.duop .elig{width:100%;margin-top:6px;border-collapse:collapse;font-size:12px}.duop .elig th,.duop .elig td{padding:4px 8px;text-align:left;border-bottom:1px solid rgba(214,204,255,.1)}.duop .elig .y{color:#9fe8c0}.duop .elig .n{color:#a59eb8}
+
+#dgres .fcstamp{position:relative;display:flex;justify-content:center;align-items:center;height:64px;margin:10px 0 2px;overflow:hidden}#dgres .fcstamp b{position:relative;font:900 clamp(22px,3.4vw,34px)/1 Georgia,serif;letter-spacing:.22em;color:#ffe9b0;text-shadow:0 0 22px rgba(255,214,120,.65);animation:dgFc .75s cubic-bezier(.16,1.2,.3,1) both}#dgres .fcstamp i{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px;border-radius:50%;border:2px solid rgba(255,226,160,.8);animation:dgFcR 1.1s ease-out both}
+@keyframes dgFc{from{opacity:0;transform:scale(2.2);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}@keyframes dgFcR{from{opacity:.9;transform:scale(.3)}to{opacity:0;transform:scale(8)}}
+@media (prefers-reduced-motion:reduce){#dgres .fcstamp b,#dgres .fcstamp i{animation:none}#dgres .fcstamp i{display:none}}
+
 /* ========== CSS: 99-zz-equip.css ========== */
 /* EQM9: the Character Equipment menu (C) */
 #eq9{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(6,5,18,0);transition:background .16s ease;color:#ece8f8;font-family:Montserrat,system-ui,'Segoe UI',sans-serif}
@@ -2860,6 +2874,103 @@ html[data-skin=night] #inv7 h2.ttl:after{content:'持ち物'}html[data-skin=nigh
 html[data-skin=night] #eq9 h4{font-family:var(--font-ui)!important;font-style:normal!important}
 /* a calm, quick entrance for every main panel */
 html[data-skin=night]:not([data-ureduce=true]) #hubhead,html[data-skin=night]:not([data-ureduce=true]) #hubnav{animation:mo-fade .16s ease both}
+
+/* ========== CSS: 99-zzzz-glass.css ========== */
+/* ===== Soft Glass: the game's default look. Dark charcoal foundations, soft white and lavender highlights, translucent panels, one set of radii, shadows and motion. It sits on the Night skin's tokens, so every screen that
+   already uses them follows at once, then this file brings the screens with their own colours into line. Live blur only ever falls on the one large panel that is open, never on the HUD, and data-blur turns it down or off. ===== */
+html[data-skin=night]:root{
+ --ink:#f4f2fb;--ink-2:#d4d0e4;--muted:#a6a2b8;--line:rgba(255,255,255,.1);--line-strong:rgba(226,218,255,.26);
+ --accent:#c9bdf5;--accent-2:#e9dffb;--accent-soft:rgba(201,189,245,.13);--focus:#e2dbff;
+ --bg-page:linear-gradient(150deg,#17171f,#1f1e2b 60%,#191a24);
+ --surface:linear-gradient(165deg,rgba(58,56,76,.86),rgba(30,29,42,.88));--surface-solid:#23222f;--surface-2:linear-gradient(165deg,rgba(72,69,92,.8),rgba(40,39,54,.84));--surface-3:linear-gradient(165deg,rgba(52,50,68,.82),rgba(32,31,44,.86));--sunken:rgba(14,13,20,.5);
+ --overlay:rgba(10,9,16,.5);--glass-blur:14px;--panel:rgba(36,35,48,.86);--panel2:rgba(52,50,68,.84);--panel-hl:inset 0 1px 0 rgba(255,255,255,.09);
+ --btn-bg:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.045));--btn-bg-hover:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.08));--btn-ink:#f4f2fb;
+ --btn-primary:linear-gradient(180deg,#d6ccfa,#ad9eea);--btn-primary-ink:#1b1830;
+ --sel-bg:linear-gradient(165deg,rgba(201,189,245,.26),rgba(201,189,245,.1));--sel-bd:#d6ccfa;--input-bg:rgba(10,9,16,.42);
+ --sh-1:0 1px 3px rgba(4,3,10,.32);--sh-2:0 8px 22px -12px rgba(4,3,10,.6);--sh-3:0 24px 56px -22px rgba(4,3,10,.72);--glow:0 0 14px -6px rgba(214,204,250,.7);
+ --toast-bg:linear-gradient(165deg,rgba(62,60,80,.94),rgba(34,33,46,.94));--toast-bd:rgba(226,218,255,.26);
+ --g-blush-pearl:linear-gradient(165deg,rgba(72,69,92,.8),rgba(40,39,54,.84));--g-silver-violet:linear-gradient(165deg,rgba(66,64,84,.8),rgba(38,37,50,.84));--g-sky-lilac:linear-gradient(165deg,rgba(64,64,88,.8),rgba(38,38,54,.84));
+ --g-holo:linear-gradient(120deg,rgba(84,80,110,.72),rgba(66,62,88,.72) 50%,rgba(70,72,100,.72));--g-accent:linear-gradient(90deg,#c9bdf5,#efe9fd);--g-accent-2:linear-gradient(90deg,#d6ccfa,#f4efff);--g-rule:linear-gradient(90deg,transparent,rgba(226,218,255,.34),transparent);
+ --n16-on:#efe9fd;--n16-gold:#e9dcb4;
+ --rad-glass:16px;--rad-ctl:10px;--dur-1:.12s;--dur-2:.2s;--ease-1:cubic-bezier(.2,.7,.3,1);--uiz:1;--dgc2:#d6ccfa}
+html[data-skin=night] body{background:#17171f}
+
+/* the large panels: one surface, one edge, one shadow */
+html[data-skin=night] :is(#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#chestui,#inv7 .sheet,#inv7 .panel,#menu #card,#book7,.objpanel,#objui .box,#wg9 .box,#rw8lv,.rw8c,#craftui,#petui .card,#avf10>*,#guide10>*,#eq9 .eq9box,#cls9 .box,#cls9>div,#socui,#tl8lv,#ow15con,#dgres .dgrc,#dgcard,#dz8>*){background:var(--surface)!important;color:var(--ink);border:1px solid var(--line)!important;border-radius:var(--rad-glass)!important;box-shadow:var(--sh-3),var(--panel-hl)!important}
+html[data-skin=night] :is(#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#inv7 .sheet,#menu #card,#eq9 .eq9box,#craftui,#book7,#dgres .dgrc){animation:rbGlassIn var(--dur-2) var(--ease-1) both}
+/* uses the separate translate property: many panels are centred with transform, which an animation must not touch */
+@keyframes rbGlassIn{from{opacity:0;translate:0 6px}to{opacity:1;translate:0 0}}
+/* small things that float over the game */
+html[data-skin=night] :is(#hudL,#hudC,#wl9,#quest,#toast7 .t7,#dlg,#prompt,.netcard,#mini,#eq9tip,#nav16tip,#banner,#dgmate,#dginv,#bb10,#wb13c,.tip,.tooltip,#ow15bar){background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:var(--rad-ctl);box-shadow:var(--sh-2),var(--panel-hl)!important}
+html[data-skin=night] #hudL,html[data-skin=night] #hudC,html[data-skin=night] #mini,html[data-skin=night] #quest{border-radius:14px}
+html[data-skin=night] #nav16 .n16b{border-radius:12px;background:var(--btn-bg);border:1px solid var(--line);transition:background var(--dur-1) ease,transform var(--dur-1) ease}
+html[data-skin=night] #nav16 .n16b:hover{background:var(--btn-bg-hover);transform:translateY(-1px)}
+
+/* live blur: only here, and only as much as the setting says */
+html[data-skin=night][data-blur=high] :is(#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#inv7 .sheet,#menu #card,#eq9 .eq9box,#craftui,#book7,#dgres .dgrc){backdrop-filter:blur(18px) saturate(1.12)!important;-webkit-backdrop-filter:blur(18px) saturate(1.12)!important}
+html[data-skin=night][data-blur=med] :is(#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#inv7 .sheet,#menu #card,#eq9 .eq9box,#craftui,#book7,#dgres .dgrc){backdrop-filter:blur(9px)!important;-webkit-backdrop-filter:blur(9px)!important}
+html[data-skin=night][data-blur=off]:root{--surface:linear-gradient(165deg,#34333f,#22212d);--surface-2:linear-gradient(165deg,#3e3c4c,#2a2935);--surface-3:linear-gradient(165deg,#32313e,#23222e);--panel:#292835;--panel2:#343240}
+
+/* buttons, tabs, inputs: one set, everywhere */
+html[data-skin=night] body button:not(.n16b):not(.rb-raw){border-radius:var(--rad-ctl);transition:background var(--dur-1) ease,border-color var(--dur-1) ease,transform var(--dur-1) ease,color var(--dur-1) ease}
+html[data-skin=night] body button:not(:disabled):active{transform:scale(.975)}
+html[data-skin=night] body :is(input[type=text],input[type=password],input:not([type]),select,textarea){background:var(--input-bg);color:var(--ink);border:1px solid var(--line);border-radius:var(--rad-ctl)}
+html[data-skin=night] body :is(input,select,textarea,button):focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+html[data-skin=night] :is(.hbtn,.sec,.pri){border-radius:var(--rad-ctl)!important;transition:background var(--dur-1) ease,border-color var(--dur-1) ease,transform var(--dur-1) ease!important}
+html[data-skin=night] :is(.hbtn,.sec,#dg16 .sec,#dg16 .tabs button,#dgres .again,#dginv .no,#dg16 .x){background:var(--btn-bg)!important;color:var(--btn-ink)!important;border:1px solid var(--line)!important}
+html[data-skin=night] :is(.hbtn,.sec,#dg16 .sec,#dg16 .tabs button,#dgres .again,#dginv .no,#dg16 .x):hover{background:var(--btn-bg-hover)!important}
+html[data-skin=night] :is(.pri,#dg16 .pri,#dgres .ok,#dginv .yes,#dg16 .tabs button.on){background:var(--btn-primary)!important;color:var(--btn-primary-ink)!important;border:0!important}
+
+/* the Dungeon Hub */
+html[data-skin=night] #dg16{background:radial-gradient(1200px 720px at 74% -10%,rgba(201,189,245,.1),transparent 62%),linear-gradient(135deg,#15141c,#1d1c28 60%,#14131a);color:var(--ink);font-family:var(--font-body,system-ui,sans-serif)}
+html[data-skin=night] #dg16 header h2{font:800 24px/1 var(--font-display,system-ui,sans-serif);letter-spacing:.1em}
+html[data-skin=night] #dg16 .dc{background:var(--surface-3);border:1px solid var(--line);border-radius:12px;transition:background var(--dur-1) ease,transform var(--dur-1) ease}
+html[data-skin=night] #dg16 .dc:hover{background:var(--surface-2);transform:translateX(2px)}
+html[data-skin=night] #dg16 .dc.on{background:var(--sel-bg);border-color:var(--sel-bd)}
+html[data-skin=night] #dg16 .hero{border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+html[data-skin=night] #dg16 .kv>div,html[data-skin=night] #dg16 .dfs button,html[data-skin=night] #dg16 .wk>div{background:var(--surface-3);border:1px solid var(--line);border-radius:10px}
+html[data-skin=night] #dg16 .dfs button.on{background:var(--sel-bg);border-color:var(--sel-bd)}
+html[data-skin=night] #dg16 .it{border-radius:10px}
+html[data-skin=night] #dg16 .hubx{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}html[data-skin=night] #dg16 .hubx span{padding:4px 11px;border-radius:999px;background:var(--accent-soft);border:1px solid var(--line);font-size:12.5px;color:var(--ink-2)}html[data-skin=night] #dg16 .hubx b{color:var(--ink);font-weight:700}
+
+/* in a dungeon: quiet, out of the way */
+html[data-skin=night] #dghud .box{background:var(--surface)!important;border:1px solid var(--line)!important;border-left:3px solid var(--dgc,var(--accent))!important;border-radius:12px;backdrop-filter:none!important;text-shadow:none}
+html[data-skin=night] #dgbb{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh-2)}
+html[data-skin=night] #dgres{background:rgba(10,9,16,.56)}
+html[data-skin=night] #dgres .it{background:var(--surface-3);border:1px solid var(--line);border-radius:10px}
+html[data-skin=night] #dgres h2{font-family:var(--font-display,system-ui,sans-serif);letter-spacing:.16em}
+html[data-skin=night] .duop .pcard,html[data-skin=night] #dgmate,html[data-skin=night] #dginv{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:14px}
+html[data-skin=night] .duop .pinv{background:var(--sel-bg);border-color:var(--sel-bd)}
+
+/* the screens that keep their own colours: their bars, slots and rows now share the same quiet surfaces */
+html[data-skin=night] :is(#eq9,#cls9,#craftui,#chestui,#objui,#tools7,#socui,#petui,#wl9,#wg9,#guide10,#book7,#tl8lv,#ow15con) :is(table,.row,.slot,.card,li){border-color:var(--line)}
+html[data-skin=night] #ow15bar button,html[data-skin=night] #ow15con button{background:var(--btn-bg);color:var(--ink);border:1px solid var(--line)}
+html[data-skin=night] :is(.rb-scroll,#hubbody,#dg16 .body,#dg16 .det,#store7 .shell,#inv7 .sheet)::-webkit-scrollbar{width:9px;height:9px}
+html[data-skin=night] :is(.rb-scroll,#hubbody,#dg16 .body,#dg16 .det,#store7 .shell,#inv7 .sheet)::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:9px;border:2px solid transparent;background-clip:content-box}
+
+/* the player's choices */
+html[data-shadows=med] body{--sh-2:0 4px 12px -8px rgba(4,3,10,.5);--sh-3:0 12px 28px -16px rgba(4,3,10,.6)}
+html[data-shadows=low] body{--sh-1:none;--sh-2:none;--sh-3:none}
+html[data-uianim=off] body *,html[data-uianim=off] body *::before,html[data-uianim=off] body *::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
+html[data-ureduce=true] :is(#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#inv7 .sheet,#menu #card,#eq9 .eq9box,#craftui,#book7,#dgres .dgrc){animation:none!important}
+/* big screens: the panels grow with the screen, so text stays the same size to the eye */
+html[data-skin=night] :is(#hubc,#dlg7 .box,#store7 .shell,#tools7 .sheet,#inv7 .sheet,#menu #card,#eq9 .eq9box,#craftui,#chestui,#book7,#dg16,#dgres .dgrc,#nav16,#toast7,#dgmate,#dghud,#dginv,#dgbb,#wl9,#guide10){zoom:var(--uiz)}
+
+/* the HUD's own pieces, in the same charcoal and lavender */
+html[data-skin=night] #nav16g{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+html[data-skin=night] #bar{background:var(--surface)!important;border-radius:14px}
+html[data-skin=night] #bar .s6{background:var(--surface-2)!important;border-radius:11px}
+html[data-skin=night] #skills .sk{background:var(--surface-3)!important;border-radius:11px}
+html[data-skin=night] #hudL #pwrap9 .ring{background:conic-gradient(from 200deg,#efe9fd,#c9bdf5 30%,#8f8aa8 55%,#efe9fd 80%,#c9bdf5)}
+html[data-skin=night] #hudL .hpb i{background:linear-gradient(90deg,#d9708c,#f0a9bb)!important}
+html[data-skin=night] #hudL .xp i{background:linear-gradient(90deg,#b3a6e8,#d9d2f6)!important}
+html[data-skin=night] .rb-toggle:checked{background:linear-gradient(180deg,#d6ccfa,#ad9eea)!important}
+html[data-skin=night] select option{background:#2a2935;color:#f4f2fb}
+html[data-skin=night] ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);background-clip:padding-box}
+html[data-skin=night] ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.3);background-clip:padding-box}
+html[data-skin=night] .bs16 .pic{background:rgba(10,9,16,.5)}
+html[data-uianim=off] body :is(.hbtn,.sec,.pri,button){transition:none!important}
+html[data-skin=night] #craftui{max-height:calc(94vh / var(--uiz))!important;overflow:auto}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -14673,7 +14784,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
  const num=(v,d)=>v==null||isNaN(v)?d:+v;
  X.settings=function(){const body=UI6.body,o=cel.opt,preset=['auto',...QPRE.map(p=>p.id)];
   const S={
-   general:row('sth','Theme','Night is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Night (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
+   general:row('sth','Theme','Soft Glass is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Soft Glass (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
     +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
@@ -14683,7 +14794,13 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
     +row('sunc','Uncapped frame rate','Run faster than your monitor refreshes. Off is the smoothest; on can stutter. Applies after a restart',tog('sunc',(()=>{try{return localStorage.getItem('rb_fps_uncapped')=='1'}catch(_){return false}})(),'Uncapped frame rate'))
     +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
     +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
-    +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars')),
+    +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars'))
+    +row('sperf','Performance mode','Turns everything below down at once and takes the lowest graphics. For older computers',tog('sperf',o.perf,'Performance mode'))
+    +row('sblr','Background blur','The frosted look behind large panels. Off also makes panels solid',sel('sblr',[['high','High'],['med','Medium'],['off','Off']],o.blur||'med'))
+    +row('spq','Particle effects','How many sparks, embers and motes are drawn',sel('spq',[['high','High'],['med','Medium'],['low','Low']],o.pq||'high'))
+    +row('sshq','Shadows','Soft shadows under panels',sel('sshq',[['high','High'],['med','Medium'],['low','Low']],o.shq||'high'))
+    +row('scq','Cinematic effects','Particles and sharpness in dungeon films',sel('scq',[['2','High'],['1','Medium'],['0','Low']],(()=>{try{return DG.S.opt.cq==null?2:DG.S.opt.cq}catch(_){return 2}})()))
+    +row('suan','Interface animations','Panels and buttons ease in and out',tog('suan',o.uianim!==0,'Interface animations')),
    audio:row('smv','Music','Background music volume',rng('smv',0,100,num(OPT.mv,.5)*100))
     +row('ssv','Sound effects','Blocks, combat and world sounds',rng('ssv',0,100,num(OPT.sv,1)*100))
     +row('sav','Ambience','Wind, rain and cave atmosphere',rng('sav',0,100,num(OPT.av,1)*100))
@@ -14697,7 +14814,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
     +row('smm','Minimap','Small map in the top right corner',tog('smm',!o.hideMini,'Minimap'))
     +row('sf','FPS counter','Frames per second, top left',tog('sf',o.fpsShow,'FPS counter')),
    access:row('sr','Reduced motion','Calmer menus, less shake and flashing, fewer particles',tog('sr',o.reduce,'Reduced motion'))
-    +row('ssh','Screen shake','How much the camera shakes on impacts',rng('ssh',0,100,num(OPT.sh,1)*100))
+    +row('ssh','Camera shake','How much the camera shakes on impacts. All the way down turns it off',rng('ssh',0,100,num(OPT.sh,1)*100))
     +row('sct','Stronger contrast','Darker secondary text and clearer outlines',tog('sct',o.contrast,'Stronger contrast'))};
   body.innerHTML='<h3>Settings</h3><div class="set7"><nav class="snav7" aria-label="Setting categories">'+CATS.map(([k,n,g],i)=>'<button data-sc="'+k+'" class="'+(i?'':'on')+'"><i>'+g+'</i>'+n+'</button>').join('')+'</nav><div class="smain7"><div class="setq7"><input type="search" id="setq7" placeholder="Search settings…" aria-label="Search settings" autocomplete="off"><span class="dim" id="setn7"></span></div>'
    +CATS.map(([k,n,g,d])=>'<section class="ssec7" id="ss-'+k+'"><h4><i>'+g+'</i>'+n+'<small>'+d+'</small></h4>'+S[k]+'</section>').join('')+'<p class="dim snote7" id="sempty7" hidden>No settings match.</p></div></div>';
@@ -14730,6 +14847,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   tg('sqt',v=>o.hideQuest=v?0:1);tg('smm',v=>o.hideMini=v?0:1);tg('sf',v=>o.fpsShow=v?1:0);
   // accessibility
   tg('sr',v=>o.reduce=v?1:0);tg('sct',v=>o.contrast=v?1:0);
+  {const fx=()=>{celSave();try{UIFX.apply()}catch(_){}},pick=(id,k)=>{const e=q(id);if(e)e.onchange=()=>{o[k]=e.value;fx()}};tg('sperf',v=>{o.perf=v?1:0;fx()});pick('sblr','blur');pick('spq','pq');pick('sshq','shq');tg('suan',v=>{o.uianim=v?1:0;fx()});const c=q('scq');if(c)c.onchange=()=>{try{DG.S.opt.cq=+c.value;DG.save()}catch(_){}}}
   q('ssh').oninput=e=>{OPT.sh=e.target.value/100;lab('ssh',e.target.value);try{const c=el('osh');if(c)c.checked=OPT.sh>0;saveP()}catch(_){}};
   // category nav: scrolls to the section; the highlight follows the scroll position
   const nav=body.querySelector('.snav7'),secs=[...body.querySelectorAll('.ssec7')],mark=k=>nav.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.sc==k));
@@ -21594,7 +21712,7 @@ try{(()=>{
  const DG=window.DG,R=Math.random,TAU=Math.PI*2,rn=(a,b)=>a+R()*(b-a),cl=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,k)=>a+(b-a)*k,ez=x=>{x=cl(x,0,1);return x*x*(3-2*x)},eo=x=>1-Math.pow(1-cl(x,0,1),3);
  const reduced=()=>{try{return !!(cel.opt.reduce||QM.reduce)||!DG.S.opt.fx}catch(_){return false}};
  const tone=(a,b,d,ty,v,dl,vib)=>{try{SFX7.tone(a,b,d,ty,v,dl,vib)}catch(_){}};
- const shk=v=>{try{if(DG.S.opt.shake&&!QM.reduce)shake=Math.max(shake,v)}catch(_){}};
+ const shk=v=>{try{if(DG.S.opt.shake&&!QM.reduce&&OPT.sh!==0)shake=Math.max(shake,v)}catch(_){}};
  const glo=c=>BOSS6.glo(c);
  const BR=180,TOP=181,DK=182,CRY=183,ICE=184,ACC=185,DGT=[BR,TOP,DK,CRY,ICE,ACC];
  for(const b of DGT){try{BLK[b]=['Dungeon Stone','#3a3a44',99];SOLID6[b]=1;PRICE[b]=0;LVREQ[b]=0}catch(_){}}
@@ -21677,6 +21795,7 @@ try{(()=>{
   B.finish=()=>{for(let i=0;i<B.solids.length;i++){}
    for(let y=2;y<H-2;y++)for(let x=2;x<W-2;x++){const k=y*W+x,b=tiles[k];if(!b)continue;if(b==DK){const near=(dx,dy)=>!tiles[(y+dy)*W+x+dx];if(near(0,-1))tiles[k]=TOP;else if(near(0,1)||near(1,0)||near(-1,0))tiles[k]=BR;else if(y>3&&!tiles[(y-2)*W+x])tiles[k]=BR}else if(b==BR&&!tiles[k-W])tiles[k]=TOP}
    return B};
+  if(DG.duoB)DG.duoB(B);
   return B}
  DG.Builder=Builder;
  function buildMap(d){tiles.fill(DK);hp.fill(99);wl.fill(0);trees.clear();pop.clear();hitAt.clear();try{WALL9.clear()}catch(_){}drops.length=0;
@@ -21687,7 +21806,7 @@ try{(()=>{
  const HZ=[],WV=[],PR=[],BM=[],GR=[],RG=[],WL=[],MK=[],SD=[],Q=[];let queueN=0;
  const later=(t,f)=>{Q.push({t,f})};
  const dtele=(t)=>t*((run&&run.df&&run.df.tel)||1);
- function hurtP(a,kb,o){if(!(a>0)||iT>0||!run||DG.god)return false;if(dash>0)return false;try{if(DG.creative())return false}catch(_){}const arm=Math.min(.8,(bonus().arm||0)+(guard>0?.5:0)),d=a*(1-arm);P.hp-=d;run.taken+=d;run.hits++;iT=.7;if(kb!=null)P.vx=kb;P.vy=Math.min(P.vy,o&&o.up?o.up:-260);hurtF=.42;shk(.1);try{snd(150,.2,'sawtooth',.06)}catch(_){}if(o&&o.fn)try{o.fn()}catch(_){}return true}
+ function hurtP(a,kb,o){if(!(a>0)||iT>0||!run||DG.god||DG.aimed||(DG.coop&&DG.coop.down))return false;if(dash>0)return false;try{if(DG.creative())return false}catch(_){}const arm=Math.min(.8,(bonus().arm||0)+(guard>0?.5:0)),d=a*(1-arm);P.hp-=d;run.taken+=d;run.hits++;iT=.7;if(kb!=null)P.vx=kb;P.vy=Math.min(P.vy,o&&o.up?o.up:-260);hurtF=.42;shk(.1);if(DG.coop&&DG.coop.C)DG.coop.C.rev=0;try{snd(150,.2,'sawtooth',.06)}catch(_){}if(o&&o.fn)try{o.fn()}catch(_){}return true}
  const hitsRect=(z)=>P.x+P.w/2>z.x0&&P.x-P.w/2<z.x1&&P.y+P.h>z.y0&&P.y<z.y1;
  const pcx=()=>P.x,pcy=()=>P.y+P.h/2;
  const fx={
@@ -21783,16 +21902,16 @@ try{(()=>{
   }}
   if(L.keyAt&&!L.keyAt.got&&Math.hypot(P.x-L.keyAt.x,P.y+P.h/2-(L.keyAt.y-T))<T*1.3)gotKey();
   for(const c of L.checks)if(!c.on&&Math.abs(P.x-c.x)<T*1.1&&Math.abs(P.y+P.h-c.y)<T*1.6){for(const o of L.checks)o.cur=0;c.on=1;c.cur=1;run.check={x:c.x,y:c.y-P.h-2};tone(660,990,.25,'sine',.05);try{VFX.wave(c.x,c.y-20,L.d.p.glow,110,.6,.5)}catch(_){}DG.ui&&DG.ui.toast('Checkpoint');try{P.hp=Math.min(maxHP(),P.hp+maxHP()*.25)}catch(_){}}
-  for(const p of L.pits)if(P.x>p.x0&&P.x<p.x1&&P.y+P.h>p.y-4&&!flyingNow()){fell(p);break}}
+  for(const p of L.pits)if(P.x>p.x0&&P.x<p.x1&&P.y+P.h>p.y-4&&!flyingNow()&&!(DG.duoInside&&DG.duoInside())){fell(p);break}}
  const flyingNow=()=>{try{return !!window.OWN_STEADY}catch(_){return false}};
- function gotKey(){const k=L.keyAt;k.got=true;const id=run.d.skey;if(cnt(id)<=0)addI(id,1);markFound(id);try{saveP()}catch(_){}run.gotKey=1;tone(660,1320,.6,'triangle',.07);tone(990,1760,.5,'sine',.05,.15);try{VFX.levelUp(P.x,P.y,run.d.p.glow)}catch(_){}DG.ui&&DG.ui.banner(DG.ITEMS[id].n,'The sealed gate will open for you');run.check={x:k.x,y:k.y-P.h-2};DG.flow.objective()}
+ function gotKey(){const k=L.keyAt;k.got=true;const id=run.d.skey;if(cnt(id)<=0)addI(id,1);markFound(id);try{saveP()}catch(_){}run.gotKey=1;tone(660,1320,.6,'triangle',.07);tone(990,1760,.5,'sine',.05,.15);try{VFX.levelUp(P.x,P.y,run.d.p.glow)}catch(_){}DG.ui&&DG.ui.banner(DG.ITEMS[id].n,'The sealed gate will open for you');run.check={x:k.x,y:k.y-P.h-2};DG.flow.objective();if(DG.coop)DG.coop.key()}
  function markFound(id){const S=DG.S;if(!S.found[id]){S.found[id]=1;DG.save()}}DG.markFound=markFound;
  function fell(p){run.falls=(run.falls|0)+1;try{hurtF=.3}catch(_){}P.x=run.check.x;P.y=run.check.y;P.vx=P.vy=0;iT=Math.max(iT,1);resetGad();try{const a=Math.min(P.hp-1,maxHP()*.06);if(a>0&&!DG.god)P.hp-=a}catch(_){}tone(200,80,.35,'sine',.05);DG.ui&&DG.ui.toast('Back to the checkpoint');try{VFX.burst(P.x,P.y+P.h/2,[run.d.p.glow,'#fff'],18,220,1,.6,10)}catch(_){}}
  DG.resetGad=()=>resetGad();
  // ---- collision against what moves: land on top of platforms, ride them, and be stopped by doors and walls
  {const _m=moveE;moveE=function(e,dt){if(e!==P||!run)return _m.apply(this,arguments);const pf=P.y+P.h;_m.apply(this,arguments);if(dash>0)P.vy=0;
    for(const q of PL){if(P.x+P.w*.4<q.x||P.x-P.w*.4>q.x+q.w)continue;const f=P.y+P.h,top=q.y;if(P.vy>=-1&&pf<=top+Math.max(7,Math.abs(q.dy)+6)&&f>=top-Math.max(2,-q.dy)){P.y=top-P.h-.01;P.vy=0;P.g=true;P.x+=q.dx;P.dgPlat=q;break}}
-   for(const s of L.solids){if(!s.on)continue;if(P.x+P.w/2>s.x0&&P.x-P.w/2<s.x1&&P.y+P.h>s.y0+2&&P.y<s.y1-2){if(pf<=s.y0+8&&P.vy>=0&&!s.gate&&s.temp){P.y=s.y0-P.h-.01;P.vy=0;P.g=true;continue}const cx=(s.x0+s.x1)/2;if(P.x<cx){P.x=s.x0-P.w/2-.01;if(P.vx>0)P.vx=0}else{P.x=s.x1+P.w/2+.01;if(P.vx<0)P.vx=0}P.wall=1}}}}
+   for(const s of L.solids){if(!s.on)continue;if(P.x+P.w/2>s.x0&&P.x-P.w/2<s.x1&&P.y+P.h>s.y0+2&&P.y<s.y1-2){if(pf<=s.y0+8&&P.vy>=0&&!s.gate&&s.temp){P.y=s.y0-P.h-.01;P.vy=0;P.g=true;continue}const cx=(s.x0+s.x1)/2,my=Math.floor((P.y+P.h/2)/T),lx=s.x0-P.w/2-.01,rx=s.x1+P.w/2+.01,free=(nx)=>!solidAt(Math.floor((nx-P.w/2)/T),my)&&!solidAt(Math.floor((nx+P.w/2)/T),my);let toR=P.x>=cx;if(toR&&!free(rx))toR=false;else if(!toR&&!free(lx))toR=true;const nx=toR?rx:lx;if(!free(nx)&&s.temp){P.y=s.y0-P.h-.01;P.vy=Math.min(P.vy,0)}else{P.x=nx;if(toR?P.vx<0:P.vx>0)P.vx=0}P.wall=1}}}}
  // ---- the moves every dungeon needs: wall jump, Shift dash, ice underfoot, shifting gravity. In a trial wings cannot fly or glide (the trial has to mean something), and only one air jump counts.
  let wallT=0,wallD=0,wallLock=0,dashCD=0;
  const inTrial=()=>!!(run&&run.room&&run.room.kind=='trial');
@@ -21885,15 +22004,15 @@ try{(()=>{
  {const _dp=drawPrecip;drawPrecip=function(){if(run)return;return _dp.apply(this,arguments)}}
  {const _da=drawAmbient;drawAmbient=function(){if(run)return;return _da.apply(this,arguments)}}
  {const _ds=drawSky;drawSky=function(w,hh,now){if(!run)return _ds.apply(this,arguments);try{DG.art.sky(run.d,w,hh,now);g.save();g.scale(ZM,ZM);DG.art.back(L,g,cam.x,cam.y,now);g.restore()}catch(e){if(!drawSky.e){drawSky.e=1;console.error('DG sky',e)}_ds.apply(this,arguments)}}}
- {const _dr=BOSS6.drawProj;BOSS6.drawProj=function(c,cx,cy){_dr.apply(this,arguments);if(!run||!L)return;try{const now=performance.now(),vw=cv.width/ZM,vh=cv.height/ZM;drawGad(c,cx,cy,now);DG.art.front&&DG.art.front(L,c,cx,cy,now);drawIllus(c,cx,cy);drawFx(c,cx,cy,now);drawAmb(c,cx,cy,now);drawLight(c,cx,cy,now,vw,vh);DG.boss&&DG.boss.draw&&DG.boss.draw(c,cx,cy,now)}catch(e){if(!drawFx.e){drawFx.e=1;console.error('DG draw',e)}}}}
+ {const _dr=BOSS6.drawProj;BOSS6.drawProj=function(c,cx,cy){_dr.apply(this,arguments);if(!run||!L)return;try{const now=performance.now(),vw=cv.width/ZM,vh=cv.height/ZM;drawGad(c,cx,cy,now);DG.art.front&&DG.art.front(L,c,cx,cy,now);drawIllus(c,cx,cy);drawFx(c,cx,cy,now);drawAmb(c,cx,cy,now);drawLight(c,cx,cy,now,vw,vh);DG.boss&&DG.boss.draw&&DG.boss.draw(c,cx,cy,now);if(DG.coop)DG.coop.draw(c,cx,cy,now)}catch(e){if(!drawFx.e){drawFx.e=1;console.error('DG draw',e)}}}}
  // the world-boss guards, world events, biomes, drops and trades already step aside for the void; a dungeon asks for the same treatment
  DG.voidNow=()=>!!run;
  // ---- leaving by any other road (summoned, world changed): the run ends quietly
  {const _lw=loadWorld;loadWorld=function(n,e){if(run&&!DG.loading){const was=run;endRun(true)}return _lw.apply(this,arguments)}}
  // ---- E: what is in front of you
  {const _i=interact;interact=function(){if(run&&!dlgOpen&&!DG.locked){const a=nearby();if(a){a.go();return}return}return _i.apply(this,arguments)}}
- function nearby(){if(!L)return null;for(const q of L.portals)if(Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2.2)return{t:'Leave the dungeon (E)',go:()=>DG.ui.askLeave()};for(const q of L.gates)if(!q.open&&Math.abs(P.x-q.x)<T*2.2&&Math.abs(P.y+P.h-q.y)<T*3)return{t:q.key?(cnt(q.key)>0?'Open the sealed gate (E)':'Sealed. It needs the '+DG.ITEMS[q.key].n):'Open (E)',go:()=>tryGate(q)};for(const q of L.chests)if(!q.open&&!q.hid&&Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2)return{t:'Open the chest (E)',go:()=>DG.rew.open(q)};return null}
- function tryGate(q){if(q.key&&cnt(q.key)<=0&&!DG.unlockAll){say('You need the '+DG.ITEMS[q.key].n+'. It waits at the end of the trial');try{UIS.play('error')}catch(_){}return}q.open=true;q.t=0;q.sol.on=0;tone(60,30,1.4,'sawtooth',.08);tone(140,220,1,'sine',.04,.2);shk(.25);DG.ui&&DG.ui.banner('The gate opens','');DG.flow.objective()}
+ function nearby(){if(!L)return null;if(DG.coop&&DG.coop.on){const a=DG.coop.near();if(a)return a}for(const q of L.portals)if(Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2.2)return{t:'Leave the dungeon (E)',go:()=>DG.ui.askLeave()};for(const q of L.gates)if(!q.open&&Math.abs(P.x-q.x)<T*2.2&&Math.abs(P.y+P.h-q.y)<T*3)return{t:q.key?(cnt(q.key)>0?'Open the sealed gate (E)':'Sealed. It needs the '+DG.ITEMS[q.key].n):'Open (E)',go:()=>tryGate(q)};for(const q of L.chests)if(!q.open&&!q.hid&&Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2)return{t:'Open the chest (E)',go:()=>DG.rew.open(q)};return null}
+ function tryGate(q){if(DG.coop&&DG.coop.gateBlock(q))return;if(q.key&&cnt(q.key)<=0&&!DG.unlockAll&&!(DG.coop&&DG.coop.C&&DG.coop.C.quiet)){say('You need the '+DG.ITEMS[q.key].n+'. It waits at the end of the trial');try{UIS.play('error')}catch(_){}return}q.open=true;q.t=0;q.sol.on=0;tone(60,30,1.4,'sawtooth',.08);tone(140,220,1,'sine',.04,.2);shk(.25);DG.ui&&DG.ui.banner('The gate opens','');DG.flow.objective();if(DG.coop)DG.coop.gate(q)}
  // ---- saving a run's place in the world you came from
  function currentRet(){return{w:cur,x:P.x,y:P.y,net:(()=>{try{return !!NET7.world}catch(_){return false}})()}}
  let RET=null;
@@ -21903,7 +22022,7 @@ try{(()=>{
   const go=()=>beginRun(d,di,o);
   // the first time plays the full film; later on you can replay it from the dungeon's page
   if(o.skipCine||DG.S.opt.auto&&DG.S.seen[id]){go();return true}
-  const seen=!!DG.S.seen[id];if(seen&&!o.cine){go();return true}
+  const seen=!!DG.S.seen[id];
   if(DG.cine&&DG.cine.has(id)){DG.cine.play(id,{skip:seen,done(){DG.S.seen[id]=1;DG.save();go()}});return true}go();return true}
  function beginRun(d,di,o){RET=currentRet();try{DG.ui&&DG.ui.closeAll()}catch(_){}const df=DG.DIFF[di]||DG.DIFF.normal;
   fx.clear();for(const k in groups)delete groups[k];AM.length=0;
@@ -21915,16 +22034,16 @@ try{(()=>{
   const vw=cv.width/ZM,vh=cv.height/ZM;cam.x=cl(P.x-vw/2,0,W*T-vw);cam.y=cl(P.y-vh/2,-200,H*T-vh);
   // doors of the fight rooms: stand in the passages either side
   for(const r of L.rooms)if(r.kind=='fight'||r.kind=='boss'){r.doors=[{x0:(r.x0-.6)*T,x1:(r.x0+.2)*T,y0:(r.fy-5)*T,y1:r.fy*T,on:0,o:1,temp0:1},{x0:(r.x1-.2)*T,x1:(r.x1+.6)*T,y0:(r.fy-5)*T,y1:r.fy*T,on:r.kind=='fight'?1:0,o:r.kind=='fight'?0:1}];if(r.kind=='boss')r.doors.pop();for(const s of r.doors)L.solids.push(s)}
-  run.t0=performance.now();DG.flow.begin();DG.music&&DG.music.enter(d);DG.ui&&DG.ui.runOn(run);say('');return true}
- function endRun(quiet){const r=run;run=null;L=null;B0=null;fx.clear();DGCAM.reset();PL.length=0;AM.length=0;document.body.classList.remove('dgon');try{DG.boss&&DG.boss.stop()}catch(_){}try{DG.mobs&&DG.mobs.clear()}catch(_){}try{DG.ui&&DG.ui.runOff()}catch(_){}try{DG.music&&DG.music.leave()}catch(_){}flushArt();mobs.length=0;P.dgGrav=null;P.dgSlip=0;window.OWN_CAM=0;window.CAMT=null;try{iT=Math.max(iT,1)}catch(_){}return r}
+  run.t0=performance.now();DG.flow.begin();DG.music&&DG.music.enter(d);DG.ui&&DG.ui.runOn(run);say('');if(DG.coop)DG.coop.begun();return true}
+ function endRun(quiet){if(DG.coop)DG.coop.ended();const r=run;run=null;L=null;B0=null;fx.clear();DGCAM.reset();PL.length=0;AM.length=0;document.body.classList.remove('dgon');try{DG.boss&&DG.boss.stop()}catch(_){}try{DG.mobs&&DG.mobs.clear()}catch(_){}try{DG.ui&&DG.ui.runOff()}catch(_){}try{DG.music&&DG.music.leave()}catch(_){}flushArt();mobs.length=0;P.dgGrav=null;P.dgSlip=0;window.OWN_CAM=0;window.CAMT=null;try{iT=Math.max(iT,1)}catch(_){}return r}
  // leave: back to where you came from
- function leave(){if(!run)return;endRun();const ret=RET;RET=null;try{P.hp=maxHP()}catch(_){}const w=ret?ret.w:'plaza';try{enterWorld(w)}catch(e){console.error('DG leave',e);try{loadWorld('plaza')}catch(_){}}
+ function leave(){if(!run)return;if(DG.coop)DG.coop.left();endRun();const ret=RET;RET=null;try{P.hp=maxHP()}catch(_){}const w=ret?ret.w:'plaza';try{enterWorld(w)}catch(e){console.error('DG leave',e);try{loadWorld('plaza')}catch(_){}}
   if(ret){let n=0;const tryPos=()=>{if(++n>40)return;if(cur===w&&entered&&!isDGW(cur)){P.x=ret.x;P.y=ret.y;P.vx=P.vy=0;return}setTimeout(tryPos,150)};tryPos()}}
  // what ticks: wrapped around the monster update so the game's own knock-out rule never sees a dungeon death
  {const _um=updMobs;updMobs=function(dt){if(!run||!L)return _um.apply(this,arguments);
    // the game's own monster loop must not move our monsters
    const keep=[];for(let i=mobs.length-1;i>=0;i--)if(mobs[i].dgx){keep.push(mobs[i]);mobs.splice(i,1)}_um.apply(this,arguments);for(let i=keep.length-1;i>=0;i--)mobs.push(keep[i]);
-   const now=performance.now()/1000;dashCD-=dt;try{tickGad(dt,now);tickFx(dt);tickAmb(dt);tickCam(dt);DG.mobs&&DG.mobs.tick(dt);DG.boss&&DG.boss.tick(dt);DG.flow.tick(dt);for(const q of L.gates)if(q.open)q.t+=dt;for(const r of L.rooms)if(r.doors)for(const s of r.doors){const want=s.on?0:1;s.o+=(want-s.o)*Math.min(1,dt*7)}}catch(e){if(!updMobs.e){updMobs.e=1;console.error('DG tick',e)}}
+   const now=performance.now()/1000;dashCD-=dt;if(!flyingNow()&&!DG.locked){const tx=Math.floor(P.x/T),my=Math.floor((P.y+P.h*.5)/T),inRock=solidAt(tx,my)&&solidAt(tx,my-1);if(P.g&&!inRock&&Number.isFinite(P.x)&&Number.isFinite(P.y))run.safe={x:P.x,y:P.y};if(inRock||!Number.isFinite(P.y)||!Number.isFinite(P.x)||P.y<T*3){const q=run.safe||run.check;P.x=q.x;P.y=q.y;P.vx=P.vy=0;run.unstuck=(run.unstuck|0)+1}}try{tickGad(dt,now);tickFx(dt);tickAmb(dt);tickCam(dt);if(DG.coop)DG.coop.tick(dt);DG.mobs&&DG.mobs.tick(dt);DG.boss&&DG.boss.tick(dt);DG.flow.tick(dt);for(const q of L.gates)if(q.open)q.t+=dt;for(const r of L.rooms)if(r.doors)for(const s of r.doors){const want=s.on?0:1;s.o+=(want-s.o)*Math.min(1,dt*7)}}catch(e){if(!updMobs.e){updMobs.e=1;console.error('DG tick',e)}}
    if(P.hp<=0&&run)DG.flow.died();}}
  // ---- a safety net: never left inside rock (a stray teleport, the old respawn button), never stuck with a dead run
  setInterval(()=>{try{if(!run||!L||flyingNow()||DG.locked)return;const tx=Math.floor(P.x/T),ty=Math.floor((P.y+P.h/2)/T);if(solidAt(tx,ty)&&solidAt(tx,ty-1)&&solidAt(tx,ty+1)){P.x=run.check.x;P.y=run.check.y;P.vx=P.vy=0;say('Back to the checkpoint')}}catch(_){}},900);
@@ -22032,13 +22151,13 @@ try{(()=>{
  const A={fx,floor:floorAt,dmg:(m,k)=>m.dmg*(k==null?1:k)*(1+((DG.run&&DG.run.corr)||0)*.003),get px(){return P.x},get py(){return P.y+P.h/2},get feet(){return P.y+P.h},toward:m=>Math.sign(P.x-m.x)||1,dist:m=>Math.hypot(P.x-m.x,P.y+P.h/2-(m.y+m.h/2)),say:(a,b,ms)=>{try{DG.ui.say(a,b,ms)}catch(_){}},shk:v=>DG.shk(v),tone:DG.tone,spawn:(id,x,y,o)=>spawn(id,x,y,o),mobs:()=>mobs.filter(m=>m.dgx&&!m.dead),burst:(x,y,cs,n,sp,sz)=>{if(!DG.reduced()||n<8)try{VFX.burst(x,y,cs,DG.reduced()?Math.ceil(n/3):n,sp||180,1,.6,sz||10)}catch(_){}},wave:(x,y,c,r,d,w)=>{try{VFX.wave(x,y,c,r,d||.6,w==null?.4:w)}catch(_){}},glo:c=>BOSS6.glo(c),mech:()=>(DG.run&&DG.run.df.mech)|0,get room(){return DG.run&&DG.run.room}};
  DG.A=A;
  function reg(id,def){DEF[id]=def;def.id=id;const k='dgm_'+id;try{MK[k]={c:def.c,hp:1000,w:def.w,h:def.h,gem:def.gem||(def.cls=='regular'||def.cls=='aregular'?26:60),dmg:10,ai:'dg',fly:def.fly?1:0,ph:def.fly?1:0,min:9999,max:9999,dgm:1};MOBMAT[k]=def.mat||700}catch(_){}return def}
- function spawn(id,x,y,o={}){const def=DEF[id],run=DG.run;if(!def||!run)return null;const cls=def.cls||'regular',hp=DG.mobHP(run.d,cls,def.ttk,run.df)*(o.hpk||1),dmg=DG.mobDmg(run.d,cls,def.pct,run.df)*(o.dmgk||1);
-  const m={k:'dgm_'+id,dgx:def,x,y:y-def.h,w:def.w,h:def.h,vx:0,vy:0,hp,mhp:hp,dmg,fl:0,burn:0,slow:0,stun:0,ph:R()*6,t:1,dir:1,fade:0,g:false,wall:0,st:'idle',tt:rn(.5,1.2),cd:{},acd:rn(.6,1.6),room:run.room,summon:!!o.summon,elite:cls=='elite'||cls=='aelite'||cls=='mini',life:o.life||0,dead:0};mobs.push(m);
+ function spawn(id,x,y,o={}){const def=DEF[id],run=DG.run;if(!def||!run)return null;if(DG.coop&&DG.coop.mirror&&!o.net)return DG.coop.stub(id,x,y,o);const cls=def.cls||'regular',hp=DG.mobHP(run.d,cls,def.ttk,run.df)*(o.hpk||1),dmg=DG.mobDmg(run.d,cls,def.pct,run.df)*(o.dmgk||1);
+  const m={k:'dgm_'+id,dgx:def,x,y:y-def.h,w:def.w,h:def.h,vx:0,vy:0,hp,mhp:hp,dmg,fl:0,burn:0,slow:0,stun:0,ph:R()*6,t:1,dir:1,fade:0,g:false,wall:0,st:'idle',tt:rn(.5,1.2),cd:{},acd:rn(.6,1.6),room:run.room,summon:!!o.summon,elite:cls=='elite'||cls=='aelite'||cls=='mini',life:o.life||0,dead:0,own:o.own||0};mobs.push(m);if(DG.coop)DG.coop.spawned(m,id,o);
   if(def.init)try{def.init(m,A)}catch(e){console.error('DG mob',id,e)}if(!o.quiet){A.wave(x,y-def.h/2,def.c,def.h,.5,.4);A.burst(x,y-def.h/2,[def.c,'#fff'],14,200)}return m}
  const statusOK=m=>m.stun<=0;
  function act(m,def,dt){const k=m.atk;switch(m.st){
-   case'idle':{m.acd-=dt;if(m.acd<=0&&statusOK(m)&&def.kit&&!DG.locked){const d=A.dist(m),opts=[];for(const a of def.kit){if((m.cd[a.name]||0)>0)continue;if(a.min!=null&&d<a.min)continue;if(a.max!=null&&d>a.max)continue;if(a.when&&!a.when(m,A))continue;opts.push(a)}if(opts.length){const a=opts[(R()*opts.length)|0];m.atk=a;m.st='wind';const w=(a.wind==null?.7:a.wind)*((DG.run&&DG.run.df.tel)||1);m.tt=w;m.tt0=w;if(a.start)try{a.start(m,A)}catch(e){console.error(e)}}else m.acd=.3}break}
-   case'wind':{m.tt-=dt;if(m.stun>0){m.st='idle';m.acd=rn(.8,1.4);m.atk=null;break}if(m.tt<=0){if(k&&k.fire)try{k.fire(m,A)}catch(e){console.error('DG atk',def.id,k.name,e)}m.st='rec';m.tt=k&&k.rec!=null?k.rec:.5;if(k)m.cd[k.name]=k.cd||0;m.at=.3}break}
+   case'idle':{m.acd-=dt;if(m.acd<=0&&statusOK(m)&&def.kit&&!DG.locked){const d=A.dist(m),opts=[];for(const a of def.kit){if((m.cd[a.name]||0)>0)continue;if(a.min!=null&&d<a.min)continue;if(a.max!=null&&d>a.max)continue;if(a.when&&!a.when(m,A))continue;opts.push(a)}if(opts.length){const a=opts[(R()*opts.length)|0];m.atk=a;m.st='wind';const w=(a.wind==null?.7:a.wind)*((DG.run&&DG.run.df.tel)||1);m.tt=w;m.tt0=w;if(DG.coop)DG.coop.atk(m,a,w);if(a.start)try{a.start(m,A)}catch(e){console.error(e)}}else m.acd=.3}break}
+   case'wind':{m.tt-=dt;if(m.stun>0){m.st='idle';m.acd=rn(.8,1.4);m.atk=null;break}if(m.tt<=0){if(k&&DG.coop)DG.coop.fire(m,k);if(k&&k.fire)try{k.fire(m,A)}catch(e){console.error('DG atk',def.id,k.name,e)}m.st='rec';m.tt=k&&k.rec!=null?k.rec:.5;if(k)m.cd[k.name]=k.cd||0;m.at=.3}break}
    case'rec':{m.tt-=dt;if(m.tt<=0){m.st='idle';const b=def.icd||1;m.acd=rn(b*.7,b*1.3);m.atk=null}break}}}
  function moveAI(m,def,dt){const dx=P.x-m.x,dy=P.y+P.h/2-(m.y+m.h/2),d=Math.hypot(dx,dy),sp=(def.sp||90)*(m.slow>0?.45:1)*(m.spd||1),busy=m.st=='wind'||m.st=='rec'||m.stun>0||m.frozen;const ai=def.ai||'walk';m.f=m.f||1;if(!busy||Math.abs(dx)>T)m.f=dx>=0?1:-1;
   if(ai=='still'){m.vx*=.8;if(!def.fly)m.vy+=1800*dt}
@@ -22049,17 +22168,17 @@ try{(()=>{
   moveE(m,dt);clampRoom(m)}
  function clampRoom(m){const r=m.room;if(r&&r.x0!=null){if(!Number.isFinite(m.y)||m.y<(r.y0-3)*T||m.y>(r.fy+1)*T){m.y=r.fy*T-m.h-2;m.vy=0}if(!Number.isFinite(m.x))m.x=(r.x0+r.x1)*T/2;const a=r.x0*T+m.w/2+4,b=r.x1*T-m.w/2-4;if(m.x<a){m.x=a;m.vx=Math.max(0,m.vx)}if(m.x>b){m.x=b;m.vx=Math.min(0,m.vx)}if(def_fly(m)){const t=(r.y0+1)*T,f=r.fy*T-m.h-4;if(m.y<t)m.y=t;if(m.y>f)m.y=f}}}
  const def_fly=m=>m.dgx.fly;
- function tick(dt){for(let i=mobs.length-1;i>=0;i--){const m=mobs[i],def=m.dgx;if(!def||m.dgb)continue;m.ph+=dt;m.fl-=dt;m.slow-=dt;m.stun=(m.stun||0)-dt;m.fade=Math.min(1,m.fade+dt*2);if(m.at>0)m.at-=dt;for(const k in m.cd)m.cd[k]-=dt;
+ function tick(dt){if(DG.coop&&DG.coop.mirror)return DG.coop.mirrorMobs(dt);for(let i=mobs.length-1;i>=0;i--){const m=mobs[i],def=m.dgx;if(!def||m.dgb)continue;m.ph+=dt;m.fl-=dt;m.slow-=dt;m.stun=(m.stun||0)-dt;m.fade=Math.min(1,m.fade+dt*2);if(m.at>0)m.at-=dt;for(const k in m.cd)m.cd[k]-=dt;
    if(m.burn>0){m.burn-=dt;m.hp-=m.mhp*.012*dt;if(m.hp<=0&&!m.dead)hurtMob(m,0,null,0)}
    if(m.life){m.life-=dt;if(m.life<=0){A.burst(m.x,m.y+m.h/2,[def.c,'#fff'],10);m.dead=2}}
-   if(!m.dead){const hl=m.hide>0;if(def.tick)try{def.tick(m,dt,A)}catch(e){if(!def.e){def.e=1;console.error('DG mob tick',def.id,e)}}act(m,def,dt);moveAI(m,def,dt);
+   if(!m.dead){const hl=m.hide>0,sw=DG.coop?DG.coop.swap(m):null;if(def.tick)try{def.tick(m,dt,A)}catch(e){if(!def.e){def.e=1;console.error('DG mob tick',def.id,e)}}act(m,def,dt);moveAI(m,def,dt);if(sw)DG.coop.unswap(sw);
     const ov=!m.nohit&&def.touch!==0&&Math.abs(P.x-m.x)<(P.w+m.w)/2-4&&P.y<m.y+m.h&&P.y+P.h>m.y;if(ov&&!hl)DG.hurtP(m.dmg*(def.touch||.6),Math.sign(P.x-m.x||1)*260)}
-   if(m.dead){if(m.dead!==2){const run=DG.run;if(run){run.kills++;if(m.elite){run.elites++;run.corr=Math.max(0,(run.corr||0)-12)}}if(def.onDie)try{def.onDie(m,A)}catch(e){console.error(e)}}mobs.splice(i,1)}}}
+   if(m.dead){if(m.dead!==2){const run=DG.run;if(run){run.kills++;if(m.elite){run.elites++;run.corr=Math.max(0,(run.corr||0)-12)}}if(def.onDie)try{def.onDie(m,A)}catch(e){console.error(e)}}if(DG.coop)DG.coop.died(m);mobs.splice(i,1)}}}
  {const _dm=drawMob;drawMob=function(m,now){if(!m.dgx||m.dgb)return _dm(m,now);const def=m.dgx;try{if(m.hide>0&&m.hide<1)g.globalAlpha=.25*(1-m.hide);if(m.hide>=1){g.globalAlpha=1;return}const t=now/1000,X=m.x-cam.x,Y=m.y+m.h-cam.y;g.save();g.globalAlpha*=m.fade==null?1:m.fade;g.translate(X,Y);if(m.elite){g.globalCompositeOperation='lighter';g.globalAlpha*=.35+.1*Math.sin(t*3);g.drawImage(BOSS6.glo(def.c),-m.w*1.1,-m.h*.5-m.w*1.1,m.w*2.2,m.w*2.2);g.globalAlpha=m.fade==null?1:m.fade;g.globalCompositeOperation='source-over'}g.scale(m.f||1,1);
     if(def.art)def.art(g,m,{t,fl:m.fl>0,wind:m.st=='wind'?1-m.tt/(m.tt0||1):0,at:m.at>0?1:0,f:m.f||1});g.restore();g.globalAlpha=1;
     // health and name, only for what you have touched or what is an elite
     const hr=m.hp/m.mhp;if(hr<1||m.elite){const bw=Math.max(40,m.w*.9),by=m.y-cam.y-14;g.fillStyle='rgba(0,0,0,.65)';g.fillRect(X-bw/2,by,bw,5);g.fillStyle=m.elite?'#ffb04a':'#ff5a6a';g.fillRect(X-bw/2+1,by+1,(bw-2)*Math.max(0,hr),3);if(m.shield>0){g.fillStyle='#bfeaff';g.fillRect(X-bw/2+1,by-3,(bw-2)*Math.min(1,m.shield/(m.shield0||1)),2)}if(m.elite){g.font='800 11px system-ui,sans-serif';g.textAlign='center';g.fillStyle='#ffe0a8';g.strokeStyle='rgba(0,0,0,.7)';g.lineWidth=3;g.strokeText(def.n,X,by-5);g.fillText(def.n,X,by-5);g.textAlign='left'}}}catch(e){g.restore&&0;if(!def.ee){def.ee=1;console.error('DG art',def.id,e)}}}}
- {const _hm=hurtMob;hurtMob=function(m,d,w,ang){if(m&&m.dgx){const run=DG.run,def=m.dgx;if(m.inv||m.hide>=1)return;if(d>0){if(def.onHit)try{d=def.onHit(m,d,w,ang,A);if(!(d>0))return}catch(e){console.error(e)}if(m.shield>0){const s=Math.min(m.shield,d);m.shield-=s;d-=s;try{ft(m.x,m.y-16,'BLOCKED','#bfeaff')}catch(_){}if(d<=0){m.fl=.1;return}}if(DG.soul>0)d*=1-DG.soul;if(run)run.dealt+=Math.min(d,m.hp)}const vx=m.vx,vy=m.vy,r=_hm.call(this,m,d,w,ang);if(def.heavy||m.dgb){m.vx=vx;m.vy=vy}else{m.vx=vx+(m.vx-vx)*.25;m.vy=vy+(m.vy-vy)*.25}return r}return _hm.apply(this,arguments)}}
+ {const _hm=hurtMob;hurtMob=function(m,d,w,ang){if(m&&m.dgx){const run=DG.run,def=m.dgx;if(m.inv||m.hide>=1)return;if(d>0){if(def.onHit)try{d=def.onHit(m,d,w,ang,A);if(!(d>0))return}catch(e){console.error(e)}if(m.shield>0){const s=Math.min(m.shield,d);m.shield-=s;d-=s;try{ft(m.x,m.y-16,'BLOCKED','#bfeaff')}catch(_){}if(d<=0){m.fl=.1;return}}if(DG.soul>0)d*=1-DG.soul}const vx=m.vx,vy=m.vy,h0=m.hp,r=_hm.call(this,m,d,w,ang);if(run&&h0>m.hp)run.dealt+=Math.min(h0,h0-m.hp);if(def.heavy||m.dgb){m.vx=vx;m.vy=vy}else{m.vx=vx+(m.vx-vx)*.25;m.vy=vy+(m.vy-vy)*.25}return r}return _hm.apply(this,arguments)}}
  {const _md=mobDrops;mobDrops=function(m){if(m&&m.dgx){try{DG.rew&&DG.rew.mobDrop(m)}catch(e){console.error('DG drop',e)}return}return _md.apply(this,arguments)}}
  DG.mobs={reg,spawn,tick,DEF,clear(){for(let i=mobs.length-1;i>=0;i--)if(mobs[i].dgx)mobs.splice(i,1)},count:()=>roomMobs().length};
 
@@ -22069,13 +22188,15 @@ try{(()=>{
  function waveSpawn(r){const run=DG.run,w=r.waves[r.wi];if(!w)return;const n=(run.df.mech|0),L=w.slice();if(n>=1&&L.length)L.push(L[(R()*L.length)|0]);if(n>=2&&L.length>2)L.push(L[(R()*L.length)|0]);let side=P.x<(r.x0+r.x1)*T/2?1:-1;L.forEach((id,i)=>{const def=DEF[id];if(!def)return;let x=P.x+side*(T*7+i*T*3.2);if(i%2)x=(r.x0+r.x1)*T/2+(i-2)*T*2.4;x=cl(x,(r.x0+2)*T,(r.x1-2)*T);let y=floorAt(x,(r.y0+3)*T);if(def.fly)y=r.fy*T-T*4;DG.A.wave(x,y,def.c,T*1.5,.5,.5);setTimeout(()=>{try{if(DG.run&&DG.run===run&&r.state=='on'){const m=spawn(id,x,y);if(m)m.room=r}}catch(e){console.error(e)}},240+i*180)});r.pend=performance.now()+420+L.length*180;r.wi++}
  function closeRoom(r){for(const s of r.doors)s.on=1;DG.tone(70,40,.5,'sawtooth',.05);DG.shk(.12)}
  function openRoom(r){for(const s of r.doors)s.on=0;DG.tone(180,280,.5,'sine',.04)}
- function clearRoom(r){const run=DG.run;r.state='done';openRoom(r);run.check={x:(r.x1-3)*T,y:(r.fy)*T-P.h-2};try{P.hp=Math.min(maxHP(),P.hp+maxHP()*.3)}catch(_){}DG.ui&&DG.ui.toast('Room cleared');DG.music&&DG.music.state('explore');DG.fx.clear();objective()}
- const flow={begin(){const run=DG.run;run.room=DG.L.rooms[0];flow.objective()},objective,
-  tick(dt){const run=DG.run,L=DG.L;if(!run||!L)return;const r=roomAt(P.x);if(r&&r!==run.room){run.room=r;if(r.kind=='trial'&&DG.music)DG.music.state('explore');objective()}
-   if(!(r&&r.kind=='fight'&&r.state=='on')&&run.enemies){run.enemies=0;DG.ui&&DG.ui.enemies(0)}if(r&&r.kind=='fight'&&r.state=='on'&&r.survive){r.left-=dt;const u=1-r.left/r.survive.dur;try{r.survive.tick(dt,A,u,r)}catch(e){console.error('DG survive',e)}DG.ui&&DG.ui.objective('Survive '+Math.ceil(Math.max(0,r.left))+'s');if(r.left<=0){for(const m of mobs.slice())if(m.dgx&&!m.dgb)m.dead=2;clearRoom(r)}}
-   if(r&&r.kind=='fight'&&r.state=='wait'&&P.x>(r.x0+2.5)*T){r.state='on';r.wi=0;if(r.survive){r.left=r.survive.dur;DG.ui&&DG.ui.say('SURVIVE',r.title||'',1800)}closeRoom(r);DG.music&&DG.music.state(r.elite?'elite':'combat');if(r.title&&!r.survive)DG.ui&&DG.ui.say(r.title,'',1500);if(!r.survive)waveSpawn(r);objective()}
-   if(r&&r.kind=='fight'&&r.state=='on'&&!r.survive&&performance.now()>(r.pend||0)){const n=roomMobs().length;if(n!==run.enemies){run.enemies=n;DG.ui&&DG.ui.enemies(n)}if(n==0){if(r.wi<r.waves.length){waveSpawn(r)}else clearRoom(r)}}
-   if(r&&r.kind=='boss'&&r.state=='wait'&&P.x>(r.x0+5)*T){r.state='on';closeRoom(r);run.check={x:(r.x0+3)*T,y:r.fy*T-P.h-2};objective();DG.boss&&DG.boss.start(r)}
+ function clearRoom(r){const run=DG.run;r.state='done';if(DG.coop)DG.coop.roomDone(r);openRoom(r);run.check={x:(r.x1-3)*T,y:(r.fy)*T-P.h-2};try{P.hp=Math.min(maxHP(),P.hp+maxHP()*.3)}catch(_){}DG.ui&&DG.ui.toast('Room cleared');DG.music&&DG.music.state('explore');DG.fx.clear();objective()}
+ // a room shuts: for both players, whoever walked in. On the second computer it only asks the leader to do this
+ function startRoom(r){const run=DG.run;if(r.kind=='boss'){r.state='on';closeRoom(r);run.check={x:(r.x0+3)*T,y:r.fy*T-P.h-2};flow.objective();if(DG.coop)DG.coop.roomOn(r);DG.boss&&DG.boss.start(r);return}r.state='on';r.wi=0;if(r.survive){r.left=r.survive.dur;DG.ui&&DG.ui.say('SURVIVE',r.title||'',1800)}closeRoom(r);DG.music&&DG.music.state(r.elite?'elite':'combat');if(r.title&&!r.survive)DG.ui&&DG.ui.say(r.title,'',1500);if(DG.coop)DG.coop.roomOn(r);if(!r.survive&&!(DG.coop&&DG.coop.mirror))waveSpawn(r);flow.objective()}
+ const flow={startRoom,clearRoom,begin(){const run=DG.run;run.room=DG.L.rooms[0];flow.objective()},objective,
+  tick(dt){const run=DG.run,L=DG.L;if(!run||!L)return;const r=DG.duoInside&&DG.duoInside()?null:roomAt(P.x);if(r&&r!==run.room){run.room=r;if(r.kind=='trial'&&DG.music)DG.music.state('explore');objective()}
+   if(!(r&&r.kind=='fight'&&r.state=='on')&&run.enemies){run.enemies=0;DG.ui&&DG.ui.enemies(0)}if(r&&r.kind=='fight'&&r.state=='on'&&r.survive){r.left-=dt;const u=1-r.left/r.survive.dur;try{r.survive.tick(dt,A,u,r)}catch(e){console.error('DG survive',e)}DG.ui&&DG.ui.objective('Survive '+Math.ceil(Math.max(0,r.left))+'s');if(r.left<=0&&!(DG.coop&&DG.coop.mirror)){for(const m of mobs.slice())if(m.dgx&&!m.dgb)m.dead=2;clearRoom(r)}}
+   if(r&&r.kind=='fight'&&r.state=='wait'&&P.x>(r.x0+2.5)*T){if(DG.coop&&DG.coop.mirror)DG.coop.want(r);else startRoom(r)}
+   if(r&&r.kind=='fight'&&r.state=='on'&&!r.survive&&performance.now()>(r.pend||0)&&!(DG.coop&&DG.coop.mirror)){const n=roomMobs().length;if(n!==run.enemies){run.enemies=n;DG.ui&&DG.ui.enemies(n)}if(n==0){if(r.wi<r.waves.length){waveSpawn(r)}else clearRoom(r)}}
+   if(r&&r.kind=='boss'&&r.state=='wait'&&P.x>(r.x0+5)*T){if(DG.coop&&DG.coop.mirror)DG.coop.want(r);else startRoom(r)}
    // the corruption meter: Abyssal only. It climbs with time; each step brings a new danger; killing an elite pushes it back
    if(run.d.tier=='abyssal'&&!run.doneBoss&&!DG.locked){run.corr=Math.min(100,(run.corr||0)+dt*.42);run.corrT=(run.corrT||6)-dt;if(run.corrT<=0&&run.corr>=20){const lv=run.corr>=75?3:run.corr>=50?2:1;run.corrT=Math.max(5,13-lv*2.2);const c=run.d.p.glow,x=P.x+rn(-T*5,T*5),y=A.floor(x,P.y+P.h-8),d=DG.mobDmg(run.d,'aregular',.1+.02*lv,run.df);DG.fx.c(x,y-T*1.2,T*2.2,1.15,.3,{c,dmg:d,kind:'void'});if(lv>=2)DG.fx.shot(P.x+(R()<.5?-1:1)*T*11,P.y-T*2,0,0,{r:11,c,dmg:d,home:760,msp:300,l:5,ghost:1});if(lv>=3)DG.fx.mark({t:2.8,r:T*2.6,c,dmg:d*1.2})}}
    // the cursed mark that weakens you fades by itself
@@ -22088,7 +22209,7 @@ try{(()=>{
   fail(){const run=DG.run;DG.boss&&DG.boss.stop();DG.mobs.clear();DG.fx.clear();DG.ui.results(run,false)},
   foundSecret(){const run=DG.run;run.sec=(run.sec|0)+1;DG.tone(880,1760,.4,'sine',.05);DG.ui&&DG.ui.banner('A hidden room','Some things were meant to stay hidden');const S=DG.S;S.sec[run.d.id]=S.sec[run.d.id]||{};S.sec[run.d.id].f=1;DG.save()},
   // the boss has fallen: the chest appears and the door opens. The run finishes when you open it, so the victory film and the results never cut each other off
-  bossDown(b){const run=DG.run,L=DG.L;run.doneBoss=1;run.bosses++;run.tEnd=performance.now();const r=run.room;if(r&&r.doors)for(const s of r.doors)s.on=0;run.lightK=.6;for(const c of L.chests)if(c.kind=='final')c.hid=false;objective();DG.music&&DG.music.state('victory')}};
+  bossDown(b){const run=DG.run,L=DG.L;run.doneBoss=1;run.bosses++;run.tEnd=performance.now();const r=run.room;if(r&&r.doors)for(const s of r.doors)s.on=0;run.lightK=.6;for(const c of L.chests)if(c.kind=='final')c.hid=false;objective();DG.music&&DG.music.state('victory');if(DG.coop)DG.coop.bossDown(run)}};
  DG.flow=flow;
 })()}catch(e){console.error('DG mobs',e)}
 
@@ -22110,15 +22231,15 @@ try{(()=>{
  const hold={on:false,x:0,y:0};function lockP(){hold.on=true;hold.x=P.x;hold.y=P.y;DG.locked=true;try{for(const k in K)K[k]=0;mdL=mdR=false}catch(_){}}
  function unlockP(){hold.on=false;DG.locked=false}
  function spawnBoss(def,r,lv){const run=DG.run,cls=def.cls||'boss',hp=DG.mobHP(run.d,cls,def.ttk,run.df),dmg=DG.mobDmg(run.d,cls,def.pct,run.df),b=box(),x=b.l+(b.r-b.l)*.72,y=def.ai=='walk'?r.fy*T-def.h:r.fy*T-def.h-T*(def.hoverTiles||3);
-  const m={k:'dgb_'+def.id,dgx:def,dgb:1,x,y,w:def.w,h:def.h,vx:0,vy:0,hp,mhp:hp,dmg,fl:0,burn:0,slow:0,stun:0,ph:R()*6,t:1,dir:1,fade:1,g:false,wall:0,phase:1,bt:2,st:'idle',room:r,inv:true,rise:0,cd:{},last:null,air:0,farT:0,nearT:0};mobs.push(m);return m}
+  const m={k:'dgb_'+def.id,dgx:def,dgb:1,x,y,w:def.w,h:def.h,vx:0,vy:0,hp,mhp:hp,dmg,fl:0,burn:0,slow:0,stun:0,ph:R()*6,t:1,dir:1,fade:1,g:false,wall:0,phase:1,bt:2,st:'idle',room:r,inv:true,rise:0,cd:{},last:null,air:0,farT:0,nearT:0};mobs.push(m);if(DG.coop)DG.coop.spawned(m,'@'+def.id,{net:1});return m}
  // ---- the boss's own card over the screen, its level is the dungeon's
  function start(r){const run=DG.run,def=DEF[run.d.boss];if(!def){say('This boss is not ready yet');return}const m=spawnBoss(def,r);act=m;run.bossName=def.n;DG.flow.objective();lockP();DG.fx.clear();DG.music&&DG.music.state('bossintro');
-  const seen=!!DG.S.bseen[def.id];I={t:0,dur:def.introDur||6,ev:[],seen,skip:false,m};const api={at:(t,f)=>I.ev.push({t,f}),cam:(s,o)=>DG.cam.play(s,Object.assign({hold:true,lock:true},o||{})),set dur(v){I.dur=v},get dur(){return I.dur},room:r};
+  const seen=!!DG.S.bseen[def.id]&&!(DG.coop&&DG.coop.on);I={t:0,dur:def.introDur||6,ev:[],seen,skip:false,m};const api={at:(t,f)=>I.ev.push({t,f}),cam:(s,o)=>DG.cam.play(s,Object.assign({hold:true,lock:true},o||{})),set dur(v){I.dur=v},get dur(){return I.dur},room:r};
   const mx=m.x,my=m.y+m.h/2;
   try{if(def.intro)def.intro(api,m,A);else{api.cam([{x:(r.x0+r.x1)*T/2,y:r.fy*T-T*6,z:1,dur:1.2},{x:mx,y:my,z:1.25,dur:1.4,hold:2}]);api.at(1.4,()=>{m.rise=1})}}catch(e){console.error('DG intro',e)}
-  api.at(I.dur-2.4,()=>DG.ui.bossCard(def,run));I.ev.sort((a,b)=>a.t-b.t);I.card=false;DG.ui.bars&&DG.ui.bars(true);if(seen)DG.ui.toast('Hold any key to skip');addEventListener('keydown',skipKey);addEventListener('keyup',skipUp)}
+  if(DG.coop&&DG.coop.fast)I.dur=.2;api.at(I.dur-2.4,()=>DG.ui.bossCard(def,run));I.ev.sort((a,b)=>a.t-b.t);I.card=false;DG.ui.bars&&DG.ui.bars(true);if(seen)DG.ui.toast('Hold any key to skip');addEventListener('keydown',skipKey);addEventListener('keyup',skipUp)}
  let skipH=false,skipT=0;const skipKey=()=>{skipH=true},skipUp=()=>{skipH=false};
- function endIntro(){const m=I&&I.m,def=m&&m.dgx;removeEventListener('keydown',skipKey);removeEventListener('keyup',skipUp);skipH=false;skipT=0;I=null;if(!m)return;m.inv=false;m.rise=1;m.bt=1.3;unlockP();const r=m.room;DG.cam.frame(r.x0*T,r.x1*T,r.y0*T,r.fy*T);DG.cam.release();DG.S.bseen[def.id]=1;DG.save();DG.ui.bars&&DG.ui.bars(false);DG.ui.bossBar(m,def,true);DG.music&&DG.music.state('boss');DG.shk(.2);A.wave(m.x,m.y+m.h/2,def.c,T*9,.7,.3)}
+ function endIntro(){const m=I&&I.m,def=m&&m.dgx;removeEventListener('keydown',skipKey);removeEventListener('keyup',skipUp);skipH=false;skipT=0;I=null;if(!m)return;m.inv=false;m.rise=1;m.bt=1.3;if(def.lowG)m.lowG=def.lowG;unlockP();const r=m.room;DG.cam.frame(r.x0*T,r.x1*T,r.y0*T,r.fy*T);DG.cam.release();DG.S.bseen[def.id]=1;DG.save();DG.ui.bars&&DG.ui.bars(false);DG.ui.bossBar(m,def,true);DG.music&&DG.music.state('boss');DG.shk(.2);A.wave(m.x,m.y+m.h/2,def.c,T*9,.7,.3)}
  function pick(m,def){const L=def.atk[Math.min(m.phase-1,def.atk.length-1)]||[],d=A.dist(m),opts=[];let tot=0;for(const a of L){if(a.min!=null&&d<a.min)continue;if(a.max!=null&&d>a.max)continue;if(a.when&&!a.when(m,A))continue;if((m.cd[a.name]||0)>0)continue;let w=a.w?a.w(m,A):1;if(a===m.last)w*=.15;if(w>0){opts.push([a,w]);tot+=w}}if(!opts.length)return null;let u=R()*tot;for(const[a,w]of opts){u-=w;if(u<=0)return a}return opts[0][0]}
  function move(m,def,dt){const dx=P.x-m.x,b=box(),sp=(def.sp||70)*(m.slow>0?.5:1)*(1+(m.phase-1)*.12);if(m.frozenAI||m.st=='wind'&&!def.moveInWind){m.vx*=Math.pow(.02,dt);if(def.ai=='walk'){m.vy+=1800*dt;moveE(m,dt)}else{m.vy*=Math.pow(.02,dt);m.x+=m.vx*dt;m.y+=m.vy*dt}}
   else if(def.ai=='walk'){const near=Math.abs(dx)<(def.range||T*3);m.vx+=((near?0:Math.sign(dx)*sp)-m.vx)*Math.min(1,dt*3);m.vy+=1800*dt;moveE(m,dt)}
@@ -22128,22 +22249,25 @@ try{(()=>{
  function tick(dt){if(hold.on){P.x=hold.x;P.y=hold.y;P.vx=P.vy=0;iT=Math.max(iT,.3);try{wcd=.3;rcd=.3}catch(_){}}
   if(OUT){OUT.t+=dt;const m=OUT.m,def=m.dgx,u=cl(OUT.t/OUT.dur,0,1);m.dy=u;m.ph+=dt;m.fl=0;try{if(def.deathTick)def.deathTick(m,u,A)}catch(e){console.error(e)}if(!DG.reduced()&&R()<dt*30)A.burst(m.x+rn(-m.w/2,m.w/2),m.y+rn(0,m.h),[def.c,def.c2||'#fff'],3,160);if(OUT.t>=OUT.dur)finishOut();return}
   if(I){tickIntro(dt);if(I)I.m.ph+=dt;return}
-  const m=act;if(!m)return;const def=m.dgx;if(!mobs.includes(m)){act=null;return}m.ph+=dt;m.fl-=dt;m.slow-=dt;m.stun=(m.stun||0)-dt;if(m.at>0)m.at-=dt;if(m.vul>0)m.vul-=dt;for(const k in m.cd)m.cd[k]-=dt;if(m.burn>0){m.burn-=dt;m.hp-=m.mhp*.0008*dt*10}
+  const m=act;if(!m)return;const def=m.dgx;if(!mobs.includes(m)){act=null;return}if(m.lowG>0){m.lowG-=dt;P.dgGrav=.42}if(DG.coop&&DG.coop.mirror){DG.coop.mirrorBoss(m,dt);if(PHS){PHS.t+=dt;if(PHS.t>=PHS.dur)PHS=null}DG.ui.bossBar(m,def);return}m.ph+=dt;m.fl-=dt;m.slow-=dt;m.stun=(m.stun||0)-dt;if(m.at>0)m.at-=dt;if(m.vul>0)m.vul-=dt;for(const k in m.cd)m.cd[k]-=dt;if(m.burn>0){m.burn-=dt;m.hp-=m.mhp*.0008*dt*10}
   if(!P.g)m.air+=dt;else m.air=Math.max(0,m.air-dt*2);const d=A.dist(m);if(d>T*10)m.farT+=dt;else m.farT=Math.max(0,m.farT-dt);if(d<T*4)m.nearT+=dt;else m.nearT=Math.max(0,m.nearT-dt);
   if(m.hp<=0||m.dead){beginOut(m);return}
   // a new phase: a short beat, the arena answers, then straight back to the fight
-  const pi=m.phase-1,P2=def.phases||[];if(pi<P2.length&&m.hp/m.mhp<P2[pi]&&!PHS){m.phase++;PHS={t:0,dur:def.phaseDur||1.6,m};m.inv=true;m.st='idle';m.atk=null;DG.fx.clear();const nm=(def.names&&def.names[m.phase-1])||'';DG.ui.phase(nm,m.phase);if(m.phase-1==P2.length)DG.music&&DG.music.state('final');DG.shk(.3);try{if(def.phase)def.phase(m.phase-1,m,A);else A.wave(m.x,m.y+m.h/2,def.c,T*10,.8,.4)}catch(e){console.error('DG phase',e)}DG.cam.zoomTo(1.05,.3);setTimeout(()=>{try{if(act)DG.cam.zoomTo(1,.5)}catch(_){}},500);DG.ui.bossBar(m,def,true)}
+  const pi=m.phase-1,P2=def.phases||[];if(pi<P2.length&&m.hp/m.mhp<P2[pi]&&!PHS){enterPhase(m,def,m.phase+1);if(DG.coop)DG.coop.phase(m)}
   if(PHS){PHS.t+=dt;m.vx*=.9;if(PHS.t>=PHS.dur){m.inv=false;m.bt=.8;PHS=null}move(m,def,dt);DG.ui.bossBar(m,def);return}
+  const sw=DG.coop?DG.coop.swap(m):null;
   if(def.tick)try{def.tick(m,dt,A)}catch(e){if(!def.e){def.e=1;console.error('DG boss tick',def.id,e)}}
   move(m,def,dt);
   const idle=(def.idle||[1.7,1.3,1])[Math.min(m.phase-1,2)]*((DG.run&&DG.run.df.tel)||1);
-  if(m.st=='idle'&&m.stun<=0){m.bt-=dt;if(m.bt<=0&&!DG.locked){const a=pick(m,def);if(a){m.atk=a;m.last=a;m.st='wind';m.tt=(a.wind==null?.9:a.wind)*((DG.run&&DG.run.df.tel)||1);m.tt0=m.tt;if(a.start)try{a.start(m,A)}catch(e){console.error('DG boss atk',a.name,e)}}else m.bt=.4}}
-  else if(m.st=='wind'){m.tt-=dt;if(m.tt<=0){const a=m.atk;try{if(a.fire)a.fire(m,A)}catch(e){console.error('DG boss atk',a.name,e)}m.st='rec';m.tt=a.rec==null?.5:a.rec;m.at=.35;if(a.cd)m.cd[a.name]=a.cd;if(a.vul)m.vul=a.vul}}
+  if(m.st=='idle'&&m.stun<=0){m.bt-=dt;if(m.bt<=0&&!DG.locked){const a=pick(m,def);if(a){m.atk=a;m.last=a;m.st='wind';m.tt=(a.wind==null?.9:a.wind)*((DG.run&&DG.run.df.tel)||1);m.tt0=m.tt;if(DG.coop)DG.coop.atk(m,a,m.tt);if(a.start)try{a.start(m,A)}catch(e){console.error('DG boss atk',a.name,e)}}else m.bt=.4}}
+  else if(m.st=='wind'){m.tt-=dt;if(m.tt<=0){const a=m.atk;if(DG.coop)DG.coop.fire(m,a);try{if(a.fire)a.fire(m,A)}catch(e){console.error('DG boss atk',a.name,e)}m.st='rec';m.tt=a.rec==null?.5:a.rec;m.at=.35;if(a.cd)m.cd[a.name]=a.cd;if(a.vul)m.vul=a.vul}}
   else if(m.st=='rec'){m.tt-=dt;if(m.tt<=0){m.st='idle';m.bt=idle;m.atk=null}}
+  if(sw)DG.coop.unswap(sw);
   const ov=!m.nohit&&Math.abs(P.x-m.x)<(P.w+m.w*.8)/2&&P.y<m.y+m.h&&P.y+P.h>m.y+m.h*.1;if(ov&&def.touch!==0)DG.hurtP(m.dmg*(def.touch||.55),Math.sign(P.x-m.x||1)*340);
   DG.ui.bossBar(m,def)}
+ function enterPhase(m,def,to){const P2=def.phases||[];m.phase=to;PHS={t:0,dur:def.phaseDur||1.6,m};m.inv=true;m.st='idle';m.atk=null;DG.fx.clear();const nm=(def.names&&def.names[m.phase-1])||'';DG.ui.phase(nm,m.phase);if(m.phase-1==P2.length)DG.music&&DG.music.state('final');DG.shk(.3);try{if(def.phase)def.phase(m.phase-1,m,A);else A.wave(m.x,m.y+m.h/2,def.c,T*10,.8,.4)}catch(e){console.error('DG phase',e)}DG.cam.zoomTo(1.05,.3);setTimeout(()=>{try{if(act)DG.cam.zoomTo(1,.5)}catch(_){}},500);DG.ui.bossBar(m,def,true)}
  // ---- it falls: a quiet, slow moment that belongs to this boss, then the announcement, then the chest
- function beginOut(m){const def=m.dgx;act=null;m.dead=0;m.hp=0;m.inv=true;m.dy=0;OUT={t:0,dur:def.deathDur||4,m};DG.fx.clear();lockP();DG.ui.bossBar(null);DG.music&&DG.music.state('bossdeath');const r=m.room;DG.cam.arena=null;DG.cam.play([{x:m.x,y:m.y+m.h/2,z:1.22,dur:.8,hold:OUT.dur}],{hold:true,lock:true});DG.ui.bars&&DG.ui.bars(true);try{HITSTOP(180)}catch(_){}DG.shk(.5);try{if(def.death)def.death(m,A);else A.wave(m.x,m.y+m.h/2,def.c,T*14,1.2,.4)}catch(e){console.error('DG death',e)}}
+ function beginOut(m){const def=m.dgx;if(DG.coop)DG.coop.out(m);act=null;m.dead=0;m.hp=0;m.inv=true;m.dy=0;OUT={t:0,dur:def.deathDur||4,m};DG.fx.clear();lockP();DG.ui.bossBar(null);DG.music&&DG.music.state('bossdeath');const r=m.room;DG.cam.arena=null;DG.cam.play([{x:m.x,y:m.y+m.h/2,z:1.22,dur:.8,hold:OUT.dur}],{hold:true,lock:true});DG.ui.bars&&DG.ui.bars(true);try{HITSTOP(180)}catch(_){}try{if(!DG.reduced())CINE7.slow((def.deathDur||4)*520,.34)}catch(_){}DG.shk(.5);try{if(def.death)def.death(m,A);else A.wave(m.x,m.y+m.h/2,def.c,T*14,1.2,.4)}catch(e){console.error('DG death',e)}}
  function finishOut(){const m=OUT.m,def=m.dgx;OUT=null;const i=mobs.indexOf(m);if(i>=0)mobs.splice(i,1);A.burst(m.x,m.y+m.h/2,[def.c,def.c2||'#fff','#ffd86a'],40,420,14);A.wave(m.x,m.y+m.h/2,'#fff',T*12,1,.3);DG.shk(.45);DG.tone(880,1760,.8,'triangle',.07);DG.tone(660,1320,.9,'sine',.05,.1);unlockP();DG.cam.reset();DG.ui.bars&&DG.ui.bars(false);const run=DG.run;run.tBoss=performance.now();DG.ui.say(def.n.toUpperCase()+' DEFEATED',run.d.n+' · '+run.df.n,3200);const L=DG.L,c=L&&L.chests.find(q=>q.kind=='final');if(c){c.x=DG.cl(m.x,(m.room.x0+3)*T,(m.room.x1-3)*T);c.y=m.room.fy*T;c.hid=false;c.drop=1}DG.rew&&DG.rew.bossKill(run,def);DG.flow.bossDown(def)}
  {const _dm=drawMob;drawMob=function(m,now){if(!m.dgb)return _dm(m,now);const def=m.dgx;try{const t=now/1000,X=m.x-cam.x,Y=m.y+m.h-cam.y;g.save();g.translate(X,Y);if(m.vul>0||m.st=='wind'){const c=m.vul>0?'#ffd24a':def.c,a0=g.globalAlpha;g.globalCompositeOperation='lighter';g.globalAlpha=a0*(m.vul>0?.55:.35+.3*(1-m.tt/(m.tt0||1)));const s=Math.max(m.w,m.h)*1.5;g.drawImage(BOSS6.glo(c),-s/2,-m.h/2-s/2,s,s);g.globalAlpha=a0;g.globalCompositeOperation='source-over'}if(m.shield>0){g.save();g.globalCompositeOperation='lighter';g.strokeStyle=def.c2||'#bfeaff';g.globalAlpha=.55+.2*Math.sin(t*6);g.lineWidth=4;g.beginPath();g.ellipse(0,-m.h/2,m.w*.72,m.h*.64,0,0,TAU);g.stroke();g.restore()}g.scale(m.f||1,1);if(m.hide>0)g.globalAlpha*=1-m.hide;def.art(g,m,{t,fl:m.fl>0,wind:m.st=='wind'?1-m.tt/(m.tt0||1):0,at:m.at>0?1:0,ph:m.phase,dy:m.dy||0,rise:m.rise==null?1:m.rise,f:m.f||1,cine:!!I});g.restore()}catch(e){try{g.restore()}catch(_){}if(!def.ee){def.ee=1;console.error('DG boss art',def.id,e)}}}}
  // bosses hit harder when open, and shields stop the blow
@@ -22151,7 +22275,7 @@ try{(()=>{
  // ---- a copy of a boss with its own attack pattern (Shadow Replication and friends). Dies quickly, draws as the boss in a ghostly tint
  const GHOST={id:'__ghost',n:'Shadow',cls:'regular',w:60,h:90,c:'#5a4a8a',ai:'still',fly:1,touch:0,art(c,m,o){const s=m.src;c.save();c.globalAlpha*=.62*(m.fade||1);const q=m.sc||1;c.scale(q,q);try{s.art(c,m,{t:o.t,fl:o.fl,wind:o.wind,at:o.at,ph:1,dy:0,rise:1,f:o.f})}catch(_){}c.restore()}};
  DG.mobs.reg('__ghost',GHOST);
- A.ghost=(src,x,y,o={})=>{const m=A.spawn('__ghost',x,y,{summon:true,quiet:o.quiet,life:o.life||8});if(!m)return null;m.src=src;m.w=src.w*(o.sc||.7);m.h=src.h*(o.sc||.7);m.sc=o.sc||.7;m.y=y-m.h;m.hp=m.mhp=(act?act.mhp:1000)*(o.hp||.03);m.k='dgm___ghost';m.gtick=o.tick;const r=DG.run&&DG.run.room;if(r)m.room=r;m.dgx=Object.assign({},GHOST,{kit:o.kit||null,icd:o.icd||1.6,tick:o.tick||null});return m};
+ A.ghost=(src,x,y,o={})=>{const m=A.spawn('__ghost',x,y,{summon:true,quiet:o.quiet,life:o.life||8});if(!m)return null;m.src=src;m.w=src.w*(o.sc||.7);m.h=src.h*(o.sc||.7);m.sc=o.sc||.7;m.y=y-m.h;m.hp=m.mhp=(act?act.mhp:1000)*(o.hp||.03);m.k='dgm___ghost';m.gtick=o.tick;const r=DG.run&&DG.run.room;if(r)m.room=r;m.dgx=Object.assign({},GHOST,{kit:o.kit||null,icd:o.icd||1.6,tick:o.tick||null});if(DG.coop)DG.coop.ghosted(m,o,o.sc||.7);return m};
  // ---- soul drain: for a while your blows land weaker. Killing what caused it (or waiting) ends it
  A.soul=(v,t)=>{DG.soul=v;DG.soulT=t;DG.ui.toast('Your strength is drained')};
  // ---- reality collapse: a stretch of the arena floor stops existing for a moment. Warned well ahead, and it hurts a lot to stand there
@@ -22160,7 +22284,7 @@ try{(()=>{
  function reset(){const m=act;stop();if(m){const i=mobs.indexOf(m);if(i>=0)mobs.splice(i,1)}}
  // the owner's way to jump straight to a fight
  function startNow(id){const run=DG.run;if(!run)return false;const r=run.room&&run.room.kind=='boss'?run.room:DG.L.rooms.find(q=>q.kind=='boss');if(!r)return false;P.x=(r.x0+4)*T;P.y=r.fy*T-P.h-2;run.room=r;r.state='on';for(const s of r.doors)s.on=1;run.check={x:(r.x0+3)*T,y:r.fy*T-P.h-2};if(id&&DEF[id]){const o=run.d.boss;run.d=Object.assign({},run.d,{boss:id});start(r)}else start(r);return true}
- DG.boss={reg,DEF,start,tick,stop,reset,startNow,draw(){},get act(){return act},get inIntro(){return !!I},get inOut(){return !!OUT}};
+ DG.boss={reg,DEF,start,tick,stop,reset,startNow,phaseTo:(m,to)=>enterPhase(m,m.dgx,to),fall:m=>beginOut(m),draw(){},get act(){return act},get inIntro(){return !!I},get inOut(){return !!OUT}};
 })()}catch(e){console.error('DG boss',e)}
 
 /* ========== LATE: 99-zzzzzzzzz-p4-dg-ui.js ========== */
@@ -22191,10 +22315,10 @@ try{(()=>{
   results(run,win,loot,first,recs){const e=mk('dgres','<div class="dgrc"></div>');const c=e.querySelector('.dgrc'),d=run.d,end=(run.tEnd||performance.now()),time=end-run.t0;e.style.setProperty('--dgc',win?d.p.glow:'#ff7a7a');try{mdL=false}catch(_){}
    const stat=(a,b)=>'<div><b>'+b+'</b>'+a+'</div>',L=loot||[],best=(DG.S.best[d.id]||{})[run.df.id];
    let h='<h2>'+(win?'VICTORY':'DEFEAT')+'</h2><h3>'+esc(d.n)+' · '+esc(run.df.n)+'</h3><div class="st">'+stat('Time',fmt(time))+stat('Best time',fmt(best))+stat('Damage dealt',Math.round(run.dealt).toLocaleString())+stat('Damage taken',Math.round(run.taken).toLocaleString())+stat('Monsters slain',run.kills)+stat('Elites',run.elites)+stat('Bosses defeated',run.bosses)+stat('Falls',run.deaths)+stat('Hidden rooms',run.sec|0)+'</div>';
-   if(first&&first.length)h+='<div class="first">★ First clear: '+first.map(esc).join(' · ')+'</div>';
+   if(first&&first.length)h+='<div class="fcstamp"><i></i><b>FIRST CLEAR</b></div><div class="first">★ '+first.map(esc).join(' · ')+'</div>';
    if(recs&&recs.length)h+='<div class="first">'+recs.map(esc).join(' · ')+'</div>';
    if(L.length){h+='<h4>Materials and treasure</h4><div class="loot">'+L.map(q=>it(q.id,q.n,false,q.rare)).join('')+'</div>'}
-   h+='<div class="act">'+(win?'<button class="again">Run it again</button>':'<button class="again">Try again</button>')+'<button class="pri ok">Leave</button></div>';c.innerHTML=h;e.classList.add('on');
+   h+='<div class="act">'+(win?'<button class="again">Run it again</button>':'<button class="again">Try again</button>')+'<button class="pri ok">Leave</button></div>';c.innerHTML=h;e.classList.add('on');if(first&&first.length)try{DG.tone(523,1046,.5,'triangle',.07);DG.tone(659,1318,.6,'triangle',.06,.14);DG.tone(784,1568,.9,'sine',.07,.3);DG.tone(1046,2092,1.1,'sine',.05,.5);if(!DG.reduced()){VFX.burst(P.x,P.y-40,[d.p.glow,'#ffd86a','#fff'],60,420,1,1.2,18);DG.shk(.18)}}catch(_){}
    c.querySelector('.ok').onclick=()=>{e.classList.remove('on');DG.leave()};c.querySelector('.again').onclick=()=>{e.classList.remove('on');const id=d.id,di=run.df.id;DG.endRun();try{DG.beginRun(DG.BY[id],di,{})}catch(er){console.error(er);DG.leave()}}}};
  DG.ui=ui;
 
@@ -22202,27 +22326,27 @@ try{(()=>{
  let P16=null,tab='ancient',sel=null,seldf=null,raf=0;
  const lootOf=d=>{try{return DG.rew.tableOf(d)}catch(_){return[]}};
  function statusOf(d){const c=DG.S.clr[d.id],why=DG.lockReason(d.id);if(DG.cleared(d.id))return['Cleared','ok'];if(why)return['Locked','']; return['Open','']}
- function open(t,id){close();P16=mk('dg16');P16.innerHTML='<header><h2>DUNGEONS</h2><i>迷宮</i><div class="tabs"></div><button class="x">Close (Esc)</button></header><div class="body"></div>';tab=t||tab;if(id){sel=id;tab=DG.BY[id].tier}const tb=P16.querySelector('.tabs');for(const[k,n]of[['ancient','Ancient'],['abyssal','Abyssal'],['coll','Collection'],['rec','Records'],['week','Weekly'],['opt','Options']]){const b=document.createElement('button');b.textContent=n;b.dataset.t=k;b.onclick=()=>{tab=k;render()};tb.appendChild(b)}P16.querySelector('.x').onclick=close;P16.classList.add('on');try{DG.ensureIcons()}catch(_){}try{UIS.play('open')}catch(_){}render();addEventListener('keydown',esc16,true)}
+ function open(t,id){close();P16=mk('dg16');P16.innerHTML='<header><h2>DUNGEONS</h2><i>迷宮</i><div class="tabs"></div><button class="x">Close (Esc)</button></header><div class="body"></div>';tab=t||tab;if(id){sel=id;tab=DG.BY[id].tier}const tb=P16.querySelector('.tabs');for(const[k,n]of[['ancient','Ancient'],['abyssal','Abyssal'],['party','Party'],['coll','Collection'],['rec','Records'],['week','Weekly'],['opt','Options']]){const b=document.createElement('button');b.textContent=n;b.dataset.t=k;b.onclick=()=>{tab=k;render()};tb.appendChild(b)}P16.querySelector('.x').onclick=close;P16.classList.add('on');try{DG.ensureIcons()}catch(_){}try{UIS.play('open')}catch(_){}render();addEventListener('keydown',esc16,true)}
  const esc16=e=>{if(!P16||!P16.classList.contains('on'))return;if(e.key=='Escape'){e.stopPropagation();e.preventDefault();close()}};
  function close(){if(!P16)return;cancelAnimationFrame(raf);P16.classList.remove('on');removeEventListener('keydown',esc16,true)}
- function render(){cancelAnimationFrame(raf);for(const b of P16.querySelectorAll('.tabs button'))b.classList.toggle('on',b.dataset.t==tab);const B=P16.querySelector('.body');B.innerHTML='';if(tab=='ancient'||tab=='abyssal')pageList(B);else if(tab=='coll')pageColl(B);else if(tab=='rec')pageRec(B);else if(tab=='week')pageWeek(B);else pageOpt(B)}
+ function render(){cancelAnimationFrame(raf);for(const b of P16.querySelectorAll('.tabs button'))b.classList.toggle('on',b.dataset.t==tab);const B=P16.querySelector('.body');B.innerHTML='';if(tab=='ancient'||tab=='abyssal')pageList(B);else if(tab=='party'&&DG.partyPage)DG.partyPage(B);else if(tab=='coll')pageColl(B);else if(tab=='rec')pageRec(B);else if(tab=='week')pageWeek(B);else pageOpt(B)}
  function pageList(B){const L=DG.LIST.filter(d=>d.tier==tab);if(!sel||!L.find(d=>d.id==sel)){const f=L.filter(d=>!DG.lockReason(d.id));sel=(f[f.length-1]||L[0]).id}const left=document.createElement('div');left.className='list';for(const d of L){const[s,ok]=statusOf(d),b=document.createElement('button');b.className='dc'+(d.id==sel?' on':'')+(DG.lockReason(d.id)?' lock':'');b.style.setProperty('--dgc',d.p.glow);b.innerHTML='<b>'+esc(d.n)+'</b><small>Level '+d.entry+' · '+esc(d.diff)+'</small><span class="st '+ok+'">'+s+'</span>';b.onclick=()=>{sel=d.id;seldf=null;render()};left.appendChild(b)}B.appendChild(left);const det=document.createElement('div');det.className='det';B.appendChild(det);detail(det,DG.BY[sel])}
  function detail(det,d){det.style.setProperty('--dgc',d.p.glow);const why=DG.lockReason(d.id),dfs=DG.diffsOf(d);if(!seldf||!dfs.includes(seldf))seldf=dfs.filter(x=>DG.diffOpen(d,x)).pop()||dfs[0];const def=DG.boss.DEF[d.boss],clr=DG.S.clr[d.id]||{},best=DG.S.best[d.id]||{},found=DG.S.found,tbl=lootOf(d);
-  det.innerHTML='<div class="hero"><canvas width="960" height="400"></canvas><div class="tt"><b>'+esc(d.n)+'</b><i>'+esc(d.sub)+'</i></div></div><div class="pad"><div class="kv"><div><b>'+d.entry+'</b>Required level</div><div><b>'+esc(d.rec)+'</b>Recommended</div><div><b>'+esc(d.diff)+'</b>Difficulty</div><div><b>'+(DG.cleared(d.id)?'Yes':'Not yet')+'</b>Completed</div><div><b>'+fmt(best[seldf])+'</b>Best time ('+esc(DG.DIFF[seldf].n)+')</div></div><p>'+esc(d.desc)+'</p>'+
+  det.innerHTML='<div class="hero"><canvas width="960" height="400"></canvas><div class="tt"><b>'+esc(d.n)+'</b><i>'+esc(d.sub)+'</i></div></div><div class="pad"><div class="kv"><div><b>'+d.entry+'</b>Required level</div><div><b>'+esc(d.rec)+'</b>Recommended</div><div><b>'+esc(d.diff)+'</b>Difficulty</div><div><b>'+(DG.cleared(d.id)?'Yes':'Not yet')+'</b>Completed</div><div><b>'+fmt(best[seldf])+'</b>Best time ('+esc(DG.DIFF[seldf].n)+')</div></div><div class="hubx"><span><b>'+((()=>{const c=DG.S.clr[d.id]||{},L=DG.diffsOf(d),n=L.filter(x=>c[x]).length;return Math.round(n/L.length*100)})())+'%</b> complete</span><span>Party: <b>'+(DG.coop&&DG.coop.full?'2 of 2':'1 or 2 players')+'</b></span><span>Challenges: <b>'+((()=>{try{const a=DG.rew.weeklies();return a.filter(c=>c.done).length+' of '+a.length}catch(_){return'-'}})())+'</b> this week</span></div><p>'+esc(d.desc)+'</p>'+
    '<h4>Boss</h4><div class="pv"><canvas class="bp" width="300" height="300"></canvas><p><b>'+esc(def?def.n:'')+'</b><br><i>'+esc(def?def.ti||'':'')+'</i><br>'+esc(def?def.blurb||'':'')+'</p></div>'+
    '<h4>Difficulty</h4><div class="dfs">'+dfs.map(x=>{const q=DG.DIFF[x],op=DG.diffOpen(d,x);return'<button data-d="'+x+'" class="'+(x==seldf?'on':'')+'"'+(op?'':' disabled')+'>'+q.n+(clr[x]?' ✓':'')+'<em>'+(op?(q.revives?q.revives+' tries · ':'')+'loot ×'+q.loot:'Clear the one before')+'</em></button>'}).join('')+'</div>'+
    '<h4>Rewards</h4><div class="loot">'+tbl.map(id=>it(id,1,!found[id])).join('')+'</div>'+
-   '<div class="go"><button class="pri"'+(why||!DG.diffOpen(d,seldf)?' disabled':'')+'>ENTER</button>'+(why?'<span class="why">'+esc(why)+'</span>':'')+'<button class="sec rp"'+(DG.S.seen[d.id]?'':' disabled title="Enter once to unlock"')+'>Replay film</button></div></div>';
+   '<div class="go"><button class="pri"'+(why||!DG.diffOpen(d,seldf)?' disabled':'')+'>'+(DG.coop&&DG.coop.full?'ENTER TOGETHER':'ENTER')+'</button>'+(why?'<span class="why">'+esc(why)+'</span>':'')+'<button class="sec rp"'+(DG.S.seen[d.id]?'':' disabled title="Enter once to unlock"')+'>Replay film</button></div></div>';
   for(const b of det.querySelectorAll('.dfs button'))b.onclick=()=>{seldf=b.dataset.d;detail(det,d)};
-  det.querySelector('.pri').onclick=()=>{if(DG.lockReason(d.id))return;close();DG.enter(d.id,seldf)};
+  det.querySelector('.pri').onclick=()=>{if(DG.lockReason(d.id))return;if(DG.coop&&DG.coop.full){if(DG.coop.isLead)DG.coop.start(d.id,seldf);else DG.ui.toast('Your party leader chooses the dungeon');return}close();DG.enter(d.id,seldf)};
   det.querySelector('.rp').onclick=()=>{if(DG.cine&&DG.cine.has(d.id)){close();DG.cine.play(d.id,{skip:true,done(){}})}};
   // the hero picture is the dungeon's own layers, the boss turns in its idle
   const hero=det.querySelector('.hero canvas'),hc=hero.getContext('2d');try{const Y=DG.art.layers(d);hc.drawImage(Y.far,0,0,960,400);hc.drawImage(Y.mid,0,-60,960,540);hc.drawImage(Y.near,0,-70,960,540);const gr=hc.createLinearGradient(0,200,0,400);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(4,2,12,.85)');hc.fillStyle=gr;hc.fillRect(0,0,960,400)}catch(_){}
-  const bc=det.querySelector('.bp'),bx=bc.getContext('2d');const frame=n=>{if(!P16||!P16.classList.contains('on')||!bc.isConnected)return;bx.clearRect(0,0,300,300);if(def&&def.art)try{bx.save();const s=Math.min(1,250/Math.max(def.h,def.w)),t=n/1000;bx.translate(150,280);bx.scale(s,s);bx.fillStyle=DG.hexA(d.p.glow,.2);bx.beginPath();bx.ellipse(0,0,def.w*.6,12,0,0,6.3);bx.fill();def.art(bx,{w:def.w,h:def.h,ph:t,phase:1,dgx:def},{t,fl:false,wind:0,at:0,ph:1,dy:0,rise:1,f:1,cine:true});bx.restore()}catch(e){if(!def.pe){def.pe=1;console.error('DG preview',e)}}raf=requestAnimationFrame(frame)};raf=requestAnimationFrame(frame)}
+  const bc=det.querySelector('.bp'),bx=bc.getContext('2d');let hl=0;const frame=n=>{if(!P16||!P16.classList.contains('on')||!bc.isConnected)return;if(!DG.reduced()&&n-hl>40){hl=n;try{const Y=DG.art.layers(d),u=Math.sin(n/4200);hc.drawImage(Y.far,u*-8-8,-4,976,410);hc.drawImage(Y.mid,u*-20-20,-62,1000,556);hc.drawImage(Y.near,u*-36-36,-74,1032,574);const gr=hc.createLinearGradient(0,200,0,400);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(10,9,16,.85)');hc.fillStyle=gr;hc.fillRect(0,0,960,400)}catch(_){}}bx.clearRect(0,0,300,300);if(def&&def.art)try{bx.save();const s=Math.min(1,250/Math.max(def.h,def.w)),t=n/1000;bx.translate(150,280);bx.scale(s,s);bx.fillStyle=DG.hexA(d.p.glow,.2);bx.beginPath();bx.ellipse(0,0,def.w*.6,12,0,0,6.3);bx.fill();def.art(bx,{w:def.w,h:def.h,ph:t,phase:1,dgx:def},{t,fl:false,wind:0,at:0,ph:1,dy:0,rise:1,f:1,cine:true});bx.restore()}catch(e){if(!def.pe){def.pe=1;console.error('DG preview',e)}}raf=requestAnimationFrame(frame)};raf=requestAnimationFrame(frame)}
  function pageColl(B){const w=document.createElement('div');w.className='wide';let h='<h4>Keys and sigils</h4><div class="loot" style="display:flex;flex-wrap:wrap;gap:6px">';for(const q of DG.IT)if(DG.isKey(q[0]))h+=it(q[0],cnt(q[0]),!DG.S.found[q[0]]);h+='</div><h4>Materials</h4><div class="loot" style="display:flex;flex-wrap:wrap;gap:6px">';for(const q of DG.IT)if(!DG.isKey(q[0]))h+=it(q[0],cnt(q[0]),!DG.S.found[q[0]]);h+='</div>';try{h+=DG.rew.collectionHTML(it)}catch(_){}const tot=DG.IT.length,got=DG.IT.filter(q=>DG.S.found[q[0]]).length;h='<p>Discovered <b>'+got+' of '+tot+'</b> items. Hidden ones show as ??? until you find them.</p>'+h;w.innerHTML=h;B.appendChild(w)}
  function pageRec(B){const w=document.createElement('div');w.className='wide';let h='<table><tr><th>Dungeon</th><th>Normal</th><th>Hard</th><th>Nightmare</th><th>Abyssal</th><th>Cataclysm</th><th>Clears</th><th>Hidden rooms</th></tr>';for(const d of DG.LIST){const b=DG.S.best[d.id]||{},c=DG.S.clr[d.id]||{},n=(c.normal|0)+(c.hard|0)+(c.nightmare|0)+(c.abyssal|0)+(c.cataclysm|0);h+='<tr><td><b style="color:'+d.p.glow+'">'+esc(d.n)+'</b></td><td>'+fmt(b.normal)+'</td><td>'+fmt(b.hard)+'</td><td>'+fmt(b.nightmare)+'</td><td>'+fmt(b.abyssal)+'</td><td>'+fmt(b.cataclysm)+'</td><td>'+n+'</td><td>'+(((DG.S.sec[d.id]||{}).n)|0)+'</td></tr>'}h+='</table><p>Falls in all dungeons: <b>'+(DG.S.deaths|0)+'</b></p>';const T2=Object.keys(DG.S.titles||{});h+='<h4>Titles earned</h4><div class="dfs">'+(T2.length?T2.map(t=>'<button data-t="'+esc(t)+'" class="'+(DG.S.titleOn==t?'on':'')+'">'+esc(t)+'<em>'+(DG.S.titleOn==t?'Worn: click to take off':'Click to wear')+'</em></button>').join(''):'<p>None yet. Your first clear of each dungeon earns one.</p>')+'</div>';w.innerHTML=h;for(const b of w.querySelectorAll('[data-t]'))b.onclick=()=>{DG.S.titleOn=DG.S.titleOn==b.dataset.t?'':b.dataset.t;DG.save();render()};B.appendChild(w)}
  function pageWeek(B){const w=document.createElement('div');w.className='wide';let h='<p>New challenges every Monday. They pay out the moment you finish them.</p><div class="wk">';try{for(const c of DG.rew.weeklies())h+='<div class="'+(c.done?'ok':'')+'"><b>'+esc(c.n)+'</b><p>'+esc(c.d)+'</p>'+it(c.reward[0],c.reward[1])+(c.done?' <b style="color:#9fffd0">Done</b>':'')+'</div>'}catch(e){console.error(e)}h+='</div>';w.innerHTML=h;B.appendChild(w)}
- function pageOpt(B){const w=document.createElement('div'),o=DG.S.opt;w.className='wide';const row=(k,n,d)=>'<label class="opt"><input type="checkbox" data-k="'+k+'"'+(o[k]?' checked':'')+'><span><b>'+n+'</b><br><small>'+d+'</small></span></label>';w.innerHTML=row('shake','Camera shake','The screen shakes on big hits and in films')+row('fx','Full visual effects','Turn off for fewer particles and less motion (this also follows the game\'s Reduce motion setting)')+row('auto','Skip films I have seen','Dungeon films play once, then only when you ask. Boss entrances can still be skipped by holding a key');for(const c of w.querySelectorAll('input'))c.onchange=()=>{o[c.dataset.k]=c.checked?1:0;DG.save()};B.appendChild(w)}
+ function pageOpt(B){const w=document.createElement('div'),o=DG.S.opt;w.className='wide';const row=(k,n,d)=>'<label class="opt"><input type="checkbox" data-k="'+k+'"'+(o[k]?' checked':'')+'><span><b>'+n+'</b><br><small>'+d+'</small></span></label>';w.innerHTML=row('shake','Camera shake','The screen shakes on big hits and in films')+row('fx','Full visual effects','Turn off for fewer particles and less motion (this also follows the game\'s Reduce motion setting)')+row('auto','Skip films I have seen','Dungeon films play once, then only when you ask. Boss entrances can still be skipped by holding a key');for(const c of w.querySelectorAll('input'))c.onchange=()=>{o[c.dataset.k]=c.checked?1:0;DG.save()};{const q=document.createElement('label');q.className='opt';const v=o.cq==null?2:o.cq;q.innerHTML='<select class="cqs"><option value="2"'+(v==2?' selected':'')+'>High</option><option value="1"'+(v==1?' selected':'')+'>Medium</option><option value="0"'+(v==0?' selected':'')+'>Low</option></select><span><b>Cinematic effects</b><br><small>Particles and sharpness in dungeon films. Low runs best on older computers</small></span>';w.appendChild(q);q.querySelector('select').onchange=e=>{o.cq=+e.target.value;DG.save()}}B.appendChild(w)}
  DG.page={open,close,get on(){return !!(P16&&P16.classList.contains('on'))}};
  // ---- the dock button, after Bosses
  try{const f={id:'dungeons',btn:'bdg16',ic:'dungeon',g:'World',n:'Dungeons',d:'Ancient and Abyssal dungeons, level 15 and up',row:1,open:()=>{open();return true},close:()=>close(),on:()=>DG.page.on};const i=NAV16.F.findIndex(q=>q.id=='bosses');NAV16.F.splice(i<0?NAV16.F.length:i+1,0,f);
@@ -22326,17 +22450,17 @@ try{(()=>{
    at(n,x,y){const L=F.lay[n],cam=F.cam,ow=L.w-VW,oh=L.h-VH;return[x-ow*cam.x*L.d-(ow*(1-L.d)*.5),y-oh*cam.y*L.d-(oh*(1-L.d)*.5)]},
    glow(x,y,r,c,a){const q=F.ctx,op=q.globalCompositeOperation,a0=q.globalAlpha;q.globalCompositeOperation='lighter';q.globalAlpha=a0*(a==null?1:a);q.drawImage(BOSS6.glo(c),x-r,y-r,r*2,r*2);q.globalAlpha=a0;q.globalCompositeOperation=op},
    // particles in screen space: emit(n, {x, y, vx, vy, g, l, s, c, add, drag}) values or [min,max]
-   emit(n,o3){const m=F.reduce?Math.ceil(n/3):n,v=q=>Array.isArray(q)?q[0]+R()*(q[1]-q[0]):q;for(let i=0;i<m&&F.pr.length<420;i++)F.pr.push({x:v(o3.x),y:v(o3.y),vx:v(o3.vx||0),vy:v(o3.vy||0),g:o3.g||0,l:v(o3.l||1),l0:0,s:v(o3.s||2),c:Array.isArray(o3.c)?o3.c[(R()*o3.c.length)|0]:o3.c,add:o3.add!==false,drag:o3.drag||0,sq:o3.sq||0})},
+   emit(n,o3){const cq=DG.S.opt.cq==null?2:DG.S.opt.cq,m=F.reduce||cq==0?Math.ceil(n/3):cq==1?Math.ceil(n*.6):n,v=q=>Array.isArray(q)?q[0]+R()*(q[1]-q[0]):q;for(let i=0;i<m&&F.pr.length<420;i++)F.pr.push({x:v(o3.x),y:v(o3.y),vx:v(o3.vx||0),vy:v(o3.vy||0),g:o3.g||0,l:v(o3.l||1),l0:0,s:v(o3.s||2),c:Array.isArray(o3.c)?o3.c[(R()*o3.c.length)|0]:o3.c,add:o3.add!==false,drag:o3.drag||0,sq:o3.sq||0})},
    particles(dt){const q=F.ctx;for(let i=F.pr.length-1;i>=0;i--){const p=F.pr[i];p.l0+=dt;if(p.l0>=p.l){const z=F.pr.pop();if(i<F.pr.length)F.pr[i]=z;continue}p.vy+=p.g*dt;if(p.drag){p.vx*=1-p.drag*dt;p.vy*=1-p.drag*dt}p.x+=p.vx*dt;p.y+=p.vy*dt}for(const p of F.pr){q.globalCompositeOperation=p.add?'lighter':'source-over';q.globalAlpha=Math.min(1,(1-p.l0/p.l)*1.6);q.fillStyle=p.c;q.beginPath();if(p.sq)q.fillRect(p.x,p.y,p.s,p.s);else{q.arc(p.x,p.y,p.s,0,TAU);q.fill()}}q.globalAlpha=1;q.globalCompositeOperation='source-over'},
    // the title reveal: the letters drift together, a line draws, the subtitle fades in below
    title(a,b,t0,dur=5,col='#ffffff'){const q=F.ctx,u=F.t-t0;if(u<0||u>dur)return;const k=u<.9?ez(u/.9):u>dur-.8?1-ez((u-dur+.8)/.8):1,sp=lerp(36,12,eo(u/2));q.save();q.textAlign='center';q.textBaseline='middle';q.globalAlpha=k;let fs=a.length>18?54:70;const chars=[...a];q.font='900 '+fs+'px Georgia,"Times New Roman",serif';let wid=chars.reduce((s,ch)=>s+q.measureText(ch).width,0);const room=1180-36*(chars.length-1);if(wid>room){fs=Math.floor(fs*Math.max(.4,room/wid));q.font='900 '+fs+'px Georgia,"Times New Roman",serif'}const ws=chars.map(ch=>q.measureText(ch).width),tot=ws.reduce((s,w)=>s+w,0)+sp*(chars.length-1);let px=VW/2-tot/2;q.shadowColor=col;q.shadowBlur=26;q.fillStyle='#fff';chars.forEach((ch,i)=>{q.fillText(ch,px+ws[i]/2,VH*.47);px+=ws[i]+sp});q.shadowBlur=0;const lw=lerp(0,Math.min(tot,860),eo((u-.3)/1.1));q.fillStyle=col;q.fillRect(VW/2-lw/2,VH*.47+fs*.62,lw,2);q.globalAlpha=k*cl((u-.9)/.8,0,1);q.font='italic 500 24px Georgia,serif';q.fillStyle='#e8e4f4';q.fillText(b,VW/2,VH*.47+fs*1.02);q.restore()},
    fade(c,a){if(a<=0)return;const q=F.ctx;q.globalAlpha=Math.min(1,a);q.fillStyle=c;q.fillRect(0,0,VW,VH);q.globalAlpha=1},
-   shake(v){if(!F.reduce&&DG.S.opt.shake)F.shk=Math.max(F.shk,v)},
+   shake(v){if(!F.reduce&&DG.S.opt.shake&&(typeof OPT=='undefined'||OPT.sh!==0))F.shk=Math.max(F.shk,v)},
    sfx(k,v){try{DG.music.sfx(k,v)}catch(_){}},music(n,s){try{DG.music.mix(n,s)}catch(_){}},
    // the wide look of film: bars and grain
    frame(){const q=F.ctx;q.fillStyle='#000';q.fillRect(0,0,VW,62);q.fillRect(0,VH-62,VW,62)}};
   return F}
- function size(){if(!C)return;const dpr=Math.min(1.5,devicePixelRatio||1),w=Math.round(innerWidth*dpr),h=Math.round(innerHeight*dpr);if(C.cv.width!=w||C.cv.height!=h){C.cv.width=w;C.cv.height=h}}
+ function size(){if(!C)return;const dpr=Math.min(DG.S.opt.cq===0?1:1.5,devicePixelRatio||1),w=Math.round(innerWidth*dpr),h=Math.round(innerHeight*dpr);if(C.cv.width!=w||C.cv.height!=h){C.cv.width=w;C.cv.height=h}}
  function frame(n){if(!C)return;const F=C.F,dt=Math.min(.05,(n-C.last)/1000);C.last=n;F.t=(n-C.t0)/1000;if(C.skip&&C.held){C.hold+=dt;if(C.hold>=.6){finish();return}}else C.hold=Math.max(0,C.hold-dt*2);
   size();const def=F.def;while(C.bi<def.beats.length&&def.beats[C.bi][0]<=F.t){try{def.beats[C.bi][1](F)}catch(e){console.error('DG film beat',e)}C.bi++}
   try{if(def.cam){const q=def.cam(F.t);if(q){F.cam.x=q.x;F.cam.y=q.y==null?.5:q.y;F.cam.z=q.z||1}}const c=C.x,cvw=C.cv.width,cvh=C.cv.height,sc=Math.max(cvw/VW,cvh/VH);F.ctx=c;c.setTransform(1,0,0,1,0,0);c.fillStyle='#000';c.fillRect(0,0,cvw,cvh);F.shk=Math.max(0,F.shk-dt*1.1);const sx=F.shk?(R()-.5)*F.shk*36:0,sy=F.shk?(R()-.5)*F.shk*36:0;c.setTransform(sc,0,0,sc,(cvw-VW*sc)/2+sx*sc,(cvh-VH*sc)/2+sy*sc);if(F.cam.z!==1){c.translate(VW/2,VH/2);c.scale(F.cam.z,F.cam.z);c.translate(-VW/2,-VH/2)}def.draw(c,F.t,F,dt);F.particles(dt);if(def.over)def.over(c,F.t,F,dt);c.setTransform(sc,0,0,sc,(cvw-VW*sc)/2,(cvh-VH*sc)/2);F.frame()}catch(e){console.error('DG film',e);finish();return}
@@ -22346,7 +22470,7 @@ try{(()=>{
  const EVS=['keydown','keyup','mousedown','mouseup','pointerdown','pointerup'];
  function play(id,o={}){const def=REG[id];if(!def){o.done&&o.done();return false}if(C)stop();const d=DG.BY[id];const cv2=document.createElement('canvas');cv2.id='dgfilm';cv2.setAttribute('aria-label',d?d.n+' film':'Film');document.body.appendChild(cv2);const tip=document.createElement('div');tip.id='dgskip';document.body.appendChild(tip);
   const F=Film(def,o);C={cv:cv2,x:cv2.getContext('2d'),F,t0:performance.now(),last:performance.now(),done:o.done,skip:!!o.skip,hold:0,held:false,raf:0,bi:0,prev:window.RB_COVER,tip};
-  window.RB_COVER=1;F.ctx=C.x;try{if(def.build)def.build(F)}catch(e){console.error('DG film build',e)}try{if(d)DG.music.film(d)}catch(_){}for(const k of EVS)addEventListener(k,key,true);size();C.raf=requestAnimationFrame(frame);C.t0=performance.now();C.last=C.t0;return true}
+  window.RB_COVER=1;F.ctx=C.x;try{if(def.build)def.build(F)}catch(e){console.error('DG film build',e)}try{if(d&&!def.silentStart)DG.music.film(d)}catch(_){}for(const k of EVS)addEventListener(k,key,true);size();C.raf=requestAnimationFrame(frame);C.t0=performance.now();C.last=C.t0;return true}
  function stop(){if(!C)return;cancelAnimationFrame(C.raf);for(const k of EVS)removeEventListener(k,key,true);const cv2=C.cv,tip=C.tip;cv2.style.transition='opacity .5s';cv2.style.opacity='0';setTimeout(()=>{try{cv2.remove();tip.remove()}catch(_){}},520);window.RB_COVER=C.prev||0;if(!window.RB_COVER)try{delete window.RB_COVER}catch(_){}try{for(const k in K)K[k]=0}catch(_){}C=null}
  function finish(){if(!C)return;const d=C.done;stop();try{if(!DG.run)DG.music.leave()}catch(_){}try{d&&d()}catch(e){console.error(e)}}
  DG.cine={reg(id,def){def.beats=(def.beats||[]).slice().sort((a,b)=>a[0]-b[0]);REG[id]=def;return def},has:id=>!!REG[id],play,stop,finish,REG,get on(){return !!C},get t(){return C?C.F.t:0},seek(t){if(C)C.t0=performance.now()-t*1000},VW,VH,get canSkip(){return !!(C&&C.skip)}};
@@ -22550,7 +22674,7 @@ try{(()=>{
   onHit(m,d){return d}});
  // ================= the film =================
  const DOORX=1720,DOORY=792,DOORH=360,DOORW=250;
- DG.cine.reg('ruins',{dur:33,seed:1701,
+ DG.cine.reg('ruins',{dur:33,seed:1701,silentStart:1,
   build(F){F.layer('sky',1280,720,(x,w,h,r)=>{const gr=x.createLinearGradient(0,0,0,h);gr.addColorStop(0,'#01060a');gr.addColorStop(.55,'#072018');gr.addColorStop(1,'#0e3a2c');x.fillStyle=gr;x.fillRect(0,0,w,h);ART.stars(x,w,h*.5,180,r,'#cfeee0');ART.glow(x,w*.68,h*.28,240,'#bfffe0',.18);x.fillStyle='#d8fff0';x.beginPath();x.arc(w*.68,h*.26,34,0,TAU);x.fill();x.fillStyle='#03120e';x.beginPath();x.arc(w*.68+14,h*.26-6,31,0,TAU);x.fill();ART.ridge(x,w,h*.62,h,'#061a14',r,44);ART.ridge(x,w,h*.72,h,'#04120e',r,30)},0);
     // the temple itself: terraces, a colonnade, a sealed gate in the middle
     F.layer('temple',3000,1000,(x,w,h,r)=>{const stone='#1c332a',dk='#0e1e18',lt='#2c4a3c';for(let i=0;i<4;i++){const W2=1800-i*340,H2=120,X=DOORX-W2/2,Y=792+H2-i*H2-30;const gr=x.createLinearGradient(0,Y,0,Y+H2);gr.addColorStop(0,lt);gr.addColorStop(1,dk);x.fillStyle=gr;x.fillRect(X,Y,W2,H2);x.strokeStyle='rgba(0,0,0,.4)';x.lineWidth=3;for(let k=0;k<W2;k+=90){x.beginPath();x.moveTo(X+k+(i%2)*45,Y);x.lineTo(X+k+(i%2)*45,Y+H2);x.stroke()}x.beginPath();x.moveTo(X,Y+H2/2);x.lineTo(X+W2,Y+H2/2);x.stroke()}
@@ -22560,7 +22684,7 @@ try{(()=>{
     // statues and broken columns that pass close to the camera
     F.layer('fore',4200,1000,(x,w,h,r)=>{for(let i=0;i<5;i++){const X=300+i*860+r()*140,wd=86+r()*40,broke=r()<.7;ART.pillar(x,X,1000,wd,broke?180+r()*160:720,'#08120e','#0a1812',broke,r)}for(let i=0;i<3;i++){const X=760+i*1300+r()*160;const c=x;c.save();c.translate(X,1000);c.scale(.62,.62);c.translate(-X,-1000);c.fillStyle='#060e0a';c.fillRect(X-90,700,180,300);c.beginPath();c.moveTo(X-50,700);c.lineTo(X-60,470);c.lineTo(X-96,430);c.lineTo(X-46,380);c.lineTo(X+46,380);c.lineTo(X+96,430);c.lineTo(X+60,470);c.lineTo(X+50,700);c.closePath();c.fill();c.beginPath();c.arc(X,340,42,0,TAU);c.fill();c.fillRect(X+84,300,12,420);c.restore()}for(let i=0;i<14;i++){const X=r()*w;x.strokeStyle='#050c08';x.lineWidth=4+r()*5;x.beginPath();x.moveTo(X,0);x.quadraticCurveTo(X+30,150,X-20,200+r()*250);x.stroke()}},1);
     F.crys=[[1280,780],[1420,800],[1560,770],[1890,780],[2030,800],[2170,770],[1140,790],[2300,795],[1000,800],[2440,790]].map((p,i)=>({x:p[0],y:p[1],t:7.4+i*.62,s:.8+((i*13)%5)*.1}));F.open=0;F.sym=0;F.lit=0},
-  beats:[[.3,F=>F.sfx('wind',1.2)],[4,F=>F.sfx('wind',1)],[7.4,F=>{F.sfx('bell',.7)}],[10,F=>F.music('cine',2)],[12,F=>F.sfx('bell',.5)],[15.5,F=>F.sfx('choir',.7)],[17.5,F=>{F.sfx('glow',1);F.symOn=1}],[20.2,F=>{F.sfx('rumble',1.1);F.shake(.2)}],[21.7,F=>{F.sfx('door',1.2);F.opening=1;F.shake(.32)}],[25.3,F=>{F.sfx('boom',.5);F.shake(.15);F.emit(30,{x:[500,780],y:[300,600],vx:[-90,90],vy:[-50,50],c:['#bfffe0','#5dffb0'],s:[1,3],l:[1,2.4]})}],[27,F=>F.music('explore',3)]],
+  beats:[[.3,F=>F.sfx('wind',1.2)],[4,F=>F.sfx('wind',1)],[7.4,F=>{F.sfx('bell',.7)}],[10,F=>{try{DG.music.film(DG.BY.ruins)}catch(_){}F.music('cine',2)}],[12,F=>F.sfx('bell',.5)],[15.5,F=>F.sfx('choir',.7)],[17.5,F=>{F.sfx('glow',1);F.symOn=1}],[20.2,F=>{F.sfx('rumble',1.1);F.shake(.2)}],[21.7,F=>{F.sfx('door',1.2);F.opening=1;F.shake(.32)}],[25.3,F=>{F.sfx('boom',.5);F.shake(.15);F.emit(30,{x:[500,780],y:[300,600],vx:[-90,90],vy:[-50,50],c:['#bfffe0','#5dffb0'],s:[1,3],l:[1,2.4]})}],[27,F=>F.music('explore',3)]],
   cam(t){const x=t<6?lerp(.1,.22,ez(t/6)):t<16?lerp(.22,.46,ez((t-6)/10)):lerp(.46,.5,ez((t-16)/5)),y=t<16?.55-.05*ez(t/16):lerp(.5,.68,ez((t-16)/6));return{x,y,z:t<16?1:lerp(1,1.28,ez((t-16)/7))}},
   draw(c,t,F,dt){const rv=ez((t-2.6)/4);F.draw('sky');F.draw('temple',{a:rv});F.draw('floor',{a:rv});const[gx,gy]=F.at('temple',DOORX,DOORY);
    // the gate: two stone doors with symbols that light one by one. What is behind them is darker than the night
@@ -22722,7 +22846,8 @@ try{(()=>{
     {name:'eruptions3',wind:.65,rec:.6,start(m,X){},fire(m,X){const f=X.fl();for(let i=0;i<5;i++)geyser(X.clX(P.x+(i-2)*T*3.4),f,.8+i*.14,m,X);X.shk(.14)}},
     {name:'skyfire2',wind:.6,rec:.5,w(m){return m.air>1?3:.4},start(m,X){},fire(m,X){for(let i=0;i<4;i++)fx.later(i*.18,()=>fx.c(P.x+rn(-T*2,T*2),P.y+P.h/2+rn(-T,T),T*1.9,.75,.24,{c:HOT,dmg:X.dmg(m,.9),kind:'fire',snd:0}))}}]],
   // the entrance: the lava starts to work, the floor gives way to fire, and he walks up out of it
-  intro(I,m,X){const r=I.room,cxr=(r.x0+r.x1)*T/2,fy=r.fy*T;m.x=(r.x0+32)*T;m.y=fy-m.h;m.rise=0;m.f=-1;I.cam([{x:(r.x0+6)*T,y:fy-T*7,z:1,dur:.1},{x:cxr,y:fy-T*9,z:.95,dur:2.6},{x:m.x-T*2,y:fy-T*7,z:1.08,dur:1.8,hold:.4},{x:m.x,y:fy-m.h*.72,z:1.32,dur:1.6,hold:1},{x:m.x-T*3,y:fy-T*7,z:1.05,dur:.8,hold:1.6}]);
+  intro(I,m,X){const r=I.room,cxr=(r.x0+r.x1)*T/2,fy=r.fy*T;m.x=(r.x0+32)*T;m.y=fy-m.h;m.rise=0;m.f=-1;I.cam([{x:(r.x1-6)*T,y:fy-T*2.4,z:1.32,dur:.1},{x:cxr,y:fy-T*3,z:1.24,dur:2.6},{x:m.x+T*2,y:fy-T*4,z:1.12,dur:1.8,hold:.4},{x:m.x,y:fy-m.h*.72,z:1.42,dur:1.6,hold:1},{x:m.x-T*3,y:fy-T*7,z:1.02,dur:.8,hold:1.6}]);
+   for(let i=0;i<44;i++)I.at(.3+i*.09,()=>{const x=rn(r.x0+3,r.x1-3)*T;fx.shot(x,fy-2,rn(-6,6),-rn(26,64),{r:rn(4,12),c:i%3?FI:FL,dmg:0,ghost:1,l:rn(.5,.9)})});
    I.at(.3,()=>{DG.music.sfx('lava',1);fx.ground(r.x0*T,r.x1*T,fy,{life:5.6,c:FI,dmg:0,h:T*.7})});I.at(2.6,()=>DG.music.sfx('lava',1.2));
    for(let i=0;i<16;i++)I.at(.4+i*.19,()=>{const x=rn(r.x0+3,r.x1-3)*T;X.burst(x,fy-2,[FI,FL],9,150+i*8);X.shk(.03+i*.004)});
    I.at(3.1,()=>DG.music.sfx('rumble'));for(let i=0;i<12;i++)I.at(3.2+i*.17,()=>{const x=(r.x0+3+((i*17)%40))*T;fx.z(x-T*1.1,fy-T*(5+i%4*2),x+T*1.1,fy+2,.12,.5,{c:FI,dmg:0,kind:'fire',snd:0});DG.shk(.08)});
@@ -22906,8 +23031,8 @@ try{(()=>{
     {name:'cage3',wind:.7,rec:.5,cd:7,start(m,X){},fire(m,X){cage(m,X,P.x,P.y+P.h/2,.8);for(let i=0;i<4;i++)fx.later(.2+i*.14,()=>fallIce(X.clX(P.x+rn(-T*5,T*5)),.75,m,X,.9))}},
     {name:'wave3',wind:.8,rec:.6,start(m,X){},fire(m,X){for(let k=0;k<3;k++)fx.later(k*.6,()=>fwave(m,X,.95,490))}}]],
   // the entrance: snow starts inside the room, everything freezes outward from the walls, and she is there in the middle of it, in a cocoon that breaks
-  intro(I,m,X){const r=I.room,cxr=(r.x0+r.x1)*T/2,fy=r.fy*T;m.x=(r.x0+30)*T;m.y=fy-m.h-T*3;m.rise=0;m.f=-1;I.cam([{x:(r.x0+6)*T,y:fy-T*7,z:1,dur:.1},{x:cxr,y:fy-T*9,z:.95,dur:2.8},{x:m.x-T*2,y:fy-T*8,z:1.08,dur:1.8,hold:.3},{x:m.x,y:m.y+m.h*.45,z:1.36,dur:1.6,hold:1},{x:m.x-T*3,y:fy-T*8,z:1.05,dur:.8,hold:1.6}]);
-   I.at(.2,()=>DG.music.sfx('wind',1));for(let i=0;i<30;i++)I.at(.3+i*.1,()=>{const x=rn(r.x0+2,r.x1-2)*T;X.burst(x,r.y0*T+T*(2+(i%5)),['#eaf8ff','#bfeaff'],4+(i>>3),50)});
+  intro(I,m,X){const r=I.room,cxr=(r.x0+r.x1)*T/2,fy=r.fy*T;m.x=(r.x0+30)*T;m.y=fy-m.h-T*3;m.rise=0;m.f=-1;I.cam([{x:cxr,y:r.y0*T+T*3,z:.9,dur:.1},{x:cxr,y:fy-T*6.5,z:.96,dur:2.8},{x:m.x+T*3,y:m.y+m.h*.6,z:1.14,dur:1.8,hold:.3},{x:m.x,y:m.y+m.h*.45,z:1.36,dur:1.6,hold:1},{x:m.x-T*3,y:fy-T*8,z:1.05,dur:.8,hold:1.6}]);
+   I.at(.2,()=>DG.music.sfx('wind',1));for(let i=0;i<(DG.reduced()?40:120);i++)I.at(.15+i*(DG.reduced()?.16:.052),()=>{fx.shot(rn(r.x0+1,r.x1-1)*T,r.y0*T+T,rn(-16,16),rn(60,130),{r:rn(1.6,3.6),c:'#f0faff',dmg:0,ghost:1,l:5.5})});for(let i=0;i<30;i++)I.at(.3+i*.1,()=>{const x=rn(r.x0+2,r.x1-2)*T;X.burst(x,r.y0*T+T*(2+(i%5)),['#eaf8ff','#bfeaff'],4+(i>>3),50)});
    for(let i=0;i<8;i++)I.at(2.6+i*.22,()=>{const a=(r.x0+i*3)*T,b=(r.x1-i*3)*T;slick(a,a+T*3,fy,0,6.5);slick(b-T*3,b,fy,0,6.5);X.burst(a,fy-4,[ICE,PALE],8,160);X.burst(b,fy-4,[ICE,PALE],8,160);DG.music.sfx('crack',.4);X.shk(.04)});
    I.at(3,()=>DG.music.sfx('freeze',1.1));I.at(4.3,()=>{DG.music.sfx('glow',1);X.wave(m.x,fy,ICE,T*6,1,.4)});rz(I,m,4.4,2.5);I.at(5.6,()=>DG.music.sfx('choir',.7));
    I.at(6.9,()=>{DG.music.sfx('freeze',1.2);DG.music.sfx('boom',.5);X.shk(.4);X.wave(m.x,m.y+m.h/2,PALE,T*14,1,.3);X.burst(m.x,m.y+m.h/2,['#fff',ICE,PALE],44,420,12)});I.dur=9},
@@ -23508,14 +23633,14 @@ try{(()=>{
  const OMEGA={name:'omega',wind:2,rec:1.5,vul:1.4,cd:15,w:()=>2,start(m,X){omega(m,X,2)},fire(m,X){X.shk(.6);DG.music.sfx('boom',1)}};
  const DRAIN={name:'drain',wind:.9,rec:.7,cd:12,when:(m,X)=>X.mech()>=2,start(m,X){fx.c(P.x,P.y+P.h/2,T*2.4,.9,.25,{c:G2,dmg:X.dmg(m,.8),kind:'void',fn(){X.soul(.3,8)}})},fire(m,X){if(X.mech()>=3)fx.mark({t:2.8,r:T*2.6,c:G2,dmg:X.dmg(m,1)})}};
  const SHADOWS={name:'shadows',wind:1,rec:.6,cd:22,when:(m,X)=>X.mech()>=3,start(m,X){X.say('','Its shadow steps through',800)},fire(m,X){const b=X.box(),f=X.fl();for(const u of[.2,.8])X.ghost(m.dgx,lerp(b.l,b.r,u),f-T*5,{life:10,icd:2.4,sc:.42,hp:.02,kit:[{name:'g',wind:.9,rec:.7,start(){},fire(q,Y){const sy=q.y+q.h*.34,a=Math.atan2(P.y+P.h/2-sy,P.x-q.x);for(let i=-1;i<=1;i++)fx.shot(q.x,sy,Math.cos(a+i*.26)*300,Math.sin(a+i*.26)*300,{r:9,c:G,dmg:Y.dmg(q,.9),l:4.5,ghost:1})}}]})}};
- DG.boss.reg('worldeater0',{n:'The World Eater',ti:'Its Shadow Upon the Abyss',d:'abyss',cls:'boss',c:G,c2:G2,c3:'#ffd24a',w:200,h:300,ai:'float',sp:72,hover:T*7,range:T*5,touch:.3,hoverTiles:4,mats:[715,708],phases:[.72,.45,.18],names:['The Hunger','Gravity Fails','The Unmaking','Existence Ends'],idle:[1.7,1.2,.8],phaseDur:1.8,blurb:'This is not all of it. It bends the fall of things, unmakes the floor, and once it seals itself you can only endure. When it opens, strike with everything.',art:eaterArt,introDur:12.9,deathDur:6.6,defn:'Four phases, one you can only survive',
+ DG.boss.reg('worldeater0',{lowG:5,n:'The World Eater',ti:'Its Shadow Upon the Abyss',d:'abyss',cls:'boss',c:G,c2:G2,c3:'#ffd24a',w:200,h:300,ai:'float',sp:72,hover:T*7,range:T*5,touch:.3,hoverTiles:4,mats:[715,708],phases:[.72,.45,.18],names:['The Hunger','Gravity Fails','The Unmaking','Existence Ends'],idle:[1.7,1.2,.8],phaseDur:1.8,blurb:'This is not all of it. It bends the fall of things, unmakes the floor, and once it seals itself you can only endure. When it opens, strike with everything.',art:eaterArt,introDur:12.9,deathDur:6.6,defn:'Four phases, one you can only survive',
   atk:[[BOLTS,SWEEP,CLAW,RING,SKY,REPEL,REACH],[BOLTS,SWEEP,CLAW,RING,LOWG,HEAVY,WELL,COLLAPSE,SUMMON,SKY,REPEL,REACH],[BEAMS,WELL,COLLAPSE,RING,CLAW,LOWG,HEAVY,SUMMON,DRAIN,SKY,REPEL,REACH],[OMEGA,BEAMS,TWIN,COLLAPSE,BOLTS,WELL,LOWG,HEAVY,DRAIN,SHADOWS,SKY,REPEL]],
   // the entrance: the ground lets go of things first, the motes gather, the shape comes through, and only when its eye has opened does the fight begin
   intro(I,m,X){const r=I.room,fy=r.fy*T,cx=(r.x0+r.x1)*T/2,bx=cx+T*6,by=fy-m.h-T*4.5;m.x=bx;m.y=by;m.rise=0;m.eye=0;m.f=-1;m.sealed=0;
    I.cam([{x:cx,y:fy-T*9,z:.82,dur:.1,hold:.2},{x:cx,y:fy-T*11,z:.78,dur:3,hold:.8},{x:bx,y:by+m.h*.5,z:.95,dur:2.5,hold:1.2},{x:bx,y:by+m.h*.34,z:1.4,dur:1.2,hold:.9},{x:bx,y:by+m.h*.45,z:1,dur:.8,hold:2.8}]);
    I.at(.3,()=>{DG.music.sfx('rumble',.8);X.wave(cx,fy,G3,T*18,1.2,.3)});I.at(1,()=>DG.music.sfx('rise',.7));
    // rocks leave the floor and do not come back
-   for(let i=0;i<28;i++)I.at(.4+i*.2,()=>{const x=lerp(r.x0+2,r.x1-2,R())*T;fx.shot(x,fy-T*.5,rn(-16,16),-rn(60,130),{r:rn(6,17),kind:'rock',c:'#4a3a70',ghost:1,l:7});X.burst(x,fy-4,[G3,'#4a3a70'],5,70)});
+   I.at(.3,()=>X.say('','The ground is letting go',2000));for(let i=0;i<28;i++)I.at(.4+i*.2,()=>{const x=lerp(r.x0+2,r.x1-2,R())*T;fx.shot(x,fy-T*.5,rn(-16,16),-rn(60,130),{r:rn(6,17),kind:'rock',c:'#4a3a70',ghost:1,l:7});X.burst(x,fy-4,[G3,'#4a3a70'],5,70)});
    // it comes through slowly: a shape in the tear, no more
    for(let i=0;i<=60;i++)I.at(3.2+i*.09,()=>{m.rise=i/60});I.at(3.3,()=>DG.music.sfx('choir',.6));I.at(6,()=>{X.shk(.14);DG.music.sfx('rumble',.8)});
    for(let i=0;i<=20;i++)I.at(8.7+i*.05,()=>{m.eye=i/20});I.at(8.7,()=>{DG.music.sfx('eye',1);X.shk(.2)});I.at(9.1,()=>X.wave(bx,by+m.h*.34,G2,T*7,.8,.4));
@@ -24185,7 +24310,7 @@ try{(()=>{
    [kingsfall,decree,reach,crownblades,rebuke,court,sentence,muster,tithe,kingdomsEnd],
    [kingsfall,voidstep,execution,crownblades,rebuke,court,sentence,tithe,kingdomsEnd,decree,oathward,muster]],
   // the entrance: a dead hall, three tolls of a bell, and then the thing on the throne remembers it is a king
-  intro(I,m,X){const r=I.room,fy=r.fy*T,tx=(r.x0+33)*T;m.x=tx;m.y=fy-m.h;m.rise=0;m.f=-1;m.thr=tx;m.vx=0;DG.run.lightK=1.5;I.cam([{x:(r.x0+6)*T,y:fy-T*8,z:1,dur:.1},{x:(r.x0+r.x1)*T/2,y:fy-T*10,z:.92,dur:3},{x:tx-T*2,y:fy-T*6,z:1.2,dur:2.2,hold:.6},{x:tx,y:fy-m.h*.72,z:1.5,dur:2,hold:1.2},{x:tx-T*3,y:fy-T*7,z:1.05,dur:.9,hold:2}]);
+  intro(I,m,X){const r=I.room,fy=r.fy*T,tx=(r.x0+33)*T;m.x=tx;m.y=fy-m.h;m.rise=0;m.f=-1;m.thr=tx;m.vx=0;DG.run.lightK=1.5;I.cam([{x:(r.x0+8)*T,y:fy-T*6,z:.86,dur:.1},{x:tx-T*7,y:fy-T*6.5,z:1,dur:4.2},{x:tx-T,y:fy-T*6,z:1.22,dur:1.4,hold:.3},{x:tx,y:fy-m.h*.72,z:1.58,dur:2,hold:1.2},{x:tx-T*3,y:fy-T*7,z:1.05,dur:.9,hold:2}]);
    for(const[k,t0]of[[0,.5],[1,2],[2,3.5]])I.at(t0,()=>{DG.music.sfx('bell',.7-k*.08);X.shk(.05)});for(let i=0;i<20;i++)I.at(.3+i*.28,()=>X.burst(tx+rn(-T*9,T*9),fy-rn(0,T*3),['#04020a','#1a1028',V],5,70));
    for(let i=0;i<=20;i++)I.at(4+i*.06,()=>{m.rise=.3*i/20});I.at(4,()=>{DG.music.sfx('eye',1);DG.run.lightK=1.2});I.at(5,()=>{DG.music.sfx('rumble',.9);X.burst(tx,fy-m.h*.5,[V,SL],16,200)});for(let i=0;i<=44;i++)I.at(5.2+i*.06,()=>{m.rise=.3+.7*i/44});
    I.at(8,()=>{DG.music.sfx('boom',.9);DG.music.sfx('roar',.7);X.shk(.5);X.wave(tx,fy,V,T*14,1,.3);for(const s of[-1,1])X.burst(tx+s*T*3,fy,[SL,V],22,260);DG.run.lightK=1})},
@@ -24365,7 +24490,7 @@ try{(()=>{
  const everything={name:'everything',wind:1.25,rec:2.4,cd:13,vul:2,w:()=>1.4,start(m,X){X.say('EVERYTHING ENDS','',1200);DG.music.sfx('roar',.7)},fire(m,X){const f=X.fl(),b=X.box(),x0=P.x;const fall=(x,sd2,tl)=>{handTo(m,sd2,x,b.t+T*3,tl);fx.z(x-T*2.4,b.t,x+T*2.4,f+2,tl,.28,{c:C,dmg:X.dmg(m,.95),kb:440,kind:'down',on(){handTo(m,sd2,x,f-T*1.2,.5);X.shk(.3)}})};fall(x0,-1,.98);fall(X.clX(x0+(P.x<m.x?1:-1)*T*7.4),1,1.3);fx.later(1.5,()=>{const my=m.y+m.h-MAWY,a=Math.atan2(P.y+P.h/2-my,P.x-m.x);m.eat0=m.eatT=.95*tel();fx.beam(m.x,my,a,T*44,{w:16,tel:.95,act:.04,c:C,dmg:0});fx.later(.95*tel(),()=>shootPlanet(m,X,a))});fx.later(2.2,()=>{const w2=(b.r-b.l)/8,i0=Math.floor((P.x-b.l)/w2);for(let i=0;i<8;i++)if((i+i0)%2)X.collapse(b.l+i*w2,b.l+(i+1)*w2,1.05,C,X.dmg(m,.7))})}};
  const twinsweep={name:'twinsweep',wind:1.1,rec:1.3,cd:8,vul:.8,w:m=>1+Math.min(1.5,m.nearT*.2),start(m,X){const b=X.box(),f=X.fl();X.say('','Low, then high. Jump, then stay down',900);handTo(m,-1,b.l+T,f-T*1.1,1.2);fx.z(b.l,f-T*1.6,b.r,f+2,1.1,.22,{c:C,dmg:X.dmg(m,.9),kb:360,kind:'slash',boom:0})},fire(m,X){const b=X.box(),f=X.fl();X.shk(.2);handTo(m,-1,b.r-T,f-T*1.1,.5);fx.later(.1,()=>{handTo(m,1,b.r-T,f-T*3.2,1);fx.z(b.l,f-T*5,b.r,f-T*1.7,.95,.22,{c:C2,dmg:X.dmg(m,.9),kb:360,kind:'slash',boom:0})});fx.later(1.08,()=>{handTo(m,1,b.l+T,f-T*3.2,.5);X.shk(.2);X.tone(120,50,.4,'sawtooth',.07)})}};
  const nova={name:'nova',wind:1.15,rec:1.2,cd:9,w:m=>.8+Math.min(2,m.nearT*.3),start(m,X){X.say('','Three rings. Find each gap',900);const f=X.fl();fx.c(m.x,f-T*1.2,T*3.4,1.15,.1,{c:WH,kind:'void',boom:0,snd:0})},fire(m,X){const f=X.fl(),cy=f-T*1.2;for(let i=0;i<3;i++)fx.later(i*.85,()=>{fx.ring(m.x,cy,{r0:T*3.4,sp:430+i*30,max:T*30,w:26,gw:X.mech()>=3?.85:1.05,gap:Math.atan2(P.y+P.h/2-cy,P.x-m.x)+rn(-.55,.55),c:i==1?C2:C,dmg:X.dmg(m,.85)});X.shk(.2);X.tone(90,40,.5,'sawtooth',.07)})}};
- DG.boss.reg('worldeater',{n:'The World Eater',ti:'Everything That Begins',d:'eater',cls:'aboss',c:C,c2:C2,c3:WH,w:EW,h:EH,ai:'float',sp:0,touch:0,hoverTiles:0,mats:[724,720],phases:[.76,.5,.22],names:['The First Hunger','Gravity Fails','Worlds Consumed','The Last Silence'],idle:[1.5,1.2,.92],phaseDur:2.4,blurb:'The last thing there is. Watch the maw, watch the hands, and when the arena goes dark, stay in the last light. It can be beaten. Nothing has yet.',art:eaterArt,introDur:13.4,deathDur:7.2,defn:'Four phases. Gravity is not on your side',
+ DG.boss.reg('worldeater',{lowG:7,n:'The World Eater',ti:'Everything That Begins',d:'eater',cls:'aboss',c:C,c2:C2,c3:WH,w:EW,h:EH,ai:'float',sp:0,touch:0,hoverTiles:0,mats:[724,720],phases:[.76,.5,.22],names:['The First Hunger','Gravity Fails','Worlds Consumed','The Last Silence'],idle:[1.5,1.2,.92],phaseDur:2.4,blurb:'The last thing there is. Watch the maw, watch the hands, and when the arena goes dark, stay in the last light. It can be beaten. Nothing has yet.',art:eaterArt,introDur:13.4,deathDur:7.2,defn:'Four phases. Gravity is not on your side',
   atk:[[handfall,planetshot,gravshift,longarm,exhale],
    [handfall,planetshot,gravshift,longarm,exhale,wells,unmaking,echoes,condemn,feast],
    [handfall,planetshot,worldsrain,annihilate,children,eventh,unmaking,echoes,condemn,feast,longarm,exhale],
@@ -24448,6 +24573,277 @@ try{(()=>{
    // at the moment the eyes are fully open, nothing. Then the name
    F.fade('#000',t<2.6?1-ez(t/2.6):t>27.5&&t<28.6?ez((t-27.5)/.7):t>=35?ez((t-35)/1):0);F.title('THRONE OF THE WORLD EATER','Everything that begins must eventually end.',29.4,5.6,C)}});
 })()}catch(e){console.error('DG eater',e)}
+
+/* ========== LATE: 99-zzzzzzzzz-r1-dg-coop.js ========== */
+// ===== DG co-op: two real players in one dungeon. The map is the same on both computers (it is built from the dungeon's own seed). The party leader's computer runs the monsters and bosses and sends where they are;
+//  the other computer shows copies of them. When a monster attacks, both computers run that attack aimed at the same player, and each computer only ever hurts its own player, so dodging feels the same on both.
+//  A blow on a copy is sent to the leader, who decides what it did. If the leader leaves, the other computer takes the monsters over. server/party.js owns who is in the party and pays the run's reward once. =====
+try{(()=>{
+ const DG=window.DG,A=DG.A,TAU=Math.PI*2,R=Math.random,cl=DG.cl;
+ let PT=null,C=null,invite=null;const LS=[];
+ const ns=o=>{try{return NET7.send(o)}catch(_){return false}};
+ const me=()=>{try{return NET7.auth&&NET7.auth.uid}catch(_){return''}};
+ const pg=d=>{if(C)ns({t:'pg',d})};
+ const say=(a,b,ms)=>{try{DG.ui.say(a,b||'',ms||2400)}catch(_){}};
+ const toast=t=>{try{DG.ui.toast(t)}catch(_){try{window.say&&window.say(t)}catch(_){}}};
+ const byN=n=>{for(const m of mobs)if(m.dgx&&m.nid===n)return m;return null};
+ const mateOf=()=>PT&&PT.m&&PT.m.find(x=>x.uid!==me());
+ const myM=()=>PT&&PT.m&&PT.m.find(x=>x.uid===me());
+ function pres(){try{return{x:P.x|0,y:P.y|0,f:P.f,n:myName,h:myHue,vx:0,wp,sw:0,fm:1,hat:wear.hat,wing:wear.wing,boot:wear.boot,glove:wear.glove,body:wear.body,lv:lvl,wo:1,uid:myId,lk:look,cx:celPres()}}catch(_){return{}}}
+ function pushInfo(){if(!NET7.online)return;let open=[];try{open=DG.LIST.filter(d=>!DG.lockReason(d.id)).map(d=>d.id)}catch(_){}let wn='';try{const w=WPN[wp];wn=w&&w.n||wp}catch(_){}let wg='';try{const q=curWing(lvl);wg=q&&q.n||''}catch(_){}ns({t:'party',op:'info',d:{lvl:lvl|0,wp:wn,wg,title:(DG.S&&DG.S.titleOn)||'',open,pr:JSON.stringify(pres())}})}
+
+ // ================= the run =================
+ const K_HP={regular:1.55,elite:1.7,mini:1.75,boss:1.85,aregular:1.6,aelite:1.75,aboss:1.9};
+ // two players do about twice the damage, but they also split up, revive and dodge: enemies get about 1.6 to 1.9 times the health, not double, and each hit stings a little less as there is more to go around
+ {const h0=DG.mobHP,d0=DG.mobDmg;DG.mobHP=function(d,cls){const v=h0.apply(this,arguments);return C&&C.scale?v*(K_HP[cls]||1.6):v};DG.mobDmg=function(d,cls){const v=d0.apply(this,arguments);return C&&C.scale?v*.92:v}}
+ function begin(pv,go){C={run:go.run,d:go.d,df:go.df,seed:go.seed,leaderUid:go.leader,get guest(){return this.leaderUid!==me()},scale:true,mate:null,mateIn:false,mateOn:true,nid:1,pt:0,st:0,gt:0,rev:0,eH:false,down:false,dealt:0,mdealt:0,ghq:[],groups:{},pz:[],bm:null,claimed:false,fast:false,bt:18,quiet:0,started:performance.now(),hello:0};
+  try{DG.page&&DG.page.close()}catch(_){}try{if(DG.run)DG.endRun()}catch(_){}document.body.classList.add('dgduo');
+  // the film is the same but may run a different length on each computer: nothing wakes up until both have arrived
+  const ok=DG.enter(go.d,go.df,{force:true,duo:true});if(!ok){toast('Could not enter');stop()}return ok}
+ function stop(){const c=C;C=null;document.body.classList.remove('dgduo');hudOff();return c}
+ const coop={
+  get on(){return !!C},get run(){return C&&C.run},get leader(){return !!(C&&!C.guest)},get mirror(){return !!(C&&C.guest)},get mateIn(){return !!(C&&C.mateIn)},get down(){return !!(C&&C.down)},get fast(){return !!(C&&C.fast)},get C(){return C},get party(){return PT},
+  get hitMate(){return !!(C&&C.fromMate)},
+  // ---- targets: a monster goes for whoever is nearest, and stays on them for a few seconds so it does not twitch between you
+  swap(m){if(!C||C.guest||!C.mate||!C.mateIn||!C.mateOn)return null;const M=C.mate;m.tgT=(m.tgT||0)-1/60;if(M.dn){m.tg=0}else if(C.down){m.tg=1}else if(m.dgb&&C.aggro){m.tg=C.aggro-1}else if(m.own){m.tg=m.own-1}else if(m.tgT<=0||m.tg==null){m.tgT=2.5+R()*1.5;m.tg=Math.hypot(M.x-m.x,M.y-m.y)<Math.hypot(P.x-m.x,P.y-m.y)?1:0}if(m.tg!==1)return null;const sv={x:P.x,y:P.y,g:P.g};P.x=M.x;P.y=M.y;P.g=!M.a;DG.aimed=1;return sv},
+  unswap(sv){P.x=sv.x;P.y=sv.y;P.g=sv.g;DG.aimed=0},
+  atk(m,a,w){if(!C||C.guest)return;pg({e:'a',n:m.nid,a:a.name,w,tg:m.tg===1?1:0,tx:P.x|0,ty:P.y|0})},
+  fire(m,a){if(!C||C.guest)return;pg({e:'f',n:m.nid,a:a.name,tg:m.tg===1?1:0,tx:P.x|0,ty:P.y|0})},
+  spawned(m,id,o){if(!C)return;if(C.guest&&!o.net)return;if(C.guest){m.nid=o.net;return}m.nid=++C.nid;if(id[0]=='@'){m.nid=1;return}pg({e:'sp',n:m.nid,id,x:m.x|0,y:(m.y+m.h)|0,o:{hpk:o.hpk||1,dmgk:o.dmgk||1,summon:o.summon?1:0,life:o.life||0,quiet:o.quiet?1:0,own:o.own||0}})},
+  stub(id,x,y,o){const def=DG.mobs.DEF[id]||{w:30,h:30};return{k:'dgm_'+id,dgx:def,x,y:y-(def.h||30),w:def.w,h:def.h,hp:1,mhp:1,cd:{},stub:1,fl:0,ph:0,room:DG.run&&DG.run.room}},
+  ghosted(m,o,sc){if(!C)return;if(C.guest){C.ghq.push(o.kit||null);return}pg({e:'gh',n:m.nid,sc:sc||.7})},
+  died(m){if(!C||C.guest)return;pg({e:'x',n:m.nid,k:m.dead!==2?1:0})},
+  out(m){if(!C||C.guest)return;pg({e:'bo'})},
+  phase(m){if(!C||C.guest)return;pg({e:'ph',ph:m.phase})},
+  roomOn(r){if(!C||C.guest||C.quiet)return;pg({e:'rm',i:DG.L.rooms.indexOf(r),s:1});pull(r)},
+  roomDone(r){if(!C||C.guest||C.quiet)return;pg({e:'rm',i:DG.L.rooms.indexOf(r),s:2})},
+  want(r){if(!C||!C.guest)return;const i=DG.L.rooms.indexOf(r);const n=performance.now();if(n-(r.wantT||0)<900)return;r.wantT=n;pg({e:'want',i})},
+  key(){if(!C||C.quiet)return;pg({e:'k'})},
+  gate(q){if(!C||C.quiet)return;pg({e:'g',i:DG.L.gates.indexOf(q)})},
+  bossDown(run){if(!C||C.guest)return;ns({t:'party',op:'done',run:C.run})},
+  gateBlock(q){if(!C||C.quiet)return false;return DG.duoP?DG.duoP.gateBlock(q):false},
+  near(){if(!C||!C.mate||!C.mateIn)return null;const M=C.mate;if(M.dn&&!C.down&&Math.hypot(P.x-M.x,P.y-M.y)<T*3.2)return{t:'Hold E to revive '+((C.mate.pr&&C.mate.pr.n)||'your friend'),go(){}};return DG.duoP?DG.duoP.near():null},
+  begun(){if(!C)return;C.t0=performance.now();C.mateIn=false;announce();hudOn()},
+  ended(){if(!C)return;hudOff()},
+  left(){if(!C)return;ns({t:'party',op:'out',run:C.run});stop()},
+  // ---- every frame of a run
+  tick(dt){if(!C||!DG.run)return;C.pt-=dt;if(C.pt<=0){C.pt=.066;pg({e:'p',x:P.x|0,y:P.y|0,f:P.f,vx:P.vx|0,a:P.g?0:1,s:typeof swing!='undefined'&&swing>0?1:0,hp:P.hp|0,mh:maxHP()|0,dn:C.down?1:0,rv:C.rev>0?+C.rev.toFixed(2):0,wp})}
+   C.hello-=dt;if(!C.mateIn&&C.hello<=0){C.hello=1;announce()}
+   if(!C.guest){C.st-=dt;if(C.st<=0){C.st=.1;snap()}}
+   C.gt-=dt;if(C.gt<=0){C.gt=.25;groupSync()}
+   if(C.down){try{for(const k in K)K[k]=0;mdL=false;mdR=false}catch(_){}P.vx=0;P.hp=Math.max(1,P.hp);iT=Math.max(iT,.5);if(P.g===false)P.vy=Math.max(P.vy,60)}
+   const M=C.mate;if(M&&M.dn&&!C.down&&C.eH&&Math.hypot(P.x-M.x,P.y-M.y)<T*3.2){C.rev+=dt/3;try{if(!DG.reduced()&&R()<dt*16)VFX.burst(M.x,M.y+20,['#bfffe0','#fff'],1,60,1,.5,4)}catch(_){}if(C.rev>=1){C.rev=0;pg({e:'revive'});toast('You pulled your friend back up');C.revives=(C.revives|0)+1}}else C.rev=Math.max(0,C.rev-dt*2);
+   if(!C.guest&&C.down&&M&&M.dn)wipe();
+   if(!C.guest&&!C.mateOn&&C.down)selfRise();
+   if(DG.duoP)try{DG.duoP.tick(dt)}catch(e){if(!coop.e){coop.e=1;console.error('DG duo',e)}}
+   hudTick(dt)},
+  mirrorMobs(dt){for(let i=mobs.length-1;i>=0;i--){const m=mobs[i];if(!m.dgx||m.dgb)continue;m.ph+=dt;m.fl-=dt;m.fade=Math.min(1,(m.fade||0)+dt*2);if(m.at>0)m.at-=dt;mirrorOne(m,dt);touch(m,m.dgx.touch||.6,260)}},
+  mirrorBoss(m,dt){m.ph+=dt;m.fl-=dt;if(m.at>0)m.at-=dt;if(m.vul>0)m.vul-=dt;mirrorOne(m,dt);if(m.dgx.touch!==0)touch(m,m.dgx.touch||.55,340)},
+  draw(c,cx,cy,now){if(!C)return;try{drawMate(c,cx,cy,now);if(DG.duoP)DG.duoP.draw(c,cx,cy,now)}catch(e){if(!coop.de){coop.de=1;console.error('DG mate',e)}}},
+  died2(){return died()},
+  invite:n=>{pushInfo();ns({t:'party',op:'invite',who:n})},accept(){if(invite){ns({t:'party',op:'accept',id:invite.id});pushInfo();invite=null;invEl()}},decline(){if(invite){ns({t:'party',op:'decline',id:invite.id});invite=null;invEl()}},leave(){ns({t:'party',op:'leave'})},lead(){ns({t:'party',op:'lead'})},start(d,df){pushInfo();ns({t:'party',op:'start',d,df})},
+  get full(){return !!(PT&&PT.m&&PT.m.length==2)},get isLead(){return !!(PT&&PT.leader===me())},get inv(){return invite},refresh(){pushInfo();ns({t:'party',op:'state'})},onChange(f){LS.push(f)},pres};
+ DG.coop=coop;
+ function fireL(){for(const f of LS)try{f()}catch(e){console.error(e)}}
+ function announce(){if(C&&DG.run)pg({e:'in',pr:pres(),i:C.mateIn?1:0})}
+ const findAtk=(m,name)=>{const def=m.dgx;if(def.atk){for(const L of def.atk)for(const a of L)if(a.name==name)return a}if(m.kit)for(const a of m.kit)if(a.name==name)return a;if(def.kit)for(const a of def.kit)if(a.name==name)return a;return null};
+ function aim(e,fn){if(e.tg===1||!C||!C.guest&&0)return fn();const sv={x:P.x,y:P.y};P.x=e.tx;P.y=e.ty;DG.aimed=1;try{fn()}finally{P.x=sv.x;P.y=sv.y;DG.aimed=0}}
+ function mirrorOne(m,dt){if(m.sx!=null){const k=Math.min(1,dt*12);m.x+=(m.sx-m.x)*k;m.y+=(m.sy-m.y)*k}m.vx=0;m.vy=0;if(m.st=='wind'){m.tt-=dt}else if(m.st=='rec'){m.tt-=dt;if(m.tt<=0){m.st='idle';m.atk=null}}const def=m.dgx;if(def.tick&&!m.dy)try{def.tick(m,dt,A)}catch(e){if(!def.e){def.e=1;console.error('DG mirror',def.id,e)}}}
+ function touch(m,k,kb){if(m.nohit||m.hide>0||C.down)return;if(Math.abs(P.x-m.x)<(P.w+m.w*.8)/2-2&&P.y<m.y+m.h&&P.y+P.h>m.y+m.h*.1)DG.hurtP(m.dmg*k,Math.sign(P.x-m.x||1)*kb)}
+ function snap(){const a=[];for(const m of mobs)if(m.dgx&&m.nid&&!m.stub)a.push([m.nid,m.x|0,m.y|0,Math.ceil(m.hp),m.f||1,Math.ceil(m.shield||0),m.hide>0?1:0,m.inv?1:0]);if(a.length)pg({e:'m',a:a.slice(0,48)})}
+ function groupSync(){const G=DG.groups;for(const k in G){const v=G[k]&&G[k].on?1:0;if(C.groups[k]===undefined)C.groups[k]=v;if(v&&!C.groups[k]){C.groups[k]=1;pg({e:'grp',k})}}}
+ // whoever is outside a room that has just shut is brought in
+ function pull(r){if(!r||!DG.run)return;if(P.x<(r.x0+1.5)*T||P.x>(r.x1-1)*T){P.x=(r.x0+3)*T;P.y=r.fy*T-P.h-2;P.vx=P.vy=0;toast('Your friend started the fight')}}
+ function rise(){if(!C)return;C.down=false;P.hp=Math.round(maxHP()*.4);iT=Math.max(iT,2.2);say('BACK ON YOUR FEET','',1400);hudTick(1)}
+ function selfRise(){C.down=false;P.hp=Math.round(maxHP()*.3);iT=Math.max(iT,2.2)}
+ // ---- knocked out: while your friend still stands you wait for them instead of leaving. When both are down the party restarts from the checkpoint
+ const diedSolo=DG.flow.died;
+ function died(){if(!C||!C.mate||!C.mateIn||!C.mateOn){if(C&&!C.guest&&C.mate)pg({e:'wipe'});return diedSolo.apply(DG.flow,arguments)}
+  if(C.down){P.hp=1;return}
+  C.down=true;P.hp=1;iT=Math.max(iT,1.5);C.downs=(C.downs|0)+1;try{DG.fx.clear()}catch(_){}say('YOU ARE DOWN','Your friend can revive you',2800);pg({e:'dn'})}
+ function wipe(){if(!C)return;C.down=false;C.rev=0;if(C.mate)C.mate.dn=0;if(!C.guest)pg({e:'wipe'});say('THE PARTY HAS FALLEN','Back to the checkpoint',2400);diedSolo.call(DG.flow)}
+ DG.flow.died=died;
+ // a blow on a copy: the leader decides what it did
+ {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(C&&m&&m.dgx){if(m.stub)return;if(C.guest&&!C.fromLead){if(m.inv||m.hide>=1)return;let dm=d;if(w&&d>0){try{if(R()<Math.min(.6,.06+prof.fight.l*.004+bonus().crit))dm=Math.round(d*(1.75+bonus().cdmg))}catch(_){}if(w.fx=='leech')P.hp=Math.min(maxHP(),P.hp+dm*.25);if(w.fx=='heal')P.hp=Math.min(maxHP(),P.hp+3)}if(!(dm>0))return;m.fl=.15;C.dealt+=dm;try{ft(m.x,m.y-10,''+Math.round(dm),'#fff');burst(m.x,m.y+m.h/2,'rgb('+(w&&w.g?w.g:[255,255,255])+')',6,120,3)}catch(_){}pg({e:'hit',n:m.nid,d:Math.round(dm),a:+(ang||0).toFixed(2),fx:w&&w.fx||0});return}
+    if(!C.fromMate&&d>0)C.dealt+=Math.min(d,m.hp)}return _h.apply(this,arguments)}}
+ const onE=e=>{if(e.key=='e'||e.key=='E'){if(C&&!e.repeat)C.eH=e.type=='keydown';if(C&&e.type=='keyup')C.eH=false;if(C&&e.type=='keydown'&&DG.duoP)try{DG.duoP.press()}catch(_){}}};addEventListener('keydown',onE,true);addEventListener('keyup',onE,true);
+ // the chest: the server says whether this run has paid you already, so a resend or a dropped connection can never pay twice
+ const opChest=DG.rew.open;
+ {DG.rew.open=function(q){if(!C||q.kind!='final')return opChest.apply(this,arguments);if(q.open||C.claiming||!DG.run)return;C.claiming=q;C.claimN=0;ns({t:'party',op:'claim',run:C.run});toast('Opening the chest')}}
+ // the mate leaves: the one who stays takes over and the monsters shrink to a one-player fight
+ function solo(why,leaderUid){if(!C)return;const was=C.guest;if(leaderUid)C.leaderUid=leaderUid;C.mateOn=false;C.mateIn=false;C.mate=null;C.scale=false;for(const m of mobs)if(m.dgx&&!m.stub){const k=K_HP[m.dgx.cls||(m.dgb?'boss':'regular')]||1.6;m.mhp/=k;m.hp/=k;m.dmg/=.92;m.sx=null;if(m.st=='wind'||m.st=='rec'){m.st='idle';m.acd=1;m.atk=null;m.bt=1}}if(C.down){C.down=false;P.hp=Math.round(maxHP()*.5);iT=Math.max(iT,2)}if(DG.run&&DG.run.doneBoss&&!C.guest)ns({t:'party',op:'done',run:C.run});if(was&&!C.guest)toast('You now run the fight');say('YOUR FRIEND '+(why=='lost'?'LOST CONNECTION':'LEFT'),'The dungeon has adjusted to one player',3000);hudTick(1)}
+
+ // ================= what comes from the other computer =================
+ function fullState(){const L=DG.L,run=DG.run;return{e:'full',rooms:L.rooms.map(r=>r.state),gates:L.gates.map(q=>q.open?1:0),key:!!(L.keyAt&&L.keyAt.got),groups:Object.keys(DG.groups).filter(k=>DG.groups[k]&&DG.groups[k].on),mobs:mobs.filter(m=>m.dgx&&m.nid&&!m.dgb).map(m=>({n:m.nid,id:m.dgx.id,x:m.x|0,y:(m.y+m.h)|0,hp:m.hp,mhp:m.mhp})),boss:(()=>{const m=DG.boss.act;return m?{hp:m.hp,mhp:m.mhp,ph:m.phase}:null})(),done:!!run.doneBoss,nid:C.nid,pz:DG.duoP?DG.duoP.state():null,check:run.check}}
+ function onFull(e){const L=DG.L,run=DG.run;if(!L||!run)return;C.quiet=1;try{for(let i=0;i<L.rooms.length;i++){const r=L.rooms[i],s=e.rooms[i];if(s==r.state)continue;if(s=='done'){if(r.state=='on'){DG.flow.clearRoom(r)}else{r.state='done';if(r.doors)for(const q of r.doors)q.on=0}}else if(s=='on'&&r.kind=='fight'){DG.flow.startRoom(r);pull(r)}}
+   e.gates.forEach((o,i)=>{const q=L.gates[i];if(o&&q&&!q.open){q.open=true;q.t=2;q.sol.on=0}});if(e.key&&L.keyAt&&!L.keyAt.got)DG.gotKey();for(const k of e.groups||[])if(DG.groups[k])DG.groups[k].on=1;
+   for(const q of e.mobs||[])if(!byN(q.n)){const m=DG.mobs.DEF[q.id]&&DG.mobs.spawn(q.id,q.x,q.y,{net:q.n,quiet:1});if(m){m.hp=q.hp;m.mhp=q.mhp}}
+   if(e.boss&&!DG.boss.act){const r=L.rooms.find(q=>q.kind=='boss');if(r){C.fast=true;r.state='wait';DG.flow.startRoom(r);C.fast=false;pull(r);const m=DG.boss.act;if(m){m.hp=e.boss.hp;m.mhp=e.boss.mhp;m.phase=e.boss.ph}}}
+   if(DG.duoP&&e.pz)DG.duoP.restore(e.pz);if(e.check)run.check=e.check}finally{C.quiet=0}}
+ NET7.on('pg',msg=>{const e=msg.d;if(!e||!C)return;const run=DG.run;const k=e.e;
+  if(k=='in'){if(!run)return;const first=!C.mate||!C.mateIn;C.mate=C.mate||{x:e.pr&&e.pr.x||P.x,y:e.pr&&e.pr.y||P.y,dx:P.x,dy:P.y,f:1,vx:0,hp:1,mh:1,dn:0};C.mate.pr=e.pr||C.mate.pr;C.mateIn=true;C.mateOn=true;if(!C.guest&&(first||!e.i))pg(fullState());if(first)say('YOUR FRIEND HAS ARRIVED','',1600);if(!e.i)announce();return}
+  if(!run)return;
+  if(k=='p'){const M=C.mate||(C.mate={dx:e.x,dy:e.y});M.x=e.x;M.y=e.y;M.f=e.f;M.vx=e.vx;M.a=e.a;M.s=e.s;M.hp=e.hp;M.mh=e.mh;M.dn=e.dn;M.rv=e.rv;M.wp=e.wp;if(M.dx==null){M.dx=e.x;M.dy=e.y}C.mateIn=true;return}
+  if(k=='full'){if(C.guest)onFull(e);return}
+  if(k=='dn'){if(C.mate){C.mate.dn=1;toast('Your friend is down! Get to them')}return}
+  if(k=='revive'){if(C.down)rise();return}
+  if(k=='wipe'){if(C.guest)wipe();return}
+  if(k=='k'){const L=DG.L;C.quiet=1;try{if(L.keyAt&&!L.keyAt.got){DG.gotKey()}}finally{C.quiet=0}return}
+  if(k=='g'){const q=DG.L.gates[e.i];if(q&&!q.open){C.quiet=1;try{DG.tryGate(q)}finally{C.quiet=0};if(!q.open){q.open=true;q.t=0;q.sol.on=0}}return}
+  if(k=='grp'){const g=DG.groups[e.k];if(g){g.on=1;C.groups[e.k]=1}return}
+  if(k=='want'){if(C.guest)return;const r=DG.L.rooms[e.i];if(r&&r.state=='wait')DG.flow.startRoom(r);return}
+  if(k=='pz'||k=='pe'||k=='bm'){if(DG.duoP)DG.duoP.net(e);return}
+  if(!C.guest){if(k=='hit'){const m=byN(e.n);if(m&&!m.dead){C.fromMate=true;C.mdealt+=e.d;try{hurtMob(m,e.d,null,e.a||0);if(e.fx=='burn')m.burn=3;if(e.fx=='stun'||e.fx=='smash')m.stun=1.5;if(e.fx=='slow')m.slow=3}finally{C.fromMate=false}}return}return}
+  // ---- only the guest copies these
+  if(k=='m'){for(const q of e.a){const m=byN(q[0]);if(!m)continue;m.sx=q[1];m.sy=q[2];m.hp=q[3];m.f=q[4];m.shield=q[5];m.hide=q[6];m.inv=!!q[7]}return}
+  if(k=='sp'){if(byN(e.n))return;DG.mobs.spawn(e.id,e.x,e.y,Object.assign({},e.o,{net:e.n,summon:!!e.o.summon,quiet:!!e.o.quiet}));return}
+  if(k=='gh'){const m=byN(e.n),b=DG.boss.act;if(m&&b){const dx=b.dgx;m.src=dx;m.sc=e.sc;m.w=dx.w*e.sc;m.h=dx.h*e.sc;const kit=C.ghq.shift();m.dgx=Object.assign({},m.dgx,{kit,tick:null});m.kit=kit;m.k='dgm___ghost'}return}
+  if(k=='x'){const m=byN(e.n);if(!m)return;const i=mobs.indexOf(m);if(e.k){run.kills++;if(m.elite){run.elites++;run.corr=Math.max(0,(run.corr||0)-12)}try{mobDrops(m)}catch(_){}try{xpGain('fight',((MK[m.k]&&MK[m.k].gem)||26)*4);stat('kill',1)}catch(_){}try{burst(m.x,m.y+m.h/2,m.dgx.c,18,180,4)}catch(_){}if(m.dgx.onDie)try{m.dgx.onDie(m,A)}catch(_){}}if(i>=0)mobs.splice(i,1);return}
+  if(k=='a'){const m=byN(e.n);if(!m)return;const a=findAtk(m,e.a);if(!a)return;m.atk=a;m.st='wind';m.tt=e.w;m.tt0=e.w;if(a.start)aim(e,()=>{try{a.start(m,A)}catch(err){console.error('DG atk',err)}});return}
+  if(k=='f'){const m=byN(e.n);if(!m)return;const a=findAtk(m,e.a);if(!a)return;if(a.fire)aim(e,()=>{try{a.fire(m,A)}catch(err){console.error('DG atk',err)}});m.st='rec';m.tt=a.rec==null?.5:a.rec;m.at=.35;if(a.vul)m.vul=a.vul;return}
+  if(k=='ph'){const m=DG.boss.act;if(m&&m.phase!==e.ph)DG.boss.phaseTo(m,e.ph);return}
+  if(k=='bo'){const m=DG.boss.act;if(m)DG.boss.fall(m);return}
+  if(k=='rm'){const r=DG.L.rooms[e.i];if(!r)return;C.quiet=1;try{if(e.s==1&&r.state=='wait'){DG.flow.startRoom(r);pull(r)}else if(e.s==2&&r.state!='done')DG.flow.clearRoom(r)}finally{C.quiet=0}return}});
+ // ================= the party, from the server =================
+ NET7.on('party',m=>{const op=m.op;
+  if(op=='state'){const had=PT;PT=m.p;if(!PT&&C&&!DG.run)C=null;fireL();if(m.back&&PT&&PT.run&&!C)rejoin();else if(m.back&&C&&DG.run)announce();return}
+  if(op=='err'){toast(m.m||'That did not work');try{window.say&&window.say(m.m)}catch(_){}return}
+  if(op=='invited'){invite={id:m.id,from:m.from,lvl:m.lvl,exp:performance.now()+(m.ms||60000)};invEl();setTimeout(()=>{if(invite&&invite.id==m.id){invite=null;invEl()}},m.ms||60000);fireL();return}
+  if(op=='sent'){toast('Invitation sent to '+m.to);return}
+  if(op=='declined'){toast(m.name+' said no this time');return}
+  if(op=='ask'){let why=null;try{why=DG.lockReason(m.d);const d=DG.BY[m.d];if(!why&&d&&!DG.diffOpen(d,m.df))why='Has not finished the difficulty before this one';if(!why&&(DG.run||!entered))why='Is busy right now'}catch(_){why='Is busy right now'}ns({t:'party',op:'ready',ok:why?0:1,why:why||''});if(why)toast('You cannot enter: '+why);return}
+  if(op=='go'){begin(PT,m);return}
+  if(op=='mate_off'){if(C){C.mateOn=false;toast(m.name+' lost connection. Waiting for them')}fireL();return}
+  if(op=='mate_back'){if(C){C.mateOn=true;toast(m.name+' is back');if(DG.run&&!C.guest)setTimeout(()=>{if(C&&DG.run)pg(fullState())},300);announce()}fireL();return}
+  if(op=='mate_out'){toast(m.name+' left the dungeon');return}
+  if(op=='mate_gone'){if(C)solo(m.why,m.leader);fireL();return}
+  if(op=='run_done'){return}
+  if(op=='reward'){if(!C||m.run!==C.run)return;const q=C.claiming;C.claiming=null;if(!q)return;if(!m.ok){if((C.claimN=(C.claimN|0)+1)<12){C.claiming=q;setTimeout(()=>{if(C&&C.claiming===q)ns({t:'party',op:'claim',run:C.run})},1000)}else toast('The chest would not open. Try again');return}
+   q.open=true;const run=DG.run;if(m.dup){toast('You already took this chest');try{DG.ui.results(run,true,[],[],['Your reward was already delivered'])}catch(_){}return}
+   q.open=false;const s=DG.S;s.duo=s.duo||{};const rec=s.duo[run.d.id]=s.duo[run.d.id]||{n:0,best:0};rec.n++;const tm=performance.now()-run.t0;if(!rec.best||tm<rec.best)rec.best=tm;run.duo={mine:Math.round(C.dealt),mate:Math.round(C.mdealt),revives:C.revives|0,gems:m.gems|0};if(m.first){s.titles=s.titles||{};s.titles['Twin Roots']=1;if(run.d.tier=='abyssal')s.titles['Abyss Twins']=1;run.duoFirst=1}
+   try{DG.rew.give&&DG.rew.give(719,run.d.tier=='abyssal'?3:1)}catch(_){}DG.save();opChest(q);return}
+  if(op=='promote'){if(C){C.leaderUid=m.leader;for(const q of mobs)if(q.dgx){q.sx=null;if(q.st!='idle'){q.st='idle';q.acd=1;q.bt=1;q.atk=null}}}return}});
+ // the results say how the two of you did, and the party leaves together rather than running it again from here
+ {const res=DG.ui.results;DG.ui.results=function(run,win,loot,first,recs){const f=(first||[]).slice(),rc=(recs||[]).slice();if(run&&run.duoFirst)f.push('First duo clear: the title Twin Roots');if(run&&run.duo){rc.push('You dealt '+run.duo.mine.toLocaleString()+', your friend '+run.duo.mate.toLocaleString()+(run.duo.revives?' · revives '+run.duo.revives:'')+' · +'+run.duo.gems.toLocaleString()+' gems')}res.call(this,run,win,loot,f,rc);if(C){const b=document.querySelector('#dgres .again');if(b)b.style.display='none'}}}
+ // back after the page reloaded: rejoin the run the party is still in
+ function rejoin(){const r=PT&&PT.run;if(!r||DG.run)return;let n=0;/* the opening film may still be playing: wait for the game, as long as the run lasts */const t=setInterval(()=>{if(!PT||!PT.run||PT.run.id!==r.id||DG.run||C||++n>2400){clearInterval(t);return}if(!entered||window.RB_COVER)return;clearInterval(t);ns({t:'party',op:'rejoin',run:r.id});begin(PT,{run:r.id,d:r.d,df:r.df,seed:r.seed,leader:PT.m.find(x=>x.uid!==me()&&x.on)?PT.m.find(x=>x.uid!==me()).uid:me()})},250)}
+ NET7.onHello&&0;
+ setInterval(()=>{try{if(NET7.online&&NET7.auth&&NET7.auth.kind!='guest'&&PT)pushInfo()}catch(_){}},15000);
+
+ // ================= on screen: the invitation, the friend's frame, the friend in the world =================
+ function invEl(){let e=document.getElementById('dginv');if(!invite){if(e)e.remove();return}if(!e){e=document.createElement('div');e.id='dginv';document.body.appendChild(e)}e.innerHTML='<b></b><small>wants you in a dungeon party</small><div class="act"><button class="yes">Accept</button><button class="no">Decline</button></div>';e.querySelector('b').textContent=invite.from+(invite.lvl?' · Level '+invite.lvl:'');e.querySelector('.yes').onclick=()=>coop.accept();e.querySelector('.no').onclick=()=>coop.decline()}
+ let hudE=null,hudKey='';
+ function hudOn(){if(!hudE){hudE=document.createElement('div');hudE.id='dgmate';hudE.innerHTML='<b></b><span class="st"></span><div class="hp"><i></i></div>';document.body.appendChild(hudE)}hudE.style.display='block';hudKey=''}
+ function hudOff(){if(hudE)hudE.style.display='none'}
+ function hudTick(){if(!hudE||!C)return;const M=C.mate,on=!!(M&&C.mateOn),k=on?[M.pr&&M.pr.n,Math.round((M.hp/(M.mh||1))*40),M.dn,M.rv>0].join():C.mateOn?'wait':'off';if(k===hudKey)return;hudKey=k;hudE.classList.toggle('down',!!(on&&M.dn));hudE.querySelector('b').textContent=(M&&M.pr&&M.pr.n)||(mateOf()&&mateOf().name)||'Your friend';hudE.querySelector('.st').textContent=!C.mateOn?'Connection lost':!C.mateIn?'Arriving':M&&M.dn?(M.rv>0?'Being revived':'Down: revive them'):'';hudE.querySelector('.hp i').style.width=(on?cl(M.hp/(M.mh||1),0,1)*100:0)+'%'}
+ function drawMate(c,cx,cy,now){const M=C.mate;if(!M||!C.mateIn||M.x==null)return;M.dx+=(M.x-M.dx)*.28;M.dy+=(M.y-M.dy)*.28;const q=M.pr||{},t=now/1000,X=M.dx-cx,Y=M.dy-cy;const g0=c.globalAlpha;if(M.dn)c.globalAlpha=.55;try{const rq=window.RBFXQ?RBFXQ(q):q;drawChar(X,Y,M.f>0?1:-1,+q.h||0,(q.lv?'['+(q.lv|0)+'] ':'')+String(q.n||'Friend').slice(0,14),t,M.vx||0,M.a?1:0,'',M.wp||q.wp||'fist',M.s?.12:0,1,{hat:q.hat,wing:q.wing,boot:q.boot,glove:q.glove,body:q.body,wo:q.wo},0,q.lk,rq)}catch(e){c.fillStyle='#bfeaff';c.fillRect(X-10,Y,20,46)}c.globalAlpha=g0;
+  if(M.dn){const u=C.rev>0?C.rev:(M.rv||0);c.save();c.lineWidth=4;c.strokeStyle='rgba(255,255,255,.25)';c.beginPath();c.arc(X,Y-22,18,0,TAU);c.stroke();c.strokeStyle='#9fffd0';c.beginPath();c.arc(X,Y-22,18,-Math.PI/2,-Math.PI/2+u*TAU);c.stroke();c.fillStyle='#fff';c.font='800 13px system-ui,sans-serif';c.textAlign='center';c.fillText('+',X,Y-17);c.restore()}
+  // off screen: a small arrow says which way your friend is
+  const vw=cv.width/ZM,vh=cv.height/ZM;if(X<-20||X>vw+20||Y<-40||Y>vh+20){const ax=cl(X,28,vw-28),ay=cl(Y,70,vh-70),an=Math.atan2(Y-ay,X-ax);c.save();c.translate(ax,ay);c.rotate(an);c.fillStyle=M.dn?'#ff8a8a':'rgba(226,214,255,.9)';c.beginPath();c.moveTo(13,0);c.lineTo(-7,-8);c.lineTo(-3,0);c.lineTo(-7,8);c.closePath();c.fill();c.restore()}}
+})()}catch(e){console.error('DG coop',e)}
+
+/* ========== LATE: 99-zzzzzzzzz-r2-dg-duo.js ========== */
+// ===== DG duo content: what only two players can do. Before each sealed gate a duo run gets a chamber with a puzzle that takes both of you (a solo run never has these rooms: it has its own, harder trials), bosses
+//  gain mechanics that need one of you to save or cover for the other, and the Party page. The leader's computer decides when a puzzle is solved and when a mechanic starts or ends; both computers show it. =====
+try{(()=>{
+ const DG=window.DG,A=DG.A,TAU=Math.PI*2,R=Math.random,cl=DG.cl;
+ const co=()=>DG.coop&&DG.coop.C;const pg=d=>{try{NET7.send({t:'pg',d})}catch(_){}};
+ const say=(a,b,ms)=>{try{DG.ui.say(a,b||'',ms||3000)}catch(_){}};
+ const ORDER={ruins:['plates','dual'],crimson:['rescue','dual'],frozen:['bridge','crystal'],hollow:['crystal','sync'],dragon:['sync','rescue'],abyss:['dual','bridge'],star:['crystal','rescue'],night:['bridge','sync'],king:['plates','crystal'],eater:['sync','crystal','rescue']};
+ const NAME={plates:['Twin Plates','Stand on a plate each and hold'],dual:['Dual Gate','One of you at each switch. Press E together'],crystal:['Crystal Sequence','Each of you lights your own crystals in number order. Press E on each'],sync:['Synchronised Trial','Climb to a ledge each and press E within three seconds of each other'],bridge:['The Ancient Bridge','One of you holds the plate open while the other crosses and locks it from the far side'],rescue:['Rescue Path','One of you stands on the plate to quench the flames while the other crosses, then locks it from the far side']};
+ // ---- the chamber is built into the map, so both computers have the same one. The map already fills the world's width, so it sits in the rock far below the gate, reached by a pad beside it
+ DG.duoB=B=>{const c=co();if(!c)return;const g0=B.gate;B.gate=(key=true)=>{const d=B.d,L=ORDER[d.id]||ORDER.ruins,type=L[(B.duoN=(B.duoN|0)+1,B.duoN-1)%L.length],W2=26,x=cl(B.x-4,3,W-W2-3),fy=Math.min(H-8,B.fy+26);B.carve(x,fy-10,W2,10,{rough:0});const pz={type,x0:x,fy,w:W2,sv:0,spots:[],h:0,t:{},seq:[0,0],hold:0,seen:0};const S=(tx,k,o)=>pz.spots.push(Object.assign({x:(x+tx)*T,y:fy*T,tx,k},o||{}));
+   if(type=='plates'){S(6,'plate');S(20,'plate')}else if(type=='dual'){S(6,'switch',{n:0});S(20,'switch',{n:1})}
+   else if(type=='crystal'){const a=[1,2,3],b=[1,2,3];for(const q of[a,b]){for(let i=2;i>0;i--){const j=Math.floor(B.R()*(i+1));[q[i],q[j]]=[q[j],q[i]]}}a.forEach((v,i)=>S(5+i*3,'crystal',{n:0,v}));b.forEach((v,i)=>S(16+i*3,'crystal',{n:1,v}))}
+   else if(type=='sync'){for(const[lx,n]of[[4,0],[19,1]]){for(let i=0;i<3;i++)B.put(x+lx+i,fy-2,DG.TID.ACC);S(lx+1,'switch',{n,y:(fy-2)*T})}}
+   else if(type=='bridge'){S(7,'plate',{hold:1});S(21,'switch',{latch:1});pz.sol={x0:(x+13)*T,y0:(fy-10)*T,x1:(x+14)*T,y1:fy*T,on:1,gate:1};B.solids.push(pz.sol)}
+   else if(type=='rescue'){S(5,'plate',{hold:1});S(22,'switch',{latch:1});pz.fire={x0:(x+9)*T,x1:(x+18)*T}}
+   B.light(x+W2/2,fy-5,d.p.glow,T*12,.55);const r=g0(key);const q=B.gates[B.gates.length-1];q.pz=pz;pz.gi=B.gates.length-1;pz.pad={x:q.x-T*2.4,y:q.y};pz.back={x:(x+1.6)*T,y:fy*T};(B.duoP=B.duoP||[]).push(pz);return r}};
+ const pzs=()=>(DG.L&&DG.L.duoP)||[];DG.duoInside=()=>{for(const q of pzs())if(P.y+P.h>(q.fy-11)*T&&P.y<(q.fy+1)*T&&P.x>q.x0*T&&P.x<(q.x0+q.w)*T)return true;return false};
+ const stand=(s,x,yFeet)=>Math.abs(x-s.x)<T*1.5&&Math.abs(yFeet-s.y)<T*1.2;
+ const onSpot=(s,c)=>{const me=stand(s,P.x,P.y+P.h),M=c.mate,mt=M&&M.x!=null&&stand(s,M.x,M.y+P.h);return{me,mt,any:me||mt}};
+ function solve(i){const c=co(),q=pzs()[i];if(!q||q.sv)return;q.sv=1;if(q.sol)q.sol.on=0;try{DG.tone(520,1040,.5,'triangle',.06);DG.tone(780,1560,.6,'sine',.05,.12);DG.shk(.15)}catch(_){}say(NAME[q.type][0].toUpperCase()+' SOLVED','The gate will open for you',2000);try{DG.flow.objective()}catch(_){}if(c&&!c.guest)pg({e:'pz',i,sv:1});if(P.y+P.h>(q.fy-11)*T&&P.x>q.x0*T&&P.x<(q.x0+q.w)*T){P.x=q.pad.x;P.y=q.pad.y-P.h-2;P.vx=P.vy=0;try{VFX.levelUp(P.x,P.y,DG.run.d.p.glow)}catch(_){}}}
+ function pressAt(c,i,q,s,idx){const now=performance.now()/1000;if(q.type=='dual'||q.type=='sync'){q.t[s.n]=now;q.flash=now;const o=q.t[1-s.n];if(o!=null&&now-o<(q.type=='dual'?1.5:3))solve(i);else pg({e:'pz',i,t:q.t})}
+  else if(q.type=='crystal'){const k=s.n;if(q.first==null||now-q.first>16){q.first=now;q.seq=[0,0]}if(s.v==q.seq[k]+1){q.seq[k]++;try{DG.tone(400+q.seq[k]*160,800+q.seq[k]*160,.2,'sine',.05)}catch(_){}if(q.seq[0]==3&&q.seq[1]==3)solve(i);else pg({e:'pz',i,seq:q.seq})}else{q.seq[k]=0;try{DG.tone(180,90,.3,'sawtooth',.05)}catch(_){}pg({e:'pz',i,seq:q.seq})}}
+  else if(s.latch)solve(i)}
+ // ---- boss mechanics, per phase
+ const BMT={sentinel:['crystals','crystals','zones'],sovereign2:['mark','mark','zones'],empress:['ice','ice','crystals'],saint:['crystals','shadows','zones'],varkhazan:['mark','crystals','zones'],worldeater0:['zones','shadows','zones'],fallenstar:['mark','zones','crystals'],eternalnight:['ice','shadows','zones'],hollowking:['shadows','shadows','zones'],worldeater:['zones','crystals','shadows']};
+ const BMN={crystals:['SEAL CRYSTALS','It shields itself. One of you keeps its attention while the other breaks the crystals'],mark:['BURNING MARK','The marked one burns. The other stands on the cooling seal to save them'],ice:['TRAPPED IN ICE','Your friend is frozen. Stand beside them and press E to break the ice'],shadows:['TWIN SHADOWS','Each shadow can only be hurt by the player it hunts'],zones:['COSMIC SEALS','One of you at each seal. Press E within three seconds of each other, before the blast']};
+ const dmgOf=k=>{const run=DG.run;return DG.mobDmg(run.d,run.d.tier=='abyssal'?'aboss':'boss',k,run.df)};
+ const myRole=(c,who)=>(who===0)===(!c.guest);
+ DG.mobs.reg('duo_crystal',{n:'Seal Crystal',cls:'regular',w:36,h:58,c:'#bfeaff',ttk:2.6,pct:.01,ai:'still',touch:0,kit:[],art(c,m,o){const G=m.gc||'#bfeaff',h=m.h,t=o.t;c.globalCompositeOperation='lighter';c.globalAlpha*=.5+.2*Math.sin(t*4);c.drawImage(BOSS6.glo(G),-40,-h/2-40,80,80);c.globalCompositeOperation='source-over';c.globalAlpha=1;c.fillStyle=o.fl?'#fff':G;c.strokeStyle='#0e1426';c.lineWidth=2.5;c.beginPath();c.moveTo(0,-h);c.lineTo(15,-h*.55);c.lineTo(9,0);c.lineTo(-9,0);c.lineTo(-15,-h*.55);c.closePath();c.fill();c.stroke();c.fillStyle='rgba(255,255,255,.6)';c.beginPath();c.moveTo(0,-h*.92);c.lineTo(5,-h*.55);c.lineTo(0,-h*.2);c.closePath();c.fill()}});
+ DG.mobs.reg('duo_shadow',{n:'Shadow',cls:'regular',w:44,h:82,c:'#7a5ac8',ttk:4.5,pct:.06,sp:150,ai:'walk',touch:.55,kit:[],onHit(m,d){const fromMate=!!(DG.coop&&DG.coop.hitMate);if(fromMate===(m.own==2))return d;try{ft(m.x,m.y-12,'NOT YOURS','#c9b8ff')}catch(_){}return 0},art(c,m,o){const h=m.h,t=o.t,me=(m.own==2)===!!(DG.coop&&DG.coop.mirror);c.globalAlpha*=.85;const gr=c.createLinearGradient(0,-h,0,0);gr.addColorStop(0,o.fl?'#fff':me?'#b9a2ff':'#4a3a78');gr.addColorStop(1,'rgba(10,6,24,.2)');c.fillStyle=gr;c.beginPath();c.moveTo(-18,0);c.quadraticCurveTo(-24,-h*.6,0,-h);c.quadraticCurveTo(24,-h*.6,18,0);for(let i=0;i<5;i++)c.lineTo(18-i*9,Math.sin(t*6+i)*4+(i%2?-5:0));c.closePath();c.fill();c.globalAlpha=1;c.fillStyle='#fff';c.fillRect(-8,-h*.8,4,3);c.fillRect(4,-h*.8,4,3);c.font='800 12px system-ui,sans-serif';c.textAlign='center';c.fillStyle=me?'#ffe27a':'rgba(255,255,255,.5)';c.fillText(me?'YOURS':'FRIEND',0,-h-8)}});
+ function bmStart(k,who,x0,x1){const c=co();const b=A.box();c.bm={k,who,t:0,x0:x0==null?b.l+T*2:x0,x1:x1==null?b.r-T*2:x1,fy:A.fl(),h:0,t2:{},n:0};const nm=BMN[k];say(nm[0],nm[1],3400);try{DG.tone(220,110,.5,'sawtooth',.05)}catch(_){}
+  if(!c.guest){pg({e:'bm',k,who,x0:c.bm.x0,x1:c.bm.x1});const m=DG.boss.act;
+   if(k=='crystals'&&m){m.shield=m.mhp*.5;m.shield0=m.shield;c.aggro=who+1;for(const f of[.2,.5,.8]){const x=b.l+(b.r-b.l)*f,q=DG.mobs.spawn('duo_crystal',x,A.fl(),{summon:true,quiet:0});if(q){q.gc=m.dgx.c2||m.dgx.c;q.nohit=1}}}
+   if(k=='shadows'&&m){for(const o of[1,2]){const px=o==1?P.x:(c.mate?c.mate.x:P.x),x=cl(px+(R()<.5?-1:1)*T*6,b.l,b.r);DG.mobs.spawn('duo_shadow',x,A.fl(),{summon:true,own:o})}}}}
+ function bmEnd(ok){const c=co();const q=c&&c.bm;if(!q)return;c.bm=null;c.frozen=false;c.aggro=0;const m=DG.boss.act;const nm=q.k;if(ok){say('WELL DONE','',1200);if(m&&!c.guest){if(nm=='crystals'){m.shield=0;m.vul=6}if(nm=='zones'){m.stun=3;m.vul=5}}}else if(!c.guest&&m&&(nm=='shadows'||nm=='crystals')){m.hp=Math.min(m.mhp,m.hp+m.mhp*.05);m.shield=0}if(!ok&&(nm=='zones'||nm=='shadows')){try{DG.hurtP(dmgOf(.5),null);DG.shk(.5)}catch(_){}}if(!c.guest){pg({e:'bm',k:'end',ok:ok?1:0});for(const x of mobs)if(x.dgx&&(x.dgx.id=='duo_shadow'||x.dgx.id=='duo_crystal'))x.dead=2}}
+ function bmTick(dt){const c=co(),q=c.bm;if(!q){if(c.guest||!c.mateIn||!c.mateOn||!c.mate)return;const m=DG.boss.act;if(!m||DG.boss.inIntro||DG.boss.inOut||m.inv||c.down||c.mate.dn)return;c.bt-=dt;if(c.bt<=0){const L=BMT[m.dgx.id]||['zones','crystals','mark'],k=L[Math.min(m.phase-1,L.length-1)];c.bt=(DG.run.d.tier=='abyssal'?20:28);bmStart(k,R()<.5?0:1);return}return}
+  q.t+=dt;const M=c.mate,mine=myRole(c,q.who);if(!c.mateOn||!M){if(!c.guest)bmEnd(true);return}
+  if(q.k=='mark'){const p0=(q.who===0)===(!c.guest)?'P':'M';if(mine){q.dt=(q.dt||0)-dt;if(q.dt<=0){q.dt=1.2;DG.hurtP(dmgOf(.05),null)}}const sx=q.pl=q.pl==null?(mine?(P.x<(q.x0+q.x1)/2?q.x1:q.x0):(M.x<(q.x0+q.x1)/2?q.x1:q.x0)):q.pl;if(!c.guest){const oth=q.who===0?M:null,ox=oth?oth.x:P.x,oy=oth?oth.y+P.h:P.y+P.h;if(Math.abs(ox-sx)<T*2&&Math.abs(oy-q.fy)<T*1.5)q.h+=dt;else q.h=Math.max(0,q.h-dt);if(q.h>=1.5){bmEnd(true);return}if(q.t>11){pg({e:'bm',k:'blast',who:q.who});if(mine)try{DG.hurtP(dmgOf(.45),null);DG.shk(.5)}catch(_){}bmEnd(false);return}}}
+  else if(q.k=='ice'){if(mine){c.frozen=true;try{for(const k in K)K[k]=0}catch(_){}P.vx=0}if(!c.guest&&q.t>9){pg({e:'bm',k:'blast',who:q.who});if(mine)try{DG.hurtP(dmgOf(.45),null)}catch(_){}bmEnd(false);return}}
+  else if(q.k=='crystals'){if(!c.guest){const n=mobs.filter(x=>x.dgx&&x.dgx.id=='duo_crystal'&&!x.dead).length;if(n==0&&q.t>.5){bmEnd(true);return}if(q.t>26){bmEnd(false);return}}}
+  else if(q.k=='shadows'){if(!c.guest){const n=mobs.filter(x=>x.dgx&&x.dgx.id=='duo_shadow'&&!x.dead).length;if(n==0&&q.t>.5){bmEnd(true);return}if(q.t>20){bmEnd(false);return}}}
+  else if(q.k=='zones'){if(!c.guest&&q.t>14){bmEnd(false);return}}}
+ function bmPress(c){const q=c.bm;if(!q)return;const M=c.mate;if(q.k=='ice'&&!myRole(c,q.who)&&M&&Math.hypot(P.x-M.x,P.y-M.y)<T*3){if(c.guest)pg({e:'pe',b:1});else bmNet(1);try{DG.tone(1200,700,.12,'triangle',.05);VFX.burst(M.x,M.y+20,['#bfeaff','#fff'],6,180,1,.5,5)}catch(_){}return true}
+  if(q.k=='zones'){for(const[i,x]of[[0,q.x0],[1,q.x1]])if(Math.abs(P.x-x)<T*2.2){if(c.guest)pg({e:'pe',b:2,i});else bmNet(2,i);try{DG.tone(600,900,.2,'sine',.05)}catch(_){}return true}}return false}
+ function bmNet(b,i){const c=co(),q=c&&c.bm;if(!q)return;if(b==1&&q.k=='ice'){q.n++;if(q.n>=4)bmEnd(true)}else if(b==2&&q.k=='zones'){const now=performance.now()/1000;q.t2[i]=now;const o=q.t2[1-i];if(o!=null&&now-o<3)bmEnd(true);else pg({e:'bm',k:'zt',t2:q.t2})}}
+ // ---- what the coop file asks of this one
+ DG.duoP={
+  inside(){for(const q of pzs())if(P.y+P.h>(q.fy-11)*T&&P.y<(q.fy+1)*T&&P.x>q.x0*T&&P.x<(q.x0+q.w)*T)return q;return null},
+  gateBlock(q){const c=co();if(!c||!q.pz||q.pz.sv||!c.mateOn)return false;say(NAME[q.pz.type][0],'Both of you must take the pad beside the gate first',2800);try{UIS.play('error')}catch(_){}return true},
+  near(){const c=co();if(c.bm){const q=c.bm,M=c.mate;if(q.k=='ice'&&!myRole(c,q.who)&&M&&Math.hypot(P.x-M.x,P.y-M.y)<T*3)return{t:'Press E to break the ice',go(){}};if(q.k=='zones'&&(Math.abs(P.x-q.x0)<T*2.2||Math.abs(P.x-q.x1)<T*2.2))return{t:'Press E to activate the seal',go(){}}}for(const q of pzs()){if(q.sv)continue;if(Math.hypot(P.x-q.pad.x,P.y+P.h-q.pad.y)<T*2.2)return{t:'Press E to enter the '+NAME[q.type][0],go(){}};if(Math.hypot(P.x-q.back.x,P.y+P.h-q.back.y)<T*1.3)return{t:'Press E to go back up',go(){}};for(const s of q.spots){if(s.k=='plate')continue;if(stand(s,P.x,P.y+P.h)){return{t:s.k=='crystal'?'Press E to light crystal '+s.v:'Press E to use the switch',go(){}}}}}return null},
+  press(){const c=co();if(!c||!DG.run)return;if(bmPress(c))return;const list=pzs();for(let i=0;i<list.length;i++){const q=list[i];if(q.sv)continue;if(Math.hypot(P.x-q.pad.x,P.y+P.h-q.pad.y)<T*2.2){P.x=(q.x0+4)*T;P.y=q.fy*T-P.h-2;P.vx=P.vy=0;try{DG.tone(300,900,.4,'sine',.05);VFX.levelUp(P.x,P.y,DG.run.d.p.glow)}catch(_){}return}if(Math.hypot(P.x-q.back.x,P.y+P.h-q.back.y)<T*1.3){P.x=q.pad.x;P.y=q.pad.y-P.h-2;P.vx=P.vy=0;return}q.spots.forEach((s,idx)=>{if(s.k=='plate'||!stand(s,P.x,P.y+P.h))return;if(c.guest)pg({e:'pe',i,s:idx});else pressAt(c,i,q,s,idx);q.flash=performance.now()/1000})}},
+  tick(dt){const c=co();if(!DG.run)return;const list=pzs(),gone=!c.mateOn&&!c.mateIn;for(let i=0;i<list.length;i++){const q=list[i];if(q.sv)continue;if(gone){q.sv=1;if(q.sol)q.sol.on=0;continue}
+    const inC=P.x>q.x0*T&&P.x<(q.x0+q.w)*T&&P.y+P.h>(q.fy-11)*T;if(inC&&!q.seen){q.seen=1;const nm=NAME[q.type];say(nm[0],nm[1],4200)}
+    if(q.type=='plates'&&!c.guest){const a=onSpot(q.spots[0],c),b=onSpot(q.spots[1],c);if((a.me&&b.mt)||(a.mt&&b.me)){q.h+=dt;if(q.h>=2.5)solve(i)}else q.h=Math.max(0,q.h-dt*2)}
+    if(q.type=='bridge'||q.type=='rescue'){const h=q.spots[0],o=onSpot(h,c);q.open=o.any;if(q.sol)q.sol.on=o.any?0:1;if(q.fire&&!q.open&&P.x>q.fire.x0&&P.x<q.fire.x1&&Math.abs(P.y+P.h-q.fy*T)<T){try{DG.hurtP(dmgOf(.08),(P.x<(q.fire.x0+q.fire.x1)/2?-1:1)*420)}catch(_){}}}
+    if(!c.guest&&q.type!='plates'&&q.first!=null&&q.type=='crystal'&&performance.now()/1000-q.first>16){q.first=null;q.seq=[0,0];pg({e:'pz',i,seq:q.seq})}}
+   bmTick(dt)},
+  net(e){const c=co();if(!c)return;if(e.e=='pz'){const q=pzs()[e.i];if(!q)return;if(e.sv)solve(e.i);if(e.t)q.t=e.t;if(e.seq)q.seq=e.seq;return}
+   if(e.e=='pe'){if(c.guest)return;if(e.b){bmNet(e.b,e.i);return}const q=pzs()[e.i];if(q&&!q.sv&&q.spots[e.s])pressAt(c,e.i,q,q.spots[e.s],e.s);return}
+   if(e.e=='bm'){if(e.k=='end'){if(c.guest)bmEnd(!!e.ok);return}if(e.k=='blast'){if(myRole(c,e.who))try{DG.hurtP(dmgOf(.45),null);DG.shk(.5)}catch(_){}return}if(e.k=='zt'){if(c.bm)c.bm.t2=e.t2;return}if(c.guest)bmStart(e.k,e.who,e.x0,e.x1);return}},
+  mech:(k,who)=>bmStart(k,who),
+  state(){return pzs().map(q=>({sv:q.sv,seq:q.seq,t:q.t}))},restore(a){pzs().forEach((q,i)=>{const s=a[i];if(!s)return;if(s.sv&&!q.sv){q.sv=1;if(q.sol)q.sol.on=0}q.seq=s.seq||q.seq;q.t=s.t||q.t})},
+  draw(c,cx,cy,now){const K0=co(),t=now/1000;for(const q of pzs()){const vw=cv.width/ZM;if((q.x0+q.w)*T<cx-40||q.x0*T>cx+vw+40)continue;const G=DG.run.d.p.glow;if(!q.sv){const X=q.pad.x-cx,Y=q.pad.y-cy;c.save();c.globalCompositeOperation='lighter';c.globalAlpha=.55+.25*Math.sin(t*3);c.drawImage(BOSS6.glo(G),X-46,Y-60,92,92);c.restore();c.strokeStyle=G;c.lineWidth=3;c.beginPath();c.ellipse(X,Y-3,T*1.3,5,0,0,TAU);c.stroke();const X2=q.back.x-cx,Y2=q.back.y-cy;c.strokeStyle='rgba(255,255,255,.7)';c.beginPath();c.ellipse(X2,Y2-3,T,4,0,0,TAU);c.stroke()}
+    for(const s of q.spots){const X=s.x-cx,Y=s.y-cy,on=q.sv||(s.k=='plate'&&onSpot(s,K0).any);c.save();c.globalCompositeOperation='lighter';c.globalAlpha=q.sv?.25:.45+.2*Math.sin(t*3+s.tx);c.drawImage(BOSS6.glo(on?'#9fffd0':G),X-46,Y-70,92,92);c.restore();
+     if(s.k=='plate'){c.fillStyle=on?'#9fffd0':G;c.fillRect(X-T*1.4,Y-5,T*2.8,5);c.fillStyle='rgba(255,255,255,.45)';c.fillRect(X-T*1.4,Y-5,T*2.8,1.5)}
+     else if(s.k=='switch'){const pr=q.t&&q.t[s.n]!=null&&performance.now()/1000-q.t[s.n]<3;c.fillStyle='#1a1630';c.fillRect(X-7,Y-34,14,34);c.fillStyle=q.sv||pr?'#9fffd0':G;c.beginPath();c.arc(X,Y-38,8,0,TAU);c.fill()}
+     else if(s.k=='crystal'){const done=q.seq[s.n]>=s.v;c.fillStyle=done||q.sv?'#9fffd0':(s.n?'#ffb9e0':'#b9d6ff');c.strokeStyle='#0e1426';c.lineWidth=2;c.beginPath();c.moveTo(X,Y-48);c.lineTo(11,Y-24+0-Y+Y);c.closePath();c.beginPath();c.moveTo(X,Y-48);c.lineTo(X+11,Y-24);c.lineTo(X+6,Y);c.lineTo(X-6,Y);c.lineTo(X-11,Y-24);c.closePath();c.fill();c.stroke();c.fillStyle='#10152a';c.font='800 15px system-ui,sans-serif';c.textAlign='center';c.fillText(String(s.v),X,Y-20)}}
+    if(q.sol&&q.sol.on){c.fillStyle='rgba(30,22,60,.92)';c.fillRect(q.sol.x0-cx,q.sol.y0-cy,q.sol.x1-q.sol.x0,q.sol.y1-q.sol.y0);c.fillStyle=G;c.fillRect(q.sol.x0-cx+T*.4,q.sol.y0-cy,2,q.sol.y1-q.sol.y0)}
+    if(q.fire&&!q.sv&&!q.open){c.save();c.globalCompositeOperation='lighter';for(let x=q.fire.x0;x<q.fire.x1;x+=T*.8){const h=20+Math.sin(t*9+x)*8;c.fillStyle='rgba(255,120,50,.55)';c.beginPath();c.moveTo(x-cx-10,q.fy*T-cy);c.quadraticCurveTo(x-cx,q.fy*T-cy-h*2,x-cx+10,q.fy*T-cy);c.fill()}c.restore()}
+    if(q.type=='plates'&&q.h>0&&!q.sv){const u=q.h/2.5,X=(q.x0+q.w/2)*T-cx,Y=(q.fy-5)*T-cy;c.lineWidth=5;c.strokeStyle='rgba(255,255,255,.2)';c.beginPath();c.arc(X,Y,22,0,TAU);c.stroke();c.strokeStyle='#9fffd0';c.beginPath();c.arc(X,Y,22,-Math.PI/2,-Math.PI/2+u*TAU);c.stroke()}}
+   const b=K0.bm;if(b){const M=K0.mate,mine=myRole(K0,b.who),tx=mine?P.x:M&&M.dx,ty=mine?P.y:M&&M.dy;if(b.k=='mark'&&tx!=null){c.save();c.globalCompositeOperation='lighter';c.globalAlpha=.7;c.drawImage(BOSS6.glo('#ff6a2a'),tx-cx-34,ty-cy-16,68,68);c.restore();c.fillStyle='#ffb07a';c.font='800 13px system-ui,sans-serif';c.textAlign='center';c.fillText(mine?'BURNING':'SAVE THEM',tx-cx,ty-cy-30);const sx=b.pl!=null?b.pl:(mine?(P.x<(b.x0+b.x1)/2?b.x1:b.x0):(M&&M.x<(b.x0+b.x1)/2?b.x1:b.x0));c.fillStyle='#8fe8ff';c.fillRect(sx-cx-T*1.6,b.fy-cy-6,T*3.2,6);c.fillText('COOLING SEAL',sx-cx,b.fy-cy-16)}
+    if(b.k=='ice'&&tx!=null){c.fillStyle='rgba(170,225,255,.55)';c.strokeStyle='#e8f8ff';c.lineWidth=2;c.beginPath();c.moveTo(tx-cx-22,ty-cy+P.h);c.lineTo(tx-cx-16,ty-cy-8);c.lineTo(tx-cx+18,ty-cy-8);c.lineTo(tx-cx+22,ty-cy+P.h);c.closePath();c.fill();c.stroke();c.fillStyle='#fff';c.font='800 13px system-ui,sans-serif';c.textAlign='center';c.fillText(mine?'FROZEN':'BREAK THE ICE',tx-cx,ty-cy-16)}
+    if(b.k=='zones'){for(const[i,x]of[[0,b.x0],[1,b.x1]]){const pr=b.t2&&b.t2[i]!=null;c.save();c.globalCompositeOperation='lighter';c.globalAlpha=.6+.2*Math.sin(t*5);c.drawImage(BOSS6.glo(pr?'#9fffd0':'#c58cff'),x-cx-50,b.fy-cy-96,100,100);c.restore();c.fillStyle=pr?'#9fffd0':'#d9c4ff';c.fillRect(x-cx-6,b.fy-cy-40,12,40);c.fillStyle='#fff';c.font='800 13px system-ui,sans-serif';c.textAlign='center';c.fillText('SEAL',x-cx,b.fy-cy-50)}const left=Math.max(0,14-b.t);c.fillStyle='#fff';c.font='800 18px system-ui,sans-serif';c.textAlign='center';c.fillText('Blast in '+Math.ceil(left),(b.x0+b.x1)/2-cx,b.fy-cy-T*8)}}}};
+
+ // ================= the Party page =================
+ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,q=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[q]));
+ function drawCard(cvs,pr){const x=cvs.getContext('2d');x.clearRect(0,0,cvs.width,cvs.height);const g0=g;try{g=x;x.save();x.translate(cvs.width/2,cvs.height-16);x.scale(2.4,2.4);const pd=typeof Plate!='undefined'?Plate.draw:null;if(pd)Plate.draw=()=>{};try{const q=pr||{};drawChar(0,-54,1,+q.h||0,'',performance.now()/1000,0,0,'',q.wp||'fist',0,1,{hat:q.hat,wing:q.wing,boot:q.boot,glove:q.glove,body:q.body,wo:1},0,q.lk,q.cx?q:undefined)}finally{if(pd)Plate.draw=pd}x.restore()}catch(e){}finally{g=g0}}
+ DG.partyPage=function(B){const w=document.createElement('div');w.className='wide duop';const C2=DG.coop,me=(()=>{try{return NET7.auth&&NET7.auth.uid}catch(_){return''}})(),signed=(()=>{try{return NET7.online&&NET7.auth&&NET7.auth.kind!='guest'}catch(_){return false}})();
+  const render=()=>{if(!w.isConnected&&w.dataset.t)return;w.dataset.t=1;const pt=C2.party,inv=C2.inv;if(!signed){w.innerHTML='<div class="pcard empty"><b>Sign in to play with a friend</b><p>Parties use your online account. A dungeon you play alone stays on your own computer.</p></div>';return}
+   const ms=pt&&pt.m||[{uid:me,name:(NET7.auth&&NET7.auth.name)||'You',on:true,info:null}],sl=[ms[0],ms[1]||null];const seat=x=>{if(!x)return'<div class="pcard empty"><h5>Open seat</h5><p>Invite a friend who is online.</p><div class="inv"><input maxlength="16" placeholder="Their name" class="who"><button class="sec send">Invite</button></div></div>';const i=x.info||{},lead=pt&&pt.leader===x.uid;return'<div class="pcard" data-u="'+esc(x.uid)+'"><canvas width="220" height="220"></canvas><h5>'+(lead?'<span class="crown" title="Party leader">★</span> ':'')+esc(x.name)+'</h5><small>'+(x.on?'<i class="dot on"></i>Online':'<i class="dot"></i>Offline')+(i.lvl?' · Level '+i.lvl:'')+'</small>'+(i.title?'<small class="ti">'+esc(i.title)+'</small>':'')+'<dl><dt>Weapon</dt><dd>'+esc(i.wp||'-')+'</dd><dt>Wings</dt><dd>'+esc(i.wg||'-')+'</dd></dl></div>'};
+   let elig='';if(pt&&pt.m.length==2){const row=DG.LIST.map(d=>{const a=pt.m[0].info,b=pt.m[1].info,ok=q=>!!(q&&q.open&&q.open.includes(d.id));return'<tr><td>'+esc(d.n)+'</td><td class="'+(ok(a)?'y':'n')+'">'+(ok(a)?'Open':'Locked')+'</td><td class="'+(ok(b)?'y':'n')+'">'+(ok(b)?'Open':'Locked')+'</td></tr>'}).join('');elig='<h4>Who can enter</h4><table class="elig"><tr><th>Dungeon</th><th>'+esc(pt.m[0].name)+'</th><th>'+esc(pt.m[1].name)+'</th></tr>'+row+'</table>'}
+   w.innerHTML=(inv?'<div class="pinv"><b>'+esc(inv.from)+' invited you</b><button class="pri ia">Accept</button><button class="sec id">Decline</button></div>':'')+'<div class="seats">'+seat(sl[0])+seat(sl[1])+'</div><div class="pact">'+(pt&&pt.m.length==2&&pt.leader===me?'<button class="sec lead">Make '+esc(sl[1]&&sl[1].uid!==me?sl[1].name:sl[0].name)+' leader</button>':'')+(pt?'<button class="sec lv">Leave party</button>':'')+'<p>'+(pt&&pt.m.length==2?(pt.leader===me?'Pick a dungeon on the Ancient or Abyssal tab and press Enter Together.':'Your leader chooses the dungeon.'):'Two players at most. Both must meet a dungeon\'s entry requirements, and each of you gets your own rewards.')+'</p></div>'+elig;
+   w.querySelectorAll('.pcard[data-u] canvas').forEach(cv2=>{const u=cv2.closest('.pcard').dataset.u,x=ms.find(q=>q.uid==u);let pr=null;if(u===me)pr=C2.pres();else if(x&&x.info&&x.info.pr)try{pr=JSON.parse(x.info.pr)}catch(_){}drawCard(cv2,pr)});
+   const s=w.querySelector('.send');if(s){const inp=w.querySelector('.who');s.onclick=()=>{const n=inp.value.trim();if(n)C2.invite(n)};inp.onkeydown=e=>{e.stopPropagation();if(e.key=='Enter')s.click()};inp.onkeyup=e=>e.stopPropagation()}
+   const q=(k,f)=>{const b=w.querySelector(k);if(b)b.onclick=f};q('.ia',()=>C2.accept());q('.id',()=>C2.decline());q('.lv',()=>C2.leave());q('.lead',()=>C2.lead())};
+  B.appendChild(w);render();C2.refresh();C2.onChange(render);w.render=render};
+})()}catch(e){console.error('DG duo',e)}
+
+/* ========== LATE: 99-zzzzzzzzz-s-uifx.js ========== */
+// ===== The player's control over how the game looks and what that costs: background blur, particles, shadows, film effects, interface motion and a performance mode that turns everything down at once.
+// All of it is a few attributes on <html> and a multiplier on the particle budget, so nothing here runs while you play. Big screens also scale the panels by the window's height (--uiz). =====
+const UIFX=(()=>{
+ const O=()=>cel.opt,PK={high:1,med:.6,low:.3},d=document.documentElement;
+ try{const o=(JSON.parse(localStorage.getItem('rbc')||'null')||{}).opt||{},q=cel.opt;q.blur=['high','med','off'].includes(o.blur)?o.blur:'med';q.pq=['high','med','low'].includes(o.pq)?o.pq:'high';q.shq=['high','med','low'].includes(o.shq)?o.shq:'high';q.uianim=o.uianim===0?0:1;q.perf=o.perf?1:0}catch(_){}
+ const scale=()=>{const k=Math.max(1,Math.min(2.4,Math.min(innerHeight/1080,innerWidth/1920)));d.style.setProperty('--uiz',k.toFixed(3))};
+ function apply(){const o=O(),pf=!!o.perf;d.setAttribute('data-blur',pf?'off':o.blur||'med');d.setAttribute('data-shadows',pf?'low':o.shq||'high');d.setAttribute('data-uianim',pf||o.uianim===0?'off':'on');d.setAttribute('data-perf',pf?'on':'off');scale();try{QM.apply(QM.cur.id,true)}catch(_){}}
+ // the particle budget follows the setting; performance mode also takes the lowest graphics preset
+ {const a0=QM.apply;QM.apply=function(id,silent){const o=O();const r=a0.call(this,o.perf?'low':id,silent);try{OPT.q*=PK[o.perf?'low':o.pq||'high']||1}catch(_){}return r}}
+ addEventListener('resize',scale);
+ apply();
+ return{apply,PK,scale}})();
 
 /* ========== LATE: 99-zzzzzzzzzz-restore.js ========== */
 // The last script of all: every item, weapon and piece of gear in the game is registered by now, so what the start-up check set aside (99-a-sanitize.js) goes back where it was.
