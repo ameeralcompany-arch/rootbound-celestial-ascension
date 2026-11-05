@@ -72,4 +72,4 @@ function createParties({send,sessions,userById,saveAcc,bonus,bucket,minRunMs,gra
  function onAuth(s){const p=mine(s);if(!p)return;const x=memberOf(p,s.uid);if(!x)return;clearTimeout(x.gone);x.sid=s.sid;x.info=x.info||s.dgInfo||null;send(s,{t:'party',op:'state',p:view(p),back:1});const o=other(p,s.uid),q=o&&o.sid&&sessions.get(o.sid);if(q)send(q,{t:'party',op:'mate_back',name:s.name,run:p.run&&!p.run.over?p.run.id:null})}
  function onClose(s){if(!s.uid)return;invites.delete(s.uid);const p=mine(s);if(!p)return;const x=memberOf(p,s.uid);if(!x||x.sid!==s.sid)return;x.sid=null;const o=other(p,s.uid),q=o&&o.sid&&sessions.get(o.sid);if(q)send(q,{t:'party',op:'mate_off',name:s.name,ms:grace});push(p);clearTimeout(x.gone);x.gone=setTimeout(()=>{if(parties.get(p.id)&&!x.sid)leaveParty(p,x.uid,'lost')},grace);if(x.gone.unref)x.gone.unref()}
  return{msg,relay,onAuth,onClose,parties,get size(){return parties.size}}}
-module.exports={createParties,GEMS,MAX};
+module.exports={createParties,GEMS,DIFFS,MAX};

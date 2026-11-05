@@ -4,16 +4,16 @@
 // The server cannot watch mining or monster drops, so a client reports its inventory (bag_sync): decreases count at once, growth is rate-limited,
 // the same honest limit the gem wallet has (shop.js). Item 0 means gems throughout. Guests have no ledger: they cannot trade or drop.
 const SHOP=require('./shop');
-const BURST=2000,PER_MIN=1500,MAXN=99999,MAXKEYS=600,MAX_OFFER=12,MAX_DROPS=80,PICK_DIST=240,ASK_MS=30000;
+const DG_BURST=600,DG_PER_MIN=40,BURST=2000,PER_MIN=1500,MAXN=99999,MAXKEYS=600,MAX_OFFER=12,MAX_DROPS=80,PICK_DIST=240,ASK_MS=30000;
 const okItem=i=>Number.isInteger(i)&&i>=0&&i<=999;
 const okN=n=>Number.isInteger(n)&&n>=1&&n<=MAXN;
 function ensure(u){if(!u.bag||typeof u.bag!='object')u.bag={};const b=u.bag;if(!b.i||typeof b.i!='object')b.i={};if(!Number.isFinite(b.seq))b.seq=0;if(!Number.isFinite(b.allow))b.allow=BURST;if(!Number.isFinite(b.t))b.t=Date.now();if(!b.out||typeof b.out!='object')b.out={};return b}
 function count(u,i){return i===0?Math.floor(SHOP.ensure(u).g):(ensure(u).i[i]|0)}
 function add(u,i,n){if(i===0){const s=SHOP.ensure(u);s.g=Math.max(0,s.g+n);return}const b=ensure(u),v=(b.i[i]|0)+n;if(v>0)b.i[i]=Math.min(MAXN,v);else delete b.i[i]}
 // a client report: ignored when it predates a server-made change (seq), otherwise decreases apply and growth spends the allowance
-function sync(u,inv,seq,now){const b=ensure(u);b.over=0;if(seq!==b.seq||!inv||typeof inv!='object')return false;now=now||Date.now();b.allow=Math.min(BURST,b.allow+Math.max(0,now-b.t)/60000*PER_MIN);b.t=now;const seen=new Set();let n=0;
+function sync(u,inv,seq,now){const b=ensure(u);b.over=0;if(seq!==b.seq||!inv||typeof inv!='object')return false;now=now||Date.now();const mins=Math.max(0,now-b.t)/60000;b.allow=Math.min(BURST,b.allow+mins*PER_MIN);b.dgAllow=Math.min(DG_BURST,(Number.isFinite(b.dgAllow)?b.dgAllow:DG_BURST)+mins*DG_PER_MIN);b.t=now;const seen=new Set();let n=0;
  for(const k of Object.keys(inv)){if(++n>MAXKEYS)break;const i=+k,v=inv[k];if(!okItem(i)||i===0||!Number.isInteger(v)||v<0||v>MAXN)continue;seen.add(i);const have=b.i[i]|0;
-  if(v>have){const inc=Math.min(v-have,Math.floor(b.allow));if(inc>0){b.i[i]=have+inc;b.allow-=inc}b.over+=v-have-Math.max(0,inc)}else if(v<have){if(v>0)b.i[i]=v;else delete b.i[i]}}
+  if(v>have){const dg=i>=700&&i<=749,inc=Math.min(v-have,Math.floor(dg?b.dgAllow:b.allow));if(inc>0){b.i[i]=have+inc;if(dg)b.dgAllow-=inc;else b.allow-=inc}b.over+=v-have-Math.max(0,inc)}else if(v<have){if(v>0)b.i[i]=v;else delete b.i[i]}}
  for(const k of Object.keys(b.i))if(!seen.has(+k))delete b.i[k];return true}
 function cleanDrops(a){return(Array.isArray(a)?a:[]).slice(0,MAX_DROPS).map(d=>d&&okItem(d.i)&&okN(d.n)&&typeof d.id=='string'&&Number.isFinite(d.x)&&Number.isFinite(d.y)?{id:d.id.slice(0,20),i:d.i,n:d.n,x:d.x,y:d.y}:null).filter(Boolean)}
 function createEconomy({send,sessions,userById,saveAcc,relay,dropsOf,touchWorld,bucket,audit,rid}){
@@ -60,5 +60,6 @@ function createEconomy({send,sessions,userById,saveAcc,relay,dropsOf,touchWorld,
   const p=s.pres||{},d={id:'d'+(++dropN).toString(36)+rid(),i,n,x:(+p.x||0)+(p.f>0?44:-44),y:+p.y||0};a.push(d);touchWorld(s.world);if(!free(s)){add(u,i,-n);deliver(u,{[i]:-n},'drop')}audit({ev:'drop',uid:s.uid,w:s.world,i,n});relay(s.world,{t:'dr+',d})}
  function pickMsg(s,m){if(!s.world||!bucket(s,'pick',30,5000))return;const a=dropsOf(s.world),at=a.findIndex(d=>d.id===m.id);if(at<0)return;const d=a[at],p=s.pres||{};if(Math.hypot((+p.x||0)-d.x,(+p.y||0)-d.y)>PICK_DIST)return;
   a.splice(at,1);touchWorld(s.world);relay(s.world,{t:'dr-',d:{id:d.id,by:s.sid}});const u=s.kind=='guest'?null:userById(s.uid);if(u){add(u,d.i,d.n);deliver(u,{[d.i]:d.n},'pick')}else send(s,{t:'bag',d:{[d.i]:d.n},why:'pick'})}
- return{tradeMsg,dropMsg,pickMsg,leaving,give,signedIn,sync:(u,m)=>sync(u,m.inv,m.seq)}}
+ function charge(u,list,why){const d={};for(const[i,n]of list){add(u,i,-n);d[i]=(d[i]|0)-n}deliver(u,d,why)}
+ return{tradeMsg,dropMsg,pickMsg,leaving,give,signedIn,charge,sync:(u,m)=>sync(u,m.inv,m.seq)}}
 module.exports={createEconomy,ensure,count,add,sync,cleanDrops,okItem,okN,BURST,MAX_DROPS};

@@ -31,7 +31,7 @@ const ONL10=(()=>{
  // ---- the bag: tell the server what this client holds (it limits growth); changes the server makes arrive as 'bag'
  let seq=0,last='';
  function report(force){if(!acct()||god())return;const o={};for(const k in inv){const i=+k,n=cnt(i);if(Number.isInteger(i)&&i>0&&i<=999&&n>0)o[k]=n}const s=JSON.stringify(o);if(!force&&s==last)return;last=s;NET7.send({t:'bag_sync',inv:o,seq})}
- setInterval(report,4000);
+ setInterval(report,4000);window.RB_BAGREPORT=()=>report(true);
  NET7.on('bag',m=>{if(m.seq!=null)seq=m.seq;const d=m.d||{};for(const k in d){const i=+k,n=d[k]|0;if(!n)continue;if(i===0)gems=Math.max(0,(gems|0)+n);else if(n>0)addI(i,n);else{const c=cnt(i);if(c>0)addI(i,-Math.min(c,-n))}
    if(n>0&&m.why!='trade'){try{ft(P.x,P.y-14,'+'+n+' '+nm(i),'#fff')}catch(_){}}if(n>0&&m.why=='gift')say('The server owner gave you '+n+' '+nm(i))}
   last='';try{barDirty=1;renderBar()}catch(_){}try{if(INV7.isOpen)INV7.render()}catch(_){}report()});

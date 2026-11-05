@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.1",
+      "type": "update",
+      "title": "Rootbound 6.13.1",
+      "summary": "A small maintenance update.",
+      "body": "A small maintenance update.",
+      "date": "2026-11-05",
+      "version": "6.13.1"
+    },
+    {
       "id": "update-6.13.0",
       "type": "update",
       "title": "Rootbound 6.13",

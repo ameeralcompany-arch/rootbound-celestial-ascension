@@ -32,7 +32,8 @@
     +row('ssv','Sound effects','Blocks, combat and world sounds',rng('ssv',0,100,num(OPT.sv,1)*100))
     +row('sav','Ambience','Wind, rain and cave atmosphere',rng('sav',0,100,num(OPT.av,1)*100))
     +row('suv','Interface sounds','Soft clicks and chimes in menus',rng('suv',0,100,(o.uiv==null?.6:o.uiv)*100))
-    +row('sum','Mute interface sounds','Silence menu sounds only',tog('sum',o.uim,'Mute interface sounds')),
+    +row('sum','Mute interface sounds','Silence menu sounds only',tog('sum',o.uim,'Mute interface sounds'))
+    +(window.RPG&&RPG.guide?row('slv','Lavi\'s voice','How loud your guide speaks',rng('slv',0,100,(+RPG.guide.opt().vol||0)*100))+row('slm','Mute Lavi','Her subtitles stay on',tog('slm',!!RPG.guide.opt().mute,'Mute Lavi'))+row('sls','Lavi\'s subtitles','Show what she says',tog('sls',!!RPG.guide.opt().sub,'Lavi subtitles'))+row('slh','Show Lavi','Your guide floats near your character',tog('slh',!!RPG.guide.opt().auto,'Show Lavi'))+row('slr','Lavi\'s tutorial','Take the guided tour again','<button type="button" class="btn7" id="slr">Replay</button>'):''),
    controls:row('szm','Camera zoom','How close the camera sits (also + and − keys)',rng('szm',50,220,(typeof ZM=='number'?ZM:1)*100))
     +'<div class="skeys7" data-k="keys controls keyboard bindings '+esc(KEYS.map(k=>k[1]).join(' ').toLowerCase())+'">'+KEYS.map(([k,d])=>'<div><kbd>'+esc(k)+'</kbd><span>'+esc(d)+'</span></div>').join('')+'</div>',
    interface:row('su','Interface size','Scales the HUD, hotbar and quest tracker',rng('su',80,140,o.ui*100))
@@ -66,6 +67,7 @@
   q('sav').oninput=e=>{lab('sav',e.target.value);OPT.av=e.target.value/100;try{saveP()}catch(_){}const a=el('oav');if(a)a.value=e.target.value};
   q('suv').oninput=e=>{o.uiv=e.target.value/100;lab('suv',e.target.value);celSave()};q('suv').onchange=()=>{try{UIS.play('select')}catch(_){}};
   tg('sum',v=>{o.uim=v?1:0;if(!v)try{UIS.play('select')}catch(_){}});
+  if(window.RPG&&RPG.guide){const G=RPG.guide;if(q('slv'))q('slv').oninput=e=>{lab('slv',e.target.value);G.setVol(e.target.value/100)};tg('slm',v=>G.setMute(v));tg('sls',v=>G.setSub(v));tg('slh',v=>G.setShow(v));if(q('slr'))q('slr').onclick=()=>{try{UI6.close()}catch(_){}G.replay()}}
   // controls
   q('szm').oninput=e=>lab('szm',e.target.value);q('szm').onchange=e=>{try{setZoom(e.target.value/100);saveP()}catch(_){}lab('szm',Math.round(ZM*100))};
   // interface

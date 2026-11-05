@@ -271,6 +271,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 15
         run: bash tools/ci-test.sh tests/dungeons.js
+      - name: Test the progression loop
+        if: ${{ !cancelled() }}
+        timeout-minutes: 12
+        run: bash tools/ci-test.sh tests/rpg.js
       - name: Test dungeon trials
         if: ${{ !cancelled() }}
         timeout-minutes: 12

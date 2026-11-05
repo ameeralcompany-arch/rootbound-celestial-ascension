@@ -2,11 +2,11 @@
 // Rootbound persistent multiplayer server. Zero dependencies (Node 18+). See server/README.md.
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {cleanText}=require('./moderation');
-const {upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),PARTY=require('./party'),zlib=require('zlib');
+const ENH=require('./enhance'),{upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),PARTY=require('./party'),zlib=require('zlib');
 const ENV=process.env;
 const WORLDS_A_DAY=10;   // new worlds one account may make in a day (claiming them is limited separately, to 5 at a time)
 const ACCOUNT_GEN=1;   // raise this by one to reset every account again when the server next starts
-const WB_GEMS=[3000,7000,12000,18000,28000],WB_DAY=10;   // what each realm's world boss pays (src/js/late/99-zzzzzzzzz-i-worldboss.js)
+const DG_DAY=30;const WB_GEMS=[3000,7000,12000,18000,28000],WB_DAY=10;   // what each realm's world boss pays (src/js/late/99-zzzzzzzzz-i-worldboss.js)
 function createServer(opts={}){
  const cfg=Object.assign({port:+ENV.PORT||8787,host:ENV.HOST||'0.0.0.0',dataDir:ENV.DATA_DIR||path.join(__dirname,'data'),client:ENV.CLIENT_FILE||path.join(__dirname,'..','index.html'),
   maxPlayers:+ENV.MAX_PLAYERS_PER_WORLD||24,maxWorlds:+ENV.MAX_WORLDS||500,maxWorldsPerAccount:+ENV.MAX_WORLDS_PER_ACCOUNT||5,maxConns:+ENV.MAX_CONNECTIONS||400,maxConnsPerIp:+ENV.MAX_CONNS_PER_IP||12,
@@ -172,6 +172,10 @@ function createServer(opts={}){
   case 'enter':if(!bucket(s,'enter',12,30000))return send(s,{t:'enter_err',m:'Slow down'});return enter(s,m.w,!!m.create,m.base);
   case 'leave':return leaveWorld(s);
   case 'sync':{if(s.kind=='guest'||!bucket(s,'sync',12,60000))return;const u=userById(s.uid);if(!u)return;SHOP.sync(u,m.gems);watch(s,u,'gems',Math.floor(+m.gems)-SHOP.view(u).gems);sendWallet(s,u);saveAcc();return}
+  // weapon enhancement: the ledger is charged here or not at all (enhance.js)
+  case 'enh':{if(s.kind=='guest'){return send(s,{t:'enh_res',ok:0,rid:String(m.rid||''),m:'Guests upgrade on their own computer'})}if(!bucket(s,'enh',12,10000))return send(s,{t:'enh_res',ok:0,rid:String(m.rid||''),m:'Slow down'});const u=userById(s.uid);if(!u)return;const r=ENH.upgrade(u,m,{count:ECON.count,charge:(uu,l,why)=>eco.charge(uu,l,why),free:!!s.god});if(r.ok&&!r.dup){saveAcc();store.audit({ev:'enh',uid:s.uid,wp:r.wp,to:r.to,spent:r.spent})}send(s,Object.assign({t:'enh_res'},r));return}
+  // a solo dungeon clear: same rule as a world boss win. Too fast or over the daily limit just means the gems arrive at the normal rate instead
+  case 'dgs':{if(s.kind=='guest'||!bucket(s,'dgs',10,60000))return;const u=userById(s.uid);if(!u)return;if(m.op=='start'){s.dgT={d:String(m.d||'').slice(0,12),t:Date.now()};return}if(m.op!='win')return;const st=s.dgT;s.dgT=null;const df=String(m.df||'normal');if(!st||st.d!==String(m.d||'')||!PARTY.GEMS[st.d]||!PARTY.DIFFS.includes(df)||Date.now()-st.t<cfg.dgMinMs)return;const day=Math.floor(Date.now()/864e5),d=u.dgDay&&u.dgDay.d==day?u.dgDay:(u.dgDay={d:day,n:0});if(d.n>=DG_DAY)return;d.n++;SHOP.bonus(u,Math.round(PARTY.GEMS[st.d]*(1+Math.max(0,PARTY.DIFFS.indexOf(df))*.5)));saveAcc();return}
   case 'party':return parties.msg(s,m);
   case 'pg':return parties.relay(s,m);
   case 'wallet':{if(s.kind=='guest')return send(s,{t:'wallet',gems:0,owned:{},guest:1});const u=userById(s.uid);return sendWallet(s,u)}

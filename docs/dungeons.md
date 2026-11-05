@@ -1,10 +1,10 @@
 # Dungeons
 
-Ten dungeons, level 15 to endgame. A dungeon is a private world on the player's own computer: you leave the room you were in, nothing is written to any world save, and when you leave you return to exactly where you stood. A dropped connection never pulls you out.
+Ten dungeons, level 10 to endgame. Each also asks for Combat Power (docs/progression-rpg.md). A dungeon is a private world on the player's own computer: you leave the room you were in, nothing is written to any world save, and when you leave you return to exactly where you stood. A dropped connection never pulls you out.
 
 | Dungeon | Level | Boss | Unlocked by |
 |---|---:|---|---|
-| Forgotten Ruins | 15 | The Ancient Sentinel | level |
+| Forgotten Ruins | 10 | The Ancient Sentinel | level |
 | Crimson Depths | 20 | The Infernal Sovereign | Forgotten Ruins |
 | Frozen Catacombs | 25 | The Frost Empress | Crimson Depths |
 | Hollow Sanctuary | 30 | The Nameless Saint | Frozen Catacombs |
