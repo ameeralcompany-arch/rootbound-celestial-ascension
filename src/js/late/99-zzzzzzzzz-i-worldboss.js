@@ -484,5 +484,5 @@ const WBOSS13=(()=>{
   Qd.querySelector('h3').textContent=b.n;Qd.querySelector('p').innerHTML=esc(b.sn)+' took back the power of your letters and guards the Word Gate. Defeat '+him(b)+' to solve the word and open the way on.<br><small>The world falls away while you fight and comes back afterwards. Recommended level '+b.lv+'.</small>';
   Qd.style.display='flex';Qd._o=1;requestAnimationFrame(()=>{if(Qd._o)Qd.classList.add('on')});try{UIS.play('open')}catch(_){}try{for(const k in keys)keys[k]=0}catch(_){}}
  function closeQ(){if(!Qd)return;Qd._o=0;Qd.classList.remove('on');setTimeout(()=>{if(Qd&&!Qd._o)Qd.style.display='none'},180)}
- return{WB,BY,need,found,ask,start,isWB,ART,LIST,ATK,CIN,get state(){return S},get fight(){return F?{st:F.st,id:F.b.id,w:F.w,ar:F.ar}:null},get void(){return !!VOID},get home(){return SNAP?{x:SNAP.px,y:SNAP.py}:null},get held(){return HELD.length},
+ return{WB,BY,need,found,ask,start,isWB,ART,LIST,ATK,CIN,get state(){return S},get fight(){return F?{st:F.st,id:F.b.id,w:F.w,ar:F.ar}:null},get void(){return !!VOID||!!(window.DG&&DG.run)},get home(){return SNAP?{x:SNAP.px,y:SNAP.py}:null},get held(){return HELD.length},
   skip(){if(CIN.on)CIN.finish()},abort,clearFx,get fx(){return PR.length+BM.length+WV.length+WL.length+RG.length+EM.length+CLN.length}}})();

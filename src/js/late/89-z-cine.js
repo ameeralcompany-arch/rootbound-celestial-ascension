@@ -1248,7 +1248,7 @@ const CINE7=(()=>{
  function tod(){try{const d=((clock()%1)+1)%1;return d<.1||d>=.92?'Midday':d<.2?'Afternoon':d<.28?'Dusk':d<.72?'Night':d<.8?'Dawn':'Morning'}catch(_){return''}}
  function wxl(){try{if(ENV7.target&&ENV7.target!='default'&&ENV7.names[ENV7.target])return ENV7.names[ENV7.target]}catch(_){}try{if(WX_NAMES[WX6.cur])return WX_NAMES[WX6.cur]}catch(_){}return{clear:'Clear skies',cloud:'Cloudy',rain:'Rain',storm:'Storm',snow:'Snow'}[typeof wxN!='undefined'?wxN:'']||''}
  function killW(){if(!W7)return;cancelAnimationFrame(W7.raf);clearTimeout(W7.tm);try{W7.w.remove()}catch(_){}try{document.body.classList.remove('c7w-on')}catch(_){}W7=null}
- function onEnter(n){const now=performance.now();if(n==lastN&&now-lastT<8000)return;lastN=n;lastT=now;if(I)return;
+ function onEnter(n){if(String(n).startsWith('dg_')&&window.DG&&DG.run)return;const now=performance.now();if(n==lastN&&now-lastT<8000)return;lastN=n;lastT=now;if(I)return;
   if(window.RB_COVER){pend=n;clearInterval(pendIv);let k=0;pendIv=setInterval(()=>{if(++k>100||pend!=n){clearInterval(pendIv);return}if(!window.RB_COVER&&!I){clearInterval(pendIv);pend=null;if(cur==n)worldCard(n)}},200);return}
   worldCard(n)}
  function worldCard(n){killW();const red=reduce(),D=red?1.2:1.9,first=seen(n),w=document.createElement('div');w.id='cine7w';w.setAttribute('aria-hidden','true');const c=mk(Math.max(2,innerWidth*.5),Math.max(2,innerHeight*.5));w.appendChild(c);

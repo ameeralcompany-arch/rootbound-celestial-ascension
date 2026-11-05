@@ -254,6 +254,18 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 12
         run: bash tools/ci-test.sh tests/winonly.js
+      - name: Test dungeons
+        if: ${{ !cancelled() }}
+        timeout-minutes: 15
+        run: bash tools/ci-test.sh tests/dungeons.js
+      - name: Test dungeon trials
+        if: ${{ !cancelled() }}
+        timeout-minutes: 12
+        run: bash tools/ci-test.sh tests/dungeon-trials.js
+      - name: Test dungeon boss fights
+        if: ${{ !cancelled() }}
+        timeout-minutes: 15
+        run: bash tools/ci-test.sh tests/dungeon-fights.js
       - name: Test real launch
         if: ${{ !cancelled() }}
         timeout-minutes: 12

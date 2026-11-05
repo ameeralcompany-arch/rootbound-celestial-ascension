@@ -1,0 +1,41 @@
+// ===== DG films: each dungeon's opening is a real scene: painted layers at their own depth, a camera that moves through them, things that move, light that changes, particles, sound and title. A film is registered with
+//   DG.cine.reg(id, {dur, build(F) (once: paint your layers with F.layer), beats:[[t, fn(F)]...] (sound and one-off events), cam(t) => {x, y, z} (where the camera looks, 0..1 across the wide scene), draw(c, t, F) (each frame, in scene space)})
+// The scene is 1280 x 720, wide layers scroll by their depth. F offers: F.layer(name, w, h, paint, depth) and F.draw(name) (draws it with parallax), F.glow, F.parts (a small particle system), F.title(a, b, t0) (the title reveal), F.fade(c, a), F.shake(v).
+// First viewing plays in full. After that (or when replayed) holding any key skips. Runs over the paused game, costs nothing once it has ended, honours Reduce motion and the camera-shake setting. =====
+try{(()=>{
+ const DG=window.DG,TAU=Math.PI*2,R=Math.random,cl=DG.cl,lerp=DG.lerp,ez=DG.ez,eo=DG.eo,hexA=DG.hexA,mix=DG.mix,REG={};const VW=1280,VH=720;
+ const cvs=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+ let C=null;
+ function Film(def,o){const F={t:0,cam:{x:.5,y:.5,z:1},shk:0,lay:{},pr:[],def,reduce:DG.reduced(),rnd:(s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296)(def.seed||1234),
+   // wide layer: painted once, drawn with parallax. depth 0 = sky, 1 = moves fully with the camera
+   layer(n,w,h,paint,depth){const c=cvs(w,h),x=c.getContext('2d');try{paint(x,w,h,F.rnd)}catch(e){console.error('DG film layer',n,e)}F.lay[n]={c,w,h,d:depth==null?.5:depth};return c},
+   draw(n,o2={}){const L=F.lay[n];if(!L)return;const c=F.ctx,cam=F.cam,ow=L.w-VW,oh=L.h-VH,x=-ow*cam.x*L.d-(ow*(1-L.d)*.5),y=-oh*(cam.y)*L.d-(oh*(1-L.d)*.5);c.globalAlpha=o2.a==null?1:o2.a;if(o2.op)c.globalCompositeOperation=o2.op;c.drawImage(L.c,x+(o2.ox||0),y+(o2.oy||0));c.globalAlpha=1;c.globalCompositeOperation='source-over'},
+   // where a point on a layer of this depth lands on screen, for things placed on the layer
+   at(n,x,y){const L=F.lay[n],cam=F.cam,ow=L.w-VW,oh=L.h-VH;return[x-ow*cam.x*L.d-(ow*(1-L.d)*.5),y-oh*cam.y*L.d-(oh*(1-L.d)*.5)]},
+   glow(x,y,r,c,a){const q=F.ctx,op=q.globalCompositeOperation,a0=q.globalAlpha;q.globalCompositeOperation='lighter';q.globalAlpha=a0*(a==null?1:a);q.drawImage(BOSS6.glo(c),x-r,y-r,r*2,r*2);q.globalAlpha=a0;q.globalCompositeOperation=op},
+   // particles in screen space: emit(n, {x, y, vx, vy, g, l, s, c, add, drag}) values or [min,max]
+   emit(n,o3){const m=F.reduce?Math.ceil(n/3):n,v=q=>Array.isArray(q)?q[0]+R()*(q[1]-q[0]):q;for(let i=0;i<m&&F.pr.length<420;i++)F.pr.push({x:v(o3.x),y:v(o3.y),vx:v(o3.vx||0),vy:v(o3.vy||0),g:o3.g||0,l:v(o3.l||1),l0:0,s:v(o3.s||2),c:Array.isArray(o3.c)?o3.c[(R()*o3.c.length)|0]:o3.c,add:o3.add!==false,drag:o3.drag||0,sq:o3.sq||0})},
+   particles(dt){const q=F.ctx;for(let i=F.pr.length-1;i>=0;i--){const p=F.pr[i];p.l0+=dt;if(p.l0>=p.l){const z=F.pr.pop();if(i<F.pr.length)F.pr[i]=z;continue}p.vy+=p.g*dt;if(p.drag){p.vx*=1-p.drag*dt;p.vy*=1-p.drag*dt}p.x+=p.vx*dt;p.y+=p.vy*dt}for(const p of F.pr){q.globalCompositeOperation=p.add?'lighter':'source-over';q.globalAlpha=Math.min(1,(1-p.l0/p.l)*1.6);q.fillStyle=p.c;q.beginPath();if(p.sq)q.fillRect(p.x,p.y,p.s,p.s);else{q.arc(p.x,p.y,p.s,0,TAU);q.fill()}}q.globalAlpha=1;q.globalCompositeOperation='source-over'},
+   // the title reveal: the letters drift together, a line draws, the subtitle fades in below
+   title(a,b,t0,dur=5,col='#ffffff'){const q=F.ctx,u=F.t-t0;if(u<0||u>dur)return;const k=u<.9?ez(u/.9):u>dur-.8?1-ez((u-dur+.8)/.8):1,sp=lerp(36,12,eo(u/2));q.save();q.textAlign='center';q.textBaseline='middle';q.globalAlpha=k;let fs=a.length>18?54:70;const chars=[...a];q.font='900 '+fs+'px Georgia,"Times New Roman",serif';let wid=chars.reduce((s,ch)=>s+q.measureText(ch).width,0);const room=1180-36*(chars.length-1);if(wid>room){fs=Math.floor(fs*Math.max(.4,room/wid));q.font='900 '+fs+'px Georgia,"Times New Roman",serif'}const ws=chars.map(ch=>q.measureText(ch).width),tot=ws.reduce((s,w)=>s+w,0)+sp*(chars.length-1);let px=VW/2-tot/2;q.shadowColor=col;q.shadowBlur=26;q.fillStyle='#fff';chars.forEach((ch,i)=>{q.fillText(ch,px+ws[i]/2,VH*.47);px+=ws[i]+sp});q.shadowBlur=0;const lw=lerp(0,Math.min(tot,860),eo((u-.3)/1.1));q.fillStyle=col;q.fillRect(VW/2-lw/2,VH*.47+fs*.62,lw,2);q.globalAlpha=k*cl((u-.9)/.8,0,1);q.font='italic 500 24px Georgia,serif';q.fillStyle='#e8e4f4';q.fillText(b,VW/2,VH*.47+fs*1.02);q.restore()},
+   fade(c,a){if(a<=0)return;const q=F.ctx;q.globalAlpha=Math.min(1,a);q.fillStyle=c;q.fillRect(0,0,VW,VH);q.globalAlpha=1},
+   shake(v){if(!F.reduce&&DG.S.opt.shake)F.shk=Math.max(F.shk,v)},
+   sfx(k,v){try{DG.music.sfx(k,v)}catch(_){}},music(n,s){try{DG.music.mix(n,s)}catch(_){}},
+   // the wide look of film: bars and grain
+   frame(){const q=F.ctx;q.fillStyle='#000';q.fillRect(0,0,VW,62);q.fillRect(0,VH-62,VW,62)}};
+  return F}
+ function size(){if(!C)return;const dpr=Math.min(1.5,devicePixelRatio||1),w=Math.round(innerWidth*dpr),h=Math.round(innerHeight*dpr);if(C.cv.width!=w||C.cv.height!=h){C.cv.width=w;C.cv.height=h}}
+ function frame(n){if(!C)return;const F=C.F,dt=Math.min(.05,(n-C.last)/1000);C.last=n;F.t=(n-C.t0)/1000;if(C.skip&&C.held){C.hold+=dt;if(C.hold>=.6){finish();return}}else C.hold=Math.max(0,C.hold-dt*2);
+  size();const def=F.def;while(C.bi<def.beats.length&&def.beats[C.bi][0]<=F.t){try{def.beats[C.bi][1](F)}catch(e){console.error('DG film beat',e)}C.bi++}
+  try{if(def.cam){const q=def.cam(F.t);if(q){F.cam.x=q.x;F.cam.y=q.y==null?.5:q.y;F.cam.z=q.z||1}}const c=C.x,cvw=C.cv.width,cvh=C.cv.height,sc=Math.max(cvw/VW,cvh/VH);F.ctx=c;c.setTransform(1,0,0,1,0,0);c.fillStyle='#000';c.fillRect(0,0,cvw,cvh);F.shk=Math.max(0,F.shk-dt*1.1);const sx=F.shk?(R()-.5)*F.shk*36:0,sy=F.shk?(R()-.5)*F.shk*36:0;c.setTransform(sc,0,0,sc,(cvw-VW*sc)/2+sx*sc,(cvh-VH*sc)/2+sy*sc);if(F.cam.z!==1){c.translate(VW/2,VH/2);c.scale(F.cam.z,F.cam.z);c.translate(-VW/2,-VH/2)}def.draw(c,F.t,F,dt);F.particles(dt);if(def.over)def.over(c,F.t,F,dt);c.setTransform(sc,0,0,sc,(cvw-VW*sc)/2,(cvh-VH*sc)/2);F.frame()}catch(e){console.error('DG film',e);finish();return}
+  const tip=document.getElementById('dgskip');if(tip){tip.textContent=C.skip?'Hold any key to skip':'';tip.style.opacity=C.hold>0?1:.7}
+  if(F.t>=def.dur){finish();return}C.raf=requestAnimationFrame(frame)}
+ function key(e){if(!C)return;e.stopPropagation();if(e.key!='F11'&&e.key!='F12')e.preventDefault();C.held=e.type=='keydown'||e.type=='mousedown'||e.type=='pointerdown'}
+ const EVS=['keydown','keyup','mousedown','mouseup','pointerdown','pointerup'];
+ function play(id,o={}){const def=REG[id];if(!def){o.done&&o.done();return false}if(C)stop();const d=DG.BY[id];const cv2=document.createElement('canvas');cv2.id='dgfilm';cv2.setAttribute('aria-label',d?d.n+' film':'Film');document.body.appendChild(cv2);const tip=document.createElement('div');tip.id='dgskip';document.body.appendChild(tip);
+  const F=Film(def,o);C={cv:cv2,x:cv2.getContext('2d'),F,t0:performance.now(),last:performance.now(),done:o.done,skip:!!o.skip,hold:0,held:false,raf:0,bi:0,prev:window.RB_COVER,tip};
+  window.RB_COVER=1;F.ctx=C.x;try{if(def.build)def.build(F)}catch(e){console.error('DG film build',e)}try{if(d)DG.music.film(d)}catch(_){}for(const k of EVS)addEventListener(k,key,true);size();C.raf=requestAnimationFrame(frame);C.t0=performance.now();C.last=C.t0;return true}
+ function stop(){if(!C)return;cancelAnimationFrame(C.raf);for(const k of EVS)removeEventListener(k,key,true);const cv2=C.cv,tip=C.tip;cv2.style.transition='opacity .5s';cv2.style.opacity='0';setTimeout(()=>{try{cv2.remove();tip.remove()}catch(_){}},520);window.RB_COVER=C.prev||0;if(!window.RB_COVER)try{delete window.RB_COVER}catch(_){}try{for(const k in K)K[k]=0}catch(_){}C=null}
+ function finish(){if(!C)return;const d=C.done;stop();try{if(!DG.run)DG.music.leave()}catch(_){}try{d&&d()}catch(e){console.error(e)}}
+ DG.cine={reg(id,def){def.beats=(def.beats||[]).slice().sort((a,b)=>a[0]-b[0]);REG[id]=def;return def},has:id=>!!REG[id],play,stop,finish,REG,get on(){return !!C},get t(){return C?C.F.t:0},seek(t){if(C)C.t0=performance.now()-t*1000},VW,VH,get canSkip(){return !!(C&&C.skip)}};
+})()}catch(e){console.error('DG cine',e)}

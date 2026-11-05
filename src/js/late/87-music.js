@@ -103,7 +103,7 @@ const MUS7=(()=>{
   const sc=SC[d.sc],mt=()=>{const n=[];for(let i=0;i<8;i++)n.push(R()<.55?(R()*sc.length)|0:-1);n[0]=(R()*sc.length)|0;return n};
   song={d,sc,A:mt(),B:mt(),root:d.key,id:d.id,ph:0};songBar=0;step=0}
  function mutate(m,sc){const o=m.slice();for(let i=0;i<o.length;i++){const r=R();if(o[i]>=0&&r<.18)o[i]=Math.max(0,Math.min(sc.length-1,o[i]+(R()<.5?-1:1)));else if(o[i]>=0&&r<.28)o[i]=-1;else if(o[i]<0&&r<.14)o[i]=(R()*sc.length)|0}return o}
- function tick(){if(!on||!ctx)return;if(ctx.currentTime<gap||fading)return;if(!song)newSong(mood);const d=song.d,e8=60/d.bpm/2;
+ function tick(){if(!on||!ctx)return;if(window.MUS_HOLD)return;/* the dungeon score plays instead */if(ctx.currentTime<gap||fading)return;if(!song)newSong(mood);const d=song.d,e8=60/d.bpm/2;
   if(nextT<ctx.currentTime)nextT=ctx.currentTime+.05;
   while(nextT<ctx.currentTime+.45){const s=step%8,bar=songBar,[rt,q]=d.prog[bar%d.prog.length],t=nextT+(s%2?(d.feel=='ambient'?0:.1)*e8:0),hv=.85+R()*.3;
    const sect=bar>>3&3,mel=(sect==2?song.B:song.A);
@@ -129,7 +129,7 @@ const MUS7=(()=>{
    nextT+=e8;step++;if(step%8==0){songBar++;if(songBar>=BARS){endSong();return}}}}
  function endSong(){fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(0,t+3.2);setTimeout(()=>{song=null;fading=0;gap=ctx.currentTime+1.5+R()*3;nextT=gap;fadeIn()},3300)}
  function fadeIn(){const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(0,t);mg.gain.linearRampToValueAtTime(1,t+2.2)}
- function crackle(){if(!on||!ctx)return;const t=ctx.currentTime;if(R()<.7)nz(t,.012+R()*.02,2500+R()*4000,'bandpass',.004+R()*.006);if(R()<.04)nz(t,.05,900,'bandpass',.008)}
+ function crackle(){if(!on||!ctx||window.MUS_HOLD)return;const t=ctx.currentTime;if(R()<.7)nz(t,.012+R()*.02,2500+R()*4000,'bandpass',.004+R()*.006);if(R()<.04)nz(t,.05,900,'bandpass',.008)}
  function start(){ac();if(on||!AC)return;ctx=AC;master=ctx.createGain();master.gain.value=mute?0:(OPT.mv==null?.5:OPT.mv);mg=ctx.createGain();mg.gain.value=1;lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;lp.Q.value=.4;
   wet=ctx.createGain();wet.gain.value=.34;const rv=mkReverb();lp.connect(mg);lp.connect(rv);rv.connect(wet);wet.connect(mg);mg.connect(master);
   // calm master: a treble shelf and a gentle lowpass take the edge off bright notes and crackle, and a slow soft compressor rounds drum transients

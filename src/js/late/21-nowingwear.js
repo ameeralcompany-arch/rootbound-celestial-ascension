@@ -4,7 +4,7 @@ const REMOVED_WEAR7=['angel','fairy','bat','phoenix','crystal'];
 for(const id of REMOVED_WEAR7){try{const v=WEAR[id];Object.defineProperty(WEAR,id,{value:v,enumerable:false,writable:true,configurable:true})}catch(_){}}
 const WINGFIX7=(()=>{
  function run(){try{let refund=0;for(const id of REMOVED_WEAR7){if(ownW[id]){refund+=({angel:150,fairy:240,bat:330,phoenix:520,crystal:900})[id]||0;delete ownW[id]}}
-  for(const sl in wear)if(wear[sl]&&(!WEAR[wear[sl]]||REMOVED_WEAR7.includes(wear[sl])))wear[sl]=''
+  for(const sl in wear)if(wear[sl]&&((!WEAR[wear[sl]]&&window.RB_LATE_DONE)||REMOVED_WEAR7.includes(wear[sl])))wear[sl]=''
   if(refund>0){gems+=refund;try{say('Wearable wings were removed. Refunded '+refund+' gems.')}catch(_){}}}catch(_){}}
  run();setInterval(run,300);return{run}})();
 // double-jump feathers use the equipped appearance wing's colours, plus a soft whoosh

@@ -17,7 +17,7 @@ const UI6=(()=>{
   for(const m of mobs){const i=(m.x/T-cxT+R)*sx,j=(m.y/T-cyT+R*.64)*sy;if(i>0&&i<150&&j>0&&j<96){mx.fillStyle='#ff5a6a';mx.fillRect(i-1,j-1,3,3)}}
   if(rm)for(const p of rm.peers()){const q=p.presence;if(p.isMe||!q||q.x==null)continue;const i=(q.x/T-cxT+R)*sx,j=(q.y/T-cyT+R*.64)*sy;if(i>0&&i<150&&j>0&&j<96){mx.fillStyle='#7ff0ff';mx.fillRect(i-1.5,j-1.5,4,4)}}
   mx.fillStyle='#ffd24a';mx.beginPath();mx.arc(75,48,3,0,6.3);mx.fill();mx.strokeStyle='#fff';mx.lineWidth=1;mx.stroke()}
- function hudTick(){if(!entered)return;portrait();const t=curPlateTier(lvl),w=curWing(lvl),A=curAura(lvl);el('pname').textContent='Lv '+lvl+'  '+myName;tt.textContent=npName(t);hw.innerHTML=w?'<i></i>'+w.n:'<i style="opacity:.3"></i>No wings yet';
+ function hudTick(){if(!entered)return;portrait();const t=curPlateTier(lvl),w=curWing(lvl),A=curAura(lvl);el('pname').textContent='Lv '+lvl+'  '+myName;tt.textContent=(window.DG&&DG.S&&DG.S.titleOn)||npName(t);hw.innerHTML=w?'<i></i>'+w.n:'<i style="opacity:.3"></i>No wings yet';
   
   // progression events
   const wi=w?WINGS.indexOf(w):-1,best=bestWing(lvl),bi=best?WINGS.indexOf(best):-1;

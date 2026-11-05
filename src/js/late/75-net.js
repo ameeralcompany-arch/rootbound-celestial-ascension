@@ -61,7 +61,7 @@ const NET7=(()=>{
  function authDone(a,e){if(!a){if(st=='connecting'||st=='reconnecting'){// fall back to a guest session so the player can still look around
     if(!authDone.g){authDone.g=1;send({t:'guest',name:myName});setSt('connecting',e);return}}setSt('offline',e);return}authDone.g=0;retry=true;setSt('online');refresh();
   // rejoin after a reconnect or enter the plaza on first connect
-  const w=saved&&saved.w||want||(entered?cur:null);const keep=saved;saved=null;if(w)go(w,false,keep)}
+  const w=saved&&saved.w||want||(entered?cur:null);const keep=saved;saved=null;/* in a dungeon you are on your own computer: a dropped connection never pulls you out */if(window.DG&&DG.run)return;if(w)go(w,false,keep)}
  function refresh(){send({t:'worlds'})}
  // ---- entering worlds
  let lastTry='';

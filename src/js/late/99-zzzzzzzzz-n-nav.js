@@ -22,6 +22,7 @@ const NAV16=(()=>{
   menu:'<rect class="d" x="3.500" y="3.500" width="7" height="7" rx="1.500"/><rect x="13.500" y="3.500" width="7" height="7" rx="1.500"/><rect x="3.500" y="13.500" width="7" height="7" rx="1.500"/><rect class="d" x="13.500" y="13.500" width="7" height="7" rx="1.500"/>',
   soundon:'<path class="d" d="M4 9.500v5h3.500l5 4.500V5l-5 4.500z"/><path d="M16 9a4 4 0 0 1 0 6M18.500 6.500a8 8 0 0 1 0 11"/>',
   soundoff:'<path class="d" d="M4 9.500v5h3.500l5 4.500V5l-5 4.500z"/><path d="M16.500 9.500l5 5M21.500 9.500l-5 5"/>',
+  dungeon:'<path class="d" d="M4 21V10a8 8 0 0 1 16 0v11z"/><path d="M9 21v-7a3 3 0 0 1 6 0v7"/><path d="M2.500 21h19"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',
   respawn:'<path d="M4 12a8 8 0 1 0 2.600-5.900"/><path d="M4 4.500V9h4.500"/>',
   owner:'<path class="d" d="M3.500 18.500l-1-11 5.500 4L12 4l4 7.500 5.500-4-1 11z"/><path d="M4 21.500h16"/>',
