@@ -4,11 +4,13 @@
 
 Rootbound is a Windows game (Windows 10 or newer). It no longer runs in a browser.
 
-**[Download for Windows](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip)** (about 180 MB)
+**[Download the Rootbound Launcher](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/RootboundSetup.exe)** (about 145 MB, then it downloads the game, about 160 MB)
 
-1. Download `Rootbound-Windows.zip`, then right-click it and choose **Extract All**.
-2. Open the extracted folder and run **Rootbound.exe**. Keep it with the other files in that folder, or it will not start.
-3. Windows may warn that the publisher could not be verified, or say "Windows protected your PC" (click **More info**, then **Run anyway**). The app is not code-signed yet, so Windows cannot tell who made it.
+1. Run `RootboundSetup.exe`. Windows may warn that the publisher could not be verified, or say "Windows protected your PC" (click **More info**, then **Run anyway**). The installer is not code-signed yet, so Windows cannot tell who made it.
+2. Choose where to install. The launcher downloads and checks the game.
+3. Press **Play**. From now on the launcher keeps the game up to date. Your saves are kept.
+
+Prefer no launcher? [Get the zip](https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/latest/download/Rootbound-Windows.zip), extract it and run **Rootbound.exe**. It doesn't update itself.
 
 The online server sleeps when nobody is playing, so the first player may wait about a minute. You can play locally while it wakes.
 
