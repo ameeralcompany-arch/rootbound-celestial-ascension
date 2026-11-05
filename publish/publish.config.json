@@ -1,0 +1,22 @@
+{
+  "channel": "stable",
+  "publicUrl": "https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/download/updates/",
+  "storage": {
+    "type": "github",
+    "repo": "ameeralcompany-arch/rootbound-celestial-ascension",
+    "tag": "updates"
+  },
+  "signingKey": "~/.rootbound-publish/signing-key.pem",
+  "keyId": "rb-1",
+  "entry": "Rootbound.exe",
+  "preserve": [
+    "safe-mode.txt"
+  ],
+  "newsFile": "content/news.json",
+  "validation": {
+    "tests": [
+      "tests/boot.js",
+      "tests/launch.js"
+    ]
+  }
+}

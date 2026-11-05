@@ -16,6 +16,8 @@ The green **Code > Download ZIP** button gives you the source code, not the app:
 
 **Played in a browser before?** Accounts live on the server, so sign in with the same name in the app. Without an account, open the old address in that same browser, choose **Save my progress**, then in the app use **Settings > General > Backup & restore > Import save file**.
 
+**Developers:** the launcher, how to publish updates and how to host them are explained in [docs/launcher.md](docs/launcher.md).
+
 The notes below are the project's history, newest last. Older ones mention browsers, GitHub Pages and host rooms, which are gone.
 
 ---

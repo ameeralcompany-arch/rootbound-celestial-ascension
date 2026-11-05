@@ -1,5 +1,10 @@
 name: Build and test
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: ['**']
+    # the launcher's update files live in releases with these tags: publishing them is not a code change
+    tags-ignore: ['updates', 'updates-parts-*']
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -317,3 +322,17 @@ jobs:
         shell: pwsh
       - uses: actions/upload-artifact@v4
         with: {name: Rootbound-Windows, path: Rootbound-Windows.zip}
+      - name: Test the launcher's update path (real HTTPS server, publish tool, delta, failures, forgeries)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: node tests/launcher/core.js
+        shell: pwsh
+      - name: Test the launcher's Start with Windows setting against the real start-up list (safe here: this machine is thrown away)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 3
+        working-directory: desktop
+        run: |
+          npx electron ../tests/launcher/startup-entry.js 2>&1 | Tee-Object -FilePath startup.txt
+          if($LASTEXITCODE -ne 0){throw "start-up test failed"}
+          if((Get-Content startup.txt -Raw) -notmatch "all passed"){throw "start-up test did not finish"}
+        shell: pwsh

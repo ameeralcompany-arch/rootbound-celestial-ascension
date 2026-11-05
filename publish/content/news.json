@@ -1,0 +1,62 @@
+{
+  "items": [
+    {
+      "id": "two-player-dungeons",
+      "type": "dungeon",
+      "pin": true,
+      "title": "Two-player dungeons",
+      "summary": "Two players can now clear any dungeon together, with shared monsters and bosses, revives, puzzle chambers only two can solve, and duo boss mechanics.",
+      "body": "Two players can now clear any dungeon together.\n\nParties live on the server. Monsters and bosses are shared, a downed partner can be revived, some puzzle chambers can only be solved by two, and bosses have their own duo mechanics. Rewards are paid by the server, once per account.",
+      "date": "2026-11-05",
+      "link": "https://github.com/ameeralcompany-arch/rootbound-celestial-ascension"
+    },
+    {
+      "id": "soft-glass",
+      "type": "content",
+      "title": "The Soft Glass look",
+      "summary": "A new default look, with settings for blur, particles, shadows, film effects, interface motion and a performance mode.",
+      "body": "Soft Glass is the new default look, with settings for blur, particles, shadows, film effects, interface motion and a performance mode. Panels scale up on big screens.\n\nBoss deaths now slow down, first clears get their own moment, films you have seen can be replayed and skipped, and several boss entrances have their own camera and effects.",
+      "date": "2026-11-05"
+    },
+    {
+      "id": "ten-dungeons",
+      "type": "dungeon",
+      "title": "Ten dungeons, from level 15 to endgame",
+      "summary": "Each dungeon is a private world with its own map, monsters, boss, film and score. Keys and gates, parkour trials, Abyssal difficulty, drops and crafting.",
+      "body": "Ten new dungeons, from level 15 to endgame. Each is a private world with its own map, monsters, boss, film and score.\n\nAlso included: keys and gates, parkour trials, Abyssal difficulty, drops, crafting and rewards.",
+      "date": "2026-11-05"
+    },
+    {
+      "id": "windows-only-612",
+      "type": "update",
+      "title": "Rootbound 6.12: Windows only, and the launch and wings fixes",
+      "summary": "Rootbound is now a Windows game, with the launch bug, the wings crash and the white screen after restarting all fixed. Your saves carry over.",
+      "body": "Rootbound is now a Windows game. Your saves carry over. Online play, accounts and shared worlds all stay, in the app.\n\nFixed: the dock going missing when your last world no longer existed, the screen going blank after changing wings in the air, the white look after restarting, sign-ins that quietly ran out, and importing a save.",
+      "date": "2026-11-04",
+      "version": "6.12.0"
+    }
+  ],
+  "events": [
+    {
+      "id": "weekly-dungeon-challenges",
+      "kind": "recurring",
+      "title": "Weekly dungeon challenges",
+      "summary": "Three challenges, the same for everyone that week. They change every Monday at 00:00 UTC.",
+      "reward": "Dungeon materials, paid when a challenge is done",
+      "recur": "weekly-utc-monday"
+    },
+    {
+      "id": "daily-challenges",
+      "kind": "recurring",
+      "title": "Daily challenges",
+      "summary": "Three new challenges each day, with a streak bonus. They change at midnight on your PC.",
+      "reward": "Gems and XP, with a streak bonus",
+      "recur": "daily-local"
+    }
+  ],
+  "banners": [],
+  "community": {
+    "links": []
+  },
+  "maintenance": null
+}

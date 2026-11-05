@@ -1,0 +1,11 @@
+{
+  "channelUrl": "https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/releases/download/updates/",
+  "channel": "stable",
+  "publicKeys": {},
+  "gameServer": "https://rootbound-rcvi.onrender.com",
+  "links": {
+    "project": "https://github.com/ameeralcompany-arch/rootbound-celestial-ascension",
+    "issues": "https://github.com/ameeralcompany-arch/rootbound-celestial-ascension/issues"
+  },
+  "testHooks": false
+}

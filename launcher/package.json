@@ -1,0 +1,13 @@
+{
+  "name": "rootbound-launcher",
+  "productName": "Rootbound Launcher",
+  "version": "1.0.0",
+  "description": "Rootbound Launcher: installs, updates and starts Rootbound",
+  "main": "bootstrap/main.js",
+  "author": "Rootbound",
+  "license": "MIT",
+  "rootbound": {
+    "bootstrapVersion": 1,
+    "minBootstrap": 1
+  }
+}
