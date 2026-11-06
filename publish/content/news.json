@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.7",
+      "type": "update",
+      "title": "The Worlds We Left Behind",
+      "summary": "The story arrives. Open your Journal (M > Journal) and watch it fill as you explore: every realm you visit, every word you speak at the Word Gate and every guardian you lay to rest writes a new page. The Plaza townsfolk now remember what yo",
+      "body": "The story arrives. Open your Journal (M > Journal) and watch it fill as you explore: every realm you visit, every word you speak at the Word Gate and every guardian you lay to rest writes a new page. The Plaza townsfolk now remember what you've done and talk about it in their own voices, and eight of them have small stories for you. Silent worlds come back to life as you restore them, and when all five are home, the Plaza throws a festival. Some names were also changed: the Hollow Grove, the Nameless Gardener, the Halls of the Eternal Night and the Bloodbound class.",
+      "date": "2026-11-06",
+      "version": "6.13.7"
+    },
+    {
       "id": "update-6.13.6",
       "type": "update",
       "title": "The official trailer, a phone menu, steadier co-op",
