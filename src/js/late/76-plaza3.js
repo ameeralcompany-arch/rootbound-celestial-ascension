@@ -5,7 +5,7 @@
 //   | ARTISAN LANE: Hana's Lodge (Archer) + field, Stormwind Bakery (Tobi, Stormcaller), Astral Tower (Seren, Mage), Mira's Trading Post (Gunslinger)
 //   | GATE SQUARE (x114-142): town map, World Gate (the world door, DX), Sky Beam dais up to the Sky Run
 //   | MARKET ROW: Rootwood Lodge (Oak, Druid, quests), Bram's Longhouse (Berserker, smith) | WARRIORS' ROW: Lionheart Keep (Kael, Knight),
-//   Moon Teahouse (Lulu, Samurai), Iron Fist Dojo (Pip, Brawler) | ARCANE END: Prism Shrine (Lumi, Elementalist), Ember Manor (Vesper, Demon).
+//   Moon Teahouse (Lulu, Samurai), Iron Fist Dojo (Pip, Brawler) | ARCANE END: Prism Spire (Lumi, Elementalist), Ember Manor (Vesper, Demon).
 // The Sky Run course floats high above (rows 40 -> 13, at least 25 rows over every roof). Houses are HOUSE7 facades drawn behind
 // everyone and never solid; only the street, the pier and the sky platforms are blocks (painted through the TILE7 chunk cache).
 // The plaza is never saved, but a layout version (localStorage 'rbplz') drops any stale plaza data (old rbw_plaza edits/objects) once.
@@ -15,11 +15,11 @@ const PLZ7=(()=>{
  const HS=[['ren','ninja',21,11,10],['hollow','reaper',36,12,14],['hana','archer',52,12,11],['tobi','stormcaller',70,12,16],['seren','mage',86,11,16],['mira','gunslinger',101,13,11],
   ['oak','druid',145,12,11],['bram','berserker',161,13,11],['kael','knight',178,13,13],['lulu','samurai',195,12,14],['pip','brawler',211,11,11],['lumi','elementalist',225,12,14],['vesper','demon',241,13,15]]
   .map(([npc,c,x0,w,h])=>({npc,c,x0,w,h}));
- const NAMES={ren:"Ren's Hideout",hollow:'Lantern Crypt',hana:"Hana's Lodge",tobi:'Stormwind Bakery',seren:'Astral Tower',mira:"Mira's Trading Post",oak:'Rootwood Lodge',bram:"Bram's Longhouse",kael:'Lionheart Keep',lulu:'Moon Teahouse',pip:'Iron Fist Dojo',lumi:'Prism Shrine',vesper:'Ember Manor'};
+ const NAMES={ren:"Ren's Hideout",hollow:'Lantern Crypt',hana:"Hana's Lodge",tobi:'Stormwind Bakery',seren:'Astral Tower',mira:"Mira's Trading Post",oak:'Rootwood Lodge',bram:"Bram's Longhouse",kael:'Lionheart Keep',lulu:'Moon Teahouse',pip:'Iron Fist Dojo',lumi:'Prism Spire',vesper:'Ember Manor'};
  const PLINTH={ninja:54,reaper:54,archer:42,stormcaller:55,mage:56,gunslinger:45,druid:57,berserker:55,knight:11,samurai:55,brawler:45,elementalist:12,demon:54};
  const POND={x0:1,x1:13,open:9,pier0:10,pier1:17,d:4},SQ={x0:114,x1:142},GATE={x0:122,w:13,h:12},BOARD={x0:116,w:3,h:4},DAIS={x0:136,w:6,h:6},BEAM={x0:138,x1:139};
  const LAMPS=[19,34,50,69,84,99,114,143,159,176,193,209,223,239],SIGN={34:'MOONLIT QUARTER',69:'ARTISAN LANE',114:'GATE SQUARE',143:'MARKET ROW',176:"WARRIORS' ROW",223:'ARCANE END'};
- // ---- Sky Run course: START above the Sky Beam, then [gap, rise, width] steps east, FINISH = the Sky Shrine island
+ // ---- Sky Run course: START above the Sky Beam, then [gap, rise, width] steps east, FINISH = the Sky Spire island
  const COURSE=(()=>{const c=[{x0:140,w:6,row:40,k:'start'}];/* START sits just east of the beam column, so the ride rises beside it and steps on */for(const[gap,dy,w]of[[2,-1,2],[2,-2,2],[2,0,1],[2,-2,2],[2,-1,2],[2,0,1],[2,-2,2],[2,-2,3],[2,0,1],[2,-2,2],[2,-1,2],[2,-2,2],[2,0,1],[2,-2,2],[2,-2,3],[2,-1,2],[2,-2,1],[2,-1,2],[2,-2,2]]){const p=c[c.length-1];c.push({x0:p.x0+p.w+gap,w,row:p.row+dy})}
   const p=c[c.length-1];c.push({x0:p.x0+p.w+2,w:8,row:p.row-2,k:'finish'});return c})();
  const FIN=COURSE[COURSE.length-1],RET={x0:FIN.x0+FIN.w-3,x1:FIN.x0+FIN.w-2,row:FIN.row};
@@ -85,6 +85,6 @@ const PLZ7=(()=>{
  // camera look-ahead: in the town the view sits ~3.5 tiles higher so rooftops and the sky show instead of the foundation
  {const _u=update;update=function(dt){_u.apply(this,arguments);window.CAMUP=cur=='plaza'&&!creatorOn?Math.min(170,Math.round(cv.height/ZM*.16)):0}}
  if(cur=='plaza'){try{gen()}catch(e){console.error(e)}}
- // Lumi naps on the glowing altar crystal inside her Prism Shrine (low enough to chat with from the street)
+ // Lumi naps on the glowing altar crystal inside her Prism Spire (low enough to chat with from the street)
  function perch(id){if(id!='lumi')return null;const h=house('lumi');return{x:(h.x0+h.w/2)*T,y:S*T-150}}
  return{S,LV,HS,NAMES,IT,COURSE,FIN,RET,BEAM,DAIS,GATE,POND,SQ,LAMPS,house,build,perch,migrate,surface:()=>S}})();

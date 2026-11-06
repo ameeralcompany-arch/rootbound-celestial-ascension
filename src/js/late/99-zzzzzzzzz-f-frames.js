@@ -9,7 +9,7 @@ const AVF10=(()=>{
  const save=()=>{try{localStorage.setItem(K(),JSON.stringify(S))}catch(_){}};
  // ---- frames: id, name, level to unlock, spins?; art drawn around a portrait of radius 32 in a 96x96 box (centre 48,48)
  const FR=[['classic','Classic',1],['bubble','Bubblegum',3,1],['sakura','Sakura',5],['frost','Frost Crown',8],['neon','Neon Pulse',10,1],['ocean','Ocean Pearl',12],
-  ['inferno','Inferno',15],['kitty','Kitty',18],['galaxy','Galaxy Orbit',22,1],['crystal','Crystal Prism',26],['shadow','Shadow Veil',30,1],['dragon','Dragon Horns',35],['celestial','Celestial Halo',40,1],['royal','Royal Laurel',50],
+  ['inferno','Inferno',15],['kitty','Kitty',18],['galaxy','Galaxy Orbit',22,1],['crystal','Crystal Prism',26],['shadow','Shadow Veil',30,1],['dragon','Dragon Horns',35],['celestial','Celestial Star Ring',40,1],['royal','Royal Laurel',50],
   // the moonlit family: roses, sheer drapes, pearls and starlight, made to glow on the dark portrait backgrounds (the sixth value lights their tile up in the picker)
   ['moonrose','Moonlit Rose',20,0,0,1],['moondrape','Velvet Veil',28,0,0,1],['pearlfall','Pearl Cascade',33,0,0,1],['nightcrown','Midnight Crescent',38,0,0,1],['moonjewel','Sapphire Reliquary',45,0,0,1],['lightlord','Lord of Light',55,0,0,1],['chronicle','Stolen Hours',60,0,0,1]];
  const BG=[['theme','Default',1,null],['sunrise','Sunrise',2,['#fff3d6','#ffc6a8','#f59a8c']],['mint','Mint',4,['#f0fff7','#bff0d8','#7fd4b0']],['sakura','Sakura',6,['#fff4f8','#ffd0e2','#f3a2c4']],

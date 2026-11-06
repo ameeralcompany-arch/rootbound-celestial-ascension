@@ -69,7 +69,7 @@ try{(()=>{
        {name:'dash',wind:.5,rec:1.3,cd:3,start(m,X){},fire(m,X){dashes(m,X,3)}},
        {name:'decoy',wind:.55,rec:.4,cd:9,when(m,X){return X.mobs().filter(q=>q.k=='dgm_frozen_decoy').length==0},start(m,X){},fire(m,X){for(const s of[-1,1]){const x=X.clX(m.x+s*T*4.5),q=X.spawn('frozen_decoy',x,m.y+m.h,{summon:true,life:6,quiet:true});if(q)q.side=s}X.burst(m.x,m.y+m.h/2,[ICE,PALE],14);X.tone(1000,1500,.2,'triangle',.04)}}],
   art(c,m,o){assassinArt(c,m,o,0)}});
- DG.mobs.reg('frozen_priestess',{n:'Ice Priestess',d:'frozen',cls:'regular',w:42,h:74,c:ICE,ttk:6,pct:.09,sp:64,ai:'keep',range:T*10,touch:0,icd:1.4,mat:705,defn:'Heals others. Kill her first',
+ DG.mobs.reg('frozen_priestess',{n:'Ice Warden',d:'frozen',cls:'regular',w:42,h:74,c:ICE,ttk:6,pct:.09,sp:64,ai:'keep',range:T*10,touch:0,icd:1.4,mat:705,defn:'Heals others. Kill her first',
   onHit(m,d,w,ang,X){if(m.st=='wind'&&m.atk&&m.atk.name=='heal'){m.st='idle';m.atk=null;m.stun=1.3;m.acd=1.6;X.say('','Interrupted',500);X.burst(m.x,m.y+m.h/2,['#fff',ICE],12);return d*1.4}return d},
   kit:[{name:'lance',wind:.7,rec:.5,cd:1.7,start(m,X){},fire(m,X){const sx=m.x+m.f*20,sy=m.y+m.h*.26;for(let i=-1;i<=1;i++){const a=Math.atan2(P.y+P.h/2-sy,P.x-sx)+i*.15;fx.shot(sx,sy,Math.cos(a)*400,Math.sin(a)*400,{r:9,c:ICE,kind:'shard',dmg:X.dmg(m,.85),l:3})}X.tone(1300,500,.2,'triangle',.05)}},
        // she mends whatever is near her. Hit her during the prayer and it stops

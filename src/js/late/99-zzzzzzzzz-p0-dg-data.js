@@ -7,14 +7,14 @@ try{window.DG=(()=>{
  const pk=(a,b,c,d,e)=>({bg:a,rock:b,glow:c,accent:d,mist:e});
  // ---- the dungeons. entry: level needed. prev: the dungeon that must be finished first. skey: the key won in its parkour trial, opens its sealed gate. next: what its boss leaves you
  const LIST=[
-  {id:'ruins',tier:'ancient',n:'Forgotten Ruins',sub:'Some secrets were buried for a reason.',entry:10,rec:'10–14',lvl:12,gear:1,prev:null,skey:731,boss:'sentinel',diff:'Challenging',p:pk('#07140f','#39463e','#5dffb0','#c9a968','#2a4a3a'),desc:'An abandoned temple swallowed by moss, where green crystals still answer to ancient magic.'},
+  {id:'ruins',tier:'ancient',n:'Forgotten Ruins',sub:'Some secrets were buried for a reason.',entry:10,rec:'10–14',lvl:12,gear:1,prev:null,skey:731,boss:'sentinel',diff:'Challenging',p:pk('#07140f','#39463e','#5dffb0','#c9a968','#2a4a3a'),desc:'Abandoned ruins swallowed by moss, where green crystals still answer to ancient magic.'},
   {id:'crimson',tier:'ancient',n:'Crimson Depths',sub:'Only the strongest survive the flames.',entry:20,rec:'20–24',lvl:22,gear:2,prev:'ruins',skey:732,boss:'sovereign2',diff:'Hard',p:pk('#180505','#3a1a16','#ff5a1e','#ffb02a','#4a1208'),desc:'A volcanic kingdom of lava rivers, crimson crystal and burning platforms.'},
-  {id:'frozen',tier:'ancient',n:'Frozen Catacombs',sub:'Time itself has frozen here.',entry:25,rec:'25–29',lvl:27,gear:2.5,prev:'crimson',skey:733,boss:'empress',diff:'Hard',p:pk('#04101e','#2c4258','#6ad8ff','#dff8ff','#1a3a58'),desc:'A temple trapped in eternal winter. Bridges of ice, freezing winds and warriors who never thawed.'},
-  {id:'hollow',tier:'ancient',n:'Hollow Sanctuary',sub:'Even the sacred can fall.',entry:30,rec:'30–34',lvl:32,gear:3,prev:'frozen',skey:734,boss:'saint',diff:'Very hard',p:pk('#0d0618','#2e2240','#b070ff','#e8d8a0','#2a1248'),desc:'A sacred place corrupted from within. Dark roots, floating halls and platforms that will not hold still.'},
+  {id:'frozen',tier:'ancient',n:'Frozen Catacombs',sub:'Time itself has frozen here.',entry:25,rec:'25–29',lvl:27,gear:2.5,prev:'crimson',skey:733,boss:'empress',diff:'Hard',p:pk('#04101e','#2c4258','#6ad8ff','#dff8ff','#1a3a58'),desc:'A palace trapped in eternal winter. Bridges of ice, freezing winds and warriors who never thawed.'},
+  {id:'hollow',tier:'ancient',n:'Hollow Grove',sub:'Even the gentlest things can fall.',entry:30,rec:'30–34',lvl:32,gear:3,prev:'frozen',skey:734,boss:'saint',diff:'Very hard',p:pk('#0d0618','#2e2240','#b070ff','#e8d8a0','#2a1248'),desc:'A sacred place corrupted from within. Dark roots, floating halls and platforms that will not hold still.'},
   {id:'dragon',tier:'ancient',n:"Dragon's Grave",sub:'The dead are never truly forgotten.',entry:35,rec:'35–39',lvl:37,gear:3.5,prev:'hollow',skey:735,boss:'varkhazan',diff:'Very hard',p:pk('#10100f','#3e3830','#ff8a3a','#e8e0c8','#3a3028'),desc:'An ancient battlefield under a permanent storm, built on the bones of giants.'},
   {id:'abyss',tier:'ancient',n:'Eternal Abyss',sub:'Beyond this point, existence loses its meaning.',entry:40,rec:'40+',lvl:42,gear:4,prev:'dragon',skey:736,boss:'worldeater0',diff:'Deadly',p:pk('#04020c','#241a38','#9a5aff','#ff5ad0','#180a30'),desc:'Floating islands and broken celestial halls adrift in an endless void.'},
   {id:'star',tier:'abyssal',n:'Abyss of the Fallen Star',sub:'Even the stars can fall.',entry:60,rec:'60+',lvl:60,gear:6,prev:null,skey:737,boss:'fallenstar',diff:'Brutal',p:pk('#06040e','#2a2230','#ffd86a','#9a6aff','#2a1a40'),desc:'The impact crater of a dying star. Meteors fall, gravity bends and the corruption rises.'},
-  {id:'night',tier:'abyssal',n:'Temple of Eternal Night',sub:'When the light disappears, something awakens.',entry:60,rec:'60+',lvl:62,gear:6,prev:'star',access:741,skey:738,boss:'eternalnight',diff:'Brutal',p:pk('#03040c','#161a2a','#a8c8ff','#e8ecff','#0a1020'),desc:'A black temple under one cold moon. What you cannot see is what hunts you.'},
+  {id:'night',tier:'abyssal',n:'Halls of the Eternal Night',sub:'When the light disappears, something awakens.',entry:60,rec:'60+',lvl:62,gear:6,prev:'star',access:741,skey:738,boss:'eternalnight',diff:'Brutal',p:pk('#03040c','#161a2a','#a8c8ff','#e8ecff','#0a1020'),desc:'Black halls under one cold moon. What you cannot see is what hunts you.'},
   {id:'king',tier:'abyssal',n:"The Hollow King's Domain",sub:'A throne without a kingdom. A king without mercy.',entry:60,rec:'60+',lvl:65,gear:6,prev:'night',access:742,skey:739,boss:'hollowking',diff:'Brutal',p:pk('#08060e','#26222e','#c0a8ff','#d8dce8','#1a1428'),desc:'A dead royal city in silver and violet. Its retainers still keep their oaths.'},
   {id:'eater',tier:'abyssal',n:'Throne of the World Eater',sub:'Everything that begins must eventually end.',entry:60,rec:'60+',lvl:70,gear:6,prev:'king',access:743,skey:740,boss:'worldeater',diff:'Endgame',p:pk('#070205','#2a1014','#ff2a3a','#ff9a5a','#280810'),desc:'The final arena, where shattered planets drift toward something enormous.'}];
  const BY={};for(const d of LIST)BY[d.id]=d;
@@ -32,14 +32,14 @@ try{window.DG=(()=>{
   [703,'Emerald Rune Shard','#5dffb0',R.r,'shard','A piece of the Ancient Sentinel\'s runes. Only from Forgotten Ruins.'],
   [704,'Crimson Ember','#ff5a1e',R.r,'ember','An ember that refuses to cool. Only from Crimson Depths.'],
   [705,'Everfrost Crystal','#6ad8ff',R.r,'crystal','Ice that time forgot. Only from Frozen Catacombs.'],
-  [706,'Hollow Root','#b070ff',R.e,'root','A dark root from the fallen sanctuary. Only from Hollow Sanctuary.'],
+  [706,'Hollow Root','#b070ff',R.e,'root','A dark root from the fallen grove. Only from Hollow Grove.'],
   [707,'Dragon Bone','#e8e0c8',R.e,'bone','Heavier than it looks, and still warm. Only from Dragon\'s Grave.'],
   [708,'Void Pearl','#9a5aff',R.e,'pearl','It drinks the light around it. Only from Eternal Abyss.'],
   [709,'Tempering Oil','#ffd86a',R.r,'flask','A crafting enhancer for dungeon forging.'],
   [710,'Sentinel Heart','#5dffb0',R.e,'heart','Only the Ancient Sentinel carries one.'],
   [711,'Sovereign Cinder','#ff7a2a',R.e,'heart','Only the Infernal Sovereign carries one.'],
   [712,'Empress Tear','#bfeeff',R.e,'heart','Only the Frost Empress weeps these.'],
-  [713,'Saint\'s Halo Fragment','#e8d8a0',R.l,'heart','Only the Nameless Saint leaves one behind.'],
+  [713,'Gardener\'s Bloom Ring Fragment','#e8d8a0',R.l,'heart','Only the Nameless Gardener leaves one behind.'],
   [714,'Varkhazan Scale','#ff8a3a',R.l,'heart','Only Varkhazan the Ancient Dragon sheds these.'],
   [715,'World Eater Fang','#ff5ad0',R.l,'heart','Only the World Eater at the bottom of the Eternal Abyss.'],
   [716,'Abyssal Core','#c04aff',R.l,'core','The core of an Abyssal monster. Level 60 and beyond.'],
@@ -55,22 +55,22 @@ try{window.DG=(()=>{
   [731,'Ancient Ruins Key','#5dffb0',R.r,'key','Opens the sealed gate in Forgotten Ruins. Stays with you until the boss falls.'],
   [732,'Crimson Seal','#ff5a1e',R.r,'seal','Opens the sealed gate in Crimson Depths. Stays with you until the boss falls.'],
   [733,'Frostbound Key','#6ad8ff',R.r,'key','Opens the sealed gate in Frozen Catacombs. Stays with you until the boss falls.'],
-  [734,'Hollow Sanctum Key','#b070ff',R.e,'key','Opens the sealed gate in Hollow Sanctuary. Stays with you until the boss falls.'],
+  [734,'Hollow Sanctum Key','#b070ff',R.e,'key','Opens the sealed gate in Hollow Grove. Stays with you until the boss falls.'],
   [735,'Dragon\'s Grave Sigil','#ff8a3a',R.e,'seal','Opens the sealed gate in Dragon\'s Grave. Stays with you until the boss falls.'],
   [736,'Eternal Abyss Key','#9a5aff',R.l,'key','Opens the sealed gate in Eternal Abyss. Stays with you until the boss falls.'],
   [737,'Fallen Star Key','#ffd86a',R.l,'key','Opens the sealed gate in the Abyss of the Fallen Star.'],
-  [738,'Moonless Key','#a8c8ff',R.l,'key','Opens the sealed gate in the Temple of Eternal Night.'],
+  [738,'Moonless Key','#a8c8ff',R.l,'key','Opens the sealed gate in the Halls of the Eternal Night.'],
   [739,'Royal Seal','#c0a8ff',R.l,'seal','Opens the sealed gate in the Hollow King\'s Domain.'],
   [740,'Key of Endings','#ff2a3a',R.m,'key','Opens the sealed gate on the Throne of the World Eater.'],
   // Abyssal access: the boss before leaves you the way forward
-  [741,'Sigil of the Fallen Star','#ffd86a',R.m,'sigil','Lets you enter the Temple of Eternal Night. Never used up.'],
+  [741,'Sigil of the Fallen Star','#ffd86a',R.m,'sigil','Lets you enter the Halls of the Eternal Night. Never used up.'],
   [742,'Sigil of Eternal Night','#a8c8ff',R.m,'sigil','Lets you enter the Hollow King\'s Domain. Never used up.'],
   [743,'Sigil of the Hollow King','#c0a8ff',R.m,'sigil','Lets you enter the Throne of the World Eater. Never used up.'],
   // passage marks: proof that a boss has fallen, left in your inventory as a keepsake and a key to the next dungeon
   [744,'Mark of the Sentinel','#5dffb0',R.r,'sigil','You defeated the Ancient Sentinel. Opens the way to Crimson Depths.'],
   [745,'Mark of the Sovereign','#ff5a1e',R.r,'sigil','You defeated the Infernal Sovereign. Opens the way to Frozen Catacombs.'],
-  [746,'Mark of the Empress','#6ad8ff',R.e,'sigil','You defeated the Frost Empress. Opens the way to Hollow Sanctuary.'],
-  [747,'Mark of the Saint','#b070ff',R.e,'sigil','You defeated the Nameless Saint. Opens the way to Dragon\'s Grave.'],
+  [746,'Mark of the Empress','#6ad8ff',R.e,'sigil','You defeated the Frost Empress. Opens the way to Hollow Grove.'],
+  [747,'Mark of the Gardener','#b070ff',R.e,'sigil','You defeated the Nameless Gardener. Opens the way to Dragon\'s Grave.'],
   [748,'Mark of Varkhazan','#ff8a3a',R.l,'sigil','You defeated Varkhazan. Opens the way to Eternal Abyss.'],
   [749,'Mark of the Abyss','#9a5aff',R.l,'sigil','You stood at the bottom of the Eternal Abyss and lived.']];
  const ITEMS={};for(const[id,n,c,p,sh,d]of IT){ITEMS[id]={id,n,c,p,sh,d};try{MAT[id]={n,c,p,d,dg:1}}catch(_){}}

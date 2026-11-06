@@ -1,0 +1,308 @@
+{
+ "mira_1": {
+  "hash": "de947f749e5705bd",
+  "spoken": "Did Lavi tell you? You can hear the Rootways. Wonderful. Can you hear any customers in there?",
+  "voice": "af_bella",
+  "dur": 5.45
+ },
+ "mira_2": {
+  "hash": "96602d7ba65fb438",
+  "spoken": "You woke a whole world? Then it will need shopping. I'm opening a stall there. Possibly. Eventually.",
+  "voice": "af_bella",
+  "dur": 6.14
+ },
+ "mira_3": {
+  "hash": "f095f1a2b3e735c2",
+  "spoken": "A buried Rootway! Did you find anything shiny down there? Asking for a friend. The friend is me.",
+  "voice": "af_bella",
+  "dur": 6.1
+ },
+ "mira_4": {
+  "hash": "87e6475b05d2e2d8",
+  "spoken": "Every world open again, and my stall in all of them. Thank you. Truly. Now buy something.",
+  "voice": "af_bella",
+  "dur": 5.62
+ },
+ "oak_1": {
+  "hash": "821b0fe6756480ac",
+  "spoken": "Before the Silence, the roots carried songs between the worlds. Some nights I still hear the echo.",
+  "voice": "bm_fable",
+  "dur": 6.98
+ },
+ "oak_2": {
+  "hash": "b41ef3ef7d21512d",
+  "spoken": "Thornmaw guarded those roots for a hundred years. Thank you for letting it rest gently.",
+  "voice": "bm_fable",
+  "dur": 6.43
+ },
+ "oak_3": {
+  "hash": "21c4f8b333539146",
+  "spoken": "The roots are singing again. I had forgotten how loud joy can be.",
+  "voice": "bm_fable",
+  "dur": 5.16
+ },
+ "bram_1": {
+  "hash": "32e464e2bad7ad72",
+  "spoken": "You've been to the Inferno. Cold forges, aren't they. I learned to hammer there. It was never cold, back then.",
+  "voice": "am_michael",
+  "dur": 8.18
+ },
+ "bram_2": {
+  "hash": "854878c89f0df696",
+  "spoken": "The forges are singing again? Hah! ...Something in my eye. Sparks. It's the sparks.",
+  "voice": "am_michael",
+  "dur": 6.24
+ },
+ "bram_3": {
+  "hash": "ac61669a332922c2",
+  "spoken": "Vulkhar finally put the hammer down. Good. Pride burns longer than coal, and it gives no heat.",
+  "voice": "am_michael",
+  "dur": 7.97
+ },
+ "hana_1": {
+  "hash": "f8d605f996bc45c4",
+  "spoken": "My seeds sprouted this morning! All of them at once! Did you do something? You did something.",
+  "voice": "af_kore",
+  "dur": 5.19
+ },
+ "hana_2": {
+  "hash": "b6bfcb42fe9756b9",
+  "spoken": "The garden is blooming like it remembers how. Come and smell the roses. That's an order.",
+  "voice": "af_kore",
+  "dur": 5.2
+ },
+ "seren_1": {
+  "hash": "7872d25ec7072f96",
+  "spoken": "The Great Silence isn't a sound. It's an absence. Like a word on the tip of your tongue, for a hundred years.",
+  "voice": "bf_emma",
+  "dur": 6.34
+ },
+ "seren_2": {
+  "hash": "c4781ba440b7e114",
+  "spoken": "You saw the stars going out. I count them every night. Last night, one fewer.",
+  "voice": "bf_emma",
+  "dur": 4.47
+ },
+ "seren_3": {
+  "hash": "1fd2220a7e91f142",
+  "spoken": "New stars! Three of them, over the Galaxy. I named one after you. It's the slightly crooked one.",
+  "voice": "bf_emma",
+  "dur": 5.53
+ },
+ "seren_4": {
+  "hash": "fde370775a86f641",
+  "spoken": "I spent my life trying to understand the Silence. In the end, understanding mattered less than remembering.",
+  "voice": "bf_emma",
+  "dur": 6
+ },
+ "kael_1": {
+  "hash": "df8c12b4893db840",
+  "spoken": "You went to the Abyssal Sea. Did you see a lighthouse? ...No. Never mind. Forget I asked.",
+  "voice": "am_liam",
+  "dur": 5.04
+ },
+ "kael_2": {
+  "hash": "24d3a4fb9e7236f2",
+  "spoken": "Someone lit the lighthouse on the Abyssal Sea. Only one person ever knew how. ...I need to sit down.",
+  "voice": "am_liam",
+  "dur": 6.23
+ },
+ "kael_3": {
+  "hash": "cd3206737f820295",
+  "spoken": "She came home. She's at the gate every evening, arguing with me about the patrol route. It's wonderful.",
+  "voice": "am_liam",
+  "dur": 5.83
+ },
+ "pip_1": {
+  "hash": "f7dcedae79c1a586",
+  "spoken": "Lavi says you can hear the roots! What are they saying? Is it about me?",
+  "voice": "am_puck",
+  "dur": 3.35
+ },
+ "pip_2": {
+  "hash": "faab006a7e6e0a79",
+  "spoken": "You beat Thornmaw?! I'm telling everyone. I already told everyone. I'm telling them again.",
+  "voice": "am_puck",
+  "dur": 4.72
+ },
+ "pip_3": {
+  "hash": "dff48cdefaafe541",
+  "spoken": "Take me to a dungeon next time! I'll be so quiet. Watch. ...This is me being quiet.",
+  "voice": "am_puck",
+  "dur": 4.64
+ },
+ "lulu_1": {
+  "hash": "392f38b0f2455ede",
+  "spoken": "The Crystal Realm... I danced at that festival once. I was the best dancer there. Tobi says I fell over. Tobi is wrong.",
+  "voice": "af_jessica",
+  "dur": 6.37
+ },
+ "lulu_2": {
+  "hash": "638215302321bd8e",
+  "spoken": "The dancers are moving again? Then I'm going back. And this time, I'm not falling over.",
+  "voice": "af_jessica",
+  "dur": 4.21
+ },
+ "tobi_1": {
+  "hash": "da503309e884ee23",
+  "spoken": "I baked a loaf to celebrate you waking up! It's a little burnt. I baked it a hundred years ago.",
+  "voice": "am_eric",
+  "dur": 4.86
+ },
+ "tobi_2": {
+  "hash": "574e383bb0d0e775",
+  "spoken": "The Inferno's forges are hot again? Perfect oven weather. Could you bring me some of that heat?",
+  "voice": "am_eric",
+  "dur": 4.47
+ },
+ "tobi_3": {
+  "hash": "dd4bf468f518d409",
+  "spoken": "A festival! I'm baking for everyone! I've only burnt three loaves so far. That's a record.",
+  "voice": "am_eric",
+  "dur": 4.72
+ },
+ "ren_1": {
+  "hash": "6a61ba695351bc67",
+  "spoken": "I walked the Rootways, before. Every world had a road home. I'm still looking for mine.",
+  "voice": "am_adam",
+  "dur": 5.6
+ },
+ "ren_2": {
+  "hash": "8cc2e79cc8274479",
+  "spoken": "There's a scholar in the Galaxy who works with Seren. Stubborn, short, laughs like my sister. ...I have to go.",
+  "voice": "am_adam",
+  "dur": 7.15
+ },
+ "ren_3": {
+  "hash": "6adb40ed323fdeb4",
+  "spoken": "I found her. She was there all along, counting stars, waiting for someone to remember her name.",
+  "voice": "am_adam",
+  "dur": 6.16
+ },
+ "lumi_1": {
+  "hash": "091d522891bbfe0a",
+  "spoken": "...you saw my home. The stars. Were there any left?",
+  "voice": "af_nova",
+  "dur": 2.92
+ },
+ "lumi_2": {
+  "hash": "beb2b96fd9f2090e",
+  "spoken": "My family's lights are back in the sky. I can see them from the stone lantern. ...Thank you.",
+  "voice": "af_nova",
+  "dur": 5.25
+ },
+ "vesper_1": {
+  "hash": "1986d23d7e965db4",
+  "spoken": "Since the Silence, I see nothing in my crystal ball. It's very relaxing. Terrible for business.",
+  "voice": "bf_lily",
+  "dur": 5.94
+ },
+ "vesper_2": {
+  "hash": "67b78459c4240a16",
+  "spoken": "Ooh. A flicker in the crystal. I see... a word. And you. And quite a lot of trouble. Wonderful!",
+  "voice": "bf_lily",
+  "dur": 5.45
+ },
+ "vesper_3": {
+  "hash": "19c04b5f8a2c43a9",
+  "spoken": "My last vision: lanterns, music and a festival in the Plaza. For once, I'm glad to be right.",
+  "voice": "bf_lily",
+  "dur": 6.28
+ },
+ "side_pip_ask": {
+  "hash": "0ac0b4d83a172af9",
+  "spoken": "I found a dragon egg! Well, I lost it. Can you find me a round stone? Break some stone blocks and bring me the roundest one.",
+  "voice": "am_puck",
+  "dur": 6.28
+ },
+ "side_pip_done": {
+  "hash": "c14ffa38ff17de92",
+  "spoken": "A dragon egg! ...It's a rock. It's the best rock. I'm going to name it Kevin.",
+  "voice": "am_puck",
+  "dur": 3.81
+ },
+ "side_hana_ask": {
+  "hash": "15238c54b0f439c9",
+  "spoken": "I have one last seed from before the Silence. Plant five seeds for me first, to warm up the soil?",
+  "voice": "af_kore",
+  "dur": 6.44
+ },
+ "side_hana_done": {
+  "hash": "dd543a76c9f359fe",
+  "spoken": "The soil is warm. I planted the old seed beside yours. I think it's going to remember how to grow.",
+  "voice": "af_kore",
+  "dur": 6.52
+ },
+ "side_bram_ask": {
+  "hash": "f342086122dd512b",
+  "spoken": "I'm forging one perfect blade, but I need to watch a fighter work. Defeat twenty monsters. Anything sharp will do.",
+  "voice": "am_michael",
+  "dur": 9.26
+ },
+ "side_bram_done": {
+  "hash": "9de96a557ba65e0b",
+  "spoken": "Good. Every swing told me something. The blade is nearly ready. So are you.",
+  "voice": "am_michael",
+  "dur": 5.86
+ },
+ "side_tobi_ask": {
+  "hash": "76eba8b542901d83",
+  "spoken": "My grandmother's bread needs Inferno heat. Could you bring me five Magma Shards from the Inferno's monsters?",
+  "voice": "am_eric",
+  "dur": 5.95
+ },
+ "side_tobi_done": {
+  "hash": "ac0026438b19cbfd",
+  "spoken": "It's rising! It's golden! It's only a little burnt. Grandmother would be proud.",
+  "voice": "am_eric",
+  "dur": 4
+ },
+ "side_kael_ask": {
+  "hash": "5d0b95645e4ac018",
+  "spoken": "Take this letter to the Abyssal Sea. Leave it by the water. Don't read it. ...You can read it.",
+  "voice": "am_liam",
+  "dur": 5.27
+ },
+ "side_kael_done": {
+  "hash": "1fc641da25f9f750",
+  "spoken": "You left it by the water? Then she'll know I never stopped waiting. Thank you.",
+  "voice": "am_liam",
+  "dur": 4.27
+ },
+ "side_lumi_ask": {
+  "hash": "69e202130464fda3",
+  "spoken": "...my lantern. I left it in the Galaxy, a hundred years ago. Could you look for it, at night?",
+  "voice": "af_nova",
+  "dur": 4.95
+ },
+ "side_lumi_done": {
+  "hash": "2305287c382cdee8",
+  "spoken": "You found its light. It was still glowing. It waited for me.",
+  "voice": "af_nova",
+  "dur": 3.38
+ },
+ "side_lulu_ask": {
+  "hash": "5f422a4918c771cc",
+  "spoken": "The festival bell went missing in the Crystal Realm. Without it, nobody knows when to dance. Could you find it?",
+  "voice": "af_jessica",
+  "dur": 5.54
+ },
+ "side_lulu_done": {
+  "hash": "b91aee7144263b89",
+  "spoken": "The bell! Listen to it... Pip, stop ringing it. Pip. Pip!",
+  "voice": "af_jessica",
+  "dur": 2.97
+ },
+ "side_mira_ask": {
+  "hash": "0832703f956854d0",
+  "spoken": "Someone left a music box with me before the Silence, and it went missing down a dungeon. Any dungeon. It plays a lullaby.",
+  "voice": "af_bella",
+  "dur": 7.49
+ },
+ "side_mira_done": {
+  "hash": "ed584a3ace4150fd",
+  "spoken": "My music box! It still plays. It's the song my mother hummed. Don't tell anyone I cried. Here. A discount. A small one.",
+  "voice": "af_bella",
+  "dur": 7.72
+ }
+}

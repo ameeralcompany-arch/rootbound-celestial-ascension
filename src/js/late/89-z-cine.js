@@ -26,7 +26,7 @@ const CINE7=(()=>{
  const BIDS=['warden','sovereign','eclipse','magma','tide','storm'];
  const BC={warden:'#6fe08a',sovereign:'#7fd8ff',eclipse:'#b58cff',magma:'#ff6a2a',tide:'#4aa8ff',storm:'#ffe27a'};
  const BNM={warden:'Verdant Warden',sovereign:'Crystal Sovereign',eclipse:'Eclipse Lord',magma:'Magma Colossus',tide:'Abyssal Leviathan',storm:'Tempest Roc'};
- const EPI={warden:'Thorn-Crowned King of the Deep Grove',sovereign:'The Walking Cathedral of Crystal',eclipse:'Tyrant of the Swallowed Sun',magma:'Heart of the Burning Mountain',tide:'Serpent of the Drowned Stars',storm:'Herald of the Thousand Storms'};
+ const EPI={warden:'Thorn-Crowned King of the Deep Grove',sovereign:'The Walking Citadel of Crystal',eclipse:'Tyrant of the Swallowed Sun',magma:'Heart of the Burning Mountain',tide:'Serpent of the Drowned Stars',storm:'Herald of the Thousand Storms'};
  const bdef=id=>{try{return BOSSES.find(b=>b.id==id)||null}catch(_){return null}};
 
  // ================= AUDIO: music bus (OPT.mv, mute) + sfx bus (OPT.sv), each with a soft reverb send =================

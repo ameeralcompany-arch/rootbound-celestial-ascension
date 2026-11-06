@@ -9,7 +9,7 @@ const CLASS7=(()=>{
   samurai:{n:'Samurai',c:'#ff7a9a',ic:'⚔',ids:['astralkat','frostbite','sakurakat'],p:'Iaido: up to 35% chance for a 1.6x critical cut'},
   archer:{n:'Archer',c:'#8affc0',ic:'🏹',ids:['zephyrbow','crowbow','icebow','raijinbow'],p:'Eagle Eye: more damage the farther the target'},
   mage:{n:'Mage',c:'#d08aff',ic:'✨',ids:['arcane','starwand','frostwand','chainwand','gravitystaff','lumistaff'],p:'Arcane Surge: +0.8% spell damage per level'},
-  demon:{n:'Demon',c:'#ff4a5a',ic:'😈',ids:['blood','voidwand','tendrilwand','umbra','umbra1','umbra2','umbra3'],p:'Hunger: hits steal life'},
+  demon:{n:'Bloodbound',c:'#ff4a5a',ic:'😈',ids:['blood','voidwand','tendrilwand','umbra','umbra1','umbra2','umbra3'],p:'Hunger: hits steal life'},
   reaper:{n:'Reaper',c:'#9a7aff',ic:'💀',ids:['void','sickle','crimsonrift'],p:'Harvest Souls: big damage to weakened foes, kills heal you'},
   elementalist:{n:'Elementalist',c:'#7ad8ff',ic:'🔥',ids:['cinder','cinder1','cinder2','cinder3','rime','rime1','rime2','rime3'],p:'Attunement: burns, chills and freezes last longer'},
   stormcaller:{n:'Stormcaller',c:'#fff07a',ic:'⚡',ids:['spark','spark1','spark2','spark3','hammer','stormflail'],p:'Static: hits can stun, more often each level'},

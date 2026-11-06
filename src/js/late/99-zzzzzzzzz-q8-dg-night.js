@@ -1,4 +1,4 @@
-// ===== Temple of Eternal Night: the second Abyssal dungeon. A black temple under one cold moon. It is dark on purpose, so this file also keeps the dark fair: eyes, footfalls, moonlight and every warning are drawn again after the darkness falls. =====
+// ===== Halls of the Eternal Night: the second Abyssal dungeon. Black halls under one cold moon. It is dark on purpose, so this file also keeps the dark fair: eyes, footfalls, moonlight and every warning are drawn again after the darkness falls. =====
 try{(()=>{
  const DG=window.DG,A=DG.A,fx=DG.fx,ART=DG.art,R=Math.random,TAU=Math.PI*2,rn=DG.rn,cl=DG.cl,lerp=DG.lerp,ez=DG.ez,eo=DG.eo,mix=DG.mix,hexA=DG.hexA,MO='#a8c8ff',MW='#e8ecff',VO='#7a6ae8',CP='#c89aff',OL='#0e0818';
  // ---- what the darkness must not hide. Everything dangerous made here goes through these wrappers, and overlay() redraws it on top of the dark
@@ -258,5 +258,5 @@ try{(()=>{
    if(!F.reduce&&t<16&&R()<dt*16)F.emit(1,{x:[60,1220],y:[380,660],vx:[-10,10],vy:[-18,-4],c:['#ffd090','#ffe8b8'],s:[.8,2],l:[1.8,3.6]});
    if(!F.reduce&&t>14&&R()<dt*18)F.emit(1,{x:[0,1280],y:[120,700],vx:[-14,14],vy:[-46,-12],c:['#02030c','#060a18'],s:[8,20],l:[2.4,4.6],add:false});
    F.draw('fore',{a:1});c.globalAlpha=1},
-  over(c,t,F){const vg=c.createRadialGradient(640,340,220,640,360,800);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.72)');c.fillStyle=vg;c.fillRect(0,0,1280,720);F.fade('#000',t<3?1-ez(t/3):t>32.7?ez((t-32.7)/1.2):0);F.title('TEMPLE OF ETERNAL NIGHT','When the light disappears, something awakens.',27.6,5.6,MO)}});
+  over(c,t,F){const vg=c.createRadialGradient(640,340,220,640,360,800);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.72)');c.fillStyle=vg;c.fillRect(0,0,1280,720);F.fade('#000',t<3?1-ez(t/3):t>32.7?ez((t-32.7)/1.2):0);F.title('HALLS OF THE ETERNAL NIGHT','When the light disappears, something awakens.',27.6,5.6,MO)}});
 })()}catch(e){console.error('DG night',e)}

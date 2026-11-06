@@ -1,6 +1,6 @@
 // ===== Sky Run: a parkour course of floating platforms high in the sky above the Plaza (PLZ7.COURSE: rows 40 -> 13, at least
 // 25 rows above every roof, so it never crowds the town). Way up: the Sky Beam on the dais in Gate Square - stand still on the glowing
-// pad (or press E) and the beam lifts you to START. Climb east to the Sky Shrine (FINISH); its RETURN pad glides you back down.
+// pad (or press E) and the beam lifts you to START. Climb east to the Sky Spire (FINISH); its RETURN pad glides you back down.
 // The timer runs while you stay on the course; touching the town ground stops it. Best time is saved. First finish under 90 s pays
 // gems (offline/guest play only) and unlocks the "Sky Runner" title. PL keeps DX-relative x (PL[k].x + DX = first tile column).
 const RUN7=(()=>{
@@ -10,7 +10,7 @@ const RUN7=(()=>{
  function ensureHud(){if(hudEl)return;hudEl=document.createElement('div');hudEl.style.cssText='position:fixed;top:78px;left:50%;transform:translateX(-50%);padding:6px 16px;border-radius:12px;background:rgba(20,18,40,.72);color:#fff;font:700 18px system-ui,sans-serif;letter-spacing:.06em;z-index:40;pointer-events:none;display:none';document.body.appendChild(hudEl)}
  const fmt=ms=>(ms/1000).toFixed(2)+'s';
  function platAt(){if(!P.g)return-1;const fy=Math.round((P.y+P.h)/T);for(let k=0;k<N;k++){const p=PL[k];if(fy==p.y&&P.x>=(DX+p.x)*T-8&&P.x<=(DX+p.x+p.w)*T+8)return k}return-1}
- // pads: the Sky Beam (street level) and the Sky Shrine's RETURN pad
+ // pads: the Sky Beam (street level) and the Sky Spire's RETURN pad
  const feet=()=>Math.round((P.y+P.h)/T);
  function pad(){if(cur!='plaza'||!P.g||ride)return null;const f=feet();if(f==S&&P.x>=B.x0*T&&P.x<=(B.x1+1)*T)return'up';if(f==RT.row&&P.x>=RT.x0*T&&P.x<=(RT.x1+1)*T)return'down';return null}
  function launch(kind){if(ride)return;const up=kind=='up',x=up?(B.x0+B.x1+1)/2*T:(RT.x0+RT.x1+1)/2*T,y0=P.y,y1=up?C[0].row*T-P.h-1:S*T-P.h-1;ride={x,x1:up?(C[0].x0+1.5)*T:x,y0,y1,t:0,dur:up?1.25:1.6,up};charge=0;

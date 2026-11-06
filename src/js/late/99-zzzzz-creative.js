@@ -22,6 +22,6 @@ const CRV8=(()=>{
   try{Object.defineProperty(P,'hp',{get(){try{return maxHP()}catch(_){return 100}},set(){},configurable:true})}catch(_){}
   // level and gems stay topped up if anything spends or changes them
   setInterval(()=>{try{if(lvl<MAXL)lvl=MAXL;if((gems|0)<GEMS/2)gems=GEMS}catch(_){}},2000);
-  const bd=document.createElement('div');bd.id='crv8b';bd.textContent='God mode';bd.title='Server owner: max level, everything unlocked, no damage';document.body.appendChild(bd);try{say('God mode on')}catch(_){}return true}
+  const bd=document.createElement('div');bd.id='crv8b';bd.textContent='Invincible mode';bd.title='Server owner: max level, everything unlocked, no damage';document.body.appendChild(bd);try{say('Invincible mode on')}catch(_){}return true}
  function disable(){if(!on)return;try{saveP()}catch(_){}location.reload()}
  return{get on(){return on},enable,disable,grant,fill,MAXL,FILL}})();

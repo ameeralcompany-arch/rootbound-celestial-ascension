@@ -8,7 +8,7 @@ const COSM=(()=>{
  // deep: the dark of the metal; neb: three nebula colours; rim: edge light; star: sparkle; pl: planet [light, mid, dark]; fall: which way its motes drift (-1 up, 1 down); d: one line of lore
  const D={
   brawler:{deep:'#1c0708',neb:['#ff5a1e','#d81e5a','#7a1ea8'],rim:'#ffb070',star:'#fff0d8',pl:['#ffe0a0','#e0501e','#4a0e14'],fall:-1,mote:'ember',d:'Gauntlets forged inside a dying red star. Every punch lets a little of its fire out.'},
-  knight:{deep:'#0b0f2a',neb:['#ffd86a','#5a7cff','#2a1fa0'],rim:'#fff2c0',star:'#ffffff',pl:['#fffbe0','#e8c050','#3a3070'],fall:1,mote:'feather',d:'A cathedral of starlight in the shape of a greatsword, lit by a sun that never set.'},
+  knight:{deep:'#0b0f2a',neb:['#ffd86a','#5a7cff','#2a1fa0'],rim:'#fff2c0',star:'#ffffff',pl:['#fffbe0','#e8c050','#3a3070'],fall:1,mote:'feather',d:'A citadel of starlight in the shape of a greatsword, lit by a sun that never set.'},
   samurai:{deep:'#170818',neb:['#ff5f96','#a43cff','#2b1a8c'],rim:'#ffc2dc',star:'#ffe9f2',pl:['#ffd0e0','#e0508a','#4a1450'],fall:1,mote:'petal',d:'One long cut of violet sky. Blossoms of stardust fall wherever its edge has been.'},
   archer:{deep:'#0a0a2c',neb:['#9aa8ff','#ffd98a','#4a2ab8'],rim:'#e8e4ff',star:'#fff6e0',pl:['#fff6d0','#b8a0ff','#2a2060'],fall:1,mote:'star',d:'A bow strung with a constellation. It never misses, because the stars already know where you are.'},
   mage:{deep:'#10062c',neb:['#b45aff','#ff4fd8','#3a2ae0'],rim:'#e8c8ff',star:'#fff0ff',pl:['#f4d8ff','#b04cff','#2a0e60'],fall:-1,mote:'rune',d:'A staff whose orb is a pocket galaxy. Its runes are the names of stars that no longer exist.'},

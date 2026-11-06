@@ -171,6 +171,22 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/phone.js
+      - name: Test the story: Journal, townsfolk lines
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/story.js
+      - name: Test the side stories
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/side.js
+      - name: Test world restoration
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/restore.js
+      - name: Test the story moments and ending
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/moments.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10

@@ -21,9 +21,9 @@ const BOSS10=(()=>{
  const sfx=(k,id,v)=>{try{CINE7.bossSfx(k,id,v)}catch(_){}};
  const shk=v=>{if(!red())shake=Math.max(shake,v)};
  const now=()=>performance.now();
- const EPI={warden:'Thorn-Crowned King of the Deep Grove',sovereign:'The Walking Cathedral of Crystal',eclipse:'Tyrant of the Swallowed Sun',magma:'Heart of the Burning Mountain',tide:'Serpent of the Drowned Stars',storm:'Herald of the Thousand Storms'};
+ const EPI={warden:'Thorn-Crowned King of the Deep Grove',sovereign:'The Walking Citadel of Crystal',eclipse:'Tyrant of the Swallowed Sun',magma:'Heart of the Burning Mountain',tide:'Serpent of the Drowned Stars',storm:'Herald of the Thousand Storms'};
  const AURA={warden:['#6fe08a','#d8ff5a','#ff5a4a'],sovereign:['#7fd8ff','#c9a0ff','#ff4a8a'],eclipse:['#b58cff','#ff6ad8','#ff3a3a'],magma:['#ff6a2a','#ffb02a','#ff2a2a'],tide:['#4aa8ff','#4affd8','#9a5aff'],storm:['#ffe27a','#ffffff','#ff5a3a']};
- const PHS={warden:['','The thorns run wild','The grove itself turns on you'],sovereign:['','Its facets split the light','The cathedral shatters into blades'],eclipse:['','The void opens','The last light is swallowed'],
+ const PHS={warden:['','The thorns run wild','The grove itself turns on you'],sovereign:['','Its facets split the light','The citadel shatters into blades'],eclipse:['','The void opens','The last light is swallowed'],
   magma:['','The mountain wakes','The heart erupts'],tide:['','The tide rises','The deep drags you down'],storm:['','The sky darkens','A thousand storms break']};
  const RN=['','I','II','III'];
  // timelines (seconds at normal speed; reduced motion runs them F times faster)

@@ -19,7 +19,7 @@ const MYMV=(()=>{
  // the move list per class: [name, kind, what it does]
  const MV={
   brawler:[['Ember Flurry','flurry','Four lightning-fast jabs burst with embers'],['Comet Dash','dash','You dash through enemies in a trail of fire'],['Meteor Uppercut','uppercut','An uppercut launches foes into a pillar of fire']],
-  knight:[['Oath Cleave','cleave','A huge, slow wave of light that cuts through everything'],['Aegis','aegis','A golden shield: half damage for 2.5 seconds'],['Judgement','judgement','Three columns of holy light fall one after another']],
+  knight:[['Oath Cleave','cleave','A huge, slow wave of light that cuts through everything'],['Aegis','aegis','A golden shield: half damage for 2.5 seconds'],['Verdict','judgement','Three columns of light fall one after another']],
   samurai:[['Iaido Flash','iaido','A blinding blink-dash; every foe you pass bursts into cuts'],['Petal Storm','petalstorm','A cyclone of petals drifts forward, slicing again and again'],['Thousand Cuts','cuts','Slashes rain across the area in front of you']],
   archer:[['Starpiercer','pierce','An arrow of starlight that pierces everything in a line'],['Fan of Light','fan','Five arrows fan out at once'],['Starfall','stars','A volley of falling stars from the sky']],
   mage:[['Arcane Missiles','missiles','Five missiles seek out enemies'],['Spectral Chains','chains','Ghostly chains pull enemies in and bind them'],['Event Horizon','vortex','A black hole that swallows foes, then bursts']],

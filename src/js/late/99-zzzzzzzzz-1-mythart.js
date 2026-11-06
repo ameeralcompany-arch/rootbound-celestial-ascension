@@ -14,7 +14,7 @@ const MYART=(()=>{
    mv:[['Crashing Arc','ring','A wide sweep that bursts into a ring of shockwaves'],['Ember Crescent','crescent','The return cut hurls a blazing crescent'],['Meteor Uppercut','pillar','A full spin that drives a pillar of fire up from the ground']],
    out:{crown:'band',cape:'#5a1a08'},wing:27,look:{hs:0,hair:'#3a1a10',eye:2,skin:'#f1c9a0',out:'#7a2e10',trim:'#ffb27a',gd:0}},
   knight:{n:'Dawnwarden',ep:'Scythe of the Last Light',q:'I stand so that others may rise.',pal:['#ffd86a','#fffbe8','#6a5418','#ffffff'],mot:'feather',fr:'angel',gold:1,
-   mv:[['Oath Sweep','crescent','A radiant arc of light cuts ahead'],['Lances of Dawn','shards','Golden spears erupt along the ground'],['Judgement','pillar','A spin that calls a column of holy light']],
+   mv:[['Oath Sweep','crescent','A radiant arc of light cuts ahead'],['Lances of Dawn','shards','Golden spears erupt along the ground'],['Verdict','pillar','A spin that calls a column of light']],
    out:{crown:'halo',cape:'#e8e2d0'},wing:40,look:{hs:8,hair:'#f4ecd8',eye:1,skin:'#f6d7b8',out:'#e8e2d0',trim:'#d9b46a',gd:1}},
   samurai:{n:'Sakura Requiem',ep:'Scythe of Falling Petals',q:'Bloom once. Cut once. Never look back.',pal:['#ff7a9a','#ffe4ec','#5a1428','#ffd0dc'],mot:'petal',fr:'blossom',
    mv:[['Iaido Crescent','crescent','A blinding draw-cut sends a pink crescent'],['Petal Storm','flock','A cyclone of sakura petals slices through enemies'],['Ink Requiem','splash','A spin that bursts into sweeping ink strokes']],

@@ -107,7 +107,7 @@ const GEAR10=(()=>{
     sc(14.4,13,'#c8a8ff',6);sc(12.2,8.6,'#ff9fd2',5);x.fillStyle='#fff';for(const[px,py]of[[-8,4],[-3,6.4],[3,4.6],[8,6.6],[-5.6,10.4],[5,10.8],[0,9.4]])dot(x,px,py,.75,'#fff');
     line(x,'#7ae8ff',.7,[-12.2,8.4,12.2,8.4]);bubble(x,-11,15.6,1.4);bubble(x,10.6,16.2,1.1)}},
    back:{bb:[-22,-4,26,28],f(x){bubble(x,-12.6,6.4,7,.9);bubble(x,-9.4,16.6,5,.9);bubble(x,-17.4,15.2,2.6,.9)}}},
-  // ---------- Celestial Seraph Robe
+  // ---------- Celestial Starlight Robe
   seraphrobe:{legs:'#efe6d2',ib:[-22,-8,44,46],
    torso:{bb:[-11,-1,22,19],f(x){const W='#f8f4ec',G='#f2c14e';cel(x,torsoP(x),W,1);
     line(x,G,1.2,[-8.8,1.6,0,10.4,8.8,1.6]);x.save();torsoP(x)();x.clip();x.fillStyle='rgba(242,193,78,.85)';x.beginPath();x.moveTo(-9,10);x.lineTo(9,13);x.lineTo(9,15.2);x.lineTo(-9,12.2);x.closePath();x.fill();x.restore();
@@ -157,8 +157,8 @@ const GEAR10=(()=>{
  const IT=[
   ['bubblehood','hat','Bubble Bunny Hood','#ffb3dc',5200,22,36,'Luck +15%, speed +8%, jump +8%, regenerate','Bubble Shield: float inside a shimmering bubble for 5s (untouchable, gentle healing)',{luck:.15,spd:.08,jump:.08,regen:1,light:60},'bubble'],
   ['bubbledress','body','Bubblegum Dream Dress','#ff9fd2',7800,26,42,'Damage taken -22%, +60 HP, damage +10%, gems +10%, regenerate','Bubble Burst: bubbles trap every monster nearby, then pop for big damage; heals 18%',{arm:.22,hp:60,dmg:.1,gem:.1,regen:2},'bubble'],
-  ['seraphcrown','hat','Celestial Halo Crown','#f2c14e',9000,30,40,'Crit +15%, damage +14%, XP +10%, light +120','Divine Light: a pillar of light smites monsters around you and heals you 20%',{crit:.15,dmg:.14,xp:.1,light:120},'seraph'],
-  ['seraphrobe','body','Celestial Seraph Robe','#f8f4ec',12000,34,46,'Damage taken -28%, +80 HP, damage +15%, regenerate','Judgement: holy rays strike up to 8 monsters at once',{arm:.28,hp:80,dmg:.15,regen:2},'seraph'],
+  ['seraphcrown','hat','Celestial Star Crown','#f2c14e',9000,30,40,'Crit +15%, damage +14%, XP +10%, light +120','Radiant Light: a pillar of light strikes monsters around you and heals you 20%',{crit:.15,dmg:.14,xp:.1,light:120},'seraph'],
+  ['seraphrobe','body','Celestial Starlight Robe','#f8f4ec',12000,34,46,'Damage taken -28%, +80 HP, damage +15%, regenerate','Verdict: rays of light strike up to 8 monsters at once',{arm:.28,hp:80,dmg:.15,regen:2},'seraph'],
   ['dragonhelm','hat','Inferno Dragon Helm','#6a1a24',9500,32,40,'Damage +18%, crit +10%, crit damage +25%, damage taken -6%','Dragon Roar: a blast of fire burns and stuns monsters in front of you',{dmg:.18,crit:.1,cdmg:.25,arm:.06},'dragon'],
   ['dragonplate','body','Inferno Dragon Plate','#7a1a22',13000,38,48,'Damage taken -30%, damage +18%, +70 HP','Dragonfire Nova: a ring of fire burns every monster within 8 tiles',{arm:.3,dmg:.18,hp:70},'dragon'],
   ['kitsunemask','hat','Sakura Kitsune Mask','#ff9a4a',3600,18,32,'Crit +12%, speed +10%, luck +8%','Foxfire: five blue wisps seek out the nearest monsters',{crit:.12,spd:.1,luck:.08,light:40},'kitsune'],

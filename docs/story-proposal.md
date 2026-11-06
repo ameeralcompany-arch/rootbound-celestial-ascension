@@ -1,4 +1,4 @@
-# THE WORLDS WE LEFT BEHIND: story proposal
+# THE WORLDS WE LEFT BEHIND: story proposal (approved 2026-11-07, built: see story.md)
 
 This is a proposal for you to approve before anything is built. It is built only on what the game already has:
 - the Plaza and its eleven townsfolk;

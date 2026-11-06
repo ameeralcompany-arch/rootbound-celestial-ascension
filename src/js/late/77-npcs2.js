@@ -63,7 +63,7 @@ const NPC2=(()=>{
   kael:{g:['Halt! ...Ah, it is you.','All quiet.','Safe travels.','n|Stay near the lanterns.'],
    t:['Nothing passes this gate without me knowing. Except butterflies.','The World Gate in the square leads to other worlds. Monsters live out there, not here.','A knight keeps the keep. I keep the keep AND the gate. Double duty.','I have walked this patrol ten thousand times. Three steps, turn, three steps.','n|Monsters roam the wild worlds at night. Bring light and a good weapon.','l|Practice on small monsters first. Then see Bram.','h|With gear like that, maybe YOU should guard the gate.','r|Rain or shine, the watch goes on.']},
   pip:{g:['Hi hi!','Whoa, cool!','Are you an adventurer?'],
-   t:['Elder Oak is telling me about the First Root. Again! I love this part.','When I grow up I want wings like yours. Bigger, though.','Lumi naps on the shrine lantern all day. I tried it. I fell off.','I am a Brawler! Hi-yah! Fists never break, so I never have to buy a sword.','l|I bet I can break blocks faster than you! ...Maybe not.','h|Level {lvl}?! That\'s like... a million!','n|I\'m not sleepy. Not even a little. *yawn*']},
+   t:['Elder Oak is telling me about the First Root. Again! I love this part.','When I grow up I want wings like yours. Bigger, though.','Lumi naps on the stone lantern all day. I tried it. I fell off.','I am a Brawler! Hi-yah! Fists never break, so I never have to buy a sword.','l|I bet I can break blocks faster than you! ...Maybe not.','h|Level {lvl}?! That\'s like... a million!','n|I\'m not sleepy. Not even a little. *yawn*']},
   lulu:{g:['Welcome in!','Tea is ready!','Mind the clean floor!'],
    t:['Jasmine, mint or moonleaf? ...They come from the same pot, honestly.','The teahouse has two floors. I have swept both twice today.','Seren drinks her tea cold. She forgets it while she reads.','I was a samurai once. Now I cut tea leaves. The blade is just as sharp.','r|Rainy days are teahouse days.','s|Hot tea, snow outside. Perfect.','n|We are closed... but for you, one quiet cup.']},
   tobi:{g:['Fresh bread!','Morning!','Smell that?','n|Midnight snack?'],
@@ -73,7 +73,7 @@ const NPC2=(()=>{
   lumi:{g:['*flutter*','Mrrp!','n|*happy wing flaps*','d|*sleepy chirp*'],
    t:['*Lumi circles you once and leaves a trail of soft sparkles.*','*She chirps. You feel a little lighter.*','*Lumi spins a tiny ember and a tiny snowflake around each other. Elementalist show-off.*','d|*Lumi is napping on the lantern. One antenna twitches at you.*','n|*Lumi dances in the lantern light.*']},
   vesper:{g:['Mm, a visitor.','The embers like you.','Your fortune? Sit, sit.','n|The night tastes sweet.'],
-   t:['They call me a demon. I prefer fortune teller with a temper.','Every hit you land can feed you, if you wield the right blade. Demon blades, of course.','Ember Manor stood here before the World Gate. Ask Elder Oak, if he remembers.','n|At midnight the manor fires burn violet. Pretty, no?','l|Fear is just hunger for adventure, little one.','h|Level {lvl}. Your soul burns brightly. Delicious... I mean, impressive.','I see a big world in your future. Several, actually. Through the gate.']},
+   t:['They call me spooky. I prefer fortune teller with a temper.','Every hit you land can feed you, if you wield the right blade. Bloodbound blades, of course.','Ember Manor stood here before the World Gate. Ask Elder Oak, if he remembers.','n|At midnight the manor fires burn violet. Pretty, no?','l|Fear is just hunger for adventure, little one.','h|Level {lvl}. Your soul burns brightly. Delicious... I mean, impressive.','I see a big world in your future. Several, actually. Through the gate.']},
   hollow:{g:['...','You see me?','...the roots are deep.'],
    t:['I was here before the plaza. I will be here when the stars move.','Do not fear the dark, {name}. It is only light, waiting.','The thorns do not hurt. They remind me where I end.','When the sun rises I return to the crypt shadows. Look for me again.','A reaper does not take. A reaper only collects what is already falling.']}};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
@@ -92,7 +92,7 @@ const NPC2=(()=>{
  function segs(n){if(n.fly)return;const d=n.d;let c=floor(hx(d.home)/T);n.row=gRow(c);if(!walk(c,n.row)){for(let k=1;k<8;k++){if(walk(c+k,n.row)){c+=k;break}if(walk(c-k,n.row)){c-=k;break}}}
   let a=c,b=c;while(a-1>c-40&&walk(a-1,n.row))a--;while(b+1<c+40&&walk(b+1,n.row))b++;n.sa=a;n.sb=b;const r=d.r||[d.home,d.home];n.lo=max(hx(r[0]),a*T+12);n.hi=min(hx(r[1]),(b+1)*T-12);if(n.lo>n.hi){n.lo=n.hi=c*T+T/2}n.wy=n.row*T}
  const clampX=(n,x)=>max(n.lo,min(n.hi,x));
- // Lumi's perch: the lantern orb on top of her Prism Shrine (PLZ7.perch)
+ // Lumi's perch: the lantern orb on top of her Prism Spire (PLZ7.perch)
  function perch(n){const p=PLZ7.perch(n.id);if(p)return{x:p.x,y:p.y,ok:true};const c=DX+n.d.home;return{x:c*T+T/2,y:(PLZ7.S-2)*T,ok:false}}
  let inited=0,lastCur='',segT=0;
  function reset(){for(const n of L){segs(n);n.wx=n.fly?perch(n).x:clampX(n,hx(n.d.home));if(n.fly)n.wy=perch(n).y;n.st='act';n.act=null;n.tm=R(.3,2);n.an='idle';n.at=R(0,3);n.ph=0;n.face=random()<.5?1:-1;n.fx=n.face;n.gcd=R(0,4);n.rcd=0;n.seen=0;n.bub=null;n.na=0;n.alpha=n.night?(night>.62?1:0):1;n.on=n.alpha>0;n.bt=R(1,4);n.blink=0;n.vis=0;n.acc=0;n.fi=-1;n.lt=0}}
@@ -185,10 +185,11 @@ const NPC2=(()=>{
   for(const n of L){if(!n.vis)continue;const px=n.wx-cam.x,top=n.wy-n.top-cam.y,cl=n.pd<1.8*T?min(1,(1.8*T-n.pd)/(.8*T)):0;let y=min(top-6,top-6-cl*(n.top<64?62:50)+(n.top<64?0:0));
    if(n.na>0){const c=plate(n);g.save();g.globalAlpha=n.na*(n.alpha==null?1:n.alpha);g.drawImage(c,round(px-c.w/2),round(y-c.h-(1-n.na)*4),c.w,c.h);g.restore();y-=c.h+2}
    if(!n.amb&&n.k){const k=n.k=='shop'?'shop':n.k=='smith'?'smith':(qs.some(q=>q.p>=q.need)?'q2':'q');const ic=icon(k),bob=sin(now/420+n.wx)*1.5;g.save();g.globalAlpha=n.na>0?1:.8;g.drawImage(ic,round(px-9),round(y-18+bob),18,18);g.restore();y-=18}
+   try{if(window.STORY2&&STORY2.has(n.id))STORY2.mark(g,px,y-8,now)}catch(_){}
    bubble(n,px,y-2,now)}}
  // ---- dialogs
- function onTalk(n){if(!n||!LINES[n.id])return;n.line=pick(LINES[n.id].t,n.line);n.bub=null;n.seen=1}
- function nextLine(n){if(n&&LINES[n.id])n.line=pick(LINES[n.id].t,n.line)}
+ function onTalk(n){if(!n||!LINES[n.id])return;let sl=null;try{sl=window.STORY2&&STORY2.take(n.id)}catch(_){}n.line=sl||pick(LINES[n.id].t,n.line);n.bub=null;n.seen=1}
+ function nextLine(n){if(!n||!LINES[n.id])return;let sl=null;try{sl=window.STORY2&&STORY2.take(n.id)}catch(_){}n.line=sl||pick(LINES[n.id].t,n.line)}
  function classHTML(n){/* class row: every NPC has a class and lives in that class's house; the button cycles passive / tip */const cl=n&&n.cls&&CLASS7.C[n.cls];if(!cl)return'';const tip=n.ct?(n.ct%2?TIPS[n.cls]:cl.p):'';return`<div class="rw" style="border-left:3px solid ${cl.c};padding-left:8px"><div style="flex:1"><b style="color:${cl.c}">${cl.ic} ${esc(cl.n)}</b><small>${esc(n.house||'')}${tip?' \u00b7 '+esc(tip):' \u00b7 a '+esc(cl.n)+' house'}</small></div><button data-a="talk:cls">Class tip</button></div>`+(typeof CJOB!='undefined'?CJOB.row(n):'')} // + choose / learn / switch class (86-z-classjob.js)
  function classTip(n){if(n)n.ct=(n.ct||0)+1}
  function lineHTML(n){if(!n||n.amb)return'';const ch=classHTML(n);if(!n.line)return ch;return ch+`<div class="rw"><div><small style="font-style:italic;opacity:.92">\u201c${esc(n.line)}\u201d</small></div></div>`}

@@ -9,7 +9,7 @@ const CEL_VER=1;window.UPD0=updMobs;   /* the plain monster update, before any w
 const WFAM={feathered:'Feathered',dark:'Dark',elemental:'Elemental',cosmic:'Cosmic',mechanical:'Mechanical',fantasy:'Fantasy'};
 const WRAR=['common','uncommon','rare','epic','legendary','mythic','exclusive'];
 const WINGS=[
- {id:'celestial',n:'Celestial Wings',fam:'feathered',rar:'uncommon',src:'level',lvl:10,pal:['#8f9cc9','#dfe7ff','#ffffff','#bcd4ff'],sp:'#ffffff',fxk:'glitter',d:'Classic pearl-white angel wings with a soft blue glow.',
+ {id:'celestial',n:'Celestial Wings',fam:'feathered',rar:'uncommon',src:'level',lvl:10,pal:['#8f9cc9','#dfe7ff','#ffffff','#bcd4ff'],sp:'#ffffff',fxk:'glitter',d:'Classic pearl-white feathered wings with a soft blue glow.',
   a:{L:54,parts:[{s:'fan',tip:'point',rows:3,n:11,a:[-52,84],arm:-40,att:.55,fw:.24,cov:'round',glow:1}]}},
  {id:'frost',n:'Frost Crystal Wings',fam:'elemental',rar:'rare',src:'level',lvl:30,pal:['#2a6fb8','#8fd4ff','#effaff','#7fd0ff'],sp:'#c8f0ff',fxk:'snow',d:'Translucent ice crystals with branching frost veins that glint in the light.',
   a:{L:60,glint:1,parts:[{s:'fan',tip:'ice',rows:2,n:9,a:[-62,70],arm:-46,att:.45,fw:.26,lc:'mid',al:.9}]}},
@@ -19,7 +19,7 @@ const WINGS=[
   a:{L:80,parts:[{s:'fan',tip:'point',rows:1,n:9,a:[-52,80],arm:-40,att:.5,fw:.26,al:.22},{s:'frag',shape:'rock',n:16,a:[-52,80],arm:-40,att:.5,sz:[5,11],line:1}]}},
  {id:'eclipse',n:'Eclipse Wings',fam:'cosmic',rar:'epic',src:'level',lvl:50,pal:['#07050c','#24163a','#5e4382','#ffcf5a'],sp:'#ffd98a',fxk:'omen',d:'Great black crescent blades rimmed in gold, with a burning corona behind the back.',
   a:{L:72,corona:{c:'#ffcf5a',r:.42},parts:[{s:'fan',tip:'crescent',rows:2,n:6,a:[-50,72],arm:-42,att:.45,fw:.18,rim:'#ffcf5a',rf:.62}]}},
- {id:'ascendant',n:'Royal Ascendant Wings',fam:'fantasy',rar:'legendary',src:'level',lvl:100,pal:['#a8843a','#f6e2b0','#ffffff','#ffe39a'],sp:'#fff4c4',fxk:'glitter',d:'Four layers of white-gold royal plumage, a second lower pair and a radiant halo.',
+ {id:'ascendant',n:'Royal Ascendant Wings',fam:'fantasy',rar:'legendary',src:'level',lvl:100,pal:['#a8843a','#f6e2b0','#ffffff','#ffe39a'],sp:'#fff4c4',fxk:'glitter',d:'Four layers of white-gold royal plumage, a second lower pair and a radiant ring of light.',
   a:{L:88,halo:'#ffe39a',parts:[{s:'fan',off:36,sc:.52,tip:'point',rows:2,n:8,a:[-40,70],arm:-30,att:.5,fw:.24,rim:'#e8c26a'},{s:'fan',tip:'point',rows:4,n:13,a:[-56,82],arm:-42,att:.56,fw:.23,cov:'round',rim:'#e8c26a'}]}},
  {id:'cosmic',n:'Transcendent Wings',fam:'cosmic',rar:'mythic',src:'level',lvl:150,pal:['#1a0b45','#7a3cff','#7ff0ff','#ff9be8'],sp:'#ffffff',fxk:'stars',d:'Three layers of living nebula, an orbit ring and drifting stars. The final milestone.',
   a:{L:104,halo:'#ff9be8',orbit:'#7ff0ff',stars:30,parts:[{s:'fan',off:36,sc:.52,tip:'star',rows:2,n:8,a:[-40,70],arm:-30,att:.5,fw:.24},{s:'rib',kind:'nebula',n:5,a:[-60,40],len:1.08,w:7},{s:'fan',tip:'star',rows:3,n:13,a:[-54,82],arm:-42,att:.56,fw:.24,glow:1}]}},
@@ -61,7 +61,7 @@ const WINGS=[
   a:{L:92,parts:[{s:'fan',tip:'point',rows:3,n:12,a:[-54,82],arm:-42,att:.56,fw:.23,rim:'#e8c26a'}],alt:[{s:'rib',kind:'void',n:4,a:[-60,40],len:.9,w:6,p2:1},{s:'frag',shape:'void',n:16,a:[-54,80],arm:-42,att:.5,sz:[6,14],p2:1}]}},
  {id:'zephyr',n:'Zephyr Wings',fam:'elemental',rar:'common',src:'shop',pal:['#5fae96','#c8f2e4','#ffffff','#e8fff6'],sp:'#e8fff6',fxk:'leaf',d:'Sweeping ribbons of wind around faint, airy feathers.',
   a:{L:50,parts:[{s:'fan',tip:'round',rows:1,n:7,a:[-50,80],arm:-36,att:.5,fw:.3,al:.55},{s:'rib',kind:'wind',n:6,a:[-56,40],len:1,w:3.2}]}},
- {id:'bat',n:'Night Bat Wings',fam:'dark',rar:'uncommon',src:'shop',lv:10,pal:['#120814','#3a1638','#7a2a5a','#ff4a8a'],sp:'#ff4a8a',fxk:'omen',d:'Small demonic bat wings with hooked claws and scalloped membranes.',
+ {id:'bat',n:'Night Bat Wings',fam:'dark',rar:'uncommon',src:'shop',lv:10,pal:['#120814','#3a1638','#7a2a5a','#ff4a8a'],sp:'#ff4a8a',fxk:'omen',d:'Small bat wings with hooked claws and scalloped membranes.',
   a:{L:48,parts:[{s:'mem',fingers:3,bone:'#2a1020',claw:1,hook:1,scal:.36}]}},
  {id:'ember',n:'Ember Wings',fam:'elemental',rar:'uncommon',src:'shop',lv:10,pal:['#7a1606','#ff5a1a','#ffd04a','#fff2b0'],sp:'#ffd04a',fxk:'embers',d:'Wings of living flame that flicker and shed embers.',
   a:{L:52,parts:[{s:'fan',tip:'flame',rows:2,n:8,a:[-62,64],arm:-46,att:.4,fw:.32},{s:'rib',kind:'flame',n:4,a:[-60,30],len:.8,w:5}]}},
@@ -81,7 +81,7 @@ const WINGS=[
   a:{L:104,parts:[{s:'rib',kind:'void',n:5,a:[-64,40],len:.9,w:7},{s:'frag',shape:'void',n:20,a:[-54,82],arm:-40,att:.52,sz:[7,17]}]}},
  {id:'phoenix',n:'Phoenix Reborn',fam:'elemental',rar:'exclusive',src:'excl',pal:['#5a0a04','#ff4a12','#ffd040','#fff6c0'],sp:'#ffd040',fxk:'embers',d:'Massive wings of fire that burst into a rebirth flame.',
   a:{L:110,rebirth:1,parts:[{s:'fan',tip:'flame',rows:3,n:12,a:[-64,74],arm:-48,att:.5,fw:.3},{s:'rib',kind:'flame',n:6,a:[-62,30],len:.95,w:7}]}},
- {id:'eternity',n:'Seraph of Eternity',fam:'feathered',rar:'exclusive',src:'excl',pal:['#7a84a4','#d6dbea','#ffffff','#ffe9a0'],sp:'#fff4c4',fxk:'glitter',d:'Three pairs of silver and gold wings that open slowly and majestically.',
+ {id:'eternity',n:'Wings of Eternity',fam:'feathered',rar:'exclusive',src:'excl',pal:['#7a84a4','#d6dbea','#ffffff','#ffe9a0'],sp:'#fff4c4',fxk:'glitter',d:'Three pairs of silver and gold wings that open slowly and majestically.',
   a:{L:100,halo:'#ffe9a0',slow:1,parts:[{s:'fan',off:38,sc:.52,tip:'point',rows:2,n:8,a:[-40,70],arm:-30,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',off:-38,sc:.62,tip:'point',rows:2,n:8,a:[-60,60],arm:-48,att:.5,fw:.24,rim:'#d9a93a'},{s:'fan',tip:'point',rows:3,n:13,a:[-54,82],arm:-40,att:.56,fw:.23,cov:'round'}]}},
  {id:'drakelord',n:'Dragon Sovereign',fam:'fantasy',rar:'exclusive',src:'excl',pal:['#120808','#3a1410','#d89a3a','#ff8a2a'],sp:'#ff8a2a',fxk:'embers',d:'Colossal obsidian dragon wings with five spiked fingers and molten veins.',
   a:{L:112,parts:[{s:'mem',fingers:5,bone:'#2a1a12',claw:1,spikes:1,vein:1,glowVein:1}]}},
@@ -91,7 +91,7 @@ const WINGS=[
   a:{L:112,corona:{c:'#cfc0ff',r:.24},trail:['void','spark','dust'],parts:[{s:'tier',e:['tendril','tendril','shroud'],n:[9,9,7],len:[.7,.46,.22],wd:[.12,.14,.3],pa:[-16,104],arm:-30,glow:1}]}},
  {id:'nightforge',n:'Nightforged Aegis',fam:'mechanical',rar:'legendary',src:'shop',lv:45,pal:['#05040a','#1d1a29','#4e4866','#c86bff'],sp:'#c86bff',fxk:'smoke',d:'Black armoured wing plates joined by violet glowing seams, layered in three hinged tiers.',
   a:{L:100,trail:['spark','ember'],parts:[{s:'tier',e:['plate','plate','scale'],n:[8,7,6],len:[.6,.38,.2],wd:[.17,.2,.32],pa:[-12,92],arm:-36,tip:'#e9b8ff',orn:'gem',glow:1}]}},
- {id:'haloseraph',n:'Halo Seraph',fam:'feathered',rar:'mythic',src:'shop',lv:60,pal:['#8c92c0','#e9edff','#ffffff','#d6b8ff'],sp:'#ffffff',fxk:'glitter',d:'Radiant white feathers in three tiers around a glowing halo ring, shedding petals of light.',
+ {id:'haloseraph',n:'Radiant Plume',fam:'feathered',rar:'mythic',src:'shop',lv:60,pal:['#8c92c0','#e9edff','#ffffff','#d6b8ff'],sp:'#ffffff',fxk:'glitter',d:'Radiant white feathers in three tiers around a glowing ring of light, shedding petals of light.',
   a:{L:108,ring:{c:'#e3d2ff',r:.2},trail:['petal','dust','feather'],parts:[{s:'tier',e:['feather','feather','covert'],n:[11,10,9],len:[.62,.4,.2],wd:[.17,.2,.34],pa:[-12,96],arm:-38,tip:'#cdb0ff',glow:1}]}},
  {id:'inkwraith',n:'Inkwraith Wings',fam:'dark',rar:'legendary',src:'shop',lv:40,pal:['#040405','#16161b','#5c5c68','#f4f4ff'],sp:'#f4f4ff',fxk:'smoke',d:'Brush-stroke wings of black ink that dissolve into drifting wisps, streaked with pale light.',
   a:{L:104,trail:['smoke','dust'],parts:[{s:'tier',e:['ink','ink','ink'],n:[8,7,6],len:[.64,.42,.22],wd:[.22,.24,.3],pa:[-16,100],arm:-30,glow:1}]}},
@@ -120,7 +120,7 @@ const AURAS=[
  {id:'none',n:'None',lvl:1,c:'#fff'},
  {id:'sigil',n:'Violet Sigil',lvl:20,c:'#a46bff',c2:'#e3ccff',pts:5},
  {id:'frost',n:'Frost Mandala',lvl:45,c:'#7fd0ff',c2:'#eaf8ff',pts:6},
- {id:'solar',n:'Golden Seraph Ring',lvl:80,c:'#ffd24a',c2:'#fff4c4',pts:8,wing:1},
+ {id:'solar',n:'Golden Sun Ring',lvl:80,c:'#ffd24a',c2:'#fff4c4',pts:8,wing:1},
  {id:'eclipse',n:'Eclipse Rune',lvl:110,c:'#c05cff',c2:'#ffd36a',pts:7},
  {id:'cosmos',n:'Cosmic Orrery',lvl:140,c:'#7ff0ff',c2:'#ff9be8',pts:9}
 ];

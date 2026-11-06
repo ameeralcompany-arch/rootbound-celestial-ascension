@@ -50,7 +50,7 @@ try{(()=>{
    ['clv','Reach class level 15','Fight with your class\'s weapons',()=>{try{return Object.keys(CLASS7.C).some(k=>CLASS7.lv(k)>=15)}catch(_){return false}},0,0,300,'Classes page',['classes']]]],
   ['ADVANCED ADVENTURER','Mastery',[
    ['froz','Clear Frozen Catacombs','Level 25 and 700 Combat Power',()=>clr('frozen'),25,700,800,'Frozen Catacombs',['dungeon','frozen']],
-   ['holl','Clear Hollow Sanctuary','Level 30 and 1150 Combat Power',()=>clr('hollow'),30,1150,1000,'Hollow Sanctuary',['dungeon','hollow']],
+   ['holl','Clear Hollow Grove','Level 30 and 1150 Combat Power',()=>clr('hollow'),30,1150,1000,'Hollow Grove',['dungeon','hollow']],
    ['hard','Clear a dungeon on Hard','Harder fights pay more',hard,10,200,600,'Any cleared dungeon',['dungeon','ruins']],
    ['up10','Enhance a weapon to +10','The big damage steps end here',()=>anyUp(10),30,0,1500,'The forge',['forge']],
    ['forge','Forge a dungeon weapon','From a blueprint and materials',()=>{try{return DG.rew.FORGE.some(f=>own[f.wid])}catch(_){return false}},10,200,500,'Crafting Table',['inventory']]]],

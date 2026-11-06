@@ -1,7 +1,7 @@
 // ===== V6 bosses: 3 telegraphed fights, relic rewards (state lives in legacy bossK/relics so it saves with the profile) =====
 const BOSSES=[
  {id:'warden',n:'Verdant Warden',depth:10,hp:520,w:96,h:78,dmg:16,ai:'hop',c:'#6fe08a',jp:780,sx:170,cd:.9,gems:350,xp:420,relic:'verdant',rn:'Warden\'s Seed',rd:'+10% XP',fx:{xp:.1},desc:'A colossal jelly king crowned in living thorns.'},
- {id:'sovereign',n:'Crystal Sovereign',depth:26,hp:1400,w:84,h:120,dmg:22,ai:'walk',spm:1.1,c:'#7fd8ff',gems:900,xp:1100,relic:'crystal',rn:'Sovereign Core',rd:'+60 HP, +6% armor',fx:{hp:60,arm:.06},desc:'A walking cathedral of living crystal.'},
+ {id:'sovereign',n:'Crystal Sovereign',depth:26,hp:1400,w:84,h:120,dmg:22,ai:'walk',spm:1.1,c:'#7fd8ff',gems:900,xp:1100,relic:'crystal',rn:'Sovereign Core',rd:'+60 HP, +6% armor',fx:{hp:60,arm:.06},desc:'A walking citadel of living crystal.'},
  {id:'eclipse',n:'Eclipse Lord',depth:44,hp:2800,w:80,h:112,dmg:28,ai:'fly',spm:1.2,c:'#b58cff',gems:2400,xp:3000,relic:'eclipse',rn:'Eclipse Shard',rd:'+7% crit, +25% crit damage',fx:{crit:.07,cdmg:.25},desc:'A void-winged tyrant that swallows the light.'}];
 for(const b of BOSSES)MK['boss_'+b.id]={c:b.c,hp:b.hp,w:b.w,h:b.h,gem:40,dmg:b.dmg,ai:b.ai,jp:b.jp,sx:b.sx,cd:b.cd,spm:b.spm,fly:b.ai=='fly'?1:0,ph:b.ai=='fly'?1:0,min:9999,max:9999,boss:1};
 MOBMAT.boss_warden=2;MOBMAT.boss_sovereign=9;MOBMAT.boss_eclipse=10;

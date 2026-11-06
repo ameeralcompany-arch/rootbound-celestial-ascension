@@ -165,8 +165,8 @@ const WORD9=(()=>{
  {const _ds=drawSky;drawSky=function(w,hh,now){if(!INF)return _ds.apply(this,arguments);try{sky(w,hh)}catch(e){_ds.apply(this,arguments)}}}
  // ---- Inferno monsters: stronger than anything in a normal world (normal max: 95 HP, 15 damage); never spawn outside an Inferno
  const IM={inf_slime:{c:'#ff6a2a',hp:190,w:50,h:34,gem:26,dmg:18,ai:'hop',jp:720,sx:240,cd:.6,n:'Molten Slime'},inf_imp:{c:'#ff4a3a',hp:150,w:34,h:34,gem:30,dmg:16,ai:'fly',fly:1,spm:1.35,n:'Ember Imp'},
-  inf_hound:{c:'#ff8a3a',hp:230,w:58,h:36,gem:34,dmg:22,ai:'walk',spm:2.1,n:'Hellhound'},inf_golem:{c:'#7a5ac8',hp:460,w:54,h:64,gem:60,dmg:30,ai:'walk',spm:.75,n:'Obsidian Golem'}};
- const DROP={inf_slime:[290,'Molten Core','#ff7a2a',70],inf_imp:[291,'Imp Horn','#ff4a3a',75],inf_hound:[292,'Hellfang','#ffb04a',85],inf_golem:[293,'Obsidian Heart','#7a5ac8',140]};
+  inf_hound:{c:'#ff8a3a',hp:230,w:58,h:36,gem:34,dmg:22,ai:'walk',spm:2.1,n:'Ashhound'},inf_golem:{c:'#7a5ac8',hp:460,w:54,h:64,gem:60,dmg:30,ai:'walk',spm:.75,n:'Obsidian Golem'}};
+ const DROP={inf_slime:[290,'Molten Core','#ff7a2a',70],inf_imp:[291,'Imp Horn','#ff4a3a',75],inf_hound:[292,'Ashfang','#ffb04a',85],inf_golem:[293,'Obsidian Heart','#7a5ac8',140]};
  for(const k in IM){MK[k]=Object.assign({min:9999,max:9999,inf:1},IM[k]);const d=DROP[k];MAT[d[0]]={n:d[1],c:d[2],p:d[3]};MOBMAT[k]=d[0]}
  {const _pm=pickMob;pickMob=function(dp){if(!INF)return _pm.apply(this,arguments);const pool=dp<6?[['inf_hound',3],['inf_imp',3],['inf_slime',3],['inf_golem',1.2]]:[['inf_slime',3],['inf_imp',2],['inf_golem',2],['inf_hound',2]];let t=0;for(const p of pool)t+=p[1];let r=R()*t;for(const p of pool){r-=p[1];if(r<=0)return p[0]}return pool[0][0]}}
  {const _md=mobDrops;mobDrops=function(m){const r=_md.apply(this,arguments);try{if(MK[m.k]&&MK[m.k].inf){for(let i=0;i<3;i++)spawnDrop(m.x,m.y,'gem',3);if(R()<.3)spawnDrop(m.x,m.y,[73,74,75,76,10][R()*5|0],1);if(R()<.35)spawnDrop(m.x,m.y,MAGMA,1+(R()*2|0))}}catch(_){}return r}}
