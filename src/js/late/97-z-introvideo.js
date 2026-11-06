@@ -12,14 +12,14 @@ const INTRO60=(()=>{
  function launch(home){
   let story=false;try{story=!!localStorage.getItem('rb_story_intro')}catch(_){}
   const v=document.createElement('video');
-  if(story||!v.canPlayType||!v.canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"'))return CINE7.launch(home);
+  if(story||!v.canPlayType||!v.canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"'))return CINE7.launch(home);try{v.preload='auto';v.src=SRC;v.load()}catch(_){}/* buffering starts now, while the game is still starting */
   let n=0;const iv=setInterval(()=>{n++;let rdy=true,bad=false;try{rdy=!window.RBDIAG||RBDIAG.ready;const d=document.getElementById('rbdiag');bad=!!(d&&getComputedStyle(d).display!='none')}catch(_){}
    if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{start(v,home)}catch(e){console.error('INTRO60',e);drop();CINE7.launch(home)}},60)}
 
  function start(v,home){
   const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label','Intro film: Rootbound');
   w.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#000;cursor:none;user-select:none;touch-action:none';
-  v.src=SRC;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
+  if(!v.getAttribute('src'))v.src=SRC;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
   v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;pointer-events:none';
   const skip=document.createElement('div');skip.style.cssText='position:absolute;right:30px;bottom:26px;display:flex;align-items:center;gap:16px;font:600 14px Montserrat,system-ui,sans-serif;color:#fff;opacity:0;transition:opacity .5s;text-shadow:0 1px 3px #000;letter-spacing:.04em;pointer-events:none';
   skip.innerHTML='<span>Press any key to skip</span><button type="button" style="font:600 13px Montserrat,system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.55);border-radius:7px;padding:7px 16px;cursor:pointer;pointer-events:auto">Skip</button>';

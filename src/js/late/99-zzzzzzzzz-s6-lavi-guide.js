@@ -12,7 +12,7 @@ try{(()=>{
  let poseUntil=0;function poseFor(p,sec){st.pose=p;poseUntil=performance.now()+sec*1000}
  // ---- where she may be seen: not in a dungeon run, a film or the title screen
  const hidden=()=>{try{if(!entered)return true;if(DG.run)return true;if(DG.cine&&DG.cine.on)return true;if(typeof INTRO60!='undefined'&&INTRO60.playing)return true}catch(_){}return !O().auto&&!T.on};
- function park(){const h=el('hudL'),r=h?h.getBoundingClientRect():{left:10,bottom:70};st.park=true;st.tx=Math.max(50,r.left+44);st.ty=Math.min(innerHeight-120,(r.bottom||70)+66)}
+ let parkR=null,parkT=0;function park(){const n=performance.now();if(!parkR||n-parkT>1000){parkT=n;const h=el('hudL');parkR=h?h.getBoundingClientRect():{left:10,bottom:70}}const r=parkR;st.park=true;st.tx=Math.max(50,r.left+44);st.ty=Math.min(innerHeight-120,(r.bottom||70)+66)}
  // ---- the loop. Her own small canvas moves about, so she costs next to nothing on a big screen
  function frame(t){raf=requestAnimationFrame(frame);if(!wrap)return;const dt=Math.min(.05,(t-lastT)/1000||.016);const hide=hidden();wrap.style.display=hide?'none':'';if(btn)btn.classList.toggle('on',!hide&&!T.on);if(hide){if(speaking)stopVoice();hl.classList.remove('on');return}
   // parked she needs only 30 frames a second

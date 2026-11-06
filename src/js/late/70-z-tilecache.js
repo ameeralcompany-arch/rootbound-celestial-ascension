@@ -9,15 +9,20 @@ const TILE7=(()=>{
  // the same look the per-block loop had: sprite, lit lip under air, dark edge above air
  function paint(c,cx,cy,lips){for(let y=cy*CH;y<cy*CH+CH&&y<H;y++)for(let x=cx*CH;x<cx*CH+CH&&x<W;x++){const k=y*W+x,b=tiles[k];if(!b||!(SOLID6[b]||TDRAW7[b]))continue;const px=(x-cx*CH)*T,py=(y-cy*CH)*T;
    c.drawImage(spr(b,x,y),px,py,T,T);if(lips&&SOLID6[b]){if(!tiles[k-W]&&y>0){c.fillStyle='rgba(255,255,255,.2)';c.fillRect(px,py,T,3)}if(!tiles[k+W]){c.fillStyle='rgba(0,0,0,.28)';c.fillRect(px,py+T-4,T,4)}}}}
- function draw(x0,x1,y0,y1,now){const m=g.getTransform(),sc=Math.min(4,Math.max(.25,Math.hypot(m.a,m.b))),lips=ZM>=.8,key=sc.toFixed(3)+'|'+lips+'|'+(typeof QM!='undefined'?QM.cur.id:'')+'|'+g.imageSmoothingEnabled;
-  if(key!==cKey){cKey=key;cache.clear()}const t=performance.now();
-  // chunks are copied 1:1 at whole device pixels (no resampling): neighbouring chunks no longer show hairline seams at odd zoom levels
-  const blit=!m.b&&!m.c&&Math.abs(m.a-sc)<.001&&Math.abs(m.d-sc)<.001;if(blit)g.setTransform(1,0,0,1,0,0);
+ // At most BUDGET chunks are (re)painted per frame. Painting every visible chunk at once (about 40 new images at full HD on arrival, and the whole
+ // screen on every frame of a camera zoom, because the scale was part of the cache key) stalled the graphics card for a third of a second at a time.
+ // A chunk not ready yet is drawn straight from its tiles this frame; a chunk painted at another zoom is shown scaled until its turn comes.
+ const BUDGET=6;
+ function draw(x0,x1,y0,y1,now){const m=g.getTransform(),sc=Math.min(4,Math.max(.25,Math.hypot(m.a,m.b))),lips=ZM>=.8,key=lips+'|'+(typeof QM!='undefined'?QM.cur.id:'')+'|'+g.imageSmoothingEnabled;
+  if(key!==cKey){cKey=key;cache.clear()}const t=performance.now();let budget=BUDGET;
+  // chunks are copied 1:1 at whole device pixels when painted at this exact scale (no resampling, no hairline seams at odd zoom levels)
+  const blitOK=!m.b&&!m.c&&Math.abs(m.a-sc)<.001&&Math.abs(m.d-sc)<.001;
   for(let cy=Math.floor(y0/CH);cy<=Math.floor(y1/CH);cy++)for(let cx=Math.floor(x0/CH);cx<=Math.floor(x1/CH);cx++){const id=cy*1024+cx,s=sig(cx,cy);let e=cache.get(id);
-   if(!e||e.s!==s){if(!e){e={c:document.createElement('canvas')};e.c.width=e.c.height=Math.ceil(CW*sc);cache.set(id,e)}e.s=s;const c=e.c.getContext('2d');
+   const stale=!e||e.s!==s,rescale=e&&!stale&&Math.abs(e.sc-sc)>.001;
+   if((stale||rescale)&&budget>0){budget--;if(!e){e={c:document.createElement('canvas')};cache.set(id,e)}const px=Math.ceil(CW*sc);if(e.c.width!==px){e.c.width=e.c.height=px}e.s=s;e.sc=sc;const c=e.c.getContext('2d');
     c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,e.c.width,e.c.height);c.imageSmoothingEnabled=g.imageSmoothingEnabled;c.setTransform(sc,0,0,sc,0,0);paint(c,cx,cy,lips)}
-   e.u=t;if(blit)g.drawImage(e.c,Math.round((cx*CW-cam.x)*m.a+m.e),Math.round((cy*CW-cam.y)*m.d+m.f));else g.drawImage(e.c,cx*CW-cam.x,cy*CW-cam.y,CW,CW)}
-  if(blit)g.setTransform(m);
+   if(e&&e.s===s){e.u=t;if(blitOK&&Math.abs(e.sc-sc)<.001){g.setTransform(1,0,0,1,0,0);g.drawImage(e.c,Math.round((cx*CW-cam.x)*m.a+m.e),Math.round((cy*CW-cam.y)*m.d+m.f));g.setTransform(m)}else g.drawImage(e.c,cx*CW-cam.x,cy*CW-cam.y,CW,CW)}
+   else{g.save();g.translate(cx*CW-cam.x,cy*CW-cam.y);paint(g,cx,cy,lips);g.restore()}}
   if(cache.size>MAXC){const old=[...cache].sort((a,b)=>a[1].u-b[1].u).slice(0,cache.size-MAXC);for(const[k]of old)cache.delete(k)}
   // live layer: lamps for the lighting pass, the hit "pop" and crack overlays
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const k=y*W+x,b=tiles[k];if(!b||!(SOLID6[b]||TDRAW7[b]))continue;if(b==13||(window.GLOW7&&GLOW7[b]))lampL.push(x*T+T/2-cam.x,y*T+T/2-cam.y);

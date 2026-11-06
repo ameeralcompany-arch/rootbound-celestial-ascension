@@ -9,3 +9,7 @@
  // the slowdown stayed after leaving the realm. So a pattern is made from a copy of the canvas that lives on the graphics card.
  const cp=CanvasRenderingContext2D.prototype.createPattern;
  CanvasRenderingContext2D.prototype.createPattern=function(im,rep){if(im&&im._rbCpu&&im.width&&im.height){const c=document.createElement('canvas');c.width=im.width;c.height=im.height;c.getContext('2d',{alpha:true}).drawImage(im,0,0);im=c}return cp.call(this,im,rep)}})();
+
+// The very first pixel read and the very first image encode in a session each cost about half a second while the browser sets them up. Paid here, during
+// loading, they are gone before the intro film starts; otherwise they landed on the first weapon or icon drawn, mid-film or just after arriving.
+(()=>{try{const t=performance.now(),c=document.createElement('canvas');c.width=c.height=2;const x=c.getContext('2d',{willReadFrequently:true});x.fillRect(0,0,1,1);x.getImageData(0,0,2,2);c.toDataURL();window.RB_WARM=Math.round(performance.now()-t)}catch(_){}})();

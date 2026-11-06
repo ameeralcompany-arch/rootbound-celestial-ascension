@@ -9,7 +9,14 @@ window.RBLAUNCH=(()=>{
  const qd=clean(q.get('rbdungeon'));
  if(qd){const iv=setInterval(()=>{try{if(!entered||window.RB_COVER)return;clearInterval(iv);if(window.DG&&DG.BY[qd]&&DG.page)DG.page.open(null,qd)}catch(e){clearInterval(iv);console.error('RBLAUNCH',e)}},700);setTimeout(()=>clearInterval(iv),600000)}
  const num=v=>Number.isFinite(+v)?+v:0;
- function avatar(){try{const c=document.getElementById('portrait');if(c&&c.width>0&&entered)return c.toDataURL('image/png')}catch(_){}return null}
+ // the launcher's portrait is drawn from the character itself onto its own canvas in main memory, never read back from the one on screen: reading from the
+// graphics card makes the game wait for all of its queued work (up to 0.6 s). Same drawing as the HUD portrait (80-ui.js), with its plain background
+function drawAv(){try{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d',{willReadFrequently:true}),dk=document.documentElement.dataset.theme=='dark';x.save();x.beginPath();x.arc(64,64,64,0,6.3);x.clip();const gr=x.createRadialGradient(64,44,6,64,64,72);gr.addColorStop(0,dk?'#4a3a78':'#ffffff');gr.addColorStop(.6,dk?'#2a2148':'#e6def6');gr.addColorStop(1,dk?'#181430':'#d6e2f4');x.fillStyle=gr;x.fillRect(0,0,128,128);const o=g;g=x;try{x.save();const hz=wear.hat&&WEAR[wear.hat]?1:0;x.translate(64,236-hz*8);x.scale(3.4-hz*.4,3.4-hz*.4);const L=AC6.info(look,null,true);AC6.headFull(x,L,-50,0,0,wear);x.restore()}finally{g=o}x.restore();return c}catch(_){return null}}
+// the portrait as a picture for the launcher. Encoded only when your look changes, and off the main thread (toBlob): encoding it on every 10-second
+// profile sync froze the game for up to 0.6 s each time
+let avU=null,avK='',avBusy=false;
+function avatar(){try{const c=document.getElementById('portrait');if(!c||!(c.width>0)||!entered)return avU;let k='';try{k=JSON.stringify(cel.ap)+(document.documentElement.dataset.theme||'')+(wear.hat||'')+(typeof AVF10!='undefined'?AVF10.bgKey():'')}catch(_){}
+ if(k!==avK&&!avBusy){avBusy=true;const want=k;setTimeout(()=>{try{const q=drawAv();if(!q||!q.toBlob){avBusy=false;return}q.toBlob(b=>{if(!b){avBusy=false;return}const r=new FileReader();r.onload=()=>{avU=r.result;avK=want;avBusy=false};r.onerror=()=>{avBusy=false};r.readAsDataURL(b)},'image/png')}catch(_){avBusy=false}},600)}}catch(_){}return avU}
  function outfit(){const out=[];try{for(const s of ['hat','body','wing','boot','glove']){const id=wear[s];if(id)out.push({slot:s,name:(WEAR[id]&&WEAR[id].n)||id})}}catch(_){}return out}
  function weapon(){try{const w=WPN[wp];return w?{id:wp,name:w.n||wp}:null}catch(_){return null}}
  function klass(){try{const k=CLASS7.cur();if(!k||!CLASS7.C[k])return null;return{id:k,name:CLASS7.C[k].n,level:CLASS7.lv(k)}}catch(_){return null}}

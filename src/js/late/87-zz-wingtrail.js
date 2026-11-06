@@ -81,7 +81,7 @@ const WTRAIL=(()=>{
   SET.set(id,s);if(SET.size>4)SET.delete(SET.keys().next().value);return s}
  // afterimage: the wing at full flare recoloured once in the theme's colours (built in an idle callback, then just stamped)
  function ghost(s,w,k){try{const i=WINGS.indexOf(w),f=k?-1:1,S=Math.ceil(w.a.L*3.4+80),C=mk(S,S),x=C.getContext('2d'),ax=S/2,ay=Math.round(S*.55);WingArt.draw(x,i,ax,ay,f,1.3,2,0,0,1,null,0,{kf:0});
-   const d=x.getImageData(0,0,S,S).data;let x0=S,x1=-1,y0=S,y1=-1;for(let y=0;y<S;y+=2)for(let q=0;q<S;q+=2)if(d[(y*S+q)*4+3]>16){if(q<x0)x0=q;if(q>x1)x1=q;if(y<y0)y0=y;if(y>y1)y1=y}
+   /* no pixel read-back to trim it: that waited on the graphics card for up to half a second; the untrimmed picture costs nothing extra to stamp */let x0=0,x1=S-7,y0=0,y1=S-7;
    if(x1<0){s.ghost[k]=false;return}x0=Math.max(0,x0-3);y0=Math.max(0,y0-3);const cw=Math.min(S-x0,x1-x0+6),ch=Math.min(S-y0,y1-y0+6),G=mk(cw,ch),q=G.getContext('2d');q.drawImage(C,x0,y0,cw,ch,0,0,cw,ch);
    q.globalCompositeOperation='source-atop';const lg=q.createLinearGradient(0,0,cw,ch),gc=s.C.gh;gc.forEach((c,j)=>lg.addColorStop(j/(gc.length-1),css(s.dk?c:mixc(c,WHITE,.2),1)));q.globalAlpha=.88;q.fillStyle=lg;q.fillRect(0,0,cw,ch);
    s.ghost[k]={c:G,ox:ax-x0,oy:ay-y0}}catch(_){s.ghost[k]=false}}
