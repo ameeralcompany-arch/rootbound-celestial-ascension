@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.6",
+      "type": "update",
+      "title": "The official trailer, a phone menu, steadier co-op",
+      "summary": "Two-player dungeons no longer disconnect in long fights: the server stopped counting every busy moment against you, and a small pill by the map shows your connection. Watch the new official trailer in Settings > General > Trailer. Press M f",
+      "body": "Two-player dungeons no longer disconnect in long fights: the server stopped counting every busy moment against you, and a small pill by the map shows your connection. Watch the new official trailer in Settings > General > Trailer. Press M for Rootlink, your phone: your profile, today's challenges and every menu in one place (Shift+M now mutes the music).",
+      "date": "2026-11-06",
+      "version": "6.13.6"
+    },
+    {
       "id": "update-6.13.5",
       "type": "update",
       "title": "Rootbound 6.13.5",
