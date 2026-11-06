@@ -10,7 +10,8 @@ else app.commandLine.appendSwitch('force_high_performance_gpu');
 // Settings > Graphics > Uncapped frame rate (off by default): the game stores it in its storage; the app copies it to rbgfx.json
 // (see syncGfx) and applies it at the next launch, since these switches only work before start-up.
 const GFX=(()=>{try{return JSON.parse(fs.readFileSync(path.join(app.getPath('userData'),'rbgfx.json'),'utf8'))}catch(_){return{}}})();
-if(!SAFE&&GFX.uncapped){app.commandLine.appendSwitch('disable-frame-rate-limit');app.commandLine.appendSwitch('disable-gpu-vsync')}
+// The uncapped setting is no longer applied: turning off the monitor sync let frames pile up faster than the graphics card could show them, the GPU
+// process ran at full load and the game froze or fell to ~10 FPS (seen on a GTX 1650 SUPER at 143 Hz, 2026-11-06). The game always runs at the monitor's rate.
 // What the Rootbound launcher can ask for. Started without these, the game behaves as it always has. --rb-display: fullscreen, borderless or windowed. --rb-res: WIDTHxHEIGHT. --rb-quality: a graphics preset id. --rb-world / --rb-dungeon: a quick launch.
 const rbArg=k=>{const p='--rb-'+k+'=',a=argv.find(x=>x.startsWith(p));return a?a.slice(p.length):''};
 const DISPLAY=/^(fullscreen|borderless|windowed)$/.test(rbArg('display'))?rbArg('display'):'fullscreen',RES=/^(\d{3,5})x(\d{3,5})$/.exec(rbArg('res')),QUALITY=/^(auto|potato|low|med|high|ultra|cine)$/.test(rbArg('quality'))?rbArg('quality'):'',QUICK={};
