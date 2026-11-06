@@ -3022,6 +3022,83 @@ html[data-skin=night] #craftui{max-height:calc(94vh / var(--uiz))!important;over
 #dg16 .minf .lnk{background:none;border:0;padding:0;color:#9fd8ff;font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
 /* a boss's spoken line */
 #bsub{position:fixed;left:50%;bottom:150px;transform:translateX(-50%) translateY(8px);z-index:9300;max-width:min(760px,90vw);padding:9px 18px;border-radius:14px;background:rgba(8,6,20,.78);border:1px solid rgba(255,255,255,.14);color:#fff;font:600 17px/1.35 Georgia,serif;text-align:center;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}#bsub.on{opacity:1;transform:translateX(-50%)}#bsub b{display:block;font:800 11px/1.2 var(--ui-font,system-ui,sans-serif);letter-spacing:.14em;text-transform:uppercase;color:#ffd58a;margin-bottom:3px}
+/* the connection indicator */
+#net16{position:fixed;top:132px;right:18px;z-index:60;display:none;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:rgba(18,14,40,.62);border:1px solid rgba(190,170,255,.28);backdrop-filter:blur(6px);color:#e8e4fb;font:600 11.5px var(--ui-font,system-ui,sans-serif);pointer-events:auto}#net16:not([style*="none"]){display:inline-flex}#net16 i{width:7px;height:7px;border-radius:50%;background:#7dffc4;box-shadow:0 0 6px #7dffc4}#net16[data-k=bad] i{background:#ffd86a;box-shadow:0 0 6px #ffd86a}#net16[data-k=re] i{background:#ffb06a;box-shadow:0 0 6px #ffb06a;animation:netp 1s ease-in-out infinite}#net16[data-k=off] i{background:#ff7a96;box-shadow:none}@keyframes netp{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){#net16[data-k=re] i{animation:none}}
+
+/* ========== CSS: 99-zzzzz-phone.css ========== */
+/* ===== ROOTLINK: the adventure device (src/js/late/99-zzzzzzzzzz-c-phone.js). Glass over the game, one accent per app, quick and quiet motion.
+   Only transform and opacity animate; the one blur is the light scrim behind the phone while it is open. ===== */
+#rlk{position:fixed;inset:0;z-index:2147482500;pointer-events:none;font-family:Montserrat,'Segoe UI',system-ui,sans-serif;color:#eef0fb}
+#rlk.on{pointer-events:auto}
+#rlk .rlk-scrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,3,12,.42),rgba(4,3,12,.62) 60%,rgba(8,6,24,.78));opacity:0;transition:opacity .28s ease}
+#rlk.on .rlk-scrim{opacity:1;backdrop-filter:blur(3px)}
+#rlk .rlk-dev{position:absolute;right:max(4vw,24px);top:50%;width:388px;height:min(790px,calc(100vh - 48px));margin-top:calc(min(790px,calc(100vh - 48px)) / -2);border-radius:48px;padding:11px;
+ background:linear-gradient(150deg,#3a3550 0%,#16131f 28%,#0b0a12 60%,#2a2540 100%);box-shadow:0 0 0 1px rgba(255,255,255,.14) inset,0 0 0 2px rgba(0,0,0,.6),0 40px 90px rgba(0,0,0,.6),0 0 60px rgba(120,100,255,.18);
+ transform:translateY(60px) rotate(5deg) scale(.92);opacity:0;transition:transform .42s cubic-bezier(.2,.9,.25,1.06),opacity .26s ease;will-change:transform,opacity}
+#rlk.on .rlk-dev{transform:none;opacity:1}
+#rlk.out .rlk-dev{transform:translateY(40px) rotate(3deg) scale(.95);opacity:0;transition:transform .22s cubic-bezier(.5,0,.75,0),opacity .2s ease}
+#rlk .rlk-scr{position:relative;width:100%;height:100%;border-radius:38px;overflow:hidden;display:flex;flex-direction:column;
+ background:radial-gradient(120% 60% at 10% 0%,rgba(140,110,255,.35),rgba(0,0,0,0) 60%),radial-gradient(90% 50% at 100% 100%,rgba(70,190,255,.22),rgba(0,0,0,0) 60%),linear-gradient(170deg,#141433,#0b0b1c 55%,#100b20);
+ filter:brightness(.25);transition:filter .38s ease .1s}
+#rlk.on .rlk-scr{filter:none}
+#rlk .rlk-sheen{position:absolute;inset:0;pointer-events:none;z-index:3;background:linear-gradient(118deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,.03) 22%,rgba(255,255,255,0) 38%,rgba(255,255,255,0) 72%,rgba(255,255,255,.05) 100%)}
+#rlk .rlk-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 26px 6px;font-size:13px;font-weight:600;letter-spacing:.02em;position:relative;z-index:2}
+#rlk .rlk-isle{font-style:normal;background:#000;border-radius:20px;padding:7px 16px;font-size:9px;letter-spacing:.38em;color:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+#rlk .rlk-net{font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;color:#cfe9d8}
+#rlk .rlk-net::before{content:'';width:7px;height:7px;border-radius:50%;background:#5fe39a;box-shadow:0 0 8px #5fe39a}
+#rlk .rlk-net[data-k=re]::before{background:#ffcf5a;box-shadow:0 0 8px #ffcf5a}#rlk .rlk-net[data-k=off]::before{background:#ff6a6a;box-shadow:none}
+#rlk .rlk-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 18px 26px;display:flex;flex-direction:column;gap:14px;scrollbar-width:none;position:relative;z-index:2}
+#rlk .rlk-body::-webkit-scrollbar{display:none}
+#rlk .rlk-body>*{flex-shrink:0}
+#rlk h3{margin:0 0 9px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(230,226,255,.62);display:flex;justify-content:space-between;align-items:baseline}
+#rlk h3 span{letter-spacing:.04em;text-transform:none;font-weight:600;color:#ffd27a}
+/* profile card */
+#rlk .rlk-me{display:grid;grid-template-columns:76px 1fr;gap:4px 14px;align-items:center;padding:14px;border-radius:24px;background:linear-gradient(140deg,rgba(255,255,255,.1),rgba(255,255,255,.035));box-shadow:0 0 0 1px rgba(255,255,255,.09) inset}
+#rlk .rlk-av{width:76px;height:76px;border-radius:22px;background:radial-gradient(circle at 50% 35%,rgba(160,140,255,.45),rgba(30,24,60,.9));box-shadow:0 0 0 1px rgba(255,255,255,.14) inset}
+#rlk .rlk-id{display:flex;flex-direction:column;gap:3px;min-width:0}
+#rlk .rlk-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:25px;font-weight:700;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rlk .rlk-lv{font-size:12.5px;font-weight:600;color:#dcd8f2}#rlk .rlk-lv i{font-style:normal;font-weight:700}
+#rlk .rlk-world{font-size:11.5px;color:rgba(220,216,242,.6)}
+#rlk .rlk-stats{grid-column:1/3;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#rlk .rlk-stats div{padding:9px 12px;border-radius:14px;background:rgba(0,0,0,.25)}
+#rlk .rlk-stats small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(220,216,242,.55);margin-bottom:2px}
+#rlk .rlk-stats b{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+#rlk .rlk-gems{color:#7af0d8}#rlk .rlk-cp{color:#ffd27a}
+/* needs you */
+#rlk .rlk-note div{display:flex;flex-wrap:wrap;gap:7px}
+#rlk .rlk-note button{font:600 12px Montserrat,system-ui,sans-serif;color:#fff;background:color-mix(in srgb,var(--c) 18%,rgba(255,255,255,.04));border:1px solid color-mix(in srgb,var(--c) 45%,transparent);border-radius:999px;padding:6px 12px;cursor:pointer;transition:transform .12s}
+#rlk .rlk-note button b{color:var(--c)}#rlk .rlk-note button:hover{transform:translateY(-1px)}
+/* today */
+#rlk .rlk-day{cursor:pointer}
+#rlk .rlk-task{display:grid;grid-template-columns:1fr auto;gap:5px 10px;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,.05);margin-bottom:6px;font-size:12.5px;font-weight:500}
+#rlk .rlk-task i{grid-column:1/3;height:4px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden}
+#rlk .rlk-task u{display:block;height:100%;background:linear-gradient(90deg,#8f7aff,#7ad8ff);border-radius:4px;text-decoration:none}
+#rlk .rlk-task small{grid-row:1;grid-column:2;font-size:11px;color:rgba(220,216,242,.6);font-variant-numeric:tabular-nums}
+#rlk .rlk-task.ready small{color:#ffd27a}#rlk .rlk-task.done{opacity:.55}#rlk .rlk-task.done u{background:#5fe39a}
+/* featured */
+#rlk .rlk-feat{all:unset;box-sizing:border-box;flex-shrink:0;display:flex;flex-direction:column;gap:3px;padding:16px 16px 15px;border-radius:22px;cursor:pointer;position:relative;overflow:hidden;
+ background:radial-gradient(120% 120% at 100% 0%,rgba(255,110,70,.45),rgba(0,0,0,0) 55%),linear-gradient(160deg,#2a1420,#140a14);box-shadow:0 0 0 1px rgba(255,150,120,.22) inset;transition:transform .14s}
+#rlk .rlk-feat:hover,#rlk .rlk-feat:focus-visible{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,170,140,.5) inset,0 10px 30px rgba(255,90,60,.15)}
+#rlk .rlk-feat-k{font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#ffb39a}
+#rlk .rlk-feat b{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;font-weight:700}
+#rlk .rlk-feat small{font-size:11.5px;color:rgba(255,226,214,.65)}
+/* apps */
+#rlk .rlk-apps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 6px;padding:4px 2px 2px}
+#rlk .rlk-app{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;border-radius:16px;padding:2px 0;opacity:0;transform:translateY(12px) scale(.9);transition:opacity .3s ease,transform .38s cubic-bezier(.2,.9,.25,1.12)}
+#rlk.on .rlk-app{opacity:1;transform:none;transition-delay:calc(var(--i) * 18ms + 120ms)}
+#rlk .rlk-ico{position:relative;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;color:var(--c);
+ background:linear-gradient(150deg,color-mix(in srgb,var(--c) 32%,#1d1a33),color-mix(in srgb,var(--c) 10%,#0c0b18));box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent) inset,0 6px 16px rgba(0,0,0,.35);transition:transform .14s,box-shadow .14s}
+#rlk .rlk-ico svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#rlk .rlk-ico svg .d{fill:color-mix(in srgb,var(--c) 22%,transparent)}
+#rlk .rlk-app:hover .rlk-ico,#rlk .rlk-app:focus-visible .rlk-ico{transform:translateY(-2px);box-shadow:0 0 0 1.5px var(--c) inset,0 10px 22px color-mix(in srgb,var(--c) 28%,transparent)}
+#rlk .rlk-app.press .rlk-ico{transform:scale(.88)}
+#rlk .rlk-app:focus-visible{outline:none}
+#rlk .rlk-app[disabled]{opacity:.32!important;cursor:default}
+#rlk .rlk-lab{font-size:11px;font-weight:600;color:#e3e1f4;letter-spacing:.01em;white-space:nowrap}
+#rlk .rlk-bdg{position:absolute;top:-5px;right:-6px;min-width:19px;height:19px;padding:0 5px;box-sizing:border-box;border-radius:10px;background:#ff4f6a;color:#fff;font:700 10.5px/19px Montserrat,system-ui,sans-serif;font-style:normal;text-align:center;box-shadow:0 0 0 2px #0e0c1d}
+#rlk .rlk-home{position:absolute;bottom:8px;left:50%;width:120px;height:5px;margin-left:-60px;border-radius:3px;background:rgba(255,255,255,.4);z-index:4}
+@media (max-height:700px){#rlk .rlk-dev{width:350px;border-radius:40px}#rlk .rlk-ico{width:50px;height:50px;border-radius:15px}}
+@media (prefers-reduced-motion:reduce){#rlk .rlk-dev,#rlk .rlk-app,#rlk .rlk-scr{transition:opacity .15s!important;transform:none!important}}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -7500,7 +7577,7 @@ const ITEM7=(()=>{
 const say6=(a,b,c)=>{try{UI6.say6(a,b,c)}catch(_){}};
 const NET7=(()=>{
  const LOCAL_ID=myId,esc=DLG7.esc,SOLO=!!(window.RB_CONFIG&&RB_CONFIG.solo);   // single-player build: no server, no online UI
- const HH={},HK=[];let mySid='',st='offline',ws=null,url='',auth=null,info=null,list=[],room=null,want=null,joinedW=null,tries=0,retry=false,rt=0,hbT=0,lastPong=0,err='',manual=false,wantCreate=false,lastEnter=0,saved=null,resyncAt=0;
+ const HH={},HK=[];let mySid='',st='offline',ws=null,url='',auth=null,info=null,list=[],room=null,want=null,joinedW=null,tries=0,retry=false,rt=0,hbT=0,lastPong=0,rtt=0,err='',manual=false,wantCreate=false,lastEnter=0,saved=null,resyncAt=0;
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
  const D=window.RBDIAG||{stage(){},err(){}};
  // ---- address handling
@@ -7523,12 +7600,12 @@ const NET7=(()=>{
    else if(!opened&&!manual&&wakeN<14){/* a free server sleeps and takes about a minute to wake */if(!wakeN)say('Waking the online server, about a minute. You can play here meanwhile.');wakeN++;setSt('connecting','Waking the server…');clearTimeout(rt);rt=setTimeout(()=>{if(st=='connecting')connect(url,false)},4000)}else{wakeN=0;setSt('offline',opened?'The server closed the connection':'Could not reach the server')}}}
  function sched(){clearTimeout(rt);tries++;const d=Math.min(30000,1000*Math.pow(2,Math.min(5,tries-1)))+Math.random()*500;rt=setTimeout(()=>{if(st=='reconnecting')connect(url,false)},d)}
  function drop(){window.RB_OWN=null;if(room){room.dead=1}if(rm===room){rm=null}room=null;if(joinedW){const hm=(typeof WBOSS13!='undefined'&&WBOSS13.home)||P;saved={w:joinedW,x:hm.x,y:hm.y}}joinedW=null;guest=false;roomCode='';myId=LOCAL_ID;try{OBJ6&&0}catch(_){}}
- function startPing(){clearInterval(hbT);hbT=setInterval(()=>{if(Date.now()-lastPong>40000){try{ws.close()}catch(_){}return}send({t:'ping',n:Date.now()})},12000)}
+ function startPing(){clearInterval(hbT);hbT=setInterval(()=>{if(Date.now()-lastPong>40000){try{ws.close()}catch(_){}return}send({t:'ping',n:Date.now()})},6000)}
  // ---- message handling
  function onMsg(m){const t=m.t;
   if(t=='chpass'){if(m.ok&&m.token)lsSet('rbtok',m.token);say6&&say6('Change password',m.ok?'Your password was changed':String(m.m||'That did not work'),4000);return}
   if(t=='server'){info={max:m.max,ownerConfigured:m.ownerConfigured};lastPong=Date.now();startPing();beginAuth();return}
-  if(t=='pong'){lastPong=Date.now();return}
+  if(t=='pong'){lastPong=Date.now();if(m.n>0&&lastPong-m.n<60000)rtt=lastPong-m.n;return}
   if(HH[t]){try{HH[t](m)}catch(e){console.error(e)}return}
   if(t=='auth'){try{if(typeof ACCT13!='undefined'&&ACCT13.auth(m)){if(ws){ws.onmessage=null;ws.onclose=null}return}}catch(e){console.error(e)}if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
    const was=auth;auth={uid:m.uid,name:m.name,kind:m.kind,owner:!!m.owner};if(m.token&&m.kind!='guest')lsSet('rbtok',m.token);tries=0;D.stage('net-auth',m.kind);
@@ -7615,7 +7692,7 @@ const NET7=(()=>{
  // boot: try to discover a server without ever blocking the game
  async function boot(){try{let off=false;try{off=!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
- return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW}}})();
+ return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW},get rtt(){return rtt},get quiet(){return lastPong?Date.now()-lastPong:0}}})();
 
 /* ========== LATE: 76-env.js ========== */
 // ===== ENV7: persistent world environments (Blossom / Space / Galaxy) =====
@@ -14842,7 +14919,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
 (()=>{const X=UI6.ext,el=id=>document.getElementById(id),esc=UI6.esc;
  const _post=X.post;X.post=(tab,body)=>{try{_post&&_post(tab,body)}catch(e){console.error(e)}if(tab=='settings'){const s=body.querySelector('#brk7'),old=s&&s.closest('.hrow'),gfx=body.querySelector('#ss-graphics');if(s&&gfx){const w=document.createElement('div');w.innerHTML=row('brk7','Break effect','What a block bursts into when you break it','');const r=w.firstChild;r.querySelector('.sc7').appendChild(s);gfx.appendChild(r);if(old)old.remove()}}if(tab=='plates'){try{X.postPlates(body)}catch(e){console.error(e)}}};
  const CATS=[['general','General','◎','Theme, name and save data'],['graphics','Graphics','✧','Quality and visual effects'],['audio','Audio','♪','Music, effects and interface sounds'],['controls','Controls','⌘','Camera and key reference'],['interface','Interface','▣','HUD size, opacity and panels'],['access','Accessibility','◐','Motion, shake and contrast']];
- const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 – 7 · Mouse wheel','Hotbar slots'],['T','Next weapon'],['X','Swap weapon ⇄ tool'],['Q R Z Shift F','Gear skills'],['E','Use / talk'],['V','Hold the wrench: click a player to trade'],['B','Emote'],['Enter','Chat'],['P','Character'],['C','Equipment'],['I / Tab','Inventory (you can keep walking while it is open)'],['K','Classes'],['U','Skills'],['N','Bosses'],['J','Quests'],['Y','Achievements'],['G','Guide · beside a door or object: set it up'],['O','Settings'],['L','Hidden word'],['F1','Starting guide'],['H','Show / hide quest tracker'],['M','Music on / off'],['+ / − / 0','Zoom in / out / reset'],['F3','FPS counter'],['Esc','Close the open panel']];
+ const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 – 7 · Mouse wheel','Hotbar slots'],['T','Next weapon'],['X','Swap weapon ⇄ tool'],['Q R Z Shift F','Gear skills'],['E','Use / talk'],['V','Hold the wrench: click a player to trade'],['B','Emote'],['Enter','Chat'],['P','Character'],['C','Equipment'],['I / Tab','Inventory (you can keep walking while it is open)'],['K','Classes'],['U','Skills'],['N','Bosses'],['J','Quests'],['Y','Achievements'],['G','Guide · beside a door or object: set it up'],['O','Settings'],['L','Hidden word'],['F1','Starting guide'],['H','Show / hide quest tracker'],['M','Rootlink (your phone: every menu)'],['Shift + M','Music on / off'],['+ / − / 0','Zoom in / out / reset'],['F3','FPS counter'],['Esc','Close the open panel']];
  const row=(id,label,desc,ctl)=>'<div class="srow7" data-k="'+esc((label+' '+desc).toLowerCase())+'"><div class="sl7"><label for="'+id+'">'+label+'</label><small>'+desc+'</small></div><div class="sc7">'+ctl+'</div></div>';
  const tog=(id,on,lbl)=>'<input type="checkbox" role="switch" class="rb-toggle" id="'+id+'"'+(on?' checked':'')+' aria-label="'+esc(lbl)+'">';
  const rng=(id,min,max,v,u)=>'<input type="range" id="'+id+'" min="'+min+'" max="'+max+'" value="'+Math.round(v)+'"><output id="'+id+'n">'+Math.round(v)+(u==null?'%':u)+'</output>';
@@ -14852,7 +14929,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   const S={
    general:row('sth','Theme','Soft Glass is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Soft Glass (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
-    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
+    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+row('strail','Trailer','Watch the official trailer','<button class="hbtn" id="strail">Watch</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
@@ -14894,6 +14971,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   q('snm').onchange=e=>{const n=e.target.value.trim().slice(0,14);if(n){myName=n;try{$('nm').value=n;saveP()}catch(_){}}else e.target.value=myName};q('snm').onkeydown=e=>e.stopPropagation();
   if(q('ssd'))q('ssd').onclick=()=>UI6.open('account');
   if(q('sintro'))q('sintro').onclick=()=>{try{INTRO60.replay()}catch(_){}};
+  if(q('strail'))q('strail').onclick=()=>{try{INTRO60.trailer()}catch(_){}};
   // graphics
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
@@ -16617,10 +16695,12 @@ const GENDER7=(()=>{
 // The film is cut ahead of time from the Remotion project (rootbound-video) and sits next to index.html like the song, so it never adds to the page.
 // "Press any key to skip" appears after a few seconds, next to a Skip button. Settings > General has a button to watch it again. A recording at
 // audio/rootbound-voice.mp3, if one is ever added, is spoken over the title.
+// The same player shows the official trailer (audio/trailer.mp4, about 90 s) from Settings > General > Trailer: nothing of it loads until then, and the
+// video is released when it ends or is skipped.
 // CINE7's story intro stays as the fallback: it plays when the film cannot (only index.html was copied, a browser without H.264, a connection too slow to
 // start it in time).
 const INTRO60=(()=>{
- const SRC='audio/intro-cinematic.mp4',VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
+ const SRC='audio/intro-cinematic.mp4',TRAILER='audio/trailer.mp4',VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
  let S=null;
  const volume=()=>{try{return Math.min(1,Math.max(0,(typeof mute!='undefined'&&mute)?0:(OPT.mv==null?.5:+OPT.mv)*1.5))}catch(_){return .75}};
 
@@ -16631,17 +16711,17 @@ const INTRO60=(()=>{
   let n=0;const iv=setInterval(()=>{n++;let rdy=true,bad=false;try{rdy=!window.RBDIAG||RBDIAG.ready;const d=document.getElementById('rbdiag');bad=!!(d&&getComputedStyle(d).display!='none')}catch(_){}
    if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{start(v,home)}catch(e){console.error('INTRO60',e);drop();CINE7.launch(home)}},60)}
 
- function start(v,home){
-  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label','Intro film: Rootbound');
+ function start(v,home,src){src=src||SRC;
+  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label',src==SRC?'Intro film: Rootbound':'Trailer: Rootbound');
   w.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#000;cursor:none;user-select:none;touch-action:none';
-  if(!v.getAttribute('src'))v.src=SRC;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
+  if(!v.getAttribute('src'))v.src=src;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
   v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;pointer-events:none';
   const skip=document.createElement('div');skip.style.cssText='position:absolute;right:30px;bottom:26px;display:flex;align-items:center;gap:16px;font:600 14px Montserrat,system-ui,sans-serif;color:#fff;opacity:0;transition:opacity .5s;text-shadow:0 1px 3px #000;letter-spacing:.04em;pointer-events:none';
   skip.innerHTML='<span>Press any key to skip</span><button type="button" style="font:600 13px Montserrat,system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.55);border-radius:7px;padding:7px 16px;cursor:pointer;pointer-events:auto">Skip</button>';
   const prompt=document.createElement('div');prompt.style.cssText="position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff4dc;font:italic 600 34px 'Cormorant Garamond',Georgia,serif;text-align:center;pointer-events:none";
   prompt.innerHTML='Click or press any key to begin<div style="font:600 14px Montserrat,system-ui,sans-serif;font-style:normal;color:rgba(255,255,255,.6);margin-top:12px">This film has music</div>';
   w.append(v,prompt,skip);document.body.appendChild(w);window.RB_COVER=true;
-  S={v,w,skip,prompt,home,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:false,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
+  S={v,w,skip,prompt,home,src,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:src!=SRC,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
   try{const a=new Audio();a.preload='auto';a.oncanplaythrough=()=>{if(S)S.vc=a};a.src=VOICE;a.load()}catch(_){}
   v.volume=volume();
   v.addEventListener('canplay',()=>{if(S&&S.st=='wait')tryPlay()});
@@ -16684,10 +16764,10 @@ const INTRO60=(()=>{
  // the game's own music waits until the film has finished
  {const _sb=startBGM;startBGM=function(){if(S){S.bgm=1;return}return _sb.apply(this,arguments)}}
  // Settings > General: watch it again. The game keeps its place underneath: its music drops out and nothing can hurt you meanwhile.
- function replay(){if(S)return false;const cover=!!window.RB_COVER;let m=null,g0=1;try{m=bgm&&bgm.m&&bgm.m.gain;if(m){g0=m.value;m.setTargetAtTime(0,bgm.m.context.currentTime,.25)}}catch(_){m=null}
+ function replay(src){if(S)return false;const cover=!!window.RB_COVER;let m=null,g0=1;try{m=bgm&&bgm.m&&bgm.m.gain;if(m){g0=m.value;m.setTargetAtTime(0,bgm.m.context.currentTime,.25)}}catch(_){m=null}
   const back=()=>{try{if(m)m.setTargetAtTime(g0,bgm.m.context.currentTime,.4)}catch(_){}window.RB_COVER=cover};
-  try{start(document.createElement('video'),back);S.replay=true}catch(e){console.error('INTRO60 replay',e);drop();back();return false}return true}
- return{launch,replay,get playing(){return !!S},get state(){return S?{st:S.st,t:S.v.currentTime,d:S.v.duration,paused:S.v.paused,muted:S.v.muted,vol:S.v.volume,said:S.said,fin:S.fin,w:S.v.videoWidth,h:S.v.videoHeight,skipShown:S.skip.style.opacity}:null},seek(t){if(S)S.v.currentTime=t},SRC,SAY,SKIPAT}})();
+  try{start(document.createElement('video'),back,src);S.replay=true}catch(e){console.error('INTRO60 replay',e);drop();back();return false}return true}
+ return{launch,replay,trailer:()=>replay(TRAILER),TRAILER,get playing(){return !!S},get state(){return S?{st:S.st,t:S.v.currentTime,d:S.v.duration,paused:S.v.paused,muted:S.v.muted,vol:S.v.volume,said:S.said,fin:S.fin,w:S.v.videoWidth,h:S.v.videoHeight,skipShown:S.skip.style.opacity}:null},seek(t){if(S)S.v.currentTime=t},SRC,SAY,SKIPAT}})();
 
 /* ========== LATE: 97-z-sprites.js ========== */
 // ===== RBART: sprite sheets made outside the game (Blender, tools/blender/render_sheet.py; see docs/blender.md). They sit in assets/sprites/ next to index.html, like the song,
@@ -21585,7 +21665,7 @@ const NAV16=(()=>{
    grid.appendChild(row)}
   tip=document.createElement('div');tip.id='nav16tip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);
   // the map tools, attached to the minimap
-  const hr=el('hudR'),mini=el('mini');if(hr&&mini){const t=document.createElement('div');t.className='maptools';for(const[id,ic,lab,d]of[['bzi','plus','Zoom in','Keys + and 0 to reset'],['bzo','minus','Zoom out','Key −'],['bmus','soundon','Music','Turn the music on or off|M']]){const b=el(id);if(!b)continue;b.removeAttribute('title');b.innerHTML=icon(ic);b.setAttribute('aria-label',lab);b.dataset.n16tip=lab+'|'+d;t.appendChild(b)}hr.innerHTML='';hr.append(t,mini)}
+  const hr=el('hudR'),mini=el('mini');if(hr&&mini){const t=document.createElement('div');t.className='maptools';for(const[id,ic,lab,d]of[['bzi','plus','Zoom in','Keys + and 0 to reset'],['bzo','minus','Zoom out','Key −'],['bmus','soundon','Music','Turn the music on or off|Shift + M']]){const b=el(id);if(!b)continue;b.removeAttribute('title');b.innerHTML=icon(ic);b.setAttribute('aria-label',lab);b.dataset.n16tip=lab+'|'+d;t.appendChild(b)}hr.innerHTML='';hr.append(t,mini)}
   // a tooltip for everything that has one
   const show=b=>{const p=String(b.dataset.n16tip).split('|');tip.innerHTML='<b>'+esc(p[0])+(p[2]?'<kbd>'+esc(p[2])+'</kbd>':'')+'</b>'+(p[1]?'<small>'+esc(p[1])+'</small>':'');tip.classList.add('on');const r=b.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;let x=r.left+r.width/2-w/2,y=r.top-h-8;if(y<6)y=r.bottom+8;x=Math.max(6,Math.min(innerWidth-w-6,x));tip.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)'};
   const hide=()=>tip.classList.remove('on');
@@ -24703,7 +24783,7 @@ try{(()=>{
   ended(){if(!C)return;hudOff()},
   left(){if(!C)return;ns({t:'party',op:'out',run:C.run});stop()},
   // ---- every frame of a run
-  tick(dt){if(!C||!DG.run)return;C.pt-=dt;if(C.pt<=0){C.pt=.066;pg({e:'p',x:P.x|0,y:P.y|0,f:P.f,vx:P.vx|0,a:P.g?0:1,s:typeof swing!='undefined'&&swing>0?1:0,hp:P.hp|0,mh:maxHP()|0,dn:C.down?1:0,rv:C.rev>0?+C.rev.toFixed(2):0,wp})}
+  tick(dt){if(!C||!DG.run)return;C.pt-=dt;if(C.pt<=0){C.pt=.066;if(C.hq&&C.hq.size){pg({e:'hits',l:[...C.hq.values()].slice(0,40)});C.hq.clear()}pg({e:'p',x:P.x|0,y:P.y|0,f:P.f,vx:P.vx|0,a:P.g?0:1,s:typeof swing!='undefined'&&swing>0?1:0,hp:P.hp|0,mh:maxHP()|0,dn:C.down?1:0,rv:C.rev>0?+C.rev.toFixed(2):0,wp})}
    C.hello-=dt;if(!C.mateIn&&C.hello<=0){C.hello=1;announce()}
    if(!C.guest){C.st-=dt;if(C.st<=0){C.st=.1;snap()}}
    C.gt-=dt;if(C.gt<=0){C.gt=.25;groupSync()}
@@ -24740,7 +24820,7 @@ try{(()=>{
  function wipe(){if(!C)return;C.down=false;C.rev=0;if(C.mate)C.mate.dn=0;if(!C.guest)pg({e:'wipe'});say('THE PARTY HAS FALLEN','Back to the checkpoint',2400);diedSolo.call(DG.flow)}
  DG.flow.died=died;
  // a blow on a copy: the leader decides what it did
- {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(C&&m&&m.dgx){if(m.stub)return;if(C.guest&&!C.fromLead){if(m.inv||m.hide>=1)return;let dm=d;if(w&&d>0){try{if(R()<Math.min(.6,.06+prof.fight.l*.004+bonus().crit))dm=Math.round(d*(1.75+bonus().cdmg))}catch(_){}if(w.fx=='leech')P.hp=Math.min(maxHP(),P.hp+dm*.25);if(w.fx=='heal')P.hp=Math.min(maxHP(),P.hp+3)}if(!(dm>0))return;m.fl=.15;C.dealt+=dm;try{ft(m.x,m.y-10,''+Math.round(dm),'#fff');burst(m.x,m.y+m.h/2,'rgb('+(w&&w.g?w.g:[255,255,255])+')',6,120,3)}catch(_){}pg({e:'hit',n:m.nid,d:Math.round(dm),a:+(ang||0).toFixed(2),fx:w&&w.fx||0});return}
+ {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(C&&m&&m.dgx){if(m.stub)return;if(C.guest&&!C.fromLead){if(m.inv||m.hide>=1)return;let dm=d;if(w&&d>0){try{if(R()<Math.min(.6,.06+prof.fight.l*.004+bonus().crit))dm=Math.round(d*(1.75+bonus().cdmg))}catch(_){}if(w.fx=='leech')P.hp=Math.min(maxHP(),P.hp+dm*.25);if(w.fx=='heal')P.hp=Math.min(maxHP(),P.hp+3)}if(!(dm>0))return;m.fl=.15;C.dealt+=dm;try{ft(m.x,m.y-10,''+Math.round(dm),'#fff');burst(m.x,m.y+m.h/2,'rgb('+(w&&w.g?w.g:[255,255,255])+')',6,120,3)}catch(_){}{const hq=C.hq||(C.hq=new Map()),q=hq.get(m.nid);if(q){q[1]+=Math.round(dm);q[2]=+(ang||0).toFixed(2);if(w&&w.fx)q[3]=w.fx}else hq.set(m.nid,[m.nid,Math.round(dm),+(ang||0).toFixed(2),w&&w.fx||0])};return}
     if(!C.fromMate&&d>0)C.dealt+=Math.min(d,m.hp)}return _h.apply(this,arguments)}}
  const onE=e=>{if(e.key=='e'||e.key=='E'){if(C&&!e.repeat)C.eH=e.type=='keydown';if(C&&e.type=='keyup')C.eH=false;if(C&&e.type=='keydown'&&DG.duoP)try{DG.duoP.press()}catch(_){}}};addEventListener('keydown',onE,true);addEventListener('keyup',onE,true);
  // the chest: the server says whether this run has paid you already, so a resend or a dropped connection can never pay twice
@@ -24769,7 +24849,7 @@ try{(()=>{
   if(k=='grp'){const g=DG.groups[e.k];if(g){g.on=1;C.groups[e.k]=1}return}
   if(k=='want'){if(C.guest)return;const r=DG.L.rooms[e.i];if(r&&r.state=='wait')DG.flow.startRoom(r);return}
   if(k=='pz'||k=='pe'||k=='bm'){if(DG.duoP)DG.duoP.net(e);return}
-  if(!C.guest){if(k=='hit'){const m=byN(e.n);if(m&&!m.dead){C.fromMate=true;C.mdealt+=e.d;try{hurtMob(m,e.d,null,e.a||0);if(e.fx=='burn')m.burn=3;if(e.fx=='stun'||e.fx=='smash')m.stun=1.5;if(e.fx=='slow')m.slow=3}finally{C.fromMate=false}}return}return}
+  if(!C.guest){if(k=='hits'){for(const q of Array.isArray(e.l)?e.l.slice(0,40):[]){const m=byN(q[0]);if(m&&!m.dead){C.fromMate=true;C.mdealt+=q[1]|0;try{hurtMob(m,q[1]|0,null,+q[2]||0);if(q[3]=='burn')m.burn=3;if(q[3]=='stun'||q[3]=='smash')m.stun=1.5;if(q[3]=='slow')m.slow=3}finally{C.fromMate=false}}}return}if(k=='hit'){const m=byN(e.n);if(m&&!m.dead){C.fromMate=true;C.mdealt+=e.d;try{hurtMob(m,e.d,null,e.a||0);if(e.fx=='burn')m.burn=3;if(e.fx=='stun'||e.fx=='smash')m.stun=1.5;if(e.fx=='slow')m.slow=3}finally{C.fromMate=false}}return}return}
   // ---- only the guest copies these
   if(k=='m'){for(const q of e.a){const m=byN(q[0]);if(!m)continue;m.sx=q[1];m.sy=q[2];m.hp=q[3];m.f=q[4];m.shield=q[5];m.hide=q[6];m.inv=!!q[7]}return}
   if(k=='sp'){if(byN(e.n))return;DG.mobs.spawn(e.id,e.x,e.y,Object.assign({},e.o,{net:e.n,summon:!!e.o.summon,quiet:!!e.o.quiet}));return}
@@ -24782,7 +24862,7 @@ try{(()=>{
   if(k=='rm'){const r=DG.L.rooms[e.i];if(!r)return;C.quiet=1;try{if(e.s==1&&r.state=='wait'){DG.flow.startRoom(r);pull(r)}else if(e.s==2&&r.state!='done')DG.flow.clearRoom(r)}finally{C.quiet=0}return}});
  // ================= the party, from the server =================
  NET7.on('party',m=>{const op=m.op;
-  if(op=='state'){const had=PT;PT=m.p;if(!PT&&C&&!DG.run)C=null;fireL();if(m.back&&PT&&PT.run&&!C)rejoin();else if(m.back&&C&&DG.run)announce();return}
+  if(op=='state'){const had=PT;if(C)C.stateAt=Date.now();if(!m.p&&C&&DG.run&&had&&!C.resumed){const mt=(had.m||[]).find(x=>x.uid!==me());if(mt){C.resumed=1;ns({t:'party',op:'resume',mate:mt.uid,run:{id:C.run,d:C.d,df:C.df,seed:C.seed,leader:C.leaderUid}});setTimeout(()=>{if(C)C.resumed=0},8000);return}}PT=m.p;if(!PT&&C&&!DG.run)C=null;fireL();if(m.back&&PT&&PT.run&&!C)rejoin();else if(m.back&&C&&DG.run)announce();return}
   if(op=='err'){toast(m.m||'That did not work');try{window.say&&window.say(m.m)}catch(_){}return}
   if(op=='invited'){invite={id:m.id,from:m.from,lvl:m.lvl,exp:performance.now()+(m.ms||60000)};invEl();setTimeout(()=>{if(invite&&invite.id==m.id){invite=null;invEl()}},m.ms||60000);fireL();return}
   if(op=='sent'){toast('Invitation sent to '+m.to);return}
@@ -24804,6 +24884,8 @@ try{(()=>{
  // back after the page reloaded: rejoin the run the party is still in
  function rejoin(){const r=PT&&PT.run;if(!r||DG.run)return;let n=0;/* the opening film may still be playing: wait for the game, as long as the run lasts */const t=setInterval(()=>{if(!PT||!PT.run||PT.run.id!==r.id||DG.run||C||++n>2400){clearInterval(t);return}if(!entered||window.RB_COVER)return;clearInterval(t);ns({t:'party',op:'rejoin',run:r.id});begin(PT,{run:r.id,d:r.d,df:r.df,seed:r.seed,leader:PT.m.find(x=>x.uid!==me()&&x.on)?PT.m.find(x=>x.uid!==me()).uid:me()})},250)}
  NET7.onHello&&0;
+ // back online in the middle of a run: if the server does not say which party we are in within a moment (it restarted and lost it), ask; the 'state' answer resumes it
+ {let seen=null;setInterval(()=>{try{const a=NET7.auth;if(NET7.online&&a&&a!==seen){seen=a;if(C&&DG.run){const t0=Date.now();setTimeout(()=>{try{if(C&&DG.run&&!(C.stateAt>t0))ns({t:'party',op:'state'})}catch(_){}},2500)}}}catch(_){}},1000)}
  setInterval(()=>{try{if(NET7.online&&NET7.auth&&NET7.auth.kind!='guest'&&PT)pushInfo()}catch(_){}},15000);
 
  // ================= on screen: the invitation, the friend's frame, the friend in the world =================
@@ -25704,6 +25786,102 @@ try{(()=>{
  P.report=()=>{const n=Math.min(P.n,P.ft.length),a=Array.from(P.ft.slice(0,n)).sort((x,y)=>x-y);if(!n)return null;const avg=a.reduce((s,v)=>s+v,0)/n,p99=a[Math.floor(n*.99)]||a[n-1];return{frames:n,avgFps:Math.round(1000/avg),low1Fps:Math.round(1000/p99),worstMs:Math.round(a[n-1]),over50:a.filter(v=>v>50).length,stalls:P.stalls}};
  P.reset=()=>{P.n=0;P.sum=0;P.worst=0;P.i=0;P.ft.fill(0);P.stalls=0};
 })()}catch(e){console.error('PERF20',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-b-netstatus.js ========== */
+// ===== NET17: the connection indicator. A small glass pill by the map: Connected with the ping, Connection unstable, Reconnecting, Reconnected (for a
+// moment), Disconnected. Shown while you play online; it never pops up messages of its own. The ping comes from the heartbeat (75-net.js), every 6 s. =====
+try{(()=>{
+ let el=null,prev='',flashT=0;
+ function make(){if(el)return el;el=document.createElement('div');el.id='net16';el.setAttribute('role','status');el.setAttribute('aria-live','polite');el.innerHTML='<i></i><span></span>';document.body.appendChild(el);return el}
+ function tick(){try{const e=make(),st=NET7.state,now=performance.now();let k='',t='';
+  const online=st=='online',rt=NET7.rtt|0,quiet=NET7.quiet|0;
+  if(prev=='reconnecting'&&online)flashT=now+3000;prev=st;
+  if(!online&&st!='reconnecting'&&st!='connecting'){if(st=='offline'&&!(window.DG&&DG.coop&&DG.coop.on)){e.style.display='none';return}k='off';t='Disconnected'}
+  else if(st=='reconnecting'||st=='connecting'){k='re';t=st=='connecting'?'Connecting…':'Reconnecting…'}
+  else if(now<flashT){k='ok';t='Reconnected'+(rt?' · '+rt+' ms':'')}
+  else if(rt>250||quiet>15000){k='bad';t='Connection unstable'+(rt?' · '+rt+' ms':'')}
+  else{k='ok';t=rt?rt+' ms':'Connected'}
+  e.style.display='';if(e.dataset.k!==k)e.dataset.k=k;const s=e.querySelector('span');if(s.textContent!==t)s.textContent=t;e.title=k=='ok'?'Connected to the server':k=='bad'?'The connection is slow or losing messages; the game keeps trying':k=='re'?'The connection dropped. Reconnecting by itself, your run is kept':'Not connected to the server'}catch(_){}}
+ setInterval(tick,500);
+})()}catch(e){console.error('NET17',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-c-phone.js ========== */
+// ===== ROOTLINK: your adventure device. M opens it (Shift+M still mutes the music); Esc, M or a click outside puts it away.
+// A glass phone slides up beside the game, its screen lights, its apps settle into place. The home screen shows who you are (portrait, name, level,
+// class, world, Combat Power, gems), what needs you (the dock's badges), today's three challenges and a way into the dungeons. Every app opens a real
+// screen that already exists (NAV16's features, the dungeon page, the trailer); the phone holds no game state of its own.
+// Cost: the markup is built once, on first open; while closed nothing runs. While open, one timer refreshes the clock every 10 s. =====
+try{(()=>{
+ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const ic=n=>{try{return NAV16.icon(n)}catch(_){return''}};
+ const EXTRA={dungeons:'<path class="d" d="M4 21V10l8-6 8 6v11z"/><path d="M9.500 21v-5.500a2.500 2.500 0 0 1 5 0V21"/>',cinema:'<rect class="d" x="3" y="5" width="18" height="14" rx="2.500"/><path d="M10 9.200v5.600l4.800-2.800z"/>'};
+ const xic=n=>'<svg class="n16i" viewBox="0 0 24 24" aria-hidden="true">'+EXTRA[n]+'</svg>';
+ // the apps: id, label, icon, accent, how it opens. nav: a NAV16 feature id
+ const APPS=[
+  {id:'character',n:'Character',nav:'character',c:'#9db4ff'},{id:'inventory',n:'Inventory',nav:'inventory',c:'#ffcf7a'},{id:'equipment',n:'Equipment',nav:'equipment',c:'#8fe3c1'},{id:'skills',n:'Skills',nav:'skills',c:'#ffe27a'},
+  {id:'classes',n:'Classes',nav:'classes',c:'#ff9ab8'},{id:'quests',n:'Quests',nav:'quests',c:'#b8a4ff'},{id:'dungeons',n:'Dungeons',c:'#ff8a6a',x:'dungeons',open:()=>DG.page.open()},{id:'worlds',n:'Worlds',nav:'worlds',c:'#7ad8ff'},
+  {id:'bosses',n:'Codex',nav:'bosses',c:'#ff6a7a',ico:'bosses'},{id:'social',n:'Friends',nav:'social',c:'#9affc8'},{id:'store',n:'Store',nav:'store',c:'#ffd27a'},{id:'collection',n:'Collection',nav:'collection',c:'#d0a4ff'},
+  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Trailer',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.trailer()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
+ let root=null,dev=null,on=false,tmr=0,closing=0,lastFocus=null;
+ const navF=id=>{try{return NAV16.F.find(f=>f.id==id)}catch(_){return null}};
+ const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;return true};
+ const badge=a=>{if(!a.nav)return'';const f=navF(a.nav),b=f&&f.el&&f.el.querySelector('.bdg');return b&&!b.hidden?b.textContent:''};
+ const tone=(k)=>{try{if(typeof OPT!='undefined'&&OPT.uim)return;if(k=='open'){snd(660,.09,'sine',.035);setTimeout(()=>snd(990,.12,'sine',.03),70)}else if(k=='close'){snd(740,.07,'sine',.03);setTimeout(()=>snd(520,.09,'sine',.025),55)}else snd(880,.04,'triangle',.03)}catch(_){}};
+
+ function build(){
+  root=document.createElement('div');root.id='rlk';root.setAttribute('aria-hidden','true');
+  root.innerHTML='<div class="rlk-scrim"></div><div class="rlk-dev" role="dialog" aria-modal="true" aria-label="Rootlink"><div class="rlk-scr"><div class="rlk-sheen"></div>'
+   +'<div class="rlk-bar"><b class="rlk-time">--:--</b><i class="rlk-isle"><span>ROOTLINK</span></i><span class="rlk-net"></span></div>'
+   +'<div class="rlk-body">'
+   +'<section class="rlk-me"><canvas width="128" height="128" class="rlk-av"></canvas><div class="rlk-id"><b class="rlk-name"></b><span class="rlk-lv"></span><span class="rlk-world"></span></div>'
+   +'<div class="rlk-stats"><div><small>Combat Power</small><b class="rlk-cp">0</b></div><div><small>Gems</small><b class="rlk-gems">0</b></div></div></section>'
+   +'<section class="rlk-note" hidden></section>'
+   +'<section class="rlk-day"><h3>Today<span class="rlk-streak"></span></h3><div class="rlk-tasks"></div></section>'
+   +'<button type="button" class="rlk-feat" data-app="dungeons"><span class="rlk-feat-k">Dungeons</span><b>Ten guardians wait below</b><small>Alone or with a friend · open the dungeon page</small></button>'
+   +'<section class="rlk-apps" role="list">'+APPS.map((a,i)=>'<button type="button" role="listitem" class="rlk-app" data-app="'+a.id+'" style="--c:'+a.c+';--i:'+i+'"><span class="rlk-ico">'+(a.x?xic(a.x):ic(a.ico||a.id))+'<em class="rlk-bdg" hidden></em></span><span class="rlk-lab">'+esc(a.n)+'</span></button>').join('')+'</section>'
+   +'</div><div class="rlk-home" aria-hidden="true"></div></div></div>';
+  document.body.appendChild(root);dev=root.querySelector('.rlk-dev');
+  root.querySelector('.rlk-scrim').addEventListener('pointerdown',()=>close());
+  root.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)launch(b.dataset.app)});
+  dev.addEventListener('keydown',e=>{const k=e.key;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(k)){const L=[...root.querySelectorAll('.rlk-app:not([disabled])')],i=L.indexOf(document.activeElement);if(i<0){L[0]&&L[0].focus();e.preventDefault();return}
+   const n=k=='ArrowLeft'?i-1:k=='ArrowRight'?i+1:k=='ArrowUp'?i-4:i+4;if(L[n])L[n].focus();e.preventDefault()}});
+ }
+ const clock=()=>{if(!root)return;const d=new Date();root.querySelector('.rlk-time').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  let st='',rt=0;try{st=NET7.state;rt=NET7.rtt|0}catch(_){}const n=root.querySelector('.rlk-net');n.dataset.k=st=='online'?'ok':st=='reconnecting'||st=='connecting'?'re':'off';n.textContent=st=='online'?(rt?rt+' ms':'Online'):st=='reconnecting'||st=='connecting'?'…':'Offline'};
+ function fill(){
+  const q=s=>root.querySelector(s);
+  // who you are
+  let cls='',cl=0,cc='#9db4ff';try{const k=CLASS7.cur(),C=CLASS7.C[k];if(C){cls=C.n;cl=CLASS7.lv(k)|0;cc=C.c}}catch(_){}
+  q('.rlk-name').textContent=(typeof myName!='undefined'&&myName)||'Traveler';
+  q('.rlk-lv').innerHTML='Level '+esc(typeof lvl!='undefined'?lvl:1)+(cls?' · <i style="color:'+esc(cc)+'">'+esc(cls)+'</i> '+esc(cl):'');
+  let w='';try{w=(typeof cur!='undefined'&&cur)?(cur=='plaza'?'The Plaza':(window.DG&&DG.run?(DG.run.d&&DG.run.d.n)||'A dungeon':cur)):''}catch(_){}
+  q('.rlk-world').textContent=w?'In '+w:'';
+  let cp=0;try{cp=Math.round(RPG.cp())}catch(_){}q('.rlk-cp').textContent=cp.toLocaleString();q('.rlk-gems').textContent=(typeof gems!='undefined'?Math.floor(gems):0).toLocaleString();
+  const av=q('.rlk-av'),x=av.getContext('2d');x.clearRect(0,0,128,128);try{const o=g;g=x;try{x.save();const hz=wear.hat&&WEAR[wear.hat]?1:0;x.translate(64,232-hz*8);x.scale(3.3-hz*.4,3.3-hz*.4);AC6.headFull(x,AC6.info(look,null,true),-50,0,0,wear);x.restore()}finally{g=o}}catch(_){}
+  // what needs you: the dock's own badges, in words
+  const notes=[];for(const a of APPS){const b=badge(a);if(b)notes.push('<button type="button" data-app="'+a.id+'" style="--c:'+a.c+'"><b>'+esc(b)+'</b> '+esc(a.n)+'</button>')}
+  const N=q('.rlk-note');N.hidden=!notes.length;N.innerHTML=notes.length?'<h3>Needs you</h3><div>'+notes.join('')+'</div>':'';
+  // today's challenges, straight from DAILY6
+  let rows='',streak=0;try{streak=dly.streak|0;for(const t of (dly.tasks||[])){const p=Math.min(t.need,DAILY6.prog(t)|0),k=t.need?p/t.need:0;rows+='<div class="rlk-task'+(t.claimed?' done':p>=t.need?' ready':'')+'"><span>'+esc(DAILY6.label(t))+'</span><i><u style="width:'+Math.round(k*100)+'%"></u></i><small>'+(t.claimed?'Claimed':p>=t.need?'Ready to claim':p+' / '+t.need)+'</small></div>'}}catch(_){}
+  q('.rlk-tasks').innerHTML=rows||'<div class="rlk-task"><span>New challenges arrive each day.</span></div>';q('.rlk-streak').textContent=streak>0?streak+' day streak':'';
+  q('.rlk-day').dataset.app='quests';
+  for(const b of root.querySelectorAll('.rlk-app')){const a=APPS.find(z=>z.id==b.dataset.app),u=usable(a);b.disabled=!u;const n=badge(a),e=b.querySelector('.rlk-bdg');e.hidden=!n;e.textContent=n}
+  clock();
+ }
+ // can it open now? Not over a film, a cinematic, the character creator, or while typing
+ const blocked=()=>{try{if(typeof INTRO60!='undefined'&&INTRO60.playing)return true;if(typeof CINE7!='undefined'&&CINE7.playing)return true;if(window.DG&&DG.cine&&DG.cine.on)return true;if(window.DG&&DG.boss&&DG.boss.inIntro)return true;if(typeof creatorOn!='undefined'&&creatorOn)return true;if(typeof entered!='undefined'&&!entered)return true}catch(_){}return false};
+ function open(){if(on||blocked())return false;if(!root)build();clearTimeout(closing);try{NAV16.closeAll()}catch(_){}lastFocus=document.activeElement;fill();on=true;root.setAttribute('aria-hidden','false');root.classList.remove('out');void root.offsetWidth;root.classList.add('on');
+  tone('open');tmr=setInterval(clock,10000);setTimeout(()=>{if(on){const f=root.querySelector('.rlk-app:not([disabled])');f&&f.focus({preventScroll:true})}},260);return true}
+ function close(then){if(!on)return false;on=false;clearInterval(tmr);root.classList.remove('on');root.classList.add('out');root.setAttribute('aria-hidden','true');if(!then)tone('close');
+  closing=setTimeout(()=>{root.classList.remove('out');if(then)try{then()}catch(e){console.error('ROOTLINK app',e)}else try{lastFocus&&lastFocus.focus&&lastFocus.focus({preventScroll:true})}catch(_){}},then?170:240);return true}
+ function launch(id){const a=APPS.find(z=>z.id==id);if(!a||!usable(a))return;tone('tap');const b=root.querySelector('.rlk-app[data-app="'+id+'"]');if(b){b.classList.add('press');setTimeout(()=>b.classList.remove('press'),200)}
+  close(()=>{if(a.open)return a.open();const f=navF(a.nav);let up=false;try{up=!!(f&&f.on&&f.on())}catch(_){}if(!up)try{NAV16.act(a.nav)}catch(e){console.error('ROOTLINK',e)}})}
+ // M: open or put away. Shift+M is left to the game (mute). Typing in a field never opens it
+ addEventListener('keydown',e=>{if(e.key!='m'&&e.key!='M')return;if(e.shiftKey||e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
+  if(on){close();e.preventDefault();e.stopImmediatePropagation();return}if(open()){e.preventDefault();e.stopImmediatePropagation()}},true);
+ addEventListener('keydown',e=>{if(on&&e.key=='Escape'){close();e.preventDefault();e.stopImmediatePropagation()}},true);
+ window.ROOTLINK={open,close,toggle:()=>on?close():open(),get on(){return on},APPS};
+})()}catch(e){console.error('ROOTLINK',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-restore.js ========== */
 // The last script of all: every item, weapon and piece of gear in the game is registered by now, so what the start-up check set aside (99-a-sanitize.js) goes back where it was.

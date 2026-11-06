@@ -167,6 +167,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/introvideo.js
+      - name: Test Rootlink, the phone menu (M)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/phone.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10
@@ -275,6 +279,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 12
         run: bash tools/ci-test.sh tests/climate.js
+      - name: Test two-player connections under stress
+        if: ${{ !cancelled() }}
+        timeout-minutes: 15
+        run: bash tools/ci-test.sh tests/netstress.js
       - name: Test the progression loop
         if: ${{ !cancelled() }}
         timeout-minutes: 12

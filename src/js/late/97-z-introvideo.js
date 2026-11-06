@@ -2,10 +2,12 @@
 // The film is cut ahead of time from the Remotion project (rootbound-video) and sits next to index.html like the song, so it never adds to the page.
 // "Press any key to skip" appears after a few seconds, next to a Skip button. Settings > General has a button to watch it again. A recording at
 // audio/rootbound-voice.mp3, if one is ever added, is spoken over the title.
+// The same player shows the official trailer (audio/trailer.mp4, about 90 s) from Settings > General > Trailer: nothing of it loads until then, and the
+// video is released when it ends or is skipped.
 // CINE7's story intro stays as the fallback: it plays when the film cannot (only index.html was copied, a browser without H.264, a connection too slow to
 // start it in time).
 const INTRO60=(()=>{
- const SRC='audio/intro-cinematic.mp4',VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
+ const SRC='audio/intro-cinematic.mp4',TRAILER='audio/trailer.mp4',VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
  let S=null;
  const volume=()=>{try{return Math.min(1,Math.max(0,(typeof mute!='undefined'&&mute)?0:(OPT.mv==null?.5:+OPT.mv)*1.5))}catch(_){return .75}};
 
@@ -16,17 +18,17 @@ const INTRO60=(()=>{
   let n=0;const iv=setInterval(()=>{n++;let rdy=true,bad=false;try{rdy=!window.RBDIAG||RBDIAG.ready;const d=document.getElementById('rbdiag');bad=!!(d&&getComputedStyle(d).display!='none')}catch(_){}
    if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{start(v,home)}catch(e){console.error('INTRO60',e);drop();CINE7.launch(home)}},60)}
 
- function start(v,home){
-  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label','Intro film: Rootbound');
+ function start(v,home,src){src=src||SRC;
+  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label',src==SRC?'Intro film: Rootbound':'Trailer: Rootbound');
   w.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#000;cursor:none;user-select:none;touch-action:none';
-  if(!v.getAttribute('src'))v.src=SRC;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
+  if(!v.getAttribute('src'))v.src=src;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
   v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;pointer-events:none';
   const skip=document.createElement('div');skip.style.cssText='position:absolute;right:30px;bottom:26px;display:flex;align-items:center;gap:16px;font:600 14px Montserrat,system-ui,sans-serif;color:#fff;opacity:0;transition:opacity .5s;text-shadow:0 1px 3px #000;letter-spacing:.04em;pointer-events:none';
   skip.innerHTML='<span>Press any key to skip</span><button type="button" style="font:600 13px Montserrat,system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.55);border-radius:7px;padding:7px 16px;cursor:pointer;pointer-events:auto">Skip</button>';
   const prompt=document.createElement('div');prompt.style.cssText="position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff4dc;font:italic 600 34px 'Cormorant Garamond',Georgia,serif;text-align:center;pointer-events:none";
   prompt.innerHTML='Click or press any key to begin<div style="font:600 14px Montserrat,system-ui,sans-serif;font-style:normal;color:rgba(255,255,255,.6);margin-top:12px">This film has music</div>';
   w.append(v,prompt,skip);document.body.appendChild(w);window.RB_COVER=true;
-  S={v,w,skip,prompt,home,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:false,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
+  S={v,w,skip,prompt,home,src,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:src!=SRC,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
   try{const a=new Audio();a.preload='auto';a.oncanplaythrough=()=>{if(S)S.vc=a};a.src=VOICE;a.load()}catch(_){}
   v.volume=volume();
   v.addEventListener('canplay',()=>{if(S&&S.st=='wait')tryPlay()});
@@ -69,7 +71,7 @@ const INTRO60=(()=>{
  // the game's own music waits until the film has finished
  {const _sb=startBGM;startBGM=function(){if(S){S.bgm=1;return}return _sb.apply(this,arguments)}}
  // Settings > General: watch it again. The game keeps its place underneath: its music drops out and nothing can hurt you meanwhile.
- function replay(){if(S)return false;const cover=!!window.RB_COVER;let m=null,g0=1;try{m=bgm&&bgm.m&&bgm.m.gain;if(m){g0=m.value;m.setTargetAtTime(0,bgm.m.context.currentTime,.25)}}catch(_){m=null}
+ function replay(src){if(S)return false;const cover=!!window.RB_COVER;let m=null,g0=1;try{m=bgm&&bgm.m&&bgm.m.gain;if(m){g0=m.value;m.setTargetAtTime(0,bgm.m.context.currentTime,.25)}}catch(_){m=null}
   const back=()=>{try{if(m)m.setTargetAtTime(g0,bgm.m.context.currentTime,.4)}catch(_){}window.RB_COVER=cover};
-  try{start(document.createElement('video'),back);S.replay=true}catch(e){console.error('INTRO60 replay',e);drop();back();return false}return true}
- return{launch,replay,get playing(){return !!S},get state(){return S?{st:S.st,t:S.v.currentTime,d:S.v.duration,paused:S.v.paused,muted:S.v.muted,vol:S.v.volume,said:S.said,fin:S.fin,w:S.v.videoWidth,h:S.v.videoHeight,skipShown:S.skip.style.opacity}:null},seek(t){if(S)S.v.currentTime=t},SRC,SAY,SKIPAT}})();
+  try{start(document.createElement('video'),back,src);S.replay=true}catch(e){console.error('INTRO60 replay',e);drop();back();return false}return true}
+ return{launch,replay,trailer:()=>replay(TRAILER),TRAILER,get playing(){return !!S},get state(){return S?{st:S.st,t:S.v.currentTime,d:S.v.duration,paused:S.v.paused,muted:S.v.muted,vol:S.v.volume,said:S.said,fin:S.fin,w:S.v.videoWidth,h:S.v.videoHeight,skipShown:S.skip.style.opacity}:null},seek(t){if(S)S.v.currentTime=t},SRC,SAY,SKIPAT}})();

@@ -4,18 +4,20 @@
 const {chromium}=require('playwright');const path=require('path'),fs=require('fs'),os=require('os'),http=require('http');const {createServer}=require('../server/server');
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},240000).unref();
-const FILE='file://'+path.resolve(__dirname,'../index.html'),MP4=path.resolve(__dirname,'../audio/intro-cinematic.mp4');
+const FILE='file://'+path.resolve(__dirname,'../index.html'),MP4=path.resolve(__dirname,'../audio/intro-cinematic.mp4'),TR=path.resolve(__dirname,'../audio/trailer.mp4');
 const get=(url,headers)=>new Promise((res,rej)=>{http.request(url,{headers},r=>{let n=0;r.on('data',d=>n+=d.length);r.on('end',()=>res({s:r.statusCode,h:r.headers,n}))}).on('error',rej).end()});
 const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window.SAID=[];try{speechSynthesis.speak=u=>{SAID.push(u.text);setTimeout(()=>{try{u.onend&&u.onend({})}catch(_){}},30)}}catch(_){}};
 (async()=>{
  const b=await chromium.launch({executablePath:process.env.CHROMIUM||'/opt/pw-browsers/chromium',args:['--no-sandbox','--mute-audio','--autoplay-policy=no-user-gesture-required']});
  const page=async(o={})=>{const c=await b.newContext({viewport:{width:1280,height:720},reducedMotion:o.rm||'no-preference'});await c.addInitScript(INIT);if(o.init)await c.addInitScript(o.init);const p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message.slice(0,160)));p.errs=errs;await p.goto(o.url||FILE);return p};
+ ok('the trailer ships beside the game too',fs.existsSync(TR)&&fs.statSync(TR).size>5e6&&fs.statSync(TR).size<40e6,{mb:fs.existsSync(TR)?Math.round(fs.statSync(TR).size/1e5)/10:0});
  ok('the film ships beside the game',fs.existsSync(MP4)&&fs.statSync(MP4).size>5e6&&fs.statSync(MP4).size<60e6,{mb:Math.round(fs.statSync(MP4).size/1e5)/10});
 
  // the server hosts it the way a video player needs
  {const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rb-vid-'));const S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.resolve(__dirname,'../index.html')});const port=await S.listen();
   const u='http://127.0.0.1:'+port+'/audio/intro-cinematic.mp4',a=await get(u,{}),r=await get(u,{Range:'bytes=100-199'});
   ok('the server hosts the film as a video',a.s==200&&a.h['content-type']=='video/mp4'&&a.n==fs.statSync(MP4).size,{s:a.s,t:a.h['content-type']});
+  {const t=await get('http://127.0.0.1:'+port+'/audio/trailer.mp4',{Range:'bytes=0-99'});ok('and the trailer, in pieces',t.s==206&&t.n==100&&t.h['content-type']=='video/mp4',{s:t.s})}
   ok('and answers partial requests (a player needs them to start and seek)',r.s==206&&r.n==100,{s:r.s,n:r.n});await S.close()}
 
  const canPlay=await (async()=>{const p=await b.newPage();const r=await p.evaluate(()=>document.createElement('video').canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"'));await p.close();return !!r})();
@@ -41,7 +43,13 @@ const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window
   const q=await page();await q.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:30000});await q.evaluate(()=>INTRO60.seek(5));await q.waitForTimeout(400);await q.keyboard.press('x');await q.waitForFunction(()=>!INTRO60.playing,null,{timeout:5000});ok('any key skips it after the prompt',!(await q.evaluate(()=>!!document.getElementById('intro60'))));await q.context().close();
   const m=await page();await m.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:30000});await m.evaluate(()=>INTRO60.seek(5));await m.waitForTimeout(400);await m.click('#intro60 button');await m.waitForFunction(()=>!INTRO60.playing,null,{timeout:5000});ok('the Skip button skips it',true);
   // replay from Settings: the film comes back over the game, and the game is still there afterwards
-  await m.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}});await m.waitForTimeout(400);await m.evaluate(()=>{UI6.open('settings')});await m.waitForTimeout(500);const has=await m.evaluate(()=>!!document.getElementById('sintro'));ok('Settings has a Replay button',has);if(has){await m.evaluate(()=>document.getElementById('sintro').click());await m.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:10000});await m.evaluate(()=>INTRO60.seek(5));await m.waitForTimeout(300);await m.keyboard.press('x');await m.waitForFunction(()=>!INTRO60.playing,null,{timeout:5000});ok('it plays again and hands back to the game',await m.evaluate(()=>!window.RB_COVER&&!document.getElementById('intro60')));}await m.context().close();
+  await m.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}});await m.waitForTimeout(400);await m.evaluate(()=>{UI6.open('settings')});await m.waitForTimeout(500);const has=await m.evaluate(()=>!!document.getElementById('sintro'));ok('Settings has a Replay button',has);
+  // the trailer, from Settings: it plays over the game with its sound, skips like the film, and lets go of the video afterwards
+  await m.evaluate(()=>document.getElementById('strail').click());await m.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:20000});
+  const tr=await m.evaluate(()=>({s:INTRO60.state,src:document.querySelector('#intro60 video').currentSrc,label:document.getElementById('intro60').getAttribute('aria-label')}));
+  ok('Settings > Trailer plays the trailer, 1080p, about 92 s, with sound',/trailer\.mp4$/.test(tr.src)&&tr.s.w==1920&&tr.s.h==1080&&Math.abs(tr.s.d-92)<1&&!tr.s.muted&&/Trailer/.test(tr.label),{d:tr.s.d,w:tr.s.w,src:tr.src.slice(-20)});
+  await m.evaluate(()=>INTRO60.seek(10));await m.waitForTimeout(500);await m.keyboard.press('x');await m.waitForFunction(()=>!INTRO60.playing,null,{timeout:5000});
+  ok('a key skips the trailer and the video is released',await m.evaluate(()=>!document.getElementById('intro60')&&![...document.querySelectorAll('video')].some(v=>/trailer/.test(v.currentSrc))));if(has){await m.evaluate(()=>document.getElementById('sintro').click());await m.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:10000});await m.evaluate(()=>INTRO60.seek(5));await m.waitForTimeout(300);await m.keyboard.press('x');await m.waitForFunction(()=>!INTRO60.playing,null,{timeout:5000});ok('it plays again and hands back to the game',await m.evaluate(()=>!window.RB_COVER&&!document.getElementById('intro60')));}await m.context().close();
   // blocked autoplay: a prompt, not a frozen black screen
   const BLOCK=()=>{const pl=HTMLMediaElement.prototype.play;window.UNBLOCK=false;HTMLMediaElement.prototype.play=function(){return window.UNBLOCK?pl.call(this):Promise.reject(new DOMException('blocked','NotAllowedError'))};addEventListener('keydown',()=>{window.UNBLOCK=true},true);addEventListener('pointerdown',()=>{window.UNBLOCK=true},true)};
   const h=await page({init:BLOCK});await h.waitForFunction(()=>typeof INTRO60!='undefined'&&INTRO60.playing&&INTRO60.state.st=='blocked',null,{timeout:30000});
