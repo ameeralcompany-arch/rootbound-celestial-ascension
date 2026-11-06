@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.4",
+      "type": "update",
+      "title": "Rootbound 6.13.4",
+      "summary": "Smoother play: fixes the freezes on the intro film, right after loading in, and the short freeze every 10 seconds while playing. Camera zooms in boss fights no longer stutter, and the inventory opens instantly.",
+      "body": "Smoother play: fixes the freezes on the intro film, right after loading in, and the short freeze every 10 seconds while playing. Camera zooms in boss fights no longer stutter, and the inventory opens instantly.",
+      "date": "2026-11-06",
+      "version": "6.13.4"
+    },
+    {
       "id": "update-6.13.3",
       "type": "update",
       "title": "Rootbound 6.13.3",
