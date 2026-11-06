@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.5",
+      "type": "update",
+      "title": "Rootbound 6.13.5",
+      "summary": "Fixes the freezing for players who had Uncapped frame rate switched on: the game now always stays in sync with your monitor (143 FPS on a 144 Hz screen), steady with no stutter. The setting has been removed.",
+      "body": "Fixes the freezing for players who had Uncapped frame rate switched on: the game now always stays in sync with your monitor (143 FPS on a 144 Hz screen), steady with no stutter. The setting has been removed.",
+      "date": "2026-11-06",
+      "version": "6.13.5"
+    },
+    {
       "id": "update-6.13.4",
       "type": "update",
       "title": "Rootbound 6.13.4",
