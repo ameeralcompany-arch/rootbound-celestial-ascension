@@ -93,7 +93,7 @@ try{window.DG=(()=>{
  function mobHP(d,cls,ttk,df){const c=CL[cls]||CL.regular;return Math.round((ttk||c.ttk)*refDPS(d)*df.hp)}
  function mobDmg(d,cls,pct,df){const c=CL[cls]||CL.regular;return Math.round((pct||c.pct)*refHP(d)*df.dmg*10)/10}
  // ---- the save, one per account. Never holds anything a later version could not read: unknown fields are kept
- const KEY=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbdg';const blank=()=>({v:1,clr:{},best:{},first:{},seen:{},bseen:{},disc:{},found:{},sec:{},weekly:{},titles:{},kills:{},deaths:0,bosses:{},miles:{},opt:{shake:1,fx:1,auto:0}});
+ const KEY=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbdg';const blank=()=>({v:1,clr:{},best:{},first:{},seen:{},bseen:{},disc:{},found:{},sec:{},weekly:{},titles:{},kills:{},deaths:0,bosses:{},miles:{},opt:{shake:1,fx:1,auto:0,flash:1,slow:1}});
  let S=blank();function load(){try{const o=JSON.parse(localStorage.getItem(KEY())||'null');if(o&&typeof o=='object'){S=Object.assign(blank(),o);S.opt=Object.assign(blank().opt,o.opt||{})}}catch(_){S=blank()}}load();
  const creative=()=>{try{return !!CRV8.on}catch(_){return false}};
  function save(){if(creative())return;try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}}
