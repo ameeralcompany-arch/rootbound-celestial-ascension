@@ -50,7 +50,7 @@ try{(()=>{
   ended(){if(!C)return;hudOff()},
   left(){if(!C)return;ns({t:'party',op:'out',run:C.run});stop()},
   // ---- every frame of a run
-  tick(dt){if(!C||!DG.run)return;C.pt-=dt;if(C.pt<=0){C.pt=.066;pg({e:'p',x:P.x|0,y:P.y|0,f:P.f,vx:P.vx|0,a:P.g?0:1,s:typeof swing!='undefined'&&swing>0?1:0,hp:P.hp|0,mh:maxHP()|0,dn:C.down?1:0,rv:C.rev>0?+C.rev.toFixed(2):0,wp})}
+  tick(dt){if(!C||!DG.run)return;C.pt-=dt;if(C.pt<=0){C.pt=.066;if(C.hq&&C.hq.size){pg({e:'hits',l:[...C.hq.values()].slice(0,40)});C.hq.clear()}pg({e:'p',x:P.x|0,y:P.y|0,f:P.f,vx:P.vx|0,a:P.g?0:1,s:typeof swing!='undefined'&&swing>0?1:0,hp:P.hp|0,mh:maxHP()|0,dn:C.down?1:0,rv:C.rev>0?+C.rev.toFixed(2):0,wp})}
    C.hello-=dt;if(!C.mateIn&&C.hello<=0){C.hello=1;announce()}
    if(!C.guest){C.st-=dt;if(C.st<=0){C.st=.1;snap()}}
    C.gt-=dt;if(C.gt<=0){C.gt=.25;groupSync()}
@@ -87,7 +87,7 @@ try{(()=>{
  function wipe(){if(!C)return;C.down=false;C.rev=0;if(C.mate)C.mate.dn=0;if(!C.guest)pg({e:'wipe'});say('THE PARTY HAS FALLEN','Back to the checkpoint',2400);diedSolo.call(DG.flow)}
  DG.flow.died=died;
  // a blow on a copy: the leader decides what it did
- {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(C&&m&&m.dgx){if(m.stub)return;if(C.guest&&!C.fromLead){if(m.inv||m.hide>=1)return;let dm=d;if(w&&d>0){try{if(R()<Math.min(.6,.06+prof.fight.l*.004+bonus().crit))dm=Math.round(d*(1.75+bonus().cdmg))}catch(_){}if(w.fx=='leech')P.hp=Math.min(maxHP(),P.hp+dm*.25);if(w.fx=='heal')P.hp=Math.min(maxHP(),P.hp+3)}if(!(dm>0))return;m.fl=.15;C.dealt+=dm;try{ft(m.x,m.y-10,''+Math.round(dm),'#fff');burst(m.x,m.y+m.h/2,'rgb('+(w&&w.g?w.g:[255,255,255])+')',6,120,3)}catch(_){}pg({e:'hit',n:m.nid,d:Math.round(dm),a:+(ang||0).toFixed(2),fx:w&&w.fx||0});return}
+ {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(C&&m&&m.dgx){if(m.stub)return;if(C.guest&&!C.fromLead){if(m.inv||m.hide>=1)return;let dm=d;if(w&&d>0){try{if(R()<Math.min(.6,.06+prof.fight.l*.004+bonus().crit))dm=Math.round(d*(1.75+bonus().cdmg))}catch(_){}if(w.fx=='leech')P.hp=Math.min(maxHP(),P.hp+dm*.25);if(w.fx=='heal')P.hp=Math.min(maxHP(),P.hp+3)}if(!(dm>0))return;m.fl=.15;C.dealt+=dm;try{ft(m.x,m.y-10,''+Math.round(dm),'#fff');burst(m.x,m.y+m.h/2,'rgb('+(w&&w.g?w.g:[255,255,255])+')',6,120,3)}catch(_){}{const hq=C.hq||(C.hq=new Map()),q=hq.get(m.nid);if(q){q[1]+=Math.round(dm);q[2]=+(ang||0).toFixed(2);if(w&&w.fx)q[3]=w.fx}else hq.set(m.nid,[m.nid,Math.round(dm),+(ang||0).toFixed(2),w&&w.fx||0])};return}
     if(!C.fromMate&&d>0)C.dealt+=Math.min(d,m.hp)}return _h.apply(this,arguments)}}
  const onE=e=>{if(e.key=='e'||e.key=='E'){if(C&&!e.repeat)C.eH=e.type=='keydown';if(C&&e.type=='keyup')C.eH=false;if(C&&e.type=='keydown'&&DG.duoP)try{DG.duoP.press()}catch(_){}}};addEventListener('keydown',onE,true);addEventListener('keyup',onE,true);
  // the chest: the server says whether this run has paid you already, so a resend or a dropped connection can never pay twice
@@ -116,7 +116,7 @@ try{(()=>{
   if(k=='grp'){const g=DG.groups[e.k];if(g){g.on=1;C.groups[e.k]=1}return}
   if(k=='want'){if(C.guest)return;const r=DG.L.rooms[e.i];if(r&&r.state=='wait')DG.flow.startRoom(r);return}
   if(k=='pz'||k=='pe'||k=='bm'){if(DG.duoP)DG.duoP.net(e);return}
-  if(!C.guest){if(k=='hit'){const m=byN(e.n);if(m&&!m.dead){C.fromMate=true;C.mdealt+=e.d;try{hurtMob(m,e.d,null,e.a||0);if(e.fx=='burn')m.burn=3;if(e.fx=='stun'||e.fx=='smash')m.stun=1.5;if(e.fx=='slow')m.slow=3}finally{C.fromMate=false}}return}return}
+  if(!C.guest){if(k=='hits'){for(const q of Array.isArray(e.l)?e.l.slice(0,40):[]){const m=byN(q[0]);if(m&&!m.dead){C.fromMate=true;C.mdealt+=q[1]|0;try{hurtMob(m,q[1]|0,null,+q[2]||0);if(q[3]=='burn')m.burn=3;if(q[3]=='stun'||q[3]=='smash')m.stun=1.5;if(q[3]=='slow')m.slow=3}finally{C.fromMate=false}}}return}if(k=='hit'){const m=byN(e.n);if(m&&!m.dead){C.fromMate=true;C.mdealt+=e.d;try{hurtMob(m,e.d,null,e.a||0);if(e.fx=='burn')m.burn=3;if(e.fx=='stun'||e.fx=='smash')m.stun=1.5;if(e.fx=='slow')m.slow=3}finally{C.fromMate=false}}return}return}
   // ---- only the guest copies these
   if(k=='m'){for(const q of e.a){const m=byN(q[0]);if(!m)continue;m.sx=q[1];m.sy=q[2];m.hp=q[3];m.f=q[4];m.shield=q[5];m.hide=q[6];m.inv=!!q[7]}return}
   if(k=='sp'){if(byN(e.n))return;DG.mobs.spawn(e.id,e.x,e.y,Object.assign({},e.o,{net:e.n,summon:!!e.o.summon,quiet:!!e.o.quiet}));return}
@@ -129,7 +129,7 @@ try{(()=>{
   if(k=='rm'){const r=DG.L.rooms[e.i];if(!r)return;C.quiet=1;try{if(e.s==1&&r.state=='wait'){DG.flow.startRoom(r);pull(r)}else if(e.s==2&&r.state!='done')DG.flow.clearRoom(r)}finally{C.quiet=0}return}});
  // ================= the party, from the server =================
  NET7.on('party',m=>{const op=m.op;
-  if(op=='state'){const had=PT;PT=m.p;if(!PT&&C&&!DG.run)C=null;fireL();if(m.back&&PT&&PT.run&&!C)rejoin();else if(m.back&&C&&DG.run)announce();return}
+  if(op=='state'){const had=PT;if(C)C.stateAt=Date.now();if(!m.p&&C&&DG.run&&had&&!C.resumed){const mt=(had.m||[]).find(x=>x.uid!==me());if(mt){C.resumed=1;ns({t:'party',op:'resume',mate:mt.uid,run:{id:C.run,d:C.d,df:C.df,seed:C.seed,leader:C.leaderUid}});setTimeout(()=>{if(C)C.resumed=0},8000);return}}PT=m.p;if(!PT&&C&&!DG.run)C=null;fireL();if(m.back&&PT&&PT.run&&!C)rejoin();else if(m.back&&C&&DG.run)announce();return}
   if(op=='err'){toast(m.m||'That did not work');try{window.say&&window.say(m.m)}catch(_){}return}
   if(op=='invited'){invite={id:m.id,from:m.from,lvl:m.lvl,exp:performance.now()+(m.ms||60000)};invEl();setTimeout(()=>{if(invite&&invite.id==m.id){invite=null;invEl()}},m.ms||60000);fireL();return}
   if(op=='sent'){toast('Invitation sent to '+m.to);return}
@@ -151,6 +151,8 @@ try{(()=>{
  // back after the page reloaded: rejoin the run the party is still in
  function rejoin(){const r=PT&&PT.run;if(!r||DG.run)return;let n=0;/* the opening film may still be playing: wait for the game, as long as the run lasts */const t=setInterval(()=>{if(!PT||!PT.run||PT.run.id!==r.id||DG.run||C||++n>2400){clearInterval(t);return}if(!entered||window.RB_COVER)return;clearInterval(t);ns({t:'party',op:'rejoin',run:r.id});begin(PT,{run:r.id,d:r.d,df:r.df,seed:r.seed,leader:PT.m.find(x=>x.uid!==me()&&x.on)?PT.m.find(x=>x.uid!==me()).uid:me()})},250)}
  NET7.onHello&&0;
+ // back online in the middle of a run: if the server does not say which party we are in within a moment (it restarted and lost it), ask; the 'state' answer resumes it
+ {let seen=null;setInterval(()=>{try{const a=NET7.auth;if(NET7.online&&a&&a!==seen){seen=a;if(C&&DG.run){const t0=Date.now();setTimeout(()=>{try{if(C&&DG.run&&!(C.stateAt>t0))ns({t:'party',op:'state'})}catch(_){}},2500)}}}catch(_){}},1000)}
  setInterval(()=>{try{if(NET7.online&&NET7.auth&&NET7.auth.kind!='guest'&&PT)pushInfo()}catch(_){}},15000);
 
  // ================= on screen: the invitation, the friend's frame, the friend in the world =================

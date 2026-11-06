@@ -27,6 +27,12 @@ function createParties({send,sessions,userById,saveAcc,bonus,bucket,minRunMs,gra
   if(p.m.length<2&&!(p.run&&!p.run.over))dissolve(p)}
  function newParty(s){const p={id:crypto.randomBytes(5).toString('hex'),leader:s.uid,m:[{uid:s.uid,name:s.name,sid:s.sid,info:s.dgInfo||null}],run:null,ask:null};parties.set(p.id,p);byUid.set(s.uid,p.id);return p}
  const mine=s=>{const id=byUid.get(s.uid);return id?parties.get(id):null};
+ const resumes=new Map();
+ function resume(s,m){const r=m.run||{},id=String(r.id||''),mate=String(m.mate||'');if(!/^[0-9a-f]{16}$/.test(id)||!mate||mate===s.uid||!GEMS[r.d]||!DIFFS.includes(r.df))return;if(mine(s))return send(s,{t:'party',op:'state',p:view(mine(s)),back:1});const w=resumes.get(id);
+  if(!w||w.exp<Date.now()||w.uid!==mate||w.mate!==s.uid){resumes.set(id,{uid:s.uid,mate,name:s.name,exp:Date.now()+120000,r});if(resumes.size>200){for(const[k,v]of resumes)if(v.exp<Date.now())resumes.delete(k)}return}
+  resumes.delete(id);if(byUid.has(mate))return;const q=sessOf(mate);const lead=[s.uid,mate].includes(String(r.leader))?String(r.leader):mate;
+  const p={id:crypto.randomBytes(5).toString('hex'),leader:lead,m:[{uid:mate,name:w.name,sid:q?q.sid:null,info:null},{uid:s.uid,name:s.name,sid:s.sid,info:s.dgInfo||null}],run:{id,d:r.d,df:r.df,leader:lead,seed:Math.max(1,Math.min(1e9,r.seed|0)),t0:Date.now(),done:false,over:false,resumed:1},ask:null};
+  parties.set(p.id,p);byUid.set(mate,p.id);byUid.set(s.uid,p.id);each(p,{t:'party',op:'state',p:view(p),back:1})}
  function claim(s,p,m){const r=p&&p.run;const u=userById(s.uid);if(!u)return;const rid=String(m.run||'');
   const cl=u.dgClaims||(u.dgClaims={});
   // already paid (a resend after a dropped connection, a tampered client): the answer stays "paid", nothing is paid again
@@ -62,13 +68,14 @@ function createParties({send,sessions,userById,saveAcc,bonus,bucket,minRunMs,gra
   // the boss has fallen. Only the run's leader can say so, and not impossibly fast
   case 'done':{const r=p&&p.run;if(!r||r.over||r.id!==m.run||r.leader!==s.uid||r.done)return;if(Date.now()-r.t0<minRun)return;r.done=true;each(p,{t:'party',op:'run_done',run:r.id});return}
   case 'claim':return claim(s,p,m);
+  case 'resume':return resume(s,m);
   // a page reload lost this computer's copy of the run: it comes back as the second computer, and the other one runs the monsters
   case 'rejoin':{const r=p&&p.run;if(!r||r.over||r.id!==m.run)return;const x=other(p,s.uid);if(r.leader===s.uid&&x&&x.sid){r.leader=x.uid;const q=sessions.get(x.sid);if(q)send(q,{t:'party',op:'promote',leader:x.uid})}return}
   // back at the door, the party can go again. Anyone leaving the dungeon ends the run for themselves; it ends for the party when both have gone
   case 'out':{const r=p&&p.run;if(!r||r.id!==m.run)return;r.out=r.out||{};r.out[s.uid]=1;const x=other(p,s.uid);const q=x&&x.sid&&sessions.get(x.sid);if(q&&!r.over)send(q,{t:'party',op:'mate_out',name:s.name});if(p.m.every(z=>r.out[z.uid])){r.over=true;if(p.m.length<2)dissolve(p);else push(p)}else if(p.leader===s.uid&&x&&r.leader===s.uid){r.leader=x.uid;if(q)send(q,{t:'party',op:'mate_gone',name:s.name,why:'left',leader:x.uid})}return}
   }}
  // play traffic: only between the two members of a run that is on, and never more than a game could use
- function relay(s,m){const p=mine(s);if(!p||!p.run||p.run.over)return;if(!bucket(s,'pg',450,5000))return;const x=other(p,s.uid);if(!x||!x.sid)return;const q=sessions.get(x.sid);if(q)send(q,{t:'pg',d:m.d})}
+ function relay(s,m){const p=mine(s);if(!p||!p.run||p.run.over)return;if(!bucket(s,'pg',1500,5000))return;const x=other(p,s.uid);if(!x||!x.sid)return;const q=sessions.get(x.sid);if(q)send(q,{t:'pg',d:m.d})}
  function onAuth(s){const p=mine(s);if(!p)return;const x=memberOf(p,s.uid);if(!x)return;clearTimeout(x.gone);x.sid=s.sid;x.info=x.info||s.dgInfo||null;send(s,{t:'party',op:'state',p:view(p),back:1});const o=other(p,s.uid),q=o&&o.sid&&sessions.get(o.sid);if(q)send(q,{t:'party',op:'mate_back',name:s.name,run:p.run&&!p.run.over?p.run.id:null})}
  function onClose(s){if(!s.uid)return;invites.delete(s.uid);const p=mine(s);if(!p)return;const x=memberOf(p,s.uid);if(!x||x.sid!==s.sid)return;x.sid=null;const o=other(p,s.uid),q=o&&o.sid&&sessions.get(o.sid);if(q)send(q,{t:'party',op:'mate_off',name:s.name,ms:grace});push(p);clearTimeout(x.gone);x.gone=setTimeout(()=>{if(parties.get(p.id)&&!x.sid)leaveParty(p,x.uid,'lost')},grace);if(x.gone.unref)x.gone.unref()}
  return{msg,relay,onAuth,onClose,parties,get size(){return parties.size}}}

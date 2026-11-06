@@ -35,6 +35,8 @@ The map comes from the dungeon's own seed, so both computers build the same one.
 - Bosses add mechanics per phase: seal crystals, burning mark, ice, twin shadows, cosmic seals (`BMT`).
 - Enemies get about 1.55 to 1.9 times the health, not double, and hit 8% softer (`K_HP`).
 
+**Connections.** The server allows 150 messages a second and 1,200 per 5 seconds per connection; going over drops messages, and only a sustained flood (60 overflows that have not faded) closes the connection. Blows on copies travel in one batch per position update (15 a second). A pong counts as alive, with a 60-second window. A dropped connection keeps the seat for two minutes and the game reconnects by itself (1 s, doubling to 30 s). If the server restarted and lost the party, both games ask to `resume` the same run and the server rebuilds it; one asking alone does nothing. The pill by the map shows the state and ping. `tests/netstress.js` cuts, delays and freezes each player's line through a proxy and restarts the server mid-run.
+
 `tests/duo.js` plays this with two separate clients on a real server. Its bot teleports between rooms and lands blows directly rather than walking and aiming. It has not yet been played by two people over the internet.
 
 ## Balance
