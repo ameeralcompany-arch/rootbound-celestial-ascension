@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.3",
+      "type": "update",
+      "title": "Rootbound 6.13.3",
+      "summary": "The dungeon bosses now control the weather: storms, blizzards, burning skies, eclipses and corrupted groves that grow as each fight goes on. Every boss has four phases, a final form and voiced lines, and fights smarter. The six legendary bo",
+      "body": "The dungeon bosses now control the weather: storms, blizzards, burning skies, eclipses and corrupted groves that grow as each fight goes on. Every boss has four phases, a final form and voiced lines, and fights smarter. The six legendary bosses have new signature abilities, like leading lightning onto a rod to strike Varkhazan. New settings in Dungeons > Options for bright flashes and slow motion.",
+      "date": "2026-11-06",
+      "version": "6.13.3"
+    },
+    {
       "id": "update-6.13.2",
       "type": "update",
       "title": "Rootbound 6.13.2",
