@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.8",
+      "type": "update",
+      "title": "A new look, and Weapon Mastery",
+      "summary": "Rootbound has its own logo now, and it greets you right after the intro film. Every panel shares one look: deep-violet glass, gold lines and serif titles. Legendary items shimmer. New: Weapon Mastery. Every defeat counts toward the weapon i",
+      "body": "Rootbound has its own logo now, and it greets you right after the intro film. Every panel shares one look: deep-violet glass, gold lines and serif titles. Legendary items shimmer. New: Weapon Mastery. Every defeat counts toward the weapon in your hand, with five levels and gem rewards, stars on the weapon in your inventory, and a Mastery app on Rootlink (M). Fixed: the worlds you build no longer turn grey and quiet like the story's Silent realms.",
+      "date": "2026-11-07",
+      "version": "6.13.8"
+    },
+    {
       "id": "update-6.13.7",
       "type": "update",
       "title": "The Worlds We Left Behind",
