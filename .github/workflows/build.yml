@@ -187,6 +187,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/moments.js
+      - name: Test the brand, design system and weapon mastery
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/brand.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10

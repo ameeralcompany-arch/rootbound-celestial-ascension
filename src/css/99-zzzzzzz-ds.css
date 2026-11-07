@@ -1,0 +1,70 @@
+/* ===== DS1: the Rootbound design system (docs/brand.md), applied to the default look ("Soft Glass", data-skin=night). The other looks (Clean, Aqua, Pearl,
+   Plum) keep their own styles. One set of tokens: warm cream text, Root Gold accents, deep-violet glass, Cormorant Garamond titles over Montserrat. Every panel
+   shell gets the same chrome, every title the same voice, every tab, label, button and close button the same shape. Colour and type only: no layout is moved. ===== */
+html[data-skin=night]:root{
+ --ds-gold:#F4D59A;--ds-gold-2:#D9B773;--ds-cream:#FFF8E6;--ds-rose:#E8899F;--ds-sky:#7AD8FF;--ds-ink:#0B0A16;
+ --ink:#F6F1E7;--ink-2:#E6DFEE;--muted:#B5ACC9;--accent:#F4D59A;--accent-2:#E8899F;
+ --line:rgba(244,213,154,.14);--line-strong:rgba(244,213,154,.34);
+ --surface:linear-gradient(172deg,rgba(36,26,66,.94),rgba(15,12,30,.95));--surface-2:linear-gradient(172deg,rgba(52,40,88,.86),rgba(24,19,44,.9));--surface-solid:#130F25;--panel:rgba(18,14,36,.93);
+ --font-display:'Cormorant Garamond','Cormorant',Georgia,'Times New Roman',serif;
+ --sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 28px 70px -28px rgba(0,0,0,.78);--rad-lg:24px;
+ --ds-chrome:0 0 0 1px rgba(0,0,0,.45),0 44px 100px -34px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,240,210,.09);
+}
+/* ---- panel shells */
+html[data-skin=night] #hubc,html[data-skin=night] #eq9 .eq9box,html[data-skin=night] #inv7 .sheet,html[data-skin=night] #store7 .shell,html[data-skin=night] #stj .stj-book{
+ background:var(--surface)!important;border:1px solid var(--line-strong)!important;border-radius:24px!important;box-shadow:var(--ds-chrome)!important}
+html[data-skin=night] #hubc::before,html[data-skin=night] #eq9 .eq9box::before,html[data-skin=night] #inv7 .sheet::before,html[data-skin=night] #store7 .shell::before{
+ content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,rgba(244,213,154,0),rgba(244,213,154,.55),rgba(244,213,154,0));pointer-events:none;z-index:1}
+/* ---- titles: the brand's serif, cream, with the gold icon */
+html[data-skin=night] #hubhead b,html[data-skin=night] #eq9 header h3,html[data-skin=night] #inv7 header .ttl,html[data-skin=night] #store7 header h2{
+ font-family:var(--font-display)!important;font-weight:700!important;font-size:30px!important;letter-spacing:.01em!important;text-transform:none!important;color:var(--ds-cream)!important;line-height:1.05!important}
+
+html[data-skin=night] #hubhead svg{color:var(--ds-gold)!important;stroke:var(--ds-gold)}
+html[data-skin=night] #hubhead i{color:rgba(244,213,154,.55)!important;font-style:normal;letter-spacing:.2em}
+html[data-skin=night] #inv7 header .eyebrow,html[data-skin=night] #eq9 .eq9nm,html[data-skin=night] #eq9 .eq9lv{color:var(--muted)!important}
+/* ---- section labels: small gold capitals */
+html[data-skin=night] #hubbody>h3,html[data-skin=night] #hubbody h4,html[data-skin=night] #inv7 .eyebrow,html[data-skin=night] #eq9 .eq9tot h4,html[data-skin=night] #store7 .shell h3{
+ font-family:Montserrat,system-ui,sans-serif!important;font-weight:700!important;font-size:11px!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:rgba(244,213,154,.78)!important}
+/* ---- body text: a touch larger and warmer where it was small and grey */
+html[data-skin=night] #hubbody,html[data-skin=night] #inv7 .sheet,html[data-skin=night] #eq9 .eq9box{color:var(--ink-2)}
+html[data-skin=night] #hubbody small,html[data-skin=night] #inv7 small{color:var(--muted)!important}
+/* ---- tabs: pill text, gold when chosen, a gold indicator */
+html[data-skin=night] #hubnav button,html[data-skin=night] #inv7 nav button{font-family:Montserrat,system-ui,sans-serif!important;font-weight:600!important;font-size:13px!important;letter-spacing:.01em!important;color:var(--muted)!important}
+html[data-skin=night] #hubnav button.on,html[data-skin=night] #inv7 nav button.on{color:var(--ds-gold)!important}
+html[data-skin=night] .nind7{background:linear-gradient(90deg,var(--ds-gold-2),var(--ds-gold))!important;box-shadow:0 0 10px rgba(244,213,154,.45)!important}
+/* ---- buttons inside panels: one secondary shape, gold on hover; the main action buttons gold */
+html[data-skin=night] #hubbody .hbtn,html[data-skin=night] #hubbody button:not(.on):not([class*=tab]){border-radius:10px!important;border:1px solid var(--line-strong)!important;background:rgba(255,255,255,.045)!important;color:var(--ink)!important;transition:border-color .12s,background .12s,transform .12s}
+html[data-skin=night] #hubbody .hbtn:hover,html[data-skin=night] #hubbody button:not(.on):not([class*=tab]):hover{border-color:rgba(244,213,154,.7)!important;background:rgba(244,213,154,.08)!important}
+html[data-skin=night] #hubbody .hbtn:active{transform:translateY(1px)}
+/* ---- close buttons: one round shape everywhere */
+html[data-skin=night] #hubx,html[data-skin=night] #eq9 .eq9x,html[data-skin=night] #inv7 header .x,html[data-skin=night] #store7 header .x{width:38px!important;height:38px!important;border-radius:50%!important;display:grid!important;place-items:center;padding:0!important;
+ background:rgba(255,255,255,.06)!important;border:1px solid var(--line)!important;color:var(--ink)!important;font-size:16px!important;transition:background .12s,border-color .12s}
+html[data-skin=night] #hubx:hover,html[data-skin=night] #eq9 .eq9x:hover,html[data-skin=night] #inv7 header .x:hover,html[data-skin=night] #store7 header .x:hover{background:rgba(244,213,154,.12)!important;border-color:var(--line-strong)!important}
+/* ---- inputs */
+html[data-skin=night] #hubbody input[type=text],html[data-skin=night] #hubbody input:not([type]),html[data-skin=night] #inv7 input,html[data-skin=night] #store7 input,html[data-skin=night] #hubbody select,html[data-skin=night] #inv7 select{
+ background:rgba(255,255,255,.05)!important;border:1px solid var(--line)!important;border-radius:10px!important;color:var(--ink)!important}
+html[data-skin=night] #hubbody input:focus,html[data-skin=night] #inv7 input:focus,html[data-skin=night] #store7 input:focus{outline:none!important;border-color:rgba(244,213,154,.6)!important;box-shadow:0 0 0 3px rgba(244,213,154,.12)!important}
+/* ---- numbers line up */
+html[data-skin=night] #hubbody b,html[data-skin=night] #store7 .gv b,html[data-skin=night] #inv7 .gem7 b{font-variant-numeric:tabular-nums}
+/* ---- scrollbars: thin, gold */
+html[data-skin=night] #hubbody,html[data-skin=night] #inv7 .grid7,html[data-skin=night] #store7 .shell *,html[data-skin=night] #stj .stj-list,html[data-skin=night] #stj .stj-page{scrollbar-width:thin;scrollbar-color:rgba(244,213,154,.35) transparent}
+html[data-skin=night] ::-webkit-scrollbar{width:8px;height:8px}html[data-skin=night] ::-webkit-scrollbar-thumb{background:rgba(244,213,154,.28);border-radius:8px}html[data-skin=night] ::-webkit-scrollbar-track{background:transparent}
+/* ---- the menu dock and HUD card share the gold hairline */
+html[data-skin=night] #nav16,html[data-skin=night] #ccard7{border-color:var(--line-strong)!important}
+/* the two panels whose own titles are more specific */
+html[data-skin=night]:root body #eq9 .eq9box header h3,html[data-skin=night]:root body #store7 .shell header h2{font-family:var(--font-display)!important;font-weight:700!important;font-size:30px!important;letter-spacing:.01em!important;text-transform:none!important;color:var(--ds-cream)!important;line-height:1.05!important}
+html[data-skin=night]:root body #store7 .shell header h2{font-size:26px!important;letter-spacing:.2em!important}
+/* ---- rarity: the intensity follows the rarity, so a rare thing looks rare and a common one stays calm. Mythic keeps its own animated treatment (89-gear.css) */
+html[data-skin=night] #inv7 .it7[data-rar],html[data-skin=night] #store7 .card[data-rar]{position:relative;overflow:hidden}
+html[data-skin=night] #inv7 .it7[data-rar=uncommon],html[data-skin=night] #store7 .card[data-rar=uncommon]{box-shadow:inset 0 2px 0 rgba(140,230,140,.55)!important}
+html[data-skin=night] #inv7 .it7[data-rar=rare],html[data-skin=night] #store7 .card[data-rar=rare]{box-shadow:inset 0 0 0 1px rgba(110,180,255,.55),inset 0 2px 0 rgba(140,200,255,.8)!important}
+html[data-skin=night] #inv7 .it7[data-rar=epic],html[data-skin=night] #store7 .card[data-rar=epic]{box-shadow:inset 0 0 0 1.5px rgba(190,130,255,.7),inset 0 0 22px rgba(170,110,255,.18)!important}
+html[data-skin=night] #inv7 .it7[data-rar=legendary],html[data-skin=night] #store7 .card[data-rar=legendary]{box-shadow:inset 0 0 0 1.5px rgba(244,213,154,.85),inset 0 0 26px rgba(244,190,110,.22),0 0 18px -6px rgba(244,200,120,.45)!important}
+html[data-skin=night] #inv7 .it7[data-rar=legendary]::after,html[data-skin=night] #store7 .card[data-rar=legendary]::after{content:'';position:absolute;top:-20%;bottom:-20%;left:0;width:40%;pointer-events:none;z-index:2;
+ background:linear-gradient(100deg,rgba(255,240,200,0),rgba(255,240,200,.28),rgba(255,240,200,0));transform:translateX(-160%) skewX(-12deg);animation:dsSheen 4.8s ease-in-out infinite}
+html[data-skin=night] #inv7 .it7[data-rar=legendary]:nth-child(3n)::after{animation-delay:1.6s}html[data-skin=night] #inv7 .it7[data-rar=legendary]:nth-child(3n+1)::after{animation-delay:3.2s}
+@keyframes dsSheen{0%,62%{transform:translateX(-160%) skewX(-12deg)}100%{transform:translateX(360%) skewX(-12deg)}}
+html[data-reduce=true] #inv7 .it7[data-rar=legendary]::after,html[data-reduce=true] #store7 .card[data-rar=legendary]::after{animation:none;opacity:0}
+@media (prefers-reduced-motion:reduce){html[data-skin=night] #inv7 .it7[data-rar=legendary]::after,html[data-skin=night] #store7 .card[data-rar=legendary]::after{animation:none;opacity:0}}
+html[data-skin=night]:root body #inv7 .it7[data-rar=legendary]::after,html[data-skin=night]:root body #store7 .card[data-rar=legendary]::after{animation:dsSheen 4.8s ease-in-out infinite!important;opacity:1}
+html[data-reduce=true]:root body #inv7 .it7[data-rar=legendary]::after,html[data-reduce=true]:root body #store7 .card[data-rar=legendary]::after{animation:none!important;opacity:0!important}

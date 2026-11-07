@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Rootbound brand</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* The Rootbound logo system, drawn with the brand fonts. tools/brand/export.js photographs each lockup into assets/brand/*.png and the whole sheet into docs/brand-sheet.png */
+:root{--gold-1:#FFF8E6;--gold-2:#F4D59A;--gold-3:#D9B773;--ink:#0B0A16;--night:#14112A;--violet:#2A1A4A;--plum:#2A1640;--rose:#E8899F;--sky:#7AD8FF;--cream:#F6EEDF}
+*{box-sizing:border-box}body{margin:0;background:#0b0a16;color:#efeaf8;font-family:Montserrat,system-ui,sans-serif}
+.word{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;letter-spacing:.3em;padding-left:.3em;line-height:1;white-space:nowrap}
+.gold{background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 46%,var(--gold-3) 76%,#F1DDA8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(255,214,150,.28))}
+.lock{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:56px 72px}
+.lock .sym{width:120px;height:120px}
+.lock .word{font-size:84px}
+.lock .tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:26px;letter-spacing:.02em}
+.compact{display:flex;align-items:center;gap:16px;padding:28px 40px}.compact .sym{width:56px;height:56px}.compact .word{font-size:38px;letter-spacing:.24em}
+.dark{background:radial-gradient(120% 120% at 50% 0%,#2a1a4a 0%,#14112a 50%,#0b0a16 100%)}
+.light{background:linear-gradient(180deg,#fbf6ec,#f1e8d8)}.light .word,.light .tag{color:var(--plum)}
+.mono-w{background:#1a1726}.mono-w .word,.mono-w .tag{color:#fff}.mono-b{background:#fff}.mono-b .word,.mono-b .tag{color:#000}
+.sheet{width:1600px;padding:60px;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.card{border-radius:22px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.08);min-width:0}.sheet>div{min-width:0}.sheet>div:not(.wide) .lock .word{font-size:56px}.sheet>div:not(.wide) .lock .sym{width:96px;height:96px}
+.cap{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#bdb4d6;margin:0 0 10px}
+.wide{grid-column:1/3}
+.pal{display:flex;gap:12px;flex-wrap:wrap}.sw{width:150px;border-radius:14px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.1)}.sw i{display:block;height:70px}.sw b{display:block;font-size:12px;padding:8px 10px 2px}.sw small{display:block;font-size:11px;padding:0 10px 10px;color:#b9b1d0}
+.type h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:48px;margin:0}.type h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:30px;margin:6px 0}
+.type .lab{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#ffcf8a}.type p{font-size:15px;line-height:1.55;color:#ddd6ea;max-width:60ch}.type .num{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums}
+.social{width:1200px;height:630px;position:relative;overflow:hidden}
+</style></head>
+<body>
+<div class="sheet" id="sheet">
+ <div class="wide"><p class="cap">Main logo · on dark</p><div class="card dark lock" id="logo-dark"><img class="sym" src="../../assets/brand/symbol.svg" alt=""><div class="word gold">ROOTBOUND</div><div class="tag gold">Every world is waiting to be remembered.</div></div></div>
+ <div><p class="cap">Main logo · on light</p><div class="card light lock" id="logo-light"><img class="sym" src="../../assets/brand/symbol-plum.svg" alt=""><div class="word">ROOTBOUND</div></div></div>
+ <div><p class="cap">Compact</p><div class="card dark compact" id="logo-compact"><img class="sym" src="../../assets/brand/symbol.svg" alt=""><div class="word gold">ROOTBOUND</div></div>
+  <p class="cap" style="margin-top:22px">Symbol only</p><div class="card dark" style="display:flex;gap:30px;align-items:center;padding:30px" id="symbols"><img src="../../assets/brand/symbol.svg" style="width:120px" alt=""><img src="../../assets/brand/symbol.svg" style="width:64px" alt=""><img src="../../assets/brand/symbol.svg" style="width:32px" alt=""></div></div>
+ <div><p class="cap">Monochrome · white</p><div class="card mono-w lock" id="logo-mono-white"><img class="sym" src="../../assets/brand/symbol-mono.svg" alt=""><div class="word">ROOTBOUND</div></div></div>
+ <div><p class="cap">Monochrome · black</p><div class="card mono-b lock" id="logo-mono-black"><img class="sym" src="../../assets/brand/symbol-black.svg" alt=""><div class="word">ROOTBOUND</div></div></div>
+ <div class="wide"><p class="cap">Colour</p><div class="pal">
+  <div class="sw"><i style="background:#F4D59A"></i><b>Root Gold</b><small>#F4D59A · logo, highlights</small></div>
+  <div class="sw"><i style="background:#FFF8E6"></i><b>Cream</b><small>#FFF8E6 · titles</small></div>
+  <div class="sw"><i style="background:#0B0A16"></i><b>Night Ink</b><small>#0B0A16 · backgrounds</small></div>
+  <div class="sw"><i style="background:#2A1A4A"></i><b>Deep Violet</b><small>#2A1A4A · panels</small></div>
+  <div class="sw"><i style="background:#E8899F"></i><b>Bloom Rose</b><small>#E8899F · accent</small></div>
+  <div class="sw"><i style="background:#7AD8FF"></i><b>Rootway Sky</b><small>#7AD8FF · links, online</small></div>
+  <div class="sw"><i style="background:linear-gradient(90deg,#9be37a,#ff9a4a,#b48cff,#5ab8ff,#ff9ad0)"></i><b>The five realms</b><small>first world · inferno · galaxy · sea · crystal</small></div></div></div>
+ <div class="wide type"><p class="cap">Type</p><div class="lab">Display · Cormorant Garamond 700</div><h1>The Worlds We Left Behind</h1><h2>Titles, names, lore and story</h2>
+  <div class="lab" style="margin-top:18px">Interface · Montserrat 500 to 800</div><p>Labels, buttons, numbers and everything you read at a glance. Numbers use tabular figures so they line up.</p><div class="num">48,250 · 436 CP · Lv 42</div></div>
+</div>
+<div class="social dark" id="social">
+ <div style="position:absolute;inset:0;background:radial-gradient(60% 60% at 50% 40%,rgba(244,213,154,.16),rgba(0,0,0,0))"></div>
+ <div class="lock" style="position:absolute;inset:0;padding:0"><img class="sym" src="../../assets/brand/symbol.svg" style="width:140px;height:140px" alt=""><div class="word gold" style="font-size:96px">ROOTBOUND</div><div class="tag gold" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:30px">Every world is waiting to be remembered.</div><div style="margin-top:22px;font-size:14px;font-weight:700;letter-spacing:.42em;color:#d9cfbe">OUT NOW · WINDOWS</div></div>
+</div>
+</body></html>

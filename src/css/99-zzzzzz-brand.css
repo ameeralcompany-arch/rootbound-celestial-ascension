@@ -1,0 +1,65 @@
+/* ===== BRAND1: the title screen (src/js/late/99-zzzzzzzzzz-i-brand.js). The start card grows into a title: the animated logo, the tagline, then your name and Play.
+   Only shown before you enter the game (html.rb-title). ===== */
+#brand1{display:none}
+html.rb-title #menu{background:radial-gradient(ellipse at 50% 42%,rgba(20,12,44,.35),rgba(4,3,12,.86) 75%)!important}
+html.rb-title #menu #card{width:min(620px,94vw)!important;padding:46px 54px 40px!important;text-align:center;
+ background:linear-gradient(170deg,rgba(32,22,62,.78),rgba(12,10,26,.86))!important;border:1px solid rgba(244,213,154,.22)!important;box-shadow:0 0 0 1px rgba(0,0,0,.4),0 40px 100px rgba(0,0,0,.55),0 0 80px rgba(160,120,255,.12)!important;backdrop-filter:blur(6px)}
+html.rb-title #menu #card #mclose{display:none}
+html.rb-title #brand1{display:flex;flex-direction:column;align-items:center;gap:14px;margin:0 0 30px}
+#brand1 .br-sym{width:118px;height:118px;filter:drop-shadow(0 0 22px rgba(244,213,154,.32))}
+#brand1 .br-word{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:58px;line-height:1;letter-spacing:.3em;padding-left:.3em;white-space:nowrap;
+ background:linear-gradient(180deg,#FFF8E6 0%,#F4D59A 46%,#D9B773 76%,#F1DDA8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(255,214,150,.3))}
+#brand1 .br-word span,#brandrev .br-word span{display:inline-block;background:linear-gradient(180deg,#FFF8E6 0%,#F4D59A 46%,#D9B773 76%,#F1DDA8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#brand1 .br-tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:21px;color:#f1e3c4;letter-spacing:.01em}
+/* the reveal */
+#brand1 .br-ring,#brand1 .br-trunk,#brand1 .br-root{stroke-dasharray:1;stroke-dashoffset:1}
+#brand1 .br-leaf{transform-box:fill-box;transform-origin:0% 100%;transform:scale(0);opacity:0}#brand1 .br-l2{transform-origin:0% 100%}
+#brand1 .br-star{transform-box:fill-box;transform-origin:50% 50%;transform:scale(0) rotate(-90deg);opacity:0}
+#brand1 .br-word span{opacity:0;transform:translateY(10px);filter:blur(4px)}
+#brand1 .br-tag{opacity:0;transform:translateY(6px)}
+#brand1.go .br-ring{animation:brDraw 1.3s cubic-bezier(.6,0,.3,1) .15s forwards}
+#brand1.go .br-trunk{animation:brDraw .7s ease-out .9s forwards}
+#brand1.go .br-root{animation:brDraw .8s ease-out 1.25s forwards}#brand1.go .br-r2{animation-delay:1.55s}
+#brand1.go .br-l1{animation:brLeaf .55s cubic-bezier(.2,1.4,.4,1) 1.5s forwards}#brand1.go .br-l2{animation:brLeaf .55s cubic-bezier(.2,1.4,.4,1) 1.65s forwards}
+#brand1.go .br-star{animation:brStar .7s cubic-bezier(.2,1.4,.4,1) 1.9s forwards,brTwinkle 3.6s ease-in-out 3s infinite}
+#brand1.go .br-word span{animation:brLetter .6s cubic-bezier(.2,.8,.2,1) calc(1.1s + var(--i) * 70ms) forwards}
+#brand1.go .br-tag{animation:brUp .8s ease 2.3s forwards}
+#brand1.go .br-sym{animation:brGlow 5s ease-in-out 3s infinite}
+html.rb-title #menu #mhome{opacity:0;animation:brUp .7s ease 2.5s forwards}
+@keyframes brDraw{to{stroke-dashoffset:0}}
+@keyframes brLeaf{to{transform:scale(1);opacity:1}}
+@keyframes brStar{to{transform:scale(1) rotate(0);opacity:1}}
+@keyframes brTwinkle{0%,100%{transform:scale(1)}50%{transform:scale(1.25) rotate(45deg)}}
+@keyframes brLetter{to{opacity:1;transform:none;filter:none}}
+@keyframes brUp{to{opacity:1;transform:none}}
+@keyframes brGlow{0%,100%{filter:drop-shadow(0 0 18px rgba(244,213,154,.25))}50%{filter:drop-shadow(0 0 30px rgba(244,213,154,.5))}}
+/* the name and Play row, in the brand's language */
+html.rb-title #menu #mhome{display:flex;flex-direction:column;gap:14px;align-items:stretch;max-width:380px;margin:0 auto}
+html.rb-title #menu #nm{height:52px;border-radius:14px!important;text-align:center;font:600 17px Montserrat,system-ui,sans-serif!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(244,213,154,.25)!important;color:#fff8ea!important}
+html.rb-title #menu #nm:focus{outline:none;border-color:rgba(244,213,154,.7)!important;box-shadow:0 0 0 4px rgba(244,213,154,.12)}
+html.rb-title #menu #bp{height:56px;border-radius:14px!important;font:800 16px Montserrat,system-ui,sans-serif!important;letter-spacing:.34em;padding-left:.34em;text-transform:uppercase;color:#1a1020!important;border:0!important;
+ background:linear-gradient(180deg,#FFF3D2,#F4D59A 55%,#D9B773)!important;box-shadow:0 10px 30px rgba(244,213,154,.25),inset 0 1px 0 rgba(255,255,255,.7)!important;transition:transform .12s,box-shadow .12s}
+html.rb-title #menu #bp:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(244,213,154,.38),inset 0 1px 0 rgba(255,255,255,.8)!important}
+html.rb-title #menu #bp:active{transform:translateY(1px) scale(.99)}
+@media (max-height:640px){#brand1 .br-sym{width:84px;height:84px}#brand1 .br-word{font-size:44px}html.rb-title #menu #card{padding:28px 34px!important}}
+@media (prefers-reduced-motion:reduce){#brand1 *,html.rb-title #menu #mhome{animation:none!important;opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important}}
+/* the launch title over the starting game */
+#brandrev{position:fixed;inset:0;z-index:2147482600;display:flex;align-items:center;justify-content:center;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 46%,rgba(14,10,32,.55),rgba(4,3,12,.92) 72%);animation:brvOut .9s ease 3.8s forwards}
+#brandrev .brv-in{display:flex;flex-direction:column;align-items:center;gap:16px}
+#brandrev .br-sym{width:150px;height:150px;filter:drop-shadow(0 0 26px rgba(244,213,154,.35))}
+#brandrev .br-word{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:78px;line-height:1;letter-spacing:.3em;padding-left:.3em;white-space:nowrap;
+ background:linear-gradient(180deg,#FFF8E6 0%,#F4D59A 46%,#D9B773 76%,#F1DDA8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#brandrev .br-word span{display:inline-block}
+#brandrev .br-tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:26px;color:#f1e3c4}
+#brandrev .br-ring,#brandrev .br-trunk,#brandrev .br-root{stroke-dasharray:1;stroke-dashoffset:1}
+#brandrev .br-leaf{transform-box:fill-box;transform-origin:0% 100%;transform:scale(0);opacity:0}
+#brandrev .br-star{transform-box:fill-box;transform-origin:50% 50%;transform:scale(0) rotate(-90deg);opacity:0}
+#brandrev .br-word span{opacity:0;transform:translateY(10px);filter:blur(4px)}#brandrev .br-tag{opacity:0;transform:translateY(6px)}
+#brandrev.go .br-ring{animation:brDraw 1.2s cubic-bezier(.6,0,.3,1) .1s forwards}#brandrev.go .br-trunk{animation:brDraw .6s ease-out .8s forwards}
+#brandrev.go .br-root{animation:brDraw .7s ease-out 1.1s forwards}#brandrev.go .br-r2{animation-delay:1.35s}
+#brandrev.go .br-l1{animation:brLeaf .5s cubic-bezier(.2,1.4,.4,1) 1.3s forwards}#brandrev.go .br-l2{animation:brLeaf .5s cubic-bezier(.2,1.4,.4,1) 1.45s forwards}
+#brandrev.go .br-star{animation:brStar .6s cubic-bezier(.2,1.4,.4,1) 1.7s forwards}
+#brandrev.go .br-word span{animation:brLetter .55s cubic-bezier(.2,.8,.2,1) calc(1s + var(--i) * 60ms) forwards}#brandrev.go .br-tag{animation:brUp .7s ease 2s forwards}
+@keyframes brvOut{to{opacity:0}}
+@media (prefers-reduced-motion:reduce){#brandrev *{animation:none!important;opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important}}

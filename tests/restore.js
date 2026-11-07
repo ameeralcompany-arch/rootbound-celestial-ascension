@@ -19,6 +19,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:500,own:{fist:1},ownW:{},wear:{},w
  ok('speaking its word wakes it: its own music returns, colour nearly back',s1.h.st==1&&s1.wst=='1'&&s1.mood!='silent',s1);
  await p.evaluate(()=>{WBOSS13.state.w['rootbound']=1;RESTORE1.apply()});await sleep(2800);const s2=await S();await shot('w-restored');
  ok('its guardian at rest restores it: no filter at all, counted as restored',s2.h.st==2&&s2.wst==''&&(s2.filter=='none'||!s2.filter)&&s2.restored==1,s2);
+ await p.evaluate(()=>enterWorld('mytestworld'));await sleep(3000);const own=await S();ok('a world the player builds is never greyed or hushed, only the story realms are',own.h===null&&own.wst==''&&own.mood!='silent',own);
  ok('the music system knows the hushed and festival moods',await p.evaluate(()=>!!(MUS7.MOODS.silent&&MUS7.MOODS.festival&&MUS7.MOODS.silent.songs.length==2)));
  // the Plaza: one lantern strand per restored realm, a festival when all five are back
  await p.evaluate(()=>enterWorld('plaza'));await sleep(2500);const pl=await S();ok('in the Plaza no filter, and the plaza mood until all five are back',pl.wst==''&&pl.mood!='festival',pl);

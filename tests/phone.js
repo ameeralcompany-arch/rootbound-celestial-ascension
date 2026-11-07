@@ -23,7 +23,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:4321,own:{fist:1,astralkat:1},ownW
  ok('Combat Power and gems are the real numbers',h.cp==h.cpReal&&h.gems==h.gemsReal,{cp:h.cp,real:h.cpReal,gems:h.gems,greal:h.gemsReal});
  ok('your portrait is drawn',h.av>2000,h.av);
  ok("today's challenges are the real ones",h.tasks==Math.max(1,h.dly),{shown:h.tasks,real:h.dly});
- ok('17 apps, all usable here',h.apps==17&&h.off.length==0,h.off);
+ ok('18 apps, all usable here',h.apps==18&&h.off.length==0,h.off);
  ok('opening it did not mute the music',h.muted===false);
  if(SHOTS){fs.mkdirSync(SHOTS,{recursive:true});await p.screenshot({path:path.join(SHOTS,'phone-home.png')})}
  // keys: arrows move between apps, Esc closes

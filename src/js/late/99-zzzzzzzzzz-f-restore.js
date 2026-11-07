@@ -8,13 +8,15 @@
 try{(()=>{
  const COL=['#9be37a','#ff9a4a','#b48cff','#5ab8ff','#ff9ad0'],NAME=['the first world','an Inferno world','a Galaxy world','an Abyssal Sea world','a Crystal Realm world'];
  const stage=n=>{try{return WORD9.stageOf(n)}catch(_){return -1}};
- const anyIn=(o,sg,f)=>{try{return Object.keys(o||{}).some(n=>n!='plaza'&&stage(n)===sg&&f(o[n]))}catch(_){return false}};
+ // only the story's own realms (rootbound and its four realms); worlds players build keep their own colour and music
+ const REALM=['rootbound','rootbound-inf','rootbound-gal','rootbound-sea','rootbound-cry'],isRealm=n=>REALM.includes(n);
+ const anyIn=(o,sg,f)=>{try{const n=REALM[sg];return !!(o&&n in o&&f(o[n]))}catch(_){return false}};
  const word=sg=>{try{return anyIn(WORD9.state.w,sg,v=>v&&v.ok)}catch(_){return false}};
  const guard=sg=>{try{return anyIn(WBOSS13.state&&WBOSS13.state.w,sg,v=>!!v)}catch(_){return false}};
  const state=sg=>word(sg)?(guard(sg)?2:1):0;
  const restored=()=>[0,1,2,3,4].filter(sg=>state(sg)==2).length;
  const inRun=()=>{try{return !!(window.DG&&DG.run)}catch(_){return false}};
- const here=()=>{try{if(typeof cur=='undefined'||!cur||cur=='plaza'||inRun())return null;if(!WORD9.hasWord(cur))return null;const sg=stage(cur);return sg>=0&&sg<=4?{sg,st:state(sg)}:null}catch(_){return null}};
+ const here=()=>{try{if(typeof cur=='undefined'||!cur||!isRealm(cur)||inRun())return null;if(!WORD9.hasWord(cur))return null;const sg=stage(cur);return sg>=0&&sg<=4?{sg,st:state(sg)}:null}catch(_){return null}};
  // ---- colour, and the note on arrival
  let lastW='',lastSt=-1;
  function apply(){const h=here(),root=document.documentElement,v=h&&h.st<2?String(h.st):'';if(root.dataset.wst!==v){if(v)root.dataset.wst=v;else delete root.dataset.wst}
@@ -44,5 +46,5 @@ try{(()=>{
     const x=((a*w+t*22*(.5+b))%w+w)%w,y=((b*h+t*40*(.6+a))%h+h)%h;g.save();g.translate(x,y);g.rotate(t*(1+a)+i);g.fillStyle=COL[i%5];g.globalAlpha=.75;g.beginPath();g.ellipse(0,0,5,2.6,0,0,6.283);g.fill();g.restore()}}
   g.restore()}
  try{const dp=BOSS6.drawProj;BOSS6.drawProj=function(){const r=dp.apply(this,arguments);try{const now=performance.now();if(typeof cur!='undefined'&&cur=='plaza'&&!inRun())lanterns(g,now);else{const h=here();if(h&&h.st==2)lights(g,now)}}catch(_){}return r}}catch(e){console.error('RESTORE1 draw',e)}
- window.RESTORE1={state,restored,here,COL,NAME,apply};
+ window.RESTORE1={state,restored,here,COL,NAME,apply,REALM,isRealm};
 })()}catch(e){console.error('RESTORE1',e)}

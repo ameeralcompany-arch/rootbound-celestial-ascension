@@ -9,7 +9,8 @@ try{(()=>{
  const st=k=>{try{return stats[k]|0}catch(_){return 0}};
  const got=id=>{try{return STORY1.got.includes(id)}catch(_){return false}};
  const stage=n=>{try{return WORD9.stageOf(n)}catch(_){return -1}};
- const inWorld=sg=>{try{return typeof cur!='undefined'&&cur&&cur!='plaza'&&!(window.DG&&DG.run)&&WORD9.hasWord(cur)&&stage(cur)===sg}catch(_){return false}};
+ const REALM=['rootbound','rootbound-inf','rootbound-gal','rootbound-sea','rootbound-cry'];
+ const inWorld=sg=>{try{return typeof cur!='undefined'&&cur===REALM[sg]&&!(window.DG&&DG.run)}catch(_){return false}};
  const clears=()=>{try{let n=0;for(const d of Object.keys(DG.S.clr||{}))n+=Object.keys(DG.S.clr[d]||{}).length;return n}catch(_){return 0}};
  const isNight=()=>{try{return typeof night!='undefined'&&night>.55}catch(_){return false}};
  // kind: 'stat' (a game counter grows by need), 'item' (carry need of an item; handed over), 'visit' (be somewhere, once, after accepting), 'clear' (clear a dungeon after accepting)

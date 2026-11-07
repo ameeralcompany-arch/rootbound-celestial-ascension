@@ -3139,6 +3139,161 @@ html[data-skin=night] #craftui{max-height:calc(94vh / var(--uiz))!important;over
 #c{transition:filter 2.4s ease}
 html[data-wst="0"] #c{filter:saturate(.6) brightness(.94) contrast(.98)}
 html[data-wst="1"] #c{filter:saturate(.86) brightness(.98)}
+/* MASTERY1: stars on weapon tiles, and the Mastery page */
+.it7 .wm1{position:absolute;left:4px;top:3px;z-index:3;font-style:normal;font-size:10px;letter-spacing:-1px;color:#F4D59A;text-shadow:0 0 4px rgba(0,0,0,.9),0 0 8px rgba(244,213,154,.6);pointer-events:none}
+.it7 .wm1[data-l="5"]{color:#fff3c8;text-shadow:0 0 6px rgba(255,214,120,.95),0 0 2px #000}
+#wm1{position:fixed;inset:0;z-index:2147482400;display:none;align-items:center;justify-content:center;font-family:Montserrat,'Segoe UI',system-ui,sans-serif;color:#efeaf8}
+#wm1.on{display:flex}#wm1 .wm-scrim{position:absolute;inset:0;background:rgba(4,3,12,.66)}
+#wm1 .wm-box{position:relative;width:min(760px,94vw);max-height:min(680px,88vh);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:linear-gradient(172deg,rgba(36,26,66,.96),rgba(15,12,30,.97));border:1px solid rgba(244,213,154,.34);box-shadow:0 44px 100px -34px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,240,210,.09);animation:stjin .3s cubic-bezier(.2,.9,.25,1.05)}
+#wm1 header{display:flex;align-items:center;gap:16px;padding:22px 26px 6px}#wm1 header small{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#ffcf8a}
+#wm1 header h2{margin:2px 0 0;font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-weight:700}#wm1 .wm-count{margin-left:auto;font-size:12.5px;color:rgba(239,234,248,.6)}
+#wm1 .wm-x{all:unset;cursor:pointer;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,.06)}#wm1 .wm-x:hover{background:rgba(244,213,154,.14)}
+#wm1 .wm-sub{margin:0;padding:0 26px 14px;font-size:13px;color:rgba(239,234,248,.62);border-bottom:1px solid rgba(244,213,154,.1)}
+#wm1 .wm-list{overflow-y:auto;padding:14px 22px 22px;display:flex;flex-direction:column;gap:8px}
+#wm1 .wm-row{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.04);box-shadow:inset 3px 0 0 var(--c)}
+#wm1 .wm-n b{font-size:14.5px;font-weight:700}#wm1 .wm-n small{display:block;font-size:12px;color:rgba(239,234,248,.6);margin-top:2px}
+#wm1 .wm-stars i{font-style:normal;font-size:17px;color:rgba(255,255,255,.14);margin-left:2px}#wm1 .wm-stars i.on{color:#F4D59A;text-shadow:0 0 8px rgba(244,213,154,.55)}
+#wm1 .wm-bar{grid-column:1/3;height:5px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden}#wm1 .wm-bar u{display:block;height:100%;text-decoration:none;background:linear-gradient(90deg,#D9B773,#F4D59A)}
+#wm1 .wm-next{grid-column:1/3;font-size:11.5px;color:rgba(239,234,248,.55)}#wm1 .wm-empty{color:rgba(239,234,248,.6);font-size:14px;padding:12px}
+
+/* ========== CSS: 99-zzzzzz-brand.css ========== */
+/* ===== BRAND1: the title screen (src/js/late/99-zzzzzzzzzz-i-brand.js). The start card grows into a title: the animated logo, the tagline, then your name and Play.
+   Only shown before you enter the game (html.rb-title). ===== */
+#brand1{display:none}
+html.rb-title #menu{background:radial-gradient(ellipse at 50% 42%,rgba(20,12,44,.35),rgba(4,3,12,.86) 75%)!important}
+html.rb-title #menu #card{width:min(620px,94vw)!important;padding:46px 54px 40px!important;text-align:center;
+ background:linear-gradient(170deg,rgba(32,22,62,.78),rgba(12,10,26,.86))!important;border:1px solid rgba(244,213,154,.22)!important;box-shadow:0 0 0 1px rgba(0,0,0,.4),0 40px 100px rgba(0,0,0,.55),0 0 80px rgba(160,120,255,.12)!important;backdrop-filter:blur(6px)}
+html.rb-title #menu #card #mclose{display:none}
+html.rb-title #brand1{display:flex;flex-direction:column;align-items:center;gap:14px;margin:0 0 30px}
+#brand1 .br-sym{width:118px;height:118px;filter:drop-shadow(0 0 22px rgba(244,213,154,.32))}
+#brand1 .br-word{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:58px;line-height:1;letter-spacing:.3em;padding-left:.3em;white-space:nowrap;
+ background:linear-gradient(180deg,#FFF8E6 0%,#F4D59A 46%,#D9B773 76%,#F1DDA8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(255,214,150,.3))}
+#brand1 .br-word span,#brandrev .br-word span{display:inline-block;background:linear-gradient(180deg,#FFF8E6 0%,#F4D59A 46%,#D9B773 76%,#F1DDA8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#brand1 .br-tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:21px;color:#f1e3c4;letter-spacing:.01em}
+/* the reveal */
+#brand1 .br-ring,#brand1 .br-trunk,#brand1 .br-root{stroke-dasharray:1;stroke-dashoffset:1}
+#brand1 .br-leaf{transform-box:fill-box;transform-origin:0% 100%;transform:scale(0);opacity:0}#brand1 .br-l2{transform-origin:0% 100%}
+#brand1 .br-star{transform-box:fill-box;transform-origin:50% 50%;transform:scale(0) rotate(-90deg);opacity:0}
+#brand1 .br-word span{opacity:0;transform:translateY(10px);filter:blur(4px)}
+#brand1 .br-tag{opacity:0;transform:translateY(6px)}
+#brand1.go .br-ring{animation:brDraw 1.3s cubic-bezier(.6,0,.3,1) .15s forwards}
+#brand1.go .br-trunk{animation:brDraw .7s ease-out .9s forwards}
+#brand1.go .br-root{animation:brDraw .8s ease-out 1.25s forwards}#brand1.go .br-r2{animation-delay:1.55s}
+#brand1.go .br-l1{animation:brLeaf .55s cubic-bezier(.2,1.4,.4,1) 1.5s forwards}#brand1.go .br-l2{animation:brLeaf .55s cubic-bezier(.2,1.4,.4,1) 1.65s forwards}
+#brand1.go .br-star{animation:brStar .7s cubic-bezier(.2,1.4,.4,1) 1.9s forwards,brTwinkle 3.6s ease-in-out 3s infinite}
+#brand1.go .br-word span{animation:brLetter .6s cubic-bezier(.2,.8,.2,1) calc(1.1s + var(--i) * 70ms) forwards}
+#brand1.go .br-tag{animation:brUp .8s ease 2.3s forwards}
+#brand1.go .br-sym{animation:brGlow 5s ease-in-out 3s infinite}
+html.rb-title #menu #mhome{opacity:0;animation:brUp .7s ease 2.5s forwards}
+@keyframes brDraw{to{stroke-dashoffset:0}}
+@keyframes brLeaf{to{transform:scale(1);opacity:1}}
+@keyframes brStar{to{transform:scale(1) rotate(0);opacity:1}}
+@keyframes brTwinkle{0%,100%{transform:scale(1)}50%{transform:scale(1.25) rotate(45deg)}}
+@keyframes brLetter{to{opacity:1;transform:none;filter:none}}
+@keyframes brUp{to{opacity:1;transform:none}}
+@keyframes brGlow{0%,100%{filter:drop-shadow(0 0 18px rgba(244,213,154,.25))}50%{filter:drop-shadow(0 0 30px rgba(244,213,154,.5))}}
+/* the name and Play row, in the brand's language */
+html.rb-title #menu #mhome{display:flex;flex-direction:column;gap:14px;align-items:stretch;max-width:380px;margin:0 auto}
+html.rb-title #menu #nm{height:52px;border-radius:14px!important;text-align:center;font:600 17px Montserrat,system-ui,sans-serif!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(244,213,154,.25)!important;color:#fff8ea!important}
+html.rb-title #menu #nm:focus{outline:none;border-color:rgba(244,213,154,.7)!important;box-shadow:0 0 0 4px rgba(244,213,154,.12)}
+html.rb-title #menu #bp{height:56px;border-radius:14px!important;font:800 16px Montserrat,system-ui,sans-serif!important;letter-spacing:.34em;padding-left:.34em;text-transform:uppercase;color:#1a1020!important;border:0!important;
+ background:linear-gradient(180deg,#FFF3D2,#F4D59A 55%,#D9B773)!important;box-shadow:0 10px 30px rgba(244,213,154,.25),inset 0 1px 0 rgba(255,255,255,.7)!important;transition:transform .12s,box-shadow .12s}
+html.rb-title #menu #bp:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(244,213,154,.38),inset 0 1px 0 rgba(255,255,255,.8)!important}
+html.rb-title #menu #bp:active{transform:translateY(1px) scale(.99)}
+@media (max-height:640px){#brand1 .br-sym{width:84px;height:84px}#brand1 .br-word{font-size:44px}html.rb-title #menu #card{padding:28px 34px!important}}
+@media (prefers-reduced-motion:reduce){#brand1 *,html.rb-title #menu #mhome{animation:none!important;opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important}}
+/* the launch title over the starting game */
+#brandrev{position:fixed;inset:0;z-index:2147482600;display:flex;align-items:center;justify-content:center;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 46%,rgba(14,10,32,.55),rgba(4,3,12,.92) 72%);animation:brvOut .9s ease 3.8s forwards}
+#brandrev .brv-in{display:flex;flex-direction:column;align-items:center;gap:16px}
+#brandrev .br-sym{width:150px;height:150px;filter:drop-shadow(0 0 26px rgba(244,213,154,.35))}
+#brandrev .br-word{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:78px;line-height:1;letter-spacing:.3em;padding-left:.3em;white-space:nowrap;
+ background:linear-gradient(180deg,#FFF8E6 0%,#F4D59A 46%,#D9B773 76%,#F1DDA8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#brandrev .br-word span{display:inline-block}
+#brandrev .br-tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:26px;color:#f1e3c4}
+#brandrev .br-ring,#brandrev .br-trunk,#brandrev .br-root{stroke-dasharray:1;stroke-dashoffset:1}
+#brandrev .br-leaf{transform-box:fill-box;transform-origin:0% 100%;transform:scale(0);opacity:0}
+#brandrev .br-star{transform-box:fill-box;transform-origin:50% 50%;transform:scale(0) rotate(-90deg);opacity:0}
+#brandrev .br-word span{opacity:0;transform:translateY(10px);filter:blur(4px)}#brandrev .br-tag{opacity:0;transform:translateY(6px)}
+#brandrev.go .br-ring{animation:brDraw 1.2s cubic-bezier(.6,0,.3,1) .1s forwards}#brandrev.go .br-trunk{animation:brDraw .6s ease-out .8s forwards}
+#brandrev.go .br-root{animation:brDraw .7s ease-out 1.1s forwards}#brandrev.go .br-r2{animation-delay:1.35s}
+#brandrev.go .br-l1{animation:brLeaf .5s cubic-bezier(.2,1.4,.4,1) 1.3s forwards}#brandrev.go .br-l2{animation:brLeaf .5s cubic-bezier(.2,1.4,.4,1) 1.45s forwards}
+#brandrev.go .br-star{animation:brStar .6s cubic-bezier(.2,1.4,.4,1) 1.7s forwards}
+#brandrev.go .br-word span{animation:brLetter .55s cubic-bezier(.2,.8,.2,1) calc(1s + var(--i) * 60ms) forwards}#brandrev.go .br-tag{animation:brUp .7s ease 2s forwards}
+@keyframes brvOut{to{opacity:0}}
+@media (prefers-reduced-motion:reduce){#brandrev *{animation:none!important;opacity:1!important;transform:none!important;filter:none!important;stroke-dashoffset:0!important}}
+
+/* ========== CSS: 99-zzzzzzz-ds.css ========== */
+/* ===== DS1: the Rootbound design system (docs/brand.md), applied to the default look ("Soft Glass", data-skin=night). The other looks (Clean, Aqua, Pearl,
+   Plum) keep their own styles. One set of tokens: warm cream text, Root Gold accents, deep-violet glass, Cormorant Garamond titles over Montserrat. Every panel
+   shell gets the same chrome, every title the same voice, every tab, label, button and close button the same shape. Colour and type only: no layout is moved. ===== */
+html[data-skin=night]:root{
+ --ds-gold:#F4D59A;--ds-gold-2:#D9B773;--ds-cream:#FFF8E6;--ds-rose:#E8899F;--ds-sky:#7AD8FF;--ds-ink:#0B0A16;
+ --ink:#F6F1E7;--ink-2:#E6DFEE;--muted:#B5ACC9;--accent:#F4D59A;--accent-2:#E8899F;
+ --line:rgba(244,213,154,.14);--line-strong:rgba(244,213,154,.34);
+ --surface:linear-gradient(172deg,rgba(36,26,66,.94),rgba(15,12,30,.95));--surface-2:linear-gradient(172deg,rgba(52,40,88,.86),rgba(24,19,44,.9));--surface-solid:#130F25;--panel:rgba(18,14,36,.93);
+ --font-display:'Cormorant Garamond','Cormorant',Georgia,'Times New Roman',serif;
+ --sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 28px 70px -28px rgba(0,0,0,.78);--rad-lg:24px;
+ --ds-chrome:0 0 0 1px rgba(0,0,0,.45),0 44px 100px -34px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,240,210,.09);
+}
+/* ---- panel shells */
+html[data-skin=night] #hubc,html[data-skin=night] #eq9 .eq9box,html[data-skin=night] #inv7 .sheet,html[data-skin=night] #store7 .shell,html[data-skin=night] #stj .stj-book{
+ background:var(--surface)!important;border:1px solid var(--line-strong)!important;border-radius:24px!important;box-shadow:var(--ds-chrome)!important}
+html[data-skin=night] #hubc::before,html[data-skin=night] #eq9 .eq9box::before,html[data-skin=night] #inv7 .sheet::before,html[data-skin=night] #store7 .shell::before{
+ content:'';position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,rgba(244,213,154,0),rgba(244,213,154,.55),rgba(244,213,154,0));pointer-events:none;z-index:1}
+/* ---- titles: the brand's serif, cream, with the gold icon */
+html[data-skin=night] #hubhead b,html[data-skin=night] #eq9 header h3,html[data-skin=night] #inv7 header .ttl,html[data-skin=night] #store7 header h2{
+ font-family:var(--font-display)!important;font-weight:700!important;font-size:30px!important;letter-spacing:.01em!important;text-transform:none!important;color:var(--ds-cream)!important;line-height:1.05!important}
+
+html[data-skin=night] #hubhead svg{color:var(--ds-gold)!important;stroke:var(--ds-gold)}
+html[data-skin=night] #hubhead i{color:rgba(244,213,154,.55)!important;font-style:normal;letter-spacing:.2em}
+html[data-skin=night] #inv7 header .eyebrow,html[data-skin=night] #eq9 .eq9nm,html[data-skin=night] #eq9 .eq9lv{color:var(--muted)!important}
+/* ---- section labels: small gold capitals */
+html[data-skin=night] #hubbody>h3,html[data-skin=night] #hubbody h4,html[data-skin=night] #inv7 .eyebrow,html[data-skin=night] #eq9 .eq9tot h4,html[data-skin=night] #store7 .shell h3{
+ font-family:Montserrat,system-ui,sans-serif!important;font-weight:700!important;font-size:11px!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:rgba(244,213,154,.78)!important}
+/* ---- body text: a touch larger and warmer where it was small and grey */
+html[data-skin=night] #hubbody,html[data-skin=night] #inv7 .sheet,html[data-skin=night] #eq9 .eq9box{color:var(--ink-2)}
+html[data-skin=night] #hubbody small,html[data-skin=night] #inv7 small{color:var(--muted)!important}
+/* ---- tabs: pill text, gold when chosen, a gold indicator */
+html[data-skin=night] #hubnav button,html[data-skin=night] #inv7 nav button{font-family:Montserrat,system-ui,sans-serif!important;font-weight:600!important;font-size:13px!important;letter-spacing:.01em!important;color:var(--muted)!important}
+html[data-skin=night] #hubnav button.on,html[data-skin=night] #inv7 nav button.on{color:var(--ds-gold)!important}
+html[data-skin=night] .nind7{background:linear-gradient(90deg,var(--ds-gold-2),var(--ds-gold))!important;box-shadow:0 0 10px rgba(244,213,154,.45)!important}
+/* ---- buttons inside panels: one secondary shape, gold on hover; the main action buttons gold */
+html[data-skin=night] #hubbody .hbtn,html[data-skin=night] #hubbody button:not(.on):not([class*=tab]){border-radius:10px!important;border:1px solid var(--line-strong)!important;background:rgba(255,255,255,.045)!important;color:var(--ink)!important;transition:border-color .12s,background .12s,transform .12s}
+html[data-skin=night] #hubbody .hbtn:hover,html[data-skin=night] #hubbody button:not(.on):not([class*=tab]):hover{border-color:rgba(244,213,154,.7)!important;background:rgba(244,213,154,.08)!important}
+html[data-skin=night] #hubbody .hbtn:active{transform:translateY(1px)}
+/* ---- close buttons: one round shape everywhere */
+html[data-skin=night] #hubx,html[data-skin=night] #eq9 .eq9x,html[data-skin=night] #inv7 header .x,html[data-skin=night] #store7 header .x{width:38px!important;height:38px!important;border-radius:50%!important;display:grid!important;place-items:center;padding:0!important;
+ background:rgba(255,255,255,.06)!important;border:1px solid var(--line)!important;color:var(--ink)!important;font-size:16px!important;transition:background .12s,border-color .12s}
+html[data-skin=night] #hubx:hover,html[data-skin=night] #eq9 .eq9x:hover,html[data-skin=night] #inv7 header .x:hover,html[data-skin=night] #store7 header .x:hover{background:rgba(244,213,154,.12)!important;border-color:var(--line-strong)!important}
+/* ---- inputs */
+html[data-skin=night] #hubbody input[type=text],html[data-skin=night] #hubbody input:not([type]),html[data-skin=night] #inv7 input,html[data-skin=night] #store7 input,html[data-skin=night] #hubbody select,html[data-skin=night] #inv7 select{
+ background:rgba(255,255,255,.05)!important;border:1px solid var(--line)!important;border-radius:10px!important;color:var(--ink)!important}
+html[data-skin=night] #hubbody input:focus,html[data-skin=night] #inv7 input:focus,html[data-skin=night] #store7 input:focus{outline:none!important;border-color:rgba(244,213,154,.6)!important;box-shadow:0 0 0 3px rgba(244,213,154,.12)!important}
+/* ---- numbers line up */
+html[data-skin=night] #hubbody b,html[data-skin=night] #store7 .gv b,html[data-skin=night] #inv7 .gem7 b{font-variant-numeric:tabular-nums}
+/* ---- scrollbars: thin, gold */
+html[data-skin=night] #hubbody,html[data-skin=night] #inv7 .grid7,html[data-skin=night] #store7 .shell *,html[data-skin=night] #stj .stj-list,html[data-skin=night] #stj .stj-page{scrollbar-width:thin;scrollbar-color:rgba(244,213,154,.35) transparent}
+html[data-skin=night] ::-webkit-scrollbar{width:8px;height:8px}html[data-skin=night] ::-webkit-scrollbar-thumb{background:rgba(244,213,154,.28);border-radius:8px}html[data-skin=night] ::-webkit-scrollbar-track{background:transparent}
+/* ---- the menu dock and HUD card share the gold hairline */
+html[data-skin=night] #nav16,html[data-skin=night] #ccard7{border-color:var(--line-strong)!important}
+/* the two panels whose own titles are more specific */
+html[data-skin=night]:root body #eq9 .eq9box header h3,html[data-skin=night]:root body #store7 .shell header h2{font-family:var(--font-display)!important;font-weight:700!important;font-size:30px!important;letter-spacing:.01em!important;text-transform:none!important;color:var(--ds-cream)!important;line-height:1.05!important}
+html[data-skin=night]:root body #store7 .shell header h2{font-size:26px!important;letter-spacing:.2em!important}
+/* ---- rarity: the intensity follows the rarity, so a rare thing looks rare and a common one stays calm. Mythic keeps its own animated treatment (89-gear.css) */
+html[data-skin=night] #inv7 .it7[data-rar],html[data-skin=night] #store7 .card[data-rar]{position:relative;overflow:hidden}
+html[data-skin=night] #inv7 .it7[data-rar=uncommon],html[data-skin=night] #store7 .card[data-rar=uncommon]{box-shadow:inset 0 2px 0 rgba(140,230,140,.55)!important}
+html[data-skin=night] #inv7 .it7[data-rar=rare],html[data-skin=night] #store7 .card[data-rar=rare]{box-shadow:inset 0 0 0 1px rgba(110,180,255,.55),inset 0 2px 0 rgba(140,200,255,.8)!important}
+html[data-skin=night] #inv7 .it7[data-rar=epic],html[data-skin=night] #store7 .card[data-rar=epic]{box-shadow:inset 0 0 0 1.5px rgba(190,130,255,.7),inset 0 0 22px rgba(170,110,255,.18)!important}
+html[data-skin=night] #inv7 .it7[data-rar=legendary],html[data-skin=night] #store7 .card[data-rar=legendary]{box-shadow:inset 0 0 0 1.5px rgba(244,213,154,.85),inset 0 0 26px rgba(244,190,110,.22),0 0 18px -6px rgba(244,200,120,.45)!important}
+html[data-skin=night] #inv7 .it7[data-rar=legendary]::after,html[data-skin=night] #store7 .card[data-rar=legendary]::after{content:'';position:absolute;top:-20%;bottom:-20%;left:0;width:40%;pointer-events:none;z-index:2;
+ background:linear-gradient(100deg,rgba(255,240,200,0),rgba(255,240,200,.28),rgba(255,240,200,0));transform:translateX(-160%) skewX(-12deg);animation:dsSheen 4.8s ease-in-out infinite}
+html[data-skin=night] #inv7 .it7[data-rar=legendary]:nth-child(3n)::after{animation-delay:1.6s}html[data-skin=night] #inv7 .it7[data-rar=legendary]:nth-child(3n+1)::after{animation-delay:3.2s}
+@keyframes dsSheen{0%,62%{transform:translateX(-160%) skewX(-12deg)}100%{transform:translateX(360%) skewX(-12deg)}}
+html[data-reduce=true] #inv7 .it7[data-rar=legendary]::after,html[data-reduce=true] #store7 .card[data-rar=legendary]::after{animation:none;opacity:0}
+@media (prefers-reduced-motion:reduce){html[data-skin=night] #inv7 .it7[data-rar=legendary]::after,html[data-skin=night] #store7 .card[data-rar=legendary]::after{animation:none;opacity:0}}
+html[data-skin=night]:root body #inv7 .it7[data-rar=legendary]::after,html[data-skin=night]:root body #store7 .card[data-rar=legendary]::after{animation:dsSheen 4.8s ease-in-out infinite!important;opacity:1}
+html[data-reduce=true]:root body #inv7 .it7[data-rar=legendary]::after,html[data-reduce=true]:root body #store7 .card[data-rar=legendary]::after{animation:none!important;opacity:0!important}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -25858,17 +26013,17 @@ try{(()=>{
 try{(()=>{
  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const ic=n=>{try{return NAV16.icon(n)}catch(_){return''}};
- const EXTRA={dungeons:'<path class="d" d="M4 21V10l8-6 8 6v11z"/><path d="M9.500 21v-5.500a2.500 2.500 0 0 1 5 0V21"/>',cinema:'<rect class="d" x="3" y="5" width="18" height="14" rx="2.500"/><path d="M10 9.200v5.600l4.800-2.800z"/>',journal:'<path class="d" d="M5 4.500h9.500a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h9.500M9 8.500h5M9 11h3.500"/>'};
+ const EXTRA={dungeons:'<path class="d" d="M4 21V10l8-6 8 6v11z"/><path d="M9.500 21v-5.500a2.500 2.500 0 0 1 5 0V21"/>',cinema:'<rect class="d" x="3" y="5" width="18" height="14" rx="2.500"/><path d="M10 9.200v5.600l4.800-2.800z"/>',mastery:'<path class="d" d="M12 3.500l2.500 5.200 5.700.800-4.100 4 1 5.700L12 16.500l-5.100 2.700 1-5.700-4.100-4 5.700-.800z"/>',journal:'<path class="d" d="M5 4.500h9.500a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h9.500M9 8.500h5M9 11h3.500"/>'};
  const xic=n=>'<svg class="n16i" viewBox="0 0 24 24" aria-hidden="true">'+EXTRA[n]+'</svg>';
  // the apps: id, label, icon, accent, how it opens. nav: a NAV16 feature id
  const APPS=[
   {id:'character',n:'Character',nav:'character',c:'#9db4ff'},{id:'inventory',n:'Inventory',nav:'inventory',c:'#ffcf7a'},{id:'equipment',n:'Equipment',nav:'equipment',c:'#8fe3c1'},{id:'skills',n:'Skills',nav:'skills',c:'#ffe27a'},
   {id:'classes',n:'Classes',nav:'classes',c:'#ff9ab8'},{id:'quests',n:'Quests',nav:'quests',c:'#b8a4ff'},{id:'dungeons',n:'Dungeons',c:'#ff8a6a',x:'dungeons',open:()=>DG.page.open()},{id:'worlds',n:'Worlds',nav:'worlds',c:'#7ad8ff'},
   {id:'bosses',n:'Codex',nav:'bosses',c:'#ff6a7a',ico:'bosses'},{id:'social',n:'Friends',nav:'social',c:'#9affc8'},{id:'store',n:'Store',nav:'store',c:'#ffd27a'},{id:'collection',n:'Collection',nav:'collection',c:'#d0a4ff'},
-  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Trailer',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.trailer()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
+  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Trailer',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.trailer()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
  let root=null,dev=null,on=false,tmr=0,closing=0,lastFocus=null;
  const navF=id=>{try{return NAV16.F.find(f=>f.id==id)}catch(_){return null}};
- const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;if(a.id=='journal')return !!window.STORY1;return true};
+ const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;if(a.id=='journal')return !!window.STORY1;if(a.id=='mastery')return !!window.MASTERY1;return true};
  const badge=a=>{if(a.id=='journal'){try{const n=STORY1.unread;return n?String(n):''}catch(_){return''}}if(!a.nav)return'';const f=navF(a.nav),b=f&&f.el&&f.el.querySelector('.bdg');return b&&!b.hidden?b.textContent:''};
  const tone=(k)=>{try{if(typeof OPT!='undefined'&&OPT.uim)return;if(k=='open'){snd(660,.09,'sine',.035);setTimeout(()=>snd(990,.12,'sine',.03),70)}else if(k=='close'){snd(740,.07,'sine',.03);setTimeout(()=>snd(520,.09,'sine',.025),55)}else snd(880,.04,'triangle',.03)}catch(_){}};
 
@@ -25938,8 +26093,9 @@ try{(()=>{
  const save=()=>{try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}};
  // ---- what the player has done, read from the game's own records
  const stage=n=>{try{return WORD9.stageOf(n)}catch(_){return -1}};
- const wordOk=sg=>{try{const w=WORD9.state.w||{};return Object.keys(w).some(n=>w[n]&&w[n].ok&&n!='plaza'&&stage(n)===sg)}catch(_){return false}};
- const guard=sg=>{try{const w=(WBOSS13.state&&WBOSS13.state.w)||{};return Object.keys(w).some(n=>w[n]&&stage(n)===sg)}catch(_){return false}};
+ const REALM=['rootbound','rootbound-inf','rootbound-gal','rootbound-sea','rootbound-cry'];
+ const wordOk=sg=>{try{const v=(WORD9.state.w||{})[REALM[sg]];return !!(v&&v.ok)}catch(_){return false}};
+ const guard=sg=>{try{return !!((WBOSS13.state&&WBOSS13.state.w)||{})[REALM[sg]]}catch(_){return false}};
  const clr=d=>{try{const c=DG.S.clr[d];return !!(c&&Object.keys(c).length)}catch(_){return false}};
  const anyClr=()=>{try{return Object.keys(DG.S.clr||{}).some(clr)}catch(_){return false}};
  const seen=sg=>!!S.seen[sg];
@@ -25986,7 +26142,7 @@ try{(()=>{
  const busy=()=>{try{if(typeof INTRO60!='undefined'&&INTRO60.playing)return true;if(typeof CINE7!='undefined'&&CINE7.playing)return true;if(window.DG&&(DG.run||(DG.cine&&DG.cine.on)))return true;if(typeof WBOSS13!='undefined'&&WBOSS13.fight)return true;if(typeof entered!='undefined'&&!entered)return true;if(window.RPG&&RPG.guide&&RPG.guide.touring)return true}catch(_){}return false};
  const toast=t=>{try{say('Journal: '+t+' (M > Journal)')}catch(_){}};
  function check(){
-  try{const c=typeof cur!='undefined'?cur:'';if(c&&c!='plaza'&&!(window.DG&&DG.run)){const sg=stage(c);if(sg>=0&&!S.seen[sg]){S.seen[sg]=1;save()}}}catch(_){}
+  try{const c=typeof cur!='undefined'?cur:'';if(c&&!(window.DG&&DG.run)){const sg=REALM.indexOf(c);if(sg>=0&&!S.seen[sg]){S.seen[sg]=1;save()}}}catch(_){}
   let n=0;for(const p of ALL){if(S.got[p.id])continue;let ok=false;try{ok=!!p.if()}catch(_){}if(ok){S.got[p.id]=Date.now();n++;if(p.lavi)queue.push(p);else if(!API.busy())toast(p.t)}}
   if(n)save();
   if(queue.length&&!API.busy()){const p=queue.shift();try{RPG.guide.say(p.lavi)}catch(_){}toast(p.t)}
@@ -26048,13 +26204,15 @@ try{(()=>{
 try{(()=>{
  const COL=['#9be37a','#ff9a4a','#b48cff','#5ab8ff','#ff9ad0'],NAME=['the first world','an Inferno world','a Galaxy world','an Abyssal Sea world','a Crystal Realm world'];
  const stage=n=>{try{return WORD9.stageOf(n)}catch(_){return -1}};
- const anyIn=(o,sg,f)=>{try{return Object.keys(o||{}).some(n=>n!='plaza'&&stage(n)===sg&&f(o[n]))}catch(_){return false}};
+ // only the story's own realms (rootbound and its four realms); worlds players build keep their own colour and music
+ const REALM=['rootbound','rootbound-inf','rootbound-gal','rootbound-sea','rootbound-cry'],isRealm=n=>REALM.includes(n);
+ const anyIn=(o,sg,f)=>{try{const n=REALM[sg];return !!(o&&n in o&&f(o[n]))}catch(_){return false}};
  const word=sg=>{try{return anyIn(WORD9.state.w,sg,v=>v&&v.ok)}catch(_){return false}};
  const guard=sg=>{try{return anyIn(WBOSS13.state&&WBOSS13.state.w,sg,v=>!!v)}catch(_){return false}};
  const state=sg=>word(sg)?(guard(sg)?2:1):0;
  const restored=()=>[0,1,2,3,4].filter(sg=>state(sg)==2).length;
  const inRun=()=>{try{return !!(window.DG&&DG.run)}catch(_){return false}};
- const here=()=>{try{if(typeof cur=='undefined'||!cur||cur=='plaza'||inRun())return null;if(!WORD9.hasWord(cur))return null;const sg=stage(cur);return sg>=0&&sg<=4?{sg,st:state(sg)}:null}catch(_){return null}};
+ const here=()=>{try{if(typeof cur=='undefined'||!cur||!isRealm(cur)||inRun())return null;if(!WORD9.hasWord(cur))return null;const sg=stage(cur);return sg>=0&&sg<=4?{sg,st:state(sg)}:null}catch(_){return null}};
  // ---- colour, and the note on arrival
  let lastW='',lastSt=-1;
  function apply(){const h=here(),root=document.documentElement,v=h&&h.st<2?String(h.st):'';if(root.dataset.wst!==v){if(v)root.dataset.wst=v;else delete root.dataset.wst}
@@ -26084,7 +26242,7 @@ try{(()=>{
     const x=((a*w+t*22*(.5+b))%w+w)%w,y=((b*h+t*40*(.6+a))%h+h)%h;g.save();g.translate(x,y);g.rotate(t*(1+a)+i);g.fillStyle=COL[i%5];g.globalAlpha=.75;g.beginPath();g.ellipse(0,0,5,2.6,0,0,6.283);g.fill();g.restore()}}
   g.restore()}
  try{const dp=BOSS6.drawProj;BOSS6.drawProj=function(){const r=dp.apply(this,arguments);try{const now=performance.now();if(typeof cur!='undefined'&&cur=='plaza'&&!inRun())lanterns(g,now);else{const h=here();if(h&&h.st==2)lights(g,now)}}catch(_){}return r}}catch(e){console.error('RESTORE1 draw',e)}
- window.RESTORE1={state,restored,here,COL,NAME,apply};
+ window.RESTORE1={state,restored,here,COL,NAME,apply,REALM,isRealm};
 })()}catch(e){console.error('RESTORE1',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-g-side.js ========== */
@@ -26099,7 +26257,8 @@ try{(()=>{
  const st=k=>{try{return stats[k]|0}catch(_){return 0}};
  const got=id=>{try{return STORY1.got.includes(id)}catch(_){return false}};
  const stage=n=>{try{return WORD9.stageOf(n)}catch(_){return -1}};
- const inWorld=sg=>{try{return typeof cur!='undefined'&&cur&&cur!='plaza'&&!(window.DG&&DG.run)&&WORD9.hasWord(cur)&&stage(cur)===sg}catch(_){return false}};
+ const REALM=['rootbound','rootbound-inf','rootbound-gal','rootbound-sea','rootbound-cry'];
+ const inWorld=sg=>{try{return typeof cur!='undefined'&&cur===REALM[sg]&&!(window.DG&&DG.run)}catch(_){return false}};
  const clears=()=>{try{let n=0;for(const d of Object.keys(DG.S.clr||{}))n+=Object.keys(DG.S.clr[d]||{}).length;return n}catch(_){return 0}};
  const isNight=()=>{try{return typeof night!='undefined'&&night>.55}catch(_){return false}};
  // kind: 'stat' (a game counter grows by need), 'item' (carry need of an item; handed over), 'visit' (be somewhere, once, after accepting), 'clear' (clear a dungeon after accepting)
@@ -26198,6 +26357,73 @@ try{(()=>{
  try{const pg=STORY1.PAGES.find(p=>p.id=='end');if(pg)pg.replay=()=>start('end')}catch(_){}
  window.MOMENT1={start,stop,get on(){return !!M},get kind(){return M&&M.kind},get S(){return S},reset(){S={wake:{},rest:{},end:0};save()}};
 })()}catch(e){console.error('MOMENT1',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-i-brand.js ========== */
+// ===== BRAND1: the Rootbound logo on the title screen (docs/brand.md). The symbol (assets/brand/symbol.svg, inlined here so it can animate) and the wordmark reveal
+// themselves: the ring draws, the roots grow, the leaves open, the star glints, the letters settle, then the tagline. It shows only on the start card (before you
+// enter the game), never over the worlds list the same menu also shows later. Reduce motion shows the finished logo at once. =====
+try{(()=>{
+ const SYM='<svg class="br-sym" viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="brG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF8E6"/><stop offset=".45" stop-color="#F4D59A"/><stop offset=".8" stop-color="#D9B773"/><stop offset="1" stop-color="#F1DDA8"/></linearGradient></defs>'
+  +'<g fill="none" stroke="url(#brG)" stroke-linecap="round" stroke-linejoin="round"><path class="br-ring" pathLength="1" d="M52.5 11.6 A49 49 0 1 0 67.5 11.6" stroke-width="3.2"/><path class="br-trunk" pathLength="1" d="M60 86 C58.6 74 61.4 62 60 40" stroke-width="3.6"/>'
+  +'<path class="br-root" pathLength="1" d="M60 86 C55 92 46 96 37 104" stroke-width="2.6"/><path class="br-root" pathLength="1" d="M60 86 C60.6 94 60 100 60 109" stroke-width="2.6"/><path class="br-root" pathLength="1" d="M60 86 C65 92 74 96 83 104" stroke-width="2.6"/>'
+  +'<path class="br-root br-r2" pathLength="1" d="M53 93 C49 92 45 93 41 90" stroke-width="1.8"/><path class="br-root br-r2" pathLength="1" d="M67 93 C71 92 75 93 79 90" stroke-width="1.8"/></g>'
+  +'<g fill="url(#brG)"><path class="br-leaf br-l1" d="M60 55 C52 54 44 49 39 40 C49 39 57 44 60 55 Z"/><path class="br-leaf br-l2" d="M60.4 47 C67 45 76 39 81 30 C70 30 62 36 60.4 47 Z"/><path class="br-star" d="M60 2.5 L62.2 9.3 L69 11.5 L62.2 13.7 L60 20.5 L57.8 13.7 L51 11.5 L57.8 9.3 Z"/></g></svg>';
+ const WORD='ROOTBOUND';let uid=0;const sym=()=>{const id='brG'+(++uid);return SYM.split('brG').join(id)};
+ function mount(){const card=document.getElementById('card');if(!card||document.getElementById('brand1'))return;const b=document.createElement('div');b.id='brand1';b.setAttribute('role','img');b.setAttribute('aria-label','Rootbound');
+  b.innerHTML=sym()+'<div class="br-word">'+[...WORD].map((ch,i)=>'<span style="--i:'+i+'">'+ch+'</span>').join('')+'</div><div class="br-tag">Every world is waiting to be remembered.</div>';
+  card.insertBefore(b,card.querySelector('#mhome')||card.firstChild);update()}
+ // visible on the start card only: before the game is entered, while the name and Play row is the menu's section
+ function update(){const b=document.getElementById('brand1'),menu=document.getElementById('menu'),home=document.getElementById('mhome');if(!b||!menu)return;
+  let show=false;try{show=!entered&&menu.style.display!='none'&&home&&getComputedStyle(home).display!='none'}catch(_){}
+  document.documentElement.classList.toggle('rb-title',show);if(show&&!b.classList.contains('go')){void b.offsetWidth;b.classList.add('go')}}
+ const iv=setInterval(()=>{mount();update();try{if(entered){update();clearInterval(iv);setInterval(update,2000)}}catch(_){}},250);
+ // the page's own icon is the symbol, not an emoji
+ try{const l=document.querySelector('link[rel=icon]');if(l)l.href='data:image/svg+xml,'+encodeURIComponent(SYM.replace('class="br-sym"','xmlns="http://www.w3.org/2000/svg"'))}catch(_){}
+ // the launch title: after the intro film the game starts under a short logo reveal (4.6 s, never blocks input, removed afterwards)
+ function reveal(){if(document.getElementById('brandrev'))return;const o=document.createElement('div');o.id='brandrev';o.setAttribute('aria-hidden','true');
+  o.innerHTML='<div class="brv-in">'+sym()+'<div class="br-word">'+[...WORD].map((ch,i)=>'<span style="--i:'+i+'">'+ch+'</span>').join('')+'</div><div class="br-tag">Every world is waiting to be remembered.</div></div>';
+  document.body.appendChild(o);void o.offsetWidth;o.classList.add('go');try{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{try{snd(f,1.4,'sine',.03)}catch(_){}},1100+i*160))}catch(_){}setTimeout(()=>{try{o.remove()}catch(_){}},4800)}
+ try{const o=SHOW7.open;SHOW7.open=function(){const r=o.apply(this,arguments);try{reveal()}catch(_){}return r}}catch(_){}
+ window.BRAND1={SYM,update,reveal};
+})()}catch(e){console.error('BRAND1',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-j-mastery.js ========== */
+// ===== MASTERY1: weapon mastery. Every defeat made with a weapon counts toward that weapon's mastery (read from the game's own kill counter: stat('kill') is
+// wrapped, and the weapon is the one in your hand). Five levels at 10, 50, 150, 400 and 1,000 defeats; each pays gems once and shows as stars on the weapon's tile
+// in the inventory. Rootlink > Mastery lists every weapon you own with its stars and progress. No damage changes: mastery is pride and gems, not power, so the
+// classes stay balanced. State: RB_PREFIX+'rbmast' {w:{id:{k:defeats,l:level paid}}}. =====
+try{(()=>{
+ const KEY=()=>(typeof RB_PREFIX!='undefined'?RB_PREFIX:'')+'rbmast';
+ let S={w:{}};try{S=Object.assign(S,JSON.parse(localStorage.getItem(KEY())||'{}'))}catch(_){}
+ let dirty=false;const save=()=>{try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}dirty=false};setInterval(()=>{if(dirty)save()},5000);addEventListener('beforeunload',()=>{if(dirty)save()});
+ const NEED=[10,50,150,400,1000],GEMS=[50,150,400,1000,2500],NAMES=['Novice','Adept','Expert','Master','Grandmaster'];
+ const lvlOf=k=>NEED.filter(n=>k>=n).length;
+ const wname=id=>{try{return(WPN[id]&&WPN[id].n)||id}catch(_){return id}};
+ const isWeapon=id=>{try{return !!(WPN[id]&&WPN[id].k!='tool'&&id!='fist')}catch(_){return false}};
+ function add(id,n){if(!isWeapon(id)||!(n>0))return;const e=S.w[id]||(S.w[id]={k:0,l:0});e.k+=n;dirty=true;const L=lvlOf(e.k);
+  while(e.l<L){const g=GEMS[e.l];e.l++;save();try{gems+=g;say(wname(id)+' mastery: '+NAMES[e.l-1]+'  '+'★'.repeat(e.l)+'  +'+g+' gems');snd(784,.2,'triangle',.05);setTimeout(()=>snd(1175,.3,'triangle',.05),120)}catch(_){}}
+  paint()}
+ // the game's own kill counter: a defeat counts for the weapon in hand
+ try{const s0=stat;stat=function(k,n){const r=s0.apply(this,arguments);try{if(k=='kill'&&n>0)add(typeof wp!='undefined'?wp:'',n)}catch(_){}return r}}catch(e){console.error('MASTERY1 hook',e)}
+ // stars on weapon tiles in the inventory (painted after the inventory draws its grid)
+ function paint(){const g=document.querySelector('#inv7 .grid7');if(!g)return;for(const t of g.querySelectorAll('.it7[data-k^="w:"]')){const id=t.dataset.k.slice(2),e=S.w[id],l=e?e.l:0;let b=t.querySelector('.wm1');
+   if(!l){if(b)b.remove();continue}if(!b){b=document.createElement('i');b.className='wm1';t.appendChild(b)}const s='★'.repeat(l);if(b.textContent!==s){b.textContent=s;b.title=NAMES[l-1]+' mastery'}b.dataset.l=l}}
+ try{const mo=new MutationObserver(()=>{if(document.querySelector('#inv7.open,#inv7.show'))paint()});const watch=()=>{const inv=document.getElementById('inv7');if(inv){mo.observe(inv,{childList:true,subtree:true});return true}return false};if(!watch()){const iv=setInterval(()=>{if(watch())clearInterval(iv)},1500)}}catch(_){}
+ try{const o=INV7.open;INV7.open=function(){const r=o.apply(this,arguments);setTimeout(()=>{try{const inv=document.getElementById('inv7');if(inv&&!inv.__wm){inv.__wm=1;const mo2=new MutationObserver(()=>paint());mo2.observe(inv,{childList:true,subtree:true})}paint()}catch(_){}},60);return r}}catch(_){}
+ // the Mastery page (Rootlink > Mastery)
+ let el=null;const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ function render(){const owned=Object.keys(typeof own!='undefined'?own:{}).filter(isWeapon);const ids=[...new Set([...owned,...Object.keys(S.w).filter(isWeapon)])].sort((a,b)=>((S.w[b]||{}).k|0)-((S.w[a]||{}).k|0));
+  const tot=ids.reduce((n,id)=>n+((S.w[id]||{}).l|0),0);el.querySelector('.wm-count').textContent=tot+' of '+ids.length*5+' stars';
+  el.querySelector('.wm-list').innerHTML=ids.length?ids.map(id=>{const e=S.w[id]||{k:0,l:0},l=e.l|0,next=NEED[l],prev=l?NEED[l-1]:0,k=next?Math.min(1,(e.k-prev)/(next-prev)):1;let cc='#F4D59A';try{cc=CLASS7.C[CLASS7.of(id)].c}catch(_){}
+   return'<div class="wm-row" style="--c:'+cc+'"><div class="wm-n"><b>'+esc(wname(id))+'</b><small>'+(l?NAMES[l-1]:'Not yet mastered')+' · '+e.k+' defeats</small></div><div class="wm-stars">'+[0,1,2,3,4].map(i=>'<i class="'+(i<l?'on':'')+'">★</i>').join('')+'</div><div class="wm-bar"><u style="width:'+Math.round(k*100)+'%"></u></div><small class="wm-next">'+(next?(next-e.k)+' more for '+NAMES[l]+' · +'+GEMS[l]+' gems':'Grandmaster')+'</small></div>'}).join(''):'<p class="wm-empty">Defeat monsters with a weapon to start mastering it.</p>'}
+ function build(){el=document.createElement('div');el.id='wm1';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Weapon mastery');
+  el.innerHTML='<div class="wm-scrim"></div><div class="wm-box"><header><div><small>Rootlink</small><h2>Weapon Mastery</h2></div><span class="wm-count"></span><button type="button" class="wm-x" aria-label="Close">×</button></header><p class="wm-sub">Every defeat counts toward the weapon in your hand. Five levels, each with a reward.</p><div class="wm-list"></div></div>';
+  document.body.appendChild(el);el.querySelector('.wm-scrim').addEventListener('pointerdown',close);el.querySelector('.wm-x').addEventListener('click',close);
+  addEventListener('keydown',e=>{if(el&&el.classList.contains('on')&&e.key=='Escape'){close();e.preventDefault();e.stopImmediatePropagation()}},true)}
+ function open(){if(!el)build();try{NAV16.closeAll()}catch(_){}render();el.classList.add('on');return true}
+ function close(){if(el)el.classList.remove('on')}
+ window.MASTERY1={add,open,close,lvlOf,NEED,GEMS,NAMES,get on(){return !!(el&&el.classList.contains('on'))},get S(){return S},reset(){S={w:{}};save();paint()},paint};
+})()}catch(e){console.error('MASTERY1',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-restore.js ========== */
 // The last script of all: every item, weapon and piece of gear in the game is registered by now, so what the start-up check set aside (99-a-sanitize.js) goes back where it was.

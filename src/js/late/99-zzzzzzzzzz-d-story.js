@@ -8,8 +8,9 @@ try{(()=>{
  const save=()=>{try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}};
  // ---- what the player has done, read from the game's own records
  const stage=n=>{try{return WORD9.stageOf(n)}catch(_){return -1}};
- const wordOk=sg=>{try{const w=WORD9.state.w||{};return Object.keys(w).some(n=>w[n]&&w[n].ok&&n!='plaza'&&stage(n)===sg)}catch(_){return false}};
- const guard=sg=>{try{const w=(WBOSS13.state&&WBOSS13.state.w)||{};return Object.keys(w).some(n=>w[n]&&stage(n)===sg)}catch(_){return false}};
+ const REALM=['rootbound','rootbound-inf','rootbound-gal','rootbound-sea','rootbound-cry'];
+ const wordOk=sg=>{try{const v=(WORD9.state.w||{})[REALM[sg]];return !!(v&&v.ok)}catch(_){return false}};
+ const guard=sg=>{try{return !!((WBOSS13.state&&WBOSS13.state.w)||{})[REALM[sg]]}catch(_){return false}};
  const clr=d=>{try{const c=DG.S.clr[d];return !!(c&&Object.keys(c).length)}catch(_){return false}};
  const anyClr=()=>{try{return Object.keys(DG.S.clr||{}).some(clr)}catch(_){return false}};
  const seen=sg=>!!S.seen[sg];
@@ -56,7 +57,7 @@ try{(()=>{
  const busy=()=>{try{if(typeof INTRO60!='undefined'&&INTRO60.playing)return true;if(typeof CINE7!='undefined'&&CINE7.playing)return true;if(window.DG&&(DG.run||(DG.cine&&DG.cine.on)))return true;if(typeof WBOSS13!='undefined'&&WBOSS13.fight)return true;if(typeof entered!='undefined'&&!entered)return true;if(window.RPG&&RPG.guide&&RPG.guide.touring)return true}catch(_){}return false};
  const toast=t=>{try{say('Journal: '+t+' (M > Journal)')}catch(_){}};
  function check(){
-  try{const c=typeof cur!='undefined'?cur:'';if(c&&c!='plaza'&&!(window.DG&&DG.run)){const sg=stage(c);if(sg>=0&&!S.seen[sg]){S.seen[sg]=1;save()}}}catch(_){}
+  try{const c=typeof cur!='undefined'?cur:'';if(c&&!(window.DG&&DG.run)){const sg=REALM.indexOf(c);if(sg>=0&&!S.seen[sg]){S.seen[sg]=1;save()}}}catch(_){}
   let n=0;for(const p of ALL){if(S.got[p.id])continue;let ok=false;try{ok=!!p.if()}catch(_){}if(ok){S.got[p.id]=Date.now();n++;if(p.lavi)queue.push(p);else if(!API.busy())toast(p.t)}}
   if(n)save();
   if(queue.length&&!API.busy()){const p=queue.shift();try{RPG.guide.say(p.lavi)}catch(_){}toast(p.t)}

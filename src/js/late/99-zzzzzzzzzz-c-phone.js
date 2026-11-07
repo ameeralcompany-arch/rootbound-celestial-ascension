@@ -6,17 +6,17 @@
 try{(()=>{
  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const ic=n=>{try{return NAV16.icon(n)}catch(_){return''}};
- const EXTRA={dungeons:'<path class="d" d="M4 21V10l8-6 8 6v11z"/><path d="M9.500 21v-5.500a2.500 2.500 0 0 1 5 0V21"/>',cinema:'<rect class="d" x="3" y="5" width="18" height="14" rx="2.500"/><path d="M10 9.200v5.600l4.800-2.800z"/>',journal:'<path class="d" d="M5 4.500h9.500a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h9.500M9 8.500h5M9 11h3.500"/>'};
+ const EXTRA={dungeons:'<path class="d" d="M4 21V10l8-6 8 6v11z"/><path d="M9.500 21v-5.500a2.500 2.500 0 0 1 5 0V21"/>',cinema:'<rect class="d" x="3" y="5" width="18" height="14" rx="2.500"/><path d="M10 9.200v5.600l4.800-2.800z"/>',mastery:'<path class="d" d="M12 3.500l2.500 5.200 5.700.800-4.100 4 1 5.700L12 16.500l-5.100 2.700 1-5.700-4.100-4 5.700-.800z"/>',journal:'<path class="d" d="M5 4.500h9.500a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h9.500M9 8.500h5M9 11h3.500"/>'};
  const xic=n=>'<svg class="n16i" viewBox="0 0 24 24" aria-hidden="true">'+EXTRA[n]+'</svg>';
  // the apps: id, label, icon, accent, how it opens. nav: a NAV16 feature id
  const APPS=[
   {id:'character',n:'Character',nav:'character',c:'#9db4ff'},{id:'inventory',n:'Inventory',nav:'inventory',c:'#ffcf7a'},{id:'equipment',n:'Equipment',nav:'equipment',c:'#8fe3c1'},{id:'skills',n:'Skills',nav:'skills',c:'#ffe27a'},
   {id:'classes',n:'Classes',nav:'classes',c:'#ff9ab8'},{id:'quests',n:'Quests',nav:'quests',c:'#b8a4ff'},{id:'dungeons',n:'Dungeons',c:'#ff8a6a',x:'dungeons',open:()=>DG.page.open()},{id:'worlds',n:'Worlds',nav:'worlds',c:'#7ad8ff'},
   {id:'bosses',n:'Codex',nav:'bosses',c:'#ff6a7a',ico:'bosses'},{id:'social',n:'Friends',nav:'social',c:'#9affc8'},{id:'store',n:'Store',nav:'store',c:'#ffd27a'},{id:'collection',n:'Collection',nav:'collection',c:'#d0a4ff'},
-  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Trailer',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.trailer()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
+  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Trailer',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.trailer()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
  let root=null,dev=null,on=false,tmr=0,closing=0,lastFocus=null;
  const navF=id=>{try{return NAV16.F.find(f=>f.id==id)}catch(_){return null}};
- const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;if(a.id=='journal')return !!window.STORY1;return true};
+ const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;if(a.id=='journal')return !!window.STORY1;if(a.id=='mastery')return !!window.MASTERY1;return true};
  const badge=a=>{if(a.id=='journal'){try{const n=STORY1.unread;return n?String(n):''}catch(_){return''}}if(!a.nav)return'';const f=navF(a.nav),b=f&&f.el&&f.el.querySelector('.bdg');return b&&!b.hidden?b.textContent:''};
  const tone=(k)=>{try{if(typeof OPT!='undefined'&&OPT.uim)return;if(k=='open'){snd(660,.09,'sine',.035);setTimeout(()=>snd(990,.12,'sine',.03),70)}else if(k=='close'){snd(740,.07,'sine',.03);setTimeout(()=>snd(520,.09,'sine',.025),55)}else snd(880,.04,'triangle',.03)}catch(_){}};
 
