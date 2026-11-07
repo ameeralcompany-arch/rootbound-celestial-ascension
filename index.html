@@ -57,7 +57,7 @@ var mo=new MutationObserver(function(){if(document.body){mo.disconnect();start()
 })();
 </script>
 
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600;700&family=Montserrat:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600;700&display=swap">
 <script>(function(){var l=document.querySelector('link[rel=preload][as=style]');if(!l)return;l.onload=function(){l.onload=null;l.rel='stylesheet'};l.onerror=function(){window.RBDIAG&&RBDIAG.assets.push('fonts (optional, using system fonts)')}})()</script>
 <meta name="description" content="Rootbound: a multiplayer block-building sandbox you can play with a room code.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E">
@@ -129,6 +129,16 @@ img{image-rendering:pixelated}
 .cl{color:var(--mu);font-size:12px;text-transform:uppercase;margin-top:8px}.sw{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.sw i{width:30px;height:30px;border-radius:4px;border:2px solid rgba(255,255,255,.3);cursor:pointer}.sw i.on,.sw button.on{border-color:#ffd24a;box-shadow:0 0 8px rgba(255,210,74,.6)}.sw button{padding:6px 10px}
 #qm{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,94vw);max-height:80vh;overflow:auto;padding:14px;display:none;z-index:6}#qm .dh{display:flex;align-items:center;gap:10px;margin-bottom:10px}#qm small{color:var(--mu);display:block}
 #rinfo{margin-top:8px;color:var(--mu);font-size:13px}#mworlds .row{align-items:center}
+
+/* ========== CSS: 00-fonts.css ========== */
+/* ===== The brand fonts, bundled with the game so they work offline (docs/brand.md). Cormorant Garamond (titles, story) and Montserrat (the interface),
+   both SIL Open Font License 1.1 (assets/fonts/OFL-*.txt), from Google Fonts. Variable fonts: one file per style covers every weight. Latin and Latin Extended. ===== */
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:600 700;font-display:swap;src:url(assets/fonts/cormorant-garamond-italic-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:600 700;font-display:swap;src:url(assets/fonts/cormorant-garamond-italic-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:600 700;font-display:swap;src:url(assets/fonts/cormorant-garamond-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:600 700;font-display:swap;src:url(assets/fonts/cormorant-garamond-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:500 900;font-display:swap;src:url(assets/fonts/montserrat-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:500 900;font-display:swap;src:url(assets/fonts/montserrat-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 
 /* ========== CSS: 10-theme.css ========== */
 :root{--ink:#07060d;--panel:#0d0b16;--panel2:#15111f;--line:#3a2a3f;--gold:#d9b46a;--gold2:#f3dca0;--rose:#b3263a;--vio:#9a6bff;--ice:#9fd8ff;--txt:#ece6f4;--dim:#9a90ad;--green:#4dff9a}

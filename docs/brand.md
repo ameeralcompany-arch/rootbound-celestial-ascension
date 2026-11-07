@@ -53,7 +53,7 @@ It never blocks input. Reduce motion shows the finished logo straight away.
 
 Section labels are Montserrat 700, 11 px, 0.18em, in capitals and gold. Panel titles are Cormorant 30 px in cream.
 
-The fonts currently load from Google Fonts at start, with Georgia and the system sans as fallbacks when offline. Bundling the two font families (both under the SIL Open Font License) is the next step, waiting on approval to download them.
+Both fonts ship with the game in `assets/fonts/`, so they work offline. They come from Google Fonts under the SIL Open Font License 1.1, and the licences sit beside them (`OFL-*.txt`). They're variable fonts, so one file per style covers every weight, with Latin and Latin Extended files (about 254 KB in total). `src/css/00-fonts.css` declares them. Fredoka and Pixelify Sans, used by the older looks, still load from Google Fonts when the internet is available.
 
 ## The design system in the game
 
