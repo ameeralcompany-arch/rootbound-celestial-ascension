@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.10",
+      "type": "update",
+      "title": "The new intro cinematic, and Rootlink on screen",
+      "summary": "The new 92-second cinematic is now the intro every time you start Rootbound. Watch it again any time from Settings > General > Intro film, or from Rootlink. Rootlink, your phone, now has its own button under your character card, next to Res",
+      "body": "The new 92-second cinematic is now the intro every time you start Rootbound. Watch it again any time from Settings > General > Intro film, or from Rootlink. Rootlink, your phone, now has its own button under your character card, next to Respawn (or press M).",
+      "date": "2026-11-07",
+      "version": "6.13.10"
+    },
+    {
       "id": "update-6.13.9",
       "type": "update",
       "title": "The brand fonts, now built in",
