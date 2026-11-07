@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.9",
+      "type": "update",
+      "title": "The brand fonts, now built in",
+      "summary": "Rootbound's title and menu fonts now come with the game, so everything looks right even when you start without internet.",
+      "body": "Rootbound's title and menu fonts now come with the game, so everything looks right even when you start without internet.",
+      "date": "2026-11-07",
+      "version": "6.13.9"
+    },
+    {
       "id": "update-6.13.8",
       "type": "update",
       "title": "A new look, and Weapon Mastery",
