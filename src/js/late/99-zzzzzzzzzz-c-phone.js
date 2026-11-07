@@ -13,7 +13,7 @@ try{(()=>{
   {id:'character',n:'Character',nav:'character',c:'#9db4ff'},{id:'inventory',n:'Inventory',nav:'inventory',c:'#ffcf7a'},{id:'equipment',n:'Equipment',nav:'equipment',c:'#8fe3c1'},{id:'skills',n:'Skills',nav:'skills',c:'#ffe27a'},
   {id:'classes',n:'Classes',nav:'classes',c:'#ff9ab8'},{id:'quests',n:'Quests',nav:'quests',c:'#b8a4ff'},{id:'dungeons',n:'Dungeons',c:'#ff8a6a',x:'dungeons',open:()=>DG.page.open()},{id:'worlds',n:'Worlds',nav:'worlds',c:'#7ad8ff'},
   {id:'bosses',n:'Codex',nav:'bosses',c:'#ff6a7a',ico:'bosses'},{id:'social',n:'Friends',nav:'social',c:'#9affc8'},{id:'store',n:'Store',nav:'store',c:'#ffd27a'},{id:'collection',n:'Collection',nav:'collection',c:'#d0a4ff'},
-  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Trailer',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.trailer()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
+  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Intro film',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.replay()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
  let root=null,dev=null,on=false,tmr=0,closing=0,lastFocus=null;
  const navF=id=>{try{return NAV16.F.find(f=>f.id==id)}catch(_){return null}};
  const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;if(a.id=='journal')return !!window.STORY1;if(a.id=='mastery')return !!window.MASTERY1;return true};
@@ -72,5 +72,8 @@ try{(()=>{
  addEventListener('keydown',e=>{if(e.key!='m'&&e.key!='M')return;if(e.shiftKey||e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
   if(on){close();e.preventDefault();e.stopImmediatePropagation();return}if(open()){e.preventDefault();e.stopImmediatePropagation()}},true);
  addEventListener('keydown',e=>{if(on&&e.key=='Escape'){close();e.preventDefault();e.stopImmediatePropagation()}},true);
+ // a button for it under the character card, next to Respawn, so it can be found without knowing the key
+ setInterval(function btn(){const row=document.getElementById('ow15bt');if(!row||document.getElementById('brlk'))return;const b=document.createElement('button');b.id='brlk';b.type='button';b.className='pn';b.setAttribute('aria-label','Rootlink, your phone (M)');b.dataset.n16tip='Rootlink|Your phone: profile, today, every menu, the intro film|M';
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.5 18.3h3"/></svg>ROOTLINK<kbd>M</kbd>';b.addEventListener('click',e=>{e.stopPropagation();on?close():open()});row.appendChild(b)},1000);
  window.ROOTLINK={open,close,toggle:()=>on?close():open(),get on(){return on},APPS};
 })()}catch(e){console.error('ROOTLINK',e)}

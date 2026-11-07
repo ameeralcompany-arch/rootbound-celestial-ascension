@@ -3110,6 +3110,12 @@ html[data-skin=night] #craftui{max-height:calc(94vh / var(--uiz))!important;over
 @media (max-height:700px){#rlk .rlk-dev{width:350px;border-radius:40px}#rlk .rlk-ico{width:50px;height:50px;border-radius:15px}}
 @media (prefers-reduced-motion:reduce){#rlk .rlk-dev,#rlk .rlk-app,#rlk .rlk-scr{transition:opacity .15s!important;transform:none!important}}
 
+/* the Rootlink button under the character card, next to Respawn */
+html[data-skin] body #ow15bt #brlk{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(180deg,rgba(244,213,154,.22),rgba(244,213,154,.08))!important;border:1px solid rgba(244,213,154,.6)!important;color:#FFF8E6!important}
+#brlk svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+#brlk kbd{font:700 9px Montserrat,system-ui,sans-serif;padding:1px 5px;border-radius:4px;background:rgba(0,0,0,.3);border:1px solid rgba(244,213,154,.4);letter-spacing:0}
+body.dgon #brlk{display:none!important}
+
 /* ========== CSS: 99-zzzzz-story.css ========== */
 /* ===== STORY1: the Journal (src/js/late/99-zzzzzzzzzz-d-story.js). A book of glass: chapters on the left, the page on the right. ===== */
 #stj{position:fixed;inset:0;z-index:2147482400;display:none;align-items:center;justify-content:center;font-family:Montserrat,'Segoe UI',system-ui,sans-serif;color:#efeaf8}
@@ -15135,7 +15141,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   const S={
    general:row('sth','Theme','Soft Glass is the game\'s look. Clean is the lightest on your computer',sel('sth',[['night','Soft Glass (default)'],['clean','Clean (white and grey)'],['aero','Aqua glass (Frutiger Aero)'],['light','Pearl (light)'],['dark','Plum night (dark)'],['auto','Match my system']],o.theme||'night'))
     +row('snm','Player name','Shown on your nameplate (up to 14 letters)','<input type="text" id="snm" maxlength="14" value="'+esc(myName)+'" autocomplete="off">')
-    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+row('strail','Trailer','Watch the official trailer','<button class="hbtn" id="strail">Watch</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
+    +row('sintro','Intro film','Watch the opening cinematic again','<button class="hbtn" id="sintro">Replay</button>')+((()=>{try{return !!RB_ACCT.id}catch(_){return false}})()?'':row('ssd','Save data','Progress saves automatically; keep a backup file too','<button class="hbtn" id="ssd">Backup & restore</button>')),
    graphics:row('sq','Graphics quality','Resolution, particles and background layers',sel('sq',preset.map(p=>[p,p=='auto'?'Auto (by device)':QPRE.find(q=>q.id==p).n]),o.qp)+'<small id="sqn" class="snote7"></small>')
     +row('sv','Effects intensity','Strength of hit sparks, auras and magic',rng('sv',0,150,o.vfx*100))
     +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
@@ -15177,7 +15183,6 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
   q('snm').onchange=e=>{const n=e.target.value.trim().slice(0,14);if(n){myName=n;try{$('nm').value=n;saveP()}catch(_){}}else e.target.value=myName};q('snm').onkeydown=e=>e.stopPropagation();
   if(q('ssd'))q('ssd').onclick=()=>UI6.open('account');
   if(q('sintro'))q('sintro').onclick=()=>{try{INTRO60.replay()}catch(_){}};
-  if(q('strail'))q('strail').onclick=()=>{try{INTRO60.trailer()}catch(_){}};
   // graphics
   const qn=()=>{try{const p=o.qp=='auto'?QM.cur:QPRE.find(x=>x.id==o.qp);q('sqn').textContent='Resolution '+Math.round(p.rsc*100)+'% · up to '+p.cap+' particles · '+p.par+' parallax layers'}catch(_){}};qn();
   q('sq').onchange=e=>{QM.setting(e.target.value);qn()};
@@ -16897,28 +16902,26 @@ const GENDER7=(()=>{
  return{apply,html,setHome,setLook,get cur(){return cel.ap.gd|0}}})();
 
 /* ========== LATE: 97-z-introvideo.js ========== */
-// ===== INTRO60: the launch cinematic, a 43-second film cut from footage of the real game (audio/intro-cinematic.mp4), with its music and sound already in it.
-// The film is cut ahead of time from the Remotion project (rootbound-video) and sits next to index.html like the song, so it never adds to the page.
-// "Press any key to skip" appears after a few seconds, next to a Skip button. Settings > General has a button to watch it again. A recording at
-// audio/rootbound-voice.mp3, if one is ever added, is spoken over the title.
-// The same player shows the official trailer (audio/trailer.mp4, about 90 s) from Settings > General > Trailer: nothing of it loads until then, and the
-// video is released when it ends or is skipped.
+// ===== INTRO60: the launch cinematic. Since 6.13.10 it is the official cinematic (audio/trailer.mp4, about 92 s, 1080p): made only from the real game, with
+// its own score, sound design, Lavi's narration and the bosses' voices (docs/trailer.md). Every player sees it at every launch, then the game starts.
+// "Press any key to skip" appears after a few seconds, next to a Skip button. Settings > General > Intro film and Rootlink > Intro film play it again.
+// The older 43-second film (audio/intro-cinematic.mp4) is no longer played.
 // CINE7's story intro stays as the fallback: it plays when the film cannot (only index.html was copied, a browser without H.264, a connection too slow to
 // start it in time).
 const INTRO60=(()=>{
- const SRC='audio/intro-cinematic.mp4',TRAILER='audio/trailer.mp4',VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
+ const SRC='audio/trailer.mp4',TRAILER=SRC,VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
  let S=null;
  const volume=()=>{try{return Math.min(1,Math.max(0,(typeof mute!='undefined'&&mute)?0:(OPT.mv==null?.5:+OPT.mv)*1.5))}catch(_){return .75}};
 
  function launch(home){
   let story=false;try{story=!!localStorage.getItem('rb_story_intro')}catch(_){}
   const v=document.createElement('video');
-  if(story||!v.canPlayType||!v.canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"'))return CINE7.launch(home);try{v.preload='auto';v.src=SRC;v.load()}catch(_){}/* buffering starts now, while the game is still starting */
+  if(story||!v.canPlayType||!v.canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"'))return CINE7.launch(home);const src=SRC;try{v.preload='auto';v.src=src;v.load()}catch(_){}/* buffering starts now, while the game is still starting */
   let n=0;const iv=setInterval(()=>{n++;let rdy=true,bad=false;try{rdy=!window.RBDIAG||RBDIAG.ready;const d=document.getElementById('rbdiag');bad=!!(d&&getComputedStyle(d).display!='none')}catch(_){}
-   if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{start(v,home)}catch(e){console.error('INTRO60',e);drop();CINE7.launch(home)}},60)}
+   if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{start(v,home,src)}catch(e){console.error('INTRO60',e);drop();CINE7.launch(home)}},60)}
 
  function start(v,home,src){src=src||SRC;
-  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label',src==SRC?'Intro film: Rootbound':'Trailer: Rootbound');
+  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label','Intro film: Rootbound');
   w.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#000;cursor:none;user-select:none;touch-action:none';
   if(!v.getAttribute('src'))v.src=src;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
   v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;pointer-events:none';
@@ -16927,8 +16930,7 @@ const INTRO60=(()=>{
   const prompt=document.createElement('div');prompt.style.cssText="position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff4dc;font:italic 600 34px 'Cormorant Garamond',Georgia,serif;text-align:center;pointer-events:none";
   prompt.innerHTML='Click or press any key to begin<div style="font:600 14px Montserrat,system-ui,sans-serif;font-style:normal;color:rgba(255,255,255,.6);margin-top:12px">This film has music</div>';
   w.append(v,prompt,skip);document.body.appendChild(w);window.RB_COVER=true;
-  S={v,w,skip,prompt,home,src,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:src!=SRC,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
-  try{const a=new Audio();a.preload='auto';a.oncanplaythrough=()=>{if(S)S.vc=a};a.src=VOICE;a.load()}catch(_){}
+  S={v,w,skip,prompt,home,src,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:true,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
   v.volume=volume();
   v.addEventListener('canplay',()=>{if(S&&S.st=='wait')tryPlay()});
   v.addEventListener('error',()=>{if(S&&!S.fin)giveUp()});
@@ -26030,7 +26032,7 @@ try{(()=>{
   {id:'character',n:'Character',nav:'character',c:'#9db4ff'},{id:'inventory',n:'Inventory',nav:'inventory',c:'#ffcf7a'},{id:'equipment',n:'Equipment',nav:'equipment',c:'#8fe3c1'},{id:'skills',n:'Skills',nav:'skills',c:'#ffe27a'},
   {id:'classes',n:'Classes',nav:'classes',c:'#ff9ab8'},{id:'quests',n:'Quests',nav:'quests',c:'#b8a4ff'},{id:'dungeons',n:'Dungeons',c:'#ff8a6a',x:'dungeons',open:()=>DG.page.open()},{id:'worlds',n:'Worlds',nav:'worlds',c:'#7ad8ff'},
   {id:'bosses',n:'Codex',nav:'bosses',c:'#ff6a7a',ico:'bosses'},{id:'social',n:'Friends',nav:'social',c:'#9affc8'},{id:'store',n:'Store',nav:'store',c:'#ffd27a'},{id:'collection',n:'Collection',nav:'collection',c:'#d0a4ff'},
-  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Trailer',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.trailer()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
+  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Intro film',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.replay()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
  let root=null,dev=null,on=false,tmr=0,closing=0,lastFocus=null;
  const navF=id=>{try{return NAV16.F.find(f=>f.id==id)}catch(_){return null}};
  const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;if(a.id=='journal')return !!window.STORY1;if(a.id=='mastery')return !!window.MASTERY1;return true};
@@ -26089,6 +26091,9 @@ try{(()=>{
  addEventListener('keydown',e=>{if(e.key!='m'&&e.key!='M')return;if(e.shiftKey||e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
   if(on){close();e.preventDefault();e.stopImmediatePropagation();return}if(open()){e.preventDefault();e.stopImmediatePropagation()}},true);
  addEventListener('keydown',e=>{if(on&&e.key=='Escape'){close();e.preventDefault();e.stopImmediatePropagation()}},true);
+ // a button for it under the character card, next to Respawn, so it can be found without knowing the key
+ setInterval(function btn(){const row=document.getElementById('ow15bt');if(!row||document.getElementById('brlk'))return;const b=document.createElement('button');b.id='brlk';b.type='button';b.className='pn';b.setAttribute('aria-label','Rootlink, your phone (M)');b.dataset.n16tip='Rootlink|Your phone: profile, today, every menu, the intro film|M';
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.5 18.3h3"/></svg>ROOTLINK<kbd>M</kbd>';b.addEventListener('click',e=>{e.stopPropagation();on?close():open()});row.appendChild(b)},1000);
  window.ROOTLINK={open,close,toggle:()=>on?close():open(),get on(){return on},APPS};
 })()}catch(e){console.error('ROOTLINK',e)}
 

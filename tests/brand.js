@@ -10,7 +10,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:20},gems:1000,own:{fist:1,astralkat:1,saku
 (async()=>{const b=await chromium.launch({executablePath:EXE,args:['--no-sandbox','--mute-audio','--autoplay-policy=no-user-gesture-required']});const errs=[];
  // the launch: intro film, then the logo reveal over the starting game
  {const c=await b.newContext({viewport:{width:1600,height:900}});await c.addInitScript(()=>{localStorage.setItem('rb_force_launch','1');localStorage.setItem('rbg_seen','1')});const p=await c.newPage();p.on('pageerror',e=>errs.push(e.message));
-  await p.goto(FILE);await p.waitForFunction(()=>typeof INTRO60!='undefined'&&INTRO60.playing,null,{timeout:90000});await sleep(1200);await p.evaluate(()=>INTRO60.seek(43.2));
+  await p.goto(FILE);await p.waitForFunction(()=>typeof INTRO60!='undefined'&&INTRO60.playing,null,{timeout:90000});await sleep(1200);await p.evaluate(()=>INTRO60.seek(INTRO60.state.d-.4));
   await p.waitForFunction(()=>!!document.getElementById('brandrev'),null,{timeout:15000}).catch(()=>{});const r=await p.evaluate(()=>{const o=document.getElementById('brandrev');return o?{pe:getComputedStyle(o).pointerEvents,word:o.querySelector('.br-word').textContent,sym:!!o.querySelector('.br-sym .br-ring')}:null});
   ok('after the intro film the logo reveals itself over the game, never blocking it',r&&r.pe=='none'&&r.word=='ROOTBOUND'&&r.sym,r);await sleep(2200);if(SHOTS){fs.mkdirSync(SHOTS,{recursive:true});await p.screenshot({path:path.join(SHOTS,'reveal.png')})}
   await sleep(3200);ok('then it is gone',await p.evaluate(()=>!document.getElementById('brandrev')));await c.close()}

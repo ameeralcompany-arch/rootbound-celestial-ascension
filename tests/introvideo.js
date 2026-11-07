@@ -4,7 +4,7 @@
 const {chromium}=require('playwright');const path=require('path'),fs=require('fs'),os=require('os'),http=require('http');const {createServer}=require('../server/server');
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},240000).unref();
-const FILE='file://'+path.resolve(__dirname,'../index.html'),MP4=path.resolve(__dirname,'../audio/intro-cinematic.mp4'),TR=path.resolve(__dirname,'../audio/trailer.mp4');
+const FILE='file://'+path.resolve(__dirname,'../index.html'),MP4=path.resolve(__dirname,'../audio/trailer.mp4'),TR=path.resolve(__dirname,'../audio/trailer.mp4');
 const get=(url,headers)=>new Promise((res,rej)=>{http.request(url,{headers},r=>{let n=0;r.on('data',d=>n+=d.length);r.on('end',()=>res({s:r.statusCode,h:r.headers,n}))}).on('error',rej).end()});
 const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window.SAID=[];try{speechSynthesis.speak=u=>{SAID.push(u.text);setTimeout(()=>{try{u.onend&&u.onend({})}catch(_){}},30)}}catch(_){}};
 (async()=>{
@@ -15,7 +15,7 @@ const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window
 
  // the server hosts it the way a video player needs
  {const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rb-vid-'));const S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.resolve(__dirname,'../index.html')});const port=await S.listen();
-  const u='http://127.0.0.1:'+port+'/audio/intro-cinematic.mp4',a=await get(u,{}),r=await get(u,{Range:'bytes=100-199'});
+  const u='http://127.0.0.1:'+port+'/audio/trailer.mp4',a=await get(u,{}),r=await get(u,{Range:'bytes=100-199'});
   ok('the server hosts the film as a video',a.s==200&&a.h['content-type']=='video/mp4'&&a.n==fs.statSync(MP4).size,{s:a.s,t:a.h['content-type']});
   {const t=await get('http://127.0.0.1:'+port+'/audio/trailer.mp4',{Range:'bytes=0-99'});ok('and the trailer, in pieces',t.s==206&&t.n==100&&t.h['content-type']=='video/mp4',{s:t.s})}
   ok('and answers partial requests (a player needs them to start and seek)',r.s==206&&r.n==100,{s:r.s,n:r.n});await S.close()}
@@ -28,14 +28,14 @@ const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window
  }else{
   const p=await page();await p.waitForFunction(()=>typeof INTRO60!='undefined'&&INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:30000});
   const a=await p.evaluate(()=>{const o=SHOW7.open;window.OPENED=0;SHOW7.open=function(){OPENED++;return o.apply(this,arguments)};return{s:INTRO60.state,story:CINE7.playing,cover:!!window.RB_COVER}});await p.waitForTimeout(1500);const a2=await p.evaluate(()=>INTRO60.state);
-  ok('the film plays first, at full size, not the story intro',a.s.w==1920&&a.s.h==1080&&Math.abs(a.s.d-43.5)<.2&&!a.story&&a.cover,{w:a.s.w,h:a.s.h,d:a.s.d});
+  ok('the film plays first, at full size, not the story intro',a.s.w==1920&&a.s.h==1080&&Math.abs(a.s.d-92)<1&&!a.story&&a.cover,{w:a.s.w,h:a.s.h,d:a.s.d});
   ok('it moves, with its sound on',a2.t>a.s.t+.8&&!a2.paused&&!a2.muted&&a2.vol>0,{t0:a.s.t,t1:a2.t,vol:a2.vol});
   ok('the game waits for the film to finish',await p.evaluate(()=>OPENED==0));
   // the first seconds can't be skipped by accident, and keys are the film's while it plays
   await p.keyboard.press('i');await p.waitForTimeout(250);ok('a key in the first seconds does nothing',await p.evaluate(()=>INTRO60.playing&&document.getElementById('inv')&&getComputedStyle(document.getElementById('inv')).display!='block'||INTRO60.playing));
-  await p.evaluate(()=>INTRO60.seek(38));await p.waitForTimeout(900);ok('the skip prompt shows',await p.evaluate(()=>+INTRO60.state.skipShown>.5),await p.evaluate(()=>INTRO60.state.skipShown));
+  await p.evaluate(()=>INTRO60.seek(80));await p.waitForTimeout(900);ok('the skip prompt shows',await p.evaluate(()=>+INTRO60.state.skipShown>.5),await p.evaluate(()=>INTRO60.state.skipShown));
   ok('no spoken name without a recording',(await p.evaluate(()=>SAID)).length==0);
-  await p.evaluate(()=>INTRO60.seek(42.6));
+  await p.evaluate(()=>INTRO60.seek(INTRO60.state.d-.9));
   // it ends and hands over
   await p.waitForFunction(()=>!INTRO60.playing,null,{timeout:8000});await p.waitForTimeout(800);
   const e=await p.evaluate(()=>({gone:!document.getElementById('intro60'),cover:!!window.RB_COVER,opened:OPENED}));ok('at the end the film is gone and the game starts, once',e.gone&&e.opened==1,e);ok('no errors',p.errs.length==0,p.errs);await p.context().close();
@@ -45,9 +45,9 @@ const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window
   // replay from Settings: the film comes back over the game, and the game is still there afterwards
   await m.evaluate(()=>{try{document.getElementById('cgo').click()}catch(_){}try{menuEl.style.display='none'}catch(_){}});await m.waitForTimeout(400);await m.evaluate(()=>{UI6.open('settings')});await m.waitForTimeout(500);const has=await m.evaluate(()=>!!document.getElementById('sintro'));ok('Settings has a Replay button',has);
   // the trailer, from Settings: it plays over the game with its sound, skips like the film, and lets go of the video afterwards
-  await m.evaluate(()=>document.getElementById('strail').click());await m.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:20000});
+  await m.evaluate(()=>document.getElementById('sintro').click());await m.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:20000});
   const tr=await m.evaluate(()=>({s:INTRO60.state,src:document.querySelector('#intro60 video').currentSrc,label:document.getElementById('intro60').getAttribute('aria-label')}));
-  ok('Settings > Trailer plays the trailer, 1080p, about 92 s, with sound',/trailer\.mp4$/.test(tr.src)&&tr.s.w==1920&&tr.s.h==1080&&Math.abs(tr.s.d-92)<1&&!tr.s.muted&&/Trailer/.test(tr.label),{d:tr.s.d,w:tr.s.w,src:tr.src.slice(-20)});
+  ok('Settings > Intro film plays the new cinematic again, 1080p, about 92 s, with sound',/trailer\.mp4$/.test(tr.src)&&tr.s.w==1920&&tr.s.h==1080&&Math.abs(tr.s.d-92)<1&&!tr.s.muted&&/Intro film/.test(tr.label),{d:tr.s.d,w:tr.s.w,src:tr.src.slice(-20)});
   await m.evaluate(()=>INTRO60.seek(10));await m.waitForTimeout(500);await m.keyboard.press('x');await m.waitForFunction(()=>!INTRO60.playing,null,{timeout:5000});
   ok('a key skips the trailer and the video is released',await m.evaluate(()=>!document.getElementById('intro60')&&![...document.querySelectorAll('video')].some(v=>/trailer/.test(v.currentSrc))));if(has){await m.evaluate(()=>document.getElementById('sintro').click());await m.waitForFunction(()=>INTRO60.playing&&INTRO60.state.st=='on',null,{timeout:10000});await m.evaluate(()=>INTRO60.seek(5));await m.waitForTimeout(300);await m.keyboard.press('x');await m.waitForFunction(()=>!INTRO60.playing,null,{timeout:5000});ok('it plays again and hands back to the game',await m.evaluate(()=>!window.RB_COVER&&!document.getElementById('intro60')));}await m.context().close();
   // blocked autoplay: a prompt, not a frozen black screen
@@ -56,6 +56,11 @@ const INIT=()=>{try{localStorage.setItem('rb_force_launch','1')}catch(_){}window
   await h.mouse.click(600,300);await h.waitForFunction(()=>INTRO60.state&&INTRO60.state.st=='on',null,{timeout:6000});ok('when the browser blocks sound, a click starts it with the sound on',!(await h.evaluate(()=>INTRO60.state.muted)));await h.context().close();
  }
  // the film is missing (only index.html was copied): the story takes over
- {const c=await b.newContext({viewport:{width:1280,height:720}});await c.addInitScript(INIT);const p=await c.newPage();await p.route('**/intro-cinematic.mp4',r=>r.abort());await p.goto(FILE);await p.waitForFunction(()=>typeof CINE7!='undefined'&&CINE7.playing,null,{timeout:30000});ok('without the film file, the story intro plays instead',!(await p.evaluate(()=>INTRO60.playing)));ok('and nothing of the film is left behind',!(await p.evaluate(()=>!!document.getElementById('intro60'))));await c.close()}
+ {const c=await b.newContext({viewport:{width:1280,height:720}});await c.addInitScript(INIT);const p=await c.newPage();await p.route('**/trailer.mp4',r=>r.abort());await p.goto(FILE);await p.waitForFunction(()=>typeof CINE7!='undefined'&&CINE7.playing,null,{timeout:30000});ok('without the film file, the story intro plays instead',!(await p.evaluate(()=>INTRO60.playing)));ok('and nothing of the film is left behind',!(await p.evaluate(()=>!!document.getElementById('intro60'))));await c.close()}
+ // the new cinematic is the intro for everyone, new or returning
+ {const SV=JSON.stringify({v:1,inv:{1:5},gems:10,own:{fist:1},ownW:{},wear:{},wp:'fist',bar:[1],done:{},xp:3,lvl:5,made:true,look:{skin:'#f1c9a0',hair:'#3a2a1a',style:0,shirt:'#3c6fd1',pants:'#2b3a5a'}});
+  const p=await page({init:`localStorage.setItem('rbp',${JSON.stringify(SV)});localStorage.setItem('rbg_seen','1')`});const src=async()=>{await p.waitForFunction(()=>INTRO60.playing,null,{timeout:60000}).catch(()=>{});return p.evaluate(()=>(document.querySelector('#intro60 video')||{}).src||'')};
+  const s1=await src();await p.reload();const s2=await src();ok('a returning player gets the new cinematic at every launch',/trailer.mp4$/.test(s1)&&/trailer.mp4$/.test(s2),[s1.slice(-16),s2.slice(-16)]);await p.context().close()}
+ {const p=await page();await p.waitForFunction(()=>INTRO60.playing,null,{timeout:60000}).catch(()=>{});const s=await p.evaluate(()=>(document.querySelector('#intro60 video')||{}).src||'');ok('and so does a brand-new player',/trailer.mp4$/.test(s),s);await p.context().close()}
  await b.close();console.log(fails?('FAILED '+fails):'ALL PASS');process.exit(fails?1:0);
 })().catch(e=>{console.log('ERR',String(e).slice(0,600));process.exit(1)});

@@ -42,6 +42,10 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:4321,own:{fist:1,astralkat:1},ownW
  // a click outside closes it; it never opens over the intro film
  await p.evaluate(()=>ROOTLINK.open());await sleep(450);await p.mouse.click(200,450);await sleep(400);ok('a click outside puts it away',await p.evaluate(()=>!ROOTLINK.on));
  ok('no page errors',errs.length==0,errs.slice(0,3));
+ // the button under the character card, next to Respawn, opens it too
+ {await p.evaluate(()=>{try{ROOTLINK.close();NAV16.closeAll()}catch(_){}});await sleep(500);await p.waitForFunction(()=>{const e=document.getElementById('brlk');return !!e&&e.offsetWidth>0},null,{timeout:6000}).catch(()=>{});
+  const bt=await p.evaluate(()=>{const e=document.getElementById('brlk'),r=document.getElementById('brsp');return e?{txt:e.textContent,vis:e.offsetWidth>0,row:!!r&&e.parentNode===r.parentNode}:null});ok('a Rootlink button sits next to Respawn',bt&&bt.vis&&bt.row&&/ROOTLINK/.test(bt.txt),bt);
+  await p.click('#brlk');await p.waitForFunction(()=>ROOTLINK.on,null,{timeout:4000}).catch(()=>{});ok('clicking it opens the phone',await p.evaluate(()=>ROOTLINK.on));await p.evaluate(()=>ROOTLINK.close());await sleep(400)}
  await b.close();console.log(fails?('FAILED '+fails):'ALL PASS');process.exit(fails?1:0);
  function myNameOf(h){return h.name}
 })().catch(e=>{console.log('ERR',String(e).slice(0,500));process.exit(1)});

@@ -1,25 +1,23 @@
-// ===== INTRO60: the launch cinematic, a 43-second film cut from footage of the real game (audio/intro-cinematic.mp4), with its music and sound already in it.
-// The film is cut ahead of time from the Remotion project (rootbound-video) and sits next to index.html like the song, so it never adds to the page.
-// "Press any key to skip" appears after a few seconds, next to a Skip button. Settings > General has a button to watch it again. A recording at
-// audio/rootbound-voice.mp3, if one is ever added, is spoken over the title.
-// The same player shows the official trailer (audio/trailer.mp4, about 90 s) from Settings > General > Trailer: nothing of it loads until then, and the
-// video is released when it ends or is skipped.
+// ===== INTRO60: the launch cinematic. Since 6.13.10 it is the official cinematic (audio/trailer.mp4, about 92 s, 1080p): made only from the real game, with
+// its own score, sound design, Lavi's narration and the bosses' voices (docs/trailer.md). Every player sees it at every launch, then the game starts.
+// "Press any key to skip" appears after a few seconds, next to a Skip button. Settings > General > Intro film and Rootlink > Intro film play it again.
+// The older 43-second film (audio/intro-cinematic.mp4) is no longer played.
 // CINE7's story intro stays as the fallback: it plays when the film cannot (only index.html was copied, a browser without H.264, a connection too slow to
 // start it in time).
 const INTRO60=(()=>{
- const SRC='audio/intro-cinematic.mp4',TRAILER='audio/trailer.mp4',VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
+ const SRC='audio/trailer.mp4',TRAILER=SRC,VOICE='audio/rootbound-voice.mp3',SAY=39.6,SKIPAT=3,WAIT=8000,GATE=12000,STALL=8;
  let S=null;
  const volume=()=>{try{return Math.min(1,Math.max(0,(typeof mute!='undefined'&&mute)?0:(OPT.mv==null?.5:+OPT.mv)*1.5))}catch(_){return .75}};
 
  function launch(home){
   let story=false;try{story=!!localStorage.getItem('rb_story_intro')}catch(_){}
   const v=document.createElement('video');
-  if(story||!v.canPlayType||!v.canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"'))return CINE7.launch(home);try{v.preload='auto';v.src=SRC;v.load()}catch(_){}/* buffering starts now, while the game is still starting */
+  if(story||!v.canPlayType||!v.canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"'))return CINE7.launch(home);const src=SRC;try{v.preload='auto';v.src=src;v.load()}catch(_){}/* buffering starts now, while the game is still starting */
   let n=0;const iv=setInterval(()=>{n++;let rdy=true,bad=false;try{rdy=!window.RBDIAG||RBDIAG.ready;const d=document.getElementById('rbdiag');bad=!!(d&&getComputedStyle(d).display!='none')}catch(_){}
-   if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{start(v,home)}catch(e){console.error('INTRO60',e);drop();CINE7.launch(home)}},60)}
+   if(bad||n>330){clearInterval(iv);home();return}if(!rdy)return;clearInterval(iv);try{start(v,home,src)}catch(e){console.error('INTRO60',e);drop();CINE7.launch(home)}},60)}
 
  function start(v,home,src){src=src||SRC;
-  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label',src==SRC?'Intro film: Rootbound':'Trailer: Rootbound');
+  const w=document.createElement('div');w.id='intro60';w.setAttribute('role','img');w.setAttribute('aria-label','Intro film: Rootbound');
   w.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#000;cursor:none;user-select:none;touch-action:none';
   if(!v.getAttribute('src'))v.src=src;v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.disablePictureInPicture=true;v.controls=false;
   v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;pointer-events:none';
@@ -28,8 +26,7 @@ const INTRO60=(()=>{
   const prompt=document.createElement('div');prompt.style.cssText="position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff4dc;font:italic 600 34px 'Cormorant Garamond',Georgia,serif;text-align:center;pointer-events:none";
   prompt.innerHTML='Click or press any key to begin<div style="font:600 14px Montserrat,system-ui,sans-serif;font-style:normal;color:rgba(255,255,255,.6);margin-top:12px">This film has music</div>';
   w.append(v,prompt,skip);document.body.appendChild(w);window.RB_COVER=true;
-  S={v,w,skip,prompt,home,src,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:src!=SRC,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
-  try{const a=new Audio();a.preload='auto';a.oncanplaythrough=()=>{if(S)S.vc=a};a.src=VOICE;a.load()}catch(_){}
+  S={v,w,skip,prompt,home,src,st:'wait',t0:performance.now(),hint:performance.now(),last:performance.now(),lc:-1,stall:0,said:true,skipped:false,fin:false,vc:null};skip.querySelector('button').addEventListener('click',e=>{e.stopPropagation();skipNow()});
   v.volume=volume();
   v.addEventListener('canplay',()=>{if(S&&S.st=='wait')tryPlay()});
   v.addEventListener('error',()=>{if(S&&!S.fin)giveUp()});
