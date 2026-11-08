@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.13",
+      "type": "update",
+      "title": "New trading, and choose how you fight",
+      "summary": "Trading has a new window: two clear boxes, your items below, and a final check before anything changes hands. Weapons, wearables, wings and charms can now be traded. Choosing a class is simpler too: see every class on one page, what it does",
+      "body": "Trading has a new window: two clear boxes, your items below, and a final check before anything changes hands. Weapons, wearables, wings and charms can now be traded. Choosing a class is simpler too: see every class on one page, what it does, how hard it is, and watch it in action. Press K, then All classes.",
+      "date": "2026-11-08",
+      "version": "6.13.13"
+    },
+    {
       "id": "update-6.13.12",
       "type": "update",
       "title": "Drop anything, and a cleaner character card",
