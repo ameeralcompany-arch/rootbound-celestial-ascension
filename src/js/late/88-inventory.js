@@ -6,7 +6,7 @@
 // provides it). The sheet is rebuilt only when something changes; selecting a tile patches the tile classes + details only. =====
 const INV7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- const FILT=[['all','All'],['weapons','Weapons'],['tools','Tools'],['wear','Gear'],['wings','Wings'],['charms','Charms'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Objects'],['fav','★ Favourites'],['stats','Stats']];
+ const FILT=[['all','All'],['weapons','Weapons'],['tools','Tools'],['wear','Equipment'],['wings','Wings'],['charms','Customize'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Special'],['fav','★']];/* your stats live on the Character page, their one home */
  let el=null,filter='all',selK=null,assign=-1,q='',sortBy='default',favs={},seen=null,got={},menu=null,clk={k:null,t:0},last=[];
  const PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpinv';
  try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'default';if(o.n&&typeof o.n=='object')seen=o.n;if(o.g&&typeof o.g=='object')got=o.g}catch(_){}
@@ -148,7 +148,7 @@ const INV7=(()=>{
    h+=(t=='weapons'&&window.RPG&&RPG.items?RPG.items.invWeapon(k.slice(2)):'')+actRow(s)+(lk?'<p>Unlocks at level '+w.lv+' (you are level '+lvl+').</p>':!s.own&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
   else if(t=='wings'||t=='charms'){h+='<p>'+esc(descOf(k))+'</p>'+(t=='charms'?'<div class="kv"><span>Slot</span>'+esc(s.sub=='charm'?'Charm (companion)':'Effect · '+s.sub)+'</div>':'')+actRow(s)}
   else{h+=(window.RPG&&RPG.items&&/^\d+$/.test(String(k))?RPG.items.invRow(+k):'')+'<p>'+esc(descOf(k))+'</p><div class="kv"><span>Owned</span>'+s.n+'</div><div class="kv"><span>Market value</span>'+(typeof sellP=='function'?sellP(k):'?')+' gems each</div>'+actRow(s)+hbRow(k)}
-  return h}
+  return h+(window.ITEMSRC?ITEMSRC.row(s):'')}
  function stats(){const b=bonus(),bar2=(n,p,q)=>'<div class="s"><b class="ttl" style="font-size:13px">'+n+'</b><div class="bar7"><i style="width:'+Math.max(0,Math.min(100,p*100))+'%"></i></div><small style="color:var(--ed-mute)">'+q+'</small></div>';
   return'<div class="stat7">'+bar2('Level '+lvl,xp/xpNeed(lvl),Math.floor(xp)+' / '+xpNeed(lvl)+' XP')+bar2('Mining '+prof.mine.l,prof.mine.x/(xpNeed(prof.mine.l)*.7),'Break power +'+Math.floor(prof.mine.l/6))+bar2('Farming '+prof.farm.l,prof.farm.x/(xpNeed(prof.farm.l)*.7),'Gardening gear boosts this XP')+bar2('Combat '+prof.fight.l,prof.fight.x/(xpNeed(prof.fight.l)*.7),'Damage +'+Math.round(prof.fight.l*4)+'%')+(typeof LVL9!='undefined'?(i=>bar2('Level power',i.dmg/1.5,'All weapons +'+Math.round(i.dmg*100)+'% damage · Max HP +'+i.hp+' · Armor +'+Math.round(i.arm*100)+'%'))(LVL9.info()):'')+'<div class="s"><b class="ttl" style="font-size:13px">Active bonuses</b><br><small style="color:var(--ed-mute);line-height:1.8">Gems +'+Math.round(b.gem*100)+'% · Speed '+Math.round(b.spd*100)+'% · Jump +'+Math.round(b.jump*100)+'% · Armor '+Math.round(b.arm*100)+'% · XP +'+Math.round(b.xp*100)+'% · Light +'+Math.round(b.light)+'</small></div></div>'}
  // selecting patches the tiles + details (no full rebuild), so clicks stay instant

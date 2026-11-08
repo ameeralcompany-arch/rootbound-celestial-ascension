@@ -47,7 +47,7 @@ const NET7=(()=>{
   if(t=='_kick'||t=='_ban'){const why=t=='_ban'?(m.m||'You were banned from this server'):String(m.m||'You were removed');say6&&say6('Disconnected',why,6000);toOffline();return}
   if(t=='sys'){const d=m.d||{};if(d.op=='tp'&&Number.isFinite(+d.x)&&Number.isFinite(+d.y)){P.x=+d.x;P.y=+d.y;P.vx=P.vy=0;if(d.by)say(String(d.by).slice(0,14)+' pulled you here')}else if(d.op=='world'&&d.w){
     // a realm above your level cannot load, so the summon stops here instead of leaving you between two worlds
-    try{const sg=WORD9.stageOf(d.w);if(sg&&(lvl|0)<WORD9.CH[sg].lv){say('Summoned to '+WORD9.CH[sg].t+', but it needs level '+WORD9.CH[sg].lv);return}}catch(_){}
+    try{const sg=WORD9.stageOf(d.w);if(sg&&(lvl|0)<WORD9.CH[sg].lv){say('Summoned to '+WORD9.CH[sg].t+', but it needs level '+WORD9.CH[sg].lv);return}if(window.PATH1&&PATH1.locked(d.w)){say('Summoned to a land you have not opened yet');return}}catch(_){}
     if(d.by)say(String(d.by).slice(0,14)+' summoned you');go(d.w,false,Number.isFinite(+d.x)?{w:d.w,x:+d.x,y:+d.y}:null,d.base)}return}
   if(!room)return;
   if(t=='_p'){if(!m.f||m.f===room.id||!m.d)return;if(m.d.dl){const o=room.ps[m.f];if(o){for(const k of['x','y','h','vx'])if(Number.isFinite(+m.d[k]))o[k]=+m.d[k];o.f=m.d.f>0?1:-1;o.sw=m.d.sw?1:0;o.fm=m.d.fm?1:0;if(m.d.wo!=null)o.wo=+m.d.wo||0;if(typeof m.d.wp=='string'&&Object.prototype.hasOwnProperty.call(WPN,m.d.wp))o.wp=m.d.wp}return}room.ps[m.f]=cleanPres(m.d);return}

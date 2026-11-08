@@ -31,8 +31,8 @@ const NAV16=(()=>{
  const solo=()=>!!(window.RB_CONFIG&&RB_CONFIG.solo);
  const menuOn=()=>{try{return menuEl.style.display!='none'&&getComputedStyle(menuEl).display!='none'}catch(_){return false}};
  // the Hub's sections: each dock button opens its own, and only its own tabs show
- const SEC={character:{t:'Character',jp:'人物',ic:'character',tabs:['profile','look','wings','plates']},skills:{t:'Skills',jp:'技能',ic:'skills',tabs:['skills']},bosses:{t:'Bosses',jp:'討伐',ic:'bosses',tabs:['bosses']},
-  quests:{t:'Quests',jp:'依頼',ic:'quests',tabs:['quests']},ach:{t:'Achievements',jp:'実績',ic:'achievements',tabs:['ach']},guide:{t:'Guide',jp:'案内',ic:'guide',tabs:['toolguide','craft'],acts:[['_start','Starting guide',()=>{UI6.close();GUIDE10.open()}]]},
+ const SEC={character:{t:'Character',jp:'人物',ic:'character',tabs:['profile','look','wings','plates']},skills:{t:'Skills',jp:'技能',ic:'skills',tabs:['skills']},
+  quests:{t:'Quests',jp:'依頼',ic:'quests',tabs:['quests','ach','bosses'],acts:[['_coll','Collection',()=>{UI6.close();BOOK7.open()}]]},guide:{t:'Guide',jp:'案内',ic:'guide',tabs:['toolguide','craft'],acts:[['_start','Starting guide',()=>{UI6.close();GUIDE10.open()}]]},
   social:{t:'Social',jp:'交流',ic:'social',tabs:['social']},world:{t:'Worlds',jp:'世界',ic:'worlds',acts0:[['_travel','Travel',()=>{UI6.close();openMenu('mworlds')}]],tabs:['world','events']},
   system:{t:'Settings',jp:'設定',ic:'settings',tabs:['settings','account'],acts:[['_acct','Account & sign in',()=>{UI6.close();openMenu('mworlds');try{el('wnet').scrollIntoView({block:'start'})}catch(_){}}]]},owner:{t:'Owner',jp:'管理',ic:'owner',tabs:['owner']}};
  const secOf=t=>{for(const k in SEC)if(SEC[k].tabs.includes(t))return k;return'character'};
@@ -53,10 +53,10 @@ const NAV16=(()=>{
   {id:'store',btn:'bstore',ic:'store',g:'Shop',n:'Store',d:'Buy weapons, wings, gear and more',row:0,gold:1,open:()=>STORE7.open(),close:()=>STORE7.close(),on:()=>live('store7')},
   {id:'settings',btn:'bset16',ic:'settings',g:'System',key:'O',n:'Settings',d:'Graphics, audio, controls and your save',row:0,hub:'settings',open:()=>UI6.open('settings'),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='system'},
   {id:'worlds',btn:'bworlds',ic:'worlds',g:'World',n:'Worlds',d:'Travel, realms, your worlds and events',row:1,open:()=>openMenu('mworlds'),close:()=>closeMenu(),on:()=>menuOn()||UI6.on&&secOf(UI6.tab)=='world',hubAlso:1},
-  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',key:'N',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,...HUB('bosses')},
-  {id:'quests',btn:'bqm',ic:'quests',g:'World',key:'J',n:'Quests',d:'Daily challenges, your first steps and town quests',row:1,...HUB('quests')},
-  {id:'ach',btn:'bach',ic:'achievements',g:'World',key:'Y',n:'Achievements',d:'Achievements and milestones',row:1,...HUB('ach')},
-  {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Everything you have collected, with rewards',row:1,open:()=>BOOK7.open(),close:()=>BOOK7.close(),on:()=>BOOK7.isOpen},
+  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',key:'N',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,nodock:1,...HUB('bosses'),on:()=>UI6.on&&UI6.tab=='bosses'},
+  {id:'quests',btn:'bqm',ic:'quests',g:'World',key:'J',n:'Quests',d:'Daily challenges, your first steps and town quests',row:1,...HUB('quests'),on:()=>UI6.on&&UI6.tab=='quests'},
+  {id:'ach',btn:'bach',ic:'achievements',g:'World',key:'Y',n:'Achievements',d:'Achievements and milestones',row:1,nodock:1,...HUB('ach'),on:()=>UI6.on&&UI6.tab=='ach'},
+  {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Everything you have collected, with rewards',row:1,nodock:1,open:()=>BOOK7.open(),close:()=>BOOK7.close(),on:()=>BOOK7.isOpen},
   {id:'guide',btn:'bguide',ic:'guide',g:'World',key:'G',n:'Guide',d:'How to use every tool, recipes and the starting guide',row:1,hub:'toolguide',open:()=>GUIDE8.open(),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='guide'},
   {id:'social',btn:'bsoc',ic:'social',g:'Social',n:'Social',d:'Emotes, players here and friends',row:1,solo:1,...HUB('social')}];
  const byId=id=>F.find(f=>f.id==id);
@@ -77,7 +77,7 @@ const NAV16=(()=>{
   for(const r of[0,1]){const row=document.createElement('div');row.className='n16r';let g='';for(const f of F.filter(x=>x.row==r)){if(f.solo&&solo())continue;
     if(f.g!=g){if(g){const s=document.createElement('i');s.className='n16s';s.setAttribute('aria-hidden','true');row.appendChild(s)}g=f.g;const h=document.createElement('h5');h.textContent=g;row.appendChild(h)}
     const b=document.createElement('button');b.id=f.btn;b.type='button';b.className='n16b'+(f.gold?' gold':'');b.dataset.g=f.g;b.setAttribute('aria-label',f.n+(f.key?' ('+f.key+')':''));b.dataset.n16tip=f.n+'|'+f.d+'|'+(f.key||'');
-    b.innerHTML=icon(f.ic)+'<span class="lbl">'+f.n+'</span><em class="bdg" hidden></em>';b.onclick=()=>act(f.id);row.appendChild(b);f.el=b}
+    b.innerHTML=icon(f.ic)+'<span class="lbl">'+f.n+'</span><em class="bdg" hidden></em>';b.onclick=()=>act(f.id);if(f.nodock)b.style.display='none';row.appendChild(b);f.el=b}
    grid.appendChild(row)}
   tip=document.createElement('div');tip.id='nav16tip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);
   // the map tools, attached to the minimap

@@ -31,6 +31,7 @@ function cleanObjMap(e){const out={};if(!e||typeof e!='object')return out;let n=
 // a world with an owner but no World Lock placed is still theirs: nobody else builds in it (no lock tile, so x/y stay unset)
 const effMeta=world=>world.meta||(world.ownerUid?{o:world.ownerUid,on:world.ownerName||'',f:[],t:[],b:[],pub:0,pr:0}:null);
 // realms: '<base>-inf', -gal, -sea, -cry. Same names as the client's WORD9 (long names: 9 letters + a 3-char hash)
+const PATH_LANDS=new Set(['rootbound','biome-reach','biome-wastes']);/* the First Realm road: shared by everyone, so nobody can claim one with a World Lock */
 const REALM=['','-inf','-gal','-sea','-cry'];const realmStage=n=>{if(typeof n!='string'||n.length<5)return 0;for(let i=1;i<REALM.length;i++)if(n.endsWith(REALM[i]))return i;return 0};
 const h32=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
 const stName=(b,i)=>{if(!i)return b;const s=REALM[i];return b.length<=12?b+s:b.slice(0,9)+(h32(b)%46656).toString(36).padStart(3,'0')+s};
@@ -60,4 +61,4 @@ function cleanPres(d,allowWpn){const o={};if(!d||typeof d!='object')return o;con
  return o}
 function checkX(d,fromSid,has){if(!d||typeof d!='object')return false;if(d.op!='wh')return false;const id=v=>String(v||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);const r={op:d.op};r.to=id(d.to);if(!r.to||r.to==fromSid||!has(r.to))return false;
  r.t=String(d.t||'').slice(0,80).replace(/[<>]/g,'');return r.t?r:false}
-module.exports={W,H,ODEF,WEATHERS,ROLE,isObjId,validEdit,cleanMeta,effMeta,realmStage,stName,REALM,roleOf,cleanObj,cleanObjMap,objDefaults,applyEdit,checkEdit,checkMeta,objOp,cleanPres,checkX,tileAt};
+module.exports={PATH_LANDS,W,H,ODEF,WEATHERS,ROLE,isObjId,validEdit,cleanMeta,effMeta,realmStage,stName,REALM,roleOf,cleanObj,cleanObjMap,objDefaults,applyEdit,checkEdit,checkMeta,objOp,cleanPres,checkX,tileAt};

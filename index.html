@@ -3311,6 +3311,64 @@ html[data-reduce=true] #inv7 .it7[data-rar=legendary]::after,html[data-reduce=tr
 html[data-skin=night]:root body #inv7 .it7[data-rar=legendary]::after,html[data-skin=night]:root body #store7 .card[data-rar=legendary]::after{animation:dsSheen 4.8s ease-in-out infinite!important;opacity:1}
 html[data-reduce=true]:root body #inv7 .it7[data-rar=legendary]::after,html[data-reduce=true]:root body #store7 .card[data-rar=legendary]::after{animation:none!important;opacity:0!important}
 
+/* ========== CSS: 99-zzzzzzzz-drawer.css ========== */
+/* ===== DRAWER1: the inventory as a drawer growing out of the hotbar, its collapsed handle, and the item source panel. ===== */
+html.inv6 #inv7.drw7{padding-bottom:var(--dbot,104px)!important;align-items:flex-end;background:transparent!important;clip-path:inset(0 0 var(--dbot,104px) 0);transition:opacity .16s ease}
+#inv7.drw7 .sheet{width:min(1120px,96vw);transition:none!important;will-change:transform;border-radius:22px 22px 0 0!important;border-bottom:0!important;box-shadow:0 -24px 70px -24px rgba(0,0,0,.8)!important}
+#inv7.drw7 header{position:relative;cursor:grab;touch-action:none;user-select:none;padding-top:20px!important}html.drw-drag,html.drw-drag #inv7.drw7 header{cursor:grabbing}
+#inv7.drw7 header::before{content:'';position:absolute;left:50%;top:8px;width:54px;height:5px;margin-left:-27px;border-radius:5px;background:rgba(244,213,154,.5);transition:background .14s,width .14s,margin .14s}#inv7.drw7 header:hover::before{background:#f4d59a;width:66px;margin-left:-33px}
+#inv7.drw7 .grid7{overscroll-behavior:contain}
+/* in the expanded state the Equipped strip waits for full view, so the items get the room */
+#inv7.drw7[data-lv=half] .eq8{display:none}
+#invh7{position:fixed;z-index:42;transform:translateX(-50%);display:flex;align-items:center;gap:8px;height:22px;padding:0 14px;border-radius:12px 12px 0 0;border:1px solid rgba(244,213,154,.35);border-bottom:0;background:rgba(18,14,36,.86);color:#fff8e6;font:700 12px Montserrat,system-ui,sans-serif;letter-spacing:.06em;cursor:grab;touch-action:none;transition:height .12s ease,background .12s ease,margin .12s ease}#invh7:hover{height:26px;margin-top:-4px;background:rgba(36,26,66,.95)}#invh7:active{cursor:grabbing}#invh7:focus-visible{outline:2px solid #f4d59a;outline-offset:1px}
+#invh7 i{width:22px;height:4px;border-radius:4px;background:#f4d59a}
+body.dgon #invh7{opacity:.9}
+.src8{margin-top:10px;display:flex;flex-direction:column;gap:7px}.src-b{display:flex;gap:6px}.src-b button{flex:1;min-height:34px;border-radius:9px;border:1px solid var(--line-strong,rgba(244,213,154,.34));background:rgba(255,255,255,.04);color:var(--ink,#f6f1e7);font:600 12.5px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .12s,border-color .12s}.src-b button:hover{border-color:#f4d59a}.src-b button.on{background:rgba(244,213,154,.16);border-color:#f4d59a;color:#fff8e6}
+.src-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.35;color:var(--ink-2,#e6dfee)}.src-l li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;border-radius:7px;background:rgba(255,255,255,.04)}.src-go{flex:none;padding:3px 12px;border-radius:7px;border:1px solid #f4d59a;background:rgba(244,213,154,.14);color:#fff8e6;font:700 12px Montserrat,system-ui,sans-serif;cursor:pointer}.src-go:hover{background:rgba(244,213,154,.3)}
+.src-none{margin:0;font-size:13px;color:var(--muted,#b5acc9)}.src-r{margin:0!important;font-size:12px!important;color:var(--muted,#b5acc9)!important}
+html[data-reduce=true] #invh7{transition:none}
+
+/* readable text: nothing a player has to read stays under 11 px on the default look */
+html[data-skin=night] #inv7 .it7 span{font-size:11.5px!important}html[data-skin=night] #inv7 aside p{font-size:13.5px!important;line-height:1.45}html[data-skin=night] #inv7 aside .kv{font-size:13px!important}html[data-skin=night] #inv7 nav button small{font-size:11px}html[data-skin=night] #inv7 .eyebrow{font-size:11px!important}
+html[data-skin=night] #hubbody small{font-size:12px}html[data-skin=night] #hubbody{font-size:14px}
+/* the expanded state keeps the details compact; the full picture and hints wait for full view */
+#inv7.drw7[data-lv=half] aside .pic{height:76px!important}#inv7.drw7[data-lv=half] aside .pic img{width:56px!important;height:56px!important}#inv7.drw7[data-lv=half] .hbtip7,#inv7.drw7[data-lv=half] .kb8{display:none}
+
+/* ========== CSS: 99-zzzzzzzz-path.css ========== */
+/* ===== PATH1: the First Realm road on the Worlds page, the next objective in the quest card, and the moment a new land opens. ===== */
+#bpath{margin:0 0 18px;font-family:Montserrat,system-ui,sans-serif;color:var(--ink,#f6f1e7)}
+#bpath header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:0 0 12px}
+#bpath header small{display:block;font:700 11px Montserrat,system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,213,154,.8)}
+#bpath .bp-title{margin:2px 0 0;font:700 26px 'Cormorant Garamond',Georgia,serif;letter-spacing:.01em;color:#fff8e6}
+html body #menu #card:has(#mworlds[style*="block"]){width:min(980px,95vw)!important}
+#bpath header p{margin:0;font-size:14px;color:var(--ink-2,#e6dfee);text-align:right}#bpath header p b{color:#f4d59a;font-weight:700;margin-right:6px}
+.bp-road{display:flex;align-items:stretch;gap:0}
+.bp-c{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border:1px solid color-mix(in srgb,var(--c) 45%,transparent);border-radius:16px;overflow:hidden;background:rgba(14,11,28,.72);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.bp-c:not(.lock):hover{transform:translateY(-2px);border-color:var(--c);box-shadow:0 12px 30px -16px var(--c)}
+.bp-c.here{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}.bp-c.lock{border-color:rgba(255,255,255,.14)}
+.bp-art{position:relative;aspect-ratio:64/26}.bp-art canvas{display:block;width:100%;height:100%;object-fit:cover}.bp-c.lock .bp-art canvas{filter:saturate(.25) brightness(.55)}
+.bp-n{position:absolute;left:10px;top:10px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:rgba(10,8,22,.72);border:1px solid var(--c);font:700 16px 'Cormorant Garamond',Georgia,serif;color:#fff8e6}
+.bp-st{position:absolute;right:10px;top:10px;display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:rgba(10,8,22,.78);font-size:12px;font-weight:700;color:#fff8e6}.bp-st svg,.bp-need svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;flex:none}
+.bp-b{display:flex;flex-direction:column;gap:8px;padding:12px 14px 14px;flex:1}
+.bp-b h4{margin:0;font:700 22px 'Cormorant Garamond',Georgia,serif;color:#fff8e6;letter-spacing:.01em;text-transform:none}.bp-b>p{margin:0;font-size:14px;line-height:1.4;color:var(--ink-2,#e6dfee)}
+.bp-bar{height:6px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}.bp-bar u{display:block;height:100%;background:var(--c);transition:width .3s ease;text-decoration:none}
+.bp-b ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--muted,#b5acc9)}.bp-b li{position:relative;padding-left:18px}.bp-b li::before{content:'';position:absolute;left:3px;top:6px;width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor}
+.bp-b li.ok{color:var(--c)}.bp-b li.ok::before{background:currentColor}.bp-b li.cur{color:#fff8e6;font-weight:600}.bp-b li.cur::before{border-color:var(--c)}.bp-b li em{font-style:normal;color:var(--c);margin-left:2px;font-variant-numeric:tabular-nums}
+.bp-need{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);font-size:14px;color:#fff8e6!important}
+.bp-find{font-size:13px;line-height:1.4;color:var(--muted,#b5acc9);margin-top:auto}
+.bp-go{min-height:40px;border-radius:10px;border:1px solid var(--c);background:color-mix(in srgb,var(--c) 22%,transparent);color:#fff8e6;font:700 14px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .14s,transform .1s}.bp-go:hover:not(:disabled){background:color-mix(in srgb,var(--c) 40%,transparent)}.bp-go:active:not(:disabled){transform:translateY(1px)}.bp-go:disabled{opacity:.6;cursor:default}.bp-go:focus-visible{outline:2px solid #fff8e6;outline-offset:2px}
+.bp-link{flex:0 0 20px;align-self:center;height:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.28) 0 5px,transparent 5px 9px)}.bp-link.on{background:#f4d59a}
+@media(max-width:860px){.bp-road{flex-direction:column;gap:8px}.bp-link{display:none}#bpath header{display:block}#bpath header p{text-align:left;margin-top:4px}}
+.bpq{margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.12)}#quest>.bpq:first-child{margin:0;padding:0;border:0}.bpq small{display:block;font:700 11px Montserrat,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--c)}.bpq b{display:block;font-size:14px;font-weight:600;color:#fff8e6}.bpq em{display:block;font-style:normal;font-size:12px;color:var(--muted,#b5acc9)}
+#bpun{position:fixed;inset:0;z-index:2147482000;display:grid;place-items:center;pointer-events:none;background:radial-gradient(ellipse at center,rgba(6,4,16,.72),rgba(6,4,16,.1) 70%);animation:bpuIn .4s ease both}#bpun.out{animation:bpuOut .5s ease both}
+.bpu-card{position:relative;width:min(640px,86vw);border-radius:20px;overflow:hidden;border:1px solid var(--c);box-shadow:0 30px 90px -20px var(--c);animation:bpuCard .8s cubic-bezier(.2,1.3,.4,1) both}.bpu-card canvas{display:block;width:100%;height:auto;animation:bpuArt 1.1s ease both .25s}
+.bpu-lock{position:absolute;left:50%;top:32%;width:68px;height:68px;margin-left:-34px;color:#fff8e6;animation:bpuLock 1s ease both .35s}.bpu-lock svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6}
+.bpu-t{position:absolute;left:0;right:0;bottom:0;padding:40px 22px 18px;text-align:center;background:linear-gradient(transparent,rgba(6,4,16,.92))}.bpu-t small{display:block;font:700 12px Montserrat,system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--c)}.bpu-t b{display:block;font:700 40px 'Cormorant Garamond',Georgia,serif;color:#fff8e6}.bpu-t span{font-size:15px;color:#e6dfee}
+@keyframes bpuIn{from{opacity:0}}@keyframes bpuOut{to{opacity:0}}@keyframes bpuCard{from{opacity:0;transform:translateY(24px) scale(.94)}}@keyframes bpuArt{from{filter:saturate(.2) brightness(.5)}}@keyframes bpuLock{0%{opacity:1;transform:none}55%{opacity:1;transform:translateY(-6px) scale(1.1)}100%{opacity:0;transform:translateY(-34px) scale(1.5)}}
+html[data-reduce=true] #bpun,html[data-reduce=true] #bpun *{animation-duration:.01s!important}@media(prefers-reduced-motion:reduce){#bpun,#bpun *{animation-duration:.01s!important}}
+
+html body #menu #card:has(#mworlds[style*="block"]){max-height:calc((100vh - 28px) / var(--uiz,1))!important}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -7831,7 +7889,7 @@ const NET7=(()=>{
   if(t=='_kick'||t=='_ban'){const why=t=='_ban'?(m.m||'You were banned from this server'):String(m.m||'You were removed');say6&&say6('Disconnected',why,6000);toOffline();return}
   if(t=='sys'){const d=m.d||{};if(d.op=='tp'&&Number.isFinite(+d.x)&&Number.isFinite(+d.y)){P.x=+d.x;P.y=+d.y;P.vx=P.vy=0;if(d.by)say(String(d.by).slice(0,14)+' pulled you here')}else if(d.op=='world'&&d.w){
     // a realm above your level cannot load, so the summon stops here instead of leaving you between two worlds
-    try{const sg=WORD9.stageOf(d.w);if(sg&&(lvl|0)<WORD9.CH[sg].lv){say('Summoned to '+WORD9.CH[sg].t+', but it needs level '+WORD9.CH[sg].lv);return}}catch(_){}
+    try{const sg=WORD9.stageOf(d.w);if(sg&&(lvl|0)<WORD9.CH[sg].lv){say('Summoned to '+WORD9.CH[sg].t+', but it needs level '+WORD9.CH[sg].lv);return}if(window.PATH1&&PATH1.locked(d.w)){say('Summoned to a land you have not opened yet');return}}catch(_){}
     if(d.by)say(String(d.by).slice(0,14)+' summoned you');go(d.w,false,Number.isFinite(+d.x)?{w:d.w,x:+d.x,y:+d.y}:null,d.base)}return}
   if(!room)return;
   if(t=='_p'){if(!m.f||m.f===room.id||!m.d)return;if(m.d.dl){const o=room.ps[m.f];if(o){for(const k of['x','y','h','vx'])if(Number.isFinite(+m.d[k]))o[k]=+m.d[k];o.f=m.d.f>0?1:-1;o.sw=m.d.sw?1:0;o.fm=m.d.fm?1:0;if(m.d.wo!=null)o.wo=+m.d.wo||0;if(typeof m.d.wp=='string'&&Object.prototype.hasOwnProperty.call(WPN,m.d.wp))o.wp=m.d.wp}return}room.ps[m.f]=cleanPres(m.d);return}
@@ -12992,7 +13050,7 @@ const WTRAIL=(()=>{
 // provides it). The sheet is rebuilt only when something changes; selecting a tile patches the tile classes + details only. =====
 const INV7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- const FILT=[['all','All'],['weapons','Weapons'],['tools','Tools'],['wear','Gear'],['wings','Wings'],['charms','Charms'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Objects'],['fav','★ Favourites'],['stats','Stats']];
+ const FILT=[['all','All'],['weapons','Weapons'],['tools','Tools'],['wear','Equipment'],['wings','Wings'],['charms','Customize'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Special'],['fav','★']];/* your stats live on the Character page, their one home */
  let el=null,filter='all',selK=null,assign=-1,q='',sortBy='default',favs={},seen=null,got={},menu=null,clk={k:null,t:0},last=[];
  const PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpinv';
  try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'default';if(o.n&&typeof o.n=='object')seen=o.n;if(o.g&&typeof o.g=='object')got=o.g}catch(_){}
@@ -13134,7 +13192,7 @@ const INV7=(()=>{
    h+=(t=='weapons'&&window.RPG&&RPG.items?RPG.items.invWeapon(k.slice(2)):'')+actRow(s)+(lk?'<p>Unlocks at level '+w.lv+' (you are level '+lvl+').</p>':!s.own&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
   else if(t=='wings'||t=='charms'){h+='<p>'+esc(descOf(k))+'</p>'+(t=='charms'?'<div class="kv"><span>Slot</span>'+esc(s.sub=='charm'?'Charm (companion)':'Effect · '+s.sub)+'</div>':'')+actRow(s)}
   else{h+=(window.RPG&&RPG.items&&/^\d+$/.test(String(k))?RPG.items.invRow(+k):'')+'<p>'+esc(descOf(k))+'</p><div class="kv"><span>Owned</span>'+s.n+'</div><div class="kv"><span>Market value</span>'+(typeof sellP=='function'?sellP(k):'?')+' gems each</div>'+actRow(s)+hbRow(k)}
-  return h}
+  return h+(window.ITEMSRC?ITEMSRC.row(s):'')}
  function stats(){const b=bonus(),bar2=(n,p,q)=>'<div class="s"><b class="ttl" style="font-size:13px">'+n+'</b><div class="bar7"><i style="width:'+Math.max(0,Math.min(100,p*100))+'%"></i></div><small style="color:var(--ed-mute)">'+q+'</small></div>';
   return'<div class="stat7">'+bar2('Level '+lvl,xp/xpNeed(lvl),Math.floor(xp)+' / '+xpNeed(lvl)+' XP')+bar2('Mining '+prof.mine.l,prof.mine.x/(xpNeed(prof.mine.l)*.7),'Break power +'+Math.floor(prof.mine.l/6))+bar2('Farming '+prof.farm.l,prof.farm.x/(xpNeed(prof.farm.l)*.7),'Gardening gear boosts this XP')+bar2('Combat '+prof.fight.l,prof.fight.x/(xpNeed(prof.fight.l)*.7),'Damage +'+Math.round(prof.fight.l*4)+'%')+(typeof LVL9!='undefined'?(i=>bar2('Level power',i.dmg/1.5,'All weapons +'+Math.round(i.dmg*100)+'% damage · Max HP +'+i.hp+' · Armor +'+Math.round(i.arm*100)+'%'))(LVL9.info()):'')+'<div class="s"><b class="ttl" style="font-size:13px">Active bonuses</b><br><small style="color:var(--ed-mute);line-height:1.8">Gems +'+Math.round(b.gem*100)+'% · Speed '+Math.round(b.spd*100)+'% · Jump +'+Math.round(b.jump*100)+'% · Armor '+Math.round(b.arm*100)+'% · XP +'+Math.round(b.xp*100)+'% · Light +'+Math.round(b.light)+'</small></div></div>'}
  // selecting patches the tiles + details (no full rebuild), so clicks stay instant
@@ -17810,7 +17868,7 @@ const WORD9=(()=>{
  const stageOf=n=>{if(typeof n!='string'||n.length<5)return 0;for(let i=1;i<CH.length;i++)if(n.endsWith(CH[i].s))return i;return 0};
  function stName(b,i){b=norm(b);if(!i)return b;const s=CH[i].s,n=b.length<=12?b+s:b.slice(0,9)+(h32(b)%46656).toString(36).padStart(3,'0')+s;S.inf[n]=b;return n}
  const infName=b=>stName(b,1);
- const baseOf=n=>S.inf[n]||n.slice(0,-4)||'plaza',pretty=n=>n=='plaza'?'The Plaza':String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+ const baseOf=n=>S.inf[n]||n.slice(0,-4)||'plaza',pretty=n=>n=='plaza'?'The Plaza':window.PATH1&&PATH1.landOf(n)>=0?PATH1.B[PATH1.landOf(n)].n:String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
  const label=n=>{const s=stageOf(n);return s?pretty(baseOf(n))+' · '+CH[s].t:pretty(n)},hasWord=n=>n!='plaza',isBase=n=>n!='plaza'&&!stageOf(n);
  const baseCur=()=>stageOf(cur)?baseOf(cur):cur,nextName=()=>{const s=stageOf(cur);return s+1<CH.length?stName(baseCur(),s+1):null},lvOf=n=>CH[stageOf(n)].lv;
  // each realm's word: longer every realm, no common anagrams (the gate only takes the exact word)
@@ -18036,7 +18094,7 @@ const WORD9=(()=>{
  // the world name on the HUD reads "<World> · Inferno"
  // (the legacy HUD timer writes cur.toUpperCase() through the element's own textContent setter, see BUILD9's guard: wrap that setter)
  try{const el=document.getElementById('wname'),d=Object.getOwnPropertyDescriptor(el,'textContent')||Object.getOwnPropertyDescriptor(Node.prototype,'textContent');el._g9=1;
-  Object.defineProperty(el,'textContent',{configurable:true,get(){return d.get.call(this)},set(v){if(entered&&stageOf(cur))v=label(cur);d.set.call(this,v)}})}catch(e){console.error('WORD9 hud',e)}
+  Object.defineProperty(el,'textContent',{configurable:true,get(){return d.get.call(this)},set(v){if(entered&&stageOf(cur))v=label(cur);else if(entered&&window.PATH1&&PATH1.here()>=0)v=PATH1.B[PATH1.here()].n.toUpperCase();d.set.call(this,v)}})}catch(e){console.error('WORD9 hud',e)}
  return{LETTER,ASH,BASALT,MAGMA,OBSID,SCORCH,LV,WORDS,IM,get letters(){return L.map(l=>({k:l.k,x:l.k%W,y:l.k/W|0,ch:l.ch,i:l.i}))},get word(){return WORD},get inf(){return INF},get state(){return S},
   wordFor,isInf,infName,baseOf,label,hasWord,isBase,stageOf,stName,nextName,CH,collect:i=>collect(L.find(l=>l.i==i)),open,close,submit,travel,isOpen,spawnAt,strip,get fireballs(){return FB.length},get thrown(){return thrown},get embers(){return EM.length}}})();
 
@@ -20079,7 +20137,7 @@ const BIOME17=(()=>{
   const cnt=(STAGES[stageOf(n)]||[0,0,0]).length;for(const f of['k','o','c']){if(!Array.isArray(r[f]))r[f]=[];while(r[f].length<cnt)r[f].push(0)}if(!r.lit||typeof r.lit!='object')r.lit={};return r}
  // ---- world layout from its name: which three biomes (in band order) and the difficulty
  function layout(n){n=norm(n);const pool=STAGES[stageOf(n)]||BI,cnt=pool===BI?3:pool.length,band=BANDS[cnt]||Math.floor(90/cnt),Rn=rr((h32(n)^0xb10e)>>>0),ids=pool.map((_,i)=>i);for(let i=ids.length-1;i>0;i--){const j=Math.floor(Rn()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}
-  const q=Rn(),diff=q<.2?1:q<.45?2:q<.7?3:q<.88?4:5;return{bi:ids.slice(0,cnt).map(i=>pool[i]),diff,band,bands:ids.slice(0,cnt).map((_,i)=>({d0:TOP+i*band,d1:TOP+(i+1)*band}))}}
+  const q=Rn(),diff=({rootbound:1,'biome-reach':2,'biome-wastes':3})[n]||(q<.2?1:q<.45?2:q<.7?3:q<.88?4:5);return{bi:ids.slice(0,cnt).map(i=>pool[i]),diff,band,bands:ids.slice(0,cnt).map((_,i)=>({d0:TOP+i*band,d1:TOP+(i+1)*band}))}}
  const wordOf=n=>{if(!isWorld(n)||stageOf(n))return null;const r=rec(n);return r.bw?WORDS3[h32(norm(n)+'#w3')%WORDS3.length]:null};
  const tier=i=>N<=3?i:i*2/(N-1),needK=i=>12+Math.round(4*tier(i)),needO=i=>6+Math.round(2*tier(i)),NB=3;   // tier: how hard biome i is, from 0 to 2 however many biomes there are
  const bandOfDepth=d=>{if(d<TOP)return -1;return Math.min(N-1,Math.floor((d-TOP)/BAND))};
@@ -21822,8 +21880,8 @@ const NAV16=(()=>{
  const solo=()=>!!(window.RB_CONFIG&&RB_CONFIG.solo);
  const menuOn=()=>{try{return menuEl.style.display!='none'&&getComputedStyle(menuEl).display!='none'}catch(_){return false}};
  // the Hub's sections: each dock button opens its own, and only its own tabs show
- const SEC={character:{t:'Character',jp:'人物',ic:'character',tabs:['profile','look','wings','plates']},skills:{t:'Skills',jp:'技能',ic:'skills',tabs:['skills']},bosses:{t:'Bosses',jp:'討伐',ic:'bosses',tabs:['bosses']},
-  quests:{t:'Quests',jp:'依頼',ic:'quests',tabs:['quests']},ach:{t:'Achievements',jp:'実績',ic:'achievements',tabs:['ach']},guide:{t:'Guide',jp:'案内',ic:'guide',tabs:['toolguide','craft'],acts:[['_start','Starting guide',()=>{UI6.close();GUIDE10.open()}]]},
+ const SEC={character:{t:'Character',jp:'人物',ic:'character',tabs:['profile','look','wings','plates']},skills:{t:'Skills',jp:'技能',ic:'skills',tabs:['skills']},
+  quests:{t:'Quests',jp:'依頼',ic:'quests',tabs:['quests','ach','bosses'],acts:[['_coll','Collection',()=>{UI6.close();BOOK7.open()}]]},guide:{t:'Guide',jp:'案内',ic:'guide',tabs:['toolguide','craft'],acts:[['_start','Starting guide',()=>{UI6.close();GUIDE10.open()}]]},
   social:{t:'Social',jp:'交流',ic:'social',tabs:['social']},world:{t:'Worlds',jp:'世界',ic:'worlds',acts0:[['_travel','Travel',()=>{UI6.close();openMenu('mworlds')}]],tabs:['world','events']},
   system:{t:'Settings',jp:'設定',ic:'settings',tabs:['settings','account'],acts:[['_acct','Account & sign in',()=>{UI6.close();openMenu('mworlds');try{el('wnet').scrollIntoView({block:'start'})}catch(_){}}]]},owner:{t:'Owner',jp:'管理',ic:'owner',tabs:['owner']}};
  const secOf=t=>{for(const k in SEC)if(SEC[k].tabs.includes(t))return k;return'character'};
@@ -21844,10 +21902,10 @@ const NAV16=(()=>{
   {id:'store',btn:'bstore',ic:'store',g:'Shop',n:'Store',d:'Buy weapons, wings, gear and more',row:0,gold:1,open:()=>STORE7.open(),close:()=>STORE7.close(),on:()=>live('store7')},
   {id:'settings',btn:'bset16',ic:'settings',g:'System',key:'O',n:'Settings',d:'Graphics, audio, controls and your save',row:0,hub:'settings',open:()=>UI6.open('settings'),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='system'},
   {id:'worlds',btn:'bworlds',ic:'worlds',g:'World',n:'Worlds',d:'Travel, realms, your worlds and events',row:1,open:()=>openMenu('mworlds'),close:()=>closeMenu(),on:()=>menuOn()||UI6.on&&secOf(UI6.tab)=='world',hubAlso:1},
-  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',key:'N',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,...HUB('bosses')},
-  {id:'quests',btn:'bqm',ic:'quests',g:'World',key:'J',n:'Quests',d:'Daily challenges, your first steps and town quests',row:1,...HUB('quests')},
-  {id:'ach',btn:'bach',ic:'achievements',g:'World',key:'Y',n:'Achievements',d:'Achievements and milestones',row:1,...HUB('ach')},
-  {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Everything you have collected, with rewards',row:1,open:()=>BOOK7.open(),close:()=>BOOK7.close(),on:()=>BOOK7.isOpen},
+  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',key:'N',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,nodock:1,...HUB('bosses'),on:()=>UI6.on&&UI6.tab=='bosses'},
+  {id:'quests',btn:'bqm',ic:'quests',g:'World',key:'J',n:'Quests',d:'Daily challenges, your first steps and town quests',row:1,...HUB('quests'),on:()=>UI6.on&&UI6.tab=='quests'},
+  {id:'ach',btn:'bach',ic:'achievements',g:'World',key:'Y',n:'Achievements',d:'Achievements and milestones',row:1,nodock:1,...HUB('ach'),on:()=>UI6.on&&UI6.tab=='ach'},
+  {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Everything you have collected, with rewards',row:1,nodock:1,open:()=>BOOK7.open(),close:()=>BOOK7.close(),on:()=>BOOK7.isOpen},
   {id:'guide',btn:'bguide',ic:'guide',g:'World',key:'G',n:'Guide',d:'How to use every tool, recipes and the starting guide',row:1,hub:'toolguide',open:()=>GUIDE8.open(),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='guide'},
   {id:'social',btn:'bsoc',ic:'social',g:'Social',n:'Social',d:'Emotes, players here and friends',row:1,solo:1,...HUB('social')}];
  const byId=id=>F.find(f=>f.id==id);
@@ -21868,7 +21926,7 @@ const NAV16=(()=>{
   for(const r of[0,1]){const row=document.createElement('div');row.className='n16r';let g='';for(const f of F.filter(x=>x.row==r)){if(f.solo&&solo())continue;
     if(f.g!=g){if(g){const s=document.createElement('i');s.className='n16s';s.setAttribute('aria-hidden','true');row.appendChild(s)}g=f.g;const h=document.createElement('h5');h.textContent=g;row.appendChild(h)}
     const b=document.createElement('button');b.id=f.btn;b.type='button';b.className='n16b'+(f.gold?' gold':'');b.dataset.g=f.g;b.setAttribute('aria-label',f.n+(f.key?' ('+f.key+')':''));b.dataset.n16tip=f.n+'|'+f.d+'|'+(f.key||'');
-    b.innerHTML=icon(f.ic)+'<span class="lbl">'+f.n+'</span><em class="bdg" hidden></em>';b.onclick=()=>act(f.id);row.appendChild(b);f.el=b}
+    b.innerHTML=icon(f.ic)+'<span class="lbl">'+f.n+'</span><em class="bdg" hidden></em>';b.onclick=()=>act(f.id);if(f.nodock)b.style.display='none';row.appendChild(b);f.el=b}
    grid.appendChild(row)}
   tip=document.createElement('div');tip.id='nav16tip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);
   // the map tools, attached to the minimap
@@ -25342,7 +25400,7 @@ try{(()=>{
  const isW=k=>typeof k=='string'&&k.startsWith('w:');
  const nameOf=k=>{try{if(isW(k))return WPN[k.slice(2)].n;if(DG.ITEMS[k])return DG.ITEMS[k].n;return iname(k)}catch(_){return String(k)}};
  const icon=k=>{try{if(!isW(k)&&DG.ITEMS[k])return DG.iconURL(k);return iconURL(k)}catch(_){return''}};
- function tier(k){try{if(isW(k))return Math.max(0,RK.indexOf(WPNRAR(k.slice(2))));const p=(DG.ITEMS[k]&&DG.ITEMS[k].p)||(MAT[k]&&MAT[k].p)||0;return p>=800?5:p>=400?4:p>=150?3:p>=60?2:p>=20?1:0}catch(_){return 0}}
+ function tier(k){try{if(typeof INV7!='undefined')return INV7.tierOf(k)}catch(_){}try{if(isW(k))return Math.max(0,RK.indexOf(WPNRAR(k.slice(2))));const p=(DG.ITEMS[k]&&DG.ITEMS[k].p)||(MAT[k]&&MAT[k].p)||0;return p>=800?5:p>=400?4:p>=150?3:p>=60?2:p>=20?1:0}catch(_){return 0}}
  const BOSSMAT={710:1,711:1,712:1,713:1,714:1,715:1,721:1,722:1,723:1,724:1};
  function category(k){if(isW(k))return'Weapon';const i=+k;if(i>=731&&i<=749)return'Quest item';if(i>=800&&i<850)return'Blueprint';if(BOSSMAT[i])return'Boss material';if(i>=700&&i<730)return enhNeed(i).length?'Enhancement material':'Dungeon material';try{if(typeof MAT!='undefined'&&MAT[i])return'Material'}catch(_){}try{if(BLK[i])return enhNeed(i).length?'Enhancement material':'Block'}catch(_){}return'Other'}
  // every upgrade that asks for this item
@@ -25371,7 +25429,7 @@ try{(()=>{
    (q.uses.length?'<button class="sec" data-a="uses">SHOW ME WHAT USES THIS</button>':'')+(q.src.length?'<button class="sec" data-a="farm">WHERE CAN I FARM THIS?</button>':'')+(mode=='uses'?'<ul class="ls">'+q.uses.map(u=>'<li>'+esc(u.t)+(u.n?' <b>× '+u.n+'</b>':'')+'</li>').join('')+'</ul>':'')+(mode=='farm'?'<ul class="ls">'+q.src.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>'+ds.map(x=>'<button class="pri" data-d="'+x.d.id+'"'+'>Go to '+esc(x.d.n)+'</button>').join(''):'')+'</div>';
   P.querySelector('.x').onclick=close;P.onclick=e=>{if(e.target===P)close()};for(const b of P.querySelectorAll('[data-a]'))b.onclick=()=>{mode=mode==b.dataset.a?'':b.dataset.a;render()};for(const b of P.querySelectorAll('[data-d]'))b.onclick=()=>{close();try{RPG.enh.close()}catch(_){}try{DG.page.open(null,b.dataset.d)}catch(_){}}}
  // rows for the inventory's detail panel. Buttons work through one listener below, because that panel is rebuilt from strings
- function invRow(k){try{const q=info(k);if(!q)return'';return'<p class="rpgf"><b>What it does:</b> '+esc(q.fn)+'</p>'+(q.need?'<p class="rpgn">You need this now: '+q.need.have+' of '+q.need.n+'</p>':'')+(q.uses.length||q.src.length?'<button class="rpgb" data-rpgit="'+esc(k)+'">Uses and where to farm it</button>':'')}catch(_){return''}}
+ function invRow(k){try{const q=info(k);if(!q)return'';return'<p class="rpgf"><b>What it does:</b> '+esc(q.fn)+'</p>'+(q.need?'<p class="rpgn">You need this now: '+q.need.have+' of '+q.need.n+'</p>':'')}catch(_){return''}}
  function invWeapon(id){try{const w=WPN[id];if(!w||!RPG.isW(id))return'';const a=RPG.parts(id),s=RPG.enh.state(id),b=s.cost?RPG.parts(id,s.l+1):a;const rar=WPNRAR(id),k=CLASS7.of(w);return'<div class="kv"><span>Class</span>'+esc(k?CLASS7.C[k].n:'Any')+'</div><div class="kv"><span>Enhancement</span>+'+s.l+' of +'+CFG.enhMax+'</div><div class="kv"><span>Combat Power</span>'+a.total+'</div>'+(s.cost?'<div class="kv"><span>Next upgrade</span>'+a.total+' → '+b.total+' CP</div>':'')+'<button class="rpgb" data-rpgforge="'+esc(id)+'">Open the forge</button>'}catch(_){return''}}
  document.addEventListener('click',e=>{const t=e.target&&e.target.closest&&e.target.closest('[data-rpgit],[data-rpgforge]');if(!t)return;if(t.dataset.rpgforge){e.stopPropagation();RPG.enh.open(t.dataset.rpgforge);return}if(t.dataset.rpgit){e.stopPropagation();const v=t.dataset.rpgit;open(/^\d+$/.test(v)?+v:v)}},true);
  // what tests/rpg.js checks: everything a player can hold says what it is for
@@ -26224,7 +26282,8 @@ try{(()=>{
  const anyIn=(o,sg,f)=>{try{const n=REALM[sg];return !!(o&&n in o&&f(o[n]))}catch(_){return false}};
  const word=sg=>{try{return anyIn(WORD9.state.w,sg,v=>v&&v.ok)}catch(_){return false}};
  const guard=sg=>{try{return anyIn(WBOSS13.state&&WBOSS13.state.w,sg,v=>!!v)}catch(_){return false}};
- const state=sg=>word(sg)?(guard(sg)?2:1):0;
+ const vale=sg=>{try{return sg==0&&window.PATH1&&PATH1.done(0)}catch(_){return false}};/* finishing Sunroot Vale's questline wakes the first world */
+ const state=sg=>word(sg)||vale(sg)?(guard(sg)?2:1):0;
  const restored=()=>[0,1,2,3,4].filter(sg=>state(sg)==2).length;
  const inRun=()=>{try{return !!(window.DG&&DG.run)}catch(_){return false}};
  const here=()=>{try{if(typeof cur=='undefined'||!cur||!isRealm(cur)||inRun())return null;if(!WORD9.hasWord(cur))return null;const sg=stage(cur);return sg>=0&&sg<=4?{sg,st:state(sg)}:null}catch(_){return null}};
@@ -26439,6 +26498,182 @@ try{(()=>{
  function close(){if(el)el.classList.remove('on')}
  window.MASTERY1={add,open,close,lvlOf,NEED,GEMS,NAMES,get on(){return !!(el&&el.classList.contains('on'))},get S(){return S},reset(){S={w:{}};save();paint()},paint};
 })()}catch(e){console.error('MASTERY1',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-k-path.js ========== */
+// ===== PATH1: the First Realm road. Three fixed lands, chosen from the Worlds page (World Gate > Travel), each opened by finishing the questline of the one before:
+//   Sunroot Vale (world 'rootbound', the story's first world), Gloamglass Reach ('biome-reach'), the Starfall Wastes ('biome-wastes').
+// A questline is a short ordered list of real things done in that land, read from the game's own counter (stat() is wrapped), its visits and its depth trial (BIOME17).
+// One lock, three places: enterWorld refuses, loadWorld redirects (the only route that reaches every entry) and a summon stops (75-net.js). Any realm of a locked land is
+// locked with it. Server limit: the server has no knowledge of quests, so a modified client could walk in; rewards are small and nothing else depends on it.
+// Lands 2 and 3 are the normal generator with its surface re-dressed from BIOME17's own tiles, so no new tile ids, and worlds stay deterministic for online edits.
+// State: RB_PREFIX+'rbpath' {q:[{s:step,n:count,done:time},...]} (synced by ACCT13 like every rb* key). =====
+try{(()=>{
+ const KEY=()=>(typeof RB_PREFIX!='undefined'?RB_PREFIX:'')+'rbpath';
+ const B=[
+  {id:'vale',w:'rootbound',n:'Sunroot Vale',c:'#9be37a',d:'Golden meadows where the first roots woke. Gentle ground, and the best place to learn.',find:'Open fields, old trees and the first of the depths below.',g:6,x:.1,
+   q:[{t:'Arrive in Sunroot Vale',k:'visit'},{t:'Break blocks',k:'stat',s:'break',n:20},{t:'Plant seeds',k:'stat',s:'plant',n:3},{t:'Place blocks',k:'stat',s:'place',n:10},{t:'Defeat monsters',k:'stat',s:'kill',n:10}]},
+  {id:'reach',w:'biome-reach',n:'Gloamglass Reach',c:'#b48cff',d:'A land stuck at dusk, its hills grown through with violet glass.',find:'Glass spires, new monsters and a depth trial under the hills.',g:10,x:.15,rock:219,soil:219,acc:220,mob:3,
+   q:[{t:'Arrive in Gloamglass Reach',k:'visit'},{t:'Break blocks',k:'stat',s:'break',n:30},{t:'Defeat monsters',k:'stat',s:'kill',n:15},{t:'Finish the first depth trial',k:'trial'}]},
+  {id:'wastes',w:'biome-wastes',n:'Starfall Wastes',c:'#ff9a4a',d:'Burnt plains under a sky that is still falling. Craters, basalt and ember.',find:'Meteor craters, the hardest monsters of the road and the way onward.',g:16,x:.2,rock:225,soil:226,acc:226,mob:5,
+   q:[{t:'Arrive in the Starfall Wastes',k:'visit'},{t:'Defeat monsters',k:'stat',s:'kill',n:25},{t:'Break blocks',k:'stat',s:'break',n:40},{t:'Finish the first depth trial',k:'trial'}]}];
+ const fresh=()=>({q:B.map(()=>({s:0,n:0}))});
+ let S=fresh();try{const o=JSON.parse(localStorage.getItem(KEY())||'null');if(o&&Array.isArray(o.q))B.forEach((_,i)=>{const v=o.q[i];if(v)S.q[i]={s:Math.max(0,Math.min(B[i].q.length,v.s|0)),n:Math.max(0,v.n|0),done:v.done||undefined}})}catch(_){}
+ const save=()=>{try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}};
+ const god=()=>{try{return !!(typeof RB_CREATIVE!='undefined'&&RB_CREATIVE)||!!CRV8.on}catch(_){return false}};
+ const norm=n=>String(n||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16);
+ const done=i=>!!S.q[i].done,open=i=>i==0||done(i-1);
+ // a land's own name, or any realm built on it
+ const names=B.map(b=>{const a=[b.w];try{for(let s=1;s<5;s++)a.push(WORD9.stName(b.w,s))}catch(_){}return a});
+ const landOf=n=>{n=norm(n);for(let i=0;i<B.length;i++)if(names[i].includes(n))return i;return -1};
+ const locked=n=>{const i=landOf(n);return i>0&&!open(i)&&!god()};
+ const here=()=>{try{const c=typeof cur!='undefined'?cur:'';for(let i=0;i<B.length;i++)if(B[i].w==c)return i}catch(_){}return -1};
+ const inRun=()=>{try{return !!(window.DG&&DG.run)}catch(_){return false}};
+ const income=L=>{try{return ECON14.income(L)}catch(_){return 30+4.5*Math.max(1,L)}};
+ const rewardOf=i=>{const L=Math.max(1,typeof lvl!='undefined'?lvl|0:1);return{g:Math.round(B[i].g*income(L)),x:Math.round(B[i].x*xpNeed(L))}};
+ const tone=(a,b,d,t,v,dl)=>{try{SFX7.tone(a,b,d,t,v,dl)}catch(_){}};
+ const why=i=>'Complete the '+B[i-1].n+' questline to open '+B[i].n;
+ function refuse(n){const i=landOf(n);try{say(why(i));UI6.say6(B[i].n.toUpperCase()+' IS LOCKED',why(i),3000);tone(220,150,.25,'triangle',.05)}catch(_){}}
+ // ---- questlines
+ function step(i){const q=S.q[i],st=B[i].q[q.s];return st||null}
+ function advance(i){const b=B[i],q=S.q[i],st=step(i);q.s++;q.n=0;
+  if(q.s>=b.q.length){q.done=Date.now();save();finish(i)}else{save();try{say(b.n+': '+st.t+' done');tone(660,880,.16,'triangle',.05)}catch(_){}}paint()}
+ function finish(i){const r=rewardOf(i);try{gems+=r.g;stat('gems',r.g);xpGain('fight',r.x);say(B[i].n+' questline complete  +'+r.g+' gems')}catch(_){}
+  if(B[i+1])reveal(i+1);else try{UI6.say6('THE FIRST REALM IS YOURS','All three lands walked. The realms beyond are waiting.',4200);for(let k=0;k<4;k++)tone(523*Math.pow(1.26,k),523*Math.pow(1.26,k),.3,'triangle',.05,k*.12)}catch(_){}}
+ {const s0=stat;stat=function(k,n){const r=s0.apply(this,arguments);try{if(n>0){const i=here();if(i>=0&&open(i)&&!done(i)&&!inRun()&&!god()){const st=step(i);if(st&&st.k=='stat'&&st.s==k){S.q[i].n+=n;if(S.q[i].n>=st.n)advance(i);else{save();paint()}}}}}catch(e){console.error('PATH1 stat',e)}return r}}
+ setInterval(()=>{try{const i=here();if(i<0||!open(i)||done(i)||inRun()||god()||(typeof entered!='undefined'&&!entered))return;const st=step(i);if(!st)return;if(st.k=='visit')advance(i);else if(st.k=='trial'&&BIOME17.prog(0).done)advance(i)}catch(_){}},1000);
+ // ---- the locks
+ {const _ev=enterWorld;enterWorld=function(n){if(locked(n)&&(typeof entered=='undefined'||entered)){refuse(n);return}return _ev.apply(this,arguments)}}
+ {const _lw=loadWorld;loadWorld=function(n,e){let shut=-1;if(locked(n)){shut=landOf(n);n='plaza';e=undefined}const r=_lw.call(this,n,e);if(shut>=0)setTimeout(()=>refuse(B[shut].w),60);try{const i=here();if(i>=0){const el=document.getElementById('wname');if(el)el.textContent=B[i].n;const w0=cur;setTimeout(()=>{try{if(cur==w0&&!inRun())UI6.say6(B[i].n.toUpperCase(),B[i].d,3000)}catch(_){}},420)}}catch(err){console.error('PATH1 load',err)}return r}}
+ // ---- lands 2 and 3: the same generator, re-dressed. Deterministic from the name, run before any saved edits are laid over it
+ const h32=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
+ const rr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+ function setT(x,y,t){const k=y*W+x;tiles[k]=t;hp[k]=t?BLK[t][2]:0}
+ function reshape(i){const b=B[i],Rg=rr(h32(b.w)),ri=(a,c)=>a+Math.floor(Rg()*(c-a+1));trees.clear();
+  for(let x=1;x<W-1;x++){let top=2;while(top<H-3&&![1,2,3,8].includes(tiles[top*W+x]))top++;for(let y=top;y<Math.min(H-3,top+13);y++){const t=tiles[y*W+x];if(t==1||t==2||t==8)setT(x,y,b.soil);else if(t==3)setT(x,y,b.rock)}}
+  const mid=W>>1,clear=x=>Math.abs(x-mid)<9;
+  if(i==1){for(let x=6;x<W-6;x+=ri(7,16)){if(clear(x)||wl[sh(x)*W+x])continue;const tall=ri(3,8),hw=ri(0,1);for(let dx=-hw;dx<=hw;dx++){const top=sh(x+dx)-1,n=tall-Math.abs(dx)*2;for(let y=0;y<n&&top-y>2;y++)setT(x+dx,top-y,y>=n-2?b.acc:b.rock)}}}
+  else{for(let x=14;x<W-14;x+=ri(26,46)){if(clear(x))continue;const r=ri(4,7);for(let dx=-r;dx<=r;dx++){const d=Math.round((1-(dx*dx)/(r*r))*3.4),h=sh(x+dx);for(let y=h;y<h+d&&y<H-4;y++){if(tiles[y*W+x+dx])setT(x+dx,y,0)}if(d>0&&h+d<H-4)setT(x+dx,h+d,b.acc)}}
+   for(let x=9;x<W-9;x+=ri(17,31)){if(clear(x))continue;const top=sh(x)-1,n=ri(3,9);for(let y=0;y<n&&top-y>2;y++){setT(x,top-y,b.rock);if(y<n/2&&Rg()<.5)setT(x+(Rg()<.5?-1:1),top-y,b.rock)}}}}
+ {const _g=gen;gen=function(){const r=_g.apply(this,arguments);try{const i=here();if(i>0)reshape(i)}catch(e){console.error('PATH1 shape',e)}return r}}
+ // monsters of the land roam its surface
+ {const _pm=pickMob;pickMob=function(dp){try{const i=here();if(i>0&&dp<6&&!god()&&Math.random()<.7){const m=BIOME17.BI[B[i].mob].mob;return m[Math.random()<.6?0:1][0]}}catch(_){}return _pm.apply(this,arguments)}}
+ // ---- art: one painter per land, used for the road's cards, the unlock and the land's own sky
+ const cvs=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+ const grad=(x,h,a)=>{const g=x.createLinearGradient(0,0,0,h);a.forEach((c,i)=>g.addColorStop(i/(a.length-1),c));return g};
+ const ridge=(x,w,h,base,amp,col,seed,jag)=>{const R=rr(seed);x.fillStyle=col;x.beginPath();x.moveTo(0,h);let px=0;x.lineTo(0,base);while(px<w){px+=jag?10+R()*26:22+R()*30;x.lineTo(px,base-(jag?R()*R():Math.sin(px*.012+seed)*.5+.5)*amp-(jag&&R()<.2?amp*.5:0))}x.lineTo(w,h);x.closePath();x.fill()};
+ function sky(i,x,w,h){const R=rr(77+i*31);
+  if(i==0){x.fillStyle=grad(x,h,['#7fb8e8','#f7d9a4','#ffc98a']);x.fillRect(0,0,w,h);const g=x.createRadialGradient(w*.72,h*.42,4,w*.72,h*.42,h*.8);g.addColorStop(0,'rgba(255,250,220,1)');g.addColorStop(.12,'rgba(255,236,170,.85)');g.addColorStop(1,'rgba(255,220,150,0)');x.fillStyle=g;x.fillRect(0,0,w,h)}
+  else if(i==1){x.fillStyle=grad(x,h,['#120a33','#3a2070','#a0509a','#f0a48c']);x.fillRect(0,0,w,h);for(let k=0;k<90;k++){x.fillStyle='rgba(255,240,255,'+(.2+R()*.7)+')';const s=R()<.1?2:1;x.fillRect(R()*w,R()*h*.55,s,s)}const mx=w*.3,my=h*.28,r=h*.13;const g=x.createRadialGradient(mx,my,r*.6,mx,my,r*3);g.addColorStop(0,'rgba(220,200,255,.5)');g.addColorStop(1,'rgba(220,200,255,0)');x.fillStyle=g;x.fillRect(0,0,w,h);x.fillStyle='#efe6ff';x.beginPath();x.arc(mx,my,r,0,7);x.fill();x.fillStyle='#2a1658';x.globalAlpha=.32;x.beginPath();x.arc(mx+r*.4,my-r*.12,r*.92,0,7);x.fill();x.globalAlpha=1}
+  else{x.fillStyle=grad(x,h,['#06040f','#160a26','#4a1a24','#c0562a']);x.fillRect(0,0,w,h);for(let k=0;k<150;k++){x.fillStyle='rgba(255,240,220,'+(.2+R()*.8)+')';const s=R()<.12?2:1;x.fillRect(R()*w,R()*h*.7,s,s)}x.lineCap='round';for(let k=0;k<7;k++){const a=R()*w*.9+w*.1,b=R()*h*.45,l=30+R()*90,g=x.createLinearGradient(a,b,a-l,b-l*.6);g.addColorStop(0,'rgba(255,214,150,.95)');g.addColorStop(1,'rgba(255,120,60,0)');x.strokeStyle=g;x.lineWidth=1+R()*2;x.beginPath();x.moveTo(a,b);x.lineTo(a-l,b-l*.6);x.stroke()}}}
+ function land(i,x,w,h){if(i==0){ridge(x,w,h,h*.72,h*.2,'#8fbf7a',11);ridge(x,w,h,h*.82,h*.16,'#5f9e58',23);x.fillStyle='#2f5a32';x.beginPath();x.moveTo(w*.2,h);x.quadraticCurveTo(w*.205,h*.62,w*.17,h*.5);x.lineTo(w*.235,h*.5);x.quadraticCurveTo(w*.222,h*.66,w*.26,h);x.fill();x.fillStyle='#3f7d3e';for(const[a,b,r]of[[.2,.42,.16],[.13,.5,.11],[.28,.5,.12]]){x.beginPath();x.arc(w*a,h*b,h*r,0,7);x.fill()}ridge(x,w,h,h*.93,h*.09,'#3d7a3f',37)}
+  else if(i==1){ridge(x,w,h,h*.8,h*.42,'#3a2570',41,1);ridge(x,w,h,h*.9,h*.34,'#23164c',53,1);const R=rr(9);for(let k=0;k<9;k++){const a=R()*w,c=h*(.86+R()*.1),t=h*(.3+R()*.28),s=7+R()*12,g=x.createLinearGradient(a,c-t,a,c);g.addColorStop(0,'#e8d4ff');g.addColorStop(1,'#6a3fc0');x.fillStyle=g;x.beginPath();x.moveTo(a-s,c);x.lineTo(a-s*.2,c-t);x.lineTo(a+s,c);x.fill()}ridge(x,w,h,h*.98,h*.08,'#120a30',67)}
+  else{ridge(x,w,h,h*.84,h*.3,'#3a1a22',71,1);ridge(x,w,h,h*.93,h*.26,'#1f0e16',83,1);const g=x.createRadialGradient(w*.66,h,4,w*.66,h,h*.6);g.addColorStop(0,'rgba(255,150,70,.65)');g.addColorStop(1,'rgba(255,120,50,0)');x.fillStyle=g;x.fillRect(0,0,w,h);ridge(x,w,h,h*.99,h*.07,'#0e060c',97)}}
+ const ART={};function art(i){if(ART[i])return ART[i];const c=cvs(640,300),x=c.getContext('2d');sky(i,x,640,300);land(i,x,640,300);return ART[i]=c}
+ const SK={};function bg(i){if(SK[i])return SK[i];const a=cvs(960,540);sky(i,a.getContext('2d'),960,540);const b=cvs(1400,260),y=b.getContext('2d');land(i,y,1400,260);return SK[i]={a,b}}
+ {const _ds=drawSky;drawSky=function(w,hh,now){const i=here();if(i<1)return _ds.apply(this,arguments);try{const s=bg(i);g.drawImage(s.a,0,0,w,hh);const bh=hh*.55,bw=bh*1400/260,ox=-(((cam.x*.1)%bw+bw)%bw);g.drawImage(s.b,ox,hh-bh,bw,bh);g.drawImage(s.b,ox+bw,hh-bh,bw,bh);if(ox+bw*2<w)g.drawImage(s.b,ox+bw*2,hh-bh,bw,bh)}catch(e){_ds.apply(this,arguments)}}}
+ // ---- the road (Worlds > Travel)
+ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const LOCK='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.4"/><path d="M8 11V7.500a4 4 0 0 1 8 0V11"/></svg>';
+ const count=i=>{const q=S.q[i],st=step(i);return st&&st.k=='stat'?' '+Math.min(q.n,st.n)+' / '+st.n:''};
+ const objective=()=>{for(let i=0;i<B.length;i++){if(done(i))continue;const st=step(i),h=here()==i;return{i,land:B[i].n,text:h?st.t+count(i):'Travel to '+B[i].n,sub:h?'':'World Gate, or Worlds in the menu'}}return null};
+ function card(i){const b=B[i],q=S.q[i],lk=!open(i),d=done(i),h=here()==i,all=b.q.length,cnt=d?all:q.s,r=rewardOf(i);
+  const stLab=lk?'Locked':d?'Complete':h?'You are here':q.s?'In progress':'Available';
+  return '<article class="bp-c'+(lk?' lock':'')+(d?' done':'')+(h?' here':'')+'" style="--c:'+b.c+'" data-i="'+i+'"><div class="bp-art"><canvas width="640" height="300"></canvas><span class="bp-n">'+(i+1)+'</span><span class="bp-st">'+(lk?LOCK:'')+stLab+'</span></div>'
+   +'<div class="bp-b"><h4>'+esc(b.n)+'</h4><p>'+esc(b.d)+'</p><div class="bp-bar" role="progressbar" aria-valuenow="'+cnt+'" aria-valuemin="0" aria-valuemax="'+all+'" aria-label="'+esc(b.n)+' questline"><u style="width:'+Math.round(cnt/all*100)+'%"></u></div>'
+   +(lk?'<p class="bp-need">'+LOCK+'<span>'+esc(why(i))+'</span></p>':'<ol>'+b.q.map((s,k)=>'<li class="'+(k<q.s||d?'ok':k==q.s?'cur':'')+'">'+esc(s.t)+(k==q.s&&!d?'<em>'+count(i)+'</em>':'')+'</li>').join('')+'</ol>')
+   +'<small class="bp-find">'+esc(b.find)+(d?'':' Reward: '+r.g.toLocaleString()+' gems.')+'</small>'+(lk?'':'<button type="button" class="bp-go"'+(h?' disabled':'')+'>'+(h?'You are here':d?'Return':'Travel')+'</button>')+'</div></article>'}
+ function render(){const m=document.getElementById('mworlds');if(!m)return;let e=document.getElementById('bpath');if(!e){e=document.createElement('section');e.id='bpath';e.setAttribute('aria-label','The First Realm road');const t=document.getElementById('wtabs16');if(t&&t.parentNode==m)t.after(e);else m.insertBefore(e,m.firstChild);e.addEventListener('click',ev=>{const b=ev.target.closest('.bp-go');if(!b||b.disabled)return;const i=+b.closest('.bp-c').dataset.i;if(!open(i))return;try{enterWorld(B[i].w)}catch(err){console.error('PATH1 go',err)}})}
+  const o=objective();e.innerHTML='<header><div><small>The First Realm</small><div class="bp-title">Three lands, one road</div></div><p>'+(o?'<b>Next</b> '+esc(o.land)+': '+esc(o.text):'<b>Done</b> All three lands walked')+'</p></header><div class="bp-road">'+B.map((_,i)=>card(i)+(i<2?'<i class="bp-link'+(open(i+1)?' on':'')+'" aria-hidden="true"></i>':'')).join('')+'</div>';
+  e.querySelectorAll('.bp-c').forEach(c=>{const v=c.querySelector('canvas');v.getContext('2d').drawImage(art(+c.dataset.i),0,0)})}
+ {const _r=renderWorlds;renderWorlds=function(){const r=_r.apply(this,arguments);try{render()}catch(e){console.error('PATH1 road',e)}return r}}
+ // the next objective, in the quest card
+ {const _q=renderQuest;renderQuest=function(){const r=_q.apply(this,arguments);try{const el=document.getElementById('quest'),o=objective();if(!el||(typeof creatorOn!='undefined'&&creatorOn))return r;const html=o?'<div class="bpq" style="--c:'+B[o.i].c+'"><small>'+esc(o.land)+'</small><b>'+esc(o.text)+'</b>'+(o.sub?'<em>'+esc(o.sub)+'</em>':'')+'</div>':'';
+    if(el.style.display=='none'){if(o){el.style.display='block';el.innerHTML=html}}else if(html)el.insertAdjacentHTML('beforeend',html)}catch(e){console.error('PATH1 quest',e)}return r}}
+ let paintT=0;function paint(){clearTimeout(paintT);paintT=setTimeout(()=>{try{renderQuest();const m=document.getElementById('mworlds');if(m&&m.style.display=='block')render()}catch(_){}},120)}
+ // ---- a new land opens
+ function reveal(i){const b=B[i],old=document.getElementById('bpun');if(old)old.remove();const e=document.createElement('div');e.id='bpun';e.style.setProperty('--c',b.c);e.setAttribute('role','status');e.innerHTML='<div class="bpu-card"><canvas width="640" height="300"></canvas><div class="bpu-lock">'+LOCK+'</div><div class="bpu-t"><small>A new land is open</small><b>'+esc(b.n)+'</b><span>'+esc(b.d)+'</span></div></div>';document.body.appendChild(e);e.querySelector('canvas').getContext('2d').drawImage(art(i),0,0);
+  try{[392,523,659,784,1047].forEach((f,k)=>tone(f,f,.42,'triangle',.05,k*.11));tone(120,60,.5,'sine',.08)}catch(_){}setTimeout(()=>{e.classList.add('out');setTimeout(()=>e.remove(),520)},4200)}
+ window.PATH1={B,S:()=>S,open,done,locked,landOf,here,objective,render,reveal,advance,reset(){S=fresh();save();paint()},step,names};
+ setTimeout(()=>{try{renderQuest()}catch(_){}},1500);
+})()}catch(e){console.error('PATH1',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-l-drawer.js ========== */
+// ===== DRAWER1: the inventory (INV7) as a bottom drawer. It grows out of the hotbar, which stays visible and stays a drop target. Three states: collapsed (a small handle on the
+// hotbar), expanded and full view. Drag the handle or the drawer's header up and down (6 px before a drag begins, so a click stays a click), flick it, or tap to toggle.
+// A spring runs the motion, transform only; the sheet's height is set just once, when it comes to rest, so the grid inside scrolls normally and nothing reflows while it moves.
+// Keys while open: arrows move the selection, [ and ] change category, Enter or E uses, D drops, Page Up / Page Down grow and shrink, Esc closes. No controller: the game has no gamepad layer.
+// ITEMSRC: "Where to find" and "What is it used for?" on every item kind, read from the same data the game runs on (RPG.items, BIOME17, WPN, WEAR, WINGS, SHOP7); no rate is ever made up. =====
+try{(()=>{
+ const reduce=()=>{try{return MOTION7.reduce()}catch(_){return false}};
+ let el=null,sheet=null,vis=0,v=0,target=0,raf=0,last=0,drag=null,level='half',rest=true,onDone=null;
+ const bar=()=>document.getElementById('bar');
+ function metrics(){const b=bar(),r=b&&b.getClientRects().length?b.getBoundingClientRect():null,bot=r&&r.height?Math.round(innerHeight-r.top+6):12,z=uiz(),full=Math.max(320,(innerHeight-bot-10)/z),half=Math.min(full,Math.max(340,Math.round(innerHeight*.5/z)));return{bot,full,half}}
+ const uiz=()=>{try{return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--uiz'))||1}catch(_){return 1}};
+ const stops=()=>{const m=metrics();return[0,m.half,m.full]};
+ function moving(){if(!sheet||!rest)return;rest=false;const m=metrics();sheet.style.setProperty('height',m.full+'px','important');paint()}
+ function paint(){const m=metrics();sheet.style.transform='translate3d(0,'+(m.full-vis).toFixed(1)+'px,0)'}
+ function settle(){rest=true;v=0;raf=0;if(!sheet)return;sheet.style.setProperty('height',Math.round(vis)+'px','important');sheet.style.transform='none';el.dataset.lv=level;const d=onDone;onDone=null;if(d)d()}
+ function tick(t){const dt=Math.min(.032,(t-last)/1000||.016);last=t;const k=420,c=34,a=-k*(vis-target)-c*v;v+=a*dt;vis+=v*dt;if(Math.abs(vis-target)<.6&&Math.abs(v)<14){vis=target;paint();settle();return}paint();raf=requestAnimationFrame(tick)}
+ function go(to){target=to;moving();if(reduce()){vis=to;paint();settle();return}if(!raf){last=performance.now();raf=requestAnimationFrame(tick)}}
+ function setLevel(l){const m=metrics();level=l;go(l=='full'?m.full:m.half)}
+ function attach(){if(el)return true;el=document.getElementById('inv7');if(!el)return false;sheet=el.querySelector('.sheet');el.classList.add('drw7');
+  el.addEventListener('pointerdown',e=>{if(e.button!=0||!INV7.isOpen)return;const h=e.target.closest('header');if(!h||e.target.closest('button,input,select,a'))return;begin(e,false)})}
+ function layout(){if(!el)return;const m=metrics();el.style.setProperty('--dbot',m.bot+'px')}
+ // ---- dragging, from the header or from the collapsed handle
+ function begin(e,fromHandle){drag={id:e.pointerId,y0:e.clientY,vis0:fromHandle?0:vis,moved:false,fromHandle,t:performance.now(),ly:e.clientY,lt:performance.now(),vy:0};addEventListener('pointermove',move);addEventListener('pointerup',up);addEventListener('pointercancel',up)}
+ function move(e){if(!drag||e.pointerId!=drag.id)return;const dy=e.clientY-drag.y0,now=performance.now();if(!drag.moved){if(Math.abs(dy)<6)return;drag.moved=true;if(drag.fromHandle){if(dy>0){drag=null;off();return}try{NAV16.act('inventory')}catch(_){}if(!INV7.isOpen){drag=null;off();return}cancelAnimationFrame(raf);raf=0}else{cancelAnimationFrame(raf);raf=0}moving();document.documentElement.classList.add('drw-drag')}
+  if(now>drag.lt){const q=(e.clientY-drag.ly)/(now-drag.lt);drag.vy=drag.vy*.6+q*.4;drag.lt=now;drag.ly=e.clientY}const m=metrics();let w=drag.vis0-dy/uiz();if(w>m.full)w=m.full+(w-m.full)*.2;if(w<0)w=0;vis=w;v=0;paint()}
+ function off(){removeEventListener('pointermove',move);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);document.documentElement.classList.remove('drw-drag')}
+ function up(e){if(!drag||e.pointerId!=drag.id)return;const d=drag;drag=null;off();
+  if(!d.moved){if(d.fromHandle){try{NAV16.act('inventory')}catch(_){}}else setLevel(level=='full'?'half':'full');return}
+  const fly=-d.vy*1000,aim=vis+fly*.16,S=stops();let best=S[0];for(const s of S)if(Math.abs(aim-s)<Math.abs(aim-best))best=s;v=fly;if(best==0){try{INV7.close()}catch(_){}return}level=best==S[2]?'full':'half';go(best)}
+ // ---- opening and closing
+ {const o0=INV7.open;INV7.open=function(){const was=INV7.isOpen,r=o0.apply(this,arguments);try{attach();layout();sheet=el.querySelector('.sheet');if(!was){level='half';if(!drag||!drag.moved){vis=0;v=0;rest=true;moving();paint();setLevel('half')}}}catch(e){console.error('DRAWER1 open',e)}return r}}
+ {const c0=INV7.close;INV7.close=function(){const live=INV7.isOpen;try{if(live&&sheet){if(reduce()){vis=0;paint()}else{cancelAnimationFrame(raf);raf=0;const t0=performance.now(),a=vis;moving();const ease=()=>{if(INV7.isOpen||!sheet)return;const k=Math.min(1,(performance.now()-t0)/190);vis=a*(1-k*k);paint();if(k<1)requestAnimationFrame(ease)};requestAnimationFrame(ease)}}}catch(_){}return c0.apply(this,arguments)}}
+ addEventListener('resize',()=>{try{if(el&&INV7.isOpen){layout();setLevel(level)}}catch(_){}});
+ // ---- keys
+ const CATS=()=>[...el.querySelectorAll('nav [data-f]')];
+ addEventListener('keydown',e=>{try{if(!INV7.isOpen||!el||e.ctrlKey||e.altKey||e.metaKey)return;const tg=e.target;if(tg&&/^(INPUT|SELECT|TEXTAREA)$/.test(tg.tagName))return;if(window.DLG7&&DLG7.isOpen)return;const k=e.key;
+   if(k=='PageUp'||k=='PageDown'){e.preventDefault();e.stopPropagation();if(k=='PageUp')setLevel('full');else if(level=='full')setLevel('half');else INV7.close();return}
+   if(k=='['||k==']'){e.preventDefault();e.stopPropagation();const c=CATS(),i=c.findIndex(b=>b.classList.contains('on')),n=c[(i+(k==']'?1:-1)+c.length)%c.length];if(n)n.click();return}
+   if(k=='ArrowLeft'||k=='ArrowRight'||k=='ArrowUp'||k=='ArrowDown'){const g=el.querySelector('.grid7'),L=[...g.querySelectorAll('.it7')];if(!L.length)return;e.preventDefault();e.stopPropagation();let i=L.findIndex(t=>t.classList.contains('sel'));const y0=L[0].offsetTop;let cols=L.findIndex(t=>t.offsetTop!=y0);if(cols<1)cols=L.length;const d=k=='ArrowLeft'?-1:k=='ArrowRight'?1:k=='ArrowUp'?-cols:cols;i=i<0?0:Math.max(0,Math.min(L.length-1,i+d));const t=L[i];INV7.select(/^\d+$/.test(t.dataset.k)?+t.dataset.k:t.dataset.k);t.scrollIntoView({block:'nearest'});return}
+   if((k=='d'||k=='D')&&INV7.selK!=null){const b=el.querySelector('aside [data-a=drop]');if(b){e.preventDefault();e.stopPropagation();b.click()}}}catch(_){}},true);
+ // ---- the collapsed handle, on top of the hotbar
+ let h=null;function build(){h=document.createElement('button');h.id='invh7';h.type='button';h.setAttribute('aria-label','Open your items (I)');h.dataset.n16tip='Items|Drag up, or click|I';h.innerHTML='<i></i><span>Items</span>';document.body.appendChild(h);h.addEventListener('pointerdown',e=>{if(e.button==0){e.preventDefault();begin(e,true)}});h.addEventListener('keydown',e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();e.stopPropagation();try{NAV16.act('inventory')}catch(_){}}})}
+ setInterval(()=>{try{if(!h)build();const b=bar(),show=typeof entered!='undefined'&&entered&&!window.RB_COVER&&!INV7.isOpen&&b&&b.getClientRects().length&&menuEl.style.display=='none'&&!(typeof creatorOn!='undefined'&&creatorOn);h.style.display=show?'':'none';if(show){const r=b.getBoundingClientRect();h.style.left=Math.round(r.left+r.width/2)+'px';h.style.top=Math.round(r.top-24)+'px'}}catch(_){}},300);
+ window.DRAWER1={get level(){return level},get vis(){return vis},get rest(){return rest},setLevel,metrics};
+})()}catch(e){console.error('DRAWER1',e)}
+// ---- ITEMSRC: every item says what it is, where it comes from and what uses it
+try{(()=>{
+ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const num=k=>typeof k=='number';
+ const biomeOf=i=>{try{const b=BIOME17.BI.find(b=>b.ore==i||b.mat==i);return b?b.n:null}catch(_){return null}};
+ const wingOf=k=>{try{return wingById(k.slice(5))}catch(_){return null}},shopOf=k=>{try{return SHOP7.byId.get(k.slice(3))}catch(_){return null}};
+ const dungeonRows=i=>{try{return RPG.items.dungeonsWith(i)}catch(_){return[]}};
+ // [{t:text, go:{kind,arg}?}] : the go button appears only when there is a real place to send you
+ function where(k){const o=[];
+  if(num(k)){const dg=dungeonRows(k);let src=[];try{src=RPG.items.sources(k)}catch(_){}const b=biomeOf(k);if(b)o.push({t:'Found in '+b+', a depth biome under the surface'});for(const s of src){const d=dg.find(x=>s.startsWith(x.d.n));o.push({t:s,go:d?{kind:'dungeon',arg:d.d.id}:undefined})}return o}
+  if(k.startsWith('w:')){const w=WPN[k.slice(2)];if(!w)return o;if(w.cost>0)o.push({t:'Buy it here in your inventory for '+w.cost.toLocaleString()+' gems'+(w.lv?', from level '+w.lv:'')});else if(w.dg)o.push({t:'Forged from dungeon materials',go:{kind:'forge'}});else o.push({t:w.k=='tool'?'A starting tool':'Earned through play, not sold'});return o}
+  if(k[0]=='a'&&WEAR[k.slice(2)]){const w=WEAR[k.slice(2)];if(w.cost>0)o.push({t:'Buy it here in your inventory for '+w.cost.toLocaleString()+' gems'+(w.lv?', from level '+w.lv:'')});else o.push({t:'Earned through play, not sold'});return o}
+  if(k.startsWith('wing:')){const w=wingOf(k);if(w&&w.lvl)o.push({t:'Reached at level '+w.lvl});else o.push({t:'The Store',go:{kind:'store'}});return o}
+  if(k.startsWith('id:')){const it=shopOf(k);if(it&&it.price)o.push({t:'The Store, '+it.price.toLocaleString()+' gems',go:{kind:'store'}});else o.push({t:'The Store',go:{kind:'store'}});return o}
+  return o}
+ function used(k){const o=[];
+  if(num(k)){let u=[];try{u=RPG.items.uses(k)}catch(_){}for(const q of u)o.push({t:q.t+(q.n?' × '+q.n:''),go:q.k=='forge'?{kind:'forge'}:undefined});if(!o.length){let p='';try{p=RPG.items.purpose(k)}catch(_){}if(p)o.push({t:p})}return o}
+  if(k.startsWith('w:')){const w=WPN[k.slice(2)];if(!w)return o;if(w.k=='tool'){o.push({t:w.d||'A tool'});return o}o.push({t:'Attack with it'});try{const c=CLASS7.of(w);if(c)o.push({t:'A '+CLASS7.C[c].n+' weapon: it trains that class'})}catch(_){}try{if(RPG.isW(k.slice(2)))o.push({t:'Can be upgraded at the forge',go:{kind:'forge',arg:k.slice(2)}})}catch(_){}return o}
+  if(k[0]=='a'){const w=WEAR[k.slice(2)];if(w)o.push({t:'Wear it: '+(w.sd||w.d||'')});return o}
+  if(k.startsWith('wing:')){o.push({t:'Wear it to glide and fly'});return o}
+  if(k.startsWith('id:')){const it=shopOf(k);o.push({t:(it&&it.d)||'Equip it'});return o}
+  return o}
+ // what the game's rules really allow
+ function rules(k){const T=[];if(num(k)){T.push(k==17?'Can\'t be traded or dropped':k>=731&&k<=749?'Quest item: can\'t be traded':'Can be traded and dropped')}else T.push('Trading comes with the next update');return T}
+ function go(g){if(!g)return;try{INV7.close()}catch(_){}try{if(g.kind=='dungeon')DG.page.open(null,g.arg);else if(g.kind=='store')STORE7.open();else if(g.kind=='forge')RPG.enh.open(g.arg||(typeof wp!='undefined'?wp:undefined))}catch(e){console.error('ITEMSRC go',e)}}
+ let open='',cache=[];
+ function list(k,which){cache=which=='where'?where(k):used(k);if(!cache.length)return'<p class="src-none">'+(which=='where'?'No known source.':'Nothing uses it yet.')+'</p>';return'<ul class="src-l">'+cache.map((q,i)=>'<li><span>'+esc(q.t)+'</span>'+(q.go?'<button type="button" class="src-go" data-srcgo="'+i+'">Go</button>':'')+'</li>').join('')+'</ul>'}
+ function row(s){if(!s)return'';const k=s.k,own=s.own?(s.n?'You own '+s.n:'You own this'):'You don\'t own this yet';return'<div class="src8"><div class="src-b"><button type="button" data-src="where" class="'+(open=='where'?'on':'')+'" aria-expanded="'+(open=='where')+'">Where to find</button><button type="button" data-src="used" class="'+(open=='used'?'on':'')+'" aria-expanded="'+(open=='used')+'">What is it used for?</button></div>'+(open?list(k,open):'')+'<p class="src-r">'+esc(own)+' · '+esc(rules(k).join(' · '))+'</p></div>'}
+ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-src],[data-srcgo]');if(!t||!t.closest('#inv7'))return;e.stopPropagation();if(t.dataset.srcgo!=null){go((cache[+t.dataset.srcgo]||{}).go);return}open=open==t.dataset.src?'':t.dataset.src;try{const k=INV7.selK;if(k!=null)INV7.select(k)}catch(_){}},true);
+ window.ITEMSRC={row,where,used,rules,reset(){open=''}};
+})()}catch(e){console.error('ITEMSRC',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-restore.js ========== */
 // The last script of all: every item, weapon and piece of gear in the game is registered by now, so what the start-up check set aside (99-a-sanitize.js) goes back where it was.

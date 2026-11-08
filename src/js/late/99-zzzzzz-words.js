@@ -30,7 +30,7 @@ const WORD9=(()=>{
  const stageOf=n=>{if(typeof n!='string'||n.length<5)return 0;for(let i=1;i<CH.length;i++)if(n.endsWith(CH[i].s))return i;return 0};
  function stName(b,i){b=norm(b);if(!i)return b;const s=CH[i].s,n=b.length<=12?b+s:b.slice(0,9)+(h32(b)%46656).toString(36).padStart(3,'0')+s;S.inf[n]=b;return n}
  const infName=b=>stName(b,1);
- const baseOf=n=>S.inf[n]||n.slice(0,-4)||'plaza',pretty=n=>n=='plaza'?'The Plaza':String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+ const baseOf=n=>S.inf[n]||n.slice(0,-4)||'plaza',pretty=n=>n=='plaza'?'The Plaza':window.PATH1&&PATH1.landOf(n)>=0?PATH1.B[PATH1.landOf(n)].n:String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
  const label=n=>{const s=stageOf(n);return s?pretty(baseOf(n))+' · '+CH[s].t:pretty(n)},hasWord=n=>n!='plaza',isBase=n=>n!='plaza'&&!stageOf(n);
  const baseCur=()=>stageOf(cur)?baseOf(cur):cur,nextName=()=>{const s=stageOf(cur);return s+1<CH.length?stName(baseCur(),s+1):null},lvOf=n=>CH[stageOf(n)].lv;
  // each realm's word: longer every realm, no common anagrams (the gate only takes the exact word)
@@ -256,6 +256,6 @@ const WORD9=(()=>{
  // the world name on the HUD reads "<World> · Inferno"
  // (the legacy HUD timer writes cur.toUpperCase() through the element's own textContent setter, see BUILD9's guard: wrap that setter)
  try{const el=document.getElementById('wname'),d=Object.getOwnPropertyDescriptor(el,'textContent')||Object.getOwnPropertyDescriptor(Node.prototype,'textContent');el._g9=1;
-  Object.defineProperty(el,'textContent',{configurable:true,get(){return d.get.call(this)},set(v){if(entered&&stageOf(cur))v=label(cur);d.set.call(this,v)}})}catch(e){console.error('WORD9 hud',e)}
+  Object.defineProperty(el,'textContent',{configurable:true,get(){return d.get.call(this)},set(v){if(entered&&stageOf(cur))v=label(cur);else if(entered&&window.PATH1&&PATH1.here()>=0)v=PATH1.B[PATH1.here()].n.toUpperCase();d.set.call(this,v)}})}catch(e){console.error('WORD9 hud',e)}
  return{LETTER,ASH,BASALT,MAGMA,OBSID,SCORCH,LV,WORDS,IM,get letters(){return L.map(l=>({k:l.k,x:l.k%W,y:l.k/W|0,ch:l.ch,i:l.i}))},get word(){return WORD},get inf(){return INF},get state(){return S},
   wordFor,isInf,infName,baseOf,label,hasWord,isBase,stageOf,stName,nextName,CH,collect:i=>collect(L.find(l=>l.i==i)),open,close,submit,travel,isOpen,spawnAt,strip,get fireballs(){return FB.length},get thrown(){return thrown},get embers(){return EM.length}}})();

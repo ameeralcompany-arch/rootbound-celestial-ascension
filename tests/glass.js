@@ -8,11 +8,11 @@ const URL='file://'+path.resolve(__dirname,'../index.html');setTimeout(()=>{cons
  const p=await open(1600,900);
  // ---- the design system
  const tk=await p.evaluate(()=>{const c=getComputedStyle(document.documentElement),g=k=>c.getPropertyValue(k).trim();return{ink:g('--ink'),surface:g('--surface'),acc:g('--accent'),line:g('--line'),rad:g('--rad-glass'),btn:g('--btn-primary'),skin:document.documentElement.dataset.skin,blur:document.documentElement.dataset.blur}});
- ok('the default look is Soft Glass: charcoal surfaces, lavender accent, soft white ink',tk.skin=='night'&&/rgba\(58, ?56, ?76/.test(tk.surface)&&tk.acc=='#c9bdf5'&&tk.ink=='#f4f2fb',tk);ok('balanced by default: medium blur',tk.blur=='med',tk.blur);
+ ok('the default look is the brand: deep-violet glass, gold accent, cream ink',tk.skin=='night'&&/rgba\(36, ?26, ?66/.test(tk.surface)&&tk.acc.toUpperCase()=='#F4D59A'&&tk.ink.toUpperCase()=='#F6F1E7',tk);ok('balanced by default: medium blur',tk.blur=='med',tk.blur);
  // one panel style across different screens
  const panels=[['Hub',()=>UI6.open('profile'),'#hubc'],['Inventory',()=>INV7.open(),'#inv7 .sheet'],['Store',()=>STORE7.open(),'#store7 .shell'],['Worlds',()=>openMenu('mworlds'),'#menu #card'],['Crafting',()=>CRAFT6.open(),'#craftui'],['Dungeons',()=>DG.page.open('ancient'),'#dg16']];
  const styles={};for(const[n,f,sel]of panels){await p.evaluate(`(${f})()`).catch(e=>console.log(n,String(e).slice(0,100)));await p.waitForTimeout(320);styles[n]=await p.evaluate(sel=>{const e=document.querySelector(sel);if(!e)return null;const c=getComputedStyle(e),r=e.getBoundingClientRect();return{bg:c.backgroundImage.slice(0,60),rad:c.borderRadius,bf:c.backdropFilter,w:r.width|0,h:r.height|0}},sel);await closeAll(p);await p.waitForTimeout(200)}
- for(const n of['Hub','Inventory','Store','Worlds','Crafting'])ok(n+' uses the shared glass panel',styles[n]&&/rgba\(58, ?56, ?76/.test(styles[n].bg)&&styles[n].rad=='16px',styles[n]);
+ for(const n of['Hub','Inventory','Store','Worlds','Crafting'])ok(n+' uses the shared glass panel',styles[n]&&/rgba\(36, ?26, ?66/.test(styles[n].bg)&&styles[n].rad=='16px',styles[n]);
  ok('the Dungeon Hub is its own full page in the same palette',styles.Dungeons&&styles.Dungeons.w>1500,styles.Dungeons);
  ok('the HUD never has live blur',await p.evaluate(()=>{const q=document.querySelector('#hudL');return getComputedStyle(q).backdropFilter=='none'&&getComputedStyle(document.querySelector('#bar')).backdropFilter=='none'}));
  ok('an open panel has medium blur',/blur\(9px\)/.test(styles.Hub.bf),styles.Hub.bf);

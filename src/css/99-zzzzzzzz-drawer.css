@@ -1,0 +1,21 @@
+/* ===== DRAWER1: the inventory as a drawer growing out of the hotbar, its collapsed handle, and the item source panel. ===== */
+html.inv6 #inv7.drw7{padding-bottom:var(--dbot,104px)!important;align-items:flex-end;background:transparent!important;clip-path:inset(0 0 var(--dbot,104px) 0);transition:opacity .16s ease}
+#inv7.drw7 .sheet{width:min(1120px,96vw);transition:none!important;will-change:transform;border-radius:22px 22px 0 0!important;border-bottom:0!important;box-shadow:0 -24px 70px -24px rgba(0,0,0,.8)!important}
+#inv7.drw7 header{position:relative;cursor:grab;touch-action:none;user-select:none;padding-top:20px!important}html.drw-drag,html.drw-drag #inv7.drw7 header{cursor:grabbing}
+#inv7.drw7 header::before{content:'';position:absolute;left:50%;top:8px;width:54px;height:5px;margin-left:-27px;border-radius:5px;background:rgba(244,213,154,.5);transition:background .14s,width .14s,margin .14s}#inv7.drw7 header:hover::before{background:#f4d59a;width:66px;margin-left:-33px}
+#inv7.drw7 .grid7{overscroll-behavior:contain}
+/* in the expanded state the Equipped strip waits for full view, so the items get the room */
+#inv7.drw7[data-lv=half] .eq8{display:none}
+#invh7{position:fixed;z-index:42;transform:translateX(-50%);display:flex;align-items:center;gap:8px;height:22px;padding:0 14px;border-radius:12px 12px 0 0;border:1px solid rgba(244,213,154,.35);border-bottom:0;background:rgba(18,14,36,.86);color:#fff8e6;font:700 12px Montserrat,system-ui,sans-serif;letter-spacing:.06em;cursor:grab;touch-action:none;transition:height .12s ease,background .12s ease,margin .12s ease}#invh7:hover{height:26px;margin-top:-4px;background:rgba(36,26,66,.95)}#invh7:active{cursor:grabbing}#invh7:focus-visible{outline:2px solid #f4d59a;outline-offset:1px}
+#invh7 i{width:22px;height:4px;border-radius:4px;background:#f4d59a}
+body.dgon #invh7{opacity:.9}
+.src8{margin-top:10px;display:flex;flex-direction:column;gap:7px}.src-b{display:flex;gap:6px}.src-b button{flex:1;min-height:34px;border-radius:9px;border:1px solid var(--line-strong,rgba(244,213,154,.34));background:rgba(255,255,255,.04);color:var(--ink,#f6f1e7);font:600 12.5px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .12s,border-color .12s}.src-b button:hover{border-color:#f4d59a}.src-b button.on{background:rgba(244,213,154,.16);border-color:#f4d59a;color:#fff8e6}
+.src-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.35;color:var(--ink-2,#e6dfee)}.src-l li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;border-radius:7px;background:rgba(255,255,255,.04)}.src-go{flex:none;padding:3px 12px;border-radius:7px;border:1px solid #f4d59a;background:rgba(244,213,154,.14);color:#fff8e6;font:700 12px Montserrat,system-ui,sans-serif;cursor:pointer}.src-go:hover{background:rgba(244,213,154,.3)}
+.src-none{margin:0;font-size:13px;color:var(--muted,#b5acc9)}.src-r{margin:0!important;font-size:12px!important;color:var(--muted,#b5acc9)!important}
+html[data-reduce=true] #invh7{transition:none}
+
+/* readable text: nothing a player has to read stays under 11 px on the default look */
+html[data-skin=night] #inv7 .it7 span{font-size:11.5px!important}html[data-skin=night] #inv7 aside p{font-size:13.5px!important;line-height:1.45}html[data-skin=night] #inv7 aside .kv{font-size:13px!important}html[data-skin=night] #inv7 nav button small{font-size:11px}html[data-skin=night] #inv7 .eyebrow{font-size:11px!important}
+html[data-skin=night] #hubbody small{font-size:12px}html[data-skin=night] #hubbody{font-size:14px}
+/* the expanded state keeps the details compact; the full picture and hints wait for full view */
+#inv7.drw7[data-lv=half] aside .pic{height:76px!important}#inv7.drw7[data-lv=half] aside .pic img{width:56px!important;height:56px!important}#inv7.drw7[data-lv=half] .hbtip7,#inv7.drw7[data-lv=half] .kb8{display:none}

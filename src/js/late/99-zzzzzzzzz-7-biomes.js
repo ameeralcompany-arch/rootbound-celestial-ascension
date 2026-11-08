@@ -78,7 +78,7 @@ const BIOME17=(()=>{
   const cnt=(STAGES[stageOf(n)]||[0,0,0]).length;for(const f of['k','o','c']){if(!Array.isArray(r[f]))r[f]=[];while(r[f].length<cnt)r[f].push(0)}if(!r.lit||typeof r.lit!='object')r.lit={};return r}
  // ---- world layout from its name: which three biomes (in band order) and the difficulty
  function layout(n){n=norm(n);const pool=STAGES[stageOf(n)]||BI,cnt=pool===BI?3:pool.length,band=BANDS[cnt]||Math.floor(90/cnt),Rn=rr((h32(n)^0xb10e)>>>0),ids=pool.map((_,i)=>i);for(let i=ids.length-1;i>0;i--){const j=Math.floor(Rn()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}
-  const q=Rn(),diff=q<.2?1:q<.45?2:q<.7?3:q<.88?4:5;return{bi:ids.slice(0,cnt).map(i=>pool[i]),diff,band,bands:ids.slice(0,cnt).map((_,i)=>({d0:TOP+i*band,d1:TOP+(i+1)*band}))}}
+  const q=Rn(),diff=({rootbound:1,'biome-reach':2,'biome-wastes':3})[n]||(q<.2?1:q<.45?2:q<.7?3:q<.88?4:5);return{bi:ids.slice(0,cnt).map(i=>pool[i]),diff,band,bands:ids.slice(0,cnt).map((_,i)=>({d0:TOP+i*band,d1:TOP+(i+1)*band}))}}
  const wordOf=n=>{if(!isWorld(n)||stageOf(n))return null;const r=rec(n);return r.bw?WORDS3[h32(norm(n)+'#w3')%WORDS3.length]:null};
  const tier=i=>N<=3?i:i*2/(N-1),needK=i=>12+Math.round(4*tier(i)),needO=i=>6+Math.round(2*tier(i)),NB=3;   // tier: how hard biome i is, from 0 to 2 however many biomes there are
  const bandOfDepth=d=>{if(d<TOP)return -1;return Math.min(N-1,Math.floor((d-TOP)/BAND))};

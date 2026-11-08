@@ -221,7 +221,7 @@ function createServer(opts={}){
   if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid,s.god)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);return}
   if(t=='meta'){if(!bucket(s,'meta',6,8000))return;if(s.kind=='guest')return;const r=R.checkMeta(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'meta'});return}if(r.v)r.v.on=s.name;
    // placing a World Lock in an unowned world claims it, within the same limit
-   if(!w.ownerUid&&r.v){const u=userById(s.uid);if(!u||R.realmStage(wid)||!canOwn(u)){send(s,{t:'_rej',op:'meta'});return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first')}u.worlds=(u.worlds||[]).concat(wid);saveAcc();setOwner(wid,u.id,u.name);sendMine(s)}
+   if(!w.ownerUid&&r.v){const u=userById(s.uid);if(!u||R.realmStage(wid)||R.PATH_LANDS.has(wid)||!canOwn(u)){send(s,{t:'_rej',op:'meta'});return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first')}u.worlds=(u.worlds||[]).concat(wid);saveAcc();setOwner(wid,u.id,u.name);sendMine(s)}
    // taking the lock away frees the world (and its realms) again
    if(r.v===null&&w.ownerUid){const o=userById(w.ownerUid);if(o){o.worlds=(o.worlds||[]).filter(x=>x!=wid);saveAcc()}w.meta=null;setOwner(wid,'','');sendMine(s)}
    // a lock put down comes out of the server's own ledger (the client took it from its inventory too), so only a lock really paid for is handed back on release

@@ -13,7 +13,8 @@ try{(()=>{
  const anyIn=(o,sg,f)=>{try{const n=REALM[sg];return !!(o&&n in o&&f(o[n]))}catch(_){return false}};
  const word=sg=>{try{return anyIn(WORD9.state.w,sg,v=>v&&v.ok)}catch(_){return false}};
  const guard=sg=>{try{return anyIn(WBOSS13.state&&WBOSS13.state.w,sg,v=>!!v)}catch(_){return false}};
- const state=sg=>word(sg)?(guard(sg)?2:1):0;
+ const vale=sg=>{try{return sg==0&&window.PATH1&&PATH1.done(0)}catch(_){return false}};/* finishing Sunroot Vale's questline wakes the first world */
+ const state=sg=>word(sg)||vale(sg)?(guard(sg)?2:1):0;
  const restored=()=>[0,1,2,3,4].filter(sg=>state(sg)==2).length;
  const inRun=()=>{try{return !!(window.DG&&DG.run)}catch(_){return false}};
  const here=()=>{try{if(typeof cur=='undefined'||!cur||!isRealm(cur)||inRun())return null;if(!WORD9.hasWord(cur))return null;const sg=stage(cur);return sg>=0&&sg<=4?{sg,st:state(sg)}:null}catch(_){return null}};

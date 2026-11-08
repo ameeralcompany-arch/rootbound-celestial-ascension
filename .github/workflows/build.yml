@@ -191,6 +191,14 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/brand.js
+      - name: Test the First Realm road
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/path.js
+      - name: Test the inventory drawer
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/drawer.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10

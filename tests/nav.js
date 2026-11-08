@@ -36,7 +36,8 @@ const SIZES=[[800,600],[1024,600],[1024,768],[1280,720],[1366,768],[1600,900],[1
  // ---- the Hub shows only the section you opened
  const tabs=async t=>E(t=>{UI6.open(t);return[...document.querySelectorAll('#hubnav button')].map(b=>b.textContent)},t);
  ok('Character shows its four tabs',(await tabs('profile')).join()=='Profile,Appearance,Wings & Aura,Nameplates',await tabs('profile'));
- for(const t of['skills','bosses','quests','ach']){await tabs(t);await W(60);ok(t+' is its own page, with no tabs',await E(()=>document.getElementById('hubc').classList.contains('one')&&getComputedStyle(document.getElementById('hubnav')).display=='none'))}
+ ok('Quests holds achievements, the boss list and the collection as tabs',await E(()=>{UI6.open('quests');const n=[...document.querySelectorAll('#hubnav button')].map(b=>b.textContent);UI6.close();return n.join()=='Quests,Achievements,Bosses,Collection'}));
+ for(const t of['skills']){await tabs(t);await W(60);ok(t+' is its own page, with no tabs',await E(()=>document.getElementById('hubc').classList.contains('one')&&getComputedStyle(document.getElementById('hubnav')).display=='none'))}
  ok('every Hub tab belongs to a section',await E(()=>UI6.TABS.every(t=>Object.values(NAV16.SEC).some(s=>s.tabs.includes(t[0]))||t[0]=='owner')),await E(()=>UI6.TABS.map(t=>t[0])));
  ok('the old Equipment and Directory tabs are gone',await E(()=>!UI6.TABS.some(t=>t[0]=='gear'||t[0]=='dir')));await closeAll();
  // ---- Bosses: real data, a real Challenge
@@ -73,5 +74,5 @@ const SIZES=[[800,600],[1024,600],[1024,768],[1280,720],[1366,768],[1600,900],[1
  // ---- a larger interface scale still fits
  await p.setViewportSize({width:1280,height:720});await W(600);const sc=await (async()=>{await E(()=>{cel.opt.ui=1.2;UI6.applyUi()});await W(1300);const s=await scan();await E(()=>{cel.opt.ui=1;UI6.applyUi()});return s})();ok('a larger interface scale has no overlaps',sc.out.length==0&&sc.over.length==0,sc);
  // ---- tooltips
- await p.hover('#bboss');await W(220);const tp=await E(()=>{const t=document.getElementById('nav16tip'),r=t.getBoundingClientRect();return{on:t.classList.contains('on'),txt:t.innerText,inside:r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight}});ok('the tooltip names the feature and its key, and stays on screen',tp.on&&/Bosses/.test(tp.txt)&&/N/.test(tp.txt)&&tp.inside,tp);await p.mouse.move(600,300);
+ await p.hover('#bqm');await W(220);const tp=await E(()=>{const t=document.getElementById('nav16tip'),r=t.getBoundingClientRect();return{on:t.classList.contains('on'),txt:t.innerText,inside:r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight}});ok('the tooltip names the feature and its key, and stays on screen',tp.on&&/Quests/.test(tp.txt)&&/J/.test(tp.txt)&&tp.inside,tp);await p.mouse.move(600,300);
  ok('no page errors',errs.length==0,errs.slice(0,5));await b.close();console.log(fails?'FAILURES '+fails:'all nav tests passed');process.exit(fails?1:0)})().catch(e=>{console.log('FAIL crash',e);process.exit(1)});
