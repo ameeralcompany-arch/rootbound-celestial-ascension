@@ -199,6 +199,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/drawer.js
+      - name: Test dropping items, the wrench and tool introductions
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/drops.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10

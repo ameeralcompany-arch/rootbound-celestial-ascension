@@ -72,7 +72,7 @@ function createServer(opts={}){
  // who runs this world's monsters: the current host if still here, else the first player who is not in a private fight
  function mbElect(id){const w=id=='plaza'?null:worlds.get(id);if(!w)return;const c=w.mobHost&&sessions.get(w.mobHost);if(c&&c.world===id&&!c.mbAway&&!c.oInv)return;let pick='';for(const sid of w.members){const o=sessions.get(sid);if(o&&o.world===id&&!o.mbAway&&!o.oInv){pick=sid;break}}if(pick!==(w.mobHost||'')){w.mobHost=pick;relay(id,{t:'mhost',d:{sid:pick}})}}
  function helloFor(s,id){const pl={};for(const sid of members(id)){if(sid==s.sid)continue;const o=sessions.get(sid);if(o&&!o.oInv)pl[sid]=o.pres}pl[s.sid]=s.pres;
-  if(id=='plaza')return{w:'plaza',edits:{},pl,wx:'default',dr:plazaDrops};const w=worlds.get(id);const e=Object.assign({},w.edits);if(w.meta)e.m=w.meta;if(Object.keys(w.objs).length)e.o=w.objs;return{w:id,edits:e,pl,wx:w.weather,rev:w.rev,g:w.g,own:w.ownerUid?{o:w.ownerUid,on:w.ownerName}:null,dr:w.drops}}
+  if(id=='plaza')return{w:'plaza',edits:{},pl,wx:'default',dr:plazaDrops.map(ECON.pubDrop)};const w=worlds.get(id);const e=Object.assign({},w.edits);if(w.meta)e.m=w.meta;if(Object.keys(w.objs).length)e.o=w.objs;return{w:id,edits:e,pl,wx:w.weather,rev:w.rev,g:w.g,own:w.ownerUid?{o:w.ownerUid,on:w.ownerName}:null,dr:w.drops.map(ECON.pubDrop)}}
  function enter(s,idRaw,create,baseRaw){const id=wname(idRaw);if(!id)return send(s,{t:'enter_err',m:'Invalid world name'});
   if(s.world==id)return;
   if(banned(s.uid))return send(s,{t:'enter_err',m:'You are banned from this server'});const pass=s.owner||s.summon===id;
@@ -96,7 +96,7 @@ function createServer(opts={}){
  const chatLog=Object.create(null),reports=store.readJSON(store.p('reports.json'),{list:[]});if(!Array.isArray(reports.list))reports.list=[];
  function setGod(s,u,on){const sh=SHOP.ensure(u);if(on&&!u.god){sh.realG=sh.g;sh.g=Math.max(sh.g,999999)}else if(!on&&u.god){sh.g=Number.isFinite(sh.realG)?sh.realG:sh.g;delete sh.realG}u.god=on?1:0;s.god=!!on;saveAcc();send(s,{t:'god',on:on?1:0});sendWallet(s,u)}
  const parties=PARTY.createParties({send,sessions,userById,saveAcc:()=>saveAcc(),bonus:(u,n)=>SHOP.bonus(u,n),bucket:(s,k,n,ms)=>bucket(s,k,n,ms),minRunMs:cfg.dgMinMs,graceMs:cfg.dgGraceMs});
- const eco=ECON.createEconomy({send,sessions,userById,saveAcc:()=>saveAcc(),relay:(w,m)=>relay(w,m),dropsOf:id=>id=='plaza'?plazaDrops:(worlds.get(id)||{drops:[]}).drops,touchWorld:id=>{const w=worlds.get(id);if(w)saveWorld(w)},bucket:(s,k,c,ms)=>bucket(s,k,c,ms),audit:o=>store.audit(o),rid:()=>crypto.randomBytes(2).toString('hex')});
+ const eco=ECON.createEconomy({send,sessions,userById,saveAcc:()=>saveAcc(),relay:(w,m)=>relay(w,m),dropsOf:id=>id=='plaza'?plazaDrops:(worlds.get(id)||{drops:[]}).drops,loadW:id=>loadWorld(id,false),allDrops:()=>[['plaza',plazaDrops],...[...worlds].map(([id,w])=>[id,w.drops])],touchWorld:id=>{const w=worlds.get(id);if(w)saveWorld(w)},bucket:(s,k,c,ms)=>bucket(s,k,c,ms),audit:o=>store.audit(o),rid:()=>crypto.randomBytes(2).toString('hex')});
  // ---------- admin (OWNER ONLY, verified server-side on every call)
  function adminOp(s,m){const rid=m.rid,ok=(msg,data)=>send(s,{t:'admin_res',rid,ok:1,m:msg,data}),no=msg=>send(s,{t:'admin_res',rid,ok:0,m:msg});
   if(!s.owner||!isOwnerUid(s.uid)||s.kind!='owner'){store.audit({ev:'admin-denied',uid:s.uid,op:String(m.op).slice(0,24),ip:s.ip});return no('Not authorized')}
@@ -198,6 +198,7 @@ function createServer(opts={}){
   // the owner's effects: only the owner's session gets past here, whatever a client sends. Everyone else in the world receives them with the sender filled in by the server.
   case 'ofx':{if(!ownerSess(s)){if(!bucket(s,'ofxd',3,60000))return;store.audit({ev:'owner-denied',uid:s.uid,op:String(m.op).slice(0,16),ip:s.ip});return notify(s,'Only the owner can do that')}if(!bucket(s,'ofx',30,10000)||!s.world)return;const op=String(m.op||''),n=(v,a,b)=>{v=+v;return Number.isFinite(v)?Math.max(a,Math.min(b,v)):0},mus=/^[a-z]{1,12}$/.test(String(m.m||''))?String(m.m):'owner',out={t:'ofx',op,f:s.sid,uid:s.uid,x:n(m.x,-1e5,1e5),y:n(m.y,-1e5,1e5)};
    if(op=='enter'){out.d=n(m.d,4,15);out.m=mus;out.na=m.na?1:0;out.n=s.name.slice(0,14)}else if(op=='invis'){if(s.oInv)return;s.oInv=true;ownerHidden=true}else if(op=='vis'){if(!s.oInv)return;s.oInv=false;ownerHidden=false;out.m=mus}else if(op=='time'){const v=m.v==null?null:n(m.v,0,1);if(v==null)delete ownTime[s.world];else ownTime[s.world]=v;out.v=v}else if(op=='fly'){return}else if(op!='fx')return;relay(s.world,out,s.sid);if(op=='vis'&&s.pres)relay(s.world,{t:'_p',d:s.pres,f:s.sid},s.sid);if(op=='invis'||op=='vis')mbElect(s.world);return}
+  case 'gear_sync':{if(s.kind=='guest'||!bucket(s,'gear',12,30000))return;const u=userById(s.uid);if(u&&eco.gearSync(u,m)){watch(s,u,'gear',u.gear.over|0);saveAcc()}return}
   case 'bag_sync':{if(s.kind=='guest'||!bucket(s,'bag',12,30000))return;const u=userById(s.uid);if(u&&eco.sync(u,m)){watch(s,u,'items',u.bag.over|0);saveAcc()}return}
   case 'trade':return eco.tradeMsg(s,m);
   case 'drop':return eco.dropMsg(s,m);
@@ -262,11 +263,12 @@ function createServer(opts={}){
   send(s,{t:'server',v:1,max:cfg.maxPlayers,ownerConfigured:!!owner,time:Date.now()})});
  const hb=setInterval(()=>{const now=Date.now();for(const s of sessions.values()){s.flood=Math.max(0,(s.flood|0)-15);const alive=Math.max(s.last,s.conn.lastPong||0);if(now-alive>60000||(!s.uid&&now-s.born>60000)){s.conn.close(1001);continue}s.conn.ping()}
   for(const k of Object.keys(authFail))if(!authFail[k].until&&authFail[k].first&&now-authFail[k].first>3600e3||authFail[k].until&&now>authFail[k].until)delete authFail[k];for(const[k,a]of ipHits)if(!a.length||now-a[a.length-1]>3600e3)ipHits.delete(k);{let ch=false;for(const k of Object.keys(sess))if(sess[k].exp<now){delete sess[k];ch=true}if(ch)saveSess()}
+  try{eco.sweep(now)}catch(e){console.error('drop sweep',e)}
   for(const[id,w]of worlds){if(!w.members.size&&now-w.emptySince>300000){if(w.dirty)saveWorld(w,true);worlds.delete(id)}}},15000);hb.unref&&hb.unref();
  function listen(){return new Promise(res=>server.listen(cfg.port,cfg.host,()=>res(server.address().port)))}
  function close(){clearInterval(hb);for(const w of worlds.values())if(w.dirty)saveWorld(w,true);for(const k of store.flush());try{store.writeJSON(store.p('accounts.json'),accounts);store.writeJSON(store.p('bans.json'),bans);store.writeJSON(store.p('sessions.json'),sess);store.writeJSON(store.p('reports.json'),reports)}catch(_){}
   for(const s of sessions.values())try{s.conn.close(1001)}catch(_){}const flushed=cfg.cloud?cfg.cloud.flush().catch(e=>console.error('cloud save failed:',e.message)):Promise.resolve();return Promise.all([flushed,new Promise(r=>server.close(()=>r()))]).then(()=>{})}
- return{server,listen,close,cfg,store,worlds,sessions}}
+ return{server,listen,close,cfg,store,worlds,sessions,sweepDrops:now=>eco.sweep(now)}}
 module.exports={createServer};
 if(require.main===module)process.on('uncaughtException',e=>console.error('uncaught:',e&&e.stack||e)),process.on('unhandledRejection',e=>console.error('unhandled:',e&&e.stack||e));
 if(require.main===module)(async()=>{const dir=ENV.DATA_DIR||path.join(__dirname,'data'),cloud=require('./cloud').fromEnv(dir);

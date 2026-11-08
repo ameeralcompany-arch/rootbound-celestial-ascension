@@ -111,6 +111,26 @@ const pres=async(c,x,y)=>{c.send({t:'_p',d:{x,y,f:1}});await sleep(50)};
  await pres(bc,1040,505);bc.clear();ac.clear();bc.send({t:'pick',id:dp.d.id});const pk=await bc.wait(m=>m.t=='bag'&&m.why=='pick');const rmv=await ac.wait(m=>m.t=='dr-');ok('the nearest player picks it up and the others see it go',pk.d[6]==5&&rmv.d.id==dp.d.id);
  bc.clear();ac.clear();await pres(ac,1040,505);ac.send({t:'pick',id:dp.d.id});await sleep(80);ok('the same drop cannot be picked up twice',!ac.has(m=>m.t=='bag'&&m.why=='pick'));
  ac.send({t:'drop',i:6,n:2});const kept=await bc.wait(m=>m.t=='dr+');
+ // ---- gear: weapons and wearables have a record on the server; dropping one is real and can not be duplicated
+ {
+  let aq=0,bq=0;
+  ac.clear();bc.clear();ac.send({t:'gear_sync',list:['w:frost','a:hat1','w:pip','bad key!'],seq:0});bc.send({t:'gear_sync',list:['w:other'],seq:0});await sleep(80);
+  ac.send({t:'drop',i:'w:notmine'});await sleep(60);ok('you can not drop gear the server has no record of',!bc.has(m=>m.t=='dr+'));
+  ac.send({t:'drop',i:'w:pip'});await sleep(60);ok('starter tools can never be dropped',!bc.has(m=>m.t=='dr+'));
+  ac.clear();bc.clear();ac.send({t:'drop',i:'w:frost'});ac.send({t:'drop',i:'w:frost'});const gd=await bc.wait(m=>m.t=='dr+');const gc=await ac.wait(m=>m.t=='gear'&&m.why=='drop');aq=gc.seq;await sleep(80);
+  ok('the drop exists once on the server',S.worlds.get('alice1').drops.filter(x=>x.i=='w:frost').length==1);ok('the confirmation removes exactly one',gc.d['w:frost']==-1);
+  ok('other players are not told the owner\'s account id',gd.d.o===undefined&&gd.d.by=='alice',gd.d);
+  ac.send({t:'gear_sync',list:['w:frost','a:hat1'],seq:aq});await sleep(60);ac.clear();ac.send({t:'drop',i:'w:frost'});await sleep(60);ok('saying you still own what you dropped does not bring it back',S.worlds.get('alice1').drops.filter(x=>x.i=='w:frost').length==1);
+  await pres(bc,5000,5000);bc.clear();bc.send({t:'pick',id:gd.d.id});await sleep(60);ok('gear can not be picked up from far away',!bc.has(m=>m.t=='gear'&&m.why=='pick'));
+  await pres(bc,gd.d.x,gd.d.y);bc.clear();ac.clear();bc.send({t:'pick',id:gd.d.id});bc.send({t:'pick',id:gd.d.id});const gp=await bc.wait(m=>m.t=='gear'&&m.why=='pick');bq=gp.seq;ok('picking it up gives it to the new owner',gp.d['w:frost']==1);await sleep(60);ok('a double pickup gives it once',S.worlds.get('alice1').drops.every(x=>x.i!='w:frost'));
+  ac.clear();await pres(ac,gd.d.x,gd.d.y);ac.send({t:'pick',id:gd.d.id});await sleep(60);ok('the same gear can not be picked up twice',!ac.has(m=>m.t=='gear'&&m.why=='pick'));
+  // comes home when nobody takes it
+  ac.clear();ac.send({t:'gear_sync',list:['a:hat1'],seq:aq});await sleep(60);ac.send({t:'drop',i:'a:hat1'});const d2=await ac.wait(m=>m.t=='gear'&&m.why=='drop');aq=d2.seq;await sleep(40);const late=S.worlds.get('alice1').drops.find(x=>x.i=='a:hat1');late.t0=Date.now()-20*60000;ac.clear();bc.clear();S.sweepDrops();const home=await ac.wait(m=>m.t=='gear'&&m.why=='returned');ok('after 15 minutes an untaken item comes back to its owner',home.d['a:hat1']==1&&!S.worlds.get('alice1').drops.some(x=>x.i=='a:hat1'));
+  // already owning one
+  aq=home.seq;ac.send({t:'gear_sync',list:['a:hat1'],seq:aq});await sleep(60);bc.clear();bc.send({t:'gear_sync',list:['a:hat1','w:frost','w:other'],seq:bq});await sleep(60);
+  ac.clear();ac.send({t:'drop',i:'a:hat1'});const d3=await bc.wait(m=>m.t=='dr+');await sleep(40);bc.clear();await pres(bc,d3.d.x,d3.d.y);bc.send({t:'pick',id:d3.d.id});await sleep(80);ok('someone who already owns one does not lose the drop by trying',S.worlds.get('alice1').drops.some(x=>x.id==d3.d.id)&&!bc.has(m=>m.t=='gear'));
+
+  }
  // ---- presence deltas (free hosts meter bandwidth)
  bc.clear();await sleep(5);ac.send({t:'_p',d:{x:1,y:2,f:1,lv:3}});const full=await bc.wait(m=>m.t=='_p'&&m.d.x==1);ok('first presence after a change is complete',full.d.uid==A.r.uid&&full.d.n=='alice');
  ac.send({t:'_p',d:{x:9,y:2,f:1,lv:3}});const dl=await bc.wait(m=>m.t=='_p'&&m.d.x==9);ok('movement after that is a small delta',dl.d.dl==1&&dl.d.uid==undefined&&JSON.stringify(dl).length<110,JSON.stringify(dl));

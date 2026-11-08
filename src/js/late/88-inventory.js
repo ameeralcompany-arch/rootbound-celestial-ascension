@@ -79,9 +79,9 @@ const INV7=(()=>{
  function run(a,k){if(k==null||!a)return false;let r=false;if(a=='equip')r=equip(k);else if(a=='unequip')r=unequip(k);else if(a=='buy')r=buy(k);else if(a=='wear')r=isWorn(k)?unequip(k):equip(k);if(isOpen())render();return r}
  function doPrimary(k){const i=items().find(x=>x.k===k);const p=primary(i);if(!p||!p.a||p.dis){if(i)say(!p?nameOf(k)+': nothing to equip — put it on the hotbar or sell it at the market':p.dis?'Not enough gems':p.l);snd('error');return false}const r=run(p.a,k);if(r)pulse(k);return r}
  // throw items on the ground in front of you (picked up again after a moment if you stay close)
- function drop(k,n){if(typeof k!='number'||!(cnt(k)>0))return false;n=Math.max(1,Math.min(cnt(k),n|0));try{if(ONL10.drop(k,n)){if(isOpen())render();return true}}catch(_){}const L=drops.length;spawnDrop(P.x+(P.f||1)*44,P.y+P.h*.4,k,n);if(drops.length==L){say('Too many items on the ground here');return false}
-  const d=drops[drops.length-1];d.t=-1.6;d.vx=(P.f||1)*Math.abs(d.vx||120);addI(k,-n);say('Dropped '+n+' × '+nameOf(k));snd('close');if(isOpen())render();return true}
- function dropAsk(k){const c=cnt(k);if(c<=1)return drop(k,1);DLG7.open({title:'Drop '+nameOf(k),text:'Anyone nearby can pick it up.',fields:[{k:'n',label:'How many (you have '+c+')',val:String(c),max:5}],ok:'Drop'}).then(v=>{if(v)drop(k,Math.floor(+v.n)||0)})}
+ // dropping and its rules live in DROP2 (99-zzzzzzzzzz-m-drops.js)
+ function drop(k,n){const r=DROP2.drop(k,n);if(isOpen())render();return r}
+ function dropAsk(k){return DROP2.ask(k).then(()=>{if(isOpen())render()})}
  // ---- rendering
  const mk=()=>{if(el)return;el=document.createElement('div');el.id='inv7';el.className='ed';el.innerHTML='<div class="sheet" role="dialog" aria-label="Inventory"></div>';document.body.appendChild(el);
   const ab=document.createElement('div');ab.className='assignbanner ed';ab.id='asb';document.body.appendChild(ab);
@@ -140,7 +140,7 @@ const INV7=(()=>{
   return'<div class="eyebrow" style="margin-top:12px">Hotbar slot</div><div class="hbrow7">'+b+'</div><p class="hbtip7">'+(s>=0?'In slot '+(s+1)+' (click it again to take it off the bar). ':'')+'Or press 1–7, or drag it onto the hotbar.</p>'}
  function actRow(i){const p=primary(i);let h='<div class="row7 act8">';if(p)h+=p.a=='equip'&&i.worn||!p.a?'<button class="btn" disabled>'+esc(p.a?'Equipped':p.l)+'</button>':'<button class="btn" data-a="'+p.a+'"'+(p.dis?' disabled':'')+'>'+esc(p.l)+'</button>';
   if((i.t=='weapons'||i.t=='tools')&&i.worn)h='<div class="row7 act8"><button class="btn" data-a="equip" disabled>Equipped</button><button class="btn ghost" data-a="unequip">Put away</button>';
-  if(typeof i.k=='number'&&cnt(i.k)>0)h+='<button class="btn ghost" data-a="drop" title="Drop for others to pick up">Drop</button>';h+='<button class="btn ghost" data-a="fav" title="Favourite">'+(favs[i.k]?'★':'☆')+'</button></div>';if(p&&p.a&&!p.dis)h+='<p class="kb8"><kbd>E</kbd> or double-click: '+esc(p.l.replace(/ ·.*$/,''))+' · right-click for more</p>';return h}
+  if(i.own){const c=DROP2.can(i.k);h+='<button class="btn ghost" data-a="drop"'+(c.ok?' title="Drop it on the ground"':' disabled title="'+esc(c.why)+'"')+'>Drop</button>'}h+='<button class="btn ghost" data-a="fav" title="Favourite">'+(favs[i.k]?'★':'☆')+'</button></div>';if(p&&p.a&&!p.dis)h+='<p class="kb8"><kbd>E</kbd> or double-click: '+esc(p.l.replace(/ ·.*$/,''))+' · right-click for more</p>';return h}
  function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does.</p><p style="margin-top:14px"><b>Equip anything fast:</b> double-click an item, or select it and press <kbd>E</kbd>. Right-click for a menu, or drag it onto <b>Equipped</b> or onto the hotbar.</p><p>Your hotbar has <b>seven</b> slots, keys <b>1–7</b> or the <b>mouse wheel</b>. Select an item and press <b>1–7</b> to put it in that slot. <b>X</b> swaps weapon ⇄ tool. Only tools break blocks.</p>';
   const k=s.k,nm=nameOf(k),c=ITEM7.cat(k),t=s.t;let h='<div class="rbar7"><span class="catl7"><i>'+(ITEM7.CATG[c]||'✦')+'</i>'+(t=='wings'?'Wings':t=='charms'?(s.sub=='charm'?'Charm':'Effect'):ITEM7.CATN[c])+'</span><span class="rtag" data-rar="'+ITEM7.RAR[tierOf(k)]+'">'+ITEM7.RN[tierOf(k)]+'</span></div><div class="pic"'+RARA(k)+'><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
   if(t=='wear'){const w=WEAR[k.slice(2)];h+='<p>'+esc(w.d)+'<br><b>'+esc(w.sd)+'</b></p><div class="kv"><span>Slot</span>'+({hat:'Head',body:'Body',wing:'Wings',boot:'Boots',glove:'Gloves'})[w.s]+'</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+w.lv+'</div>':'')+actRow(s)+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
@@ -179,13 +179,13 @@ const INV7=(()=>{
   if(p&&p.a&&!p.dis)b+='<button data-c="p">'+esc(p.l)+'<kbd>E</kbd></button>';if(i.worn&&p&&p.a!='unequip'&&kind(k)!='mats'&&!(p.a=='wear'))b+='<button data-c="u">Unequip</button>';
   if(h&&h.assignable(k)){const s=h.slotOf(k);b+='<div class="ms8">Put in hotbar slot</div><div class="mr8">';for(let x=0;x<h.N;x++)b+='<button data-c="hb'+x+'" class="'+(x===s?'on':'')+'" title="Slot '+(x+1)+'">'+(x+1)+'</button>';b+='</div>';if(s>=0)b+='<button data-c="hbx">Remove from hotbar</button>'}
   b+='<button data-c="fav">'+(favs[k]?'★ Unfavourite':'☆ Favourite')+'</button>';
-  if(typeof k=='number'&&cnt(k)>0){b+='<button data-c="d1">Drop 1</button>';if(cnt(k)>1)b+='<button data-c="da">Drop all ('+cnt(k)+')</button>'}
+  if(typeof k=='number'&&cnt(k)>0){if(DROP2.can(k).ok){b+='<button data-c="d1">Drop 1</button>';if(cnt(k)>1)b+='<button data-c="da">Drop all ('+cnt(k)+')</button>'}}else if(i.own&&DROP2.can(k).ok)b+='<button data-c="dg">Drop</button>';
   closeMenu();menu=document.createElement('div');menu.id='ictx8';menu.setAttribute('role','menu');menu.dataset.k=String(k);menu.innerHTML=b;el.appendChild(menu);
   const r=menu.getBoundingClientRect(),x=Math.min(e.clientX,innerWidth-r.width-8),y=Math.min(e.clientY,innerHeight-r.height-8);menu.style.transform='translate('+Math.max(8,x)+'px,'+Math.max(8,y)+'px)'}
  function menuAct(c){if(!menu)return;const k=keyOf(menu.dataset.k);closeMenu();const h=HB();
   if(c=='p')doPrimary(k);else if(c=='u'){if(unequip(k))render()}else if(c=='fav'){if(favs[k])delete favs[k];else favs[k]=1;saveP();render()}
   else if(/^hb\d$/.test(c)&&h){h.set(+c.slice(2),k);render()}else if(c=='hbx'&&h){const s=h.slotOf(k);if(s>=0)h.set(s,null);render()}
-  else if(c=='d1')drop(k,1);else if(c=='da')drop(k,cnt(k))}
+  else if(c=='d1')drop(k,1);else if(c=='da')drop(k,cnt(k));else if(c=='dg')dropAsk(k)}
  const isOpen=()=>showInv&&!!el&&el.classList.contains('open');
  function open(f,slot){mk();document.documentElement.classList.add('inv6');el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');render();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(showInv)el.classList.add('show')}));try{G('bag')}catch(_){}snd('open')}
  function close(){if(!el||!showInv)return;closeMenu();assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv){el.classList.remove('open');document.documentElement.classList.remove('inv6')}},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';snd('close')}

@@ -3334,6 +3334,51 @@ html[data-skin=night] #hubbody small{font-size:12px}html[data-skin=night] #hubbo
 /* the expanded state keeps the details compact; the full picture and hints wait for full view */
 #inv7.drw7[data-lv=half] aside .pic{height:76px!important}#inv7.drw7[data-lv=half] aside .pic img{width:56px!important;height:56px!important}#inv7.drw7[data-lv=half] .hbtip7,#inv7.drw7[data-lv=half] .kb8{display:none}
 
+/* ========== CSS: 99-zzzzzzzz-hudcard.css ========== */
+/* ===== HUDCARD1: the character card on the default look. Five lines at most, each with room to breathe: name and level, class, health with its number, experience, gems and Combat Power.
+   The title, wing name and class bar live on Character, Equipment and Classes; the hanging banner is gone (it covered the buttons below). Nothing here animates layout: the bars move by transform only. ===== */
+html[data-skin=night]:root body #hudL{display:grid!important;grid-template-columns:64px minmax(0,1fr) auto!important;column-gap:14px!important;row-gap:0!important;align-items:center;width:276px!important;min-width:0!important;padding:12px 14px!important;box-sizing:border-box}
+html[data-skin=night]:root body #hudL:hover{transform:none}
+html[data-skin=night]:root body #hudL>:is(#pbanner9,#hudWing),html[data-skin=night]:root body #hudL #hudWing,html[data-skin=night]:root body #hudL #cxp9 .hpb,html[data-skin=night]:root body #hudL #cxp9 em{display:none!important}
+html[data-skin=night]:root body #hudL.cls9on #hudTitle{display:none!important}
+/* the portrait: the avatar and its skin, whole, in one calm ring */
+html[data-skin=night]:root body #hudL #pwrap9{grid-column:1;grid-row:1/6;align-self:center;width:64px;height:64px;margin:0}
+html[data-skin=night]:root body #hudL #pwrap9 #portrait{width:64px;height:64px}
+html[data-skin=night]:root body #hudL #pwrap9 .ring{inset:-3px}
+html[data-skin=night]:root body #hudL #pwrap9 .ring:before{display:none;animation:none}
+html[data-skin=night]:root body #hudL #pwrap9:after{inset:-4px}
+html[data-skin=night]:root body #hudL #pwrap9 .emb{right:-6px;bottom:-5px;width:22px;height:22px}
+/* the name and level */
+html[data-skin=night]:root body #hudL #pname{grid-column:2/4;grid-row:1;font:700 15px/20px Montserrat,system-ui,sans-serif!important;letter-spacing:0!important;color:#fff8e6!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* the class, or your title when you have no class yet */
+html[data-skin=night]:root body #hudL #cxp9,html[data-skin=night]:root body #hudL #hudTitle{grid-column:2/4;grid-row:2;margin:0 0 8px!important;min-width:0}
+html[data-skin=night]:root body #hudL #cxp9 .cl{display:block;font:600 12.5px/16px Montserrat,system-ui,sans-serif!important;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-skin=night]:root body #hudL #cxp9 .cl b{font-weight:600;text-transform:none;letter-spacing:0;color:color-mix(in srgb,var(--clsl,#d8c8ff) 80%,#fff)!important}
+html[data-skin=night]:root body #hudL #hudTitle{font:600 12.5px/16px Montserrat,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:#b5acc9!important}
+/* health, with its number */
+html[data-skin=night]:root body #hudL .hprow{grid-column:2/4;grid-row:3;display:flex;align-items:center;gap:8px;margin:0 0 6px;min-width:0}
+html[data-skin=night]:root body #hudL .hprow .hpb{flex:1;min-width:0;margin:0!important;height:9px!important}
+.hpn{display:none}
+html[data-skin=night]:root body #hudL .hpn{display:block;flex:none;font:700 12px/14px Montserrat,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#fff8e6;min-width:46px;text-align:right}
+/* experience */
+html[data-skin=night]:root body #hudL>.hpb.xp{grid-column:2/4;grid-row:4;margin:0 0 9px!important;height:5px!important}
+/* the bars: the old fill keeps its value for the rest of the game, unseen; these two draw it */
+.hpv,.hpg{display:none}
+html[data-skin=night]:root body #hudL .hpb{position:relative;overflow:hidden;background:rgba(255,255,255,.1)!important;border-radius:6px!important}
+html[data-skin=night]:root body #hudL :is(#hpf,#xpf){opacity:0!important;transition:none!important;position:absolute;left:0;top:0;height:100%;pointer-events:none}
+html[data-skin=night]:root body #hudL .hpv,html[data-skin=night]:root body #hudL .hpg{display:block;position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);text-decoration:none;will-change:transform}
+html[data-skin=night]:root body #hudL .hpg{background:rgba(255,248,230,.55)}
+html[data-skin=night]:root body #hudL .hprow .hpv{background:linear-gradient(90deg,#d84f79,#f69ab6)}
+html[data-skin=night]:root body #hudL .hpb.low .hpv{background:linear-gradient(90deg,#c9283f,#ff5a6a)}
+html[data-skin=night]:root body #hudL>.hpb.xp .hpv{background:linear-gradient(90deg,#d9b773,#f4d59a)}
+/* gems and Combat Power */
+html[data-skin=night]:root body #hudL .gw9{grid-column:2;grid-row:5;display:flex;align-items:center;gap:6px;margin:0!important;min-width:0}
+html[data-skin=night]:root body #hudL #gv{font:700 14px/18px Montserrat,system-ui,sans-serif!important;font-variant-numeric:tabular-nums;letter-spacing:0!important;color:#fff8e6!important}
+html[data-skin=night]:root body #hudL #cp16{grid-column:3;grid-row:5;justify-self:end;width:auto!important;height:24px;margin:0!important;padding:0 10px!important;display:inline-flex;align-items:center;gap:5px;border-radius:12px!important;border:1px solid rgba(244,213,154,.42)!important;background:rgba(244,213,154,.1)!important;transition:background .12s,border-color .12s}
+html[data-skin=night]:root body #hudL #cp16:hover{background:rgba(244,213,154,.22)!important;border-color:#f4d59a!important}
+html[data-skin=night]:root body #hudL #cp16 span{font:700 11px/14px Montserrat,system-ui,sans-serif;letter-spacing:.04em;color:rgba(244,213,154,.9)}
+html[data-skin=night]:root body #hudL #cp16 b{font:700 13px/14px Montserrat,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#fff8e6}
+
 /* ========== CSS: 99-zzzzzzzz-path.css ========== */
 /* ===== PATH1: the First Realm road on the Worlds page, the next objective in the quest card, and the moment a new land opens. ===== */
 #bpath{margin:0 0 18px;font-family:Montserrat,system-ui,sans-serif;color:var(--ink,#f6f1e7)}
@@ -3368,6 +3413,28 @@ html body #menu #card:has(#mworlds[style*="block"]){width:min(980px,95vw)!import
 html[data-reduce=true] #bpun,html[data-reduce=true] #bpun *{animation-duration:.01s!important}@media(prefers-reduced-motion:reduce){#bpun,#bpun *{animation-duration:.01s!important}}
 
 html body #menu #card:has(#mworlds[style*="block"]){max-height:calc((100vh - 28px) / var(--uiz,1))!important}
+
+/* ========== CSS: 99-zzzzzzzz-tools.css ========== */
+/* ===== WRENCH2 panel, TOOLI1 tool introductions, and how rarity shows when you inspect an item. ===== */
+#wr2{position:fixed;left:14px;top:232px;z-index:41;width:286px;padding:12px 14px;border-radius:16px;background:linear-gradient(172deg,rgba(36,26,66,.95),rgba(15,12,30,.96));border:1px solid rgba(244,213,154,.42);box-shadow:0 18px 50px -20px rgba(0,0,0,.8);color:#f6f1e7;font-family:Montserrat,system-ui,sans-serif;opacity:0;transform:translateX(-14px);pointer-events:none;transition:opacity .16s ease,transform .22s cubic-bezier(.2,1.2,.4,1)}#wr2.on{opacity:1;transform:none;pointer-events:auto}
+#wr2 header{display:flex;align-items:center;gap:8px}#wr2 .wr-i{width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:rgba(244,213,154,.16);color:#f4d59a}#wr2 .wr-i svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}#wr2 header b{flex:1;font:700 21px 'Cormorant Garamond',Georgia,serif;color:#fff8e6}
+#wr2 .wr-x{width:28px;height:28px;border-radius:50%;border:1px solid rgba(244,213,154,.25);background:rgba(255,255,255,.05);color:#f6f1e7;cursor:pointer;font-size:12px}#wr2 .wr-x:hover{border-color:#f4d59a}
+#wr2 nav{display:flex;gap:4px;margin:10px 0 8px}#wr2 nav button{flex:1;min-height:32px;border-radius:9px;border:1px solid rgba(244,213,154,.22);background:rgba(255,255,255,.04);color:#b5acc9;font:600 12.5px Montserrat,system-ui,sans-serif;cursor:pointer;transition:background .12s,color .12s,border-color .12s}#wr2 nav button:hover{color:#fff8e6}#wr2 nav button.on{background:rgba(244,213,154,.18);border-color:#f4d59a;color:#fff8e6}
+.wr-d{margin:0 0 8px;font-size:13px;line-height:1.35;color:#e6dfee}.wr-t{padding:7px 10px;border-radius:9px;background:rgba(255,90,100,.12);border:1px solid rgba(255,90,100,.3);font-size:13px;font-weight:600;color:#ffc4c8;min-height:18px}.wr-t.ok{background:rgba(244,213,154,.12);border-color:rgba(244,213,154,.4);color:#fff8e6}
+.wr-info{margin-top:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.05);font-size:13px}.wr-info h4{margin:0 0 4px;font:700 18px 'Cormorant Garamond',Georgia,serif;color:#fff8e6}.wr-info div{display:flex;justify-content:space-between;gap:10px;padding:2px 0}.wr-info span{color:#b5acc9}.wr-info b{font-weight:600;text-align:right}
+#wr2 footer{margin-top:8px;font-size:12px;color:#b5acc9}#wr2 kbd{display:inline-block;padding:0 6px;margin:0 3px 0 6px;border-radius:5px;background:rgba(0,0,0,.35);border:1px solid rgba(244,213,154,.3);font:700 11px Montserrat,system-ui,sans-serif;color:#fff8e6}#wr2 footer kbd:first-child{margin-left:0}
+body.dgon #wr2{display:none}
+#tooli1{position:fixed;left:14px;bottom:112px;z-index:43;width:372px;display:grid;grid-template-columns:72px 1fr;gap:6px 12px;padding:14px;border-radius:16px;background:linear-gradient(172deg,rgba(36,26,66,.96),rgba(15,12,30,.97));border:1px solid rgba(244,213,154,.42);box-shadow:0 18px 50px -20px rgba(0,0,0,.85);color:#f6f1e7;font-family:Montserrat,system-ui,sans-serif;animation:tooliIn .34s cubic-bezier(.2,1.2,.4,1) both}#tooli1.out{animation:tooliOut .22s ease both}
+#tooli1 img{width:72px;height:72px;image-rendering:auto;object-fit:contain}#tooli1 small{font:700 11px Montserrat,system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,213,154,.85)}#tooli1 h4{margin:2px 0 6px;font:700 21px 'Cormorant Garamond',Georgia,serif;color:#fff8e6}#tooli1 dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px;line-height:1.3}#tooli1 dt{color:#b5acc9;white-space:nowrap}#tooli1 dd{margin:0}#tooli1 button{grid-column:1/-1;justify-self:end;min-height:32px;padding:0 16px;border-radius:9px;border:1px solid #f4d59a;background:rgba(244,213,154,.16);color:#fff8e6;font:700 13px Montserrat,system-ui,sans-serif;cursor:pointer}#tooli1 button:hover{background:rgba(244,213,154,.32)}
+@keyframes tooliIn{from{opacity:0;transform:translateY(14px)}}@keyframes tooliOut{to{opacity:0;transform:translateY(8px)}}
+html[data-reduce=true] #tooli1,html[data-reduce=true] #wr2{animation:none;transition:none}@media(prefers-reduced-motion:reduce){#tooli1,#wr2{animation:none;transition:none}}
+/* rarity when you inspect: the higher it is, the richer the light behind it. Common stays plain */
+html[data-skin=night]:root{--r-mythic-c:#ff4f6d}
+html[data-skin=night] #inv7 aside .pic[data-rar=uncommon]{background:radial-gradient(circle at 50% 58%,rgba(140,230,140,.22),rgba(255,255,255,.03) 72%)!important}
+html[data-skin=night] #inv7 aside .pic[data-rar=rare]{background:radial-gradient(circle at 50% 58%,rgba(110,180,255,.3),rgba(255,255,255,.03) 74%)!important;border-color:rgba(110,180,255,.5)!important}
+html[data-skin=night] #inv7 aside .pic[data-rar=epic]{background:radial-gradient(circle at 50% 58%,rgba(190,130,255,.38),rgba(255,255,255,.03) 76%)!important;border-color:rgba(190,130,255,.6)!important}
+html[data-skin=night] #inv7 aside .pic[data-rar=legendary]{background:radial-gradient(circle at 50% 58%,rgba(244,200,120,.46),rgba(255,255,255,.03) 78%)!important;border-color:rgba(244,213,154,.8)!important;box-shadow:inset 0 0 30px rgba(244,190,110,.22)}
+html[data-skin=night] #inv7 aside .pic[data-rar=mythic]{background:radial-gradient(circle at 50% 58%,rgba(255,79,109,.5),rgba(255,255,255,.03) 80%)!important;border-color:rgba(255,79,109,.8)!important;box-shadow:inset 0 0 34px rgba(255,79,109,.26)}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -11334,7 +11401,7 @@ const TOOLS8=(()=>{
   bubbles:{n:'Bubbles the Fishing Rod',g:[120,200,255],tool:'rod',d:'A cute rod with a duck bobber. Click water to cast, click when it bites, then hold to keep the fish in the green zone and reel it in! Bait from Tackle Boxes helps.'}};
  for(const id in TL){const t=TL[id];WPN[id]={n:t.n,g:t.g,bd:1,md:0,cd:t.tool=='rod'?.25:.18,k:'tool',cost:0,fx:'',d:t.d,tool:t.tool,id};own[id]=1}
  // the Wrench: never digs, never fights. Click a player to open their card and trade (ONL10), or a World Lock for its settings. Not a levelled tool (not in TL).
- WPN.wrench={n:'Wrench',g:[200,210,225],bd:1,md:0,cd:.3,k:'tool',cost:0,fx:'',d:'Click another player to trade with them, or a World Lock to open its settings. Press V to hold it.',tool:'wrench',id:'wrench'};own.wrench=1;
+ WPN.wrench={n:'Wrench',g:[200,210,225],bd:1,md:0,cd:.3,k:'tool',cost:0,fx:'',d:'Inspects anything, sets up doors, chests and World Locks, and opens another player\'s card. Press V to hold it.',tool:'wrench',id:'wrench'};own.wrench=1;
  // ---- what kind of block is it?
  const ORE=new Set([9,10,60,61,62,65,71,72,73,74,75,76]);
  // CAT pins a block's kind when its name would mislead the regex (Geode Rock is stone, not ore); ONLY[b] is the one tool that may break b at all
@@ -11374,10 +11441,10 @@ const TOOLS8=(()=>{
    x.globalCompositeOperation='lighter';x.fillStyle='rgba(200,250,255,'+(.5+.5*Math.sin(t*6))+')';x.beginPath();for(let i=0;i<8;i++){const r=i%2?1.2:4,a=i*Math.PI/4;x.lineTo(L*.5+Math.cos(a)*r,-13+Math.sin(a)*r)}x.fill();x.globalCompositeOperation='source-over'},
   twiggy(x,L){x.fillStyle='#8a5a30';x.fillRect(-2,-2,L*.6,4);x.strokeRect(-2,-2,L*.6,4);x.fillStyle='#d8e0e8';x.beginPath();x.moveTo(L*.5,-2);x.quadraticCurveTo(L*.72,-12,L*.74,-2);x.lineTo(L*.74,4);x.quadraticCurveTo(L*.66,8,L*.5,4);x.closePath();x.fill();x.stroke();
    x.fillStyle='#7ad850';x.beginPath();x.ellipse(L*.46,-7,4,2.4,-.6,0,6.3);x.fill();x.stroke()},
-  wrench(x,L){x.fillStyle='#c8d2e0';x.fillRect(-2,-2.5,L*.7,5);x.strokeRect(-2,-2.5,L*.7,5);x.beginPath();x.arc(L*.76,0,8,.75,Math.PI*2-.75);x.lineTo(L*.76,0);x.closePath();x.fill();x.stroke()},
+  wrench(x,L){const st=x.createLinearGradient(0,-L*.2,0,L*.2);st.addColorStop(0,'#f2f6fc');st.addColorStop(.5,'#b4c0d2');st.addColorStop(1,'#6e7b92');x.fillStyle=st;x.beginPath();x.roundRect(L*.04,-L*.075,L*.62,L*.15,L*.05);x.fill();x.stroke();/* open jaw */const r=L*.23,cx=L*.8,ja=.6;x.beginPath();x.arc(cx,0,r,ja,Math.PI*2-ja);x.lineTo(cx+r*.12,-r*.36);x.lineTo(cx-r*.18,-r*.36);x.lineTo(cx-r*.18,r*.36);x.lineTo(cx+r*.12,r*.36);x.closePath();x.fill();x.stroke();/* ring end */x.beginPath();x.arc(L*.02,0,L*.13,0,6.3);x.fill();x.stroke();x.fillStyle='#2a1a4a';x.beginPath();x.arc(L*.02,0,L*.06,0,6.3);x.fill();x.stroke();/* the gold band that marks it */x.fillStyle='#f4d59a';x.beginPath();x.rect(L*.46,-L*.1,L*.08,L*.2);x.fill();x.stroke()},
   bubbles(x,L,t){const bd=FISH.S.st=='reel'&&typeof FISHGAME!='undefined'?.25+FISHGAME.G.ten*.6:0;x.strokeStyle='#5a3a1a';x.lineWidth=3;x.beginPath();x.moveTo(-2,0);if(bd)x.quadraticCurveTo(L*.6,-L*.42,L*.95,-L*.35+bd*L*.5);else x.lineTo(L*.95,-L*.35);x.stroke();x.strokeStyle='#ffd34a';x.lineWidth=1.5;x.beginPath();x.moveTo(L*.1,-L*.04);x.lineTo(L*.22,-L*.08);x.stroke();
    x.fillStyle='#9ad8ff';x.strokeStyle='#000';x.lineWidth=1.5;x.beginPath();x.arc(L*.12,1,3.5,0,6.3);x.fill();x.stroke();if(FISH.S.st=='idle'){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=1;x.beginPath();x.moveTo(L*.95,-L*.35);x.lineTo(L*.95,-L*.35+8+Math.sin(t*3)*2);x.stroke()}}};
- {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){if((TL[id]||id=='wrench')&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';x.strokeStyle='#000';x.lineWidth=1.6;try{MODEL[id](x,L,t||0)}finally{x.restore()}return}return _dw.apply(this,arguments)}}
+ {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){if((TL[id]||id=='wrench')&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';x.strokeStyle='#000';x.lineWidth=1.6;/* bigger in the hand than on an icon, so a tool reads at a glance */if(x===g)x.scale(1.28,1.28);try{MODEL[id](x,L,t||0)}finally{x.restore()}return}return _dw.apply(this,arguments)}}
  // ======================= FISHING =======================
  // fish 240-249, bait 250-252 (materials: they stack, sell, trade)
  const FISHES={240:{n:'Minnow',c:'#b8c8d0',p:4,w:30},241:{n:'Bluegill',c:'#5aa0d8',p:7,w:24},242:{n:'Rainbow Trout',c:'#ff9ac8',p:12,w:16},243:{n:'Koi',c:'#ff8a3a',p:25,w:9},244:{n:'Pufferfish',c:'#ffe07a',p:30,w:7},
@@ -13123,9 +13190,9 @@ const INV7=(()=>{
  function run(a,k){if(k==null||!a)return false;let r=false;if(a=='equip')r=equip(k);else if(a=='unequip')r=unequip(k);else if(a=='buy')r=buy(k);else if(a=='wear')r=isWorn(k)?unequip(k):equip(k);if(isOpen())render();return r}
  function doPrimary(k){const i=items().find(x=>x.k===k);const p=primary(i);if(!p||!p.a||p.dis){if(i)say(!p?nameOf(k)+': nothing to equip — put it on the hotbar or sell it at the market':p.dis?'Not enough gems':p.l);snd('error');return false}const r=run(p.a,k);if(r)pulse(k);return r}
  // throw items on the ground in front of you (picked up again after a moment if you stay close)
- function drop(k,n){if(typeof k!='number'||!(cnt(k)>0))return false;n=Math.max(1,Math.min(cnt(k),n|0));try{if(ONL10.drop(k,n)){if(isOpen())render();return true}}catch(_){}const L=drops.length;spawnDrop(P.x+(P.f||1)*44,P.y+P.h*.4,k,n);if(drops.length==L){say('Too many items on the ground here');return false}
-  const d=drops[drops.length-1];d.t=-1.6;d.vx=(P.f||1)*Math.abs(d.vx||120);addI(k,-n);say('Dropped '+n+' × '+nameOf(k));snd('close');if(isOpen())render();return true}
- function dropAsk(k){const c=cnt(k);if(c<=1)return drop(k,1);DLG7.open({title:'Drop '+nameOf(k),text:'Anyone nearby can pick it up.',fields:[{k:'n',label:'How many (you have '+c+')',val:String(c),max:5}],ok:'Drop'}).then(v=>{if(v)drop(k,Math.floor(+v.n)||0)})}
+ // dropping and its rules live in DROP2 (99-zzzzzzzzzz-m-drops.js)
+ function drop(k,n){const r=DROP2.drop(k,n);if(isOpen())render();return r}
+ function dropAsk(k){return DROP2.ask(k).then(()=>{if(isOpen())render()})}
  // ---- rendering
  const mk=()=>{if(el)return;el=document.createElement('div');el.id='inv7';el.className='ed';el.innerHTML='<div class="sheet" role="dialog" aria-label="Inventory"></div>';document.body.appendChild(el);
   const ab=document.createElement('div');ab.className='assignbanner ed';ab.id='asb';document.body.appendChild(ab);
@@ -13184,7 +13251,7 @@ const INV7=(()=>{
   return'<div class="eyebrow" style="margin-top:12px">Hotbar slot</div><div class="hbrow7">'+b+'</div><p class="hbtip7">'+(s>=0?'In slot '+(s+1)+' (click it again to take it off the bar). ':'')+'Or press 1–7, or drag it onto the hotbar.</p>'}
  function actRow(i){const p=primary(i);let h='<div class="row7 act8">';if(p)h+=p.a=='equip'&&i.worn||!p.a?'<button class="btn" disabled>'+esc(p.a?'Equipped':p.l)+'</button>':'<button class="btn" data-a="'+p.a+'"'+(p.dis?' disabled':'')+'>'+esc(p.l)+'</button>';
   if((i.t=='weapons'||i.t=='tools')&&i.worn)h='<div class="row7 act8"><button class="btn" data-a="equip" disabled>Equipped</button><button class="btn ghost" data-a="unequip">Put away</button>';
-  if(typeof i.k=='number'&&cnt(i.k)>0)h+='<button class="btn ghost" data-a="drop" title="Drop for others to pick up">Drop</button>';h+='<button class="btn ghost" data-a="fav" title="Favourite">'+(favs[i.k]?'★':'☆')+'</button></div>';if(p&&p.a&&!p.dis)h+='<p class="kb8"><kbd>E</kbd> or double-click: '+esc(p.l.replace(/ ·.*$/,''))+' · right-click for more</p>';return h}
+  if(i.own){const c=DROP2.can(i.k);h+='<button class="btn ghost" data-a="drop"'+(c.ok?' title="Drop it on the ground"':' disabled title="'+esc(c.why)+'"')+'>Drop</button>'}h+='<button class="btn ghost" data-a="fav" title="Favourite">'+(favs[i.k]?'★':'☆')+'</button></div>';if(p&&p.a&&!p.dis)h+='<p class="kb8"><kbd>E</kbd> or double-click: '+esc(p.l.replace(/ ·.*$/,''))+' · right-click for more</p>';return h}
  function detail(s){if(!s)return'<div class="eyebrow">Details</div><p>Select an item to see what it does.</p><p style="margin-top:14px"><b>Equip anything fast:</b> double-click an item, or select it and press <kbd>E</kbd>. Right-click for a menu, or drag it onto <b>Equipped</b> or onto the hotbar.</p><p>Your hotbar has <b>seven</b> slots, keys <b>1–7</b> or the <b>mouse wheel</b>. Select an item and press <b>1–7</b> to put it in that slot. <b>X</b> swaps weapon ⇄ tool. Only tools break blocks.</p>';
   const k=s.k,nm=nameOf(k),c=ITEM7.cat(k),t=s.t;let h='<div class="rbar7"><span class="catl7"><i>'+(ITEM7.CATG[c]||'✦')+'</i>'+(t=='wings'?'Wings':t=='charms'?(s.sub=='charm'?'Charm':'Effect'):ITEM7.CATN[c])+'</span><span class="rtag" data-rar="'+ITEM7.RAR[tierOf(k)]+'">'+ITEM7.RN[tierOf(k)]+'</span></div><div class="pic"'+RARA(k)+'><img src="'+iconOf(k)+'" alt=""></div><h3 class="ttl">'+esc(nm)+'</h3>';
   if(t=='wear'){const w=WEAR[k.slice(2)];h+='<p>'+esc(w.d)+'<br><b>'+esc(w.sd)+'</b></p><div class="kv"><span>Slot</span>'+({hat:'Head',body:'Body',wing:'Wings',boot:'Boots',glove:'Gloves'})[w.s]+'</div>'+(w.lv?'<div class="kv"><span>Requires level</span>'+w.lv+'</div>':'')+actRow(s)+(!s.own&&!s.lock&&gems<w.cost?'<p>You need '+(w.cost-gems)+' more gems.</p>':'')+hbRow(k)}
@@ -13223,13 +13290,13 @@ const INV7=(()=>{
   if(p&&p.a&&!p.dis)b+='<button data-c="p">'+esc(p.l)+'<kbd>E</kbd></button>';if(i.worn&&p&&p.a!='unequip'&&kind(k)!='mats'&&!(p.a=='wear'))b+='<button data-c="u">Unequip</button>';
   if(h&&h.assignable(k)){const s=h.slotOf(k);b+='<div class="ms8">Put in hotbar slot</div><div class="mr8">';for(let x=0;x<h.N;x++)b+='<button data-c="hb'+x+'" class="'+(x===s?'on':'')+'" title="Slot '+(x+1)+'">'+(x+1)+'</button>';b+='</div>';if(s>=0)b+='<button data-c="hbx">Remove from hotbar</button>'}
   b+='<button data-c="fav">'+(favs[k]?'★ Unfavourite':'☆ Favourite')+'</button>';
-  if(typeof k=='number'&&cnt(k)>0){b+='<button data-c="d1">Drop 1</button>';if(cnt(k)>1)b+='<button data-c="da">Drop all ('+cnt(k)+')</button>'}
+  if(typeof k=='number'&&cnt(k)>0){if(DROP2.can(k).ok){b+='<button data-c="d1">Drop 1</button>';if(cnt(k)>1)b+='<button data-c="da">Drop all ('+cnt(k)+')</button>'}}else if(i.own&&DROP2.can(k).ok)b+='<button data-c="dg">Drop</button>';
   closeMenu();menu=document.createElement('div');menu.id='ictx8';menu.setAttribute('role','menu');menu.dataset.k=String(k);menu.innerHTML=b;el.appendChild(menu);
   const r=menu.getBoundingClientRect(),x=Math.min(e.clientX,innerWidth-r.width-8),y=Math.min(e.clientY,innerHeight-r.height-8);menu.style.transform='translate('+Math.max(8,x)+'px,'+Math.max(8,y)+'px)'}
  function menuAct(c){if(!menu)return;const k=keyOf(menu.dataset.k);closeMenu();const h=HB();
   if(c=='p')doPrimary(k);else if(c=='u'){if(unequip(k))render()}else if(c=='fav'){if(favs[k])delete favs[k];else favs[k]=1;saveP();render()}
   else if(/^hb\d$/.test(c)&&h){h.set(+c.slice(2),k);render()}else if(c=='hbx'&&h){const s=h.slotOf(k);if(s>=0)h.set(s,null);render()}
-  else if(c=='d1')drop(k,1);else if(c=='da')drop(k,cnt(k))}
+  else if(c=='d1')drop(k,1);else if(c=='da')drop(k,cnt(k));else if(c=='dg')dropAsk(k)}
  const isOpen=()=>showInv&&!!el&&el.classList.contains('open');
  function open(f,slot){mk();document.documentElement.classList.add('inv6');el._sk='';el._ind=null;if(f){filter=f;q=''}assign=slot==null?-1:slot;selK=null;showInv=true;el.classList.add('open');render();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(showInv)el.classList.add('show')}));try{G('bag')}catch(_){}snd('open')}
  function close(){if(!el||!showInv)return;closeMenu();assign=-1;showInv=false;try{const a=document.activeElement;if(a&&el.contains(a))a.blur()}catch(_){}el.classList.remove('show');setTimeout(()=>{if(!showInv){el.classList.remove('open');document.documentElement.classList.remove('inv6')}},230);const ab=document.getElementById('asb');if(ab)ab.style.display='none';snd('close')}
@@ -21632,7 +21699,7 @@ const ONL10=(()=>{
  let seq=0,last='';
  function report(force){if(!acct()||god())return;const o={};for(const k in inv){const i=+k,n=cnt(i);if(Number.isInteger(i)&&i>0&&i<=999&&n>0)o[k]=n}const s=JSON.stringify(o);if(!force&&s==last)return;last=s;NET7.send({t:'bag_sync',inv:o,seq})}
  setInterval(report,4000);window.RB_BAGREPORT=()=>report(true);
- NET7.on('bag',m=>{if(m.seq!=null)seq=m.seq;const d=m.d||{};for(const k in d){const i=+k,n=d[k]|0;if(!n)continue;if(i===0)gems=Math.max(0,(gems|0)+n);else if(n>0)addI(i,n);else{const c=cnt(i);if(c>0)addI(i,-Math.min(c,-n))}
+ NET7.on('bag',m=>{try{DROP2.bagNote(m)}catch(_){}if(m.seq!=null)seq=m.seq;const d=m.d||{};for(const k in d){const i=+k,n=d[k]|0;if(!n)continue;if(i===0)gems=Math.max(0,(gems|0)+n);else if(n>0)addI(i,n);else{const c=cnt(i);if(c>0)addI(i,-Math.min(c,-n))}
    if(n>0&&m.why!='trade'){try{ft(P.x,P.y-14,'+'+n+' '+nm(i),'#fff')}catch(_){}}if(n>0&&m.why=='gift')say('The server owner gave you '+n+' '+nm(i))}
   last='';try{barDirty=1;renderBar()}catch(_){}try{if(INV7.isOpen)INV7.render()}catch(_){}report()});
  NET7.on('god',m=>{try{m.on?CRV8.enable():CRV8.disable()}catch(e){console.error(e)}});
@@ -21673,25 +21740,22 @@ const ONL10=(()=>{
   pEl.onclick=async e=>{const b=e.target.closest('[data-pc]');if(!b)return;const a=b.dataset.pc;pEl.style.display='none';
    if(a=='block'){SOC6.cmd((blocked(q.n)?'/unblock ':'/block ')+q.n);return}
    if(a=='report'){const v=await DLG7.open({title:'Report '+q.n,text:'The server owner will see this and what '+q.n+' recently said in this world.',fields:[{k:'why',label:'What happened?',max:160}],ok:'Send report'});if(v&&v.why&&v.why.trim()){try{NET7.send({t:'report',who:q.n,why:v.why})}catch(_){}}return}
-   if(a=='trade')ask(p.peer);else if(a=='friend')SOC6.cmd('/friend '+q.n);else if(a=='pull')adm('pull',{who:p.peer});else if(a=='kick')adm('kick',{who:p.peer});
+   if(a=='trade')ask(p.peer);else if(a=='friend')SOC6.cmd('/friend '+q.n);else if(a=='pull')adm('pull',{who:p.peer});else if(a=='kick'){const v=await DLG7.open({title:'Kick '+q.n+'?',text:q.n+' will be removed from this world.',ok:'Kick',danger:1});if(v)adm('kick',{who:p.peer})}
    else if(a=='give'){const v=await DLG7.open({title:'Give '+q.n,fields:[{k:'i',label:'Item (gems, a number or a name like iron_ore)',max:40},{k:'n',label:'Amount',val:'1',max:6}],ok:'Give'});if(v){const i=itemId(v.i);if(i==null)say('No such item');else adm('give',{who:p.peer,item:i,n:Math.max(1,Math.floor(+v.n||1))})}}
    else if(a=='ban'){const v=await DLG7.open({title:'Ban '+q.n,fields:[{k:'m',label:'Minutes (empty = until you unban)',max:6},{k:'r',label:'Reason',max:80}],ok:'Ban',danger:1});if(v)adm('ban',{who:p.peer,mins:+v.m||0,reason:v.r})}}}
- function wrenchAt(c){if(!rm){say('The wrench is for other players: join a server');return}let best=null,bd=1e9;for(const p of SOC6.peers()){const r=rp[p.peer]||p.presence;if(!r||!(Math.abs(r.x-c.x)<34&&c.y>r.y-14&&c.y<r.y+70))continue;const d=Math.hypot(r.x-c.x,r.y+28-c.y);if(d<bd){bd=d;best=p}}
-  if(best){snd('open');return card(best)}try{if(wrench())return}catch(_){}say('Point the wrench at a player')}
- let lastHand='';addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='v')return;if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench';say('Wrench: click a player to trade')}snd('select')});
+ function peerAt(c){if(!rm)return null;let best=null,bd=1e9;for(const p of SOC6.peers()){const r=rp[p.peer]||p.presence;if(!r||!(Math.abs(r.x-c.x)<34&&c.y>r.y-14&&c.y<r.y+70))continue;const d=Math.hypot(r.x-c.x,r.y+28-c.y);if(d<bd){bd=d;best=p}}return best}
+ function wrenchAt(c){try{return WRENCH2.use(c)}catch(e){console.error('wrench',e)}}
+ function openCard(p){snd('open');return card(p)}
+ let lastHand='';function toggleWrench(){if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench'}snd('select')}addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='v')return;toggleWrench()});
  // ---- items dropped for others (the server owns them; the first player to reach one gets it)
  const ND=[];
- const addD=(d,old)=>{if(ND.some(x=>x.id==d.id))return;ND.push({id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,vy:old?0:-220,ph:Math.random()*6,t:old?9:0,sent:0,rest:0})};
+ const addD=(d,old)=>{if(ND.some(x=>x.id==d.id))return;const o={id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,by:d.by||'',vy:old?0:-260,ph:Math.random()*6,t:old?9:0,sent:0,rest:0};try{DROP2.unclip(o)}catch(_){}ND.push(o)};
  NET7.onHello(d=>{ND.length=0;for(const x of d.dr||[])addD(x,1);try{renderWorlds()}catch(_){}});
  NET7.on('dr+',m=>addD(m.d));NET7.on('dr-',m=>{const i=ND.findIndex(x=>x.id==m.d.id);if(i>=0){const d=ND[i];ND.splice(i,1);try{burst(d.x,d.y,d.i===0?'#7ee8ff':'#fff',4,60,3,'p')}catch(_){}}});
  {const _u=updDrops;updDrops=function(dt){const r=_u.apply(this,arguments);if(!NET7.room){ND.length=0;return r}if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;const now=performance.now();for(const d of ND){d.t+=dt;const tx=Math.floor(d.x/T);
-    if(d.rest&&!solidAt(tx,Math.floor((d.y+12)/T)))d.rest=0;if(!d.rest){d.vy+=1500*dt;d.y+=d.vy*dt;const ty=Math.floor((d.y+9)/T);if(d.vy>0&&solidAt(tx,ty)){d.y=ty*T-9;d.vy=0;d.rest=1}if(d.y>H*T){d.y=H*T-20;d.rest=1}}
-    if(d.t>1.6&&now-d.sent>1500&&Math.hypot(P.x-d.x,P.y+30-d.y)<44){d.sent=now;NET7.send({t:'pick',id:d.id})}}return r}}
- {const _d=drawDrops;drawDrops=function(now){const r=_d.apply(this,arguments);if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;for(const d of ND){const px=d.x-cam.x,py=d.y-cam.y+Math.sin(now/260+d.ph)*2.5;if(px<-30||px>cv.width/ZM+30)continue;
-    if(d.i===0){g.save();g.translate(px,py);g.fillStyle='#5fd0ff';g.strokeStyle='#06304a';g.lineWidth=2;g.beginPath();g.moveTo(0,-9);g.lineTo(8,-2);g.lineTo(0,9);g.lineTo(-8,-2);g.closePath();g.fill();g.stroke();g.restore()}
-    else{try{if(!ICONC[d.i])iconURL(d.i);const c=ICONC[d.i];if(c)g.drawImage(c,px-11,py-11,22,22)}catch(_){}}
-    if(d.n>1){g.font='700 11px '+FONT;g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=3;g.strokeText(d.n,px+6,py+12);g.fillText(d.n,px+6,py+12)}}return r}}
- function drop(k,n){if(!live())return false;if(typeof WBOSS13!='undefined'&&WBOSS13.void){say('Nothing can be dropped in the void');return true}if(!acct()){say('Create an account to drop items');return true}report(true);NET7.send({t:'drop',i:k,n});say('Dropped '+n+' × '+nm(k));snd('close');return true}
+    if(d.rest&&!solidAt(tx,Math.floor((d.y+12)/T)))d.rest=0;if(!d.rest){d.vy+=1500*dt;d.y+=d.vy*dt;const ty=Math.floor((d.y+9)/T);if(d.vy>0&&solidAt(tx,ty)){d.y=ty*T-9;d.vy=0;d.rest=1}if(d.y>H*T){d.y=H*T-20;d.rest=1}}}return r}}
+ {const _d=drawDrops;drawDrops=function(now){const r=_d.apply(this,arguments);if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;for(const d of ND)try{DROP2.draw(d,now)}catch(_){}return r}}
+ function drop(k,n){if(!live())return false;if(typeof WBOSS13!='undefined'&&WBOSS13.void){say('Nothing can be dropped in the void');return true}if(!acct()){say('Create an account to drop items');return true}report(true);NET7.send({t:'drop',i:k,n});return true}
  // ---- hide other players' effects: their auras, wings and sparkles are simply not drawn (their character still is)
  const hideFx=()=>{try{return !!cel.opt.hideFx}catch(_){return false}};
  window.RBFXQ=q=>{if(!hideFx())return q;const c=q&&q.cx?Object.assign({},q.cx,{w:-1,a:0,fx:{au:'',ch:'',ws:''}}):q&&q.cx;return Object.assign({},q,{cx:c,wing:'',wo:0,fm:0})};
@@ -21710,7 +21774,7 @@ const ONL10=(()=>{
  {const _r=renderWorlds;renderWorlds=function(){const r=_r.apply(this,arguments);try{panels()}catch(e){console.error('ONL10 panels',e)}return r}}
  // a World Lock claims the world, so tell the player here if the server would refuse it, before the lock leaves their hands
  function lockBlock(){if(!live())return false;let m='';if(!acct())m='Create an account to lock a world';else{try{if(WORD9.stageOf(cur))m='A realm belongs to its base world: place your lock there'}catch(_){}if(!m&&window.RB_OWN&&RB_OWN.o&&RB_OWN.o!=myId)m='This world belongs to '+RB_OWN.on;if(!m&&!NET7.owner&&mine.max&&mine.list.length>=mine.max&&!(window.RB_OWN&&RB_OWN.o==myId))m='You already own '+mine.max+' worlds. Release one first'}if(m){say(m);return true}return false}
- return{drop,lockBlock,wrench:wrenchAt,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();
+ return{drop,lockBlock,wrench:wrenchAt,peerAt,card:openCard,toggleWrench,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();
 
 /* ========== LATE: 99-zzzzzzzzz-k-accounts.js ========== */
 // ===== ACCT13: each account's progress lives on the server, so it follows the account to any computer and a reset really starts everyone over. Signing in
@@ -26666,14 +26730,179 @@ try{(()=>{
   if(k.startsWith('id:')){const it=shopOf(k);o.push({t:(it&&it.d)||'Equip it'});return o}
   return o}
  // what the game's rules really allow
- function rules(k){const T=[];if(num(k)){T.push(k==17?'Can\'t be traded or dropped':k>=731&&k<=749?'Quest item: can\'t be traded':'Can be traded and dropped')}else T.push('Trading comes with the next update');return T}
+ function rules(k){const c=(()=>{try{return DROP2.can(k)}catch(_){return{ok:false,why:''}}})();const T=[];if(k===17)T.push('Can\'t be traded or dropped');else if(num(k)&&k>=731&&k<=749)T.push('Quest item: can\'t be traded');else if(num(k))T.push(c.ok?'Can be traded and dropped':'Can be traded');else if(c.ok)T.push('Can be dropped');else if(c.why&&!/own/.test(c.why))T.push(c.why);return T}
  function go(g){if(!g)return;try{INV7.close()}catch(_){}try{if(g.kind=='dungeon')DG.page.open(null,g.arg);else if(g.kind=='store')STORE7.open();else if(g.kind=='forge')RPG.enh.open(g.arg||(typeof wp!='undefined'?wp:undefined))}catch(e){console.error('ITEMSRC go',e)}}
  let open='',cache=[];
  function list(k,which){cache=which=='where'?where(k):used(k);if(!cache.length)return'<p class="src-none">'+(which=='where'?'No known source.':'Nothing uses it yet.')+'</p>';return'<ul class="src-l">'+cache.map((q,i)=>'<li><span>'+esc(q.t)+'</span>'+(q.go?'<button type="button" class="src-go" data-srcgo="'+i+'">Go</button>':'')+'</li>').join('')+'</ul>'}
- function row(s){if(!s)return'';const k=s.k,own=s.own?(s.n?'You own '+s.n:'You own this'):'You don\'t own this yet';return'<div class="src8"><div class="src-b"><button type="button" data-src="where" class="'+(open=='where'?'on':'')+'" aria-expanded="'+(open=='where')+'">Where to find</button><button type="button" data-src="used" class="'+(open=='used'?'on':'')+'" aria-expanded="'+(open=='used')+'">What is it used for?</button></div>'+(open?list(k,open):'')+'<p class="src-r">'+esc(own)+' · '+esc(rules(k).join(' · '))+'</p></div>'}
+ function row(s){if(!s)return'';const k=s.k,own=s.own?(s.n?'You own '+s.n:'You own this'):'You don\'t own this yet',rl=rules(k);return'<div class="src8"><div class="src-b"><button type="button" data-src="where" class="'+(open=='where'?'on':'')+'" aria-expanded="'+(open=='where')+'">Where to find</button><button type="button" data-src="used" class="'+(open=='used'?'on':'')+'" aria-expanded="'+(open=='used')+'">What is it used for?</button></div>'+(open?list(k,open):'')+'<p class="src-r">'+esc(own)+(rl.length?' · '+esc(rl.join(' · ')):'')+'</p></div>'}
  document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-src],[data-srcgo]');if(!t||!t.closest('#inv7'))return;e.stopPropagation();if(t.dataset.srcgo!=null){go((cache[+t.dataset.srcgo]||{}).go);return}open=open==t.dataset.src?'':t.dataset.src;try{const k=INV7.selK;if(k!=null)INV7.select(k)}catch(_){}},true);
  window.ITEMSRC={row,where,used,rules,reset(){open=''}};
 })()}catch(e){console.error('ITEMSRC',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-m-drops.js ========== */
+// ===== DROP2: dropping anything you may give up, as a real object lying in the world. Blocks, materials, weapons, wearables, store wings and charms. Press E beside it to pick it up.
+// Rules, the same for everyone: it stays for 15 minutes; anyone nearby can take it; if nobody does it comes back to whoever dropped it, so timing never loses you anything.
+// Never droppable: what you are wearing or holding, upgraded weapons, starter tools, level-earned wings, World Locks and quest items.
+// Online: the server decides. The item leaves your inventory only when the server says the drop exists (server/economy.js), so lag, double clicks or a disconnect can not duplicate or lose it.
+// Offline there is nobody to cheat, and it is saved in your own browser storage (RB_PREFIX+'rbdrops'), this is not presented as security.
+// Mob loot is untouched: it stays the magnet-to-you pickups of the 'drops' list. =====
+try{(()=>{
+ const KEY=()=>(typeof RB_PREFIX!='undefined'?RB_PREFIX:'')+'rbdrops',TTL=15*60000;
+ const STARTER=new Set(['fist','pip','pebble','glimmer','twiggy','bubbles','wrench']);
+ const num=k=>typeof k=='number';
+ const netKey=k=>typeof k=='string'&&k.startsWith('wing:')?'id:wing_'+k.slice(5):k;
+ const uiKey=i=>typeof i=='string'&&i.startsWith('id:wing_')?'wing:'+i.slice(8):i;
+ const tierOf=k=>{try{return k===0?1:INV7.tierOf(k)}catch(_){return 0}};
+ const nameOf=k=>{try{return k===0?'Gems':INV7.nameOf(k)}catch(_){return'Item'}};
+ const online=()=>{try{return NET7.online&&!!NET7.room}catch(_){return false}};
+ const acct=()=>{try{return NET7.online&&!!NET7.auth&&NET7.auth.kind!='guest'}catch(_){return false}};
+ const god=()=>{try{return !!CRV8.on}catch(_){return false}};
+ const snd2=n=>{try{UIS.play(n)}catch(_){}};
+ const tone=(a,b,d,t,v,dl)=>{try{SFX7.tone(a,b,d,t,v,dl)}catch(_){}};
+ const inRun=()=>{try{return !!(window.DG&&DG.run)}catch(_){return false}};
+ const voided=()=>{try{return !!(typeof WBOSS13!='undefined'&&WBOSS13.void)}catch(_){return false}};
+ // ---- what may be dropped, and if not, why
+ function can(k){
+  if(num(k)){if(!(cnt(k)>0))return{ok:false,why:'You have none'};if(k==17)return{ok:false,why:'A World Lock stays with you'};if(k>=731&&k<=749)return{ok:false,why:'Quest items stay with you'};return{ok:true}}
+  if(k.startsWith('w:')){const id=k.slice(2);if(!own[id])return{ok:false,why:'You do not own this'};if(STARTER.has(id))return{ok:false,why:'Starter tools stay with you'};if((typeof wUp!='undefined'&&wUp[id])|0)return{ok:false,why:'Upgraded weapons stay with you'};if(wp==id)return{ok:false,why:'Put it away first'};return{ok:true}}
+  if(k[0]=='a'){const id=k.slice(2);if(!ownW[id])return{ok:false,why:'You do not own this'};const w=WEAR[id];if(w&&wear[w.s]==id)return{ok:false,why:'Take it off first'};return{ok:true}}
+  if(k.startsWith('wing:')){const id=k.slice(5);let w=null;try{w=wingById(id)}catch(_){}if(!w||w.src!='shop')return{ok:false,why:'Earned wings stay with you'};if(!SHOP7.has('wing_'+id))return{ok:false,why:'You do not own this'};try{if(curWing(lvl).id==id)return{ok:false,why:'Take them off first'}}catch(_){}return{ok:true}}
+  if(k.startsWith('id:')){const id=k.slice(3),it=SHOP7.byId.get(id);if(!it||it.stack||!SHOP7.has(id))return{ok:false,why:'You do not own this'};if(SHOP7.equipped(id))return{ok:false,why:'Unequip it first'};return{ok:true}}
+  return{ok:false,why:'This can not be dropped'}}
+ // ---- taking and giving, for every kind
+ function refresh(){try{renderBar()}catch(_){}try{if(INV7.isOpen)INV7.render()}catch(_){}try{save()}catch(_){}}
+ function shopKeysFor(cat,ref){try{return SHOP7.items.filter(i=>i.cat==cat&&i.ref==ref).map(i=>i.id)}catch(_){return[]}}
+ function take(k,n){n=n||1;if(num(k)){addI(k,-n)}else if(k.startsWith('w:')){const id=k.slice(2);delete own[id];if(wp==id)wp='fist';try{const s=HOTBAR.slotOf(k);if(s>=0)HOTBAR.set(s,null)}catch(_){}for(const s of shopKeysFor('weapons',id))delete SHOP7.st.own[s]}
+  else if(k[0]=='a'){const id=k.slice(2);delete ownW[id];for(const s of shopKeysFor('gear',id))delete SHOP7.st.own[s]}
+  else if(k.startsWith('wing:')){delete SHOP7.st.own['wing_'+k.slice(5)]}else if(k.startsWith('id:')){delete SHOP7.st.own[k.slice(3)]}
+  try{SHOP7.save()}catch(_){}refresh()}
+ function give(k,n){n=n||1;if(num(k)){addI(k,n)}else if(k.startsWith('w:')){own[k.slice(2)]=1}else if(k[0]=='a'){ownW[k.slice(2)]=1}else if(k.startsWith('wing:')){SHOP7.st.own['wing_'+k.slice(5)]=1}else if(k.startsWith('id:')){SHOP7.st.own[k.slice(3)]=1}try{SHOP7.save()}catch(_){}refresh()}
+ const owns=k=>{try{if(num(k))return false;if(k.startsWith('w:'))return !!own[k.slice(2)];if(k[0]=='a')return !!ownW[k.slice(2)];if(k.startsWith('wing:'))return SHOP7.has('wing_'+k.slice(5));return SHOP7.has(k.slice(3))}catch(_){return false}};
+ function gotFx(k,n,x,y){const t=tierOf(k);try{ft(x,y-14,'+'+(n>1?n+' ':'')+nameOf(k),t>=2?REW8.RC[t]:'#fff')}catch(_){}tone(520+t*80,780+t*120,.14,'triangle',.05);if(t>=3)try{const ico=num(k)||k[0]=='w'||k[0]=='a'?k:undefined;REW8.card({kind:'reveal',kick:REW8.RN[t]+' item',title:nameOf(k)+(n>1?' ×'+n:''),tier:t,icon:ico})}catch(e){console.error('DROP2 reveal',e)}}
+ // ---- saved local drops
+ let LD=[];try{const o=JSON.parse(localStorage.getItem(KEY())||'[]');if(Array.isArray(o))LD=o.filter(d=>d&&d.id&&d.w).map(d=>Object.assign(d,{rest:1,ph:Math.random()*6,tt:9,vy:0,vx:0}))}catch(_){}
+ const persist=()=>{try{localStorage.setItem(KEY(),JSON.stringify(LD.map(d=>({id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,w:d.w,t0:d.t0}))))}catch(_){}};
+ let nid=0;
+ function unclip(d){try{let tx=Math.floor(d.x/T),n=0;while(n++<8&&solidAt(tx,Math.floor(d.y/T)))d.y-=T}catch(_){}}
+ function dropLocal(k,n){const front=(P.f||1)*44,tx=Math.floor((P.x+front)/T),ty=Math.floor((P.y+10)/T),x=solidAt(tx,ty)?P.x:P.x+front,d={id:'l'+Date.now().toString(36)+(nid++),i:k,n,x,y:P.y+P.h*.3,w:cur,t0:Date.now(),vy:-320,vx:(P.f||1)*90,ph:Math.random()*6,tt:0,rest:0};unclip(d);LD.push(d);persist();/* the object exists and is saved before the item leaves your bag */take(k,n);landNote(k,n)}
+ function landNote(k,n){try{say('Dropped '+(n>1?n+' × ':'')+nameOf(k))}catch(_){}tone(340,170,.18,'triangle',.05)}
+ // ---- dropping: the one entry point
+ const pend={};
+ function drop(k,n){const c=can(k);if(!c.ok){try{say(c.why)}catch(_){}snd2('error');return false}if(inRun()||voided()){try{say('Nothing can be dropped here')}catch(_){}snd2('error');return false}n=num(k)?Math.max(1,Math.min(cnt(k),n|0)):1;
+  if(online()){if(!acct()){try{say('Create an account to drop items')}catch(_){}return false}const key=String(k);if(pend[key]&&performance.now()-pend[key]<4000)return false;pend[key]=performance.now();try{ONL10.report(true);sendGear(true)}catch(_){}NET7.send({t:'drop',i:netKey(k),n});return true}
+  dropLocal(k,n);return true}
+ async function ask(k){const c=can(k);if(!c.ok){try{say(c.why)}catch(_){}snd2('error');return false}let n=1;
+  if(num(k)&&cnt(k)>1){const v=await DLG7.open({title:'Drop '+nameOf(k),text:'How many?',fields:[{k:'n',label:'You have '+cnt(k),val:String(cnt(k)),max:5}],ok:'Next'});if(!v)return false;n=Math.floor(+v.n)||0;if(n<1)return false}
+  if(!num(k)||tierOf(k)>=2){const v=await DLG7.open({title:'Drop '+nameOf(k)+'?',text:online()?'It will lie on the ground for 15 minutes, and anyone nearby can pick it up. If nobody does, it comes back to you.':'It will lie on the ground for 15 minutes. If you leave it, it comes back to you.',ok:'Drop it',danger:1});if(!v)return false}
+  return drop(k,n)}
+ // ---- messages from the server
+ let gseq=null,lastG='';
+ function sendGear(force){if(!acct()||god()||gseq==null)return;const list=[];for(const id in own)if(own[id]&&!STARTER.has(id)&&WPN[id]&&!((typeof wUp!='undefined'&&wUp[id])|0))list.push('w:'+id);for(const id in ownW)if(ownW[id])list.push('a:'+id);list.sort();const s=list.join();if(!force&&s==lastG)return;lastG=s;NET7.send({t:'gear_sync',list,seq:gseq})}
+ setInterval(()=>{try{sendGear()}catch(_){}},4000);
+ NET7.on('gear',m=>{try{if(m.seq!=null){gseq=m.seq;lastG=''}const d=m.d||{};for(const i in d){const k=uiKey(i),v=d[i]|0;if(v>0){if(!owns(k))give(k,1);if(m.why=='pick')gotFx(k,1,P.x,P.y);else if(m.why)try{say(nameOf(k)+' came back to you')}catch(_){}}else if(v<0){if(owns(k))take(k,1);delete pend[String(k)];if(m.why=='drop')landNote(k,1)}}}catch(e){console.error('DROP2 gear',e)}});
+ function bagNote(m){try{const d=m.d||{};for(const i in d){const v=d[i]|0,k=+i;if(m.why=='drop'&&v<0){delete pend[String(k)];landNote(k,-v)}else if(m.why=='pick'&&v>0)gotFx(k,v,P.x,P.y);else if(m.why=='returned'&&v>0)try{say(v+' × '+nameOf(k)+' came back to you')}catch(_){}}}catch(_){}}
+ // ---- local physics and expiry
+ function step(d,dt){d.tt=(d.tt||0)+dt;const tx=Math.floor(d.x/T);if(d.rest&&!solidAt(tx,Math.floor((d.y+12)/T)))d.rest=0;if(d.rest)return;d.vy+=1500*dt;d.y+=d.vy*dt;if(d.vx){const nx=d.x+d.vx*dt;if(!solidAt(Math.floor(nx/T),Math.floor(d.y/T)))d.x=nx;d.vx*=Math.max(0,1-3*dt)}const ty=Math.floor((d.y+9)/T);if(d.vy>0&&solidAt(Math.floor(d.x/T),ty)){if(d.vy>300)try{burst(d.x,d.y+8,'#fff',3,50,2,'p')}catch(_){}d.y=ty*T-9;d.vy=0;d.rest=1}if(d.y>H*T){d.y=H*T-20;d.rest=1}}
+ {const _u=updDrops;updDrops=function(dt){const r=_u.apply(this,arguments);try{for(const d of LD)if(d.w==cur)step(d,dt)}catch(_){}return r}}
+ setInterval(()=>{try{if(!LD.length)return;const now=Date.now();let ch=false;for(let i=LD.length-1;i>=0;i--){const d=LD[i];if(now-d.t0<TTL)continue;LD.splice(i,1);ch=true;if(num(d.i)||!owns(d.i)){give(d.i,d.n);try{say(nameOf(d.i)+' came back to you')}catch(_){}}}if(ch)persist()}catch(_){}},5000);
+ // ---- how a dropped thing looks: the item, floating and tilting a little; a soft pool of its rarity colour; from Epic up a thin column of light
+ const GL={},IM={};
+ function glow(t){if(GL[t])return GL[t];const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d'),col=(()=>{try{return REW8.RC[t]}catch(_){return'#fff'}})(),g2=x.createRadialGradient(48,48,2,48,48,46);g2.addColorStop(0,col+'cc');g2.addColorStop(.45,col+'44');g2.addColorStop(1,col+'00');x.fillStyle=g2;x.fillRect(0,0,96,96);return GL[t]=c}
+ function beam(t){const k='b'+t;if(GL[k])return GL[k];const c=document.createElement('canvas');c.width=24;c.height=150;const x=c.getContext('2d'),col=(()=>{try{return REW8.RC[t]}catch(_){return'#fff'}})(),v=x.createLinearGradient(0,150,0,0);v.addColorStop(0,col+'aa');v.addColorStop(1,col+'00');x.fillStyle=v;x.fillRect(9,0,6,150);return GL[k]=c}
+ function pic(k){if(num(k)){try{if(!ICONC[k])iconURL(k);return ICONC[k]||null}catch(_){return null}}if(IM[k])return IM[k].complete?IM[k]:null;const im=new Image();try{im.src=INV7.iconOf(k)}catch(_){}IM[k]=im;return null}
+ function draw(d,now,k){if(d.w&&d.w!=cur)return;k=k==null?uiKey(d.i):k;const px=d.x-cam.x,py=d.y-cam.y+Math.sin(now/420+d.ph)*3;if(px<-40||px>cv.width/ZM+40)return;const t=tierOf(k);
+  if(t>=1&&k!==0){g.save();g.globalCompositeOperation='lighter';g.globalAlpha=.55+Math.sin(now/600+d.ph)*.15;g.drawImage(glow(t),px-30,py-26,60,60);if(t>=3){g.globalAlpha=.5+Math.sin(now/500+d.ph)*.2;g.drawImage(beam(t),px-9,py-104,18,112)}g.restore()}
+  if(k===0){g.save();g.translate(px,py);g.fillStyle='#5fd0ff';g.strokeStyle='#06304a';g.lineWidth=2;g.beginPath();g.moveTo(0,-9);g.lineTo(8,-2);g.lineTo(0,9);g.lineTo(-8,-2);g.closePath();g.fill();g.stroke();g.restore()}
+  else{const c=pic(k);if(c){g.save();g.translate(px,py);g.rotate(Math.sin(now/760+d.ph)*.09);g.drawImage(c,-15,-15,30,30);g.restore()}}
+  if(d.n>1){g.font='700 11px '+FONT;g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=3;g.strokeText(d.n,px+8,py+14);g.fillText(d.n,px+8,py+14)}}
+ {const _d=drawDrops;drawDrops=function(now){const r=_d.apply(this,arguments);try{if(!voided()){for(const d of LD)draw(d,now);const n=nearest();if(n)label(n.d,now)}}catch(e){console.error('DROP2 draw',e)}return r}}
+ // ---- picking up: E beside it. The closest one wins, and it is ready a moment after it lands so you do not grab what you just threw
+ function nearest(){if(inRun()||voided())return null;let best=null,bd=76;const net=(()=>{try{return online()?ONL10.drops:[]}catch(_){return[]}})();const look=(a,o)=>{for(const d of a){if(d.w&&d.w!=cur)continue;if((o?d.t:d.tt)<1.1)continue;const q=Math.hypot(P.x-d.x,P.y+30-d.y);if(q<bd){bd=q;best={d,net:o}}}};look(net,1);if(!online())look(LD,0);return best}
+ function label(d,now){const k=uiKey(d.i),px=d.x-cam.x,py=d.y-cam.y-30,t=tierOf(k),txt=nameOf(k)+(d.by?'  ·  '+d.by:'');g.save();g.font='700 13px '+FONT;const w=g.measureText(txt).width+52;g.fillStyle='rgba(10,8,22,.86)';g.strokeStyle=(()=>{try{return REW8.RC[t]}catch(_){return'#fff'}})();g.lineWidth=1.2;g.beginPath();g.roundRect(px-w/2,py-14,w,26,8);g.fill();g.stroke();g.fillStyle='#f4d59a';g.fillRect(px-w/2+7,py-8,16,14);g.fillStyle='#1a1020';g.textAlign='center';g.fillText('E',px-w/2+15,py+4);g.fillStyle='#fff8e6';g.textAlign='left';g.fillText(txt,px-w/2+30,py+4);g.restore()}
+ function pick(n){const d=n.d,k=uiKey(d.i);if(n.net){if(performance.now()-(d.sent||0)<1200)return;d.sent=performance.now();NET7.send({t:'pick',id:d.id});return}if(!num(k)&&owns(k)){try{say('You already own one of these')}catch(_){}snd2('error');return}const i=LD.indexOf(d);if(i<0)return;LD.splice(i,1);persist();give(k,d.n);gotFx(k,d.n,d.x,d.y)}
+ addEventListener('keydown',e=>{try{if((e.key!='e'&&e.key!='E')||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;if(!entered||dlgOpen||showInv||creatorOn||menuEl.style.display!='none'||window.RB_COVER||(window.DLG7&&DLG7.isOpen))return;const n=nearest();if(!n)return;e.preventDefault();e.stopImmediatePropagation();pick(n)}catch(_){}},true);
+ window.DROP2={can,drop,ask,draw,step,unclip,bagNote,netKey,uiKey,TTL,get local(){return LD},nearest,sendGear,get gseq(){return gseq}};
+})()}catch(e){console.error('DROP2',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-n-wrench.js ========== */
+// ===== WRENCH2: the wrench as a real tool. Holding it (V, or from the hotbar) opens a small panel with three modes, each one a thing the wrench truly does:
+//   Inspect   click anything: a block (what it is, how tough, who may build here), an object, a World Lock, or another player
+//   Configure click a door, teleporter, chest or other object you are allowed to set up, or your World Lock
+//   People    click another player for their card: trade, friend, block, report (and the owner's tools)
+// What is under the mouse is outlined: gold when it can be used, red when it can not, and the panel says why. R changes mode. V or Esc puts the wrench away.
+// TOOLI1: the first time you hold each tool, a card says what it does, how to use it, why it helps, its special trick and its controls. Once per tool. =====
+try{(()=>{
+ const MODES=[{id:'inspect',n:'Inspect',d:'Point at anything and click to see what it is.'},{id:'config',n:'Configure',d:'Click a door, chest, teleporter or your World Lock to set it up.'},{id:'people',n:'People',d:'Click another player to trade, add a friend, block or report.'}];
+ let mode=0,el=null,shown=false,info=null;
+ const tone=(a,b,d,t,v,dl)=>{try{SFX7.tone(a,b,d,t,v,dl)}catch(_){}};
+ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const active=()=>{try{return typeof wp!='undefined'&&wp=='wrench'&&entered&&!window.RB_COVER}catch(_){return false}};
+ const ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.700 6.300a4.500 4.500 0 0 0-5.900 5.900L3 18l3 3 5.800-5.800a4.500 4.500 0 0 0 5.900-5.900l-2.900 2.900-2.300-2.300z"/></svg>';
+ const inReach=(x,y)=>{try{return Math.hypot(x-P.x,y-(P.y+P.h/2))<REACH}catch(_){return false}};
+ const buildRule=()=>{try{if(typeof cur!='undefined'&&cur=='plaza')return'Nobody can build in the Plaza';if(!meta)return'No World Lock: anyone can build here';if(isOwner())return'Your world: you can build';if(meta.pub)return meta.on+"'s world: open to everyone";return meta.on+"'s world: owner and friends only"}catch(_){return''}};
+ // what is under the mouse right now, for this mode
+ function target(){const c={x:mx+cam.x,y:my+cam.y},tx=Math.floor(c.x/T),ty=Math.floor(c.y/T),m=MODES[mode].id;if(tx<0||ty<0||tx>=W||ty>=H)return{ok:false,msg:'Nothing here'};
+  let peer=null;try{peer=ONL10.peerAt(c)}catch(_){}
+  const k=ty*W+tx,o=(()=>{try{return OBJ6.OBJ[k]||null}catch(_){return null}})(),lock=(()=>{try{return !!(meta&&tx==meta.x&&ty==meta.y&&tiles[k]==17)}catch(_){return false}})(),far=!inReach(tx*T+T/2,ty*T+T/2);
+  const box={x:tx*T,y:ty*T,w:T,h:T};
+  if(m=='people'){try{if(!NET7.room)return{ok:false,msg:'People are only here on a server'}}catch(_){return{ok:false,msg:'People are only here on a server'}}if(peer)return{ok:true,kind:'peer',peer,msg:'Click to open '+((peer.presence&&peer.presence.n)||'their')+' card',box:null};return{ok:false,msg:'Point at another player'}}
+  if(m=='config'){if(lock){if(far)return{ok:false,msg:'Too far away',box};return{ok:true,kind:'lock',msg:'World Lock: click to open its settings',box}}if(o){const d=ODEF[o.t];if(far)return{ok:false,msg:'Too far away',box};if(!OBJ6.canConfig(myId))return{ok:false,msg:'Only the owner and builders can set this up',box};return{ok:true,kind:'obj',k,msg:(o.c&&o.c.nm||d.n)+': click to set it up',box}}return{ok:false,msg:'Point at a door, chest or World Lock',box:tiles[k]?box:null}}
+  if(peer)return{ok:true,kind:'peer',peer,msg:((peer.presence&&peer.presence.n)||'Player')+': click for their card',box:null};
+  if(lock)return{ok:true,kind:'lock',msg:'World Lock: click for details',box};
+  if(o){const d=ODEF[o.t];return{ok:true,kind:'objinfo',k,o,msg:(o.c&&o.c.nm||d.n),box}}
+  const t=tiles[k];if(t)return{ok:true,kind:'tile',t,msg:(BLK[t]||['Block'])[0],box};return{ok:false,msg:'Point at something'}}
+ function use(c){const t=target(),m=MODES[mode].id;if(!t.ok){tone(200,140,.14,'triangle',.05);try{say(t.msg)}catch(_){}return}tone(620,860,.1,'triangle',.05);
+  if(t.kind=='peer'){try{ONL10.card(t.peer)}catch(e){console.error(e)}return}
+  if(t.kind=='lock'){try{wrench()}catch(_){}return}
+  if(t.kind=='obj'){try{DOORS6.config(t.k,false)}catch(e){console.error(e)}return}
+  if(t.kind=='objinfo'){const d=ODEF[t.o.t];info={h:t.o.c&&t.o.c.nm||d.n,rows:[['Kind',String(d.cat||'object')],['Who can set it up',OBJ6.canConfig(myId)?'You can':'The owner and builders']],m};paint();return}
+  if(t.kind=='tile'){const b=BLK[t.t]||['Block',0,1];info={h:b[0],rows:[['Toughness',String(b[2])],['Building here',buildRule()]],m};paint();return}}
+ function build(){el=document.createElement('section');el.id='wr2';el.setAttribute('aria-label','Wrench');el.innerHTML='<header><span class="wr-i">'+ICON+'</span><b>Wrench</b><button type="button" class="wr-x" aria-label="Put the wrench away (V)">✕</button></header><nav>'+MODES.map((m,i)=>'<button type="button" data-m="'+i+'">'+m.n+'</button>').join('')+'</nav><p class="wr-d"></p><div class="wr-t" role="status"></div><div class="wr-info"></div><footer><kbd>R</kbd> mode <kbd>V</kbd> put away</footer>';document.body.appendChild(el);
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b){setMode(+b.dataset.m);return}if(e.target.closest('.wr-x'))putAway()});el.addEventListener('pointerdown',e=>e.stopPropagation())}
+ function putAway(){try{ONL10.toggleWrench()}catch(_){}}
+ function setMode(i){mode=(i+MODES.length)%MODES.length;info=null;tone(520,700,.08,'triangle',.04);paint()}
+ function paint(){if(!el)return;el.querySelectorAll('[data-m]').forEach(b=>{const on=+b.dataset.m==mode;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')});el.querySelector('.wr-d').textContent=MODES[mode].d;const inf=el.querySelector('.wr-info');inf.innerHTML=info?'<h4>'+esc(info.h)+'</h4>'+info.rows.map(r=>'<div><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>').join(''):'';inf.style.display=info?'':'none'}
+ let last='';setInterval(()=>{try{const on=active();if(on&&!el)build();if(el&&on!==shown){shown=on;el.classList.toggle('on',on);if(on){info=null;tone(380,640,.12,'triangle',.04);paint()}}if(!on||!el)return;const t=target(),s=(t.ok?'1':'0')+t.msg;if(s!=last){last=s;const e=el.querySelector('.wr-t');e.textContent=t.msg;e.classList.toggle('ok',!!t.ok)}}catch(_){}},90);
+ addEventListener('keydown',e=>{try{if(!active()||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;if(dlgOpen||showInv||menuEl.style.display!='none'||(window.DLG7&&DLG7.isOpen))return;if(e.key=='r'||e.key=='R'){e.preventDefault();e.stopImmediatePropagation();setMode(mode+1)}else if(e.key=='Escape'){e.preventDefault();e.stopImmediatePropagation();putAway()}}catch(_){}},true);
+ // the outline in the world, drawn with the same hook the dungeons use
+ try{const dp=BOSS6.drawProj;BOSS6.drawProj=function(){const r=dp.apply(this,arguments);try{if(active()){const t=target(),now=performance.now();const col=t.ok?'rgba(244,213,154,':'rgba(255,90,100,',a=.75+Math.sin(now/180)*.2;g.save();g.lineWidth=2.5;g.strokeStyle=col+a+')';g.fillStyle=col+'.14)';if(t.box){g.beginPath();g.roundRect(t.box.x-cam.x+1,t.box.y-cam.y+1,t.box.w-2,t.box.h-2,6);g.fill();g.stroke()}else if(t.peer){const q=t.peer.presence;const px=(q.x||0)-cam.x,py=(q.y||0)-cam.y;g.beginPath();g.roundRect(px-24,py-14,48,84,10);g.fill();g.stroke()}g.restore()}}catch(_){}return r}}catch(e){console.error('WRENCH2 outline',e)}
+ // removing a World Lock frees the whole world: ask first
+ try{const la=lockAct;lockAct=function(p){if(p[1]=='rm'){DLG7.open({title:'Remove your World Lock?',text:'Anyone will be able to build here again.',ok:'Remove it',danger:1}).then(v=>{if(v)la(p)});return}return la(p)}}catch(_){}
+ window.WRENCH2={use,target,setMode,get mode(){return MODES[mode].id},get info(){return info}};
+})()}catch(e){console.error('WRENCH2',e)}
+try{(()=>{
+ const KEY=()=>(typeof RB_PREFIX!='undefined'?RB_PREFIX:'')+'rbtooli';
+ let seen={};try{seen=JSON.parse(localStorage.getItem(KEY())||'{}')||{}}catch(_){}
+ const T1={
+  pip:{t:'Pip the Pocket Shovel',what:'Digs soft ground: dirt, grass, sand, wood, glass and leaves.',how:'Hold it and left-click a block in reach.',why:'One hit each, so clearing ground is quick.',spec:'Levels up the more you dig.',keys:'Left-click to dig'},
+  pebble:{t:'Pebble the Rock Tapper',what:'Breaks stone, cobble, brick, marble and deepslate.',how:'Hold it and left-click stone.',why:'Cuts through rock in a single tap.',spec:'The only tool that can break Geode Rock.',keys:'Left-click to break'},
+  glimmer:{t:'Glimmer the Ore Pick',what:'Mines ores, and only ores.',how:'Hold it and left-click an ore.',why:'Takes the whole vein at once.',spec:'Finds bonus ore and makes nearby ores twinkle.',keys:'Left-click an ore'},
+  twiggy:{t:'Twiggy the Tree Axe',what:'Chops trees and wooden blocks.',how:'Hold it and left-click a tree.',why:'Gives extra wood from every tree.',spec:'Splits wooden blocks too.',keys:'Left-click a tree'},
+  bubbles:{t:'Bubbles the Fishing Rod',what:'Catches fish from any water.',how:'Click water to cast, click when it bites, then hold to keep the fish in the green zone.',why:'Fish sell well, and some are rare.',spec:'Bait from Tackle Boxes helps.',keys:'Click to cast, hold to reel'},
+  wrench:{t:'The Wrench',what:'Inspects anything, sets up objects and reaches other players.',how:'Choose a mode in its panel, then click your target.',why:'Everything you can set up, in one tool.',spec:'Outlines what you can use in gold, and what you can not in red.',keys:'V hold, R mode, Esc put away'}};
+ let el=null,tm=0;
+ function show(id){const q=T1[id];if(!q)return;if(el)el.remove();el=document.createElement('aside');el.id='tooli1';let pic='';try{pic=iconURL('w:'+id)}catch(_){}el.innerHTML='<img alt="" src="'+pic+'"><div><small>New tool</small><h4>'+q.t+'</h4><dl><dt>What it does</dt><dd>'+q.what+'</dd><dt>How to use it</dt><dd>'+q.how+'</dd><dt>Why it helps</dt><dd>'+q.why+'</dd><dt>Special</dt><dd>'+q.spec+'</dd><dt>Controls</dt><dd>'+q.keys+'</dd></dl></div><button type="button" aria-label="Got it">Got it</button>';document.body.appendChild(el);const done=()=>{clearTimeout(tm);if(el){el.classList.add('out');const e=el;el=null;setTimeout(()=>e.remove(),240)}};el.querySelector('button').onclick=done;tm=setTimeout(done,16000);try{SFX7.tone(560,840,.16,'triangle',.05)}catch(_){}}
+ setInterval(()=>{try{if(!entered||window.RB_COVER||typeof wp=='undefined'||!T1[wp]||seen[wp]||menuEl.style.display!='none')return;if(typeof creatorOn!='undefined'&&creatorOn)return;seen[wp]=1;localStorage.setItem(KEY(),JSON.stringify(seen));show(wp)}catch(_){}},500);
+ window.TOOLI1={T1,show,reset(){seen={};try{localStorage.setItem(KEY(),'{}')}catch(_){}}};
+})()}catch(e){console.error('TOOLI1',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-o-hudcard.js ========== */
+// ===== HUDCARD1: the character card's bars and health number (the layout is 99-zzzzzzzz-hudcard.css). The game keeps writing the two old fills' widths as before; each frame these bars read that value
+// and ease towards it using transform only, so no layout runs and a hit never jumps. A pale strip shows the health you just lost for a moment, then drains. Below a quarter the bar turns red.
+// Only what changed is written. Reduced motion: the bars jump straight to their value. =====
+try{(()=>{
+ const reduce=()=>{try{return MOTION7.reduce()}catch(_){return false}};
+ const mk=(host,ghost)=>{const v=document.createElement('u');v.className='hpv';let g=null;if(ghost){g=document.createElement('u');g.className='hpg';host.insertBefore(g,host.firstChild)}host.appendChild(v);return{v,g}};
+ let hp=null,xp=null,hpRow=null,num=null;
+ function build(){const f=document.getElementById('hpf'),x=document.getElementById('xpf');if(!f||!x)return false;const bar=f.parentNode;hpRow=document.createElement('div');hpRow.className='hprow';bar.parentNode.insertBefore(hpRow,bar);hpRow.appendChild(bar);num=document.createElement('span');num.className='hpn';num.setAttribute('aria-label','Health');hpRow.appendChild(num);hp={f,bar,...mk(bar,true),s:-1,g0:-1,hold:0,lastV:-1,lastG:-1};xp={f:x,bar:x.parentNode,...mk(x.parentNode,false),s:-1,lastV:-1};return true}
+ const read=e=>{const w=e.style.width;if(!w)return 0;const n=parseFloat(w);return Number.isFinite(n)?Math.max(0,Math.min(1,n/100)):0};
+ let t0=0;function frame(t){requestAnimationFrame(frame);const dt=Math.min(.05,(t-t0)/1000||.016);t0=t;if(!hp&&!build())return;if(document.hidden)return;const snap=reduce();
+  const ht=read(hp.f);if(hp.s<0)hp.s=hp.g0=ht;if(snap)hp.s=hp.g0=ht;else{hp.s+=(ht-hp.s)*(1-Math.exp(-dt/.07));if(Math.abs(ht-hp.s)<.0015)hp.s=ht;if(ht>=hp.g0){hp.g0=ht;hp.hold=0}else if(hp.hold<.42)hp.hold+=dt;else{hp.g0+=(ht-hp.g0)*(1-Math.exp(-dt/.16));if(hp.g0-ht<.002)hp.g0=ht}}
+  if(hp.s!==hp.lastV){hp.lastV=hp.s;hp.v.style.transform='scaleX('+hp.s.toFixed(4)+')';const low=ht<.25;if(low!==hp.low){hp.low=low;hp.bar.classList.toggle('low',low)}}if(hp.g0!==hp.lastG){hp.lastG=hp.g0;hp.g.style.transform='scaleX('+hp.g0.toFixed(4)+')'}
+  const xt=read(xp.f);if(xp.s<0)xp.s=xt;if(snap||xt<xp.s-.5)xp.s=xt;else{xp.s+=(xt-xp.s)*(1-Math.exp(-dt/.14));if(Math.abs(xt-xp.s)<.001)xp.s=xt}if(xp.s!==xp.lastV){xp.lastV=xp.s;xp.v.style.transform='scaleX('+xp.s.toFixed(4)+')'}}
+ requestAnimationFrame(frame);
+ let lastN='';setInterval(()=>{try{if(!num||typeof P=='undefined')return;const s=Math.max(0,Math.ceil(P.hp))+' / '+Math.ceil(maxHP());if(s!==lastN){lastN=s;num.textContent=s}}catch(_){}},150);
+})()}catch(e){console.error('HUDCARD1',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-restore.js ========== */
 // The last script of all: every item, weapon and piece of gear in the game is registered by now, so what the start-up check set aside (99-a-sanitize.js) goes back where it was.

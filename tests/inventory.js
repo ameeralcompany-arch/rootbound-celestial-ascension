@@ -49,8 +49,8 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
  await p.click('#inv7 .es8[data-slot=charm] .ux8');await W8();ok('✕ unequips the charm',await E(c=>!SHOP7.equipped(c),env.charm));
  // ---- blocks: hold, drop
  await E(()=>{INV7.filter='blocks';INV7.render()});await W8(200);await p.dblclick('#inv7 [data-k="1"]');await W8(150);ok('double-click a block holds it (on the hotbar)',await E(()=>HOTBAR.held()===1&&wp=='fist'));
- const d0=await E(()=>({n:cnt(1),d:drops.length}));await p.click('#inv7 [data-k="1"]',{button:'right'});await W8();await p.click('#ictx8 [data-c=d1]');await W8();
- const d1=await E(()=>({n:cnt(1),d:drops.length,k:drops.length?drops[drops.length-1].k:null}));ok('right-click → Drop 1 throws one Dirt on the ground',d1.n==d0.n-1&&d1.d==d0.d+1&&d1.k===1,[d0,d1]);
+ const d0=await E(()=>({n:cnt(1),d:DROP2.local.length}));await p.click('#inv7 [data-k="1"]',{button:'right'});await W8();await p.click('#ictx8 [data-c=d1]');await W8();
+ const d1=await E(()=>({n:cnt(1),d:DROP2.local.length,k:DROP2.local.length?DROP2.local[DROP2.local.length-1].i:null}));ok('right-click → Drop 1 throws one Dirt on the ground',d1.n==d0.n-1&&d1.d==d0.d+1&&d1.k===1,[d0,d1]);
  // ---- tabs, search, sorting
  const tabs=await E(()=>{const o={};for(const f of['tools','wear','weapons']){INV7.filter=f;INV7.render();o[f]=INV7.list}INV7.filter='all';INV7.render();return o});
  ok('Tools tab lists only tools, Gear only wearables, Weapons no tools',tabs.tools.length>=5&&await E(t=>t.tools.every(k=>WPN[k.slice(2)].k=='tool')&&t.wear.every(k=>k.startsWith('a:'))&&t.weapons.every(k=>k.startsWith('w:')&&WPN[k.slice(2)].k!='tool'),tabs),tabs.tools);

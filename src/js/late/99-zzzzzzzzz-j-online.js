@@ -32,7 +32,7 @@ const ONL10=(()=>{
  let seq=0,last='';
  function report(force){if(!acct()||god())return;const o={};for(const k in inv){const i=+k,n=cnt(i);if(Number.isInteger(i)&&i>0&&i<=999&&n>0)o[k]=n}const s=JSON.stringify(o);if(!force&&s==last)return;last=s;NET7.send({t:'bag_sync',inv:o,seq})}
  setInterval(report,4000);window.RB_BAGREPORT=()=>report(true);
- NET7.on('bag',m=>{if(m.seq!=null)seq=m.seq;const d=m.d||{};for(const k in d){const i=+k,n=d[k]|0;if(!n)continue;if(i===0)gems=Math.max(0,(gems|0)+n);else if(n>0)addI(i,n);else{const c=cnt(i);if(c>0)addI(i,-Math.min(c,-n))}
+ NET7.on('bag',m=>{try{DROP2.bagNote(m)}catch(_){}if(m.seq!=null)seq=m.seq;const d=m.d||{};for(const k in d){const i=+k,n=d[k]|0;if(!n)continue;if(i===0)gems=Math.max(0,(gems|0)+n);else if(n>0)addI(i,n);else{const c=cnt(i);if(c>0)addI(i,-Math.min(c,-n))}
    if(n>0&&m.why!='trade'){try{ft(P.x,P.y-14,'+'+n+' '+nm(i),'#fff')}catch(_){}}if(n>0&&m.why=='gift')say('The server owner gave you '+n+' '+nm(i))}
   last='';try{barDirty=1;renderBar()}catch(_){}try{if(INV7.isOpen)INV7.render()}catch(_){}report()});
  NET7.on('god',m=>{try{m.on?CRV8.enable():CRV8.disable()}catch(e){console.error(e)}});
@@ -73,25 +73,22 @@ const ONL10=(()=>{
   pEl.onclick=async e=>{const b=e.target.closest('[data-pc]');if(!b)return;const a=b.dataset.pc;pEl.style.display='none';
    if(a=='block'){SOC6.cmd((blocked(q.n)?'/unblock ':'/block ')+q.n);return}
    if(a=='report'){const v=await DLG7.open({title:'Report '+q.n,text:'The server owner will see this and what '+q.n+' recently said in this world.',fields:[{k:'why',label:'What happened?',max:160}],ok:'Send report'});if(v&&v.why&&v.why.trim()){try{NET7.send({t:'report',who:q.n,why:v.why})}catch(_){}}return}
-   if(a=='trade')ask(p.peer);else if(a=='friend')SOC6.cmd('/friend '+q.n);else if(a=='pull')adm('pull',{who:p.peer});else if(a=='kick')adm('kick',{who:p.peer});
+   if(a=='trade')ask(p.peer);else if(a=='friend')SOC6.cmd('/friend '+q.n);else if(a=='pull')adm('pull',{who:p.peer});else if(a=='kick'){const v=await DLG7.open({title:'Kick '+q.n+'?',text:q.n+' will be removed from this world.',ok:'Kick',danger:1});if(v)adm('kick',{who:p.peer})}
    else if(a=='give'){const v=await DLG7.open({title:'Give '+q.n,fields:[{k:'i',label:'Item (gems, a number or a name like iron_ore)',max:40},{k:'n',label:'Amount',val:'1',max:6}],ok:'Give'});if(v){const i=itemId(v.i);if(i==null)say('No such item');else adm('give',{who:p.peer,item:i,n:Math.max(1,Math.floor(+v.n||1))})}}
    else if(a=='ban'){const v=await DLG7.open({title:'Ban '+q.n,fields:[{k:'m',label:'Minutes (empty = until you unban)',max:6},{k:'r',label:'Reason',max:80}],ok:'Ban',danger:1});if(v)adm('ban',{who:p.peer,mins:+v.m||0,reason:v.r})}}}
- function wrenchAt(c){if(!rm){say('The wrench is for other players: join a server');return}let best=null,bd=1e9;for(const p of SOC6.peers()){const r=rp[p.peer]||p.presence;if(!r||!(Math.abs(r.x-c.x)<34&&c.y>r.y-14&&c.y<r.y+70))continue;const d=Math.hypot(r.x-c.x,r.y+28-c.y);if(d<bd){bd=d;best=p}}
-  if(best){snd('open');return card(best)}try{if(wrench())return}catch(_){}say('Point the wrench at a player')}
- let lastHand='';addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='v')return;if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench';say('Wrench: click a player to trade')}snd('select')});
+ function peerAt(c){if(!rm)return null;let best=null,bd=1e9;for(const p of SOC6.peers()){const r=rp[p.peer]||p.presence;if(!r||!(Math.abs(r.x-c.x)<34&&c.y>r.y-14&&c.y<r.y+70))continue;const d=Math.hypot(r.x-c.x,r.y+28-c.y);if(d<bd){bd=d;best=p}}return best}
+ function wrenchAt(c){try{return WRENCH2.use(c)}catch(e){console.error('wrench',e)}}
+ function openCard(p){snd('open');return card(p)}
+ let lastHand='';function toggleWrench(){if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench'}snd('select')}addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='v')return;toggleWrench()});
  // ---- items dropped for others (the server owns them; the first player to reach one gets it)
  const ND=[];
- const addD=(d,old)=>{if(ND.some(x=>x.id==d.id))return;ND.push({id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,vy:old?0:-220,ph:Math.random()*6,t:old?9:0,sent:0,rest:0})};
+ const addD=(d,old)=>{if(ND.some(x=>x.id==d.id))return;const o={id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,by:d.by||'',vy:old?0:-260,ph:Math.random()*6,t:old?9:0,sent:0,rest:0};try{DROP2.unclip(o)}catch(_){}ND.push(o)};
  NET7.onHello(d=>{ND.length=0;for(const x of d.dr||[])addD(x,1);try{renderWorlds()}catch(_){}});
  NET7.on('dr+',m=>addD(m.d));NET7.on('dr-',m=>{const i=ND.findIndex(x=>x.id==m.d.id);if(i>=0){const d=ND[i];ND.splice(i,1);try{burst(d.x,d.y,d.i===0?'#7ee8ff':'#fff',4,60,3,'p')}catch(_){}}});
  {const _u=updDrops;updDrops=function(dt){const r=_u.apply(this,arguments);if(!NET7.room){ND.length=0;return r}if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;const now=performance.now();for(const d of ND){d.t+=dt;const tx=Math.floor(d.x/T);
-    if(d.rest&&!solidAt(tx,Math.floor((d.y+12)/T)))d.rest=0;if(!d.rest){d.vy+=1500*dt;d.y+=d.vy*dt;const ty=Math.floor((d.y+9)/T);if(d.vy>0&&solidAt(tx,ty)){d.y=ty*T-9;d.vy=0;d.rest=1}if(d.y>H*T){d.y=H*T-20;d.rest=1}}
-    if(d.t>1.6&&now-d.sent>1500&&Math.hypot(P.x-d.x,P.y+30-d.y)<44){d.sent=now;NET7.send({t:'pick',id:d.id})}}return r}}
- {const _d=drawDrops;drawDrops=function(now){const r=_d.apply(this,arguments);if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;for(const d of ND){const px=d.x-cam.x,py=d.y-cam.y+Math.sin(now/260+d.ph)*2.5;if(px<-30||px>cv.width/ZM+30)continue;
-    if(d.i===0){g.save();g.translate(px,py);g.fillStyle='#5fd0ff';g.strokeStyle='#06304a';g.lineWidth=2;g.beginPath();g.moveTo(0,-9);g.lineTo(8,-2);g.lineTo(0,9);g.lineTo(-8,-2);g.closePath();g.fill();g.stroke();g.restore()}
-    else{try{if(!ICONC[d.i])iconURL(d.i);const c=ICONC[d.i];if(c)g.drawImage(c,px-11,py-11,22,22)}catch(_){}}
-    if(d.n>1){g.font='700 11px '+FONT;g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=3;g.strokeText(d.n,px+6,py+12);g.fillText(d.n,px+6,py+12)}}return r}}
- function drop(k,n){if(!live())return false;if(typeof WBOSS13!='undefined'&&WBOSS13.void){say('Nothing can be dropped in the void');return true}if(!acct()){say('Create an account to drop items');return true}report(true);NET7.send({t:'drop',i:k,n});say('Dropped '+n+' × '+nm(k));snd('close');return true}
+    if(d.rest&&!solidAt(tx,Math.floor((d.y+12)/T)))d.rest=0;if(!d.rest){d.vy+=1500*dt;d.y+=d.vy*dt;const ty=Math.floor((d.y+9)/T);if(d.vy>0&&solidAt(tx,ty)){d.y=ty*T-9;d.vy=0;d.rest=1}if(d.y>H*T){d.y=H*T-20;d.rest=1}}}return r}}
+ {const _d=drawDrops;drawDrops=function(now){const r=_d.apply(this,arguments);if(typeof WBOSS13!='undefined'&&WBOSS13.void)return r;for(const d of ND)try{DROP2.draw(d,now)}catch(_){}return r}}
+ function drop(k,n){if(!live())return false;if(typeof WBOSS13!='undefined'&&WBOSS13.void){say('Nothing can be dropped in the void');return true}if(!acct()){say('Create an account to drop items');return true}report(true);NET7.send({t:'drop',i:k,n});return true}
  // ---- hide other players' effects: their auras, wings and sparkles are simply not drawn (their character still is)
  const hideFx=()=>{try{return !!cel.opt.hideFx}catch(_){return false}};
  window.RBFXQ=q=>{if(!hideFx())return q;const c=q&&q.cx?Object.assign({},q.cx,{w:-1,a:0,fx:{au:'',ch:'',ws:''}}):q&&q.cx;return Object.assign({},q,{cx:c,wing:'',wo:0,fm:0})};
@@ -110,4 +107,4 @@ const ONL10=(()=>{
  {const _r=renderWorlds;renderWorlds=function(){const r=_r.apply(this,arguments);try{panels()}catch(e){console.error('ONL10 panels',e)}return r}}
  // a World Lock claims the world, so tell the player here if the server would refuse it, before the lock leaves their hands
  function lockBlock(){if(!live())return false;let m='';if(!acct())m='Create an account to lock a world';else{try{if(WORD9.stageOf(cur))m='A realm belongs to its base world: place your lock there'}catch(_){}if(!m&&window.RB_OWN&&RB_OWN.o&&RB_OWN.o!=myId)m='This world belongs to '+RB_OWN.on;if(!m&&!NET7.owner&&mine.max&&mine.list.length>=mine.max&&!(window.RB_OWN&&RB_OWN.o==myId))m='You already own '+mine.max+' worlds. Release one first'}if(m){say(m);return true}return false}
- return{drop,lockBlock,wrench:wrenchAt,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();
+ return{drop,lockBlock,wrench:wrenchAt,peerAt,card:openCard,toggleWrench,ask,realmState,itemId,report,get trade(){return TR},get drops(){return ND},get seq(){return seq},get mine(){return mine}}})();

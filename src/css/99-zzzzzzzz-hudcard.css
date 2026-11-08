@@ -1,0 +1,43 @@
+/* ===== HUDCARD1: the character card on the default look. Five lines at most, each with room to breathe: name and level, class, health with its number, experience, gems and Combat Power.
+   The title, wing name and class bar live on Character, Equipment and Classes; the hanging banner is gone (it covered the buttons below). Nothing here animates layout: the bars move by transform only. ===== */
+html[data-skin=night]:root body #hudL{display:grid!important;grid-template-columns:64px minmax(0,1fr) auto!important;column-gap:14px!important;row-gap:0!important;align-items:center;width:276px!important;min-width:0!important;padding:12px 14px!important;box-sizing:border-box}
+html[data-skin=night]:root body #hudL:hover{transform:none}
+html[data-skin=night]:root body #hudL>:is(#pbanner9,#hudWing),html[data-skin=night]:root body #hudL #hudWing,html[data-skin=night]:root body #hudL #cxp9 .hpb,html[data-skin=night]:root body #hudL #cxp9 em{display:none!important}
+html[data-skin=night]:root body #hudL.cls9on #hudTitle{display:none!important}
+/* the portrait: the avatar and its skin, whole, in one calm ring */
+html[data-skin=night]:root body #hudL #pwrap9{grid-column:1;grid-row:1/6;align-self:center;width:64px;height:64px;margin:0}
+html[data-skin=night]:root body #hudL #pwrap9 #portrait{width:64px;height:64px}
+html[data-skin=night]:root body #hudL #pwrap9 .ring{inset:-3px}
+html[data-skin=night]:root body #hudL #pwrap9 .ring:before{display:none;animation:none}
+html[data-skin=night]:root body #hudL #pwrap9:after{inset:-4px}
+html[data-skin=night]:root body #hudL #pwrap9 .emb{right:-6px;bottom:-5px;width:22px;height:22px}
+/* the name and level */
+html[data-skin=night]:root body #hudL #pname{grid-column:2/4;grid-row:1;font:700 15px/20px Montserrat,system-ui,sans-serif!important;letter-spacing:0!important;color:#fff8e6!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* the class, or your title when you have no class yet */
+html[data-skin=night]:root body #hudL #cxp9,html[data-skin=night]:root body #hudL #hudTitle{grid-column:2/4;grid-row:2;margin:0 0 8px!important;min-width:0}
+html[data-skin=night]:root body #hudL #cxp9 .cl{display:block;font:600 12.5px/16px Montserrat,system-ui,sans-serif!important;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-skin=night]:root body #hudL #cxp9 .cl b{font-weight:600;text-transform:none;letter-spacing:0;color:color-mix(in srgb,var(--clsl,#d8c8ff) 80%,#fff)!important}
+html[data-skin=night]:root body #hudL #hudTitle{font:600 12.5px/16px Montserrat,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:#b5acc9!important}
+/* health, with its number */
+html[data-skin=night]:root body #hudL .hprow{grid-column:2/4;grid-row:3;display:flex;align-items:center;gap:8px;margin:0 0 6px;min-width:0}
+html[data-skin=night]:root body #hudL .hprow .hpb{flex:1;min-width:0;margin:0!important;height:9px!important}
+.hpn{display:none}
+html[data-skin=night]:root body #hudL .hpn{display:block;flex:none;font:700 12px/14px Montserrat,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#fff8e6;min-width:46px;text-align:right}
+/* experience */
+html[data-skin=night]:root body #hudL>.hpb.xp{grid-column:2/4;grid-row:4;margin:0 0 9px!important;height:5px!important}
+/* the bars: the old fill keeps its value for the rest of the game, unseen; these two draw it */
+.hpv,.hpg{display:none}
+html[data-skin=night]:root body #hudL .hpb{position:relative;overflow:hidden;background:rgba(255,255,255,.1)!important;border-radius:6px!important}
+html[data-skin=night]:root body #hudL :is(#hpf,#xpf){opacity:0!important;transition:none!important;position:absolute;left:0;top:0;height:100%;pointer-events:none}
+html[data-skin=night]:root body #hudL .hpv,html[data-skin=night]:root body #hudL .hpg{display:block;position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);text-decoration:none;will-change:transform}
+html[data-skin=night]:root body #hudL .hpg{background:rgba(255,248,230,.55)}
+html[data-skin=night]:root body #hudL .hprow .hpv{background:linear-gradient(90deg,#d84f79,#f69ab6)}
+html[data-skin=night]:root body #hudL .hpb.low .hpv{background:linear-gradient(90deg,#c9283f,#ff5a6a)}
+html[data-skin=night]:root body #hudL>.hpb.xp .hpv{background:linear-gradient(90deg,#d9b773,#f4d59a)}
+/* gems and Combat Power */
+html[data-skin=night]:root body #hudL .gw9{grid-column:2;grid-row:5;display:flex;align-items:center;gap:6px;margin:0!important;min-width:0}
+html[data-skin=night]:root body #hudL #gv{font:700 14px/18px Montserrat,system-ui,sans-serif!important;font-variant-numeric:tabular-nums;letter-spacing:0!important;color:#fff8e6!important}
+html[data-skin=night]:root body #hudL #cp16{grid-column:3;grid-row:5;justify-self:end;width:auto!important;height:24px;margin:0!important;padding:0 10px!important;display:inline-flex;align-items:center;gap:5px;border-radius:12px!important;border:1px solid rgba(244,213,154,.42)!important;background:rgba(244,213,154,.1)!important;transition:background .12s,border-color .12s}
+html[data-skin=night]:root body #hudL #cp16:hover{background:rgba(244,213,154,.22)!important;border-color:#f4d59a!important}
+html[data-skin=night]:root body #hudL #cp16 span{font:700 11px/14px Montserrat,system-ui,sans-serif;letter-spacing:.04em;color:rgba(244,213,154,.9)}
+html[data-skin=night]:root body #hudL #cp16 b{font:700 13px/14px Montserrat,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#fff8e6}
