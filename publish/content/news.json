@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.12",
+      "type": "update",
+      "title": "Drop anything, and a cleaner character card",
+      "summary": "You can now drop items, weapons, wearables, store wings and charms as real objects in the world, and press E to pick them up. If nobody takes them, they come back to you after 15 minutes. The wrench has a new look and its own panel: press V",
+      "body": "You can now drop items, weapons, wearables, store wings and charms as real objects in the world, and press E to pick them up. If nobody takes them, they come back to you after 15 minutes. The wrench has a new look and its own panel: press V, and R to change mode. Tools are bigger in your hand and explain themselves the first time. Your character card is simpler, and the health bar now moves smoothly.",
+      "date": "2026-11-08",
+      "version": "6.13.12"
+    },
+    {
       "id": "update-6.13.11",
       "type": "update",
       "title": "The First Realm road, and a new inventory",
