@@ -203,6 +203,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/drops.js
+      - name: Test the class chooser
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/classpick.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10

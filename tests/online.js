@@ -67,12 +67,12 @@ const hash=p=>ev(p,()=>{let h=0;for(let i=0;i<tiles.length;i++)h=(h*31+tiles[i])
   await ev(A,()=>document.querySelector('#pcard10 [data-pc=trade]').click());await B.waitForFunction(()=>ONL10.trade&&ONL10.trade.st=='ask',null,{timeout:5000}).catch(()=>{});ok('the other player is asked',await ev(B,()=>/annie/.test(document.getElementById('trade10').textContent)));
   await ev(B,()=>document.querySelector('#trade10 [data-tr=accept]').click());await A.waitForFunction(()=>ONL10.trade&&ONL10.trade.st=='on',null,{timeout:5000}).catch(()=>{});await sleep(150);
   const inv0=await ev(A,()=>[cnt(6),cnt(5)]),inv1=await ev(B,()=>[cnt(6),cnt(5)]);
-  await ev(A,()=>{const t=document.getElementById('trade10');t.querySelector('#tr10i').value='6';t.querySelector('#tr10n').value='10';t.querySelector('[data-tr=add]').click()});await sleep(300);
-  await ev(B,()=>{const t=document.getElementById('trade10');t.querySelector('#tr10i').value='5';t.querySelector('#tr10n').value='8';t.querySelector('[data-tr=add]').click()});await sleep(300);
-  ok('both offers show in both windows',await ev(A,()=>{const t=document.getElementById('trade10').textContent;return /× 10/.test(t)&&/× 8/.test(t)}),await ev(A,()=>document.getElementById('trade10').textContent));
-  ok('confirm is off until both lock',await ev(A,()=>document.querySelector('#trade10 [data-tr=confirm]').disabled));
+  await ev(A,()=>TRADE2.add(6,10));await sleep(300);
+  await ev(B,()=>TRADE2.add(5,8));await sleep(300);
+  ok('both offers show in two equal boxes',await ev(A,()=>{const a=document.querySelectorAll('#trade10 .tr-box.me .tr-t').length,b=document.querySelectorAll('#trade10 .tr-box.them .tr-t').length,s=document.querySelectorAll('#trade10 .tr-box.me .tr-g>*').length==document.querySelectorAll('#trade10 .tr-box.them .tr-g>*').length;return a==1&&b==1&&s&&/10/.test(document.querySelector('#trade10 .tr-box.me').textContent)&&/8/.test(document.querySelector('#trade10 .tr-box.them').textContent)}));
+  if(process.env.SHOTS)await A.screenshot({path:process.env.SHOTS+'/trade1.png'});ok('confirm does not exist until both are ready',await ev(A,()=>!document.querySelector('#trade10 [data-tr=confirm]')));
   await ev(A,()=>document.querySelector('#trade10 [data-tr=lock]').click());await sleep(200);await ev(B,()=>document.querySelector('#trade10 [data-tr=lock]').click());await sleep(250);
-  await ev(A,()=>document.querySelector('#trade10 [data-tr=confirm]').click());await sleep(200);ok('nothing moves on one confirmation',await ev(A,()=>cnt(6))==inv0[0]);
+  if(process.env.SHOTS)await A.screenshot({path:process.env.SHOTS+'/trade2.png'});await ev(A,()=>document.querySelector('#trade10 [data-tr=confirm]').click());await sleep(200);ok('nothing moves on one confirmation',await ev(A,()=>cnt(6))==inv0[0]);
   await ev(B,()=>document.querySelector('#trade10 [data-tr=confirm]').click());await sleep(500);
   const af=await ev(A,()=>[cnt(6),cnt(5)]),bf=await ev(B,()=>[cnt(6),cnt(5)]);ok('the trade moves exactly what was offered',af[0]==inv0[0]-10&&af[1]==inv0[1]+8&&bf[0]==inv1[0]+10&&bf[1]==inv1[1]-8,{inv0,inv1,af,bf});
   ok('the window closes for both',await ev(A,()=>!ONL10.trade&&document.getElementById('trade10').style.display=='none')&&await ev(B,()=>!ONL10.trade));

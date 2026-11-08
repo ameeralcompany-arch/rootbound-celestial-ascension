@@ -42,7 +42,7 @@ const CLS9=(()=>{
    'You can only fight with your class\'s weapons (fists and tools always work). Reach level '+CJOB.NEED+' in the class you use to learn another; learned classes keep their levels.';
   return'<div class="c9bg" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>'+
    '<header class="c9top"><span class="c9brand">Rootbound.</span><nav aria-label="Sections"><button data-go="my">Mythic</button><button data-go="ov">Overview</button><button data-go="wp">Weapons</button><button data-go="ms">Master</button></nav>'+
-   '<span class="c9meta">Classes</span><button class="c9x" data-a="close" aria-label="Close classes">Close <b aria-hidden="true">✕</b></button></header>'+
+   '<span class="c9meta">Classes</span><button class="c9all" data-a="all">All classes</button><button class="c9x" data-a="close" aria-label="Close classes">Close <b aria-hidden="true">✕</b></button></header>'+
    '<div class="c9v c9vl" aria-hidden="true">Class '+pad(i+1)+' / '+pad(KEYS.length)+'</div><div class="c9v c9vr" aria-hidden="true">'+esc(c.n)+' · #Lv'+L+'</div>'+
    '<div class="c9art" aria-hidden="true"><canvas class="c9heroc"></canvas></div>'+
    '<section class="c9hero"><div class="c9eye"><span>'+pad(i+1)+'</span><span>'+ws.length+' weapons</span><span>'+(hand?'in your hand':st.t=='active'?'your class':'')+'</span></div>'+
@@ -67,7 +67,7 @@ const CLS9=(()=>{
  function act(){const st=status(sel);if(st.t!='switch'&&st.t!='learn')return false;let ok=false;try{ok=CJOB.become(sel)}catch(_){}if(ok){try{UIS.play('confirm')}catch(_){}render()}return ok}
  function build(){if(el)return el;el=document.createElement('div');el.id='cls9';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Classes');document.body.appendChild(el);
   el.addEventListener('click',e=>{const b=e.target.closest('[data-k],[data-a],[data-go]');if(b&&b.getAttribute('aria-disabled')=='true')return;if(!b)return;
-   if(b.dataset.k)pick(b.dataset.k);else if(b.dataset.a=='close')close();else if(b.dataset.a=='st')act();
+   if(b.dataset.k)pick(b.dataset.k);else if(b.dataset.a=='all'){try{CLPICK1.open(sel)}catch(_){}}else if(b.dataset.a=='close')close();else if(b.dataset.a=='st')act();
    else if(b.dataset.a&&b.dataset.a.startsWith('eq:')){if(equip(b.dataset.a.slice(3))){render.keep=true;render()}}
    else if(b.dataset.a&&b.dataset.a.startsWith('my:')){try{if(MYUI.act(b.dataset.a.slice(3),sel)){render.keep=true;render()}}catch(e){console.error('CLS9 mythic',e)}}
    else if(b.dataset.go){const s=el.querySelector('#c9-'+b.dataset.go);if(s)s.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}});
@@ -79,9 +79,9 @@ const CLS9=(()=>{
   el.style.display='block';render();void el.offsetWidth;el.classList.add('on');try{UIS.play('open')}catch(_){}try{(typeof MYUI!='undefined'?MYUI.start(el):0)}catch(_){}}
  function close(){if(!isOpen())return;el.classList.remove('on');try{(typeof MYUI!='undefined'?MYUI.stop():0)}catch(_){}try{UIS.play('close')}catch(_){}setTimeout(()=>{if(!el.classList.contains('on'))el.style.display='none'},220)}
  // while open the screen owns the keyboard: arrows browse, Enter switches, Esc / K close, nothing reaches the game
- addEventListener('keydown',e=>{if(!isOpen())return;const k=e.key;
+ addEventListener('keydown',e=>{if(!isOpen()||(window.CLPICK1&&CLPICK1.on))return;const k=e.key;
   if(k=='Escape'||k=='k'||k=='K')close();else if(k=='ArrowLeft'||k=='a'||k=='A')step(-1);else if(k=='ArrowRight'||k=='d'||k=='D')step(1);else if(k=='Enter')act();else if(k=='Tab')return;
   e.preventDefault();e.stopImmediatePropagation()},true);
  addEventListener('keydown',e=>{if(isOpen()||e.repeat||e.ctrlKey||e.metaKey||e.altKey||(e.key!='k'&&e.key!='K'))return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.isContentEditable))return;
-  try{if(!entered||dlgOpen||creatorOn)return}catch(_){}e.preventDefault();e.stopImmediatePropagation();open()},true);
+  try{if(!entered||dlgOpen||creatorOn)return}catch(_){}e.preventDefault();e.stopImmediatePropagation();CLS9.open()},true);
  return{open,close,isOpen,pick,step,act,status,weapons,equip,refresh(){render.keep=true;render()},get sel(){return sel},el:()=>el}})();

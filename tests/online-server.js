@@ -130,7 +130,28 @@ const pres=async(c,x,y)=>{c.send({t:'_p',d:{x,y,f:1}});await sleep(50)};
   aq=home.seq;ac.send({t:'gear_sync',list:['a:hat1'],seq:aq});await sleep(60);bc.clear();bc.send({t:'gear_sync',list:['a:hat1','w:frost','w:other'],seq:bq});await sleep(60);
   ac.clear();ac.send({t:'drop',i:'a:hat1'});const d3=await bc.wait(m=>m.t=='dr+');await sleep(40);bc.clear();await pres(bc,d3.d.x,d3.d.y);bc.send({t:'pick',id:d3.d.id});await sleep(80);ok('someone who already owns one does not lose the drop by trying',S.worlds.get('alice1').drops.some(x=>x.id==d3.d.id)&&!bc.has(m=>m.t=='gear'));
 
-  }
+    // ---- gear in trades: both sides move in one step, or nothing moves
+  aq=(await ac.wait(m=>m.t=='gear'&&m.why=='drop')).seq;ac.send({t:'gear_sync',list:['w:blade1','w:blade2'],seq:aq});bc.send({t:'gear_sync',list:['w:frost','w:other','a:hat1','w:gift'],seq:bq});await sleep(80);
+  ac.clear();bc.clear();const sidA=[...S.sessions.values()].find(x=>x.name=='alice').sid;bc.send(T({op:'ask',to:sidA}));const ta=await ac.wait(m=>m.t=='trade'&&m.op=='ask');ac.clear();bc.clear();ac.send(T({op:'accept',id:ta.id}));await bc.wait(m=>m.t=='trade'&&m.op=='state');
+  const bad=async(it,re,n)=>{const r=await ac.rpc(T({op:'set',id:ta.id,it}),m=>m.t=='trade'&&m.op=='err');ok(n,re.test(r.m),r.m)};
+  await bad([[735,1]],/not valid/,'quest items can not be offered');await sleep(30);await bad([[17,1]],/not valid/,'a World Lock can not be offered');await bad([['w:blade1',2]],/not valid/,'one piece of gear can not be offered twice over');await bad([['w:notmine',1]],/do not have/,'gear you do not have can not be offered');await bad([['w:pip',1]],/not valid/,'starter tools can not be offered');await bad([['w:frost',1]],/do not have/,'what the other player owns can not be offered');
+  bc.clear();ac.send(T({op:'set',id:ta.id,it:[['w:blade1',1]]}));await bc.wait(m=>m.t=='trade'&&m.op=='state'&&m.them.it.length==1);ac.clear();bc.send(T({op:'set',id:ta.id,it:[['w:other',1]]}));await ac.wait(m=>m.t=='trade'&&m.op=='state'&&m.them.it.length==1);
+  ac.send(T({op:'lock',on:1}));bc.send(T({op:'lock',on:1}));await sleep(10500);/* the drop limit from the tests above */ac.clear();ac.send({t:'drop',i:'w:blade1'});await ac.wait(m=>m.t=='notice');ok('an item locked in a trade can not be dropped',!S.worlds.get('alice1').drops.some(x=>x.i=='w:blade1'));
+  // the other player's item disappears right before the end: nothing moves
+  ac.send(T({op:'confirm'}));await sleep(40);bc.send({t:'gear_sync',list:['w:frost','a:hat1','w:gift'],seq:bq});await sleep(60);ac.clear();bc.clear();bc.send(T({op:'confirm'}));const abort=await ac.wait(m=>m.t=='trade'&&m.op=='err');ok('if an item is gone at the last moment the whole trade stops, and neither side loses anything',/no longer/.test(abort.m)&&!ac.has(m=>m.t=='gear'&&m.why=='trade')&&!bc.has(m=>m.t=='gear'&&m.why=='trade'));
+  const st2=await ac.wait(m=>m.t=='trade'&&m.op=='state');ok('and both offers unlock',st2.me.lock==0&&st2.them.lock==0&&st2.me.ok==0);
+  // a real exchange
+  bc.send({t:'gear_sync',list:['w:frost','w:other','a:hat1','w:gift'],seq:bq});await sleep(120);
+  ac.clear();bc.send(T({op:'set',id:ta.id,it:[['w:gift',1]]}));await ac.wait(m=>m.t=='trade'&&m.op=='state'&&m.them.it[0]&&m.them.it[0][0]=='w:gift');
+  ac.send(T({op:'lock',on:1}));bc.send(T({op:'lock',on:1}));await sleep(60);ac.clear();bc.clear();ac.send(T({op:'confirm'}));await sleep(40);ok('nothing moves on one confirmation',!ac.has(m=>m.t=='gear'&&m.why=='trade'));
+  // a change after one confirmation takes everyone back
+  bc.send(T({op:'set',id:ta.id,it:[['w:gift',1],[0,1]]}));await ac.wait(m=>m.t=='trade'&&m.op=='state'&&m.them.it.length==2);const st3=await ac.wait(m=>m.t=='trade'&&m.op=='state'&&m.me.ok==0);ok('changing an offer after a confirmation resets both players',st3.me.lock==0&&st3.me.ok==0);
+  bc.send(T({op:'set',id:ta.id,it:[['w:gift',1]]}));await sleep(50);ac.send(T({op:'lock',on:1}));bc.send(T({op:'lock',on:1}));await sleep(60);ac.clear();bc.clear();ac.send(T({op:'confirm'}));bc.send(T({op:'confirm'}));
+  const ga=await ac.wait(m=>m.t=='gear'&&m.why=='trade'),gb=await bc.wait(m=>m.t=='gear'&&m.why=='trade');ok('gear changes hands both ways, once each',ga.d['w:blade1']==-1&&ga.d['w:gift']==1&&gb.d['w:blade1']==1&&gb.d['w:gift']==-1,[ga.d,gb.d]);
+  const tlog=JSON.parse(await (async()=>{await sleep(1800);return fs.readFileSync(path.join(dir,'trades.json'),'utf8')})());ok('the exchange is written to the trade log',tlog.some(x=>JSON.stringify([x.ga,x.gb]).includes('w:blade1')));aq=ga.seq;bq=gb.seq;
+  ac.clear();ac.send({t:'gear_sync',list:['w:blade1','w:blade2','w:gift'],seq:aq});await sleep(60);ac.send({t:'drop',i:'w:blade1'});await sleep(60);ok('what you traded away does not come back by being reported',!S.worlds.get('alice1').drops.some(x=>x.i=='w:blade1'));
+ }
+
  // ---- presence deltas (free hosts meter bandwidth)
  bc.clear();await sleep(5);ac.send({t:'_p',d:{x:1,y:2,f:1,lv:3}});const full=await bc.wait(m=>m.t=='_p'&&m.d.x==1);ok('first presence after a change is complete',full.d.uid==A.r.uid&&full.d.n=='alice');
  ac.send({t:'_p',d:{x:9,y:2,f:1,lv:3}});const dl=await bc.wait(m=>m.t=='_p'&&m.d.x==9);ok('movement after that is a small delta',dl.d.dl==1&&dl.d.uid==undefined&&JSON.stringify(dl).length<110,JSON.stringify(dl));

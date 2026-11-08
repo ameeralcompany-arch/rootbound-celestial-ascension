@@ -41,27 +41,14 @@ const ONL10=(()=>{
  NET7.on('own',m=>{const d=m.d||{};window.RB_OWN=d.o?{o:d.o,on:d.on}:null;if(d.clearLock){meta=null;delete edits.m}});
  // ---- trades
  let TR=null,tEl=null;
- const offerRow=(x,mine)=>'<div class="trow10"'+(mine?' data-rm="'+x[0]+'"':'')+'><span>'+esc(nm(x[0]))+'</span><b>× '+x[1]+'</b>'+(mine?'<i aria-hidden="true">✕</i>':'')+'</div>';
- function tOpen(){if(tEl)return tEl;tEl=document.createElement('div');tEl.id='trade10';tEl.setAttribute('role','dialog');tEl.setAttribute('aria-label','Trade');document.body.appendChild(tEl);
-  tEl.addEventListener('click',e=>{if(!TR)return;const b=e.target.closest('[data-tr]'),r=e.target.closest('[data-rm]');
-   if(r&&TR.me){const i=+r.dataset.rm;NET7.send({t:'trade',op:'set',id:TR.id,it:TR.me.it.filter(x=>x[0]!==i)});return}if(!b)return;const a=b.dataset.tr;
-   if(a=='accept'){NET7.send({t:'trade',op:'accept',id:TR.id});snd('select')}else if(a=='cancel')NET7.send({t:'trade',op:'cancel',id:TR.id});
-   else if(a=='add'){const i=+tEl.querySelector('#tr10i').value,n=Math.floor(+tEl.querySelector('#tr10n').value)||0;if(!(n>0))return say('How many?');const it=TR.me.it.filter(x=>x[0]!==i);it.push([i,n]);report(true);NET7.send({t:'trade',op:'set',id:TR.id,it});snd('select')}
-   else if(a=='lock')NET7.send({t:'trade',op:'lock',id:TR.id,on:TR.me.lock?0:1});else if(a=='confirm')NET7.send({t:'trade',op:'confirm',id:TR.id})});return tEl}
- function tClose(){TR=null;if(tEl)tEl.style.display='none'}
- function tRender(){const e=tOpen();e.style.display='flex';let h='<div class="card10"><header><b>Trade with '+esc(TR.name)+'</b><button data-tr="cancel" aria-label="Close">✕</button></header>';
-  if(TR.st=='ask'){const f=x=>x?x[1]+' × '+esc(nm(x[0])):'';h+='<p>'+esc(TR.name)+' wants to trade with you.'+(TR.give?' They offer <b>'+f(TR.give)+'</b>':'')+(TR.want?' and want <b>'+f(TR.want)+'</b>':'')+'</p><p class="note10">Nothing changes until both of you confirm.</p><footer><button class="btn" data-tr="accept">Open the trade</button><button class="btn ghost" data-tr="cancel">Decline</button></footer></div>';e.innerHTML=h;return}
-  if(TR.st=='asked'){h+='<p>Waiting for '+esc(TR.name)+' to answer…</p><footer><button class="btn ghost" data-tr="cancel">Cancel</button></footer></div>';e.innerHTML=h;return}
-  const keep=(id,d)=>{const x=e.querySelector('#'+id);return x?x.value:d},si=keep('tr10i',''),sn=keep('tr10n','1');const keys=Object.keys(inv).map(Number).filter(k=>k>0&&k<=999&&cnt(k)>0).sort((a,b)=>nm(a).localeCompare(nm(b)));
-  h+='<div class="cols10"><section'+(TR.me.lock?' class="locked10"':'')+'><h4>You give'+(TR.me.ok?' · confirmed':TR.me.lock?' · locked':'')+'</h4>'+(TR.me.it.map(x=>offerRow(x,!TR.me.lock)).join('')||'<p class="note10">Nothing yet</p>')+'</section><section'+(TR.them.lock?' class="locked10"':'')+'><h4>'+esc(TR.name)+' gives'+(TR.them.ok?' · confirmed':TR.them.lock?' · locked':'')+'</h4>'+(TR.them.it.map(x=>offerRow(x,false)).join('')||'<p class="note10">Nothing yet</p>')+'</section></div>';
-  if(!TR.me.lock)h+='<div class="add10"><select id="tr10i" aria-label="Item"><option value="0">Gems ('+(gems|0)+')</option>'+keys.map(k=>'<option value="'+k+'">'+esc(nm(k))+' ('+cnt(k)+')</option>').join('')+'</select><input id="tr10n" type="number" min="1" value="1" aria-label="Amount"><button class="btn ghost" data-tr="add">Add</button></div>';
-  const both=TR.me.lock&&TR.them.lock;h+='<footer><button class="btn'+(TR.me.lock?' ghost':'')+'" data-tr="lock">'+(TR.me.lock?'Unlock':'Lock in my offer')+'</button><button class="btn" data-tr="confirm"'+(both&&!TR.me.ok?'':' disabled')+'>'+(TR.me.ok?'Waiting for '+esc(TR.name):'Confirm trade')+'</button><button class="btn ghost" data-tr="cancel">Cancel</button></footer><p class="note10">Changing an offer unlocks both sides. In-game items only.</p></div>';
-  e.innerHTML=h;stop(e);const x=e.querySelector('#tr10i');if(x){if(si&&[...x.options].some(o=>o.value==si))x.value=si;e.querySelector('#tr10n').value=sn}}
+ // the window itself is TRADE2 (99-zzzzzzzzzz-p-trade.js)
+ function tClose(done,sum){TR=null;try{TRADE2.close(done,sum)}catch(_){}}
+ function tRender(){try{TRADE2.render(TR)}catch(e){console.error('TRADE2',e)}}
  NET7.on('trade',m=>{const op=m.op;if(op=='err'){say(m.m||'Trade problem');return}
   if(op=='ask'){if(typeof WBOSS13!='undefined'&&WBOSS13.void){NET7.send({t:'trade',op:'cancel',id:m.id});return}TR={st:'ask',id:m.id,name:m.name,give:m.give,want:m.want};snd('open');tRender();return}if(op=='asked'){TR={st:'asked',id:m.id,name:m.name};tRender();return}
   if(op=='state'){TR={st:'on',id:m.id,name:m.name,me:m.me,them:m.them};tRender();return}
-  if(op=='closed'){const was=TR;tClose();if(m.done){say('Trade complete');snd('buy')}else if(was)say(m.why||'Trade closed')}});
- function ask(sid,give,want){if(!live())return say('Trading needs a server');if(!acct())return say('Create an account to trade');report(true);NET7.send({t:'trade',op:'ask',to:sid,give:give||undefined,want:want||undefined})}
+  if(op=='closed'){const was=TR,sum=(()=>{try{return TRADE2.snapshot()}catch(_){return null}})();tClose(!!m.done,sum);if(m.done){say('Trade complete');snd('buy')}else if(was)say(m.why||'Trade closed')}});
+ function ask(sid,give,want){if(!live())return say('Trading needs a server');if(!acct())return say('Create an account to trade');report(true);try{DROP2.sendGear(true)}catch(_){}NET7.send({t:'trade',op:'ask',to:sid,give:give||undefined,want:want||undefined})}
  // /trade name  or  /trade name giveItem n wantItem n
  function typed(a){const p=SOC6.byName(a[1]);if(!p)return say(a[1]?'That player is not in this world':'Usage: /trade name [giveItem n wantItem n]  (id 0 = gems)');if(a.length<3)return ask(p.peer);
   const gi=itemId(a[2]),gn=+a[3],wi=itemId(a[4]),wn=+a[5];if(gi==null||wi==null||!(gn>=1)||!(wn>=1))return say('Usage: /trade name giveItem n wantItem n  (id 0 = gems)');ask(p.peer,[gi,Math.floor(gn)],[wi,Math.floor(wn)])}

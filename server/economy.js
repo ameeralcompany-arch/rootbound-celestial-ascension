@@ -4,7 +4,7 @@
 // The server cannot watch mining or monster drops, so a client reports its inventory (bag_sync): decreases count at once, growth is rate-limited,
 // the same honest limit the gem wallet has (shop.js). Item 0 means gems throughout. Guests have no ledger: they cannot trade or drop.
 const SHOP=require('./shop');
-const DG_BURST=600,DG_PER_MIN=40,BURST=2000,PER_MIN=1500,MAXN=99999,MAXKEYS=600,MAX_OFFER=12,MAX_DROPS=80,PICK_DIST=240,ASK_MS=30000;
+const DG_BURST=600,DG_PER_MIN=40,BURST=2000,PER_MIN=1500,MAXN=99999,MAXKEYS=600,MAX_OFFER=12,MAX_DROPS=80,PICK_DIST=240,ASK_MS=30000,TRADE_IDLE=5*60000;
 const okItem=i=>Number.isInteger(i)&&i>=0&&i<=999;
 const okN=n=>Number.isInteger(n)&&n>=1&&n<=MAXN;
 // gear: weapons and wearables ('w:id', 'a:id') live in a record per account (u.gear.h), store items ('id:x') in the store's own ledger (u.shop.owned). Like the bag, a client reports what it owns:
@@ -32,7 +32,7 @@ function sync(u,inv,seq,now){const b=ensure(u);b.over=0;if(seq!==b.seq||!inv||ty
 function cleanDrops(a){return(Array.isArray(a)?a:[]).slice(0,MAX_DROPS).map(d=>d&&okDrop(d.i)&&okN(d.n)&&typeof d.id=='string'&&Number.isFinite(d.x)&&Number.isFinite(d.y)?{id:d.id.slice(0,20),i:d.i,n:d.n,x:d.x,y:d.y,o:typeof d.o=='string'?d.o:'',by:typeof d.by=='string'?d.by.slice(0,14):'',t0:Number.isFinite(d.t0)?d.t0:Date.now()}:null).filter(Boolean)}
 // what other players are told about a drop: never the owner's account id
 const pubDrop=d=>({id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,by:d.by||'',t0:d.t0||0});
-function createEconomy({send,sessions,userById,saveAcc,relay,dropsOf,touchWorld,bucket,audit,rid,loadW,allDrops}){
+function createEconomy({send,sessions,userById,saveAcc,saveAccNow,logTrade,relay,dropsOf,touchWorld,bucket,audit,rid,loadW,allDrops}){
  const byUid=uid=>{for(const o of sessions.values())if(o.uid==uid&&o.conn&&!o.conn.closed)return o;return null};
  const free=s=>!!s.god;// the owner in god mode has everything: nothing is debited or checked
  // tell the owning client about a change the server made; an offline account gets it at next sign-in
@@ -51,14 +51,21 @@ function createEconomy({send,sessions,userById,saveAcc,relay,dropsOf,touchWorld,
  const other=(T,s)=>T.a===s?T.b:T.a,side=(T,s)=>T.a===s?T.oa:T.ob;
  function view(T,s){const m=side(T,s),t=side(T,other(T,s));return{t:'trade',op:'state',id:T.id,name:other(T,s).name,me:{it:m.it,lock:m.lock,ok:m.ok},them:{it:t.it,lock:t.lock,ok:t.ok}}}
  const push=T=>{send(T.a,view(T,T.a));send(T.b,view(T,T.b))};
- function end(T,why,done){trades.delete(T.id);if(tradeOf.get(T.a.sid)==T.id)tradeOf.delete(T.a.sid);if(tradeOf.get(T.b.sid)==T.id)tradeOf.delete(T.b.sid);clearTimeout(T.timer);for(const s of[T.a,T.b])send(s,{t:'trade',op:'closed',id:T.id,why,done:done?1:0})}
- const cleanIt=it=>{const m=new Map();for(const x of Array.isArray(it)?it.slice(0,MAX_OFFER):[]){if(!Array.isArray(x)||!okItem(x[0])||!okN(x[1]))return null;m.set(x[0],Math.min(MAXN,(m.get(x[0])||0)+x[1]))}return[...m.entries()]};
- const covers=(s,u,it)=>free(s)||it.every(([i,n])=>count(u,i)>=n);
- const seed=x=>Array.isArray(x)&&okItem(x[0])&&okN(x[1])?[x[0],x[1]]:null;
+ function end(T,why,done){trades.delete(T.id);if(tradeOf.get(T.a.sid)==T.id)tradeOf.delete(T.a.sid);if(tradeOf.get(T.b.sid)==T.id)tradeOf.delete(T.b.sid);clearTimeout(T.timer);clearTimeout(T.idle);for(const s of[T.a,T.b])send(s,{t:'trade',op:'closed',id:T.id,why,done:done?1:0})}
+ // quest items and World Locks never change hands; gear is one of a kind
+ const tradable=i=>okDrop(i)&&i!==17&&!(typeof i=='number'&&i>=731&&i<=749);
+ const cleanIt=it=>{const m=new Map();for(const x of Array.isArray(it)?it.slice(0,MAX_OFFER):[]){if(!Array.isArray(x)||!tradable(x[0])||!okN(x[1]))return null;if(typeof x[0]=='string'){if(x[1]!==1)return null;m.set(x[0],1)}else m.set(x[0],Math.min(MAXN,(m.get(x[0])||0)+x[1]))}return[...m.entries()]};
+ const covers=(s,u,it)=>free(s)||it.every(([i,n])=>typeof i=='string'?hasGear(u,i):count(u,i)>=n);
+ // the receiver can not already own a piece of gear coming to them
+ const fits=(u,it)=>it.every(([i])=>typeof i!='string'||!hasGear(u,i));
+ const seed=x=>Array.isArray(x)&&tradable(x[0])&&okN(x[1])&&(typeof x[0]!='string'||x[1]===1)?[x[0],x[1]]:null;
+ function idle(T){clearTimeout(T.idle);T.idle=setTimeout(()=>{if(trades.has(T.id))end(T,'The trade timed out')},TRADE_IDLE);if(T.idle.unref)T.idle.unref()}
  function swap(T){const A=userById(T.a.uid),B=userById(T.b.uid);if(!A||!B)return end(T,'A player is unavailable');
-  if(!covers(T.a,A,T.oa.it)||!covers(T.b,B,T.ob.it)){T.oa.lock=T.ob.lock=T.oa.ok=T.ob.ok=0;for(const s of[T.a,T.b])send(s,{t:'trade',op:'err',m:'Someone no longer has those items. Offers unlocked.'});return push(T)}
-  const da={},db={};const move=(from,fs,to,it,df,dt)=>{for(const[i,n]of it){if(!free(fs))add(from,i,-n);add(to,i,n);df[i]=(df[i]|0)-n;dt[i]=(dt[i]|0)+n}};
-  move(A,T.a,B,T.oa.it,da,db);move(B,T.b,A,T.ob.it,db,da);audit({ev:'trade',a:A.id,b:B.id,ga:T.oa.it,gb:T.ob.it});end(T,'',true);deliver(A,da,'trade');deliver(B,db,'trade')}
+  const unlock=m=>{T.oa.lock=T.ob.lock=T.oa.ok=T.ob.ok=0;for(const s of[T.a,T.b])send(s,{t:'trade',op:'err',m});return push(T)};
+  if(!covers(T.a,A,T.oa.it)||!covers(T.b,B,T.ob.it))return unlock('Someone no longer has those items. Offers unlocked.');if(!fits(B,T.oa.it)||!fits(A,T.ob.it))return unlock('Someone already owns one of those items. Offers unlocked.');
+  const now=Date.now(),da={},db={},ga={},gb={};const move=(from,fs,to,it,df,dt,gf,gt)=>{for(const[i,n]of it){if(typeof i=='string'){if(!free(fs)){setGear(from,i,0);gearOf(from).out[i]=now;gf[i]=-1}setGear(to,i,1);delete gearOf(to).out[i];gt[i]=1;continue}if(!free(fs))add(from,i,-n);add(to,i,n);df[i]=(df[i]|0)-n;dt[i]=(dt[i]|0)+n}};
+  move(A,T.a,B,T.oa.it,da,db,ga,gb);move(B,T.b,A,T.ob.it,db,da,gb,ga);const rec={ev:'trade',t:now,a:A.id,an:A.name,b:B.id,bn:B.name,ga:T.oa.it,gb:T.ob.it};audit(rec);try{logTrade(rec)}catch(_){}end(T,'',true);
+  if(Object.keys(da).length)deliver(A,da,'trade');if(Object.keys(db).length)deliver(B,db,'trade');if(Object.keys(ga).length)deliverGear(A,ga,'trade');if(Object.keys(gb).length)deliverGear(B,gb,'trade');try{saveAccNow()}catch(e){console.error('trade save',e)}}
  function tradeMsg(s,m){const fail=x=>send(s,{t:'trade',op:'err',m:x});const op=String(m.op||'');
   if(s.kind=='guest')return fail('Create an account to trade');const u=userById(s.uid);if(!u)return;
   if(op=='ask'){if(!bucket(s,'tradeask',6,20000))return fail('Slow down');if(tradeOf.has(s.sid))return fail('Finish your current trade first');const o=sessions.get(String(m.to||''));
@@ -69,16 +76,16 @@ function createEconomy({send,sessions,userById,saveAcc,relay,dropsOf,touchWorld,
    send(s,{t:'trade',op:'asked',id:T.id,name:o.name});send(o,{t:'trade',op:'ask',id:T.id,name:s.name,give,want});return}
   const T=trades.get(tradeOf.get(s.sid));if(!T||(m.id&&m.id!==T.id))return fail('That trade is over');
   if(op=='cancel')return end(T,s.name+' cancelled the trade');
-  if(op=='accept'){if(s!==T.b||T.on)return;T.on=1;clearTimeout(T.timer);if(T.want&&count(u,T.want[0])>=T.want[1])T.ob.it=[T.want];return push(T)}
-  if(!T.on)return fail('Waiting for the other player');const me=side(T,s),th=side(T,other(T,s));
-  if(op=='set'){if(!bucket(s,'tradeset',30,10000))return;const it=cleanIt(m.it);if(!it)return fail('Those items are not valid');if(!covers(s,u,it))return fail('You do not have that many');me.it=it;me.lock=me.ok=th.lock=th.ok=0;return push(T)}
-  if(op=='lock'){me.lock=m.on?1:0;me.ok=0;th.ok=0;return push(T)}
+  if(op=='accept'){if(s!==T.b||T.on)return;T.on=1;clearTimeout(T.timer);idle(T);if(T.want&&covers(s,u,[T.want]))T.ob.it=[T.want];return push(T)}
+  if(!T.on)return fail('Waiting for the other player');idle(T);const me=side(T,s),th=side(T,other(T,s));
+  if(op=='set'){if(!bucket(s,'tradeset',30,10000))return;const it=cleanIt(m.it);if(!it)return fail('Those items are not valid');if(!covers(s,u,it))return fail('You do not have that many');{const ou=userById(other(T,s).uid);if(ou&&!fits(ou,it))return fail(other(T,s).name+' already owns one of those')}me.it=it;me.lock=me.ok=th.lock=th.ok=0;return push(T)}
+  if(op=='lock'){if(m.on&&!covers(s,u,me.it))return fail('You no longer have those items');me.lock=m.on?1:0;me.ok=0;th.ok=0;return push(T)}
   if(op=='confirm'){if(!me.lock||!th.lock)return fail('Both players must lock their offers first');me.ok=1;if(th.ok)return swap(T);return push(T)}}
  function leaving(s){const T=trades.get(tradeOf.get(s.sid));if(T)end(T,s.name+' left')}
  // ---- world drops: the server holds them, first player to reach one gets it
  let dropN=0;
  function dropMsg(s,m){if(!s.world)return;const fail=x=>send(s,{t:'notice',d:{text:x,by:'Server'}});if(s.kind=='guest')return fail('Create an account to drop items');const u=userById(s.uid);if(!u||!bucket(s,'drop',10,10000))return;
-  const i=m.i,gear=typeof i=='string',n=gear?1:m.n;if(!okDrop(i)||!okN(n))return;if(gear?(!free(s)&&!hasGear(u,i)):(!free(s)&&count(u,i)<n)){send(s,{t:'drop_res',ok:0,i});return fail(gear?'You do not have that item':'You do not have that many')}if(!gear&&i>=731&&i<=749)return fail('Quest items stay with you');if(i===17)return fail('A World Lock can not be dropped');const a=dropsOf(s.world);if(a.length>=MAX_DROPS){send(s,{t:'drop_res',ok:0,i});return fail('Too many items on the ground here')}
+  const i=m.i,gear=typeof i=='string',n=gear?1:m.n;if(!okDrop(i)||!okN(n))return;if(gear?(!free(s)&&!hasGear(u,i)):(!free(s)&&count(u,i)<n)){send(s,{t:'drop_res',ok:0,i});return fail(gear?'You do not have that item':'You do not have that many')}{const LT=trades.get(tradeOf.get(s.sid));if(LT&&side(LT,s).lock&&side(LT,s).it.some(x=>x[0]===i))return fail('That item is locked in a trade')}if(!gear&&i>=731&&i<=749)return fail('Quest items stay with you');if(i===17)return fail('A World Lock can not be dropped');const a=dropsOf(s.world);if(a.length>=MAX_DROPS){send(s,{t:'drop_res',ok:0,i});return fail('Too many items on the ground here')}
   const now=Date.now(),p=s.pres||{},d={id:'d'+(++dropN).toString(36)+rid(),i,n,x:(+p.x||0)+(p.f>0?44:-44),y:+p.y||0,o:free(s)?'':s.uid,by:String(s.name||'').slice(0,14),t0:now};a.push(d);touchWorld(s.world);
   if(!free(s)){const g=gearOf(u);g.dropped[d.id]={i,n,w:s.world,t0:now};if(gear){setGear(u,i,0);g.out[i]=now;deliverGear(u,{[i]:-1},'drop')}else{add(u,i,-n);deliver(u,{[i]:-n},'drop')}}else send(s,{t:'drop_res',ok:1,i});audit({ev:'drop',uid:s.uid,w:s.world,i,n});relay(s.world,{t:'dr+',d:pubDrop(d)})}
  function pickMsg(s,m){if(!s.world||!bucket(s,'pick',30,5000))return;const a=dropsOf(s.world),at=a.findIndex(d=>d.id===m.id);if(at<0)return;const d=a[at],p=s.pres||{};if(Math.hypot((+p.x||0)-d.x,(+p.y||0)-d.y)>PICK_DIST)return;

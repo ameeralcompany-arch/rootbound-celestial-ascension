@@ -66,7 +66,7 @@ try{(()=>{
   if(k.startsWith('id:')){const it=shopOf(k);o.push({t:(it&&it.d)||'Equip it'});return o}
   return o}
  // what the game's rules really allow
- function rules(k){const c=(()=>{try{return DROP2.can(k)}catch(_){return{ok:false,why:''}}})();const T=[];if(k===17)T.push('Can\'t be traded or dropped');else if(num(k)&&k>=731&&k<=749)T.push('Quest item: can\'t be traded');else if(num(k))T.push(c.ok?'Can be traded and dropped':'Can be traded');else if(c.ok)T.push('Can be dropped');else if(c.why&&!/own/.test(c.why))T.push(c.why);return T}
+ function rules(k){const c=(()=>{try{return DROP2.can(k)}catch(_){return{ok:false,why:''}}})();const T=[];if(k===17)T.push('Can\'t be traded or dropped');else if(num(k)&&k>=731&&k<=749)T.push('Quest item: can\'t be traded');else if(num(k))T.push(c.ok?'Can be traded and dropped':'Can be traded');else if(c.ok)T.push('Can be traded and dropped');else if(c.why&&!/own/.test(c.why))T.push(c.why);return T}
  function go(g){if(!g)return;try{INV7.close()}catch(_){}try{if(g.kind=='dungeon')DG.page.open(null,g.arg);else if(g.kind=='store')STORE7.open();else if(g.kind=='forge')RPG.enh.open(g.arg||(typeof wp!='undefined'?wp:undefined))}catch(e){console.error('ITEMSRC go',e)}}
  let open='',cache=[];
  function list(k,which){cache=which=='where'?where(k):used(k);if(!cache.length)return'<p class="src-none">'+(which=='where'?'No known source.':'Nothing uses it yet.')+'</p>';return'<ul class="src-l">'+cache.map((q,i)=>'<li><span>'+esc(q.t)+'</span>'+(q.go?'<button type="button" class="src-go" data-srcgo="'+i+'">Go</button>':'')+'</li>').join('')+'</ul>'}
