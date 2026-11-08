@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.15",
+      "type": "update",
+      "title": "Smoother everywhere",
+      "summary": "Clicks and attacks respond more reliably, even very quick taps. Heavy hits land with more weight. Your character starts and stops walking more smoothly. Menus open faster, and the whole game runs steadier.",
+      "body": "Clicks and attacks respond more reliably, even very quick taps. Heavy hits land with more weight. Your character starts and stops walking more smoothly. Menus open faster, and the whole game runs steadier.",
+      "date": "2026-11-08",
+      "version": "6.13.15"
+    },
+    {
       "id": "update-6.13.14",
       "type": "update",
       "title": "A living world, and a real phone",
