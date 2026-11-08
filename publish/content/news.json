@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.14",
+      "type": "update",
+      "title": "A living world, and a real phone",
+      "summary": "Rootlink now feels like a real phone: your character takes it out, the screen wakes, and it holds just the quick things you need. Weather and moving skies are back, and pause by themselves if your game slows down. The three lands of the Fir",
+      "body": "Rootlink now feels like a real phone: your character takes it out, the screen wakes, and it holds just the quick things you need. Weather and moving skies are back, and pause by themselves if your game slows down. The three lands of the First Realm now hide 24 discoveries: lore fragments, buried caches, rare finds and chime puzzles. Track everything in Quests > Logbook.",
+      "date": "2026-11-08",
+      "version": "6.13.14"
+    },
+    {
       "id": "update-6.13.13",
       "type": "update",
       "title": "New trading, and choose how you fight",
