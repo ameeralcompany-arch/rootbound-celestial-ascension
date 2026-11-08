@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.11",
+      "type": "update",
+      "title": "The First Realm road, and a new inventory",
+      "summary": "Three new lands await at the World Gate: Sunroot Vale, Gloamglass Reach and the Starfall Wastes. Finish each questline to open the next. Your inventory now slides up from the hotbar: drag the handle, or press I. Every item now tells you whe",
+      "body": "Three new lands await at the World Gate: Sunroot Vale, Gloamglass Reach and the Starfall Wastes. Finish each questline to open the next. Your inventory now slides up from the hotbar: drag the handle, or press I. Every item now tells you where to find it and what it's for. Achievements, Bosses and Collection have moved into Quests.",
+      "date": "2026-11-08",
+      "version": "6.13.11"
+    },
+    {
       "id": "update-6.13.10",
       "type": "update",
       "title": "The new intro cinematic, and Rootlink on screen",
