@@ -3349,7 +3349,7 @@ html[data-reduce=true] #clp1.on,html[data-reduce=true] .cp-c,html[data-reduce=tr
 
 /* ========== CSS: 99-zzzzzzzz-drawer.css ========== */
 /* ===== DRAWER1: the inventory as a drawer growing out of the hotbar, its collapsed handle, and the item source panel. ===== */
-html.inv6 #inv7.drw7{padding-bottom:var(--dbot,104px)!important;align-items:flex-end;background:transparent!important;clip-path:inset(0 0 var(--dbot,104px) 0);transition:opacity .16s ease}
+html.inv6 #inv7.drw7{bottom:var(--dbot,104px)!important;padding-bottom:0!important;align-items:flex-end;background:transparent!important;overflow:hidden;transition:opacity .16s ease}
 #inv7.drw7 .sheet{width:min(1120px,96vw);transition:none!important;will-change:transform;border-radius:22px 22px 0 0!important;border-bottom:0!important;box-shadow:0 -24px 70px -24px rgba(0,0,0,.8)!important}
 #inv7.drw7 header{position:relative;cursor:grab;touch-action:none;user-select:none;padding-top:20px!important}html.drw-drag,html.drw-drag #inv7.drw7 header{cursor:grabbing}
 #inv7.drw7 header::before{content:'';position:absolute;left:50%;top:8px;width:54px;height:5px;margin-left:-27px;border-radius:5px;background:rgba(244,213,154,.5);transition:background .14s,width .14s,margin .14s}#inv7.drw7 header:hover::before{background:#f4d59a;width:66px;margin-left:-33px}
@@ -3369,6 +3369,12 @@ html[data-skin=night] #inv7 .it7 span{font-size:11.5px!important}html[data-skin=
 html[data-skin=night] #hubbody small{font-size:12px}html[data-skin=night] #hubbody{font-size:14px}
 /* the expanded state keeps the details compact; the full picture and hints wait for full view */
 #inv7.drw7[data-lv=half] aside .pic{height:76px!important}#inv7.drw7[data-lv=half] aside .pic img{width:56px!important;height:56px!important}#inv7.drw7[data-lv=half] .hbtip7,#inv7.drw7[data-lv=half] .kb8{display:none}
+
+/* menus open quickly: panels are nearly solid, so the full-window blur behind them cost a lot and showed almost nothing; tiles off screen are not painted until they scroll in */
+html[data-skin=night] :is(#hubc,#store7 .shell,#inv7 .sheet,#menu #card,#eq9 .eq9box,#craftui,#chestui,#book7){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#inv7 .grid7,#store7 .grid{contain:layout style}
+#inv7 .it7{content-visibility:auto;contain-intrinsic-size:auto 108px}
+#store7 .card{content-visibility:auto;contain-intrinsic-size:auto 200px}
 
 /* ========== CSS: 99-zzzzzzzz-hudcard.css ========== */
 /* ===== HUDCARD1: the character card on the default look. Five lines at most, each with room to breathe: name and level, class, health with its number, experience, gems and Combat Power.
@@ -3766,7 +3772,7 @@ function updSplash(dt,w,hh){if(wxI>.15&&ptype!='snow'&&splashes.length<44&&Math.
 // ---------- main draw
 function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=hh/ZM;
  const ck=1-Math.pow(.82,Math.min(.05,window.FDT||1/144)*144);/* same follow speed as .18 per frame at 144 fps, at any frame rate */const ctx_=window.CAMT?CAMT.x:P.x,cty_=window.CAMT?CAMT.y:P.y+P.h/2-(window.CAMUP||0);/* CAMUP: look-ahead upward (the plaza town frames its rooftops) *//* CAMT: a fixed camera target (boss arena) */cam.x+=(Math.max(0,Math.min(W*T-vw,ctx_-vw/2))-cam.x)*ck;cam.y+=(Math.max(-200,Math.min(H*T-vh,cty_-vh/2))-cam.y)*ck;
- const sx=shake?(Math.random()-.5)*shake*34*OPT.sh:0,sy=shake?(Math.random()-.5)*shake*34*OPT.sh:0;drawSky(w,hh,now);
+ const sx=(shake?(Math.random()-.5)*shake*34*OPT.sh:0)+(window.KICK?KICK.x:0),sy=(shake?(Math.random()-.5)*shake*34*OPT.sh:0)+(window.KICK?KICK.y:0);drawSky(w,hh,now);
  g.save();g.scale(ZM,ZM);g.translate(sx,sy);const x0=Math.max(0,cam.x/T|0),x1=Math.min(W-1,(cam.x+vw)/T|0),y0=Math.max(0,cam.y/T|0),y1=Math.min(H-1,(cam.y+vh)/T|0);
  
  lampL.length=0;const dX=DX*T-cam.x,dY=sh(DX)*T-cam.y;g.fillStyle='#000';rr(dX+2,dY-T-16,T-4,T+16,10);g.fill();g.fillStyle='#6b4a2a';rr(dX+5,dY-T-13,T-10,T+13,8);g.fill();g.fillStyle='#fff6b0';g.beginPath();g.arc(dX+T-14,dY-T/2,3,0,6.3);g.fill();g.fillStyle='rgba(255,255,255,.18)';g.fillRect(dX+9,dY-T-9,6,T+6);
@@ -3804,7 +3810,7 @@ function update(dt){tm+=dt;mt-=dt;wcd-=dt;rcd-=dt;swing-=dt;iT-=dt;shake=Math.ma
  
  moveE(P,dt);if(P.wall&&P.g&&ax)stepUp(ax);landFx(dt);waterFx(dt);if(P.g){P.jumps=0;if(slam){slam=0;/* the ground pound shakes the ground but no longer breaks blocks (only tools do) */rings.push({x:P.x,y:P.y+P.h,c:'#9ee',t:performance.now()});shake=.3;noise(.4,500,.3);for(const m of mobs)if(Math.hypot(m.x-P.x,m.y-P.y)<T*3)hurtMob(m,12,null,-1.5)}}
  P.x=Math.max(T*1.5,Math.min((W-1.5)*T,P.x));if(P.y>H*T)P.y=0;
- if(!busy&&!showInv&&wcd<=0&&mdL)useWeapon();if(!busy&&!showInv&&rcd<=0&&mdR){rcd=.15;placeAction()}
+ if(!busy&&!showInv&&wcd<=0&&(mdL||(window.ATKQ&&performance.now()-window.ATKQ<140))){window.ATKQ=0;useWeapon()}if(!busy&&!showInv&&rcd<=0&&mdR){rcd=.15;placeAction()}
  if(Math.abs(P.x-(DX*T))>T*3)G('move');
  for(const[k,t]of hitAt)if(performance.now()-t>3500){hp[k]=tiles[k]?BLK[tiles[k]][2]:0;hitAt.delete(k)}
  updMobs(dt);updDrops(dt);if(P.hp<=0){P.hp=maxHP();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;P.vx=P.vy=0;mobs.length=0;say('You were knocked out. Back at the door.')}else if(iT<-4)P.hp=Math.min(maxHP(),P.hp+dt*3);
@@ -5538,9 +5544,10 @@ const AC6=(()=>{
   g.strokeStyle=shade(skin,-.3);g.lineWidth=.6;g.beginPath();g.moveTo(4.9,ey+4);g.lineTo(4.3,ey+4.9);g.stroke();g.fillStyle='rgba(255,255,255,.45)';g.beginPath();g.arc(4.3,ey+3.7,.35,0,6.3);g.fill();
   g.strokeStyle=gd==2?'#c4485e':'#8e4a52';g.lineWidth=gd==2?1.1:.95;g.beginPath();g.moveTo(1.6,hy+8.2);g.quadraticCurveTo(3.4,hy+9.1,5.2,hy+7.9);g.stroke();
   if(gd==2){g.fillStyle='rgba(220,90,110,.35)';g.beginPath();g.ellipse(3.5,hy+9.1,1.3,.5,0,0,6.3);g.fill()}}
+ const BL9={k:0,t:0};
  function drawBody(g,L,o){
   const {t,vx,air,f,sw,wpn,fm,wr}=o,so=o.sit,sd=so?Math.max(0,21-so.h/.9):0,sl=so&&so.lean||0;if(sd)g.translate(0,sd);if(sl){g.translate(0,-21);g.rotate(-sl);g.translate(0,21)}// sitting (92-zz-summer.js): body lowered onto the seat (h = seat height) and leaned back on loungers (lean); legs bent down, or straight out when reclining
-  const run=Math.abs(vx)>10,ph=t*(run?14:2.4),ls=run?Math.sin(ph):0,as=run?Math.sin(ph+3.1):0,breath=run?0:Math.sin(t*2.2)*.5,bob=(run?Math.abs(Math.sin(ph))*-2.7:breath*.8)+(air?-1:0);
+  const run=Math.abs(vx)>10;let rk=run?1:0;if(o.me){const n9=performance.now();BL9.k+=(rk-BL9.k)*Math.min(1,(n9-BL9.t)/80);BL9.t=n9;rk=BL9.k}const gait=t*14,ph=run?gait:t*2.4,ls=Math.sin(gait)*rk,as=Math.sin(gait+3.1)*rk,breath=(1-rk)*Math.sin(t*2.2)*.5,bob=(Math.abs(Math.sin(gait))*-2.7*rk+breath*.8)+(air?-1:0);
   const hs=clamp(-vx*.018,-6,6)+Math.sin(t*2.6)*1.1+(air?-2:0),blink=(t%4.2)<.13,out=L.out,trim=L.trim,sh=-37+bob,hip=-21+bob*.5;
   const boot=wr.boot&&WEAR[wr.boot]?WEAR[wr.boot].c:'#2a2030',glove=wr.glove&&WEAR[wr.glove]?WEAR[wr.glove].c:L.skin,bodyW=wr.body&&WEAR[wr.body]?WEAR[wr.body].c:null,oc=bodyW||out;
   // equipment art (GEAR7): a worn body piece replaces the outfit's own details; hats, boots and gloves draw from cached sprites
@@ -26950,9 +26957,9 @@ try{(()=>{
  function build(){const f=document.getElementById('hpf'),x=document.getElementById('xpf');if(!f||!x)return false;const bar=f.parentNode;hpRow=document.createElement('div');hpRow.className='hprow';bar.parentNode.insertBefore(hpRow,bar);hpRow.appendChild(bar);num=document.createElement('span');num.className='hpn';num.setAttribute('aria-label','Health');hpRow.appendChild(num);hp={f,bar,...mk(bar,true),s:-1,g0:-1,hold:0,lastV:-1,lastG:-1};xp={f:x,bar:x.parentNode,...mk(x.parentNode,false),s:-1,lastV:-1};return true}
  const read=e=>{const w=e.style.width;if(!w)return 0;const n=parseFloat(w);return Number.isFinite(n)?Math.max(0,Math.min(1,n/100)):0};
  let t0=0;function frame(t){requestAnimationFrame(frame);const dt=Math.min(.05,(t-t0)/1000||.016);t0=t;if(!hp&&!build())return;if(document.hidden)return;const snap=reduce();
-  const ht=read(hp.f);if(hp.s<0)hp.s=hp.g0=ht;if(snap)hp.s=hp.g0=ht;else{hp.s+=(ht-hp.s)*(1-Math.exp(-dt/.07));if(Math.abs(ht-hp.s)<.0015)hp.s=ht;if(ht>=hp.g0){hp.g0=ht;hp.hold=0}else if(hp.hold<.42)hp.hold+=dt;else{hp.g0+=(ht-hp.g0)*(1-Math.exp(-dt/.16));if(hp.g0-ht<.002)hp.g0=ht}}
+  if(t-(hp.rt||0)>50){hp.rt=t;hp.t=read(hp.f);xp.t=read(xp.f)}const ht=hp.t||0;if(hp.s<0)hp.s=hp.g0=ht;if(snap)hp.s=hp.g0=ht;else{hp.s+=(ht-hp.s)*(1-Math.exp(-dt/.07));if(Math.abs(ht-hp.s)<.0015)hp.s=ht;if(ht>=hp.g0){hp.g0=ht;hp.hold=0}else if(hp.hold<.42)hp.hold+=dt;else{hp.g0+=(ht-hp.g0)*(1-Math.exp(-dt/.16));if(hp.g0-ht<.002)hp.g0=ht}}
   if(hp.s!==hp.lastV){hp.lastV=hp.s;hp.v.style.transform='scaleX('+hp.s.toFixed(4)+')';const low=ht<.25;if(low!==hp.low){hp.low=low;hp.bar.classList.toggle('low',low)}}if(hp.g0!==hp.lastG){hp.lastG=hp.g0;hp.g.style.transform='scaleX('+hp.g0.toFixed(4)+')'}
-  const xt=read(xp.f);if(xp.s<0)xp.s=xt;if(snap||xt<xp.s-.5)xp.s=xt;else{xp.s+=(xt-xp.s)*(1-Math.exp(-dt/.14));if(Math.abs(xt-xp.s)<.001)xp.s=xt}if(xp.s!==xp.lastV){xp.lastV=xp.s;xp.v.style.transform='scaleX('+xp.s.toFixed(4)+')'}}
+  const xt=xp.t||0;if(xp.s<0)xp.s=xt;if(snap||xt<xp.s-.5)xp.s=xt;else{xp.s+=(xt-xp.s)*(1-Math.exp(-dt/.14));if(Math.abs(xt-xp.s)<.001)xp.s=xt}if(xp.s!==xp.lastV){xp.lastV=xp.s;xp.v.style.transform='scaleX('+xp.s.toFixed(4)+')'}}
  requestAnimationFrame(frame);
  let lastN='';setInterval(()=>{try{if(!num||typeof P=='undefined')return;const s=Math.max(0,Math.ceil(P.hp))+' / '+Math.ceil(maxHP());if(s!==lastN){lastN=s;num.textContent=s}}catch(_){}},150);
 })()}catch(e){console.error('HUDCARD1',e)}
@@ -27105,7 +27112,8 @@ try{(()=>{
  addEventListener('keydown',e=>{try{if((e.key!='e'&&e.key!='E')||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;if(!entered||dlgOpen||showInv||creatorOn||menuEl.style.display!='none'||window.RB_COVER||(window.DLG7&&DLG7.isOpen))return;const n=near();if(!n)return;e.preventDefault();e.stopImmediatePropagation();collect(n)}catch(_){}},true);
  // ---- drawing, only what is on screen
  const COL={lore:'#a4e0ff',cache:'#f4d59a',gather:'#c8a8ff',puzzle:'#9be37a'};
- function glow(c,x,y,r,a){g.save();g.globalCompositeOperation='lighter';g.globalAlpha=a;const G=g.createRadialGradient(x,y,1,x,y,r);G.addColorStop(0,c);G.addColorStop(1,c+'00');g.fillStyle=G;g.fillRect(x-r,y-r,r*2,r*2);g.restore()}
+ const GS={};function glowS(c){if(GS[c])return GS[c];const q=document.createElement('canvas');q.width=q.height=64;const x=q.getContext('2d'),G=x.createRadialGradient(32,32,1,32,32,32);G.addColorStop(0,c);G.addColorStop(1,c+'00');x.fillStyle=G;x.fillRect(0,0,64,64);return GS[c]=q}
+ function glow(c,x,y,r,a){g.save();g.globalCompositeOperation='lighter';g.globalAlpha=a;g.drawImage(glowS(c),x-r,y-r,r*2,r*2);g.restore()}
  function stone(x,y,c,on){g.fillStyle='#3a3648';g.strokeStyle='#000';g.lineWidth=1.5;g.beginPath();g.moveTo(x-11,y);g.lineTo(x-8,y-30);g.lineTo(x+6,y-36);g.lineTo(x+11,y);g.closePath();g.fill();g.stroke();g.fillStyle=c;g.globalAlpha=on?1:.55;g.fillRect(x-3,y-26,6,12);g.globalAlpha=1}
  function draw(now){if(!spots||inRun())return;const vw=cv.width/ZM;for(let i=0;i<spots.length;i++){if(got(land,i))continue;const s=spots[i],c=COL[s.kind],t=now/1000,px=s.px-cam.x;if(px<-140||px>vw+140)continue;
    if(s.kind=='lore'){const py=s.py-cam.y;glow(c,px,py-20,46,.35+.1*Math.sin(t*1.6+i));stone(px,py,c,true)}
@@ -27159,6 +27167,17 @@ try{(()=>{
  for(const i in H.bar)if(okId(H.bar[i])&&!bar[i])bar[i]=H.bar[i];
  for(const k in H.own)if(WPN[k])own[k]=1;if(H.wp&&WPN[H.wp]&&own[H.wp])wp=H.wp;
  window.RB_HELD=null;barDirty=1;for(const f of[renderBar,renderW,hud])try{f()}catch(_){}}catch(e){try{console.error('restore',e)}catch(_){}}})();
+
+/* ========== LATE: 99-zzzzzzzzzz-s-feel.js ========== */
+// ===== FEEL1: small things that make hits and clicks feel immediate.  A click on the world counts even if it was shorter than a frame or came just before your weapon was ready (140 ms buffer, read in update()).
+// A hit nudges the view a couple of pixels towards the target, more for heavy weapons, and heavy weapons get a tiny hit-stop (fast weapons do not, so they never stutter). Shake setting and reduced motion are respected. =====
+try{(()=>{
+ const reduce=()=>{try{return MOTION7.reduce()}catch(_){return false}};
+ window.KICK={x:0,y:0};window.ATKQ=0;
+ addEventListener('pointerdown',e=>{try{if(e.button==0&&e.target===cv)window.ATKQ=performance.now()}catch(_){}},true);
+ {const u=update;update=function(dt){const r=u.apply(this,arguments);try{const k=Math.exp(-dt*24),K=window.KICK;K.x*=k;K.y*=k;if(Math.abs(K.x)<.02)K.x=0;if(Math.abs(K.y)<.02)K.y=0}catch(_){}return r}}
+ {const h=hurtMob;hurtMob=function(m,d,w,kb){const r=h.apply(this,arguments);try{if(w&&w.k!='tool'&&m&&!reduce()){const dir=Math.sign(m.x-P.x)||P.f||1,cd=+w.cd||.4,sh=typeof OPT!='undefined'&&OPT.sh!=null?+OPT.sh:1,amt=Math.min(3.2,.7+cd*5)*sh;window.KICK.x=dir*amt;if(cd>=.3)window.HS_T=Math.max(window.HS_T||0,Math.min(.03,cd*.07))}}catch(_){}return r}}
+})()}catch(e){console.error('FEEL1',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-z-launcher.js ========== */
 // ===== RBLAUNCH: the small bridge between the game and the Rootbound launcher. It reads, never writes: RBLAUNCH.profile() gathers what the launcher's Profile and Continue

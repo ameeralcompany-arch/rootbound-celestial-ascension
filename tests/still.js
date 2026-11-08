@@ -10,7 +10,7 @@ setTimeout(()=>{console.log('FAIL global timeout (test hung)');process.exit(2)},
  const diff=(a,b)=>{let d=0;for(let i=0;i<a.length;i++)d+=Math.abs(a[i]-b[i]);return d/a.length};
  // monsters, drops and sparks flying across the top of the screen aren't the sky
  await p.evaluate(()=>{P.vx=0;const v=clock();clock=()=>v;spawnMob=()=>false;setInterval(()=>{mobs.length=0;parts.length=0;drops.length=0;try{FLOW15.FX.length=0;rings.length=0;floats.length=0;BOSS6.clear();if(typeof WE7!='undefined')WE7.ev=null}catch(_){}},30)});await p.waitForTimeout(600);
- ok('still background is on by default',await p.evaluate(()=>cel.opt.still!=0&&STILL13.on()));
+ ok('weather runs by default; Still background is a choice',await p.evaluate(()=>cel.opt.still==0&&!STILL13.on()));await p.evaluate(()=>{cel.opt.still=1;try{for(const s in WX6.I)WX6.I[s]=s=='clear'?1:0;WX6.reset()}catch(_){}});await p.waitForTimeout(1500);
  const a1=await grab();await p.waitForTimeout(2500);const a2=await grab();ok('the sky does not move',diff(a1,a2)<.08,diff(a1,a2).toFixed(3));
  const env={};for(const e of ['blossom','galaxy','space']){await p.evaluate(e=>ENV7.set(e,{instant:true}),e);await p.waitForTimeout(1000);const x1=await grab();await p.waitForTimeout(1800);const x2=await grab();env[e]=+diff(x1,x2).toFixed(3)}
  ok('weather-machine scenery is still',Object.values(env).every(v=>v<.08),JSON.stringify(env));await p.evaluate(()=>ENV7.set('default',{instant:true}));

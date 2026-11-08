@@ -98,9 +98,10 @@ const AC6=(()=>{
   g.strokeStyle=shade(skin,-.3);g.lineWidth=.6;g.beginPath();g.moveTo(4.9,ey+4);g.lineTo(4.3,ey+4.9);g.stroke();g.fillStyle='rgba(255,255,255,.45)';g.beginPath();g.arc(4.3,ey+3.7,.35,0,6.3);g.fill();
   g.strokeStyle=gd==2?'#c4485e':'#8e4a52';g.lineWidth=gd==2?1.1:.95;g.beginPath();g.moveTo(1.6,hy+8.2);g.quadraticCurveTo(3.4,hy+9.1,5.2,hy+7.9);g.stroke();
   if(gd==2){g.fillStyle='rgba(220,90,110,.35)';g.beginPath();g.ellipse(3.5,hy+9.1,1.3,.5,0,0,6.3);g.fill()}}
+ const BL9={k:0,t:0};
  function drawBody(g,L,o){
   const {t,vx,air,f,sw,wpn,fm,wr}=o,so=o.sit,sd=so?Math.max(0,21-so.h/.9):0,sl=so&&so.lean||0;if(sd)g.translate(0,sd);if(sl){g.translate(0,-21);g.rotate(-sl);g.translate(0,21)}// sitting (92-zz-summer.js): body lowered onto the seat (h = seat height) and leaned back on loungers (lean); legs bent down, or straight out when reclining
-  const run=Math.abs(vx)>10,ph=t*(run?14:2.4),ls=run?Math.sin(ph):0,as=run?Math.sin(ph+3.1):0,breath=run?0:Math.sin(t*2.2)*.5,bob=(run?Math.abs(Math.sin(ph))*-2.7:breath*.8)+(air?-1:0);
+  const run=Math.abs(vx)>10;let rk=run?1:0;if(o.me){const n9=performance.now();BL9.k+=(rk-BL9.k)*Math.min(1,(n9-BL9.t)/80);BL9.t=n9;rk=BL9.k}const gait=t*14,ph=run?gait:t*2.4,ls=Math.sin(gait)*rk,as=Math.sin(gait+3.1)*rk,breath=(1-rk)*Math.sin(t*2.2)*.5,bob=(Math.abs(Math.sin(gait))*-2.7*rk+breath*.8)+(air?-1:0);
   const hs=clamp(-vx*.018,-6,6)+Math.sin(t*2.6)*1.1+(air?-2:0),blink=(t%4.2)<.13,out=L.out,trim=L.trim,sh=-37+bob,hip=-21+bob*.5;
   const boot=wr.boot&&WEAR[wr.boot]?WEAR[wr.boot].c:'#2a2030',glove=wr.glove&&WEAR[wr.glove]?WEAR[wr.glove].c:L.skin,bodyW=wr.body&&WEAR[wr.body]?WEAR[wr.body].c:null,oc=bodyW||out;
   // equipment art (GEAR7): a worn body piece replaces the outfit's own details; hats, boots and gloves draw from cached sprites

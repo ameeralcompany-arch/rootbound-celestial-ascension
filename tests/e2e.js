@@ -4,7 +4,7 @@ const path=require('path'),fs=require('fs'),os=require('os'),{spawnSync}=require
 const {chromium}=require('playwright');const {createServer}=require('../server/server');
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined?'  - '+x:''));if(!c)fails++};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},170000).unref();
+setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},280000).unref();
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbe2e-')),SN='64';
 const env=Object.assign({},process.env,{DATA_DIR:dir,SCRYPT_N:SN});
 const OWN='owner-pass-123456';

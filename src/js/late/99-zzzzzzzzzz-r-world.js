@@ -40,7 +40,8 @@ try{(()=>{
  addEventListener('keydown',e=>{try{if((e.key!='e'&&e.key!='E')||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;if(!entered||dlgOpen||showInv||creatorOn||menuEl.style.display!='none'||window.RB_COVER||(window.DLG7&&DLG7.isOpen))return;const n=near();if(!n)return;e.preventDefault();e.stopImmediatePropagation();collect(n)}catch(_){}},true);
  // ---- drawing, only what is on screen
  const COL={lore:'#a4e0ff',cache:'#f4d59a',gather:'#c8a8ff',puzzle:'#9be37a'};
- function glow(c,x,y,r,a){g.save();g.globalCompositeOperation='lighter';g.globalAlpha=a;const G=g.createRadialGradient(x,y,1,x,y,r);G.addColorStop(0,c);G.addColorStop(1,c+'00');g.fillStyle=G;g.fillRect(x-r,y-r,r*2,r*2);g.restore()}
+ const GS={};function glowS(c){if(GS[c])return GS[c];const q=document.createElement('canvas');q.width=q.height=64;const x=q.getContext('2d'),G=x.createRadialGradient(32,32,1,32,32,32);G.addColorStop(0,c);G.addColorStop(1,c+'00');x.fillStyle=G;x.fillRect(0,0,64,64);return GS[c]=q}
+ function glow(c,x,y,r,a){g.save();g.globalCompositeOperation='lighter';g.globalAlpha=a;g.drawImage(glowS(c),x-r,y-r,r*2,r*2);g.restore()}
  function stone(x,y,c,on){g.fillStyle='#3a3648';g.strokeStyle='#000';g.lineWidth=1.5;g.beginPath();g.moveTo(x-11,y);g.lineTo(x-8,y-30);g.lineTo(x+6,y-36);g.lineTo(x+11,y);g.closePath();g.fill();g.stroke();g.fillStyle=c;g.globalAlpha=on?1:.55;g.fillRect(x-3,y-26,6,12);g.globalAlpha=1}
  function draw(now){if(!spots||inRun())return;const vw=cv.width/ZM;for(let i=0;i<spots.length;i++){if(got(land,i))continue;const s=spots[i],c=COL[s.kind],t=now/1000,px=s.px-cam.x;if(px<-140||px>vw+140)continue;
    if(s.kind=='lore'){const py=s.py-cam.y;glow(c,px,py-20,46,.35+.1*Math.sin(t*1.6+i));stone(px,py,c,true)}

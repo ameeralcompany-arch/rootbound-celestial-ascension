@@ -335,7 +335,7 @@ function updSplash(dt,w,hh){if(wxI>.15&&ptype!='snow'&&splashes.length<44&&Math.
 // ---------- main draw
 function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=hh/ZM;
  const ck=1-Math.pow(.82,Math.min(.05,window.FDT||1/144)*144);/* same follow speed as .18 per frame at 144 fps, at any frame rate */const ctx_=window.CAMT?CAMT.x:P.x,cty_=window.CAMT?CAMT.y:P.y+P.h/2-(window.CAMUP||0);/* CAMUP: look-ahead upward (the plaza town frames its rooftops) *//* CAMT: a fixed camera target (boss arena) */cam.x+=(Math.max(0,Math.min(W*T-vw,ctx_-vw/2))-cam.x)*ck;cam.y+=(Math.max(-200,Math.min(H*T-vh,cty_-vh/2))-cam.y)*ck;
- const sx=shake?(Math.random()-.5)*shake*34*OPT.sh:0,sy=shake?(Math.random()-.5)*shake*34*OPT.sh:0;drawSky(w,hh,now);
+ const sx=(shake?(Math.random()-.5)*shake*34*OPT.sh:0)+(window.KICK?KICK.x:0),sy=(shake?(Math.random()-.5)*shake*34*OPT.sh:0)+(window.KICK?KICK.y:0);drawSky(w,hh,now);
  g.save();g.scale(ZM,ZM);g.translate(sx,sy);const x0=Math.max(0,cam.x/T|0),x1=Math.min(W-1,(cam.x+vw)/T|0),y0=Math.max(0,cam.y/T|0),y1=Math.min(H-1,(cam.y+vh)/T|0);
  
  lampL.length=0;const dX=DX*T-cam.x,dY=sh(DX)*T-cam.y;g.fillStyle='#000';rr(dX+2,dY-T-16,T-4,T+16,10);g.fill();g.fillStyle='#6b4a2a';rr(dX+5,dY-T-13,T-10,T+13,8);g.fill();g.fillStyle='#fff6b0';g.beginPath();g.arc(dX+T-14,dY-T/2,3,0,6.3);g.fill();g.fillStyle='rgba(255,255,255,.18)';g.fillRect(dX+9,dY-T-9,6,T+6);
@@ -373,7 +373,7 @@ function update(dt){tm+=dt;mt-=dt;wcd-=dt;rcd-=dt;swing-=dt;iT-=dt;shake=Math.ma
  
  moveE(P,dt);if(P.wall&&P.g&&ax)stepUp(ax);landFx(dt);waterFx(dt);if(P.g){P.jumps=0;if(slam){slam=0;/* the ground pound shakes the ground but no longer breaks blocks (only tools do) */rings.push({x:P.x,y:P.y+P.h,c:'#9ee',t:performance.now()});shake=.3;noise(.4,500,.3);for(const m of mobs)if(Math.hypot(m.x-P.x,m.y-P.y)<T*3)hurtMob(m,12,null,-1.5)}}
  P.x=Math.max(T*1.5,Math.min((W-1.5)*T,P.x));if(P.y>H*T)P.y=0;
- if(!busy&&!showInv&&wcd<=0&&mdL)useWeapon();if(!busy&&!showInv&&rcd<=0&&mdR){rcd=.15;placeAction()}
+ if(!busy&&!showInv&&wcd<=0&&(mdL||(window.ATKQ&&performance.now()-window.ATKQ<140))){window.ATKQ=0;useWeapon()}if(!busy&&!showInv&&rcd<=0&&mdR){rcd=.15;placeAction()}
  if(Math.abs(P.x-(DX*T))>T*3)G('move');
  for(const[k,t]of hitAt)if(performance.now()-t>3500){hp[k]=tiles[k]?BLK[tiles[k]][2]:0;hitAt.delete(k)}
  updMobs(dt);updDrops(dt);if(P.hp<=0){P.hp=maxHP();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;P.vx=P.vy=0;mobs.length=0;say('You were knocked out. Back at the door.')}else if(iT<-4)P.hp=Math.min(maxHP(),P.hp+dt*3);

@@ -1,5 +1,5 @@
 /* ===== DRAWER1: the inventory as a drawer growing out of the hotbar, its collapsed handle, and the item source panel. ===== */
-html.inv6 #inv7.drw7{padding-bottom:var(--dbot,104px)!important;align-items:flex-end;background:transparent!important;clip-path:inset(0 0 var(--dbot,104px) 0);transition:opacity .16s ease}
+html.inv6 #inv7.drw7{bottom:var(--dbot,104px)!important;padding-bottom:0!important;align-items:flex-end;background:transparent!important;overflow:hidden;transition:opacity .16s ease}
 #inv7.drw7 .sheet{width:min(1120px,96vw);transition:none!important;will-change:transform;border-radius:22px 22px 0 0!important;border-bottom:0!important;box-shadow:0 -24px 70px -24px rgba(0,0,0,.8)!important}
 #inv7.drw7 header{position:relative;cursor:grab;touch-action:none;user-select:none;padding-top:20px!important}html.drw-drag,html.drw-drag #inv7.drw7 header{cursor:grabbing}
 #inv7.drw7 header::before{content:'';position:absolute;left:50%;top:8px;width:54px;height:5px;margin-left:-27px;border-radius:5px;background:rgba(244,213,154,.5);transition:background .14s,width .14s,margin .14s}#inv7.drw7 header:hover::before{background:#f4d59a;width:66px;margin-left:-33px}
@@ -19,3 +19,9 @@ html[data-skin=night] #inv7 .it7 span{font-size:11.5px!important}html[data-skin=
 html[data-skin=night] #hubbody small{font-size:12px}html[data-skin=night] #hubbody{font-size:14px}
 /* the expanded state keeps the details compact; the full picture and hints wait for full view */
 #inv7.drw7[data-lv=half] aside .pic{height:76px!important}#inv7.drw7[data-lv=half] aside .pic img{width:56px!important;height:56px!important}#inv7.drw7[data-lv=half] .hbtip7,#inv7.drw7[data-lv=half] .kb8{display:none}
+
+/* menus open quickly: panels are nearly solid, so the full-window blur behind them cost a lot and showed almost nothing; tiles off screen are not painted until they scroll in */
+html[data-skin=night] :is(#hubc,#store7 .shell,#inv7 .sheet,#menu #card,#eq9 .eq9box,#craftui,#chestui,#book7){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#inv7 .grid7,#store7 .grid{contain:layout style}
+#inv7 .it7{content-visibility:auto;contain-intrinsic-size:auto 108px}
+#store7 .card{content-visibility:auto;contain-intrinsic-size:auto 200px}
