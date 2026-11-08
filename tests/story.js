@@ -33,7 +33,7 @@ const require_lines=()=>JSON.parse(fs.readFileSync(path.join(__dirname,'../tools
  ok('the phone shows how many pages are unread',ph.unread>0&&ph.bdg==String(ph.unread),ph);
  await p.click('#rlk .rlk-app[data-app=journal]');await p.waitForFunction(()=>STORY1.on,null,{timeout:5000}).catch(()=>{});await sleep(400);
  const j=await p.evaluate(()=>{const e=document.getElementById('stj');return{on:STORY1.on,count:e.querySelector('.stj-count').textContent,title:e.querySelector('.stj-page h1').textContent,locked:e.querySelectorAll('.stj-list .lock').length,newb:e.querySelectorAll('.stj-list i').length}});
- ok('the Journal opens from the phone, on an unread page',j.on&&!!j.title&&/of 32 pages/.test(j.count),j);
+ ok('the Journal opens from the phone, on an unread page',j.on&&!!j.title&&/of 41 pages/.test(j.count),j);
  ok('pages not yet earned are hidden, with a hint',j.locked>5,j.locked);
  if(SHOTS){fs.mkdirSync(SHOTS,{recursive:true});await p.screenshot({path:path.join(SHOTS,'journal.png')})}
  await p.click('#stj .stj-list button.lock');await sleep(200);ok('a locked page shows what to do',await p.evaluate(()=>!!document.querySelector('#stj .stj-page .hint')&&document.querySelector('#stj .stj-page .hint').textContent.length>8));

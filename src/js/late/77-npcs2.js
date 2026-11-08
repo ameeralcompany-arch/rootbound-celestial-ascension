@@ -47,7 +47,7 @@ const NPC2=(()=>{
   mage:'Each Mage level adds spell damage. Wands and staves reward patience, and a very good hat.',gunslinger:'Gunslingers pull the trigger faster with every level and land headshots. Aim for the eyes!',
   druid:'Hold a druid weapon and you slowly heal. Perfect for long digs far from town.',berserker:'Berserkers hit harder the lower their health. Dangerous... and very fun.',
   knight:'Knight blades knock monsters back and sometimes stun them. Hold the line.',samurai:'A samurai blade can land a 1.6x critical cut. Strike once, strike true.',
-  brawler:'Brawlers recover faster between punches, and fists never break. Start here, stay forever.',elementalist:'Burns, chills and freezes last longer the more you level Elementalist.',demon:'Demon weapons steal life with every hit. Stay greedy, stay alive.'};
+  brawler:'Brawlers recover faster between punches, and fists never break. Start here, stay forever.',elementalist:'Burns, chills and freezes last longer the more you level Elementalist.',demon:'Bloodbound weapons steal life with every hit. Stay greedy, stay alive.'};
  // ---- dialogue. 'x|text' = only when context x holds: n night, d day, c clear day, r rain, s snow, l low level, h high level. {name} {lvl}
  const LINES={
   mira:{g:['Welcome, welcome!','Fresh stock today!','Psst... shiny things!','n|Late-night bargains!','r|Come in out of the rain!'],
@@ -83,7 +83,7 @@ const NPC2=(()=>{
  // ---- roster: the 3 service NPCs are the legacy NPCS objects (shop/smith/quest logic reads them), the rest are ambient talkers
  const L=[];
  for(const id in DEF){const d=DEF[id];let n=NPCS.find(q=>q.id==id);if(!n){n={id,n:d.n,role:d.role,k:'talk',x:DX+round(d.home)};}
-  if(id=='oak')n.role='Quest Elder';n.roleBase=n.role;n.cls=d.cls||null;if(n.cls)n.role=n.roleBase+' · '+n.cls[0].toUpperCase()+n.cls.slice(1);/* CLASS7 loads later; its keys are the class names */n.x=DX+round(d.home);n.house=(PLZ7.NAMES||{})[id]||'';
+  if(id=='oak')n.role='Quest Elder';n.roleBase=n.role;n.cls=d.cls||null;if(n.cls)n.role=n.roleBase+' · '+(n.cls=='demon'?'Bloodbound':n.cls[0].toUpperCase()+n.cls.slice(1));/* CLASS7 loads later; its keys are the class names */n.x=DX+round(d.home);n.house=(PLZ7.NAMES||{})[id]||'';
   Object.assign(n,{arch:d.arch,v:d.v,pal:d.c,L:d.L||{skin:'#fff',hair:'#000',es:0,eyeCol:'#fff'},d,spd:d.spd||30,top:d.top||70,hue:d.hue||200,fly:!!d.fly,night:!!d.night,amb:n.k=='talk'});L.push(n)}
  const hx=o=>(DX+o)*T+T/2;
  // ---- ground + walkable columns (the NPC needs its own tile and the one above free, solid ground below, no water)

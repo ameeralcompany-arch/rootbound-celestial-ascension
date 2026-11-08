@@ -1,7 +1,7 @@
 // ===== CRV8: god mode, the old creative powers, reachable only through the server owner's /god chat command (ONL10 calls enable() when the server says so).
 // Full level (150, the highest any wing or aura asks for), every class and tool at max level, every wing, outfit, weapon, effect and charm unlocked and
 // wearable, 999 of every block, seed and object (topped up so they never run out), plenty of gems, and no damage. It sits on top of the real save (RB_GOD keeps
-// a copy): turning it off reloads and the early switch restores that copy. A small GOD MODE badge shows while it is on. Other modules read CRV8.on / RB_CREATIVE. =====
+// a copy): turning it off reloads and the early switch restores that copy. A small OWNER MODE badge shows while it is on. Other modules read CRV8.on / RB_CREATIVE. =====
 const CRV8=(()=>{
  let on=false;const FILL=999,GEMS=999999;
  const MAXL=(()=>{let m=100;try{for(const w of WINGS)if(w.src=='level')m=Math.max(m,w.lvl|0)}catch(_){}try{for(const a of AURAS)m=Math.max(m,a.lvl|0)}catch(_){}return Math.min(999,m)})();

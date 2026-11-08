@@ -15,10 +15,10 @@ const GEAR15=(()=>{
  const SETS=[
   {k:'brawler',a:'#7a2a14',b:'#2a0e0a',c:'#ffb24a',g:'#ff7a2a',st:'harness',ht:'band',lv:'lava',air:'flame',n:'Cindermaw',hn:'Ember Headband',bn:'Cindermaw Harness'},
   {k:'knight',a:'#e8e0c8',b:'#7a6a3a',c:'#ffd86a',g:'#fff2c0',st:'plate',ht:'helm',lv:'shine',air:'light',n:'Dawnwarden',hn:'Dawnwarden Helm',bn:'Dawnwarden Plate'},
-  {k:'samurai',a:'#2a1420',b:'#120810',c:'#ff7a9a',g:'#ffc2dc',st:'robe',ht:'kasa',lv:'nebula',air:'petal',n:'Sakura Requiem',hn:'Requiem Kasa',bn:'Requiem Kimono'},
+  {k:'samurai',a:'#2a1420',b:'#120810',c:'#ff7a9a',g:'#ffc2dc',st:'robe',ht:'kasa',lv:'nebula',air:'petal',n:'Sakura Elegy',hn:'Elegy Kasa',bn:'Elegy Kimono'},
   {k:'archer',a:'#2a2470',b:'#0e0c38',c:'#ffd98a',g:'#c8b8ff',st:'gown',ht:'circlet',lv:'nebula',air:'star',n:'Starlight',hn:'Starlight Circlet',bn:'Starlight Raiment'},
   {k:'mage',a:'#3a1a6a',b:'#160830',c:'#ff6ae0',g:'#c88aff',st:'robe',ht:'wizard',lv:'nebula',air:'rune',n:'Arcana',hn:'Arcana Peak',bn:'Arcana Veil Robe'},
-  {k:'demon',a:'#3a0a14',b:'#14040a',c:'#ff2a4a',g:'#ff4a64',st:'gown',ht:'horns',lv:'lava',air:'blood',n:'Crimson Covenant',hn:'Covenant Horns',bn:'Covenant Regalia'},
+  {k:'demon',a:'#3a0a14',b:'#14040a',c:'#ff2a4a',g:'#ff4a64',st:'gown',ht:'horns',lv:'lava',air:'blood',n:'Crimson Pact',hn:'Pact Horns',bn:'Pact Regalia'},
   {k:'reaper',a:'#14081e',b:'#06030c',c:'#b48cff',g:'#a070ff',st:'robe',ht:'hood',lv:'nebula',air:'soul',n:'Nightveil',hn:'Nightveil Cowl',bn:'Nightveil Shroud'},
   {k:'elementalist',a:'#1a3a6a',b:'#0a1830',c:'#ff8a3a',g:'#7ad8ff',st:'coat',ht:'circlet',lv:'split',air:'storm2',n:'Tempest Prism',hn:'Prism Diadem',bn:'Prism Mantle'},
   {k:'stormcaller',a:'#14285a',b:'#081030',c:'#8ad4ff',g:'#c8ecff',st:'coat',ht:'hood',lv:'volt',air:'bolt',n:'Thunderveil',hn:'Thunderveil Hood',bn:'Thunderveil Coat'},

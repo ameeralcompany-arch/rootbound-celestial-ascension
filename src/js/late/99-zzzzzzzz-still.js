@@ -5,7 +5,7 @@
 // still follow the game clock, and the layers still shift with the camera as you walk, so the world keeps its depth). The weather manager
 // is held on 'clear' and the precipitation / fog / leaves layer is not drawn. Switching it off restores everything as it was. =====
 const STILL13=(()=>{
- const on=()=>{try{return cel.opt.still!=0}catch(_){return true}};
+ const on=()=>{try{return cel.opt.still!=0||!!window.WXAUTO}catch(_){return true}};/* WXAUTO: pauses weather and moving skies by itself while the frame rate is low */
  let frozen=null;
  {const _ds=drawSky;drawSky=function(w,hh,now){if(on()){if(frozen==null)frozen=now;return _ds.call(this,w,hh,frozen)}frozen=null;return _ds.apply(this,arguments)}}
  {const _dp=drawPrecip;drawPrecip=function(){if(on())return;return _dp.apply(this,arguments)}}

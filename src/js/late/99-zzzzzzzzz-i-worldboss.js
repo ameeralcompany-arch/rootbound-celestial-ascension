@@ -236,7 +236,7 @@ const WBOSS13=(()=>{
    meteors(m,p2,p3){const n=p3?9:p2?7:5,b=box();for(let i=0;i<n;i++){const x=clX(P.x+rn(-T*7,T*7)),tel=1.0+i*.2;addZ(x-T*.9,b.t-T,x+T*.9,fl()+2,tel,.35,'#ff8a3a',m.dmg*1.2,'down');if(p2)later(tel+.3,()=>{addZ(x-T*1.3,fl()-T*.6,x+T*1.3,fl()+2,.01,2.4,'#ff5a1a',m.dmg*.16,'fire',120,.5).ah=1})}say6('METEORS','',800)},
    flamewall(m,p2,p3){const b=box(),d=P.x>(b.l+b.r)/2?1:-1,go=(d,dl)=>WV.push({x:d>0?b.l:b.r,d,sp:p3?380:320,h:T*2.3,w:T*1.2,tel:1.1+dl,l:9,c:'#ff6a1a',dmg:m.dmg*1.15,kind:'fire',hit:0});go(d,0);if(p2)go(-d,1.4);later(p2?5.6:4.4,()=>{});say6('WALL OF FIRE','Jump it!',1100)},
    nova(m,p2,p3){m.att=1.2;addC(m.x,m.y+m.h*.5,T*(p3?6.5:5.5),1.0,.35,'#ffb02a',m.dmg*1.35,420);say6('NOVA','Get away!',800)},
-   hellrain(m){const b=box();for(let i=0;i<30;i++)later(i*.1,()=>shot(rn(b.l,b.r),b.t,PI/2+rn(-.15,.15),rn(240,330),{g:260,r:10,c:'#ff8a3a',dmg:m.dmg*.6,kind:'fire',l:5}));later(3.6,()=>{});say6('HELLFIRE RAIN','',1000)}},
+   hellrain(m){const b=box();for(let i=0;i<30;i++)later(i*.1,()=>shot(rn(b.l,b.r),b.t,PI/2+rn(-.15,.15),rn(240,330),{g:260,r:10,c:'#ff8a3a',dmg:m.dmg*.6,kind:'fire',l:5}));later(3.6,()=>{});say6('CINDER RAIN','',1000)}},
   wb_nyx:{
    spiral(m,p2,p3){const d=p3?3:2.4;EM.push({m,t:d,step:.11,acc:0,arms:p3?4:p2?3:2,a:R()*TAU,va:p3?2.2:1.8,sp:p3?210:180,c:'#c9b0ff',dmg:m.dmg*.6,kind:'star'});m.att=d;later(d,()=>{});say6('STARFALL SPIRAL','',900)},
    comets(m,p2,p3){const n=p3?8:p2?6:4,b=box();for(let i=0;i<n;i++){const left=R()<.5,sx=left?b.l-T:b.r+T,sy=rn(b.t,fl()-T*1.5),tx=P.x+rn(-T*3,T*3),ty=P.y+P.h/2+rn(-T*2,T*2),a=Math.atan2(ty-sy,tx-sx),dl=i*.28;

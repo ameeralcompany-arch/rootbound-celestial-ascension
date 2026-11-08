@@ -434,7 +434,7 @@ function renderWorlds(){const live={};try{if(lob)for(const p of lob.peers())if(p
 function enterWorld(n){n=String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';if(cur!=n&&lastWorlds)G('world');lastWorlds=1;cur=n;ws=[...n].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7)%1000/10;
  if(rm){const o=rm;rm=null;o.leave().catch(()=>{})}if(dbUn){dbUn();dbUn=null}dbRef=null;for(const k in rp)delete rp[k];mobs.length=0;projs.length=0;spawnT=6;gen();edits={};dirty=0;
  try{const e=JSON.parse(localStorage.getItem('rbw_'+n)||'{}');for(const k in e){edits[k]=e[k];applyEdit(+k,e[k])}}catch(_){}
- P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;P.vx=P.vy=0;addRecent(n);menuEl.style.display='none';say('Welcome to '+n);connect(n)}
+ P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;P.vx=P.vy=0;addRecent(n);menuEl.style.display='none';say('Welcome to '+(window.PATH1&&PATH1.landOf(n)>=0?PATH1.B[PATH1.landOf(n)].n:n));connect(n)}
 function connect(name){}
 function sendChat(){const t=chatEl.value.trim();chatEl.value='';chatEl.style.display='none';chatEl.blur();if(!t)return;if(t.startsWith('/name ')){myName=t.slice(6,20);say('You are '+myName);saveP();return}bub.me={t,e:performance.now()+5000};if(rm)rm.emit('chat',{n:myName,t})}
 const SAVE_V=3;let saveOK=true,bakT=0;
@@ -682,7 +682,7 @@ function bindRoom(r){rm=r;
 function leaveNet(reload){const wasGuest=guest,had=roomCode;if(rm){const o=rm;rm=null;o.leave().catch(()=>{})}roomCode='';guest=false;if(dbUn){dbUn();dbUn=null}dbRef=null;if(had&&reload)say('Left the room');if(wasGuest&&reload){loadWorld('plaza');connect(cur)}}
 function loadWorld(n,e){entered=1;n=String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';if(n!='plaza'&&!seenW[n]){seenW[n]=1;stat('worlds',1)}if(cur!=n&&lastWorlds)G('world');lastWorlds=1;cur=n;ws=[...n].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7)%1000/10;for(const k in rp)delete rp[k];mobs.length=0;projs.length=0;spawnT=6;gen();edits={};dirty=0;
  meta=null;if(cur!='plaza'){if(e)applyAll(e);else{try{applyAll(JSON.parse(localStorage.getItem('rbw_'+n)||'{}'))}catch(_){}}}
- P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;P.vx=P.vy=0;if(!e)addRecent(n);menuEl.style.display='none';say('Welcome to '+n);enterFx()}
+ P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;P.vx=P.vy=0;if(!e)addRecent(n);menuEl.style.display='none';say('Welcome to '+(window.PATH1&&PATH1.landOf(n)>=0?PATH1.B[PATH1.landOf(n)].n:n));enterFx()}
 function enterWorld(n){leaveNet();loadWorld(n);connect(cur)}
 function connect(name){}
 renderSkills();

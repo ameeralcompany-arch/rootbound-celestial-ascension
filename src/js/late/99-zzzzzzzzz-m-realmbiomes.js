@@ -48,6 +48,6 @@
    [M('cry_b_smith','golem','Ruby Smith','#c82a4a','walk',440,30,42,48,56,{spm:.7,tr:'flames'}),M('cry_b_spark','moth','Forge Spark','#ff8a9a','fly',240,24,36,30,26,{spm:1.7,tr:'flames'})],221),
   B('sapphire','Sapphire Deep','#4a8aff','#d8e6ff','bubbles','reef',66,66,94,74,'Sapphire Ore',['Deep Shell','Deep Shells','Wake','shell'],
    [M('cry_b_deepling','crab','Deepling','#2a5ac8','walk',320,26,38,44,30,{spm:1.2,tr:'spikes'}),M('cry_b_mist','wraith','Blue Mist','#8ab8ff','fly',280,25,38,34,44,{ph:1,spm:1,tr:'orbit'})],221),
-  B('sanctum','Golden Sanctum','#ffd24a','#fff6c8','dust','dune',68,8,58,10,'Gold',['Sun Obelisk','Sun Obelisks','Raise','obelisk'],
-   [M('cry_b_paladin','golem','Gilded Paladin','#e8b83a','walk',520,34,50,50,58,{spm:.65,tr:'spikes'}),M('cry_b_halo','moth','Lumen','#fff0a0','fly',300,28,44,32,28,{spm:1.5,tr:'orbit'})],221)]);
+  B('sanctum','Golden Vault','#ffd24a','#fff6c8','dust','dune',68,8,58,10,'Gold',['Sun Obelisk','Sun Obelisks','Raise','obelisk'],
+   [M('cry_b_paladin','golem','Gilded Sentinel','#e8b83a','walk',520,34,50,50,58,{spm:.65,tr:'spikes'}),M('cry_b_halo','moth','Lumen','#fff0a0','fly',300,28,44,32,28,{spm:1.5,tr:'orbit'})],221)]);
 })();

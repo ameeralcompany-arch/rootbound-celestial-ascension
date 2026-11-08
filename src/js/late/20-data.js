@@ -95,7 +95,7 @@ const WINGS=[
   a:{L:108,ring:{c:'#e3d2ff',r:.2},trail:['petal','dust','feather'],parts:[{s:'tier',e:['feather','feather','covert'],n:[11,10,9],len:[.62,.4,.2],wd:[.17,.2,.34],pa:[-12,96],arm:-38,tip:'#cdb0ff',glow:1}]}},
  {id:'inkwraith',n:'Inkwraith Wings',fam:'dark',rar:'legendary',src:'shop',lv:40,pal:['#040405','#16161b','#5c5c68','#f4f4ff'],sp:'#f4f4ff',fxk:'smoke',d:'Brush-stroke wings of black ink that dissolve into drifting wisps, streaked with pale light.',
   a:{L:104,trail:['smoke','dust'],parts:[{s:'tier',e:['ink','ink','ink'],n:[8,7,6],len:[.64,.42,.22],wd:[.22,.24,.3],pa:[-16,100],arm:-30,glow:1}]}},
- {id:'eyemoth',n:'Oracle Moth Wings',fam:'fantasy',rar:'legendary',src:'shop',lv:42,pal:['#0e080c','#35212d','#efc6cf','#ffd6e4'],sp:'#ffd6e4',fxk:'omen',d:'Vast dusky moth wings painted with watchful glowing eyes; they scatter luminous scales.',
+ {id:'eyemoth',n:'Dusk Moth Wings',fam:'fantasy',rar:'legendary',src:'shop',lv:42,pal:['#0e080c','#35212d','#efc6cf','#ffd6e4'],sp:'#ffd6e4',fxk:'omen',d:'Vast dusky moth wings painted with watchful glowing eyes; they scatter luminous scales.',
   a:{L:98,flutter:1,trail:['dust'],parts:[{s:'tier',e:['moth','mothhind','mothfur'],n:[1,1,1],la:.05,lh:0,len:[.95,.72,.16],wd:[.36,.5,.9],pa:[-22,0],ra:[[62,62],[40,40]],rp:[[.5,.5],[.2,.2]],arm:-24,glow:1}]}},
  {id:'stormlance',n:'Stormlance Wings',fam:'elemental',rar:'mythic',src:'shop',lv:55,pal:['#04163f','#1866ff','#c4ecff','#7fdcff'],sp:'#c4ecff',fxk:'volt',d:'Wings of raw blue lightning: three tiers of crackling energy that arc and spit sparks.',
   a:{L:116,arcs:'#bfe8ff',trail:['spark','dust'],parts:[{s:'tier',e:['bolt','bolt','arc'],n:[11,10,7],len:[.66,.42,.22],wd:[.1,.12,.14],pa:[-20,104],arm:-34,tip:'#ffffff',add:1,glow:1}]}},
@@ -142,7 +142,7 @@ const WX_NAMES={clear:'Clear',cloudy:'Overcast',fog:'Fog',drizzle:'Drizzle',rain
 
 // ---- celestial state, saved per account under key "rbc" (namespaced by the profile layer)
 const cel={v:CEL_VER,wing:'auto',wingsOn:1,aura:'auto',auraOn:1,plate:'auto',ap:{hair:0,eyes:0,outfit:0,acc:0,cape:1,eyeCol:0,hairCol:'#3a2a3a',skinCol:'#f1c9a0',outCol:'#2d3f6b',trimCol:'#d9b46a'},
- seenW:0,seenNp:0,opt:{qp:'auto',vfx:1,reduce:0,ui:1,bloom:1,wxOn:1,still:1,fpsShow:0,cine:0},tut:0};
+ seenW:0,seenNp:0,opt:{qp:'auto',vfx:1,reduce:0,ui:1,bloom:1,wxOn:1,still:0,fpsShow:0,cine:0},tut:0};
 function celSave(){try{localStorage.setItem('rbc',JSON.stringify(cel))}catch(_){}}
 function celLoad(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc')||'null')}catch(_){}if(!o||typeof o!='object')return;
  const n=(v,d,lo,hi)=>{v=+v;return isFinite(v)?Math.max(lo,Math.min(hi,v|0)):d},col=(v,d)=>/^#[0-9a-f]{6}$/i.test(v)?v:d;

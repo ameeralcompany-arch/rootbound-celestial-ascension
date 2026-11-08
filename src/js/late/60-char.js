@@ -161,10 +161,11 @@ const AC6=(()=>{
   g.restore();
   // --- near arm (+ weapon)
   const hx=6+ash,hy2=sh+4;let hxp,hyp;
-  if(bw){const nb=BOW15.nock(bw);hxp=bhx-Math.cos(bw.a)*nb;hyp=bhy-Math.sin(bw.a)*nb}else if(armA!=null&&fm){hxp=hx+Math.cos(armA)*15;hyp=hy2+Math.sin(armA)*15}else{hxp=9+as*2.2;hyp=hip-2+as*.8;if(pa||pg){hxp=lp(lp(hxp,11.5,pg),16,pa);hyp=lp(lp(hyp,hip-3,pg),sh+9,pa)}}
+  if(bw){const nb=BOW15.nock(bw);hxp=bhx-Math.cos(bw.a)*nb;hyp=bhy-Math.sin(bw.a)*nb}else if(armA!=null&&fm){hxp=hx+Math.cos(armA)*15;hyp=hy2+Math.sin(armA)*15}else{hxp=9+as*2.2;hyp=hip-2+as*.8;if(pa||pg){hxp=lp(lp(hxp,11.5,pg),16,pa);hyp=lp(lp(hyp,hip-3,pg),sh+9,pa)}}if(o.ph>0){hxp=lp(hxp,9,o.ph);hyp=lp(hyp,sh+6,o.ph)}
   if(wpn!='fist'&&!fm){g.save();g.translate(-6,sh+4);g.rotate(-2.35);g.scale(.58,.58);drawWeapon(g,wpn,44,0);g.restore()}
   limb(g,hx,hy2-1,hxp,hyp,4.6,ac);if(GB)G7.put(g,GB,'shoulder',0,sh);
-  if(bw){g.save();g.translate(bhx,bhy);g.rotate(bw.a);BOW15.art(g,wpn,bw.pull,t);g.restore()}else if(wpn!='fist'&&fm){g.save();g.translate(hxp,hyp);g.rotate(armA!=null?armA+.15:-.6+Math.sin(t*3)*.05);drawWeapon(g,wpn,WPN[wpn].k=='sword'?44:WPN[wpn].k=='scythe'?46:WPN[wpn].k=='glaive'?34:40,t);g.restore()}
+  if(bw){g.save();g.translate(bhx,bhy);g.rotate(bw.a);BOW15.art(g,wpn,bw.pull,t);g.restore()}else if(wpn!='fist'&&fm&&!(o.ph>.4)){g.save();g.translate(hxp,hyp);g.rotate(armA!=null?armA+.15:-.6+Math.sin(t*3)*.05);drawWeapon(g,wpn,WPN[wpn].k=='sword'?44:WPN[wpn].k=='scythe'?46:WPN[wpn].k=='glaive'?34:40,t);g.restore()}
+  if(o.ph>.05){/* the phone in the hand, its screen lit */g.save();g.translate(hxp+1,hyp-7);g.rotate(.12);g.globalAlpha=Math.min(1,o.ph*1.6);g.fillStyle='#14111f';g.strokeStyle='#000';g.lineWidth=1;g.beginPath();g.roundRect(-4.5,-8,9,16,2);g.fill();g.stroke();g.fillStyle='#8ab8ff';g.globalAlpha*=.9*o.ph;g.fillRect(-3.3,-6.8,6.6,13.4);g.restore()}
   hand(hxp,hyp+.6,2.6);
   if(fm&&sw>0&&wpn=='fist'){g.fillStyle=L.skin;g.beginPath();g.arc(hxp+8*(1-sw/.22),hyp,4,0,6.3);g.fill();g.stroke()}
  }
@@ -192,7 +193,7 @@ const AC6=(()=>{
   if(pz&&api.PZG)api.PZG(g,pz,cx,feet-ly,t);
   g.save();g.translate(cx,feet-ly);if(pz&&pz.lean){g.translate(0,-30);g.rotate(pz.lean*f);g.translate(0,30)}g.imageSmoothingEnabled=true;{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
-  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,me:local,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
+  try{drawBody(g,L,{t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,me:local,ph:local&&window.ROOTLINK?ROOTLINK.pose():0,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.05)WingArt.idleFx(WINGS[wingIdx],cx+cam.x,cy+cam.y+10+Math.random()*30,f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}

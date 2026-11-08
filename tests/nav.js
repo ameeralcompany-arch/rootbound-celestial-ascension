@@ -36,7 +36,7 @@ const SIZES=[[800,600],[1024,600],[1024,768],[1280,720],[1366,768],[1600,900],[1
  // ---- the Hub shows only the section you opened
  const tabs=async t=>E(t=>{UI6.open(t);return[...document.querySelectorAll('#hubnav button')].map(b=>b.textContent)},t);
  ok('Character shows its four tabs',(await tabs('profile')).join()=='Profile,Appearance,Wings & Aura,Nameplates',await tabs('profile'));
- ok('Quests holds achievements, the boss list and the collection as tabs',await E(()=>{UI6.open('quests');const n=[...document.querySelectorAll('#hubnav button')].map(b=>b.textContent);UI6.close();return n.join()=='Quests,Achievements,Bosses,Collection'}));
+ ok('Quests holds achievements, the boss list and the collection as tabs',await E(()=>{UI6.open('quests');const n=[...document.querySelectorAll('#hubnav button')].map(b=>b.textContent);UI6.close();return n.join()=='Quests,Achievements,Bosses,Logbook,Collection'}));
  for(const t of['skills']){await tabs(t);await W(60);ok(t+' is its own page, with no tabs',await E(()=>document.getElementById('hubc').classList.contains('one')&&getComputedStyle(document.getElementById('hubnav')).display=='none'))}
  ok('every Hub tab belongs to a section',await E(()=>UI6.TABS.every(t=>Object.values(NAV16.SEC).some(s=>s.tabs.includes(t[0]))||t[0]=='owner')),await E(()=>UI6.TABS.map(t=>t[0])));
  ok('the old Equipment and Directory tabs are gone',await E(()=>!UI6.TABS.some(t=>t[0]=='gear'||t[0]=='dir')));await closeAll();

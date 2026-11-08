@@ -1,6 +1,6 @@
 // ===== GEAR10: the v10 wardrobe. Six animated sets of two pieces (hat + body), each with its own living aura, worn art, icons and skills:
 //   Bubblegum Dream (mythic)  — a pastel bunny hood and a frilly bubble dress; iridescent bubbles rise, wobble and pop into sparkles and hearts
-//   Celestial Seraph (mythic) — a halo crown and a white-gold robe with feather wings; drifting feathers, a sun halo, a column of light
+//   Celestial Dawn (mythic) — a halo crown and a white-gold robe with feather wings; drifting feathers, a sun halo, a column of light
 //   Inferno Dragon (mythic)   — a horned dragon helm and crimson scale armour with wings; licking flames, embers, a burning ring
 //   Sakura Kitsune (legendary) — a fox mask with fox ears and a kimono with three swaying fox tails; sakura petals and blue foxfire wisps
 //   Frost Empress (legendary) — an ice tiara and a frost gown with a frost mantle; falling snowflakes, rising ice shards, an ice ring
@@ -49,7 +49,7 @@ const GEAR10=(()=>{
     x.save();x.translate(-2,-19);for(const s of[-1,1])cel(x,()=>{x.beginPath();x.moveTo(0,0);x.bezierCurveTo(s*4,-4.4,s*7.4,-2.4,s*6.6,1.4);x.bezierCurveTo(s*5.6,4,s*2,2.4,0,0);x.closePath()},'#7ae8ff',.7);cel(x,E(x,0,.4,1.8,1.6),'#bff6ff',.6);x.restore();
     for(const[px,py,r]of[[-12,6,1.2],[-10.4,-10,1],[-13.6,-2,.9],[-7,13,.9]])dot(x,px,py,r,'#ffe9f6');
     line(x,'#c98ab0',.5,[-11.2,14,-11.4,19]);bubble(x,-11.4,21.6,2.8);spark(x,-8.2,19.4,1,'#fff')}}},
-  // ---------- Celestial Seraph: Halo Crown
+  // ---------- Celestial Dawn: Halo Crown
   seraphcrown:{ib:[-17,-40,34,32],
    hatB:{bb:[-17,-38,34,14],f(x){x.save();x.strokeStyle='#b8862a';x.lineWidth=2.6;x.beginPath();x.ellipse(0,-29,12,3.4,-.08,Math.PI,TAU);x.stroke();x.strokeStyle='#ffe9a0';x.lineWidth=1.2;x.stroke();x.restore()}},
    hatF:{bb:[-17,-40,34,32],f(x){const G='#f2c14e';

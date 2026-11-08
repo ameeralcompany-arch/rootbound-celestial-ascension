@@ -32,7 +32,7 @@ const NAV16=(()=>{
  const menuOn=()=>{try{return menuEl.style.display!='none'&&getComputedStyle(menuEl).display!='none'}catch(_){return false}};
  // the Hub's sections: each dock button opens its own, and only its own tabs show
  const SEC={character:{t:'Character',jp:'人物',ic:'character',tabs:['profile','look','wings','plates']},skills:{t:'Skills',jp:'技能',ic:'skills',tabs:['skills']},
-  quests:{t:'Quests',jp:'依頼',ic:'quests',tabs:['quests','ach','bosses'],acts:[['_coll','Collection',()=>{UI6.close();BOOK7.open()}]]},guide:{t:'Guide',jp:'案内',ic:'guide',tabs:['toolguide','craft'],acts:[['_start','Starting guide',()=>{UI6.close();GUIDE10.open()}]]},
+  quests:{t:'Quests',jp:'依頼',ic:'quests',tabs:['quests','ach','bosses','log'],acts:[['_coll','Collection',()=>{UI6.close();BOOK7.open()}]]},guide:{t:'Guide',jp:'案内',ic:'guide',tabs:['toolguide','craft'],acts:[['_start','Starting guide',()=>{UI6.close();GUIDE10.open()}]]},
   social:{t:'Social',jp:'交流',ic:'social',tabs:['social']},world:{t:'Worlds',jp:'世界',ic:'worlds',acts0:[['_travel','Travel',()=>{UI6.close();openMenu('mworlds')}]],tabs:['world','events']},
   system:{t:'Settings',jp:'設定',ic:'settings',tabs:['settings','account'],acts:[['_acct','Account & sign in',()=>{UI6.close();openMenu('mworlds');try{el('wnet').scrollIntoView({block:'start'})}catch(_){}}]]},owner:{t:'Owner',jp:'管理',ic:'owner',tabs:['owner']}};
  const secOf=t=>{for(const k in SEC)if(SEC[k].tabs.includes(t))return k;return'character'};

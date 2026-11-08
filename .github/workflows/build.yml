@@ -207,6 +207,10 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: bash tools/ci-test.sh tests/classpick.js
+      - name: Test discoveries, the Logbook, weather and the phone
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: bash tools/ci-test.sh tests/worldlife.js
       - name: Test classes and jobs
         if: ${{ !cancelled() }}
         timeout-minutes: 10

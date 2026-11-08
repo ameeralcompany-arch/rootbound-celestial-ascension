@@ -64,7 +64,7 @@ try{(()=>{
  // ---- the map
  DG.BP.night=B=>{B.start(14,10);const x0=B.x-14;B.dc('window',x0+10,B.fy-3,.8).dc('statue',x0+7,B.fy,.8).dc('chain',x0+12,B.fy-10,.6,{top:1,sway:.02});B.light(x0+10,B.fy-5,MO,T*4,.6);
   B.link(4);
-  const r1=B.room({w:26,h:14,title:'The Moonless Nave',waves:[['night_stalker','night_witch'],['night_stalker','night_stalker','night_witch']],crystals:[[5],[20]],ledges:[[7,4,4],[15,4,4]]});B.dc('window',r1.x0+5,r1.fy-5,1).dc('window',r1.x1-5,r1.fy-5,1).dc('pillar',r1.x0+11,r1.fy,.9).dc('pillar',r1.x1-11,r1.fy,.9).dc('banner',r1.x0+13,r1.y0+1,.8,{top:1,sway:.015});B.light(r1.x0+5,r1.fy-7,MO,T*5,.55);B.light(r1.x1-5,r1.fy-7,MO,T*5,.55);
+  const r1=B.room({w:26,h:14,title:'The Moonless Hall',waves:[['night_stalker','night_witch'],['night_stalker','night_stalker','night_witch']],crystals:[[5],[20]],ledges:[[7,4,4],[15,4,4]]});B.dc('window',r1.x0+5,r1.fy-5,1).dc('window',r1.x1-5,r1.fy-5,1).dc('pillar',r1.x0+11,r1.fy,.9).dc('pillar',r1.x1-11,r1.fy,.9).dc('banner',r1.x0+13,r1.y0+1,.8,{top:1,sway:.015});B.light(r1.x0+5,r1.fy-7,MO,T*5,.55);B.light(r1.x1-5,r1.fy-7,MO,T*5,.55);
   B.link(3);
   const r2=B.room({w:26,h:15,title:'The Gaunt Vigil',elite:true,waves:[['night_gaunt'],['night_witch','night_stalker']],crystals:[[13]],ledges:[[4,4,4],[18,4,4]]});B.dc('statue',r2.x0+4,r2.fy,1).dc('statue',r2.x1-4,r2.fy,1).dc('window',r2.x0+13,r2.fy-6,1.2).dc('chain',r2.x0+9,r2.y0,1,{top:1,sway:.02}).dc('chain',r2.x1-9,r2.y0,1,{top:1,sway:.02});B.light(r2.x0+13,r2.fy-8,MO,T*6,.6);
   B.link(3);

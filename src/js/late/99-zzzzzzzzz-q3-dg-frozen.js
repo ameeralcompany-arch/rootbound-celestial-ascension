@@ -14,7 +14,7 @@ try{(()=>{
  // ---- the map: down into the temple. Ends at x 249
  DG.BP.frozen=B=>{B.start(10,9);const x0=B.x-10;B.dc('icicle',x0+6,B.fy-9,.9,{top:1}).dc('statue',x0+8,B.fy,.7).dc('crystal',x0+5,B.fy,.6);B.light(x0+7,B.fy-2,ICE,T*4,.6);
   B.link(3);
-  const r1=B.room({w:22,h:13,title:'The Silent Nave',waves:[['frozen_assassin','frozen_priestess'],['frozen_assassin','frozen_assassin']],crystals:[[4],[17]],ledges:[[8,4,3],[12,4,3]]});iceStrip(B,r1.x0+6,r1.x0+15,r1.fy);B.dc('statue',r1.x0+3,r1.fy,.95).dc('statue',r1.x1-3,r1.fy,.95).dc('icicle',r1.x0+7,r1.y0,1,{top:1}).dc('icicle',r1.x0+15,r1.y0,1,{top:1}).dc('banner',r1.x0+11,r1.y0+1,.8,{top:1,sway:.015});
+  const r1=B.room({w:22,h:13,title:'The Silent Hall',waves:[['frozen_assassin','frozen_priestess'],['frozen_assassin','frozen_assassin']],crystals:[[4],[17]],ledges:[[8,4,3],[12,4,3]]});iceStrip(B,r1.x0+6,r1.x0+15,r1.fy);B.dc('statue',r1.x0+3,r1.fy,.95).dc('statue',r1.x1-3,r1.fy,.95).dc('icicle',r1.x0+7,r1.y0,1,{top:1}).dc('icicle',r1.x0+15,r1.y0,1,{top:1}).dc('banner',r1.x0+11,r1.y0+1,.8,{top:1,sway:.015});
   B.link(4,4,2);
   const r2=B.room({w:24,h:14,title:'The Colossus Stirs',elite:true,waves:[['frozen_colossus'],['frozen_priestess','frozen_assassin']],crystals:[[3],[20]]});iceStrip(B,r2.x0+9,r2.x0+16,r2.fy);B.dc('throne',r2.x1-6,r2.fy,.6).dc('statue',r2.x0+6,r2.fy,1).dc('icicle',r2.x0+11,r2.y0,1.2,{top:1}).dc('spire',r2.x0+3,r2.fy,.6).dc('spire',r2.x1-3,r2.fy,.6);
   B.link(3);
@@ -32,7 +32,7 @@ try{(()=>{
     T2.ledge(58,6,16).check(60,6).plate(61,6,{seq:'cs'});T2.seq([[63,8],[66,8],[69,8],[72,8]],'cs');T2.light(68,10,ICE,T*7,.7);
     T2.path(77,7,2,'cs');T2.path(81,8,2,'cs');T2.ledge(85,8,2).key(86,8).light(86,10,PALE,T*6,.8)});
   B.gate(true);
-  const r3=B.room({w:22,h:14,title:'The Frozen Choir',waves:[['frozen_priestess','frozen_priestess','frozen_assassin'],['frozen_colossus','frozen_priestess']],crystals:[[11]],ledges:[[14,3,3],[18,5,4]]});iceStrip(B,r3.x0+5,r3.x0+11,r3.fy);B.dc('statue',r3.x0+4,r3.fy,1).dc('statue',r3.x0+9,r3.fy,1).dc('icicle',r3.x0+12,r3.y0,1.1,{top:1}).dc('window',r3.x0+6,r3.fy-7,.7);
+  const r3=B.room({w:22,h:14,title:'The Frozen Chorus',waves:[['frozen_priestess','frozen_priestess','frozen_assassin'],['frozen_colossus','frozen_priestess']],crystals:[[11]],ledges:[[14,3,3],[18,5,4]]});iceStrip(B,r3.x0+5,r3.x0+11,r3.fy);B.dc('statue',r3.x0+4,r3.fy,1).dc('statue',r3.x0+9,r3.fy,1).dc('icicle',r3.x0+12,r3.y0,1.1,{top:1}).dc('window',r3.x0+6,r3.fy-7,.7);
   // pale light where the ice on the wall is thinnest. It is not a wall at all
   B.secret(r3.x1+3,6,7,4,{id:'s1'});B.light(r3.x1-1,r3.fy-8,PALE,T*2.5,.5);
   B.link(11);
@@ -73,7 +73,7 @@ try{(()=>{
   onHit(m,d,w,ang,X){if(m.st=='wind'&&m.atk&&m.atk.name=='heal'){m.st='idle';m.atk=null;m.stun=1.3;m.acd=1.6;X.say('','Interrupted',500);X.burst(m.x,m.y+m.h/2,['#fff',ICE],12);return d*1.4}return d},
   kit:[{name:'lance',wind:.7,rec:.5,cd:1.7,start(m,X){},fire(m,X){const sx=m.x+m.f*20,sy=m.y+m.h*.26;for(let i=-1;i<=1;i++){const a=Math.atan2(P.y+P.h/2-sy,P.x-sx)+i*.15;fx.shot(sx,sy,Math.cos(a)*400,Math.sin(a)*400,{r:9,c:ICE,kind:'shard',dmg:X.dmg(m,.85),l:3})}X.tone(1300,500,.2,'triangle',.05)}},
        // she mends whatever is near her. Hit her during the prayer and it stops
-       {name:'heal',wind:1.2,rec:.5,cd:6.5,when(m,X){return X.mobs().some(q=>q.hp<q.mhp*.92&&Math.hypot(q.x-m.x,q.y-m.y)<T*12)},start(m,X){X.say('','The priestess is healing. Stop her',900);X.wave(m.x,m.y+m.h/2,ICE,T*3,1,.4)},fire(m,X){for(const q of X.mobs())if(Math.hypot(q.x-m.x,q.y-m.y)<T*12&&q.hp<q.mhp){q.hp=Math.min(q.mhp,q.hp+q.mhp*.2);X.burst(q.x,q.y+q.h/2,['#bfffe8',ICE,'#fff'],14,180);X.wave(q.x,q.y+q.h/2,'#bfffe8',T*2,.5,.4)}X.tone(600,1400,.4,'sine',.05)}},
+       {name:'heal',wind:1.2,rec:.5,cd:6.5,when(m,X){return X.mobs().some(q=>q.hp<q.mhp*.92&&Math.hypot(q.x-m.x,q.y-m.y)<T*12)},start(m,X){X.say('','The Ice Warden is healing. Stop her',900);X.wave(m.x,m.y+m.h/2,ICE,T*3,1,.4)},fire(m,X){for(const q of X.mobs())if(Math.hypot(q.x-m.x,q.y-m.y)<T*12&&q.hp<q.mhp){q.hp=Math.min(q.mhp,q.hp+q.mhp*.2);X.burst(q.x,q.y+q.h/2,['#bfffe8',ICE,'#fff'],14,180);X.wave(q.x,q.y+q.h/2,'#bfffe8',T*2,.5,.4)}X.tone(600,1400,.4,'sine',.05)}},
        {name:'barrier',wind:.75,rec:.5,cd:9,min:T*3,start(m,X){const s=X.toward(m),x=m.x+s*T*2.4,f=X.floor(x,m.y+m.h-8);m._bx=x;m._bf=f;warn(x-T*.6,f-T*4.2,x+T*.6,f+2,.75)},fire(m,X){fx.wall(m._bx-T*.55,m._bf-T*4.2,m._bx+T*.55,m._bf,{life:5,c:'#8ad4f0',kind:'ice'});X.burst(m._bx,m._bf,[ICE,PALE],12);DG.music.sfx('freeze',.4)}}],
   art(c,m,o){const h=m.h,t=o.t,F=o.fl,k=o.wind;c.lineJoin='round';c.strokeStyle=OL;c.lineWidth=2.5;const gr=c.createLinearGradient(0,-h,0,0);gr.addColorStop(0,F?'#fff':'#cfeeff');gr.addColorStop(.6,F?'#fff':'#4a8ab8');gr.addColorStop(1,F?'#ddd':'#16405e');c.fillStyle=gr;c.beginPath();c.moveTo(-9,-h*.76);c.lineTo(9,-h*.76);c.lineTo(20,0);for(let i=0;i<4;i++)c.lineTo(20-i*10-5,i%2?-3:-9);c.lineTo(-20,0);c.closePath();c.fill();c.stroke();c.fillStyle=F?'#fff':'#e8d8a0';c.fillRect(-13,-h*.46,26,3.5);
    poly(c,[-11,-h*.74,-11,-h*.94,0,-h*1.0,11,-h*.94,11,-h*.74],F?'#fff':'#a8d8f0');c.fillStyle='#0a1a2a';c.beginPath();c.ellipse(1,-h*.84,6.5,5.5,0,0,TAU);c.fill();c.fillStyle=ICE;c.fillRect(-3,-h*.86,2.5,2.2);c.fillRect(2.5,-h*.86,2.5,2.2);

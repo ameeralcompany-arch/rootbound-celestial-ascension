@@ -23,17 +23,17 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:4321,own:{fist:1,astralkat:1},ownW
  ok('Combat Power and gems are the real numbers',h.cp==h.cpReal&&h.gems==h.gemsReal,{cp:h.cp,real:h.cpReal,gems:h.gems,greal:h.gemsReal});
  ok('your portrait is drawn',h.av>2000,h.av);
  ok("today's challenges are the real ones",h.tasks==Math.max(1,h.dly),{shown:h.tasks,real:h.dly});
- ok('18 apps, all usable here',h.apps==18&&h.off.length==0,h.off);
+ ok('six quick apps, all usable here',h.apps==6&&h.off.length==0,h.off);
  ok('opening it did not mute the music',h.muted===false);
  if(SHOTS){fs.mkdirSync(SHOTS,{recursive:true});await p.screenshot({path:path.join(SHOTS,'phone-home.png')})}
  // keys: arrows move between apps, Esc closes
- await sleep(300);await p.keyboard.press('ArrowRight');const foc=await p.evaluate(()=>document.activeElement&&document.activeElement.dataset.app);ok('arrow keys move between apps',foc=='inventory',foc);
+ await sleep(300);await p.keyboard.press('ArrowRight');const foc=await p.evaluate(()=>document.activeElement&&document.activeElement.dataset.app);ok('arrow keys move between apps',foc=='journal',foc);
  await p.keyboard.press('Escape');await sleep(400);ok('Esc puts it away',await p.evaluate(()=>!ROOTLINK.on&&!document.getElementById('rlk').classList.contains('on')));
  // Shift+M still mutes; typing never opens it
  await p.keyboard.press('Shift+M');await sleep(200);const mu=await p.evaluate(()=>({mute,on:ROOTLINK.on}));ok('Shift+M mutes the music and leaves the phone shut',mu.mute===true&&!mu.on,mu);await p.keyboard.press('Shift+M');
  await p.evaluate(()=>{const i=document.createElement('input');i.id='tt';document.body.appendChild(i);i.focus()});await p.keyboard.press('m');await sleep(200);ok('typing an m in a text field does not open it',await p.evaluate(()=>!ROOTLINK.on&&document.getElementById('tt').value=='m'));await p.evaluate(()=>document.getElementById('tt').remove());
  // every app opens the real screen
- const RES={};for(const id of ['inventory','equipment','classes','store','settings','worlds','quests','bosses','collection','character','dungeons']){
+ const RES={};for(const id of ['social','dungeons']){
   await p.evaluate(()=>{try{NAV16.closeAll()}catch(_){}try{DG.page.close()}catch(_){}});await sleep(150);await p.evaluate(()=>ROOTLINK.open());await p.waitForFunction(()=>getComputedStyle(document.querySelector('#rlk .rlk-dev')).opacity=='1',null,{timeout:6000}).catch(()=>{});
   await p.click('#rlk .rlk-app[data-app="'+id+'"]');await p.waitForFunction(id=>{if(ROOTLINK.on)return false;if(id=='dungeons')return DG.page.on;const f=NAV16.F.find(f=>f.id==id);try{return !!(f&&f.on&&f.on())}catch(_){return false}},id,{timeout:6000}).catch(()=>{});
   RES[id]=await p.evaluate(id=>{if(ROOTLINK.on)return'phone still open';if(id=='dungeons')return DG.page.on;const f=NAV16.F.find(f=>f.id==({bosses:'bosses'})[id]||f.id==id);try{return !!(f&&f.on&&f.on())}catch(e){return String(e)}},id)}

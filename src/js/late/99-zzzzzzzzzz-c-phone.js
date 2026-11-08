@@ -9,12 +9,11 @@ try{(()=>{
  const EXTRA={dungeons:'<path class="d" d="M4 21V10l8-6 8 6v11z"/><path d="M9.500 21v-5.500a2.500 2.500 0 0 1 5 0V21"/>',cinema:'<rect class="d" x="3" y="5" width="18" height="14" rx="2.500"/><path d="M10 9.200v5.600l4.800-2.800z"/>',mastery:'<path class="d" d="M12 3.500l2.500 5.200 5.700.800-4.100 4 1 5.700L12 16.500l-5.100 2.700 1-5.700-4.100-4 5.700-.800z"/>',journal:'<path class="d" d="M5 4.500h9.500a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h9.500M9 8.500h5M9 11h3.500"/>'};
  const xic=n=>'<svg class="n16i" viewBox="0 0 24 24" aria-hidden="true">'+EXTRA[n]+'</svg>';
  // the apps: id, label, icon, accent, how it opens. nav: a NAV16 feature id
- const APPS=[
-  {id:'character',n:'Character',nav:'character',c:'#9db4ff'},{id:'inventory',n:'Inventory',nav:'inventory',c:'#ffcf7a'},{id:'equipment',n:'Equipment',nav:'equipment',c:'#8fe3c1'},{id:'skills',n:'Skills',nav:'skills',c:'#ffe27a'},
-  {id:'classes',n:'Classes',nav:'classes',c:'#ff9ab8'},{id:'quests',n:'Quests',nav:'quests',c:'#b8a4ff'},{id:'dungeons',n:'Dungeons',c:'#ff8a6a',x:'dungeons',open:()=>DG.page.open()},{id:'worlds',n:'Worlds',nav:'worlds',c:'#7ad8ff'},
-  {id:'bosses',n:'Codex',nav:'bosses',c:'#ff6a7a',ico:'bosses'},{id:'social',n:'Friends',nav:'social',c:'#9affc8'},{id:'store',n:'Store',nav:'store',c:'#ffd27a'},{id:'collection',n:'Collection',nav:'collection',c:'#d0a4ff'},
-  {id:'ach',n:'Achievements',nav:'ach',c:'#ffe9a8',ico:'achievements'},{id:'guide',n:'Guide',nav:'guide',c:'#a4e0ff'},{id:'cinema',n:'Intro film',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.replay()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'settings',n:'Settings',nav:'settings',c:'#c8cede'}];
- let root=null,dev=null,on=false,tmr=0,closing=0,lastFocus=null;
+ // quick things only: every other menu has its one home on the dock
+ const APPS=[{id:'dungeons',n:'Dungeons',c:'#ff8a6a',x:'dungeons',open:()=>DG.page.open()},{id:'journal',n:'Journal',c:'#ffd9a0',x:'journal',open:()=>STORY1.open()},{id:'log',n:'Logbook',c:'#a4e0ff',ico:'collection',open:()=>UI6.open('log')},{id:'mastery',n:'Mastery',c:'#ffe27a',x:'mastery',open:()=>MASTERY1.open()},{id:'social',n:'Friends',nav:'social',c:'#9affc8'},{id:'cinema',n:'Intro film',c:'#f4c8ff',x:'cinema',open:()=>INTRO60.replay()}];
+ let root=null,dev=null,on=false,tmr=0,closing=0,lastFocus=null,togT=0,tiltR=0;
+ // how far the character's hand has come up, 0 to 1 (drawBody reads this)
+ const pose=()=>{if(!togT)return 0;const k=Math.min(1,(performance.now()-togT)/260);return on?k:1-k};
  const navF=id=>{try{return NAV16.F.find(f=>f.id==id)}catch(_){return null}};
  const usable=a=>{if(a.nav){const f=navF(a.nav);if(!f)return false;try{if(f.solo&&typeof DG!='undefined'&&DG.run)return true}catch(_){}return true}if(a.id=='dungeons')return !!(window.DG&&DG.page);if(a.id=='cinema')return typeof INTRO60!='undefined'&&!!INTRO60.trailer;if(a.id=='journal')return !!window.STORY1;if(a.id=='mastery')return !!window.MASTERY1;return true};
  const badge=a=>{if(a.id=='journal'){try{const n=STORY1.unread;return n?String(n):''}catch(_){return''}}if(!a.nav)return'';const f=navF(a.nav),b=f&&f.el&&f.el.querySelector('.bdg');return b&&!b.hidden?b.textContent:''};
@@ -46,7 +45,7 @@ try{(()=>{
   let cls='',cl=0,cc='#9db4ff';try{const k=CLASS7.cur(),C=CLASS7.C[k];if(C){cls=C.n;cl=CLASS7.lv(k)|0;cc=C.c}}catch(_){}
   q('.rlk-name').textContent=(typeof myName!='undefined'&&myName)||'Traveler';
   q('.rlk-lv').innerHTML='Level '+esc(typeof lvl!='undefined'?lvl:1)+(cls?' · <i style="color:'+esc(cc)+'">'+esc(cls)+'</i> '+esc(cl):'');
-  let w='';try{w=(typeof cur!='undefined'&&cur)?(cur=='plaza'?'The Plaza':(window.DG&&DG.run?(DG.run.d&&DG.run.d.n)||'A dungeon':cur)):''}catch(_){}
+  let w='';try{w=(typeof cur!='undefined'&&cur)?(cur=='plaza'?'The Plaza':(window.DG&&DG.run?(DG.run.d&&DG.run.d.n)||'A dungeon':(window.PATH1&&PATH1.here()>=0?PATH1.B[PATH1.here()].n:cur))):''}catch(_){}
   let rc='';try{rc=RESTORE1.restored()+' of 5 worlds restored'}catch(_){}q('.rlk-world').textContent=(w?'In '+w:'')+(w&&rc?' · ':'')+rc;
   let cp=0;try{cp=Math.round(RPG.cp())}catch(_){}q('.rlk-cp').textContent=cp.toLocaleString();q('.rlk-gems').textContent=(typeof gems!='undefined'?Math.floor(gems):0).toLocaleString();
   const av=q('.rlk-av'),x=av.getContext('2d');x.clearRect(0,0,128,128);try{const o=g;g=x;try{x.save();const hz=wear.hat&&WEAR[wear.hat]?1:0;x.translate(64,232-hz*8);x.scale(3.3-hz*.4,3.3-hz*.4);AC6.headFull(x,AC6.info(look,null,true),-50,0,0,wear);x.restore()}finally{g=o}}catch(_){}
@@ -62,9 +61,11 @@ try{(()=>{
  }
  // can it open now? Not over a film, a cinematic, the character creator, or while typing
  const blocked=()=>{try{if(typeof INTRO60!='undefined'&&INTRO60.playing)return true;if(typeof CINE7!='undefined'&&CINE7.playing)return true;if(window.DG&&DG.cine&&DG.cine.on)return true;if(window.DG&&DG.boss&&DG.boss.inIntro)return true;if(typeof creatorOn!='undefined'&&creatorOn)return true;if(typeof entered!='undefined'&&!entered)return true}catch(_){}return false};
- function open(){if(on||blocked())return false;if(!root)build();clearTimeout(closing);try{NAV16.closeAll()}catch(_){}lastFocus=document.activeElement;fill();on=true;root.setAttribute('aria-hidden','false');root.classList.remove('out');void root.offsetWidth;root.classList.add('on');
+ function open(){if(on||blocked())return false;if(!root)build();clearTimeout(closing);try{NAV16.closeAll()}catch(_){}lastFocus=document.activeElement;fill();on=true;togT=performance.now();root.setAttribute('aria-hidden','false');root.classList.remove('out');void root.offsetWidth;root.classList.add('on');
   tone('open');tmr=setInterval(clock,10000);setTimeout(()=>{if(on){const f=root.querySelector('.rlk-app:not([disabled])');f&&f.focus({preventScroll:true})}},260);return true}
- function close(then){if(!on)return false;on=false;clearInterval(tmr);root.classList.remove('on');root.classList.add('out');root.setAttribute('aria-hidden','true');if(!then)tone('close');
+ // the device tilts a little towards the mouse: transform only, written once per frame at most
+ addEventListener('pointermove',e=>{if(!on||!dev||tiltR)return;tiltR=requestAnimationFrame(()=>{tiltR=0;if(!on||!dev)return;const r=dev.getBoundingClientRect(),nx=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/r.width)),ny=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/r.height));dev.style.setProperty('--ry',(nx*4).toFixed(2)+'deg');dev.style.setProperty('--rx',(-ny*3).toFixed(2)+'deg');dev.style.setProperty('--sx',(nx*14).toFixed(1)+'%')})});
+ function close(then){if(!on)return false;on=false;togT=performance.now();clearInterval(tmr);root.classList.remove('on');root.classList.add('out');root.setAttribute('aria-hidden','true');if(!then)tone('close');
   closing=setTimeout(()=>{root.classList.remove('out');if(then)try{then()}catch(e){console.error('ROOTLINK app',e)}else try{lastFocus&&lastFocus.focus&&lastFocus.focus({preventScroll:true})}catch(_){}},then?170:240);return true}
  function launch(id){const a=APPS.find(z=>z.id==id);if(!a||!usable(a))return;tone('tap');const b=root.querySelector('.rlk-app[data-app="'+id+'"]');if(b){b.classList.add('press');setTimeout(()=>b.classList.remove('press'),200)}
   close(()=>{if(a.open)return a.open();const f=navF(a.nav);let up=false;try{up=!!(f&&f.on&&f.on())}catch(_){}if(!up)try{NAV16.act(a.nav)}catch(e){console.error('ROOTLINK',e)}})}
@@ -75,5 +76,5 @@ try{(()=>{
  // a button for it under the character card, next to Respawn, so it can be found without knowing the key
  setInterval(function btn(){const row=document.getElementById('ow15bt');if(!row||document.getElementById('brlk'))return;const b=document.createElement('button');b.id='brlk';b.type='button';b.className='pn';b.setAttribute('aria-label','Rootlink, your phone (M)');b.dataset.n16tip='Rootlink|Your phone: profile, today, every menu, the intro film|M';
   b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.5 18.3h3"/></svg>ROOTLINK<kbd>M</kbd>';b.addEventListener('click',e=>{e.stopPropagation();on?close():open()});row.appendChild(b)},1000);
- window.ROOTLINK={open,close,toggle:()=>on?close():open(),get on(){return on},APPS};
+ window.ROOTLINK={open,close,pose,toggle:()=>on?close():open(),get on(){return on},APPS};
 })()}catch(e){console.error('ROOTLINK',e)}

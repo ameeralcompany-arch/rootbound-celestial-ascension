@@ -31,3 +31,7 @@ html body #menu #card:has(#mworlds[style*="block"]){width:min(980px,95vw)!import
 html[data-reduce=true] #bpun,html[data-reduce=true] #bpun *{animation-duration:.01s!important}@media(prefers-reduced-motion:reduce){#bpun,#bpun *{animation-duration:.01s!important}}
 
 html body #menu #card:has(#mworlds[style*="block"]){max-height:calc((100vh - 28px) / var(--uiz,1))!important}
+
+/* Quests > Logbook */
+#hubbody .lb-r{display:grid;grid-template-columns:minmax(0,1fr) 160px 90px;align-items:center;gap:12px;padding:5px 0;font-size:14px}#hubbody .lb-r b{text-align:right;font-variant-numeric:tabular-nums}.lb-b{height:6px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}.lb-b u{display:block;height:100%;background:#f4d59a;transform-origin:0 50%;text-decoration:none}
+.lb-m{display:flex;gap:8px;flex-wrap:wrap}.lb-m span{padding:5px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.18);font-size:13px;color:#b5acc9}.lb-m span.on{border-color:#f4d59a;background:rgba(244,213,154,.16);color:#fff8e6}.lb-h{margin:0;padding-left:18px;font-size:14px;line-height:1.6}

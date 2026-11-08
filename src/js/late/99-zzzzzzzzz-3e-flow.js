@@ -42,7 +42,7 @@ const FLOW15=(()=>{
   flurry(k,o,a,f,tx,ty){const c=cols(k);for(let i=0;i<4;i++)add('crescent',{x:o.x+f*(26+i*9),y:o.y-10+((i%2)*22),a:(i%2?-.8:.8)+(f>0?0:Math.PI),r:30,sp:1.9,sq:1,c,life:.3,del:i*.05});add('tongues',{x:o.x+f*44,y:o.y+18,r:26,h:46,n:5,c,life:.45})},
   dash(k,o,a,f){const c=cols(k),G0=o.y+20;add('tongues',{x:o.x+f*70,y:G0,r:90,h:44,n:10,c,life:.55});add('beam',{x:o.x,y:o.y,a:f>0?0:Math.PI,l:180,w:13,c,life:.34})},
   uppercut(k,o,a,f){const c=cols(k),x=o.x+f*40,y=o.y+30;add('tongues',{x,y,r:30,h:170,n:7,c,life:.7});add('crescent',{x,y:y-30,a:-Math.PI/2,r:66,sp:2.3,sq:1,c,second:1,life:.42})},
-  // Knight: wide, slow, holy light
+  // Knight: wide, slow, radiant light
   cleave(k,o,a,f){const c=cols(k);add('crescent',{x:o.x+f*18,y:o.y,a,r:92,sp:2.8,sq:1,w:24,c,second:1,life:.55});add('beam',{x:o.x,y:o.y,a,l:210,w:16,c,life:.4,del:.08})},
   aegis(k,o){const c=cols(k);add('ripple',{x:o.x,y:o.y,r:70,sq:1,w:9,n:3,c,life:.7});add('feathers',{x:o.x,y:o.y-4,r:58,n:14,c,life:.8})},
   judgement(k,o,a,f,tx,ty){const c=cols(k);for(let i=0;i<3;i++){const X=tx+(i-1)*62,Y=ty+50;add('beam',{x:X,y:Y-360,a:Math.PI/2,l:380,w:20,even:1,c,life:.55,del:i*.16});add('ripple',{x:X,y:Y,r:58,w:7,n:2,c,life:.5,del:i*.16+.1})}},

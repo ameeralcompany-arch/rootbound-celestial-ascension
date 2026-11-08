@@ -19,7 +19,7 @@
     +row('shfx','Hide other players\' effects','Their auras, wings and emote sparkles are not drawn. Your own stay',tog('shfx',o.hideFx,'Hide other players effects'))
     +row('sb','Bloom & glow','Soft light around bright blocks and magic',tog('sb',o.bloom,'Bloom'))
 
-    +row('sst','Still background','Clouds, sky and weather-machine scenery stay still, with no rain, snow or storms',tog('sst',o.still!=0,'Still background'))
+    +row('sst','Still background','Always keep the sky still, with no rain, snow or storms. Off: weather runs, and pauses by itself if the game slows down',tog('sst',o.still!=0,'Still background'))
     +row('sw','Weather','Rain, snow, fog and their sounds (needs Still background off)',tog('sw',o.wxOn,'Weather'))
     +row('sci','Letterbox bars','Film bars when the Cinematic quality is selected',tog('sci',o.cine,'Letterbox bars'))
     +row('sperf','Performance mode','Turns everything below down at once and takes the lowest graphics. For older computers',tog('sperf',o.perf,'Performance mode'))

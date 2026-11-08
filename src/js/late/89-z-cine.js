@@ -1244,7 +1244,7 @@ const CINE7=(()=>{
  // ================= WORLD ENTRY: portal iris + title card =================
  let W7=null,lastN='',lastT=-1e9,pend=null,pendIv=0;
  function seen(n){let o={};try{o=JSON.parse(localStorage.getItem('rbc7')||'{}')||{}}catch(_){}if(!o.v||typeof o.v!='object')o.v={};const first=!o.v[n];o.v[n]=(o.v[n]|0)+1;try{localStorage.setItem('rbc7',JSON.stringify(o))}catch(_){}return first}
- const wName=n=>n=='plaza'?'The Plaza':String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+ const wName=n=>n=='plaza'?'The Plaza':window.PATH1&&PATH1.landOf(n)>=0?PATH1.B[PATH1.landOf(n)].n:String(n).replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
  function tod(){try{const d=((clock()%1)+1)%1;return d<.1||d>=.92?'Midday':d<.2?'Afternoon':d<.28?'Dusk':d<.72?'Night':d<.8?'Dawn':'Morning'}catch(_){return''}}
  function wxl(){try{if(ENV7.target&&ENV7.target!='default'&&ENV7.names[ENV7.target])return ENV7.names[ENV7.target]}catch(_){}try{if(WX_NAMES[WX6.cur])return WX_NAMES[WX6.cur]}catch(_){}return{clear:'Clear skies',cloud:'Cloudy',rain:'Rain',storm:'Storm',snow:'Snow'}[typeof wxN!='undefined'?wxN:'']||''}
  function killW(){if(!W7)return;cancelAnimationFrame(W7.raf);clearTimeout(W7.tm);try{W7.w.remove()}catch(_){}try{document.body.classList.remove('c7w-on')}catch(_){}W7=null}
