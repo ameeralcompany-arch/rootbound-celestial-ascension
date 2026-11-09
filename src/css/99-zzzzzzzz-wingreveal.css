@@ -1,0 +1,13 @@
+/* the big moment when Mythic or Relic wings are earned: it never blocks play, and clears itself */
+.wrv{position:fixed;inset:0;z-index:9400;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,color-mix(in srgb,var(--wrc) 24%,transparent),rgba(8,6,16,.62) 62%,rgba(8,6,16,.78));animation:wrv-in .32s ease-out,wrv-out .5s ease-in 3.4s forwards}
+.wrv canvas{width:min(640px,86vw);height:auto;animation:wrv-rise .9s cubic-bezier(.2,.8,.2,1)}
+.wrv-t{text-align:center;margin-top:-18px;max-width:560px;padding:0 20px;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+.wrv-t small{display:block;font:700 13px/1.2 Montserrat,system-ui,sans-serif;letter-spacing:.28em;color:var(--wrc)}
+.wrv-t b{display:block;margin:6px 0 8px;font:600 44px/1.05 "Cormorant Garamond",Georgia,serif;color:#fff}
+.wrv-t i{display:block;font:400 15px/1.4 Montserrat,system-ui,sans-serif;font-style:normal;color:rgba(255,255,255,.82)}
+.wrv.relic .wrv-t b{letter-spacing:.03em}
+@keyframes wrv-in{from{opacity:0}to{opacity:1}}
+@keyframes wrv-out{to{opacity:0}}
+@keyframes wrv-rise{from{transform:translateY(26px) scale(.94);opacity:.2}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.wrv,.wrv canvas{animation:none}}
+html.reduce-motion .wrv canvas{animation:none}

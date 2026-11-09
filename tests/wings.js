@@ -21,7 +21,7 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
   for(let w=0;w<WINGS.length;w++)for(let k=0;k<8;k++){x.clearRect(0,0,520,520);try{WingArt.draw(x,w,260,260,k%2?-1:1,1.3,2,0,0,1,null,0,{kf:k,trail:1});n++}catch(e){bad.push(WINGS[w].id+'@F'+(k+1)+': '+e.message);continue}
    const d=x.getImageData(0,0,520,520).data;let px=0;for(let i=3;i<d.length;i+=16)if(d[i]>20)px++;if(px<60)bad.push('blank '+WINGS[w].id+'@F'+(k+1))}
   return{n,total:WINGS.length,bad:bad.slice(0,8),names:WING9.NAMES.length}});
- ok('every wing ('+r.total+') renders all 8 keyframes F1..F8 with pixels and no errors',r.n==r.total*8&&r.total==58&&r.bad.length==0&&r.names==8,r);
+ ok('every wing ('+r.total+') renders all 8 keyframes F1..F8 with pixels and no errors',r.n==r.total*8&&r.total>=88&&r.bad.length==0&&r.names==8,r);
  // ---- new wings: tier family, span >= 2.5x torso, F2 higher than F4, tips glow (additive sprites), nothing cut off at the cycle extremes
  r=await E(NEW=>{const torso=2*9.5*.9,out={},bad=[];const c=document.createElement('canvas');c.width=c.height=700;const x=c.getContext('2d');
   const box=(i,k)=>{x.clearRect(0,0,700,700);WingArt.draw(x,i,350,350,1,1.3,2,0,0,1,null,0,{kf:k});const d=x.getImageData(0,0,700,700).data;let x0=1e9,x1=-1,y0=1e9,y1=-1;for(let y=0;y<700;y+=2)for(let q=0;q<700;q+=2)if(d[(y*700+q)*4+3]>24){x0=Math.min(x0,q);x1=Math.max(x1,q);y0=Math.min(y0,y);y1=Math.max(y1,y)}return{w:x1-x0,top:350-y0,bot:y1-350,edge:x0<=0||y0<=0||x1>=698||y1>=698}};

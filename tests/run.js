@@ -17,7 +17,7 @@ async function enter(p,lv){await p.goto(URL);await p.waitForTimeout(700);await p
   const r=await p.evaluate(()=>{const o={};const id=l=>{const w=curWing(l);return w?w.id:null};o.w1=curWing(1);o.w4=curWing(4);o.w5=id(5);o.w10=id(10);o.w29=id(29);o.w30=id(30);o.w100=id(100);o.w150=id(150);o.w1000=id(1000);o.np=[1,14,15,29,30,134,135,149,150].map(l=>npTier(l)+':'+npName(npTier(l)));
    o.cnt=WINGS.filter(w=>w.src=='level').length;o.mile=WINGX.rewards().map(w=>w.lvl).join(',');o.total=WINGS.length;o.excl=WINGS.filter(w=>w.src=='excl').length;o.ids=new Set(WINGS.map(w=>w.id)).size==WINGS.length;return o});
   ok('no wings below level 5',r.w1===null&&r.w4===null);ok('wing tiers follow the level reward table',r.w5=='feather'&&r.w10=='celestial'&&r.w29=='silver'&&r.w30=='frost'&&r.w100=='ascendant'&&r.w150=='cosmic'&&r.w1000=='cosmic',JSON.stringify(r));
-  ok('13 level rewards (5..150), 6 exclusive wings + 4 dungeon wings, unique ids',r.cnt==13&&r.mile=='5,10,15,20,25,30,40,50,60,75,100,120,150'&&r.excl==10&&r.total>=30&&r.ids,JSON.stringify([r.mile,r.total,r.excl]));
+  ok('13 level rewards (5..150), 6 exclusive + 4 dungeon + 30 earned wings, unique ids',r.cnt==13&&r.mile=='5,10,15,20,25,30,40,50,60,75,100,120,150'&&r.excl==40&&r.total>=30&&r.ids,JSON.stringify([r.mile,r.total,r.excl]));
   ok('nameplate tiers every 15 levels (Wanderer 1-14 ... Cosmic Overlord 135-149)',r.np[0]=='0:Wanderer'&&r.np[1]=='0:Wanderer'&&r.np[2]=='1:Initiate'&&r.np[5]=='8:Ascendant Paragon'&&r.np[6]=='9:Cosmic Overlord'&&r.np[7]=='9:Cosmic Overlord'&&r.np[8]=='10:Celestial Sovereign',r.np.join(' '));
   // locked wing cannot be forced
   // level-up awakens (once per milestone)

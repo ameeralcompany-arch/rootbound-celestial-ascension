@@ -22,7 +22,7 @@ try{(()=>{
  // ---- what may be dropped, and if not, why
  function can(k){
   if(num(k)){if(!(cnt(k)>0))return{ok:false,why:'You have none'};if(k==17)return{ok:false,why:'A World Lock stays with you'};if(k>=731&&k<=749)return{ok:false,why:'Quest items stay with you'};return{ok:true}}
-  if(k.startsWith('w:')){const id=k.slice(2);if(!own[id])return{ok:false,why:'You do not own this'};if(STARTER.has(id))return{ok:false,why:'Starter tools stay with you'};if((typeof wUp!='undefined'&&wUp[id])|0)return{ok:false,why:'Upgraded weapons stay with you'};if(wp==id)return{ok:false,why:'Put it away first'};return{ok:true}}
+  if(k.startsWith('w:')){const id=k.slice(2);if(!own[id])return{ok:false,why:'You do not own this'};if(WPN[id]&&WPN[id].ars)return{ok:false,why:'Earned class weapons stay with you'};if(STARTER.has(id))return{ok:false,why:'Starter tools stay with you'};if((typeof wUp!='undefined'&&wUp[id])|0)return{ok:false,why:'Upgraded weapons stay with you'};if(wp==id)return{ok:false,why:'Put it away first'};return{ok:true}}
   if(k[0]=='a'){const id=k.slice(2);if(!ownW[id])return{ok:false,why:'You do not own this'};const w=WEAR[id];if(w&&wear[w.s]==id)return{ok:false,why:'Take it off first'};return{ok:true}}
   if(k.startsWith('wing:')){const id=k.slice(5);let w=null;try{w=wingById(id)}catch(_){}if(!w||w.src!='shop')return{ok:false,why:'Earned wings stay with you'};if(!SHOP7.has('wing_'+id))return{ok:false,why:'You do not own this'};try{if(curWing(lvl).id==id)return{ok:false,why:'Take them off first'}}catch(_){}return{ok:true}}
   if(k.startsWith('id:')){const id=k.slice(3),it=SHOP7.byId.get(id);if(!it||it.stack||!SHOP7.has(id))return{ok:false,why:'You do not own this'};if(SHOP7.equipped(id))return{ok:false,why:'Unequip it first'};return{ok:true}}

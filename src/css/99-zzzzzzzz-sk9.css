@@ -1,0 +1,54 @@
+/* the skill bar: class skills and weapon skills, each in their own row, with a cooldown sweep */
+#skills.sk9w{display:flex;flex-direction:column;gap:6px;align-items:flex-start;pointer-events:auto}
+.sk9g small{display:block;font:700 10px/1 var(--font-ui,Montserrat,sans-serif);letter-spacing:.14em;color:rgba(255,255,255,.72);margin:0 0 4px 2px;text-shadow:0 1px 3px rgba(0,0,0,.7);max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sk9r{display:flex;gap:5px}
+.sk9{position:relative;width:48px;height:48px;border-radius:9px;overflow:hidden;border:1px solid rgba(255,255,255,.2);background:rgba(14,12,28,.82);cursor:pointer;transition:transform .12s cubic-bezier(.2,1.4,.4,1),border-color .15s,filter .15s}
+.sk9:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.6)}
+.sk9:active{transform:scale(.93)}
+.sk9 img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sk9 u{position:absolute;inset:0;text-decoration:none;pointer-events:none}
+.sk9 .cdn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 15px/1 var(--font-ui,Montserrat,sans-serif);color:#fff;text-shadow:0 1px 4px #000;pointer-events:none}
+.sk9 em{position:absolute;right:3px;bottom:2px;font:800 10px/1 var(--font-ui,Montserrat,sans-serif);font-style:normal;color:#fff;text-shadow:0 0 3px #000,0 1px 2px #000;pointer-events:none}
+.sk9.dis img{filter:grayscale(1) brightness(.5)}
+.sk9.rdy{border-color:rgba(255,255,255,.34)}
+.sk9.ult{width:56px;height:56px;border-color:#ffe28a;box-shadow:0 0 12px rgba(255,226,138,.35)}
+.sk9.ult.rdy{animation:sk9p 1.8s ease-in-out infinite}
+.sk9.empty{opacity:.45;cursor:default}
+@keyframes sk9p{50%{box-shadow:0 0 20px rgba(255,226,138,.8)}}
+#sk9tip{position:fixed;z-index:9300;width:286px;padding:12px 14px;border-radius:12px;background:rgba(14,12,28,.97);border:1px solid rgba(255,255,255,.18);color:#f0eef8;font:400 13px/1.42 var(--font-ui,Montserrat,sans-serif);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;box-shadow:0 8px 28px rgba(0,0,0,.55)}
+#sk9tip.on{opacity:1;transform:none}
+#sk9tip .h{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+#sk9tip .h img{width:40px;height:40px;border-radius:7px}
+#sk9tip .h b{display:block;font-size:15px}
+#sk9tip .h small{color:rgba(255,255,255,.62);font-size:11px}
+#sk9tip p{margin:0 0 8px}
+#sk9tip dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:12px}
+#sk9tip dt{color:rgba(255,255,255,.55)}
+#sk9tip dd{margin:0;text-align:right}
+#sk9tip dd.ok{color:#8affc0}
+#sk9tip dd.off{color:#ffb08a}
+#sk9tip i{display:block;margin-top:8px;font-size:11px;color:rgba(255,255,255,.55)}
+#cmb9{position:fixed;right:34px;top:42%;z-index:30;text-align:right;color:#fff;opacity:0;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.75);transition:opacity .25s}
+#cmb9.on{opacity:1;animation:cmb9 .22s ease-out}
+#cmb9 b{display:block;font:800 44px/1 "Cormorant Garamond",Georgia,serif}
+#cmb9 small{font:700 11px/1 var(--font-ui,Montserrat,sans-serif);letter-spacing:.24em;color:#ffe28a}
+#cmb9.big b{color:#ffb060}
+@keyframes cmb9{from{transform:scale(1.28)}}
+#ultb9{position:fixed;inset:0;z-index:9200;pointer-events:none;opacity:0;transition:opacity .16s}
+#ultb9.on{opacity:1}
+#ultb9>i{position:absolute;left:0;right:0;height:9vh;background:#04030a;transform:scaleY(0);transition:transform .22s ease-out}
+#ultb9>i:first-child{top:0;transform-origin:top}#ultb9>i:nth-child(2){bottom:0;transform-origin:bottom}
+#ultb9.on>i{transform:none}
+#ultb9.who>i{display:none}
+#ultb9 .ub{position:absolute;right:5vw;top:calc(9vh + 74px);text-align:right;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.85);transform:translateX(-24px);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+#ultb9.on .ub{transform:none}
+#ultb9.who .ub{left:auto;right:30px;top:96px;bottom:auto;text-align:right}
+#ultb9 small{display:block;font:700 12px/1 var(--font-ui,Montserrat,sans-serif);letter-spacing:.24em;color:var(--ulc,#ffe28a)}
+#ultb9 b{display:block;margin:6px 0 4px;font:600 46px/1.04 "Cormorant Garamond",Georgia,serif}
+#ultb9.who b{font-size:30px}
+#ultb9 em{font:400 15px/1 var(--font-ui,Montserrat,sans-serif);font-style:normal;color:rgba(255,255,255,.85)}
+@media (max-height:640px){.sk9{width:42px;height:42px}.sk9.ult{width:48px;height:48px}}
+#vox9{position:fixed;left:50%;bottom:23vh;transform:translate(-50%,6px);z-index:60;text-align:center;color:#fff;opacity:0;pointer-events:none;transition:opacity .14s,transform .14s;text-shadow:0 2px 8px rgba(0,0,0,.9)}
+#vox9.on{opacity:1;transform:translate(-50%,0)}
+#vox9 b{display:block;font:700 24px/1.1 "Hiragino Kaku Gothic Pro","Yu Gothic","Meiryo",sans-serif}
+#vox9 small{font:500 12px/1.2 var(--font-ui,Montserrat,sans-serif);color:rgba(255,255,255,.82)}

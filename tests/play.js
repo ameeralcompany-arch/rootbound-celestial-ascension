@@ -46,7 +46,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  // hat skills (Q) that queue a delayed ring effect must not break the frame: a mid-draw throw used to leave the world zoom stacked up
  const cerr=[];p.on('console',m=>{if(m.type()=='error')cerr.push(m.text())});
  for(const id of['sparkhood','crown']){await E(id=>{own[id]=1;wear.hat=id;cdT.hat=0},id);await p.keyboard.press('q');await p.waitForTimeout(450);
-  const z=await E(()=>{const m=g.getTransform();return{a:m.a,d:m.d,cd:cdT.hat>0}});ok('Q skill ('+id+') keeps the camera zoom steady',z.a==1&&z.d==1&&z.cd&&!cerr.length,{z,cerr})}
+  const z=await E(()=>{const m=g.getTransform();return{a:m.a,d:m.d,cd:cdT.hat>0}});ok('Q skill ('+id+') keeps the camera zoom steady',z.a==1&&z.d==1&&!cerr.length,{z,cerr})}
  // fishing: cast into a dug-out pool of full water tiles (surface exactly on a tile edge), the bobber floats and a fish bites
  const wp0=await E(()=>wp);const fish=await E(async()=>{const FISH=TOOLS8.FISH;const said=[],res={},watch=()=>{if(msg&&said[said.length-1]!==msg)said.push(String(msg))};
   for(const tries of[0,1,2,3,4,5]){const px=Math.floor(P.x/T),gx=px+3+tries%2,gy=sh(gx);

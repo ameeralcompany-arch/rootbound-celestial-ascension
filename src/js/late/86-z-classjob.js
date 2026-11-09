@@ -27,7 +27,7 @@ const CJOB=(()=>{
  const canLearn=()=>!S.cur||CLASS7.lv(S.cur)>=NEED;
  // the best weapon of class k you own and can use; a starter weapon of the class if you own none
  function weaponFor(k){const ids=Object.keys(WPN).filter(id=>clsOf(id)==k&&WPN[id].k!='tool'&&id!='fist'&&!WPN[id].myth),ok=id=>(WPN[id].lv|0)<=(lvl|0)&&CLASS7.lv(k)>=creq(id);let gift=null;
-  if(!ids.some(id=>own[id])){const st=ids.filter(ok).sort((a,b)=>(WPN[a].lv|0)-(WPN[b].lv|0)||pw(a)-pw(b))[0]||ids.slice().sort((a,b)=>(WPN[a].lv|0)-(WPN[b].lv|0))[0];
+  if(!ids.some(id=>own[id])){const st=ids.filter(id=>ok(id)&&!WPN[id].ars).sort((a,b)=>(WPN[a].lv|0)-(WPN[b].lv|0)||pw(a)-pw(b))[0]||ids.filter(id=>!WPN[id].ars).sort((a,b)=>(WPN[a].lv|0)-(WPN[b].lv|0))[0];
    if(st){own[st]=1;gift=st;try{const it=SHOP7.items.find(i=>i.cat=='weapons'&&i.ref==st);if(it){SHOP7.st.own[it.id]=1;SHOP7.save()}}catch(_){}}}
   const mine=ids.filter(id=>own[id]&&ok(id)).sort((a,b)=>pw(b)-pw(a));return{id:mine[0]||'fist',gift}}
  // choose / learn / switch to class k

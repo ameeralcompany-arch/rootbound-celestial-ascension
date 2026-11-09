@@ -32,14 +32,14 @@ const CLASS7=(()=>{
   return o}
  const pc=v=>Math.round(v*100)+'%';
  function perk(k,L){const o=bon(k,L);return({brawler:'Swift Fists: +'+pc(o.spd)+' attack speed',ninja:'Shadowstep: +'+pc(o.spd)+' attack speed, '+pc(o.crit)+' chance of a 1.5x critical',samurai:'Iaido: '+pc(o.crit)+' chance of a 1.6x critical cut',
-  gunslinger:'Deadeye: +'+pc(o.spd)+' trigger speed, '+pc(o.crit)+' chance of a 1.7x headshot',archer:'Eagle Eye: +'+pc(o.far*1.2)+' damage to targets 4+ tiles away (+'+pc(o.far*.4)+' up close)',mage:'Arcane Surge: +'+pc(o.p)+' spell power, gear skills recharge '+pc(o.cdr)+' faster',
+  gunslinger:'Deadeye: +'+pc(o.spd)+' trigger speed, '+pc(o.crit)+' chance of a 1.7x headshot',archer:'Eagle Eye: +'+pc(o.far*1.2)+' damage to targets 4+ tiles away (+'+pc(o.far*.4)+' up close)',mage:'Arcane Surge: +'+pc(o.p)+' spell power, skills recharge '+pc(o.cdr)+' faster',
   demon:'Hunger: hits steal '+pc(o.ls)+' as life',reaper:'Harvest Souls: +'+pc(o.exe)+' damage to foes under 35% health, kills heal you',elementalist:'Attunement: +'+pc(o.aff*1.15)+' damage to burning, chilled or frozen foes; effects last longer',
   stormcaller:'Static: '+pc(o.arc)+' chance of a chain spark for +50% damage; hits can stun',berserker:'Rage: up to +'+pc(o.floor+o.rage)+' damage as your health drops',druid:'Grove: regenerate '+o.regen.toFixed(1)+' HP every 2 s holding a druid weapon',
   knight:'Valor: +'+pc(o.arm)+' armour, heavier knockback, hits can stun'})[k]+(L>1?' · +'+pc(o.dmg-1)+' damage':'')}
  const BYK={fist:'brawler',knuckle:'brawler',pan:'brawler',sword:'knight',spear:'knight',bow:'archer',wand:'mage',staff:'mage',scythe:'reaper',sickle:'reaper',hammer:'stormcaller',maul:'berserker',flail:'berserker',shuriken:'ninja',chakram:'ninja',glaive:'ninja',whip:'druid',gun:'gunslinger'};
  for(const k in C)C[k].ids.push('myth_'+k);   // each class's mythic scythe (99-zzzzzzzzz-2-mythic.js)
  const OF={};for(const k in C)for(const id of C[k].ids)OF[id]=k;
- const of=w=>w?(OF[w.id]||BYK[w.k]||null):null;
+ const of=w=>w?(w.cls||OF[w.id]||BYK[w.k]||null):null;
  const S={lv:{},xp:{}};for(const k in C){S.lv[k]=1;S.xp[k]=0}
  let dirty=false;
  function load(){let o=null;try{o=JSON.parse(localStorage.getItem('rbc4')||'null')}catch(_){}if(!o||typeof o!='object')return;

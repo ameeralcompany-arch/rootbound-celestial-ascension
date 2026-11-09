@@ -157,7 +157,7 @@ const WingArt=(()=>{
   if(!p){p={s:mode==2?1:0,t,fl:0,lastAir:mode==2,tier,eq:0,land:0};POSE.set(key,p);if(POSE.size>48)POSE.delete(POSE.keys().next().value)}
   let dt=t-p.t;p.t=t;if(!(dt>0)||dt>.25)dt=.016;
   if(p.tier!==tier){p.tier=tier;p.s=0;p.eq=1}
-  const air=mode==2,ex=W.src=='excl'||A.unfold||A.slow,u=((t+ph*3.1)%8.5)/8.5,idle=ease(u/.1)*(1-ease((u-.34)/.12));
+  const air=mode==2,ex=(W.src=='excl'&&!W.how)||A.unfold||A.slow,u=((t+ph*3.1)%8.5)/8.5,idle=ease(u/.1)*(1-ease((u-.34)/.12));
   const target=mode<0?0:air?1:mode==1?.28+idle*.5:idle*(ex?1:.9);
   const fly=key=='me'&&FL.on&&air,rising=fly||air&&(vy==null||vy<60),big=cl((A.L-40)/70,0,1);
   const rate=fly?FL.rate:rising?15-big*5:air?4.5-big*1.5:mode==1?7:A.flutter?8:0,amp=fly?FL.amp:rising?.3:air?.07:mode==1?.04:A.flutter?.05:0;
@@ -174,7 +174,7 @@ const WingArt=(()=>{
  // ---------- per-family drawing (inside one side's mirrored frame; +x = outward, root at 0,0) ----------
  function drawFan(g,P,ps,t,ph,fx){const nl=P.layers.length,S=ps.s;
   for(let i=0;i<nl;i++){const l=P.layers[i],kb=nl>1?1-i/(nl-1):0,e=ease(S*(1+P.stg)-kb*P.stg-P.sub*.08);
-   const ang=lerp(P.fold,P.rest,e)+(ps.fll!=null?ps.fl*(1-kb*.6)+ps.fll*kb*.6:ps.fl)*(.5+kb*.8)*(P.sub?.7:1)+ps.lag*(.5+kb)+Math.sin(t*1.7+ph)*.016*(1+kb)+(P.ruf?Math.sin(t*2.6+i*1.9+ph)*.02*S*(1+kb):0)+ps.land*.32*(1+kb*.5);
+   const ang=lerp(P.fold,P.rest,e)+(ps.fll!=null?ps.fl*(1-kb*.6)+ps.fll*kb*.6:ps.fl)*(.5+kb*.8)*(P.sub?.7:1)+ps.lag*(.5+kb)+Math.sin(t*1.7+ph)*.016*(1+kb)+(P.ruf?Math.sin(t*2.6+i*1.9+ph)*.02*S*(1+kb):0)+ps.land*.32*(1+kb*.5)+(ps.flex||0)*(.3+kb*.9)+(ps.flut?Math.sin(t*43+i*2.3+ph)*ps.flut*.018*(1+kb*1.4):0)+(ps.trm?Math.sin(i*1.7+1)*ps.trm*.05:0);
    g.save();g.rotate(ang);g.scale(lerp(P.fsx,1,e),lerp(P.fsy,1,e));g.drawImage(l.c,-l.ox,-l.oy,l.w,l.h);
    if(i==nl-1&&fx&&S>.25){const a0=g.globalAlpha;
     if(P.glow){g.globalCompositeOperation='lighter';g.globalAlpha=a0*(.07+.06*Math.sin(t*2.2+ph))*S;g.drawImage(l.c,-l.ox,-l.oy,l.w,l.h);g.globalAlpha=a0}
@@ -182,8 +182,8 @@ const WingArt=(()=>{
     if(P.glints.length){g.globalCompositeOperation='lighter';const sp=spark();for(let j=0;j<P.glints.length;j++){const q=P.glints[j],c=((t*.9+j*.61)%3.2)/.5;if(c>1)continue;const z=7*Math.sin(c*Math.PI);g.globalAlpha=a0*S;g.drawImage(sp,q[0]-z/2,q[1]-z/2,z,z)}g.globalAlpha=a0}
     g.globalCompositeOperation='source-over'}
    g.restore()}}
- function drawMem(g,P,ps,t,ph,fx){const S=ps.s,e=ease(S*1.15),L=P.L,sc=lerp(P.fs,1,e),q=ps.ph,A=ps.amp,F=P.tmp,nf=P.nf,a0=g.globalAlpha;const flx=k=>Math.sin(q-k)*A;
-  const armA=lerp(-36,-20,e)*RAD+ps.fl*.7+ps.land*.3,foreA=lerp(104,-50,e)*RAD+flx(.35)*.9+ps.land*.4,la=L*.22,lf=L*.27;
+ function drawMem(g,P,ps,t,ph,fx){const S=ps.s,e=ease(S*1.15),L=P.L,sc=lerp(P.fs,1,e),q=ps.ph,A=ps.amp,F=P.tmp,nf=P.nf,a0=g.globalAlpha;const flx=k=>Math.sin(q-k)*A+(ps.flut?Math.sin(t*37+k*5)*ps.flut*.03:0);
+  const armA=lerp(-36,-20,e)*RAD+ps.fl*.7+ps.land*.3,foreA=lerp(104,-50,e)*RAD+flx(.35)*.9+ps.land*.4+(ps.flex||0)*.8,la=L*.22,lf=L*.27;
   g.save();g.scale(sc,sc);const Ex=Math.cos(armA)*la,Ey=Math.sin(armA)*la,Wx=Ex+Math.cos(foreA)*lf,Wy=Ey+Math.sin(foreA)*lf;
   for(let i=0;i<nf;i++){const u=nf>1?i/(nf-1):0,ei=ease(S*1.3-u*.3),a=lerp(P.ff[i],P.fa[i],ei)+flx(.6+i*.3)*(.8+.35*i)+Math.sin(t*1.5+i+ph)*.025+ps.land*.3,ln=P.lens[i]*lerp(.55,1,ei);F[i*2]=Wx+Math.cos(a)*ln;F[i*2+1]=Wy+Math.sin(a)*ln}
   const Bx=L*.06,By=L*.3,sca=P.scal*(1+Math.sin(q*.5+ph)*.12);
@@ -202,7 +202,7 @@ const WingArt=(()=>{
   if(P.claw){const a=foreA-.9,c=L*(P.hook?.1:.07);g.strokeStyle=P.bone;g.lineWidth=L*.02;g.beginPath();g.moveTo(Wx,Wy);g.quadraticCurveTo(Wx+Math.cos(a)*c,Wy+Math.sin(a)*c,Wx+Math.cos(a+.9)*c*1.1,Wy+Math.sin(a+.9)*c*1.1);g.stroke()}
   g.fillStyle=P.bone;g.beginPath();g.arc(Ex,Ey,L*.022,0,6.3);g.moveTo(Wx+L*.026,Wy);g.arc(Wx,Wy,L*.026,0,6.3);g.fill();g.restore()}
  function drawMech(g,P,ps,t,ph,fx){const S=ps.s,e=ease(S*1.2),L=P.L,sc=lerp(P.fs,1,e),a0=g.globalAlpha;
-  const armA=lerp(-66,-26,e)*RAD+ps.fl*.6+ps.land*.25,foreA=lerp(64,-50,e)*RAD+ps.fl*.85+ps.land*.3,la=L*.22,lf=L*.26;
+  const armA=lerp(-66,-26,e)*RAD+ps.fl*.6+ps.land*.25,foreA=lerp(64,-50,e)*RAD+ps.fl*.85+ps.land*.3+(ps.flex||0)*.5,la=L*.22,lf=L*.26;
   g.save();g.scale(sc,sc);const Ex=Math.cos(armA)*la,Ey=Math.sin(armA)*la,Wx=Ex+Math.cos(foreA)*lf,Wy=Ey+Math.sin(foreA)*lf,tot=la+lf;
   for(let i=P.n-1;i>=0;i--){const u=P.n>1?i/(P.n-1):0,ei=ease(S*1.7-u*.7),ov=P.click?Math.sin(ei*Math.PI)*.1:0,v=(1-u*.8)*tot;
    const hx=v<=la?Ex*v/la:Ex+(Wx-Ex)*(v-la)/lf,hy=v<=la?Ey*v/la:Ey+(Wy-Ey)*(v-la)/lf,pa=lerp(P.fa[i],P.ang[i],ei)+ov+ps.fl*(.35+.5*(1-u))+Math.sin(t*1.4+i*.8+ph)*.012;
@@ -212,13 +212,13 @@ const WingArt=(()=>{
   g.lineCap='round';g.strokeStyle=P.dark;g.lineWidth=L*.065;g.beginPath();g.moveTo(0,0);g.lineTo(Ex,Ey);g.lineTo(Wx,Wy);g.stroke();g.strokeStyle=P.pal[1];g.lineWidth=L*.035;g.stroke();g.strokeStyle='rgba(255,255,255,.45)';g.lineWidth=L*.01;g.stroke();
   g.fillStyle=P.joint;for(const q of[[0,0],[Ex,Ey],[Wx,Wy]]){g.beginPath();g.arc(q[0],q[1],L*.035,0,6.3);g.fill()}g.fillStyle=P.pal[3];g.beginPath();g.arc(Ex,Ey,L*.014,0,6.3);g.moveTo(Wx+L*.014,Wy);g.arc(Wx,Wy,L*.014,0,6.3);g.fill();g.restore()}
  function drawFrag(g,P,ps,t,ph,fx,flare){const S=ps.s,n=P.fr.length,pts=P.tmp,a0=g.globalAlpha,sca=1+P.scat*flare*.22;
-  for(let i=0;i<n;i++){const f=P.fr[i],ei=ease(S*1.3-f.k*.3),a=lerp(f.fa,f.a,ei)+ps.fl*(.35+f.k*.6)+Math.sin(t*.9+f.ph)*.03+ps.land*.25,rad=f.r*lerp(P.fs,1,ei)*(1+(sca-1)*f.k)+Math.sin(t*1.4+f.ph)*1.6*S;pts[i*2]=Math.cos(a)*rad*lerp(.35,1,ei);pts[i*2+1]=Math.sin(a)*rad}
+  for(let i=0;i<n;i++){const f=P.fr[i],ei=ease(S*1.3-f.k*.3),a=lerp(f.fa,f.a,ei)+ps.fl*(.35+f.k*.6)+Math.sin(t*.9+f.ph)*.03+ps.land*.25+(ps.flex||0)*f.k,rad=f.r*lerp(P.fs,1,ei)*(1+(sca-1)*f.k)+Math.sin(t*1.4+f.ph)*1.6*S;pts[i*2]=Math.cos(a)*rad*lerp(.35,1,ei);pts[i*2+1]=Math.sin(a)*rad}
   if(P.line&&S>.3&&P.pairs.length){g.globalCompositeOperation='lighter';g.strokeStyle=rgba(P.line,.42*S);g.lineWidth=Math.max(.6,P.L*.008);g.beginPath();for(const q of P.pairs){g.moveTo(pts[q[0]*2],pts[q[0]*2+1]);g.lineTo(pts[q[1]*2],pts[q[1]*2+1])}g.stroke();g.globalCompositeOperation='source-over'}
   for(let i=0;i<n;i++){const f=P.fr[i],v=P.vars[f.v],x=pts[i*2],y=pts[i*2+1],z=lerp(.5,1,ease(S*1.3-f.k*.3));g.save();g.translate(x,y);g.rotate(f.ori?Math.atan2(y,x):f.rot+t*f.spin);g.drawImage(v.c,-v.o*z,-v.o*z,v.m*z,v.m*z);g.restore()}}
  function drawRib(g,P,ps,t,ph,fx){const S=ps.s,e=ease(S*1.25-.12);if(e<=.02)return;const K=P.K,L=P.L*lerp(P.fs,1,e),a0=g.globalAlpha;
   g.save();g.lineCap='round';g.lineJoin='round';if(K.add)g.globalCompositeOperation='lighter';if(K.dash){g.setLineDash([L*.22,L*.12]);g.lineDashOffset=-t*L*.9}
-  for(let i=0;i<P.n;i++){const u=P.n>1?i/(P.n-1):.5,ba=lerp(P.fold,P.a[i],e)+ps.fl*(.5+.4*(1-u))+ps.land*.3,Lr=L*P.len*(.55+.45*(1-u));let px=0,py=0;g.beginPath();g.moveTo(0,0);
-   for(let s=1;s<=6;s++){const q=s/6,aa=ba+K.bend*q+Math.sin(t*K.sp+q*3+i*1.7+ph)*K.wav*q,nx=Math.cos(aa)*Lr*q,ny=Math.sin(aa)*Lr*q;g.quadraticCurveTo(px,py,(px+nx)/2,(py+ny)/2);px=nx;py=ny}g.lineTo(px,py);
+  for(let i=0;i<P.n;i++){const u=P.n>1?i/(P.n-1):.5,ba=lerp(P.fold,P.a[i],e)+ps.fl*(.5+.4*(1-u))+ps.land*.3+(ps.flex||0)*.8,Lr=L*P.len*(.55+.45*(1-u));let px=0,py=0;g.beginPath();g.moveTo(0,0);
+   for(let s=1;s<=6;s++){const q=s/6,aa=ba+K.bend*q+Math.sin(t*K.sp+q*3+i*1.7+ph)*K.wav*q*(1+(ps.flut||0)*2),nx=Math.cos(aa)*Lr*q,ny=Math.sin(aa)*Lr*q;g.quadraticCurveTo(px,py,(px+nx)/2,(py+ny)/2);px=nx;py=ny}g.lineTo(px,py);
    g.globalAlpha=a0*.24*e;g.strokeStyle=P.c1;g.lineWidth=P.w*2.4;g.stroke();g.globalAlpha=a0*.85*e;g.strokeStyle=P.c2;g.lineWidth=P.w*.55;g.stroke()}
   g.restore()}
  const DRAW={fan:drawFan,mem:drawMem,mech:drawMech,frag:drawFrag,rib:drawRib};
@@ -230,12 +230,12 @@ const WingArt=(()=>{
   const ds=o&&o.ds||(QM.cur.hd?2:1.25),art=get(tier,ds),ph=phase||0;f=f||1;
   let ps=key?pose(key,tier,t,mode,vy,ph,W):{s:1,fl:Math.sin(t*2.2+ph)*.06,ph:t*2.2+ph,amp:.06,rise:false,land:0,eq:0,flare:.5+.5*Math.sin(t*.7)};
   if(api.dbg&&key=='me'){ps=Object.assign({},ps,{s:api.dbg.s,fl:api.dbg.fl!=null?api.dbg.fl:api.dbg.s?ps.fl*.2:0,land:0,flare:0})}
-  ps.lag=Math.min(.16,Math.abs(vx||0)*.00028);if(api.CYC)ps=api.CYC(ps,key,tier,t,mode,vy,W,o,art);LAST={ps,W,art,t,key};const fx=QM.cur.wfx;
+  ps.lag=Math.min(.16,Math.abs(vx||0)*.00028);if(api.CYC)ps=api.CYC(ps,key,tier,t,mode,vy,W,o,art);if(api.AERO)ps=api.AERO(ps,key,tier,t,mode,vx,vy,W,o,art,f)||ps;LAST={ps,W,art,t,key};const fx=QM.cur.wfx;
   g.save();if(alpha!=null)g.globalAlpha*=alpha;const rx=cx,ry=cy-7;
   if(art.corona){const C=art.corona,s=(.55+.45*ease(ps.s))*(1+.03*Math.sin(t*1.6))*(1+ps.flare*.06),y=ry-art.L*.1;g.save();g.globalAlpha*=.6+.4*ease(ps.s);g.translate(rx,y);g.rotate(t*.05);g.drawImage(C.c,-C.o*s,-C.o*s,C.s*s,C.s*s);g.restore()}
   if(api.PRE)api.PRE(g,art,ps,rx,ry,t,fx);
   for(let side=-1;side<=1;side+=2){const far=side*f<0,parts=art.alt&&side*f>0?art.alt:art.parts;
-   g.save();g.translate(rx+side*3,ry);g.scale(side*(far?.95:1)*(ps.sx||1),far?.97:1);if(far)g.globalAlpha*=.9;
+   g.save();g.translate(rx+side*3,ry);g.scale(side*(far?.95:1)*(ps.sx||1)*(far?(ps.xf||1):(ps.xn||1)),far?.97:1);if(ps.rot||ps.bank)g.rotate((ps.rot||0)+(far?-1:1)*(ps.bank||0));if(far)g.globalAlpha*=.9;
    for(const P of parts)(DRAW[P.kind]||api.FAM[P.kind].draw)(g,P,ps,t,ph,fx,ps.flare);g.restore()}
   if(api.POST)api.POST(g,art,ps,rx,ry,f,t,key,o,fx);
   g.restore();return ps.open!=null?ps.open:ps.s}
@@ -251,7 +251,7 @@ const WingArt=(()=>{
     for(const[w,a]of[[4,.25],[1.4,.95]]){g.strokeStyle=rgba(A.arcs,a);g.lineWidth=w;g.beginPath();pts.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.stroke()}
     const b=pts[2+((r()*2)|0)];g.strokeStyle=rgba(A.arcs,.7);g.lineWidth=1;g.beginPath();g.moveTo(b[0],b[1]);g.lineTo(b[0]+s*L*.12,b[1]+L*.16);g.lineTo(b[0]+s*L*.2,b[1]+L*.12);g.stroke()}g.restore()}
   const key=LAST&&LAST.key;if(!key||typeof VFX=='undefined'||typeof cam=='undefined')return;const wx=cx+cam.x,wy=cy+cam.y;
-  if(A.rebirth||A.unfold||W.src=='excl'){let st=RB.get(key);if(!st){st={on:0};RB.set(key,st)}if(ps.flare>.95&&!st.on){st.on=1;try{const c=[W.pal[1],W.pal[2],W.pal[3],'#ffffff'];VFX.wave(wx,wy-L*.2,W.pal[3],L*1.3,.9,.5);if(A.rebirth)VFX.burst(wx,wy-L*.2,c,26,260,1,1.1,16);else VFX.burst(wx,wy-L*.2,c,12,160,1,.9,12)}catch(_){}}else if(ps.flare<.2)st.on=0}
+  if(A.rebirth||A.unfold||(W.src=='excl'&&!W.how)){let st=RB.get(key);if(!st){st={on:0};RB.set(key,st)}if(ps.flare>.95&&!st.on){st.on=1;try{const c=[W.pal[1],W.pal[2],W.pal[3],'#ffffff'];VFX.wave(wx,wy-L*.2,W.pal[3],L*1.3,.9,.5);if(A.rebirth)VFX.burst(wx,wy-L*.2,c,26,260,1,1.1,16);else VFX.burst(wx,wy-L*.2,c,12,160,1,.9,12)}catch(_){}}else if(ps.flare<.2)st.on=0}
   if(Math.random()>.14*(QM.vfxK||1))return;const R=Math.random,px=wx+(R()<.5?-1:1)*(10+R()*L*.8),py=wy-L*.25+R()*L*.6;
   try{switch(W.fxk){case'snow':VFX.add(1,'#e8f8ff',px,py,(R()-.5)*10,14+R()*10,1.6,7,2,{a:.9});break;case'crimson':VFX.add(4,'#b0102a',px,py,(R()-.5)*30,20+R()*20,1.6,9,6,{r:R()*6,vr:2,g:10});break;
    case'volt':VFX.add(1,'#fff2a0',px,py,(R()-.5)*90,(R()-.5)*90,.22,11,2,{a:1});break;case'leaf':VFX.add(4,'#9fe0c0',px,py,(R()-.5)*60,-10+R()*20,1.4,8,6,{r:R()*6,vr:3});break;
@@ -266,4 +266,4 @@ const WingArt=(()=>{
   if(idx!==st.last){const was=st.last;st.last=idx;st.fade=0;if(key=='me'&&was!==undefined&&typeof VFX!='undefined'&&typeof cam!='undefined'){try{const W=WINGS[idx];VFX.wave(cx+cam.x,cy+cam.y,W.pal[3],W.a.L*1.1,.6,.45);VFX.burst(cx+cam.x,cy+cam.y-10,[W.pal[1],W.pal[2],W.pal[3]],14,180,1,.8,12)}catch(_){}}}
   draw(g,idx,cx,cy,f,t,mode,vx,ph,null,key,vy);extras(g,idx,cx,cy,t)}
  // FAM/CYC/PRE/POST: hooks filled by 50-z-wings2.js (tier family, keyframed flight cycle, halo ring, trail particles)
- const api={get,draw,drawChar,extras,idleFx,pose,STY:{},FL,dbg:null,FAM:{},CYC:null,PRE:null,POST:null,cacheSize:()=>cache.size,get tiers(){return WINGS.length}};return api})();
+ const api={get,draw,drawChar,extras,idleFx,pose,STY:{},FL,dbg:null,FAM:{},CYC:null,AERO:null,PRE:null,POST:null,cacheSize:()=>cache.size,get tiers(){return WINGS.length}};return api})();

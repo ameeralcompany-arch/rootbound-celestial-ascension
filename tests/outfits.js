@@ -13,7 +13,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},200000).unre
  const E=(f,a)=>p.evaluate(f,a);
  // ---- catalog, stats, art, icons
  let r=await E(()=>{const bad=[],rar={},sets={};for(const id of GEAR10.IDS){const w=WEAR[id],it=SHOP7.byId.get('wear_'+id),d=GEAR7.D[id];if(!w||!it){bad.push('missing '+id);continue}
-   if(it.cat!='gear'||it.sub!=w.s||!(it.price>0)||!(it.lv>0))bad.push('item '+id);if(!w.b||!Object.keys(w.b).length||!w.sd)bad.push('stats '+id);
+   if(it.cat!='gear'||it.sub!=w.s||!(it.price>0)||!(it.lv>0))bad.push('item '+id);if(!w.b||!Object.keys(w.b).length)bad.push('stats '+id);
    if(w.s=='hat'?!GEAR7.has(id,'hatF'):!GEAR7.has(id,'torso'))bad.push('art '+id);
    const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');if(!GEAR7.icon(x,id,64))bad.push('icon '+id);else{const px=x.getImageData(0,0,64,64).data;let n=0;for(let i=3;i<px.length;i+=4)if(px[i]>20)n++;if(n<400)bad.push('blank icon '+id)}
    rar[it.rar]=(rar[it.rar]||0)+1;(sets[GEAR10.SET[id]]=sets[GEAR10.SET[id]]||[]).push(w.s)}

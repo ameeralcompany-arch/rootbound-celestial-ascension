@@ -88,7 +88,7 @@ const WX6=(()=>{
   // snow: soft flakes in three depths that sway as they fall
   if(api.snow>.02&&open>.02){const N=Math.round((170*api.snow+120*I.blizzard)*q*(red?.4:1)*PERF7.k);while(flakes.length<N)flakes.push({x:R(),y:R(),z:R(),p:R()*6.3});if(flakes.length>N)flakes.length=N;
    const im=WXS8.flake,bz=1+I.blizzard*1.6;g.globalAlpha=1;
-   for(const f of flakes){const vy=(26+f.z*52)*bz*sc,vx=(wind*(.25+f.z*.5)+Math.sin(t*(.5+f.z*.6)+f.p)*(10+f.z*14))*sc;f.y+=vy*dt/hh;f.x+=vx*dt/w;if(f.y>1.03){f.y=-.03;f.x=R()}if(f.x>1.03)f.x-=1.06;else if(f.x<-.03)f.x+=1.06;
+   for(const f of flakes){const vy=(26+f.z*52)*bz*sc,vx=(wind*(.25+f.z*.5)+Math.sin(t*(.5+f.z*.6)+f.p)*(10+f.z*14))*sc;f.y+=vy*dt/hh;f.x+=vx*dt/w;if(window.AERO1&&AERO1.gusting)AERO1.gustFlake(f,w,hh,dt);if(f.y>1.03){f.y=-.03;f.x=R()}if(f.x>1.03)f.x-=1.06;else if(f.x<-.03)f.x+=1.06;
     const s=(4+f.z*9)*sc;g.globalAlpha=(.5+f.z*.5)*open*Math.min(1,api.snow*1.5);g.drawImage(im,f.x*w-s/2,f.y*hh-s/2,s,s)}g.globalAlpha=1}else if(flakes.length)flakes.length=0;
   // fog: an even veil + slow rolling banks (pre-rendered, tiled) in the lower half
   if(api.fog>.02){const fc=I.crystal>.3?'206,186,255':'214,222,236';g.fillStyle='rgba('+fc+','+(api.fog*.12)+')';g.fillRect(0,0,w,hh);const im=WXS8.fog;

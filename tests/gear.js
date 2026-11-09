@@ -24,7 +24,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
    const u=iconURL('a:'+id);if(!u||u.length<500)out.bad.push('iconURL '+id);
    const base={hat:'',body:'',boot:'',glove:'',wing:''},wr=Object.assign({},base,{[w.s]:id});const a=__char(base),bb=__char(wr);if(bb.n<300||a.h==bb.h)out.bad.push('worn art '+id);
    if(w.s=='hat'||w.s=='body'){const p0=__portrait(base),p1=__portrait(wr);if(p1.n<1000||p0.h==p1.h)out.bad.push('portrait '+id)}
-   if(!(w.d&&w.sd&&w.cd>0&&Object.keys(w.b).length))out.bad.push('stats '+id)}
+   if(!(w.d&&!w.sd&&Object.keys(w.b).length))out.bad.push('stats '+id)}
   for(const k in wear)wear[k]='';return out});
  ok('12 new wearables: catalog, buy charges the price, equip, icon, worn art in-game and in the portrait',r.n>=12&&r.bad.length==0,r.bad.slice(0,8).join(', '));
  // ---- every slot gets something, several rarities
@@ -43,7 +43,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
    const m={x:P.x+40,y:P.y,w:30,h:30,vx:0,vy:0,hp:99999,k};mobs.length=0;mobs.push(m);try{useSkill(sl)}catch(e){o.bad.push(id+' '+e.message)}if(!(cdT[sl]>0))o.bad.push('cd '+id);
    if(id=='anonsuit'){o.nova=99999-m.hp;o.heal=1}if(id=='anonmask')o.vanish=GEAR8.st.vanish>4&&brace>4;dash=0;mobs.length=0}
   for(const s in wear)wear[s]='';return o});
- ok('every new wearable skill fires (cooldown set); Legion of Shadows damages monsters; Vanish makes you untouchable',r.bad.length==0&&r.nova>=40&&r.vanish,r);
+ void('retired: armour has no skill buttons now; every new wearable skill fires (cooldown set); Legion of Shadows damages monsters; Vanish makes you untouchable',r.bad.length==0&&r.nova>=40&&r.vanish,r);
  // ---- charms: 3 companions + 3 effect charms
  r=await E(async()=>{const ids=['pip','gloop','cinder','runehalo','sakura','comet'],o={bad:[]};for(const c of ids){const it=SHOP7.byId.get('charm_'+c);if(!it){o.bad.push('missing '+c);continue}
    const res=await SHOP7.buy(it.id);if(!res.ok)o.bad.push('buy '+c);if(!SHOP7.equip(it.id)||SHOP7.eqRef('charm')!=c)o.bad.push('equip '+c);

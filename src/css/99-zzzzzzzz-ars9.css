@@ -1,0 +1,21 @@
+/* class weapon inspection and the Mythic moment */
+.ars9{margin:12px 0;padding:10px 12px;border-radius:10px;border:1px solid color-mix(in srgb,var(--arc,#fff) 40%,transparent);background:linear-gradient(160deg,color-mix(in srgb,var(--arc,#fff) 14%,transparent),transparent 70%)}
+.ars9.myth{border-color:var(--arc);box-shadow:0 0 18px color-mix(in srgb,var(--arc) 35%,transparent) inset}
+.ars-big{display:flex;justify-content:center;perspective:640px;margin:0 0 6px;height:170px;overflow:hidden}
+.ars-big img{height:170px;width:170px;animation:ars9t 6s ease-in-out infinite;filter:drop-shadow(0 0 12px var(--arc))}
+@keyframes ars9t{0%,100%{transform:rotateY(-22deg)}50%{transform:rotateY(22deg)}}
+.ars-t{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--arc);margin:6px 0}
+.ars-s{display:flex;gap:9px;margin:6px 0;align-items:flex-start}
+.ars-s img{width:34px;height:34px;border-radius:6px;flex:none}
+.ars-s b{display:block;font-size:13px}
+.ars-s small{display:block;font-size:11px;opacity:.7}
+.ars-s p{margin:2px 0 0;font-size:12px;line-height:1.35}
+.ars-s.u img{box-shadow:0 0 0 2px var(--arc)}
+.bar9{height:5px;border-radius:3px;background:rgba(127,127,160,.25);overflow:hidden;margin:2px 0 6px}
+.bar9 i{display:block;height:100%;background:var(--arc)}
+.colnote9{font-size:12px;opacity:.82;margin:8px 0}
+.myth9 .myw{perspective:700px}
+.myth9 .myw img{width:min(320px,70vw);height:auto;animation:myw9 3.8s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 30px var(--wrc))}
+@keyframes myw9{from{transform:rotateY(-160deg) scale(.5);opacity:0}45%{transform:rotateY(12deg) scale(1.06);opacity:1}}
+.wrv-t i.u9{margin-top:6px;color:var(--wrc)}
+@media (prefers-reduced-motion:reduce){.ars-big img,.myth9 .myw img{animation:none}}

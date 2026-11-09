@@ -6,7 +6,7 @@
 // provides it). The sheet is rebuilt only when something changes; selecting a tile patches the tile classes + details only. =====
 const INV7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- const FILT=[['all','All'],['weapons','Weapons'],['tools','Tools'],['wear','Equipment'],['wings','Wings'],['charms','Customize'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Special'],['fav','★']];/* your stats live on the Character page, their one home */
+ const FILT=[['all','All'],['weapons','Weapons'],['collection','Collection'],['tools','Tools'],['wear','Equipment'],['wings','Wings'],['charms','Customize'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Special'],['fav','★']];/* your stats live on the Character page, their one home */
  let el=null,filter='all',selK=null,assign=-1,q='',sortBy='default',favs={},seen=null,got={},menu=null,clk={k:null,t:0},last=[];
  const PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpinv';
  try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'default';if(o.n&&typeof o.n=='object')seen=o.n;if(o.g&&typeof o.g=='object')got=o.g}catch(_){}
@@ -29,7 +29,7 @@ const INV7=(()=>{
  function lazyIcon(k){if(ready(k)){const u=LC.get(k)||iconOf(k);LC.set(k,u);return u}if(!LS.has(k)){LS.add(k);LQ.push(k)}if(!lraf)lraf=requestAnimationFrame(lfill);return BLANK}
  function lfill(){lraf=0;const t0=performance.now();while(LQ.length&&performance.now()-t0<6){const k=LQ.shift();LS.delete(k);const u=iconOf(k);LC.set(k,u);if(el)for(const im of el.querySelectorAll('img[data-lk]'))if(im.dataset.lk==String(k))im.src=u}if(LQ.length)lraf=requestAnimationFrame(lfill)}
  const costOf=k=>{try{if(typeof k=='string'&&k.startsWith('id:'))return(shopOf(k)||{}).price|0;return ITEM7.value(k)}catch(_){return 0}};
- const tierOf=k=>{try{if(typeof k=='string'&&k.startsWith('id:')){const it=shopOf(k);return Math.max(0,ITEM7.RAR.indexOf(it.rar=='exclusive'?'mythic':it.rar))}if(typeof k=='string'&&k.startsWith('wing:')){const w=wingOf(k),r=w&&w.rar;const t=ITEM7.RAR.indexOf(r=='exclusive'?'mythic':r);return t>=0?t:Math.min(5,Math.floor(((w&&w.lvl)|0)/25))}return ITEM7.tier(k)}catch(_){return 0}};
+ const tierOf=k=>{try{if(typeof k=='string'&&k.startsWith('id:')){const it=shopOf(k);return Math.max(0,ITEM7.RAR.indexOf(it.rar=='exclusive'?'mythic':it.rar))}if(typeof k=='string'&&k.startsWith('wing:')){const w=wingOf(k),r=w&&w.rar;const t=ITEM7.RAR.indexOf(r=='exclusive'||r=='relic'?'mythic':r);return t>=0?t:Math.min(5,Math.floor(((w&&w.lvl)|0)/25))}return ITEM7.tier(k)}catch(_){return 0}};
  const RARA=k=>' data-cat="'+ITEM7.cat(k)+'" data-rar="'+ITEM7.RAR[tierOf(k)]+'"';
  const isWpn=k=>typeof k=='string'&&k.startsWith('w:');
  const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Hold it on the hotbar and click to place it; break it with a tool.';if(t=='seeds')return 'Hold it and click soil to plant. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. '+(()=>{try{const u=matUses(k),p=[];if(u.tribute)p.push('A tribute for ascending Mythic weapons: keep it.');if(u.craft.length)p.push('Crafts: '+u.craft.join(', ')+'.');return p.length?p.join(' '):'Sold at the market.'}catch(_){return'Sold at the market.'}})();
@@ -47,14 +47,14 @@ const INV7=(()=>{
  function items(){const out=[];
   for(const k of Object.keys(inv).map(Number).filter(k=>cnt(k)>0&&(MAT[k]||BLK[k%100]||BLK[k])).sort((a,b)=>a-b))out.push({k,t:kind(k),n:cnt(k),own:1,worn:isWorn(k)});
   for(const id in WEAR){const w=WEAR[id];out.push({k:'a:'+id,t:'wear',own:!!ownW[id],lock:lvl<w.lv&&!ownW[id],worn:wear[w.s]==id})}
-  const ws=Object.keys(WPN).filter(id=>!(WPN[id].hid&&!own[id])).map(id=>'w:'+id).sort(ITEM7.wcmp);
-  for(const k of ws){const id=k.slice(2),w=WPN[id];out.push({k,t:kind(k),own:!!own[id],lock:lvl<(w.lv|0),worn:heldW(id)})}
+  const ws=Object.keys(WPN).filter(id=>{const w=WPN[id];if(w.hid&&!own[id])return false;if(w.ars&&!own[id]){try{const lc=CJOB.learned,cu=CLASS7.cur();return lc.includes(w.cls)||cu==w.cls}catch(_){return false}}return true}).map(id=>'w:'+id).sort(ITEM7.wcmp);
+  for(const k of ws){const id=k.slice(2),w=WPN[id];out.push({k,t:kind(k),col:kind(k)=='weapons'&&!w.ars&&id!='fist',own:!!own[id],lock:lvl<(w.lv|0),worn:heldW(id)})}
   try{const cw=curWingK();for(const w of WINGS){let o=false;try{o=!!wingOwned(w)}catch(_){}if(o)out.push({k:'wing:'+w.id,t:'wings',own:1,worn:cw==='wing:'+w.id})}}catch(_){}
   try{for(const it of SHOP7.items)if((it.cat=='charms'||it.cat=='effects')&&SHOP7.has(it.id))out.push({k:'id:'+it.id,t:'charms',own:1,worn:SHOP7.equipped(it.id),sub:it.cat=='effects'?(it.sub||'effect'):'charm'})}catch(_){}
   return out}
  // ---- the main action of an item (the big button, double-click, E / Enter)
  function primary(i){if(!i)return null;const k=i.k,t=i.t;
-  if(t=='weapons'||t=='tools'){const w=WPN[k.slice(2)];if(i.lock)return{a:'',l:'Reach level '+w.lv};if(!i.own)return{a:'buy',l:'Buy · '+w.cost+' gems',dis:gems<w.cost};return i.worn?{a:'unequip',l:'Put away'}:{a:'equip',l:'Equip'+(HB()?' · slot '+(HB().equipSlot(k)+1):'')}}
+  if(t=='weapons'||t=='tools'){const w=WPN[k.slice(2)];if(!i.own&&w.ars)return{a:'',l:'Not earned yet'};if(i.lock)return{a:'',l:'Reach level '+w.lv};if(!i.own)return{a:'buy',l:'Buy · '+w.cost+' gems',dis:gems<w.cost};return i.worn?{a:'unequip',l:'Put away'}:{a:'equip',l:'Equip'+(HB()?' · slot '+(HB().equipSlot(k)+1):'')}}
   if(t=='wear'){const w=WEAR[k.slice(2)];if(i.own)return{a:'wear',l:i.worn?'Take off':'Wear'};if(i.lock)return{a:'',l:'Level '+w.lv};return{a:'buy',l:'Buy · '+w.cost+' gems',dis:gems<w.cost}}
   if(t=='wings')return{a:i.worn?'unequip':'equip',l:i.worn?'Take off':'Wear wings'};
   if(t=='charms')return{a:i.worn?'unequip':'equip',l:i.worn?'Unequip':'Equip'};
@@ -101,7 +101,7 @@ const INV7=(()=>{
   addEventListener('keydown',e=>{if(!isOpen())return;if(e.key=='Escape'){if(menu){closeMenu();e.stopPropagation();return}close();e.stopPropagation();return}
    if(e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;try{if(isTextEl(e.target))return}catch(_){}if(DLG7.isOpen)return;
    if((e.key=='e'||e.key=='E'||e.key=='Enter')&&selK!=null&&filter!='stats'){e.preventDefault();e.stopPropagation();closeMenu();doPrimary(selK)}},true)};
- function sorted(all){let list=all.filter(i=>filter=='all'?i.own:filter=='stats'?false:filter=='fav'?(i.own&&favs[i.k]):i.t==filter);
+ function sorted(all){let list=all.filter(i=>filter=='all'?i.own:filter=='stats'?false:filter=='fav'?(i.own&&favs[i.k]):filter=='collection'?!!i.col:i.t==filter);
   const qq=q.trim().toLowerCase();if(qq)list=list.filter(i=>(nameOf(i.k)+' '+ITEM7.label(i.k)+' '+(i.sub||'')).toLowerCase().includes(qq)||ITEM7.RN[tierOf(i.k)].toLowerCase()==qq);
   const pw=i=>isWpn(i.k)?ITEM7.power(i.k):0,tv=i=>tierOf(i.k);
   return list.map((i,x)=>[i,x]).sort((A,B)=>{const a=A[0],b=B[0];let d=(mineW(b.k)?1:0)-(mineW(a.k)?1:0);if(d)return d;   // the weapons of the class you use always come first
@@ -111,7 +111,7 @@ const INV7=(()=>{
    return d||A[1]-B[1]}).map(x=>x[0])}
  function render(){if(!el)return;const sh=el.querySelector('.sheet'),all=items();let ch=0;if(!seen){seen={};for(const i of all)if(i.own){seen[i.k]=1;got[i.k]=0}ch=1}
   const now=Date.now();for(const i of all)if(i.own&&got[i.k]==null){got[i.k]=now;ch=1}if(ch)saveP();
-  const cntOf=f=>all.filter(i=>f=='all'?i.own:f=='fav'?(i.own&&favs[i.k]):(i.t==f&&i.own)).length;
+  const cntOf=f=>all.filter(i=>f=='all'?i.own:f=='fav'?(i.own&&favs[i.k]):f=='collection'?(i.col&&i.own):(i.t==f&&i.own)).length;
   const list=last=sorted(all),sel=all.find(i=>i.k===selK)||null;
   let h='<header><div><div class="eyebrow">Backpack · '+esc(myName)+'</div><h2 class="ttl">Inventory</h2></div><div style="display:flex;gap:8px;align-items:center"><span class="eyebrow gem7">◆ <b>'+gems+'</b> gems</span><button class="x" data-a="close" title="Close (Esc)" aria-label="Close">✕</button></div></header>';
   h+='<nav>'+FILT.map(([f,n])=>{const c=f!='stats'?cntOf(f):0;return(f=='wings'||f=='charms')&&!c&&f!=filter?'':'<button data-f="'+f+'" class="'+(f==filter?'on':'')+'">'+n+(f!='stats'?'<small>'+c+'</small>':'')+'</button>'}).join('')+'</nav>';

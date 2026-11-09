@@ -26,7 +26,7 @@ const WINGX=(()=>{
  const has=id=>!!S.ex[id];
  const rewards=()=>WINGS.filter(w=>w.src=='level').sort((a,b)=>a.lvl-b.lvl);
  const say=(t,s,ms)=>{try{UI6.say6(t,s,ms)}catch(_){try{window.say&&window.say(t+' '+s)}catch(_){}}};
- function celebrate(w,title){try{if(entered&&typeof P!='undefined'){VFX.ascend(P.x,P.y+10,w.pal);VFX.wave(P.x,P.y+20,w.pal[3],w.a.L*1.6,1,.4);shake=Math.max(shake||0,cel.opt.reduce?0:.1)}}catch(_){}
+ function celebrate(w,title){if(w.how&&(w.rar=='mythic'||w.rar=='relic')&&window.WINGREVEAL){try{WINGREVEAL.show(w,title);return}catch(_){}}try{if(entered&&typeof P!='undefined'){VFX.ascend(P.x,P.y+10,w.pal);VFX.wave(P.x,P.y+20,w.pal[3],w.a.L*1.6,1,.4);shake=Math.max(shake||0,cel.opt.reduce?0:.1)}}catch(_){}
   try{WINGSFX.play('e',w)}catch(_){}say(title,w.n.toUpperCase(),4400)}
  // ---- level rewards: announce each milestone once
  let lastL=-1,queue=[],qT=0;
@@ -34,7 +34,7 @@ const WINGX=(()=>{
   if(L===lastL)return;lastL=L;const fresh=rewards().filter(w=>L>=w.lvl&&!S.claimed[w.id]);if(!fresh.length)return;
   for(const w of fresh)S.claimed[w.id]=1;save();queue.push({w:fresh[fresh.length-1],t:fresh.length>1?fresh.length+' WINGS AWAKENED':'WINGS AWAKENED'})}
  // ---- exclusive achievements
- function exTick(){for(const w of WINGS){if(w.src!='excl'||S.ex[w.id])continue;const r=req(w.id);if(r.length&&r.every(x=>x.done)){S.ex[w.id]=Date.now();save();queue.push({w,t:'EXCLUSIVE WINGS UNLOCKED'})}}}
+ function exTick(){for(const w of WINGS){if(w.src!='excl'||S.ex[w.id]||(w.how&&!S.fl.w3init))continue;const r=req(w.id);if(r.length&&r.every(x=>x.done)){S.ex[w.id]=Date.now();save();queue.push({w,t:w.how&&WINGX.TITLE?WINGX.TITLE[w.how]:'EXCLUSIVE WINGS UNLOCKED'})}}}
  function flags(){let ch=0;try{if(cnt(248)>0&&!S.fl.eel){S.fl.eel=1;ch=1}if(cnt(247)>0&&!S.fl.carp){S.fl.carp=1;ch=1}if(cnt(65)>0&&!S.fl.geode){S.fl.geode=1;ch=1}if(cnt(76)>0&&!S.fl.diamond){S.fl.diamond=1;ch=1}}catch(_){}if(ch)save()}
  // mined blocks: record Diamond Ore (76) and Void Geode (65) when they actually break
  {const _ba=breakAt;breakAt=function(x,y){const inb=x>=0&&y>=0&&x<W&&y<H,b=inb?tiles[y*W+x]:0;const r=_ba.apply(this,arguments);try{if(r&&inb&&!tiles[y*W+x]&&(b==76||b==65)){const k=b==76?'diamond':'geode';if(!S.fl[k]){S.fl[k]=1;save()}}}catch(_){}return r}}
@@ -43,24 +43,24 @@ const WINGX=(()=>{
  // ---- shop: equip after a successful wing purchase; exclusive wings can never be bought
  {const _b=SHOP7.buy;SHOP7.buy=async function(id,qty){const it=SHOP7.byId.get(id);if(it&&it.cat=='wings'){const w=wingById(it.ref);if(!w||w.src!='shop')return{ok:0,m:'These wings cannot be bought'}}
   const r=await _b.call(this,id,qty);try{if(r&&r.ok&&it&&it.cat=='wings'){if(wingEquip(it.ref)){const w=wingById(it.ref);setTimeout(()=>celebrate(w,'NEW WINGS EQUIPPED'),120)}}}catch(_){}return r}}
- return{has,req,rewards,REQ,S,save,flags,tick(){levelTick();flags();exTick()},grant(id){if(wingById(id)&&wingById(id).src=='excl'){S.ex[id]=Date.now();save();return true}return false}}})();
+ return{has,req,rewards,REQ,S,save,flags,HOW:null,TITLE:null,tick(){levelTick();flags();exTick()},grant(id){if(wingById(id)&&wingById(id).src=='excl'){S.ex[id]=Date.now();save();return true}return false}}})();
 
 // ---- collection UI (Wings & Aura tab)
-(()=>{const RC={common:'#aab6d8',uncommon:'#6ad88a',rare:'#5aa8ff',epic:'#c05cff',legendary:'#ffb347',mythic:'#ff5a8a',exclusive:'#ff3a4a'},RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive'};
+(()=>{const RC={common:'#aab6d8',uncommon:'#6ad88a',rare:'#5aa8ff',epic:'#c05cff',legendary:'#ffb347',mythic:'#ff5a8a',exclusive:'#ff3a4a',relic:'#7ff5e0'},RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive',relic:'Relic'};
  const F={rar:'all',fam:'all',own:'all'};let selId=null,raf=0,root=null;
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const item=w=>{try{return SHOP7.byId.get('wing_'+w.id)}catch(_){return null}};
  const owned=w=>wingOwned(w);
  function status(w){const eq=curWing(lvl);if(owned(w))return eq&&eq.id==w.id?'Equipped':'Owned';
   if(w.src=='level')return'Unlocks at level '+w.lvl;if(w.src=='shop'){const it=item(w);return it?it.price+' gems'+(it.lv?' · Lv '+it.lv:''):'Store'}
-  const r=WINGX.req(w.id);return'Exclusive · '+r.filter(x=>x.done).length+'/'+r.length}
+  const r=WINGX.req(w.id);return(w.how&&WINGX.HOW?WINGX.HOW[w.how]:'Exclusive')+' · '+r.filter(x=>x.done).length+'/'+r.length}
  const pct=(c,n)=>Math.max(0,Math.min(100,n?c/n*100:0));
  const bar=(c,n,col)=>'<div class="bar" style="height:6px;border-radius:3px;background:rgba(127,127,160,.25);overflow:hidden;margin:3px 0 6px"><i style="display:block;height:100%;width:'+pct(c,n)+'%;background:'+(col||'#7ff0ff')+'"></i></div>';
  const rtag=w=>'<span class="hchip" style="border-color:'+RC[w.rar]+';color:'+RC[w.rar]+'">'+RN[w.rar]+'</span>';
  function info(w){const it=item(w),own=owned(w),eq=curWing(lvl),isEq=eq&&eq.id==w.id,prev=WPREV.id==w.id;let h='<div class="wc-info"><b style="font-size:18px">'+esc(w.n)+'</b><div class="hrow">'+rtag(w)+'<span class="hchip">'+WFAM[w.fam]+'</span><span class="hchip'+(own?' on':'')+'">'+(own?(isEq?'Equipped':'Owned'):'Locked')+'</span></div><p class="dim">'+esc(w.d)+' Gives a double jump; hold Space in the air to fly.</p>';
   if(w.src=='level')h+='<small>Level reward · level '+w.lvl+(own?' · unlocked':' · you are level '+lvl)+'</small>'+(own?'':bar(lvl,w.lvl,RC[w.rar]));
   else if(w.src=='shop')h+='<small>Gem store · '+(it?it.price+' gems'+(it.lv?' · needs level '+it.lv:''):'not listed')+(own?' · owned':' · you have '+(gems|0)+' gems')+'</small>';
-  else{h+='<small>Exclusive · cannot be bought. Requirements:</small>';for(const r of WINGX.req(w.id))h+='<div style="font-size:12px;margin-top:4px">'+(r.done?'✔ ':'○ ')+esc(r.t)+' <span class="dim">'+r.cur+' / '+r.need+'</span></div>'+bar(r.cur,r.need,r.done?'#6ad88a':RC.exclusive)}
+  else{h+='<small>'+(w.how&&WINGX.HOW?WINGX.HOW[w.how]+' · how to earn them:':'Exclusive · cannot be bought. Requirements:')+'</small>';for(const r of WINGX.req(w.id))h+='<div style="font-size:12px;margin-top:4px">'+(r.done?'✔ ':'○ ')+esc(r.t)+' <span class="dim">'+r.cur+' / '+r.need+'</span></div>'+bar(r.cur,r.need,r.done?'#6ad88a':RC.exclusive)}
   h+='<div class="hrow" style="margin-top:8px"><button class="hbtn" data-wa="prev">'+(prev?'Stop preview':'Preview')+'</button>';
   if(own)h+=isEq?'<button class="hbtn" data-wa="un">Unequip</button>':'<button class="hbtn" data-wa="eq">Equip</button>';
   else if(w.src=='shop'&&it){const lk=(lvl|0)<(it.lv|0),poor=(gems|0)<it.price;h+='<button class="hbtn" data-wa="buy"'+(lk||poor?' disabled style="opacity:.45"':'')+'>'+(lk?'Needs level '+it.lv:poor?'Need '+(it.price-(gems|0))+' more gems':'Buy · '+it.price+' gems')+'</button>'}

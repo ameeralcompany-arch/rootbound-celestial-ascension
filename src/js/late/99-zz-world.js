@@ -18,7 +18,7 @@ const LIFE8=(()=>{
   fatlas=document.createElement('canvas');fatlas.width=16*FLW.length;fatlas.height=34;const y=fatlas.getContext('2d');
   FLW.forEach((c,i)=>{const cx=i*16+8;y.strokeStyle='#5d9a4a';y.lineWidth=1.3;y.beginPath();y.moveTo(cx,33);y.quadraticCurveTo(cx+1,20,cx,6);y.stroke();y.fillStyle=c;for(let j=0;j<5;j++){const a=j*1.2566;y.beginPath();y.arc(cx+Math.cos(a)*2.5,6+Math.sin(a)*2.5,2,0,6.3);y.fill()}y.fillStyle='#ffc94a';y.beginPath();y.arc(cx,6,1.4,0,6.3);y.fill()})}
  function flora(x0,x1,y0,y1,t){if(!atlas)mkAtlas();const wind=1.2+WX6.wind*3;flowers.length=0;tops=0;let nf=0;/* flower records are pooled (no new arrays every frame) */
-  const push=(bx,by)=>{const dx=bx-P.x,dy=Math.abs(P.y+P.h-by);if(dy>26||Math.abs(dx)>44)return 0;return Math.sign(dx||1)*(1-Math.abs(dx)/44)*(4+Math.min(3,Math.abs(P.vx)/80))};
+  const air8=window.AERO1?AERO1.washAt:null,push=(bx,by)=>{const dx=bx-P.x,dy=Math.abs(P.y+P.h-by),wa=air8?air8(bx,by):0;if(dy>26||Math.abs(dx)>44)return wa;return wa+Math.sign(dx||1)*(1-Math.abs(dx)/44)*(4+Math.min(3,Math.abs(P.vx)/80))};
   for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++){const k=y*W+x;if(tiles[k]!=2||tiles[k-W]||wl[k-W])continue;tops++;
    const lean=Math.sin(t*1.5+x*.6)*wind*.5+push(x*T+T/2,y*T),l=Math.max(0,Math.min(NL-1,Math.round(lean+(NL-1)/2))),v=(x*7+y)%3;
    g.drawImage(atlas,l*GW,v*GH,GW,GH,x*T-cam.x,y*T-cam.y-GH+2,GW,GH);

@@ -49,7 +49,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},300000).unre
   // sniper: charged shot pierces two monsters in a line, full charge hits harder than a tap
   const mk=(dx)=>{const d=MK.slime,m={k:'slime',x:P.x+dx,y:P.y+P.h-d.h,w:d.w,h:d.h,vx:0,vy:0,hp:99999,fl:0,burn:0,slow:0,ph:0,t:1,dir:1,fade:0,g:false,wall:0,stun:99};mobs.push(m);return m};
   const rnd=Math.random;Math.random=()=>.99;try{P.f=1;wp='sniper';const a=mk(120),b2=mk(200);mx=a.x-cam.x;my=a.y+a.h/2-cam.y;wcd=0;useWeapon();await new Promise(r=>setTimeout(r,120));const tap=99999-a.hp;o.pierce=a.hp<99999&&b2.hp<99999;
-   a.hp=99999;mdL=true;wcd=0;useWeapon();await new Promise(r=>setTimeout(r,1300));mdL=false;await new Promise(r=>setTimeout(r,120));o.full=99999-a.hp;o.tap=tap;o.charged=o.full>tap*2}finally{Math.random=rnd;mdL=false}
+   a.hp=99999;mdL=true;wcd=0;useWeapon();await new Promise(r=>setTimeout(r,1300));mx=a.x-cam.x;my=a.y+a.h/2-cam.y;/* the target settles while the shot charges */mdL=false;await new Promise(r=>setTimeout(r,320));o.full=99999-a.hp;o.tap=tap;o.d={si:typeof showInv!="undefined"&&showInv,l:lvl,w:wp,cwd:wcd,ent:entered};o.charged=o.full>tap*2}finally{Math.random=rnd;mdL=false}
   // shotgun: six pellets per shot
   mobs.length=0;wp='shotgun';wcd=0;const n0=GUN9.alive;useWeapon();o.pellets=GUN9.alive-n0;
   // revolver: the 6th shot is the blossom shot (longer reload)

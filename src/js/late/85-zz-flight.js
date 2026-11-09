@@ -5,7 +5,7 @@ const FLY7=(()=>{
  const wingNow=()=>{try{return curWing(lvl)}catch(_){return null}};
  // tk = top-tier class: 0 normal, 1 legendary, 2 mythic (exclusive flies like mythic). Top-tier wings climb ~1.5x / ~2x an epic wing
  // and hold the climb longer, so they reach far higher before running out of breath. Peak climb stays < 900 px/s (no tunnelling).
- const tkOf=w=>!w?0:(w.rar=='mythic'||w.rar=='exclusive')?2:w.rar=='legendary'?1:0;
+ const tkOf=w=>!w?0:(w.rar=='mythic'||w.rar=='exclusive'||w.rar=='relic')?2:w.rar=='legendary'?1:0;
  const lift=(t,tk)=>Math.min(900,tk==2?460+Math.max(0,t-6)*8:tk==1?345+Math.max(0,t-4)*8:230+t*12);
  const maxT=(t,tk)=>(3.2+.14*t)*(tk==2?1.5:tk==1?1.25:1);
  function flap(strong){try{wingFlap=1;wingOpen=1}catch(_){}try{featherFx(strong?3:1)}catch(_){}

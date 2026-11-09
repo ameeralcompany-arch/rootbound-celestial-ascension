@@ -55,7 +55,7 @@ try{(()=>{
   if(num(k)){const dg=dungeonRows(k);let src=[];try{src=RPG.items.sources(k)}catch(_){}const b=biomeOf(k);if(b)o.push({t:'Found in '+b+', a depth biome under the surface'});for(const s of src){const d=dg.find(x=>s.startsWith(x.d.n));o.push({t:s,go:d?{kind:'dungeon',arg:d.d.id}:undefined})}return o}
   if(k.startsWith('w:')){const w=WPN[k.slice(2)];if(!w)return o;if(w.cost>0)o.push({t:'Buy it here in your inventory for '+w.cost.toLocaleString()+' gems'+(w.lv?', from level '+w.lv:'')});else if(w.dg)o.push({t:'Forged from dungeon materials',go:{kind:'forge'}});else o.push({t:w.k=='tool'?'A starting tool':'Earned through play, not sold'});return o}
   if(k[0]=='a'&&WEAR[k.slice(2)]){const w=WEAR[k.slice(2)];if(w.cost>0)o.push({t:'Buy it here in your inventory for '+w.cost.toLocaleString()+' gems'+(w.lv?', from level '+w.lv:'')});else o.push({t:'Earned through play, not sold'});return o}
-  if(k.startsWith('wing:')){const w=wingOf(k);if(w&&w.lvl)o.push({t:'Reached at level '+w.lvl});else o.push({t:'The Store',go:{kind:'store'}});return o}
+  if(k.startsWith('wing:')){const w=wingOf(k);if(w&&w.lvl)o.push({t:'Reached at level '+w.lvl});else if(w&&w.src=='excl'){const label=w.how&&WINGX.HOW?WINGX.HOW[w.how]:'Achievement';for(const r of WINGX.req(w.id))o.push({t:label+': '+r.t+' ('+r.cur+' / '+r.need+')'})}else o.push({t:'The Store',go:{kind:'store'}});return o}
   if(k.startsWith('id:')){const it=shopOf(k);if(it&&it.price)o.push({t:'The Store, '+it.price.toLocaleString()+' gems',go:{kind:'store'}});else o.push({t:'The Store',go:{kind:'store'}});return o}
   return o}
  function used(k){const o=[];
