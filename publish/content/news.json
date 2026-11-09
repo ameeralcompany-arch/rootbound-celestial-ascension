@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.17",
+      "type": "update",
+      "title": "Controls work on any keyboard",
+      "summary": "W, A, S, D and every other control now work whichever keyboard language you are using, including Arabic. Typing in chat is unchanged.",
+      "body": "W, A, S, D and every other control now work whichever keyboard language you are using, including Arabic. Typing in chat is unchanged.",
+      "date": "2026-11-09",
+      "version": "6.13.17"
+    },
+    {
       "id": "update-6.13.16",
       "type": "update",
       "title": "Wings, class weapons and real combat",
