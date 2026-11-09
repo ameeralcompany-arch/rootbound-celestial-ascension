@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.16",
+      "type": "update",
+      "title": "Wings, class weapons and real combat",
+      "summary": "Every class now has its own five weapons, each with its own skills, and Mythic weapons have five skills and a spectacular ultimate. Characters fight with full-body animation and short Japanese battle callouts. Armour now gives stats only; e",
+      "body": "Every class now has its own five weapons, each with its own skills, and Mythic weapons have five skills and a spectacular ultimate. Characters fight with full-body animation and short Japanese battle callouts. Armour now gives stats only; each class has two skills of its own. Wings react to how you really fly, and there are 30 new wings to earn, including the new Relic tier.",
+      "date": "2026-11-09",
+      "version": "6.13.16"
+    },
+    {
       "id": "update-6.13.15",
       "type": "update",
       "title": "Smoother everywhere",
