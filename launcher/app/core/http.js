@@ -1,7 +1,7 @@
 // HTTPS only, in every build. Redirects are followed by hand so that each hop is checked: a redirect to plain HTTP is refused.
 'use strict';
 const https = require('https');
-const { abortError } = require('./util');
+const { abortError, sleep, isAbort } = require('./util');
 
 class NetError extends Error {
   constructor(msg, { retry = true, status = 0, code = 'NET' } = {}) { super(msg); this.retry = retry; this.status = status; this.code = code; }
@@ -16,7 +16,7 @@ function requireHttps(u) {
 
 class Http {
   // ca: extra trusted certificate, only used by test builds pointed at a local server.
-  constructor({ ca = null, userAgent = 'RootboundLauncher', connectTimeoutMs = 20000, idleTimeoutMs = 30000 } = {}) {
+  constructor({ retryDelayMs = 700, ca = null, userAgent = 'RootboundLauncher', connectTimeoutMs = 20000, idleTimeoutMs = 30000 } = {}) { this.retryDelayMs = retryDelayMs;
     this.ca = ca; this.ua = userAgent; this.connectTimeoutMs = connectTimeoutMs; this.idleTimeoutMs = idleTimeoutMs;
     this.agent = new https.Agent({ keepAlive: true, maxSockets: 8, ca: ca || undefined });
   }
@@ -56,8 +56,21 @@ class Http {
     });
   }
 
-  // A small file, whole, in memory. Larger than maxBytes is an error: nobody can make the launcher fill memory.
-  async getBytes(u, { maxBytes = 4 * 1024 * 1024, signal, noCache = false } = {}) {
+  // Hosts have short bad moments: a 5xx, a timeout, a dropped connection. Those are worth another try. No internet at all, a 404 or a refused connection are not, so being offline is still reported at once.
+  static brief(e) { return e instanceof NetError && (e.status >= 500 || e.status === 408 || e.status === 429 || e.code === 'TIMEOUT' || e.code === 'BAD_JSON' || (e.status === 0 && /reset|hang up|timed out/i.test(e.message || ''))); }
+  async retrying(tries, signal, fn) {
+    for (let attempt = 1; ; attempt++) {
+      try { return await fn(); } catch (e) {
+        if (attempt >= tries || isAbort(e) || !Http.brief(e)) throw e;
+        await sleep(this.retryDelayMs * Math.pow(2, attempt - 1) + Math.random() * 200, signal);
+      }
+    }
+  }
+
+  // A small file, whole, in memory. Larger than maxBytes is an error: nobody can make the launcher fill memory. tries: how many times to ask if the host has a bad moment.
+  async getBytes(u, { tries = 1, ...o } = {}) { return this.retrying(tries, o.signal, () => this.getOnce(u, o)); }
+
+  async getOnce(u, { maxBytes = 4 * 1024 * 1024, signal, noCache = false } = {}) {
     const res = await this.open(u, { signal, noCache });
     const chunks = []; let n = 0;
     try {
@@ -74,9 +87,11 @@ class Http {
     return Buffer.concat(chunks);
   }
 
-  async getJson(u, opts) {
-    const b = await this.getBytes(u, opts);
-    try { return JSON.parse(b.toString('utf8')); } catch (_) { throw new NetError('The server sent an unreadable file', { retry: true, code: 'BAD_JSON' }); }
+  async getJson(u, { tries = 1, ...o } = {}) {
+    return this.retrying(tries, o.signal, async () => {
+      const b = await this.getOnce(u, o);
+      try { return JSON.parse(b.toString('utf8')); } catch (_) { throw new NetError('The server sent an unreadable file', { retry: true, code: 'BAD_JSON' }); }
+    });
   }
 
   close() { this.agent.destroy(); }

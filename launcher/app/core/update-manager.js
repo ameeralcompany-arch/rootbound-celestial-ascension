@@ -72,7 +72,7 @@ class UpdateManager extends EventEmitter {
 
   async _check(signal) {
     try {
-      const env = await this.http.getJson(new URL('latest.json', this.cfg.channelUrl).toString(), { noCache: true, maxBytes: 2 * 1024 * 1024, signal });
+      const env = await this.http.getJson(new URL('latest.json', this.cfg.channelUrl).toString(), { tries: 5, noCache: true, maxBytes: 2 * 1024 * 1024, signal });
       const latest = verifyLatest(env, this.cfg.publicKeys, this.cfg.channel);
       // An older list than one already seen is a replay: someone is trying to hold players back on an old version.
       if (latest.sequence < (this.state.lastSequence || 0)) {

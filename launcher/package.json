@@ -1,7 +1,7 @@
 {
   "name": "rootbound-launcher",
   "productName": "Rootbound Launcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rootbound Launcher: installs, updates and starts Rootbound",
   "main": "bootstrap/main.js",
   "author": "Rootbound",

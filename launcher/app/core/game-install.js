@@ -95,7 +95,7 @@ class GameInstall extends EventEmitter {
   // Fetches and checks a manifest named by a verified update list.
   async fetchManifest(baseUrl, game, { signal } = {}) {
     const url = new URL(game.manifest, baseUrl).toString();
-    const raw = await this.http.getBytes(url, { maxBytes: 32 * 1024 * 1024, signal });
+    const raw = await this.http.getBytes(url, { tries: 5, maxBytes: 32 * 1024 * 1024, signal });
     if (raw.length !== game.manifestSize || sha256(raw) !== game.manifestSha256) throw new InstallError('The manifest did not match the signed update list', 'BAD_MANIFEST');
     let env;
     try { env = JSON.parse(raw.toString('utf8')); } catch (_) { throw new InstallError('The manifest is unreadable', 'BAD_MANIFEST'); }

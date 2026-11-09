@@ -236,7 +236,8 @@ async function main() {
   if (entered) {
     ok('the save copy loaded: the same character as on this PC', entered.game.level >= 1, { level: entered.game.level, name: entered.game.name ? '(has a name)' : '(none)' });
     ok('the game reports the version the launcher installed', entered.version === '6.13.0', entered.version);
-    ok('the game drew an avatar for the profile', typeof entered.game.avatar === 'string' && entered.game.avatar.startsWith('data:image/png'));
+    /* the picture is encoded off the main thread, so it arrives with a report or two after the first */const withAv = await until(() => { try { const j = JSON.parse(fs.readFileSync(prof, 'utf8')); return j.game && typeof j.game.avatar === 'string' && j.game.avatar.startsWith('data:image/png') ? j : null; } catch (_) { return null; } }, 30000, 1000);
+    ok('the game drew an avatar for the profile', !!withAv);
     ok('recent worlds are recorded', entered.recentWorlds.length > 0, entered.recentWorlds.slice(0, 2));
   }
   await sleep(1000);
@@ -518,27 +519,29 @@ async function main() {
 
   // ---- the launcher updates its own code; a bad update can't take it down (locked exe)
   console.log('\n--- launcher self-update (' + Math.round((Date.now() - t0) / 1000) + 's)');
-  { const pl = await W.publish(['--launcher-only', '--launcher-version', '1.0.1', '--notes', 'Launcher test update']);
+  // versions come from the launcher's own package, so raising it never breaks this test
+  const BUILT_L = require(path.join(__dirname, '..', '..', 'launcher', 'package.json')).version, NEXT_L = '9.0.0';
+  { const pl = await W.publish(['--launcher-only', '--launcher-version', NEXT_L, '--notes', 'Launcher test update']);
     ok('publishing the launcher code works', pl.code === 0 && /launcher update is live/i.test(pl.out), pl.err || pl.out.slice(-200));
     const e = envFor({ RB_L_SYS_ROOT: path.join(T, 'sys1'), RB_L_GAME_DATA: path.join(T, 'gd1') });
     let r = await exec(ins1exe, ['--smoke', '--apply-launcher-update', '--user-data-dir=' + ud1], { env: e, timeoutMs: 90000 });
-    ok('the locked launcher downloads its own update', /LAUNCHER-UPDATE ready=1\.0\.1/.test(r.out), r.out.trim());
+    ok('the locked launcher downloads its own update', r.out.includes('LAUNCHER-UPDATE ready=' + NEXT_L), r.out.trim());
     r = await exec(ins1exe, ['--smoke', '--user-data-dir=' + ud1], { env: e, timeoutMs: 60000 });
-    ok('after a restart it runs the new code, checked by the built-in signature check', /version=1\.0\.1 updated=true builtIn=1\.0\.0/.test(r.out), r.out.trim());
-    const dir = path.join(ud1, 'launcher-update'), asarF = path.join(dir, 'app-1.0.1.asar'), keep = fs.readFileSync(asarF);
+    ok('after a restart it runs the new code, checked by the built-in signature check', r.out.includes('version=' + NEXT_L + ' updated=true builtIn=' + BUILT_L), r.out.trim());
+    const dir = path.join(ud1, 'launcher-update'), asarF = path.join(dir, 'app-' + NEXT_L + '.asar'), keep = fs.readFileSync(asarF);
     const bad = Buffer.from(keep); bad[bad.length >> 1] ^= 0xff; fs.writeFileSync(asarF, bad);
     r = await exec(ins1exe, ['--smoke', '--user-data-dir=' + ud1], { env: e, timeoutMs: 60000 });
-    ok('a changed code package is never run: it falls back to the built-in copy', /version=1\.0\.0 updated=false/.test(r.out), r.out.trim());
+    ok('a changed code package is never run: it falls back to the built-in copy', r.out.includes('version=' + BUILT_L + ' updated=false'), r.out.trim());
     fs.writeFileSync(asarF, keep);
     const cur = path.join(dir, 'current.json'), envKeep = fs.readFileSync(cur), je = JSON.parse(envKeep), pay = JSON.parse(je.payload); pay.version = '1.0.2'; je.payload = JSON.stringify(pay);
     fs.writeFileSync(cur, JSON.stringify(je));
     r = await exec(ins1exe, ['--smoke', '--user-data-dir=' + ud1], { env: e, timeoutMs: 60000 });
-    ok('a forged record is never trusted either', /version=1\.0\.0 updated=false/.test(r.out), r.out.trim());
+    ok('a forged record is never trusted either', r.out.includes('version=' + BUILT_L + ' updated=false'), r.out.trim());
     fs.writeFileSync(cur, envKeep);
     // an update that never reports a good start twice in a row is dropped
-    fs.writeFileSync(path.join(dir, 'boot-state.json'), JSON.stringify({ version: '1.0.1', attempts: 2, bad: [] }));
+    fs.writeFileSync(path.join(dir, 'boot-state.json'), JSON.stringify({ version: NEXT_L, attempts: 2, bad: [] }));
     r = await exec(ins1exe, ['--smoke', '--user-data-dir=' + ud1], { env: e, timeoutMs: 60000 });
-    ok('a code update that keeps failing to start is given up on', /version=1\.0\.0 updated=false/.test(r.out), r.out.trim());
+    ok('a code update that keeps failing to start is given up on', r.out.includes('version=' + BUILT_L + ' updated=false'), r.out.trim());
   }
 
   // ---- uninstall (locked exe), and what it leaves

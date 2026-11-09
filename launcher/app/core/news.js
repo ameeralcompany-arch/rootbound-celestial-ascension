@@ -39,7 +39,7 @@ class News {
 
   async refresh() {
     try {
-      const env = await this.http.getJson(this.feedUrl(), { noCache: true, maxBytes: 4 * 1024 * 1024 });
+      const env = await this.http.getJson(this.feedUrl(), { tries: 3, noCache: true, maxBytes: 4 * 1024 * 1024 });
       const p = verifyFeed(env, this.cfg.publicKeys);
       // same rule as updates: an older feed than the one already here is ignored
       if (this.feed && p.sequence < this.feed.sequence) { this.error = { code: 'OLD_FEED', message: 'The server has an older news feed' }; return this.state(); }

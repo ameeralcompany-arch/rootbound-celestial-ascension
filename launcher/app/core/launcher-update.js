@@ -37,13 +37,13 @@ class LauncherUpdate extends EventEmitter {
     this.state.working = true; this.state.error = null; this.emit('state', this.state);
     try {
       await fsp.mkdir(this.dir, { recursive: true });
-      const envRaw = await this.http.getBytes(new URL(latest.envelope, baseUrl).toString(), { maxBytes: 64 * 1024 });
+      const envRaw = await this.http.getBytes(new URL(latest.envelope, baseUrl).toString(), { tries: 5, maxBytes: 64 * 1024 });
       const env = JSON.parse(envRaw.toString('utf8'));
       const rec = verifyEnvelope(env, this.boot.config.publicKeys);
       if (rec.kind !== 'launcher-app' || rec.version !== latest.version || rec.sha256 !== latest.sha256) throw Object.assign(new Error('The launcher update did not match the signed list'), { code: 'BAD_MANIFEST' });
       const file = path.join(this.dir, 'app-' + rec.version + '.asar');
       if (!(await exists(file)) || (await sha256File(file)) !== rec.sha256) {
-        const buf = await this.http.getBytes(new URL(latest.file, baseUrl).toString(), { maxBytes: 200 * 1024 * 1024 });
+        const buf = await this.http.getBytes(new URL(latest.file, baseUrl).toString(), { tries: 5, maxBytes: 200 * 1024 * 1024 });
         if (buf.length !== rec.size || sha256(buf) !== rec.sha256) throw Object.assign(new Error('The launcher update was damaged in download'), { code: 'BAD_HASH' });
         await atomicWrite(file, buf);
       }

@@ -156,6 +156,15 @@ async function main() {
     const job = M.install.makeDownload; M.install.makeDownload = function (plan) { const j = job.call(this, plan); j.backoffMs = 10; j.maxAttempts = 3; return j; };
     end = finish(M); M.enqueue('update'); t = await end;
     ok('a server that stays down ends in a clear failure', t.phase === 'failed' && /503/.test(t.error.message), t.error);
+    // a short outage at the host: the update check asks again by itself; a host that stays down is still reported; a page that does not exist is not asked for again
+    { const f0 = S.ctl.fault, quick = () => new Http({ ca: cert.cert, userAgent: 'test', idleTimeoutMs: 6000, retryDelayMs: 15 });
+      const mk = d => new UpdateManager({ config: conf, http: quick(), stateDir: path.join(T, d), gameDir: path.join(T, d + 'g'), saveDir: saves, smokeCheck: false });
+      let n = 0; S.ctl.fault = url => url.includes('latest.json') && n++ < 3 ? { status: 504 } : null; const r1 = mk('retry1'); await r1.init(); const a = await r1.check();
+      ok('a short outage at the host: the check asks again and succeeds', !a.checkError && !!a.latest && n === 4, { n, err: a.checkError });
+      n = 0; S.ctl.fault = url => { if (url.includes('latest.json')) { n++; return { status: 504 }; } return null; }; const r2 = mk('retry2'); await r2.init(); const b = await r2.check();
+      ok('a host that stays down is still reported, after a few tries', !!b.checkError && /504/.test(b.checkError.message) && n === 5, { n, err: b.checkError });
+      n = 0; S.ctl.fault = url => { if (url.includes('latest.json')) { n++; return { status: 404 }; } return null; }; const r3 = mk('retry3'); await r3.init(); await r3.check();
+      ok('a missing file is not asked for again', n === 1, { n }); S.ctl.fault = f0; }
     ok('the game is unchanged after a failed update', (await live()).p.current.version === before && (await M.install.preLaunchCheck()).ok);
     ok('the launcher still knows the update is there to retry', (await M.status()).canResume && (await M.status()).action === 'update');
     down = false; S.ctl.fault = null;

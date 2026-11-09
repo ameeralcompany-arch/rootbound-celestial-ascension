@@ -84,12 +84,12 @@ async function checkKeyIsTrusted(cfg, key) {
 // The current state of the host, read from the public address, the way players see it.
 async function readPublished(cfg, http, trusted) {
   let env = null;
-  try { env = await http.getJson(new URL('latest.json', cfg.publicUrl).toString(), { noCache: true }); } catch (e) { if (e.status !== 404) throw new Error('Could not read the current update list from ' + cfg.publicUrl + ': ' + e.message); }
+  try { env = await http.getJson(new URL('latest.json', cfg.publicUrl).toString(), { tries: 6, noCache: true }); } catch (e) { if (e.status !== 404) throw new Error('Could not read the current update list from ' + cfg.publicUrl + ': ' + e.message); }
   if (!env) return { latest: null, manifest: null };
   const latest = verifyLatest(env, trusted, cfg.channel);
   let manifest = null;
   if (latest.game) {
-    const raw = await http.getBytes(new URL(latest.game.manifest, cfg.publicUrl).toString(), { maxBytes: 32 * 1024 * 1024 });
+    const raw = await http.getBytes(new URL(latest.game.manifest, cfg.publicUrl).toString(), { tries: 6, maxBytes: 32 * 1024 * 1024 });
     manifest = verifyManifest(JSON.parse(raw.toString('utf8')), trusted, { version: latest.game.version });
   }
   return { latest, manifest };
@@ -151,7 +151,7 @@ async function publishNews(cfg, backend, http, key, trusted, contentFile, { log 
   for (const b of banners) bns.push(Object.assign({}, b, { image: await prepImage(b.image, b.id || 'banner') }));
   let prevSeq = 0;
   try {
-    const old = await http.getJson(new URL(publicName(backend, 'news.json'), cfg.publicUrl).toString(), { noCache: true });
+    const old = await http.getJson(new URL(publicName(backend, 'news.json'), cfg.publicUrl).toString(), { tries: 6, noCache: true });
     prevSeq = verifyEnvelope(old, trusted).sequence || 0;
   } catch (e) { if (e.status !== 404 && e.code !== 'BAD_SIGNATURE') log('(could not read the old news feed: ' + e.message + ')'); }
   const payload = { schema: 1, kind: 'news', sequence: nextSequence(prevSeq), publishedAt: Date.now(), items: out, events: evs, banners: bns, community: src.community || { links: [] }, maintenance: src.maintenance || null };
