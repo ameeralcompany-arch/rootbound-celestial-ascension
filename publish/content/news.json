@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.18",
+      "type": "update",
+      "title": "Evolution cinematics for every class",
+      "summary": "Evolving your class now plays its own 20-second cinematic, starring your character: the Mythic wakes, the new look arrives piece by piece, and the class's signature move ends on the evolution's name. Every class also gets one Mythic with sk",
+      "body": "Evolving your class now plays its own 20-second cinematic, starring your character: the Mythic wakes, the new look arrives piece by piece, and the class's signature move ends on the evolution's name. Every class also gets one Mythic with skills on Q E R Z V, its own sounds and dash, and a brighter anime look.",
+      "date": "2026-11-11",
+      "version": "6.13.18"
+    },
+    {
       "id": "update-6.13.17",
       "type": "update",
       "title": "Controls work on any keyboard",
