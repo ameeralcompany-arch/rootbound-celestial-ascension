@@ -29,7 +29,7 @@ const SFX7=(()=>{
 { // swing -> shout
  // monsters: soft hit/death sounds
  const _hm=hurtMob;hurtMob=function(m,d,w,ang){const was=m.hp>0,r=_hm.apply(this,arguments);try{if(was&&d>0)SFX7.mobSound(m,m.hp<=0?'die':'hit')}catch(_){}return r};
- setInterval(()=>{try{if(!entered||!mobs.length||Math.random()<.45)return;const m=mobs[(Math.random()*mobs.length)|0];if(m&&!m.dead)SFX7.mobSound(m,'idle')}catch(_){}},2600);
+ setInterval(()=>{try{if(!entered||window.RB_COVER||!mobs.length||Math.random()<.45)return;const m=mobs[(Math.random()*mobs.length)|0];if(m&&!m.dead)SFX7.mobSound(m,'idle')}catch(_){}},2600);
  // water: splash replaces the old hissy noise; placing a block into water goes "bloop"
  const _sf=splashFx;splashFx=function(x,y,pw){const sv=OPT.sv;OPT.sv=0;try{_sf.apply(this,arguments)}finally{OPT.sv=sv}SFX7.splash(Math.abs(pw)||300)};
  const _pa=placeAction;placeAction=function(){let k=-1,w0=0,c0=0;try{const it=bar[sel],tx=Math.floor((mx+cam.x)/T),ty=Math.floor((my+cam.y)/T);k=ty*W+tx;w0=wl[k]|0;c0=it?cnt(it):0;const r=_pa.apply(this,arguments);if(w0>0&&it&&cnt(it)<c0)SFX7.bloop(.9);return r}catch(e){throw e}};

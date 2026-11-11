@@ -1,0 +1,37 @@
+// ===== ANIME1: Rootbound's own bright anime look. Clouds painted like anime backgrounds (a clean white mass with a crisp, cool shadow side) instead of soft photographic puffs, and poster art of the game's own heroes for the title screen and thumbnails. Everything is painted once and stamped. =====
+try{(()=>{
+ const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+ const sr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+ const PAL={day:['#ffffff','#e4f2ff','#a9d0f6'],dusk:['#fff4e4','#ffc9a0','#c47a9a']};
+ const CACHE={};
+ function puffs(r,w,h,n){const out=[];for(let i=0;i<n;i++){const u=(i+.5)/n,e=Math.sin(Math.PI*u),rad=h*(.16+.2*e)*(.8+r()*.45);out.push([w*(.08+.84*u),h*(.72-.3*e*(.6+r()*.5)),rad])}for(let i=0;i<n;i++){const u=r();out.push([w*(.14+.72*u),h*(.68+r()*.08),h*(.12+r()*.1)])}return out}
+ function paintCloud(kind,idx,tone){const key=kind+idx+tone;if(CACHE[key])return CACHE[key];const W0=kind=='st'?1040:680,H0=kind=='st'?240:340,c=mk(W0,H0),x=c.getContext('2d'),r=sr(idx*97+11),P0=puffs(r,W0,H0,kind=='st'?13:9),[a,b,sh]=PAL[tone];
+  const body=()=>{x.beginPath();for(const q of P0){x.moveTo(q[0]+q[2],q[1]);x.arc(q[0],q[1],q[2],0,6.3)}x.rect(W0*.1,H0*.68,W0*.8,H0*.14)};
+  // base shadow colour, then the lit mass offset upward, then a clean bright top: three flat steps, as a background painter would
+  x.fillStyle=sh;body();x.fill();x.save();body();x.clip();x.translate(-W0*.012,-H0*.08);x.fillStyle=b;body();x.fill();x.translate(-W0*.01,-H0*.075);x.fillStyle=a;body();x.fill();x.restore();
+  // the flat bottom edge fades into the sky
+  x.globalCompositeOperation='destination-out';const g2=x.createLinearGradient(0,H0*.7,0,H0*.84);g2.addColorStop(0,'rgba(0,0,0,0)');g2.addColorStop(1,'rgba(0,0,0,1)');x.fillStyle=g2;x.fillRect(0,H0*.7,W0,H0*.3);x.globalCompositeOperation='source-over';return CACHE[key]=c}
+ try{const c0=WXS8.cloud;WXS8.cloud=function(kind,idx,tone){if((tone=='day'||tone=='dusk')&&kind!='ci')return paintCloud(kind,idx%6,tone);return c0.apply(this,arguments)}}catch(e){console.error('ANIME1 clouds',e)}
+ // ---------- poster art: three of the game's own heroes with their Mythics, under a big blue sky ----------
+ const HERO=[{k:'druid',x:.105,foot:.95,h:.56,f:1,ap:{hair:8,eyes:3,outfit:2,acc:0,cape:0,eyeCol:5,hairCol:'#a6d84a',skinCol:'#fbdcc0',outCol:'#3f8a58',trimCol:'#fff4b0',gd:2}},{k:'mage',x:.475,foot:.95,h:.56,f:-1,ap:{hair:9,eyes:3,outfit:2,acc:0,cape:1,eyeCol:3,hairCol:'#9a6ae0',skinCol:'#fbdcc0',outCol:'#5a3ab0',trimCol:'#ffe0a0',gd:2}},{k:'knight',x:.29,foot:.99,h:.7,f:1,ap:{hair:3,eyes:3,outfit:1,acc:0,cape:2,eyeCol:0,hairCol:'#d0342c',skinCol:'#f6d2b0',outCol:'#3a4a78',trimCol:'#ffd86a',gd:1}}];
+ function scenery(x,W0,H0,sc){const r=sr(77);const isle=(cx,cy,s,top,rock)=>{x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle=rock;x.beginPath();x.moveTo(-90,0);x.quadraticCurveTo(-70,46,-26,66);x.quadraticCurveTo(0,120,28,64);x.quadraticCurveTo(72,44,90,0);x.closePath();x.fill();x.fillStyle=top;x.beginPath();x.ellipse(0,0,94,17,0,0,6.3);x.fill();x.fillStyle='rgba(255,255,255,.28)';x.beginPath();x.ellipse(-16,-5,54,6,0,0,6.3);x.fill();x.restore()};
+  isle(W0*.2,H0*.2,1.05*sc,'#74cf7c','#7f9fd0');isle(W0*.63,H0*.16,.8*sc,'#86d98c','#8fafdc');isle(W0*.46,H0*.36,.55*sc,'#a2e6a0','#a9c4e6');
+  // a green meadow the heroes stand on, lit from above, with grass blades along the crest
+  const crest=u=>H0*(.875+.035*Math.sin(u*5.2+.6)+.012*Math.sin(u*14));const L=x.createLinearGradient(0,H0*.84,0,H0);L.addColorStop(0,'#8fe36a');L.addColorStop(.45,'#4fbf58');L.addColorStop(1,'#2a8a54');x.fillStyle=L;x.beginPath();x.moveTo(0,H0);for(let u=0;u<=1.001;u+=.01)x.lineTo(W0*u,crest(u));x.lineTo(W0,H0);x.closePath();x.fill();
+  x.strokeStyle='#c8f58a';x.lineCap='round';for(let i=0;i<190;i++){const u=r(),X=W0*u,Y=crest(u)+1,h=(7+r()*13)*sc;x.lineWidth=(1+r()*1.4)*sc;x.globalAlpha=.55+r()*.45;x.beginPath();x.moveTo(X,Y);x.quadraticCurveTo(X+2*sc,Y-h*.6,X+(r()*10-5)*sc,Y-h);x.stroke()}x.globalAlpha=1;
+  for(let i=0;i<46;i++){const X=W0*r(),Y=H0*(.9+r()*.09),s=(2.4+r()*2.6)*sc,c0=['#fff','#ffd7ec','#ffe9a0'][r()*3|0];x.fillStyle=c0;for(let k=0;k<5;k++){const a=k*1.2566;x.beginPath();x.ellipse(X+Math.cos(a)*s,Y+Math.sin(a)*s*.7,s*.8,s*.55,a,0,6.3);x.fill()}x.fillStyle='#ffc23a';x.beginPath();x.arc(X,Y,s*.5,0,6.3);x.fill()}
+  x.fillStyle='rgba(255,255,255,.85)';for(let i=0;i<46;i++){const X=W0*r(),Y=H0*r()*.8,s=(1.2+r()*2.6)*sc;x.beginPath();x.ellipse(X,Y,s*1.5,s*.7,r()*3,0,6.3);x.fill()}}
+ function poster(W0,H0){const c=mk(W0,H0),x=c.getContext('2d'),G=x.createLinearGradient(0,0,0,H0);G.addColorStop(0,'#2b86f4');G.addColorStop(.55,'#7cc4ff');G.addColorStop(1,'#dff2ff');x.fillStyle=G;x.fillRect(0,0,W0,H0);const rays=x.createRadialGradient(W0*.5,H0*.3,0,W0*.5,H0*.3,W0*.6);rays.addColorStop(0,'rgba(255,255,255,.75)');rays.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=rays;x.fillRect(0,0,W0,H0);
+  const sc=W0/1280;for(const[px,py,z,i]of[[-.06,.44,1.7,1],[.46,.12,.9,2],[.66,.5,1.8,3],[.2,.22,.8,4],[.82,.14,.8,5],[.34,.62,1.5,0]])x.drawImage(paintCloud('cu',i,'day'),W0*px,H0*py,560*z*sc,280*z*sc);
+  scenery(x,W0,H0,sc);
+  const o=g;try{g=x;AC6.quiet=1;for(const h of HERO){const q={cx:{ap:h.ap}},s=H0*h.h/68,X=W0*h.x,Y=H0*h.foot-54*s;x.save();x.translate(X,Y);x.scale(s,s);AC6.draw(0,0,h.f,0,'',1.2,0,false,'','myth_'+h.k,0,0,{},false,null,q);x.restore()}}catch(e){console.error('ANIME1 poster',e)}finally{AC6.quiet=0;g=o}
+  return c}
+ function menuArt(){try{const m=document.getElementById('menu');if(!m||m.querySelector('.an9'))return;const c=poster(1600,900);c.className='an9';m.insertBefore(c,m.firstChild)}catch(e){console.error('ANIME1 menu',e)}}
+ // portraits for the Classes screen: one hero per class on a sky tinted with the class colour, painted once
+ const PF=[[0,'#e8752a',0,2,'#c8551e'],[3,'#d0342c',0,3,'#3a4a78'],[5,'#2a2a3a',4,2,'#7a2030'],[7,'#e8c060',5,3,'#3f6f4a'],[9,'#9a6ae0',3,3,'#5a3ab0'],[6,'#a01838',1,1,'#4a1020'],[4,'#d8d8e8',3,1,'#2a2438'],[2,'#3ab0d8',0,3,'#1f6f90'],[1,'#f0d040',0,2,'#3a5ab0'],[3,'#7a2a18',1,2,'#6a3018'],[4,'#303048',2,1,'#22283a'],[8,'#a6d84a',5,3,'#3f8a58'],[2,'#d09050',2,2,'#5a4030']],PC={};
+ function portrait(k,col,i){if(PC[k])return PC[k];const S=128,c=mk(S,S),x=c.getContext('2d'),f=PF[i%PF.length];x.beginPath();x.arc(S/2,S/2,S/2-1,0,6.3);x.clip();const G=x.createLinearGradient(0,0,0,S);G.addColorStop(0,'#3a9af8');G.addColorStop(1,'#dff2ff');x.fillStyle=G;x.fillRect(0,0,S,S);x.globalAlpha=.42;x.fillStyle=col||'#7cc4ff';x.fillRect(0,0,S,S);x.globalAlpha=1;x.drawImage(paintCloud('cu',i%6,'day'),-26,S*.42,S*1.5,S*.75);
+  const ap={hair:f[0],eyes:f[3],outfit:1,acc:0,cape:0,eyeCol:f[2],hairCol:f[1],skinCol:'#f8d6b6',outCol:f[4],trimCol:'#ffe0a0',gd:i%2+1},o=g;try{g=x;AC6.quiet=1;x.save();x.translate(S/2,S*.5);x.scale(2.9,2.9);AC6.draw(0,-7,1,0,'',1.2,0,false,'','fist',0,0,{},false,null,{cx:{ap}});x.restore()}catch(e){console.error('ANIME1 portrait',e)}finally{AC6.quiet=0;g=o}
+  x.lineWidth=5;x.strokeStyle=col||'#fff';x.beginPath();x.arc(S/2,S/2,S/2-3,0,6.3);x.stroke();x.lineWidth=1.5;x.strokeStyle='rgba(255,255,255,.75)';x.beginPath();x.arc(S/2,S/2,S/2-6,0,6.3);x.stroke();return PC[k]=c.toDataURL('image/png')}
+ let tries=0;const t0=setInterval(()=>{tries++;try{if(MYTH&&COSM.sprite('knight',6,90)&&COSM.sprite('druid',6,90)&&COSM.sprite('mage',6,90)||tries>40){clearInterval(t0);menuArt()}}catch(_){if(tries>40)clearInterval(t0)}},200);
+ window.ANIME1={poster,paintCloud,HERO,portrait};
+})()}catch(e){console.error('ANIME1',e)}

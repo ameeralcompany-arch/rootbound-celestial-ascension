@@ -1,0 +1,67 @@
+// The evolution cinematics' scores: twenty seconds each, written as code, all on the same beats as the shared timeline (EVC1.TL), each in its own key, mode, tempo and colour.
+// Shape: a sting as the Mythic wakes, a heartbeat on the eyes, an ostinato that climbs while the power gathers, three stabs as the new look arrives, one beat of silence, the change, the theme over the evolved hero,
+// a drum roll into the signature move with a hit on every impact, then the name, held in the major, and gone. Inputs: cues.C (shot starts, 1-based), cues.hits (impact times), cls.
+const C = cues.C, HITS = cues.hits || [], K = cls;
+const E0 = m => 440 * Math.pow(2, (m - 69) / 12);
+const PBUF = {};
+function plBuf(m) { if (PBUF[m]) return PBUF[m]; const f = E0(m), N = Math.max(2, Math.round(SR / f)), len = SR * 3, b = ac.createBuffer(1, len, SR), d = b.getChannelData(0), ring = new Float32Array(N); for (let i = 0; i < N; i++) ring[i] = (rnd() * 2 - 1) * (i / N < .5 ? 1 : .55); let p = 0, damp = .4985 + Math.min(.0012, f / 900000); for (let t = 0; t < len; t++) { const n = (p + 1) % N, y = ring[p]; ring[p] = (y + ring[n]) * damp; d[t] = y; p = n; } return PBUF[m] = b; }
+function pluck(t, m, v = .6, dur = 1.6, p = -.2, bend = 0) { const s = ac.createBufferSource(); s.buffer = plBuf(m); const g = G(0); g.gain.setValueAtTime(v * .85, t); g.gain.setTargetAtTime(0, t + dur, .25); if (bend) { s.detune.setValueAtTime(0, t + .15); for (let k = 0; k < dur * 6; k++) s.detune.linearRampToValueAtTime((k % 2 ? -1 : 1) * bend * Math.min(1, k / 4), t + .15 + (k + 1) * .17); } s.connect(g); pan(g, p, PIANO); s.start(t); s.stop(t + dur + 1.2); }
+function haegeum(t, m, dur, v = .4, from = null, p = .12) { const f0 = E0(m), out = G(0), b1 = bp(1050, 1.3), l1 = bp(3400, .6, 'lowpass'); adsr(out, t, .06, v * .3, .5, .86, .25, t + dur); b1.connect(l1); l1.connect(out); pan(out, p, STR); const lfo = osc('sine', 5.4, t, dur + 2), ld = G(0); ld.gain.setValueAtTime(0, t); ld.gain.linearRampToValueAtTime(f0 * .014, t + Math.min(.6, dur * .6)); lfo.connect(ld); for (const c of [-7, 6]) { const s = osc('sawtooth', f0, t, dur + 2); s.detune.value = c; if (from != null) { s.frequency.setValueAtTime(E0(from), t); s.frequency.exponentialRampToValueAtTime(f0, t + .14); } ld.connect(s.frequency); s.connect(b1); } }
+// ---------- each class's voice
+const SC = { major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10], dorian: [0, 2, 3, 5, 7, 9, 10], phrygian: [0, 1, 3, 5, 7, 8, 10], lydian: [0, 2, 4, 6, 7, 9, 11], mixo: [0, 2, 4, 5, 7, 9, 10] };
+// root (MIDI, low octave), mode, tempo, lead, choir vowel, ostinato instrument, aura sound, sounds on the impacts, drum weight, a motif in scale steps (beats, step)
+const V = {
+ knight:      { r: 38, mode: 'major',    bpm: 116, lead: 'brass',  vow: 'a', ost: 'spic',  aura: 'swell',    hit: ['quake', 'slash'],          dr: 1,   mot: [[0, 0], [1, 4], [1.5, 3], [2, 4], [3, 7], [4, 6], [5, 4], [6, 2]] },
+ samurai:     { r: 45, mode: 'minor',    bpm: 132, lead: 'pluck',  vow: 'o', ost: 'pluck', aura: 'wind',     hit: ['shing', 'slash'],          dr: .9,  mot: [[0, 4], [.5, 3], [1, 2], [2, 4], [3, 7], [3.5, 6], [4, 4], [6, 3]], pent: 1 },
+ archer:      { r: 40, mode: 'dorian',   bpm: 128, lead: 'strings',vow: 'a', ost: 'spic',  aura: 'wind',     hit: ['arrow', 'whoosh', 'burst'], dr: .8,  mot: [[0, 0], [.5, 2], [1, 4], [2, 6], [2.5, 7], [3, 9], [4, 7], [6, 4]] },
+ mage:        { r: 37, mode: 'lydian',    bpm: 104, lead: 'bell',   vow: 'a', ost: 'bell',  aura: 'magic',    hit: ['magic', 'fireburst', 'shimmer'], dr: .7, mot: [[0, 7], [1, 9], [2, 11], [3, 9], [4, 7], [5, 4], [6, 6]] },
+ demon:       { r: 36, mode: 'phrygian', bpm: 112, lead: 'lowStr', vow: 'o', ost: 'spic',  aura: 'growl',    hit: ['slash', 'burst', 'quake'],      dr: 1.1, mot: [[0, 0], [1, 1], [2, 0], [2.5, 4], [3, 3], [4, 1], [6, 0]] },
+ elementalist:{ r: 42, mode: 'dorian',   bpm: 124, lead: 'strings',vow: 'a', ost: 'spic',  aura: 'magic',    hit: ['fireburst', 'blizzard', 'burst'], dr: .9, mot: [[0, 0], [.5, 4], [1, 7], [2, 6], [3, 4], [3.5, 5], [4, 7], [6, 9]] },
+ stormcaller: { r: 43, mode: 'minor',    bpm: 138, lead: 'brass',  vow: 'a', ost: 'spic',  aura: 'thunder',  hit: ['thunder', 'quake', 'burst'],         dr: 1.2, mot: [[0, 0], [.5, 0], [1, 4], [2, 3], [2.5, 4], [3, 7], [4, 6], [6, 4]] },
+ berserker:   { r: 40, mode: 'phrygian', bpm: 120, lead: 'horns',  vow: 'o', ost: 'taiko', aura: 'roar',     hit: ['quake', 'fireburst', 'roar'],      dr: 1.4, mot: [[0, 0], [1, 1], [1.5, 0], [2, 3], [3, 4], [4, 3], [5, 1], [6, 0]] },
+ ninja:       { r: 38, mode: 'minor',    bpm: 140, lead: 'haegeum',vow: 'o', ost: 'pluck', aura: 'whoosh',   hit: ['slash', 'slash', 'burst'], dr: .9,  mot: [[0, 4], [.5, 3], [1, 4], [1.5, 7], [2, 6], [3, 4], [4, 3], [6, 0]], pent: 1 },
+ druid:       { r: 43, mode: 'lydian',   bpm: 108, lead: 'pluck',  vow: 'a', ost: 'pluck', aura: 'wind',     hit: ['quake', 'growl', 'shimmer'],        dr: .8,  mot: [[0, 0], [1, 2], [2, 4], [2.5, 3], [3, 4], [4, 7], [5, 6], [6, 4]] },
+ gunslinger:  { r: 47, mode: 'dorian',   bpm: 118, lead: 'haegeum',vow: 'o', ost: 'pluck', aura: 'slowmo',   hit: ['burst', 'burst', 'quake'],   dr: 1,   mot: [[0, 0], [1, 2], [1.5, 3], [2, 4], [4, 7], [4.5, 6], [5, 4], [6, 2]] },
+ brawler:     { r: 46, mode: 'mixo',     bpm: 144, lead: 'brass',  vow: 'a', ost: 'spic',  aura: 'fireburst',hit: ['hit', 'fireburst', 'burst'],    dr: 1.3, mot: [[0, 0], [.5, 2], [1, 4], [1.5, 4], [2, 6], [3, 7], [4, 6], [6, 4]] },
+ reaper:      { r: 40, mode: 'minor',    bpm: 100, lead: 'haegeum',vow: 'o', ost: 'pluck', aura: 'wings',    hit: ['slash', 'wings', 'shing'],          dr: 1,   mot: [[0, 7], [1.5, 6], [2, 4], [4, 2], [5, 3], [6, 4]] },
+};
+const v = Object.assign({}, V[K] || V.knight, cues.voice || {});
+let scale = SC[v.mode] || SC.minor; if (v.pent) scale = v.mode == 'major' ? [0, 2, 4, 7, 9] : [0, 3, 5, 7, 10];
+const deg = d => { const n = scale.length, o = Math.floor(d / n), i = ((d % n) + n) % n; return v.r + 12 * o + scale[i]; };
+const triad = (d, up) => [deg(d) + (up || 0), deg(d + 2) + (up || 0) + 12, deg(d + 4) + (up || 0) + 12, deg(d) + 24 + (up || 0)];
+const bt = 60 / v.bpm;
+const lead = (t, m, dur, vel) => { const L = v.lead; if (L == 'brass') brass(t, m, dur, vel * .9); else if (L == 'horns') horns(t, [m, m - 12], dur, vel * .8); else if (L == 'strings') strings(t, m, dur, vel); else if (L == 'bell') { bell(t, m, vel * .8, .1); strings(t, m, dur, vel * .45); } else if (L == 'pluck') pluck(t, m, vel, dur * 1.2, -.1, dur > .6 ? 22 : 0); else if (L == 'haegeum') haegeum(t, m, dur, vel * .9, m - 2); else if (L == 'lowStr') { lowStr(t, m - 12, dur, vel); strings(t, m, dur, vel * .5); } else piano(t, m, vel, dur); };
+const ost = (t, m, vel) => { const O = v.ost; if (O == 'pluck') pluck(t, m, vel * .7, .5, .2); else if (O == 'bell') bell(t, m + 12, vel * .5, .3); else if (O == 'taiko') { taiko(t, vel * .7, .9, .2); spic(t, m, vel * .5); } else spic(t, m, vel, .11, .6); };
+const fx = (name, t, a) => { try { if (SFX[name]) SFX[name](t, a == null ? 1 : a); } catch (_) {} };
+const tonic = v.mode == 'major' || v.mode == 'lydian' || v.mode == 'mixo';
+const PROG = tonic ? [0, 4, 5, 3] : [0, 5, 2, 6];
+// ---------- 1. the Mythic wakes (0 - 1.3)
+boom(0.02, .55); bell(.05, deg(14), .5, .2); fx('glint', .32, 1); fx('shimmer', .45, .7); drone(0, C[8] + .1, [v.r - 12, v.r, v.r + 7], .3, 240);
+// ---------- 2. the eyes (1.3 - 2.3): a heartbeat, the hit as they flare
+fx('heartbeat', C[2] + .02, .9); fx('flash', C[2] + .42, .8); boom(C[2] + .42, .5); choirs(C[2] + .42, [deg(7), deg(9), deg(11)], .9, .18, v.vow, {});
+// ---------- 3. the gathering (2.3 - 4.7): an ostinato that climbs, drums that gather, the class's own sound
+{ const t0 = C[3], t1 = C[4]; fx(v.aura, t0 + .1, .8); riser(t0, t1 - t0, .8); let i = 0; for (let t = t0; t < t1 - .02; t += bt / 2, i++) { const u = (t - t0) / (t1 - t0), step = [0, 4, 7, 4][i % 4] + (u > .5 ? 2 : 0); ost(t, deg(step + 7), .28 + .4 * u); if (i % 2 == 0) taiko(t, (.25 + .6 * u) * v.dr, .8, (i % 4 ? .3 : -.3)); if (u > .6 && i % 2) hat(t, .2 + .2 * u); }
+  chord(t0, triad(PROG[0]), t1 - t0, .22, { bright: .25, a: 1.2, r: .6 }); lowStr(t0, deg(0), t1 - t0, .35); }
+// ---------- 4. the sigil (4.7 - 5.5)
+boom(C[4], .9); fx('whoosh', C[4], .8); fx('ring', C[4] + .05, .7); taiko(C[4], 1 * v.dr, 1, 0); chord(C[4], triad(PROG[0]), .8, .3, { bright: .4, a: .02, r: .4 });
+// ---------- 5-7. the three pieces: a stab each, climbing, a glint as each one lands
+[[C[5], PROG[1]], [C[6], PROG[2]], [C[7], PROG[3]]].forEach(([t, d], i) => { horns(t, [deg(d) + 12, deg(d + 2) + 12, deg(d + 4) + 12], .5, .5 + i * .08); lowStr(t, deg(d), .8, .45); taiko(t, .9 * v.dr, 1, 0); snare(t + bt * .5, .25 + i * .1); fx('shing', t + .56, .7); bell(t + .56, deg(14 + i * 2), .32, (i - 1) * .4); for (let j = 1; j < 4; j++) ost(t + j * bt / 2, deg(d + 7 + j), .35 + i * .08); });
+riser(C[7] + .1, C[8] - C[7] - .15, 1); roll(C[7] + .2, C[8] - C[7] - .28, .2, .8, .055);
+// ---------- 8. the change (8.2): one beat of silence, then everything
+{ const t = C[8]; braam(t, 1.8, 1); boom(t, 1.2); fx('burst', t, 1); fx(v.aura, t + .05, .8); choirs(t, [deg(7), deg(9), deg(11), deg(14)], 1.6, .4, v.vow, {}); chord(t, triad(0, 0), 1.2, .4, { bright: .6, a: .01, r: .8 }); taiko(t, 1.3 * v.dr, 1, 0); }
+// ---------- 9. the evolved hero (9.1 - 11.7): the theme
+{ const t0 = C[9], t1 = C[10], bar = bt * 4; let n = 0; for (let t = t0; t < t1 - .05; t += bar / 2, n++) { const d = PROG[n % 4]; chord(t, triad(d), bar / 2, .3, { bright: .45, a: .08, r: .5 }); lowStr(t, deg(d), bar / 2, .5); }
+  for (const [b, s] of v.mot) { const t = t0 + .05 + b * bt * .5; if (t > t1 - .1) break; lead(t, deg(s + 14), bt * .55, .55); }
+  for (let t = t0, i = 0; t < t1 - .02; t += bt / 2, i++) { if (i % 4 == 0) taiko(t, .9 * v.dr, 1, 0); if (i % 4 == 2) snare(t, .45); hat(t, .18); if (i % 8 == 7) taiko(t, .6 * v.dr, .8, .3); }
+  choirs(t0, [deg(7), deg(9), deg(11)], t1 - t0, .22, v.vow, {}); }
+// ---------- 10. the wind-up (11.7 - 12.5): a roll, a rising sweep, silence just before the move
+{ const t0 = C[10], t1 = C[11]; roll(t0, t1 - t0 - .12, .3, 1, .045); riser(t0, t1 - t0 - .08, 1.1); fx('breath', t0 + .1, .8); lowStr(t0, deg(0) - 12, t1 - t0 - .1, .5); }
+// ---------- 11. the signature move (12.5 - 15.3): a hit on every impact, drums driving between them
+{ const t0 = C[11], t1 = C[12]; const H = HITS.length ? HITS : [t0 + .35];
+  H.forEach((h, i) => { const hs = v.hit[Math.min(i, v.hit.length - 1)]; boom(h, i ? .9 : 1.3); fx(hs, h, 1); if (i == 0) { braam(h, 1.4, .9); chord(h, triad(0), 1, .45, { bright: .7, a: .005, r: .7 }); choirs(h, [deg(7), deg(11), deg(14)], 1.2, .32, v.vow, {}); } else { horns(h, [deg(PROG[i % 4]) + 12, deg(PROG[i % 4] + 4) + 12], .6, .55); } taiko(h, 1.2 * v.dr, 1, 0); });
+  const a0 = H[0] + .25; for (let t = a0, i = 0; t < t1 - .08; t += bt / 2, i++) { if (H.some(h => Math.abs(h - t) < .12)) continue; if (i % 2 == 0) taiko(t, .7 * v.dr, .9, i % 4 ? .25 : -.25); else snare(t, .35); hat(t, .2); if (i % 2 == 0) ost(t, deg(7 + (i % 4)), .4); }
+  lowStr(H[0], deg(0), t1 - H[0], .45); }
+// ---------- 12. the name (15.3 - 20): held, in the major, then gone
+{ const t = C[12], up = tonic ? 0 : 0, M = tonic ? [deg(0), deg(2) + 12, deg(4) + 12, deg(7) + 12] : [v.r, v.r + 16, v.r + 19, v.r + 24];
+  boom(t, 1); fx('shimmer', t + .05, .9); chord(t, M, 4, .42, { bright: .55, a: .02, r: 2 }); choirs(t + .05, [M[1] + 12, M[2] + 12, M[3] + 12], 3.8, .32, v.vow, {}); lowStr(t, v.r, 4, .5); bell(t + .1, M[3] + 24, .45, 0); bell(t + .6, M[2] + 24, .3, .3);
+  lead(t + .3, M[3] + 12, 1.6, .45); lead(t + 1.9, M[2] + 12, 1.6, .38); piano(t + 2.6, M[0] + 12, .4, 2); piano(t + 2.75, M[1] + 12, .32, 2); piano(t + 2.9, M[2] + 12, .3, 2); fx('wind', t, 4.6); }

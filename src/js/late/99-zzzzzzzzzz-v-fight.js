@@ -46,7 +46,7 @@ try{(()=>{
  const stOf=k=>{let s=ST.get(k);if(!s){s=mk();ST.set(k,s);if(ST.size>32)ST.delete(ST.keys().next().value)}return s};
  let netS=0,netSeq=0;
  // type -> hold: length, two-hand grip distance
- const HOLD={sword:[44,0],great:[48,15],katana:[46,0],hammer:[46,15],axe:[48,15],scythe:[50,18],staff:[48,18],dagger:[28,0],kunai:[26,0],bow:[40,0],gun:[30,0],fist:[0,0],whip:[44,0],orb:[34,0],spear:[50,18]};
+ const HOLD={gaunt:[20,0],branch:[48,18],sword:[44,0],great:[48,15],katana:[46,0],hammer:[46,15],axe:[48,15],scythe:[50,18],staff:[48,18],dagger:[28,0],kunai:[26,0],bow:[40,0],gun:[30,0],fist:[0,0],whip:[44,0],orb:[34,0],spear:[50,18]};
  function play(key,str,o){o=o||{};const s=stOf(key),q=parse(str),h=HOLD[o.type||'sword']||HOLD.sword;s.from=lerpPose(s.from,s.q?s.cur:POSE.ready,s.q?s.cur:POSE.ready,0);s.q=q;s.i=0;s.t=0;s.cb=o.hit||null;s.done=o.done||null;s.tot=0;s.cur.len=h[0];s.cur.grip=h[1];s.cur.hide=o.type=='fist'?1:0;s.hn=0;s.max=dur(str)+1;s.k=o.id||str;s.soft=!!o.soft;s.hideW=o.type=='fist';if(key=='me'&&o.id){netS=o.id;netSeq=(netSeq+1)%100}return s}
  function stop(key){const s=ST.get(key);if(s){s.q=null;s.cb=null}if(key=='me'){api.root=null}}
  function step(s,key,dt){if(!s.q)return;s.tot+=dt;if(s.tot>s.max){stop(key);return}const q=s.q;let st=q[s.i];if(s.t==0&&key=='me')api.root=st.vx!=null||st.vy!=null||st.hang||st.hold?st:null;s.t+=dt;while(s.t>=st.d){s.t-=st.d;if(st.hit){const n=s.hn++;try{s.cb&&s.cb(n)}catch(e){console.error('FIGHT hit',e)}}s.from=lerpPose(s.from,st.p,st.p,0);s.i++;if(s.i>=q.length){const dn=s.done;s.q=null;s.cb=null;s.done=null;if(key=='me')api.root=null;try{dn&&dn()}catch(_){}return}st=q[s.i];if(key=='me')api.root=st.vx!=null||st.vy!=null||st.hang||st.hold?st:null}
@@ -61,6 +61,6 @@ try{(()=>{
  function net(){return netS?[netS,netSeq]:0}
  // what another player is doing: when their move changes, play the same pose; the skill system adds its picture
  const RM=new Map();function remote(name,q){try{const fa=q&&q.cx&&q.cx.fa;if(!Array.isArray(fa))return;const k=String(fa[0]).slice(0,28),sq=fa[1]|0,prev=RM.get(name);if(prev===k+'#'+sq)return;RM.set(name,k+'#'+sq);if(prev===undefined)return;if(RM.size>32)RM.delete(RM.keys().next().value);if(api.onRemote)api.onRemote('p:'+name,k,q)}catch(_){}}
- const api={play,stop,parse,dur,hits,lastHit,POSE,NM,HOLD,net,root:null,mark:0,remote,onRemote:null,active:k=>{const s=ST.get(k);return!!(s&&s.q)},state:k=>ST.get(k),clearNet(){netS=0}};window.FIGHT=api;
+ const setNet=id=>{netS=id;netSeq=(netSeq+1)%100};const api={setNet,play,stop,parse,dur,hits,lastHit,POSE,NM,HOLD,net,root:null,mark:0,remote,onRemote:null,active:k=>{const s=ST.get(k);return!!(s&&s.q)},state:k=>ST.get(k),clearNet(){netS=0}};window.FIGHT=api;
  setInterval(()=>{api.mark++},16);
 })()}catch(e){console.error('FIGHT',e)}

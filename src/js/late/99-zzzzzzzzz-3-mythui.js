@@ -26,8 +26,8 @@ const MYUI=(()=>{
    (nx?'<h4>'+(t==0?'To forge (class level 50)':'Next ascension · Tier '+RN[nx.n]+' at class level '+nx.lv)+'</h4>'+(t>0?'<p class="dim">Slain monsters and bosses count from your last ascension, with this class\'s weapons.</p>':'')+req:'')+
    '<div class="c9myb"><button class="c9asc" data-a="my:asc"'+(ck.ok?'':' aria-disabled="true"')+(ck.miss&&ck.miss.length?' title="Needs: '+esc(ck.miss.join(', '))+'"':'')+'>'+esc(lab)+'</button>'+
    (t>=1?(wp===MYTH.ID(k)?'<button class="c9eq on" aria-disabled="true">Equipped</button>':'<button class="c9eq big" data-a="eq:'+MYTH.ID(k)+'">Equip '+esc(th.noun)+'</button>'):'')+
-   (t>=1?'<button class="c9tog" data-a="my:out" aria-pressed="'+(MYTH.outfit?'true':'false')+'">Mythic outfit · '+(MYTH.outfit?'On':'Off')+'</button>':'')+'</div></section>'}
- function act(a,k){if(a=='asc')return MYTH.ascend(k);if(a=='out'){MYTH.setOutfit(!MYTH.outfit);return true}return false}
+   (window.EVO1?'<button class="c9eq big" data-a="my:evo">'+(EVO1.on(k)?'Your evolution':'Class Evolution')+'</button>':'')+(t>=1?'<button class="c9tog" data-a="my:out" aria-pressed="'+(MYTH.outfit?'true':'false')+'">Mythic outfit · '+(MYTH.outfit?'On':'Off')+'</button>':'')+'</div></section>'}
+ function act(a,k){if(a=='evo'){try{EVO1.open(k)}catch(_){}return false}if(a=='asc')return MYTH.ascend(k);if(a=='out'){MYTH.setOutfit(!MYTH.outfit);return true}return false}
  // ---- live canvases on the Classes screen
  let root=null,cur=null,bgP=[];
  function after(el,k){root=el;schedule();const p=TH[k].pal;el.style.setProperty('--m',p[0]);el.style.setProperty('--l',p[1]);el.style.setProperty('--d',p[2]);el.style.setProperty('--a',p[3]);el.dataset.cls=k;if(cur!==k){cur=k;bgP=[]}}

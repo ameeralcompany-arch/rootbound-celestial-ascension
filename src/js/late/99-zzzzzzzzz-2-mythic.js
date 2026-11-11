@@ -172,9 +172,9 @@ const MYTH=(()=>{
  function draw(g2,cx,cy){const t=performance.now()/1000;g2.save();
   // the swing: an anime smear along the blade tip, then the scythe itself
   if(SW){const s=SW,o=pivot(),ox=o.x-cx,oy=o.y-cy,p=TH[s.k].pal,ca=angAt(s),tl=s.tail,rr=s.pf.len*.75*(A.VIS||1);
-   if(s.pf.ranged=='arrow'){/* the archer's own stance holds the bow (BOW15) */}else if(s.pf.ranged){const kick=Math.max(0,1-Math.abs(s.t/s.dur-.2)*5)*6;g2.save();g2.translate(ox-Math.cos(s.aim)*kick,oy-Math.sin(s.aim)*kick);g2.rotate(s.aim);if(Math.cos(s.aim)<0)g2.scale(1,-1);g2.translate(-s.pf.len*s.pf.piv,0);A.weapon(g2,s.k,s.tr,s.pf.len,t);g2.restore()}
+   if(s.pf.ranged=='arrow'){/* the archer's own stance holds the bow (BOW15) */}else if(s.pf.ranged){}
    else{if(tl.length>1){try{FLOW15.smear(g2,ox,oy,rr,tl[0],ca,s.k,s.step)}catch(_){}}
-   drawHeld(g2,s.k,s.tr,ox,oy,ca,s.a1>s.a0,t)}}
+   }}
   if(THR){const q=THR,L=prof(q.k).len;g2.save();g2.translate(q.x-cx,q.y-cy);g2.rotate(q.rot);g2.globalCompositeOperation='lighter';g2.globalAlpha=.4;g2.drawImage(glow(TH[q.k].pal[0]),-50,-50,100,100);g2.globalAlpha=1;g2.globalCompositeOperation='source-over';g2.translate(-L*.5,0);A.weapon(g2,q.k,tier(q.k),L,t);g2.restore()}
   for(const e of FX)if(!(e.del>0))fxDraw(g2,e,cx,cy,t);
   // particles
@@ -221,7 +221,7 @@ const MYTH=(()=>{
     if(!e.small)for(let i=0;i<12;i++){const q=i/12*TAU+e.t;g.beginPath();g.moveTo(x+Math.cos(q)*rr*.7,y+Math.sin(q)*rr*.7);g.lineTo(x+Math.cos(q)*rr*1.05,y+Math.sin(q)*rr*1.05);g.strokeStyle=A.rgba(p[1],.6);g.lineWidth=2;g.stroke()}break}}
   g.restore()}
  // ---- the scythe in the hand (the default holder pose) and on the back; hidden while our own swing or throw draws it
- {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const k=KOF[id];if(!k)return _dw.apply(this,arguments);if(HIDE)return;x.save();try{const big=L>=100,pf=prof(k),s=big?Math.min(1.25,pf.hs*.62):pf.hs;x.translate(big?-L*s*pf.piv:-L*pf.ho,0);if(!big&&pf==PROF.scythe)x.scale(1,-1);/* in the resting hand the blade faces forward, away from the face */A.weapon(x,k,tier(k)||1,L*s,t||0)}finally{x.restore()}}}
+ {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const k=KOF[id];if(!k)return _dw.apply(this,arguments);if(HIDE)return;x.save();try{const big=L>=100,pf=prof(k),s=big?Math.min(1.25,pf.hs*.62):pf.hs;x.translate(big?-L*s*pf.piv:-L*pf.ho,0);if(!big&&pf==PROF.scythe)x.scale(1,-1);/* in the resting hand the blade faces forward, away from the face */A.weapon(x,k,tier(k)||1,L*s,t||0,window.EVO1&&EVO1.on(k)?{aura:1}:undefined)}finally{x.restore()}}}
  // ---- the mythic outfit
  const cape=[];let capeK=null;
  function outfitK(){if(!S.out)return null;try{if((WEAR[wear.body]||{}).my||(WEAR[wear.hat]||{}).my)return null;const w=WPN[wp];if(w&&w.myth&&tier(w.myth)>=1)return w.myth;const c=CLASS7.cur();if(c&&tier(c)>=1)return c}catch(_){}return null}
@@ -252,7 +252,7 @@ const MYTH=(()=>{
  function drawPauldrons(g2,k,cx,cy){const p=TH[k].pal;for(const sd of[-1,1]){g2.save();g2.translate(cx+sd*10,cy+22);g2.scale(sd,1);g2.beginPath();g2.moveTo(-4,-2);g2.quadraticCurveTo(4,-8,9,-1);g2.quadraticCurveTo(8,5,1,6);g2.closePath();g2.fillStyle=A.metal(g2,-4,-8,9,6,k,.35);g2.fill();g2.strokeStyle=A.OL;g2.lineWidth=1;g2.stroke();A.gem(g2,3,-1,1.6,p[3]);g2.restore()}}
  {const _dc=drawChar;drawChar=function(cx,cy){const me=arguments[15]==='me';if(!me)return _dc.apply(this,arguments);const k=outfitK(),t=performance.now()/1000,f=arguments[2]||1;
    if(k)try{drawCape(g,k,cx,cy)}catch(e){if(!drawChar.e1){drawChar.e1=1;console.error('MYTH cape',e)}}
-   HIDE=!!(SW||THR);let r;try{r=_dc.apply(this,arguments)}finally{HIDE=false}
+   HIDE=!!THR;let r;try{r=_dc.apply(this,arguments)}finally{HIDE=false}
    if(k)try{drawPauldrons(g,k,cx,cy);drawCrown(g,k,cx,cy,f,t)}catch(e){if(!drawChar.e2){drawChar.e2=1;console.error('MYTH outfit',e)}}return r}}
  {const _t=BOSS6.tick,_d=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){if(!tick.e){tick.e=1;console.error('MYTH',e)}}};BOSS6.drawProj=function(g2,cx,cy){_d.call(this,g2,cx,cy);try{draw(g2,cx,cy)}catch(e){if(!draw.e){draw.e=1;console.error('MYTH draw',e)}}}}
  // ---- the ascension scene: cannot be skipped (input is swallowed and the world is paused until it ends)

@@ -1,4 +1,4 @@
-// ===== Deep treasure chests (CHEST7): hidden in caves, seeded by the world. Walk up and press E to open (once per world). =====
+// ===== Deep treasure chests (CHEST7): hidden in caves, seeded by the world. Walk up and press F to open (once per world). =====
 const CHEST7=(()=>{
  let list=[],opened={};const K=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpchest';
  const load=()=>{try{opened=JSON.parse(localStorage.getItem(K())||'{}')||{}}catch(_){opened={}}};const save=()=>{try{localStorage.setItem(K(),JSON.stringify(opened))}catch(_){}};load();
@@ -34,7 +34,7 @@ const CHEST7=(()=>{
    g.fillStyle=pal[2];g.fillRect(-19,-13,38,3);g.fillRect(-3,-16,6,9);
    g.save();g.translate(-19,-22);g.rotate(-lid*1.15);g.fillStyle=pal[0];g.beginPath();g.roundRect(0,-14,38,14,[6,6,2,2]);g.fill();g.stroke();g.fillStyle=pal[2];g.fillRect(0,-5,38,3);g.restore();
    if(op&&lid>0){g.globalCompositeOperation='lighter';g.fillStyle='rgba(255,230,150,'+(.5*(1-Math.min(1,(performance.now()-(c.t0||0))/1200)))+')';g.fillRect(-16,-34,32,16);g.globalCompositeOperation='source-over'}
-   if(c===nr){g.font='bold 12px system-ui,sans-serif';g.textAlign='center';const tw=g.measureText('Press E').width+18;g.fillStyle='rgba(20,18,30,.78)';g.beginPath();g.roundRect(-tw/2,-58+Math.sin(t*4)*2,tw,20,10);g.fill();g.fillStyle='#fff';g.fillText('Press E',0,-44+Math.sin(t*4)*2)}
+   if(c===nr){g.font='bold 12px system-ui,sans-serif';g.textAlign='center';const tw=g.measureText('Press F').width+18;g.fillStyle='rgba(20,18,30,.78)';g.beginPath();g.roundRect(-tw/2,-58+Math.sin(t*4)*2,tw,20,10);g.fill();g.fillStyle='#fff';g.fillText('Press F',0,-44+Math.sin(t*4)*2)}
    g.restore()}}
  {const _d=BOSS6.drawProj;BOSS6.drawProj=function(g,cx,cy){try{draw(g,cx,cy)}catch(_){}_d.call(this,g,cx,cy)}}
  return{build,list:()=>list,near,open,opened:()=>opened,reload:load}})();

@@ -1,0 +1,176 @@
+// The instruments and sound effects, shared by every class story movie. Taken from the trailer's score tool. Everything is synthesised; there are no samples.
+  const SR = 48000, TOTAL = cues.total, ac = new OfflineAudioContext(2, Math.ceil(SR * TOTAL), SR);
+  const mf = m => 440 * Math.pow(2, (m - 69) / 12);
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  // ---------- buffers: white noise, pink noise, two halls
+  const noise = (() => { const b = ac.createBuffer(2, SR * 4, SR); for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] = rnd() * 2 - 1; } return b; })();
+  const pink = (() => { const b = ac.createBuffer(2, SR * 6, SR); for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0; for (let i = 0; i < d.length; i++) { const w = rnd() * 2 - 1; b0 = .99886 * b0 + w * .0555179; b1 = .99332 * b1 + w * .0750759; b2 = .969 * b2 + w * .153852; b3 = .8665 * b3 + w * .3104856; b4 = .55 * b4 + w * .5329522; b5 = -.7616 * b5 - w * .016898; d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + w * .5362) * .11; } } return b; })();
+  function hall(sec, pre, dark) {
+    const n = Math.round(SR * sec), b = ac.createBuffer(2, n, SR), p = Math.round(SR * pre);
+    for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); let lp = 0;
+      for (let i = p; i < n; i++) { const t = (i - p) / (n - p), k = Math.min(.985, .25 + dark * t); lp = lp * k + (rnd() * 2 - 1) * (1 - k); d[i] = lp * Math.pow(1 - t, 2.2) * (1.6 + 2 * t); }
+      for (const [ms, g] of [[11, .5], [19, .38], [27, .3], [41, .22], [53, .17]]) { const j = p + Math.round(ms * SR / 1000 * (c ? 1.13 : 1)); if (j < n) d[j] += g; } }
+    return b;
+  }
+  // ---------- the mix: music (ducked under voices), sound design, voices; two reverbs; bus compression and a limiter
+  const G = v => { const g = ac.createGain(); g.gain.value = v; return g; };
+  const master = G(1), lim = ac.createDynamicsCompressor();
+  lim.threshold.value = -3; lim.knee.value = 2; lim.ratio.value = 12; lim.attack.value = .002; lim.release.value = .12;
+  const glue = ac.createDynamicsCompressor(); glue.threshold.value = -16; glue.knee.value = 10; glue.ratio.value = 1.8; glue.attack.value = .02; glue.release.value = .25;
+  master.connect(glue); glue.connect(lim); lim.connect(ac.destination);
+  const music = G(.9), duck = G(1), sfx = G(1), vox = G(.78);
+  music.connect(duck);
+  const want = k => !STEM || STEM === k;
+  if (want('music')) duck.connect(master); if (want('sfx')) sfx.connect(master); if (want('vo')) vox.connect(master);
+  const rv = ac.createConvolver(); rv.buffer = hall(3.4, .03, .55); const rvOut = G(.55); rv.connect(rvOut); rvOut.connect(master);
+  const big = ac.createConvolver(); big.buffer = hall(6, .05, .7); const bigOut = G(.5); big.connect(bigOut); bigOut.connect(master);
+  // music sends go through the duck so the reverb dips too
+  const mRv = G(1), mBig = G(1); mRv.connect(rv); mBig.connect(big);
+  const send = (node, a, b) => { if (a) { const s = G(a); node.connect(s); s.connect(mRv); } if (b) { const s = G(b); node.connect(s); s.connect(mBig); } };
+  const sendFx = (node, a, b) => { if (a) { const s = G(a); node.connect(s); s.connect(rv); } if (b) { const s = G(b); node.connect(s); s.connect(big); } };
+  // instrument groups, each with its own colour
+  function group(gain, lpHz, rvA, bigA, dest) { const g = G(gain), f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lpHz; f.Q.value = .4; g.connect(f); f.connect(dest || music); send(f, rvA, bigA); return g; }
+  const PIANO = group(.42, 9000, .5, .25), STR = group(.34, 9000, .45, .3), OST = group(.3, 7000, .3, .1), BRASS = group(.32, 8000, .35, .3), CHOIR = group(.2, 7000, .3, .6),
+        LOW = group(.42, 3000, .2, .1), PERC = group(.62, 12000, .18, .2), PADX = group(.28, 6000, .2, .5), BELL = group(.12, 12000, .5, .5);
+  const sat = (() => { const c = new Float32Array(2048); for (let i = 0; i < 2048; i++) { const x = i / 1023.5 - 1; c[i] = Math.tanh(x * 2.2) / Math.tanh(2.2); } return c; })();
+  const shaper = () => { const s = ac.createWaveShaper(); s.curve = sat; s.oversample = '2x'; return s; };
+  const pan = (node, v, dest) => { const p = ac.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, v)); node.connect(p); p.connect(dest); return p; };
+  const src = (buf, t, dur, off = 0, rate = 1) => { const s = ac.createBufferSource(); s.buffer = buf; s.loop = true; s.playbackRate.value = rate; s.start(t, off % (buf.duration - 1)); s.stop(t + dur + .05); return s; };
+  const osc = (type, f, t, dur) => { const o = ac.createOscillator(); o.type = type; o.frequency.value = f; o.start(t); o.stop(t + dur + .05); return o; };
+  const bp = (f, q, type = 'bandpass') => { const b = ac.createBiquadFilter(); b.type = type; b.frequency.value = f; b.Q.value = q; return b; };
+  function adsr(g, t, a, peak, d, s, rel, end) { const p = g.gain; p.setValueAtTime(0, t); p.linearRampToValueAtTime(peak, t + a); p.setTargetAtTime(peak * s, t + a, d); p.setTargetAtTime(0, Math.max(t + a, end), rel); }
+
+  // ================= instruments =================
+  function piano(t, m, vel = .7, dur = 1.5, p = 0) {
+    const f0 = mf(m), out = G(1), B = .00032; pan(out, p + (m - 62) / 40, PIANO);
+    const tau = 3.8 * Math.pow(261 / f0, .55);
+    for (let n = 1; n <= 9; n++) { const f = n * f0 * Math.sqrt(1 + B * n * n); if (f > 16000) break;
+      const a = vel * Math.pow(n, -1.15) * (n > 1 ? .55 + vel * .4 : 1) * .22, o = osc('sine', f, t, dur + 3), g = G(0);
+      o.detune.value = (n === 1 ? 0 : (rnd() - .5) * 3); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(a, t + .003); g.gain.setTargetAtTime(0, t + .003, tau / (1 + .45 * (n - 1)));
+      g.gain.setTargetAtTime(0, t + dur, .22); o.connect(g); g.connect(out); }
+    const o2 = osc('sine', f0, t, dur + 3), g2 = G(0); o2.detune.value = .9; g2.gain.setValueAtTime(0, t); g2.gain.linearRampToValueAtTime(vel * .1, t + .004); g2.gain.setTargetAtTime(0, t, tau); g2.gain.setTargetAtTime(0, t + dur, .22); o2.connect(g2); g2.connect(out);
+    const h = src(noise, t, .03, rnd() * 3), hf = bp(Math.min(9000, f0 * 3), 1.2), hg = G(0); hg.gain.setValueAtTime(vel * .05, t); hg.gain.exponentialRampToValueAtTime(.0001, t + .025); h.connect(hf); hf.connect(hg); hg.connect(out);
+  }
+  // sustained strings: five detuned saws, a slow bow, vibrato that comes in late
+  function strings(t, m, dur, vel = .5, o = {}) {
+    const f0 = mf(m), out = G(0), lp = bp((o.bright == null ? .5 : o.bright) * 4200 + 900 + (m - 50) * 12, .5, 'lowpass');
+    const at = o.a == null ? .45 : o.a, rel = o.r == null ? .7 : o.r;
+    adsr(out, t, at, vel * .16, .8, .85, rel, t + dur); lp.connect(out); pan(out, o.p == null ? (rnd() - .5) * .6 : o.p, o.dest || STR);
+    const lfo = osc('sine', 5.1 + rnd() * .6, t, dur + rel * 4), ld = G(0); ld.gain.setValueAtTime(0, t); ld.gain.linearRampToValueAtTime(f0 * .0028, t + Math.min(1.2, dur * .6)); lfo.connect(ld);
+    for (const c of [-12, -5, 0, 6, 11]) { const s = osc('sawtooth', f0, t, dur + rel * 4); s.detune.value = c + (rnd() - .5) * 3; ld.connect(s.frequency); s.connect(lp); }
+    if (o.trem) { const tr = osc('sine', o.trem, t, dur + rel * 4), tg = G(.5); out.gain.value = 0; const am = G(.5); tr.connect(tg); tg.connect(am.gain); lp.disconnect(); lp.connect(am); am.connect(out); }
+  }
+  function chord(t, ms, dur, vel, o) { for (const m of ms) strings(t, m, dur, vel, Object.assign({}, o, { p: (o && o.p != null) ? o.p : (rnd() - .5) * .8 })); }
+  // short bowed notes for the driving ostinatos
+  function spic(t, m, vel = .5, len = .11, bright = .6) {
+    const f0 = mf(m), out = G(0), lp = bp(1400 + bright * 4200, .7, 'lowpass');
+    out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(vel * .2, t + .008); out.gain.setTargetAtTime(0, t + len * .4, len * .5);
+    lp.connect(out); pan(out, (rnd() - .5) * .5, OST);
+    for (const c of [-7, 0, 8]) { const s = osc('sawtooth', f0, t, len + .4); s.detune.value = c; s.connect(lp); }
+  }
+  function brass(t, m, dur, vel = .6, o = {}) {
+    const f0 = mf(m), out = G(0), lp = bp(300, 1.2, 'lowpass'), sh = shaper();
+    const pk = 500 + vel * 2600 + (m - 48) * 25;
+    lp.frequency.setValueAtTime(260, t); lp.frequency.linearRampToValueAtTime(pk, t + .09 + (o.swell || 0)); lp.frequency.setTargetAtTime(pk * .6, t + .12 + (o.swell || 0), .4); lp.frequency.setTargetAtTime(200, t + dur, .2);
+    adsr(out, t, .05 + (o.swell || 0), vel * .2, .5, .8, .25, t + dur);
+    lp.connect(sh); sh.connect(out); pan(out, o.p || 0, o.dest || BRASS);
+    const vib = osc('sine', 4.6, t, dur + 1), vd = G(0); vd.gain.setValueAtTime(0, t); vd.gain.linearRampToValueAtTime(f0 * .003, t + .7); vib.connect(vd);
+    for (const c of [-5, -1, 3, 6]) { const s = osc('sawtooth', f0, t, dur + 1); s.detune.setValueAtTime(c - 35, t); s.detune.linearRampToValueAtTime(c, t + .07); vd.connect(s.frequency); s.connect(lp); }
+  }
+  function horns(t, ms, dur, vel, o) { for (const m of ms) brass(t, m, dur, vel, o); }
+  // a wordless "ah" choir: saws through vowel formants
+  function choir(t, m, dur, vel = .5, vowel = 'a', o = {}) {
+    const F = vowel === 'o' ? [[450, 7], [800, 9], [2830, 12]] : [[780, 7], [1150, 9], [2900, 12]];
+    const f0 = mf(m), out = G(0), mix = G(1); adsr(out, t, o.a || .7, vel * .5, 1, .9, o.r || 1.1, t + dur); pan(out, o.p || (rnd() - .5) * .7, CHOIR);
+    for (const [ff, q] of F) { const b = bp(ff, q); mix.connect(b); b.connect(out); }
+    const lfo = osc('sine', 5.3, t, dur + 5), ld = G(f0 * .004); lfo.connect(ld);
+    for (const c of [-14, -6, 0, 7, 13]) { const s = osc('sawtooth', f0, t, dur + 5); s.detune.value = c + (rnd() - .5) * 4; ld.connect(s.frequency); s.connect(mix); }
+  }
+  function choirs(t, ms, dur, vel, vowel, o) { for (const m of ms) choir(t, m, dur, vel, vowel, o); }
+  function lowStr(t, m, dur, vel = .5, cut = 900) { const f0 = mf(m), out = G(0), lp = bp(cut, .6, 'lowpass'); adsr(out, t, .02, vel * .3, .4, .7, .2, t + dur); lp.connect(out); out.connect(LOW); for (const c of [-6, 0, 7]) { const s = osc('sawtooth', f0, t, dur + 1); s.detune.value = c; s.connect(lp); } }
+  function bell(t, m, vel = .5, p = 0) { const f0 = mf(m), car = osc('sine', f0, t, 5), mod = osc('sine', f0 * 3.5, t, 5), md = G(0), out = G(0);
+    md.gain.setValueAtTime(f0 * 2.2, t); md.gain.exponentialRampToValueAtTime(f0 * .05, t + 2.5); mod.connect(md); md.connect(car.frequency);
+    out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(vel * .3, t + .004); out.gain.setTargetAtTime(0, t, 1.4); car.connect(out); pan(out, p, BELL); }
+  function drone(t, dur, ms, vel = .4, cut = 260) { for (const m of ms) { const out = G(0), lp = bp(cut, .8, 'lowpass'); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(vel * .11, t + Math.min(3, dur * .4)); out.gain.setValueAtTime(vel * .11, t + dur - Math.min(2, dur * .3)); out.gain.linearRampToValueAtTime(0, t + dur);
+      const l = osc('sine', .09, t, dur), lg = G(cut * .35); l.connect(lg); lg.connect(lp.frequency); lp.connect(out); out.connect(PADX);
+      for (const c of [-8, 0, 9]) { const s = osc('sawtooth', mf(m), t, dur); s.detune.value = c; s.connect(lp); } } }
+  // ---- percussion
+  function taiko(t, vel = 1, p = 1, pn = 0) {
+    const out = G(1); pan(out, pn, PERC);
+    const o = osc('sine', 150 * p, t, 1.2), g = G(0); o.frequency.setValueAtTime(155 * p, t); o.frequency.exponentialRampToValueAtTime(52 * p, t + .14); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel * .9, t + .004); g.gain.setTargetAtTime(0, t + .01, .2 * Math.sqrt(1 / p)); o.connect(g); g.connect(out);
+    const o2 = osc('triangle', 230 * p, t, .5), g2 = G(0); o2.frequency.exponentialRampToValueAtTime(110 * p, t + .1); g2.gain.setValueAtTime(vel * .25, t); g2.gain.setTargetAtTime(0, t, .07); o2.connect(g2); g2.connect(out);
+    const n = src(noise, t, .2, rnd() * 3), f = bp(800 * p, .8), ng = G(0); ng.gain.setValueAtTime(vel * .35, t); ng.gain.setTargetAtTime(0, t, .035); n.connect(f); f.connect(ng); ng.connect(out);
+  }
+  function snare(t, vel = .6) { const n = src(noise, t, .4, rnd() * 3), hp = bp(1800, .7, 'highpass'), b = bp(3500, .8), g = G(0); g.gain.setValueAtTime(vel * .5, t); g.gain.setTargetAtTime(0, t, .09); n.connect(hp); hp.connect(b); b.connect(g); pan(g, (rnd() - .5) * .3, PERC);
+    const o = osc('triangle', 210, t, .2), og = G(0); og.gain.setValueAtTime(vel * .25, t); og.gain.setTargetAtTime(0, t, .04); o.connect(og); og.connect(PERC); }
+  function hat(t, vel = .3, len = .04) { const n = src(noise, t, .1, rnd() * 3), hp = bp(7500, .7, 'highpass'), g = G(0); g.gain.setValueAtTime(vel * .25, t); g.gain.setTargetAtTime(0, t, len); n.connect(hp); hp.connect(g); pan(g, .35, PERC); }
+  function roll(t, dur, v0, v1, step = .0625) { for (let x = 0; x < dur; x += step) snare(t + x, v0 + (v1 - v0) * x / dur); }
+  // the trailer hit: a falling sub, a body, a metallic ring and a burst of air
+  function boom(t, v = 1, dest) {
+    const out = G(1); out.connect(dest || PERC); send(out, .2, .5);
+    const o = osc('sine', 62, t, 3), g = G(0), sh = shaper(); o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(30, t + 1.4); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * 1.1, t + .006); g.gain.setTargetAtTime(0, t + .02, .9); o.connect(sh); sh.connect(g); g.connect(out);
+    const n = src(noise, t, 1.5, rnd() * 3), lp = bp(2600, .5, 'lowpass'), ng = G(0); lp.frequency.setValueAtTime(5000, t); lp.frequency.exponentialRampToValueAtTime(300, t + 1); ng.gain.setValueAtTime(v * .5, t); ng.gain.setTargetAtTime(0, t, .3); n.connect(lp); lp.connect(ng); ng.connect(out);
+    for (const [r, a] of [[1, .14], [2.76, .07], [5.4, .04]]) { const m = osc('sine', 110 * r, t, 4), mg = G(0); mg.gain.setValueAtTime(v * a, t); mg.gain.setTargetAtTime(0, t, 1.3); m.connect(mg); mg.connect(out); }
+  }
+  function braam(t, dur = 2.2, v = 1) {
+    const out = G(0), lp = bp(200, 1.5, 'lowpass'), sh = shaper(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(v * .32, t + .12); out.gain.setTargetAtTime(v * .2, t + .2, .6); out.gain.setTargetAtTime(0, t + dur, .4);
+    lp.frequency.setValueAtTime(180, t); lp.frequency.linearRampToValueAtTime(1500, t + .15); lp.frequency.setTargetAtTime(420, t + .2, .7);
+    lp.connect(sh); sh.connect(out); out.connect(BRASS); send(out, 0, .4);
+    for (const m of [26, 38, 45, 50]) for (const c of [-9, 0, 8]) { const s = osc('sawtooth', mf(m), t, dur + 2); s.detune.value = c; s.connect(lp); }
+    const sub = osc('sine', mf(26), t, dur + 1), sg = G(0); sg.gain.setValueAtTime(0, t); sg.gain.linearRampToValueAtTime(v * .5, t + .05); sg.gain.setTargetAtTime(0, t + .1, dur * .6); sub.connect(sg); sg.connect(LOW);
+  }
+  function riser(t, dur, v = 1, dest) {
+    const out = G(0); out.connect(dest || sfx); sendFx(out, .25, .2);
+    out.gain.setValueAtTime(.0001, t); out.gain.exponentialRampToValueAtTime(v * .32, t + dur); out.gain.setValueAtTime(0, t + dur + .01);
+    const n = src(noise, t, dur, rnd() * 3), b = bp(300, 3); b.frequency.setValueAtTime(300, t); b.frequency.exponentialRampToValueAtTime(7000, t + dur); n.connect(b); b.connect(out);
+    for (const c of [0, 700, 1200]) { const s = osc('sawtooth', 110, t, dur), lp = bp(800, 1, 'lowpass'); s.detune.setValueAtTime(c, t); s.detune.linearRampToValueAtTime(c + 2400, t + dur); lp.frequency.setValueAtTime(400, t); lp.frequency.exponentialRampToValueAtTime(5000, t + dur); const gg = G(.18); s.connect(lp); lp.connect(gg); gg.connect(out); }
+  }
+
+  // ================= sound design (cues.json "sfx") =================
+  const nz = (t, dur, f, q, type) => { const n = src(noise, t, dur, rnd() * 3), b = bp(f, q, type); n.connect(b); return b; };
+  const env1 = (t, a, peak, tau, dest) => { const g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.setTargetAtTime(0, t + a, tau); g.connect(dest); return g; };
+  const SFX = {
+    wind(t, d) { const n = src(pink, t, d, rnd() * 5), b = bp(500, .8), g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.15, t + Math.min(2.5, d * .3)); g.gain.setValueAtTime(.15, t + d * .7); g.gain.linearRampToValueAtTime(0, t + d);
+      const l = osc('sine', .23, t, d), lg = G(380); l.connect(lg); lg.connect(b.frequency); const l2 = osc('sine', .37, t, d), lg2 = G(.25), am = G(.75); l2.connect(lg2); lg2.connect(am.gain); n.connect(b); b.connect(am); am.connect(g); pan(g, -.2, sfx); sendFx(g, .2, 0); },
+    swell(t, d) { const o = osc('sine', mf(26), t, d + 1), g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.2, t + d); g.gain.setTargetAtTime(0, t + d, .8); o.connect(g); g.connect(sfx); },
+    whoosh(t, v = .6, d = .55) { const b = nz(t, d, 500, 2.5), g = G(0); b.frequency.setValueAtTime(350, t); b.frequency.exponentialRampToValueAtTime(2400, t + d * .55); b.frequency.exponentialRampToValueAtTime(600, t + d);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .55, t + d * .55); g.gain.linearRampToValueAtTime(0, t + d); b.connect(g); const p = ac.createStereoPanner(); p.pan.setValueAtTime(-.7, t); p.pan.linearRampToValueAtTime(.7, t + d); g.connect(p); p.connect(sfx); sendFx(p, .15, 0); },
+    step(t, v = 1) { boom(t, v * .55, sfx); const b = nz(t, .6, 160, .7, 'lowpass'); b.connect(env1(t, .005, v * .6, .18, sfx)); for (let i = 0; i < 6; i++) { const tt = t + .05 + rnd() * .5, c = nz(tt, .05, 2500 + rnd() * 3000, 2); c.connect(env1(tt, .002, v * .06, .015, sfx)); } },
+    ring(t, v = 1) { bell(t, 81, v * .7, -.2); bell(t + .08, 88, v * .5, .2); const s = nz(t, 1.6, 6000, 1, 'highpass'), g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .08, t + .3); g.gain.linearRampToValueAtTime(0, t + 1.5); s.connect(g); g.connect(sfx); sendFx(g, .4, .2); },
+    glint(t, v = 1) { for (const [f, a] of [[3520, .1], [5274, .07], [7040, .04]]) { const o = osc('sine', f, t, 1.4); o.connect(env1(t, .002, a * v, .35, sfx)); } const g = G(0); sendFx(g, .5, .3); },
+    breath(t, v = 1) { const b = nz(t, .9, 1300, .9), g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .07, t + .45); g.gain.linearRampToValueAtTime(0, t + .85); b.connect(g); g.connect(sfx); sendFx(g, .2, 0); },
+    shing(t, v = 1) { const b = nz(t, .45, 3000, 6), g = G(0); b.frequency.setValueAtTime(2500, t); b.frequency.exponentialRampToValueAtTime(8000, t + .35); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .35, t + .05); g.gain.setTargetAtTime(0, t + .3, .08);
+      const dl = ac.createDelay(.01), fb = G(.72); dl.delayTime.value = 1 / 2350; b.connect(g); g.connect(dl); dl.connect(fb); fb.connect(dl); const o = G(.6); dl.connect(o); o.connect(sfx); g.connect(sfx); sendFx(o, .3, .2);
+      for (const [f, a] of [[2349, .09], [3720, .05], [6010, .03]]) { const s = osc('sine', f, t + .25, 2); s.connect(env1(t + .25, .003, a * v, .55, sfx)); } },
+    slash(t, v = 1) { const b = nz(t, .25, 1200, 1.5), g = G(0); b.frequency.setValueAtTime(900, t); b.frequency.exponentialRampToValueAtTime(5500, t + .16); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .5, t + .1); g.gain.setTargetAtTime(0, t + .12, .04); b.connect(g); pan(g, (rnd() - .5) * .8, sfx); sendFx(g, .15, 0); },
+    hit(t, v = 1) { const o = osc('sine', 95, t, .6), g = G(0); o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(42, t + .18); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .85, t + .003); g.gain.setTargetAtTime(0, t, .13); o.connect(g); g.connect(sfx);
+      const c = nz(t, .1, 2200, .8); c.connect(env1(t, .001, v * .55, .03, sfx)); const m = nz(t, .3, 600, 1); m.connect(env1(t, .002, v * .35, .07, sfx)); const s = G(0); sendFx(s, 0, 0); if (v > 1) boom(t, (v - 1) * .8, sfx); },
+    magic(t, d = .8) { for (const [r, p] of [[1, -.3], [1.5, .3], [2, 0]]) { const o = osc('sine', 330 * r, t, d + .3), g = G(0); o.frequency.setValueAtTime(330 * r, t); o.frequency.exponentialRampToValueAtTime(660 * r, t + d); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.07, t + d); g.gain.linearRampToValueAtTime(0, t + d + .06); o.connect(g); pan(g, p, sfx); sendFx(g, .4, .2); }
+      for (let i = 0; i < 14; i++) { const tt = t + rnd() * d, o = osc('sine', 2000 + rnd() * 4000, tt, .2); o.connect(env1(tt, .002, .03, .04, sfx)); }
+      const b = nz(t, d, 3000, 1); const g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.12, t + d); g.gain.linearRampToValueAtTime(0, t + d + .05); b.connect(g); g.connect(sfx); },
+    burst(t, v = 1) { SFX.hit(t, v * .8); const b = nz(t, 1.2, 5000, .5, 'highpass'); const g = env1(t, .005, v * .2, .35, sfx); b.connect(g); sendFx(g, .4, .4); bell(t, 93, v * .3, 0); },
+    arrow(t, v = 1) { const b = nz(t, .2, 4000, 3), g = G(0); b.frequency.setValueAtTime(2500, t); b.frequency.exponentialRampToValueAtTime(7000, t + .15); g.gain.setValueAtTime(v * .3, t); g.gain.setTargetAtTime(0, t, .05); b.connect(g); pan(g, .5, sfx); const o = osc('triangle', 180, t, .1); o.connect(env1(t, .001, v * .2, .02, sfx)); },
+    thunder(t, v = 1) { const c = nz(t, .2, 3000, .5, 'highpass'); c.connect(env1(t, .001, v * .9, .05, sfx)); const r = src(pink, t, 3, rnd() * 4), lp = bp(180, .7, 'lowpass'), g = env1(t + .03, .05, v * 1.1, 1.1, sfx); r.connect(lp); lp.connect(g); sendFx(g, .2, .5); boom(t, v * .4, sfx); },
+    whirl(t, v = 1) { const b = nz(t, .8, 1800, 2), g = G(0), am = G(.5), l = osc('sine', 11, t, .8), lg = G(.5); l.connect(lg); lg.connect(am.gain); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .4, t + .3); g.gain.linearRampToValueAtTime(0, t + .75); b.connect(am); am.connect(g); pan(g, 0, sfx); },
+    quake(t, v = 1) { const r = src(pink, t, 2.4, rnd() * 4), lp = bp(110, .7, 'lowpass'), g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * 1.3, t + .05); g.gain.setTargetAtTime(0, t + .1, .7); r.connect(lp); lp.connect(g); g.connect(sfx); boom(t, v * .7, sfx);
+      for (let i = 0; i < 10; i++) { const tt = t + .1 + rnd() * 1.2, c = nz(tt, .05, 1500 + rnd() * 2500, 2); c.connect(env1(tt, .002, v * .05, .02, sfx)); } },
+    gate(t, d = 2) { const r = src(noise, t, d, rnd() * 3), lp = bp(320, 2, 'lowpass'), g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.4, t + .3); g.gain.setValueAtTime(.4, t + d - .3); g.gain.linearRampToValueAtTime(0, t + d);
+      const l = osc('sawtooth', 7, t, d), lg = G(120); l.connect(lg); lg.connect(lp.frequency); r.connect(lp); lp.connect(g); g.connect(sfx); sendFx(g, .2, .4); SFX.step(t + d - .1, .6); },
+    roar(t, v = 1) { const out = G(0), sh = shaper(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(v * .5, t + .25); out.gain.setValueAtTime(v * .5, t + .9); out.gain.linearRampToValueAtTime(0, t + 1.7);
+      const mix = G(1); for (const [f, q] of [[380, 4], [850, 6], [2400, 5]]) { const b = bp(f, q); mix.connect(b); b.connect(sh); } sh.connect(out); out.connect(sfx); sendFx(out, .3, .6);
+      for (const c of [0, 13, -11]) { const s = osc('sawtooth', 75, t, 1.8); s.frequency.setValueAtTime(70, t); s.frequency.linearRampToValueAtTime(95, t + .4); s.frequency.linearRampToValueAtTime(52, t + 1.7); s.detune.value = c; const j = osc('square', 31, t, 1.8), jg = G(9); j.connect(jg); jg.connect(s.frequency); s.connect(mix); }
+      const n = src(noise, t, 1.8, rnd() * 3), nb = bp(700, 1.2), ng = G(.6); n.connect(nb); nb.connect(ng); ng.connect(mix); boom(t + .05, .5 * v, sfx); },
+    blizzard(t, d = 2) { const n = src(pink, t, d, rnd() * 4), b = bp(2600, 1.4), g = G(0); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.5, t + .4); g.gain.linearRampToValueAtTime(0, t + d); const l = osc('sine', 1.3, t, d), lg = G(1200); l.connect(lg); lg.connect(b.frequency); n.connect(b); b.connect(g); pan(g, .4, sfx); },
+    fireburst(t, v = 1) { SFX.hit(t, v * .7); const n = src(noise, t, 1.6, rnd() * 3), lp = bp(1400, .6, 'lowpass'), g = env1(t, .02, v * .5, .5, sfx); n.connect(lp); lp.connect(g); for (let i = 0; i < 24; i++) { const tt = t + rnd() * 1.4, c = nz(tt, .03, 3000 + rnd() * 3000, 3); c.connect(env1(tt, .001, v * .07 * (1 - (tt - t) / 1.5), .01, sfx)); } },
+    slowmo(t, v = 1) { const o = osc('sine', 220, t, 1.3), g = G(0); o.frequency.setValueAtTime(260, t); o.frequency.exponentialRampToValueAtTime(40, t + 1.1); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * .35, t + .1); g.gain.setTargetAtTime(0, t + .3, .3); o.connect(g); g.connect(sfx); sendFx(g, .3, .5);
+      const b = nz(t - .4, .5, 2000, 1), rg = G(0); rg.gain.setValueAtTime(0, t - .4); rg.gain.exponentialRampToValueAtTime(v * .25, t); rg.gain.setValueAtTime(0, t + .01); b.connect(rg); rg.connect(sfx); },
+    heartbeat(t, v = 1) { for (const [dt, a] of [[0, 1], [.27, .7]]) { const o = osc('sine', 58, t + dt, .5), g = G(0); o.frequency.setValueAtTime(70, t + dt); o.frequency.exponentialRampToValueAtTime(40, t + dt + .12); g.gain.setValueAtTime(0, t + dt); g.gain.linearRampToValueAtTime(a * v * .9, t + dt + .006); g.gain.setTargetAtTime(0, t + dt, .09); o.connect(g); g.connect(sfx); } },
+    growl(t, d = 1.6) { const out = G(0), sh = shaper(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(.45, t + d); out.gain.setValueAtTime(0, t + d + .02); const b = bp(320, 3); b.connect(sh); sh.connect(out); out.connect(sfx); sendFx(out, .2, .5);
+      for (const c of [0, 15, -13]) { const s = osc('sawtooth', 41, t, d); s.detune.value = c; const j = osc('square', 23, t, d), jg = G(5); j.connect(jg); jg.connect(s.frequency); s.connect(b); } },
+    flash(t, v = 1) { const d = .7, b = nz(t - d, d + .05, 6000, .5, 'highpass'), g = G(0); g.gain.setValueAtTime(.0001, t - d); g.gain.exponentialRampToValueAtTime(v * .45, t); g.gain.setValueAtTime(0, t + .01); b.connect(g); g.connect(sfx); sendFx(g, .2, .3); },
+    wings(t, v = 1) { for (const [dt, f0, f1] of [[0, 300, 1800], [.12, 260, 1500], [.26, 220, 1200]]) { const b = nz(t + dt, .45, f0, 1.2), g = G(0); b.frequency.setValueAtTime(f0, t + dt); b.frequency.exponentialRampToValueAtTime(f1, t + dt + .3); g.gain.setValueAtTime(0, t + dt); g.gain.linearRampToValueAtTime(v * .32, t + dt + .1); g.gain.linearRampToValueAtTime(0, t + dt + .4); b.connect(g); pan(g, dt ? .3 : -.3, sfx); sendFx(g, .3, .3); } bell(t + .05, 98, v * .25, 0); },
+    boom(t, v = 1) { boom(t, v, sfx); },
+    riser(t, d = 2) { riser(t, d, .9); },
+    shimmer(t, v = 1) { [86, 89, 93, 98, 101, 105].forEach((m, i) => bell(t + i * .09, m, v * .35, (i % 2 ? .4 : -.4))); },
+  };
+

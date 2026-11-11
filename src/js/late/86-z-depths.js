@@ -149,7 +149,7 @@ const DEPTH8=(()=>{
  function note(j,v){tone(NOTE[j],NOTE[j]*1.003,.6,'triangle',v||.05);tone(NOTE[j]*2,NOTE[j]*2,.45,'sine',.016,.02)}
  function listen(r){if(wr().p[r.id])return;r.st='show';r.i=0;r.tm=.55;r.step=0;try{say('Listen to the crystals...')}catch(_){}}
  function hit(r,j){r.lit[j]=.38;note(j);try{const w2=RW();if(w2)w2.sparkle(pillX(r,j),r.fy*T-90,PC[j],6,120)}catch(_){}if(wr().p[r.id]||r.st!='input')return;r.idle=0;
-  if(r.seq[r.step]==j){r.step++;if(r.step>=r.seq.length){r.st='win';r.tm=.5}}else{r.st='fail';r.tm=1.4;r.bad=.7;tone(220,150,.35,'sawtooth',.03);tone(233,160,.35,'sawtooth',.02,.02);try{say('The song breaks. Press E to listen again')}catch(_){}}}
+  if(r.seq[r.step]==j){r.step++;if(r.step>=r.seq.length){r.st='win';r.tm=.5}}else{r.st='fail';r.tm=1.4;r.bad=.7;tone(220,150,.35,'sawtooth',.03);tone(233,160,.35,'sawtooth',.02,.02);try{say('The song breaks. Press F to listen again')}catch(_){}}}
  function solve(r){const w=wr();w.p[r.id]=1;tot('reso');save();r.st='solved';const g=80+r.seq.length*10,xp=150,x=ctr(r),y=r.fy*T;addI(268,1);pay(g,xp);[523,659,784,988,1319].forEach((f,i)=>tone(f,f,1.2,'triangle',.03,i*.05));
   const q=RW();if(q){q.celebrate(x,y,'#9fe0ff',{d:2,s:1.2,n:36,w:220});q.fly(x,y-60,g);q.card({kind:'reso',kick:'Resonance restored',title:'The crystal song is whole',gems:g,xp,items:[[268,1]],tier:3})}}
  // ---- mini games. A win pays gems / XP / items unless that site paid in the last few minutes (you can always replay for a best score)
@@ -157,8 +157,8 @@ const DEPTH8=(()=>{
   if(paid){s.cd=now+MG[kind].cd;for(const[i,n]of items)addI(i,n);pay(g,xp,kind=='forge'?'craft':'mine')}save();[523,659,784,1047].forEach((f,i)=>tone(f,f,.5,'triangle',.03,i*.07));
   const q=RW();if(q){q.celebrate(x,y,MG[kind].c,{d:1.6,s:1,n:26});if(paid){q.fly(x,y-40,g);q.fan('discover')}
    q.card(paid?{kind,kick:first?kick+' · first clear':kick,title,gems:g,xp,items,tier:first?3:2}:{kind,kick,title,sub:'Rewards again in '+fmt(s.cd-now),tier:1})}}
- function lose(r,txt){save();tone(392,370,.3,'triangle',.03);tone(330,320,.4,'triangle',.025,.16);try{say(txt+' · press E to try again')}catch(_){}}
- // Mole Rush: moles pop out of 5 burrows; bonk them (strike with any weapon / tool, or press E standing at the burrow). Golden moles are worth 3
+ function lose(r,txt){save();tone(392,370,.3,'triangle',.03);tone(330,320,.4,'triangle',.025,.16);try{say(txt+' · press F to try again')}catch(_){}}
+ // Mole Rush: moles pop out of 5 burrows; bonk them (strike with any weapon / tool, or press F standing at the burrow). Golden moles are worth 3
  function startMole(r){r.st='play';r.tm=MG.mole.t;r.sc=0;r.nx=.7;for(const m of r.mo){m.u=0;m.l=0;m.bonk=0}tone(523,530,.16,'triangle',.04);tone(784,790,.2,'triangle',.035,.12);try{say('Mole Rush! Bonk '+MG.mole.goal+' points of moles!')}catch(_){}}
  function bonk(r,j){const m=r.mo[j];if(!m||r.st!='play'||m.l<=0||m.bonk>0)return false;m.bonk=.4;m.l=Math.min(m.l,.4);const pts=m.gold?3:1;r.sc+=pts;const x=holeX(r,j),y=r.fy*T-26;
   tone(m.gold?1319:880,m.gold?1330:885,.14,'triangle',.045);tone(m.gold?1976:1319,m.gold?1990:1325,.1,'sine',.015,.03);try{const q=RW();if(q)q.sparkle(x,y,m.gold?'#ffd36a':'#e8c8a0',m.gold?14:8,160)}catch(_){}try{ft(x,y-18,'+'+pts,m.gold?'#ffe08a':'#ffffff')}catch(_){}return true}
@@ -188,17 +188,17 @@ const DEPTH8=(()=>{
   r.sp=Math.min(2.1,r.sp+.25);zone(r);
   if(r.n>=MG.forge.n){r.st='idle';const sc=r.res.reduce((a,b)=>a+b,0),pf=r.res.filter(v=>v==2).length,best=db.hi.forge|0;if(sc>best)db.hi.forge=sc;tot('forge');
    if(sc<MG.forge.goal)lose(r,'The blade cracked · '+sc+' / 10');else win(r,'forge','Ember Forge',(pf>=5?'A flawless forging':'A fine forging')+' · '+sc+' / 10',40+sc*10,80+sc*12,[[pf>=5?265:sc>=8?264:263,1]])}return true}
- function forgeTick(r,dt){r.fl=Math.max(0,(r.fl||0)-dt);if(r.st!='play')return;r.ph+=dt*r.sp*Math.PI;r.idle+=dt;if(r.idle>12){r.st='idle';try{say('The forge cools down · press E to start again')}catch(_){}}}
+ function forgeTick(r,dt){r.fl=Math.max(0,(r.fl||0)-dt);if(r.st!='play')return;r.ph+=dt*r.sp*Math.PI;r.idle+=dt;if(r.idle>12){r.st='idle';try{say('The forge cools down · press F to start again')}catch(_){}}}
  function awaken(r){const kinds=['magma','golem','shade'];for(let i=r.killed;i<3;i++){const k=kinds[i%3],d=MK[k];if(!d)continue;const x=(r.x+.5+(i-1)*4)*T,y=r.fy*T-d.h-2-(d.fly?T*1.5:0),hpv=Math.round(d.hp*(2.4+(lvl|0)*.05));
    const m={k,x,y,w:d.w,h:d.h,vx:0,vy:-140,hp:hpv,mhp:hpv,fl:0,burn:0,slow:0,ph:R0()*6,t:1,dir:1,fade:0,g:false,wall:0,vg:r.id,elite:1};mobs.push(m);r.gs.push(m);try{VFX.burst(x,y+d.h/2,['#ff6a2a','#ffd36a'],14,220,0,.8,14)}catch(_){}}
   try{VFX.wave(ctr(r),r.fy*T,'#ff4a2a',260,.9,.3);shake=Math.max(shake,QM.reduce?0:.12)}catch(_){}tone(70,45,1.2,'sawtooth',.06);tone(140,90,.6,'square',.02,.1);try{say('The vault guardians awaken!')}catch(_){}}
  function unseal(r){r.un=performance.now();const x=ctr(r),y=r.fy*T;try{VFX.shatter(x,y-30,['#d8d8e8','#ffd36a','#ffffff'],26)}catch(_){}tone(1200,600,.25,'triangle',.04);tone(1800,900,.2,'triangle',.03,.08);pay(0,60,'fight');
-  const q=RW();if(q){q.celebrate(x,y,'#ff9a4a',{d:1.4,s:.9,n:20});q.card({kind:'vault',kick:'Guardians defeated',title:'The relic vault is unsealed',sub:'Press E at the chest',xp:60,tier:3})}}
+  const q=RW();if(q){q.celebrate(x,y,'#ff9a4a',{d:1.4,s:.9,n:20});q.card({kind:'vault',kick:'Guardians defeated',title:'The relic vault is unsealed',sub:'Press F at the chest',xp:60,tier:3})}}
  function openVault(r){const w=wr();w.v[r.id]=1;tot('vault');save();r.t0=performance.now();const g=180+(R0()*80|0),xp=250,x=ctr(r),y=r.fy*T,t=Math.max(2,roll(2+luck())),gid=TBL[t][0];addI(269,1);addI(gid,1);pay(g,xp,'fight');
   const q=RW();if(q){q.card({kind:'vault',kick:'Also in the vault',title:iname(gid),items:[[gid,1]],tier:q.tierOf(gid),ms:4200});q.reveal(269,1,x,y-20,{kick:'Relic vault opened',showTier:true,gems:g,xp,ms:4400})}}
  // ---- input: E near a site, or striking a crystal pillar with any weapon / tool
  function use(){for(const r of S){
-   if(r.k=='reso'&&near(r,(r.rw+1)*T,T*3)){if(r.st=='input'){let bj=-1,bd=T*.9;for(let j=0;j<4;j++){const d=Math.abs(P.x-pillX(r,j));if(d<bd){bd=d;bj=j}}if(bj>=0)hit(r,bj);else try{say('Stand at a crystal and press E, or strike it')}catch(_){}return true}
+   if(r.k=='reso'&&near(r,(r.rw+1)*T,T*3)){if(r.st=='input'){let bj=-1,bd=T*.9;for(let j=0;j<4;j++){const d=Math.abs(P.x-pillX(r,j));if(d<bd){bd=d;bj=j}}if(bj>=0)hit(r,bj);else try{say('Stand at a crystal and press F, or strike it')}catch(_){}return true}
     if(wr().p[r.id]){try{say('The crystals hum in harmony.')}catch(_){}return true}if(r.st=='idle'||r.st=='fail'){listen(r);return true}return true}
    if(r.k=='mole'&&near(r,(r.rw+1)*T,T*3)){if(r.st=='play'){let bj=-1,bd=T*1.3;for(let j=0;j<5;j++){const m=r.mo[j],d=Math.abs(P.x-holeX(r,j));if(d<bd&&m.l>0&&!m.bonk){bd=d;bj=j}}if(bj>=0)bonk(r,bj);return true}startMole(r);return true}
    if(r.k=='gal'&&near(r,(r.rw+1)*T,T*4)){if(r.st=='play')try{say('Aim at the floating crystals and attack!')}catch(_){}else startGal(r);return true}
@@ -319,11 +319,11 @@ const DEPTH8=(()=>{
     if(r.k=='gal'){label(g2,cx,by-(r.rh+.4)*T+bob,'Crystals  '+r.sc+' / '+MG.gal.goal+'   ·   '+Math.ceil(Math.max(0,r.tm))+' s',MG.gal.c);continue}
     if(r.k=='forge'){forgeBar(g2,r,cx,by-162);continue}}
    if(!nr)continue;const bob=Math.sin(t*4)*2;
-   if(r.k=='reso'){const sv=w.p[r.id];label(g2,cx,by-150+bob,sv?'Resonance restored':r.st=='show'?'Listen...':r.st=='input'?'Strike the crystals in order  '+r.step+' / '+r.seq.length:r.st=='fail'?'Wrong note!':'Press E: listen to the crystals',sv?'#9fe0ff':PC[1])}
+   if(r.k=='reso'){const sv=w.p[r.id];label(g2,cx,by-150+bob,sv?'Resonance restored':r.st=='show'?'Listen...':r.st=='input'?'Strike the crystals in order  '+r.step+' / '+r.seq.length:r.st=='fail'?'Wrong note!':'Press F: listen to the crystals',sv?'#9fe0ff':PC[1])}
    else if(r.k=='mole'||r.k=='gal'||r.k=='forge'){const G=MG[r.k],s=w.mg[r.id],hi=db.hi[r.k]|0,cd=s&&s.cd>Date.now()?'   ·   rewards in '+fmt(s.cd-Date.now()):'',
      nm=r.k=='mole'?'Mole Rush: bonk '+G.goal+' points':r.k=='gal'?'Crystal Gallery: hit '+G.goal+' crystals':'Ember Forge: strike in the gold';
-     label(g2,cx,by-(r.k=='mole'?96:r.k=='gal'?(r.rh+.4)*T:150)+bob,'Press E: '+nm+(hi?'   ·   best '+hi:'')+cd,G.c)}
-   else if(r.k=='vault'){label(g2,cx,by-92+bob,w.v[r.id]?'Relic vault (empty)':r.killed>=3?'Press E: open the relic chest':r.gs.length?'Defeat the guardians  '+r.killed+' / 3':'A sealed relic vault','#ff7a3a')}
+     label(g2,cx,by-(r.k=='mole'?96:r.k=='gal'?(r.rh+.4)*T:150)+bob,'Press F: '+nm+(hi?'   ·   best '+hi:'')+cd,G.c)}
+   else if(r.k=='vault'){label(g2,cx,by-92+bob,w.v[r.id]?'Relic vault (empty)':r.killed>=3?'Press F: open the relic chest':r.gs.length?'Defeat the guardians  '+r.killed+' / 3':'A sealed relic vault','#ff7a3a')}
    else if(r.k=='grove'&&!ready(r))label(g2,cx,by-108+bob,'Regrowing  '+fmt((w.g[r.id]||0)-Date.now()),CAPC[0])}}
  {const _dp=BOSS6.drawProj;BOSS6.drawProj=function(g2,cx,cy){try{drawTop(g2,cx,cy)}catch(e){if(!drawTop.e){drawTop.e=1;console.error('DEPTH8 top',e)}}return _dp.apply(this,arguments)}}
  return{BANDS,theme,MG,MATS,holeX,bonk,tgPos,shoot,needle,hammer,startMole,startGal,startForge,strike,CACHE,GEODE,sites:()=>S,caches:()=>CA,geodes:()=>GE,get band(){return band&&band.id},get depth(){return depth},get db(){return db},wr,save,reload:load,spore,pillX,hit,listen,use,counts,el:()=>el,

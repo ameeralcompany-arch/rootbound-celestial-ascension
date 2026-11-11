@@ -52,7 +52,7 @@ try{(()=>{
    if(fin+8<m.dur)m.dur=Math.min(m.dur,fin+8)}
   m.raf=requestAnimationFrame(frame)}
  // when to play them: on arriving in a world in its new state, once; the ending on coming home to the Plaza after the last Journal page
- const calm=()=>{try{if(typeof INTRO60!='undefined'&&INTRO60.playing)return false;if(typeof CINE7!='undefined'&&CINE7.playing)return false;if(window.DG&&(DG.run||(DG.cine&&DG.cine.on)))return false;if(typeof WBOSS13!='undefined'&&WBOSS13.fight)return false;if(typeof entered!='undefined'&&!entered)return false;return true}catch(_){return false}};
+ const calm=()=>{try{if(window.MOVIE1&&MOVIE1.on)return false;if(typeof INTRO60!='undefined'&&INTRO60.playing)return false;if(typeof CINE7!='undefined'&&CINE7.playing)return false;if(window.DG&&(DG.run||(DG.cine&&DG.cine.on)))return false;if(typeof WBOSS13!='undefined'&&WBOSS13.fight)return false;if(typeof entered!='undefined'&&!entered)return false;return true}catch(_){return false}};
  let lastW='',settle=0;
  setInterval(()=>{if(M||!calm())return;const c=typeof cur!='undefined'?cur:'';if(c!==lastW){lastW=c;settle=performance.now()+3200;return}if(performance.now()<settle)return;
   try{if(c=='plaza'){if(!S.end&&STORY1.got.includes('end')){S.end=1;save();start('end')}return}const h=window.RESTORE1&&RESTORE1.here();if(!h)return;

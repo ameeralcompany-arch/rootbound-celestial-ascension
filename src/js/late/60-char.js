@@ -1,6 +1,6 @@
 // ===== V6 anime character renderer (layered, cel-shaded, animated) + presence of celestial cosmetics =====
 const AC6=(()=>{
- const sc=new Map(),OL='#140c1c';
+ const sc=new Map(),OL='#2c1b33';
  function shade(h,k){const key=h+k;let v=sc.get(key);if(v)return v;const n=parseInt(h.slice(1),16);let r=n>>16,g2=n>>8&255,b=n&255;if(k<0){r*=1+k;g2*=1+k;b*=1+k;r*=.94;b*=1.04}else{r+=(255-r)*k;g2+=(255-g2)*k;b+=(255-b)*k}v='rgb('+Math.max(0,Math.min(255,r|0))+','+Math.max(0,Math.min(255,g2|0))+','+Math.max(0,Math.min(255,b|0))+')';if(sc.size>400)sc.clear();sc.set(key,v);return v}
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  // cel-shaded fill: dark base, lit shape offset toward the light, outline
@@ -8,7 +8,7 @@ const AC6=(()=>{
  const poly=(g,pts,close)=>()=>{g.beginPath();g.moveTo(pts[0],pts[1]);for(let i=2;i<pts.length;i+=2)g.lineTo(pts[i],pts[i+1]);if(close!==false)g.closePath()};
  function ik2(sx,sy,tx,ty,l1,l2,b){let dx=tx-sx,dy=ty-sy,d=Math.hypot(dx,dy)||.001;const m=l1+l2-.01;if(d>m){dx*=m/d;dy*=m/d;d=m}const a=(l1*l1-l2*l2+d*d)/(2*d),h=Math.sqrt(Math.max(0,l1*l1-a*a)),px=sx+dx*a/d,py=sy+dy*a/d;return[px-b*h*dy/d,py+b*h*dx/d,sx+dx,sy+dy]}
  function limb2(g,x1,y1,x2,y2,l1,l2,w,col,b){const q=ik2(x1,y1,x2,y2,l1,l2,b);limb(g,x1,y1,q[0],q[1],w,col);limb(g,q[0],q[1],q[2],q[3],w*.94,col);return q}
- function limb(g,x1,y1,x2,y2,w,col){g.lineCap='round';g.strokeStyle=OL;g.lineWidth=w+2.2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.strokeStyle=col;g.lineWidth=w;g.stroke();g.strokeStyle=shade(col,-.3);g.lineWidth=w*.35;g.beginPath();g.moveTo(x1-.7,y1+.6);g.lineTo(x2-.7,y2+.6);g.stroke()}
+ function limb(g,x1,y1,x2,y2,w,col){g.lineCap='round';g.strokeStyle=OL;g.lineWidth=w+1.7;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.strokeStyle=col;g.lineWidth=w;g.stroke();g.strokeStyle=shade(col,-.3);g.lineWidth=w*.35;g.beginPath();g.moveTo(x1-.7,y1+.6);g.lineTo(x2-.7,y2+.6);g.stroke()}
  // hair table: back = shape behind head; top = spike count/height; bang = fringe drop; side = part offset
  const HS=[{back:'short',top:5,th:10,bang:5,sw:1},{back:'tail',top:3,th:6,bang:5,sw:1},{back:'short',top:0,th:0,bang:7,sw:-1},{back:'shoulder',top:6,th:13,bang:6,sw:1},{back:'none',top:3,th:5,bang:3,sw:1},{back:'long',top:4,th:8,bang:6,sw:1},{back:'none',top:0,th:2,bang:3,sw:1},{back:'shoulder',top:2,th:4,bang:8,sw:-1},{back:'straight',top:0,th:0,bang:6,sw:1},{back:'twin',top:0,th:2,bang:6,sw:-1}]; // 8 long straight, 9 twin tails (v8)
  const HSN=HS.map(h=>Object.assign({},h,{top:0})); // same styles without the top spikes (worn under hoods/caps)
@@ -57,7 +57,7 @@ const AC6=(()=>{
   g.save();g.lineCap='round';g.strokeStyle='rgba(255,255,255,.42)';g.lineWidth=1.5;g.setLineDash([3.2,1.3]);g.beginPath();g.moveTo(-6.6,hy-11.2);g.quadraticCurveTo(.6,hy-15.4,7.6,hy-11);g.stroke();g.setLineDash([]);
   g.strokeStyle='rgba(255,255,255,.22)';g.lineWidth=.7;g.beginPath();g.moveTo(-4.6,hy-9.4);g.quadraticCurveTo(.8,hy-12.6,5.8,hy-9.2);g.stroke();g.restore()}
  // big layered anime eyes. es: 0 sharp, 1 calm (half-lidded), 2 fierce, 3 round
- function eye(g,x,y,sx,es,col,blink,far){const w=(es==3?3.3:es==0?3.1:3)*sx,ht=es==3?5:es==1?3.6:es==2?3.9:4.4,ln='#2a1418';
+ function eye(g,x,y,sx,es,col,blink,far){const w=(es==3?3.3:es==0?3.1:3)*sx*1.16,ht=(es==3?5:es==1?3.6:es==2?3.9:4.4)*1.24,ln='#2a1418';
   if(blink){g.strokeStyle=ln;g.lineWidth=1.3;g.lineCap='round';g.beginPath();g.moveTo(x-w,y+.6);g.quadraticCurveTo(x,y+2.4,x+w,y+.2);g.stroke();g.lineWidth=.6;g.beginPath();g.moveTo(x+w,y+.2);g.lineTo(x+w+1.2*sx,y-.6);g.stroke();return}
   const tilt=es==2?-.25:es==0?-.15:0,tOut=y-ht*(es==2?.05:.42),tIn=y-ht*(.42+tilt);
   const shape=()=>{g.beginPath();g.moveTo(x-w,tIn);g.quadraticCurveTo(x-w*.1,y-ht*1.06,x+w,tOut);g.quadraticCurveTo(x+w*.92,y+ht*.86,x+w*.1,y+ht*.92);g.quadraticCurveTo(x-w*.88,y+ht*.88,x-w,tIn);g.closePath()};
@@ -111,10 +111,11 @@ const AC6=(()=>{
   const of=GB?-1:L.of,ac=GB&&G7.D[GB].arms=='out'?out:oc,gd=L.gd|0,ash=gd==1?.6:gd==2?-.4:0; // gd: body type (shoulder offset)
   const hand=(x0,y0,r)=>{if(GG&&G7.glove(g,GG,x0,y0))return;if(paw&&!GG&&G7.glove(g,GB,x0,y0))return;g.fillStyle=glove;g.strokeStyle=OL;g.lineWidth=1;g.beginPath();g.arc(x0,y0,r,0,6.3);g.fill();g.stroke()};
   leanOn();
+  if(o.evo&&api.EVB)api.EVB(g,o.evo,{t,sh,hip,vx,hy:-50+bob});
   // --- cape (behind)
   if(L.cape){const len=L.cape==2?30:19,fl=clamp(-vx*.03,-10,10)+Math.sin(t*3)*1.5+(air?-6:0);celf(g,()=>{g.beginPath();g.moveTo(-5,sh+2);g.lineTo(6,sh+2);g.bezierCurveTo(8+fl*.3,sh+len*.5,10+fl,sh+len,6+fl*1.3,sh+len+4);g.lineTo(-9+fl*1.4,sh+len+3);g.bezierCurveTo(-11+fl*.6,sh+len*.5,-8,sh+8,-5,sh+2);g.closePath()},shade(trim,-.45),1.1)}
   if(GB){G7.tail(g,GB,-7.5,hip-3.5,t,run,air);if(!(GB=='sparksuit'&&GH=='sparkhood'))G7.put(g,GB,'back',0,sh)}
-  g.save();g.translate(0,-43+bob);g.scale(1.16,1.16);g.translate(0,43-bob);hairBack(g,HS[L.hs],-50+bob,L.hair,hs,t);if(GH)G7.hat(g,GH,-50+bob,t,'B',1.16);g.restore();
+  g.save();g.translate(0,-43+bob);g.scale(1.24,1.24);g.translate(0,43-bob);hairBack(g,HS[L.hs],-50+bob,L.hair,hs,t);if(GH)G7.hat(g,GH,-50+bob,t,'B',1.24);g.restore();
   // --- far arm
   const swing=sw>0?1-sw/.22:-1,armA=swing>=0?-2.1+3.5*swing:null;
   // aura pose with wings (60-z-aurapose.js): pa = flight pose weight (arms spread, legs together and trailing), pg = grounded levitation (arms open)
@@ -155,7 +156,7 @@ const AC6=(()=>{
   // scarf
   if(L.acc==1){celf(g,poly(g,[-5.6,sh-2,5.6,sh-2,5,sh+3,-5,sh+3]),trim,1);const tl=clamp(-vx*.04,-9,9)+Math.sin(t*4)*1.2;celf(g,()=>{g.beginPath();g.moveTo(-3,sh+2);g.lineTo(2,sh+2);g.lineTo(-6+tl,sh+15);g.lineTo(-10+tl,sh+13);g.closePath()},shade(trim,-.15),1)}
   // head (a little oversized for a cuter proportion)
-  g.save();g.translate(0,-43+bob);g.scale(1.16,1.16);g.translate(0,43-bob);head(g,L,-50+bob,t,air,blink,hs);
+  g.save();g.translate(0,-43+bob);g.scale(1.24,1.24);g.translate(0,43-bob);head(g,L,-50+bob,t,air,blink,hs);
   // face-side accessories
   if(L.acc==2){g.fillStyle='#fff';g.shadowColor=trim;g.shadowBlur=4;g.beginPath();g.arc(-9.4,-50+bob+4.2,1.5,0,6.3);g.fill();g.shadowBlur=0}
   if(L.acc==3){celf(g,poly(g,[-6,-50+bob+4,8,-50+bob+4,5,-50+bob+11,-3,-50+bob+11.6]),shade('#2a2438',0),1)}
@@ -163,7 +164,7 @@ const AC6=(()=>{
   hairFront(g,G7.cover(GH)?HSN[L.hs]:HS[L.hs],-50+bob,L.hair,hs,t,air);
   if(L.acc==4&&!G7.cover(GH)){g.fillStyle=trim;g.strokeStyle=OL;g.lineWidth=.9;g.fillRect(-10,-50+bob-5,20,2.8);g.strokeRect(-10,-50+bob-5,20,2.8)}
   // hat item (cached GEAR7 sprite; unknown ids fall back to the icon art)
-  if(GH&&!G7.hat(g,GH,-50+bob,t,'F',1.16)){g.save();g.translate(0,-62+bob);g.scale(.62,.62);g.translate(-24,-24);try{drawWearIcon(g,wr.hat,48)}catch(_){}g.restore()}
+  if(GH&&!G7.hat(g,GH,-50+bob,t,'F',1.24)){g.save();g.translate(0,-62+bob);g.scale(.62,.62);g.translate(-24,-24);try{drawWearIcon(g,wr.hat,48)}catch(_){}g.restore()}
   g.restore();
   // --- near arm (+ weapon)
   const hx=6+ash,hy2=sh+4;let hxp,hyp;
@@ -172,6 +173,7 @@ const AC6=(()=>{
   if(fa){const q=limb2(g,hx,hy2-1,hx+fa.nh[0],hy2-1+fa.nh[1],9.2,9.2,4.6,ac,1);hxp=q[2];hyp=q[3]}else limb(g,hx,hy2-1,hxp,hyp,4.6,ac);if(GB)G7.put(g,GB,'shoulder',0,sh);
   if(fa&&fa.hide){}else if(fa&&wpn!='fist'){g.save();if(fa.off){g.translate(fax,fay)}else g.translate(hxp,hyp);g.rotate(fa.wa-fa.lean);drawWeapon(g,wpn,fa.len||40,t);g.restore()}else if(bw){g.save();g.translate(bhx,bhy);g.rotate(bw.a);BOW15.art(g,wpn,bw.pull,t);g.restore()}else if(wpn!='fist'&&fm&&!(o.ph>.4)){g.save();g.translate(hxp,hyp);g.rotate(armA!=null?armA+.15:-.6+Math.sin(t*3)*.05);drawWeapon(g,wpn,WPN[wpn].k=='sword'?44:WPN[wpn].k=='scythe'?46:WPN[wpn].k=='glaive'?34:40,t);g.restore()}
   if(o.ph>.05){/* the phone in the hand, its screen lit */g.save();g.translate(hxp+1,hyp-7);g.rotate(.12);g.globalAlpha=Math.min(1,o.ph*1.6);g.fillStyle='#14111f';g.strokeStyle='#000';g.lineWidth=1;g.beginPath();g.roundRect(-4.5,-8,9,16,2);g.fill();g.stroke();g.fillStyle='#8ab8ff';g.globalAlpha*=.9*o.ph;g.fillRect(-3.3,-6.8,6.6,13.4);g.restore()}
+  if(o.evo&&api.EVF)api.EVF(g,o.evo,{t,sh,hip,vx,hy:-50+bob});
   hand(hxp,hyp+.6,2.6);leanOff();
   if(!fa&&fm&&sw>0&&wpn=='fist'){g.fillStyle=L.skin;g.beginPath();g.arc(hxp+8*(1-sw/.22),hyp,4,0,6.3);g.fill();g.stroke()}
  }
@@ -189,7 +191,7 @@ const AC6=(()=>{
   // aura pose hook: visual-only lift (levitation px), lean and flight-pose weights; hitboxes and P are never touched
   const pz=api.PZ&&wingIdx>=0?api.PZ(local?'me':'p:'+name,wingIdx,air,vx,sw,t,local):null,ly=pz?pz.lev:0;
   // aura circle under the feet (ground-projected)
-  if(aura&&aura.id!='none'&&QM.cur.wfx>=0)Sigil.draw(g,aura,cx,feet-1,t,72,.8);
+  if(aura&&aura.id!='none'&&QM.cur.wfx>=0&&!api.quiet)Sigil.draw(g,aura,cx,feet-1,t,72,.8);
   // soft shadow
   g.save();const sd=QM.cur.shadow;g.fillStyle='rgba(0,0,0,'+(sd?.32:.22)+')';g.beginPath();g.ellipse(cx,feet,15-ly*.7,4-ly*.12,0,0,6.3);g.fill();g.restore();
   // wings sit behind the body
@@ -199,23 +201,23 @@ const AC6=(()=>{
   if(pz&&api.PZG)api.PZG(g,pz,cx,feet-ly,t);
   g.save();g.translate(cx,feet-ly);if(pz&&pz.lean){g.translate(0,-30);g.rotate(pz.lean*f);g.translate(0,30)}g.imageSmoothingEnabled=true;{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
-  try{drawBody(g,L,{fa:api.FA?api.FA(local?'me':'p:'+name,wpn,fm):null,t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,me:local,ph:local&&window.ROOTLINK?ROOTLINK.pose():0,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
+  try{drawBody(g,L,{evo:api.EVK?api.EVK(local,cxo):null,fa:api.FA?api.FA(local?'me':'p:'+name,wpn,fm):null,t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,me:local,ph:local&&window.ROOTLINK?ROOTLINK.pose():0,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.05)WingArt.idleFx(WINGS[wingIdx],cx+cam.x,cy+cam.y+10+Math.random()*30,f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}
   // shop cosmetics: charm (all players), aura particles for others (own aura is emitted by FX7.tick)
   try{const fxo=local?{ch:SHOP7.eqRef('charm'),au:null}:(cxo&&cxo.fx)||{};if(fxo.ch)FX7.charmDraw(g,fxo.ch,cx,cy-ly,t,f);if(!local&&fxo.au&&QM.cur.wfx>=2&&Math.random()<.2)FX7.AUR[fxo.au](1,cx+cam.x,cy+cam.y+54,t)}catch(_){}
   // nameplate + bubble
-  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');Plate.draw(g,cx,cy-50-ly,tier,nm,lvv,NPSKIN7.of(local,q));
+  const nm=String(name||'').replace(/^\[\d+\]\s*/,'');if(!api.quiet)Plate.draw(g,cx,cy-50-ly,tier,nm,lvv,NPSKIN7.of(local,q));
   if(bubT){g.save();g.font='500 13px '+FONT;g.textAlign='center';const bw=g.measureText(bubT).width+18;rr(cx-bw/2,cy-96,bw,24,10);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillText(bubT,cx,cy-79);g.restore()}
  }
  function headFull(g,L,hy,t,air,wr){const h=HS[L.hs],GH=wr&&wr.hat&&WEAR[wr.hat]&&GEAR7.has(wr.hat,'hatF')?wr.hat:'';hairBack(g,h,hy,L.hair,0,t);if(GH){GEAR7.begin(g);GEAR7.hat(g,GH,hy,t,'B')}head(g,L,hy,t,air,false,0);hairFront(g,GH&&GEAR7.cover(GH)?HSN[L.hs]:h,hy,L.hair,0,t,air);if(GH)GEAR7.hat(g,GH,hy,t,'F')}
- const api={draw,info,shade,head,headFull,PZ:null,PZG:null,FA:null,ik2};return api})();
+ const api={draw,info,shade,head,headFull,PZ:null,PZG:null,FA:null,EVK:null,EVB:null,EVF:null,ik2,quiet:0};return api})();
 // ===== GEAR7: equipment art shared by the item icons and the worn character (hats, armour, boots, gloves, the Sparkmouse costume).
 // Worn pieces are pre-rendered once per (item, part, scale bucket) on small offscreen canvases and blitted, so a fully geared character
 // costs a handful of drawImage calls per frame. Icons call the same vector parts at icon scale, so the icon and the worn look always match.
 const GEAR7=(()=>{
- const OL='#140c1c',SC=new Map(),sh=(c,k)=>AC6.shade(c,k);
+ const OL='#2c1b33',SC=new Map(),sh=(c,k)=>AC6.shade(c,k);
  const Y='#ffd23f',CR='#fff3c9',TL='#36d6e0',GOLD='#f2c14e';
  // cel fill (dark base, lit shape offset toward the light, outline) — same language as the body renderer
  function cel(x,path,col,lw,lx,ly){path();x.fillStyle=sh(col,-.34);x.fill();x.save();path();x.clip();x.translate(lx==null?1.4:lx,ly==null?-1.1:ly);path();x.fillStyle=col;x.fill();x.restore();path();x.strokeStyle=OL;x.lineWidth=lw||1;x.stroke()}
@@ -426,6 +428,6 @@ const GEAR7=(()=>{
 drawChar=function(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q){AC6.draw(cx,cy,f,hue,name,t,vx,air,bubT,wpn,sw,fm,wr,dsh,lk,q)};
 nameTag=function(){};
 // compact, validated cosmetic block for multiplayer presence
-function celPres(){const w=curWing(lvl),a=curAura(lvl);return{fa:window.FIGHT?FIGHT.net():0,sk:(()=>{try{return NPSKIN7.cur()||''}catch(_){return''}})(),fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
+function celPres(){const w=curWing(lvl),a=curAura(lvl);return{ev:window.EVO1?(EVO1.shown()||0):0,fa:window.FIGHT?FIGHT.net():0,sk:(()=>{try{return NPSKIN7.cur()||''}catch(_){return''}})(),fx:{au:SHOP7.eqRef('aura')||'',ch:SHOP7.eqRef('charm')||'',ws:SHOP7.eqRef('wskin')||''},w:w?WINGS.indexOf(w):-1,a:AURAS.indexOf(a),t:curPlateTier(lvl),ap:Object.assign({},cel.ap)}}
 // Sparkmouse costume skills (the base useSkill handles cooldown, ring and burst; these add the effect)
 {const _us=useSkill;useSkill=function(slot){const id=wear[slot];if((id=='sparkhood'||id=='sparksuit')&&!(cdT[slot]>0)&&!showInv&&!dlgOpen){_us.apply(this,arguments);try{if(id=='sparksuit'){P.vy=-1100;P.g=false;burst(P.x,P.y+40,'#7ff6ff',14,160,4,'p')}else{for(const m of mobs)if(Math.hypot(m.x-P.x,m.y-P.y)<T*5)hurtMob(m,12,null,0);rings.push({x:P.x,y:P.y+30,c:'#36d6e0',t:performance.now()+90});burst(P.x,P.y+24,'#fff3a0',16,220,4,'p')}}catch(_){}return}return _us.apply(this,arguments)}}

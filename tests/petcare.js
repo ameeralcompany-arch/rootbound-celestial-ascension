@@ -106,7 +106,7 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  ok('mixing: panned by screen position (left of you = left), silent off-screen and with the SFX volume at 0',vx.happy.pan<0&&vx.sad.pan>0&&vx.off=='off'&&vx.muted=='muted',{pan:[vx.happy.pan,vx.sad.pan],off:vx.off,muted:vx.muted});
  // ---- Pet UI: E opens it, clothes + colours, locked items go to the store
  await E(async({hx,gy})=>{for(const c of Object.keys(PET10.CL))if(c!='wings')await SHOP7.buy('petc_'+c);const r=PET10.RT.get('pcat');PET10.force('pcat','sit');r.tm=30;r.x=(hx+1.5)*T;r.y=gy*T;r.vy=0;P.x=r.x+30;P.y=(gy)*T-P.h-1;P.vx=P.vy=0},yard);
- await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++){const r=PET10.RT.get('pcat');P.x=r.x+20;P.y=r.y-P.h-1;P.vx=P.vy=0;await new Promise(q=>setTimeout(q,50))}});await p.keyboard.press('e');await W8(300);
+ await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++){const r=PET10.RT.get('pcat');P.x=r.x+20;P.y=r.y-P.h-1;P.vx=P.vy=0;await new Promise(q=>setTimeout(q,50))}});await p.keyboard.press('f');await W8(300);
  const ui=await E(()=>({on:PET10.ui.on,vis:document.getElementById('petui').style.display,pid:PET10.ui.pid,tabs:document.querySelectorAll('#petui .tb10').length,chips:document.querySelectorAll('#petui .ch10').length}));
  ok('E next to a pet opens its Pet UI (4 pet tabs + store, every clothing chip)',ui.on&&ui.vis=='block'&&ui.tabs==5&&ui.chips==13,ui);
  await p.click('#petui .tb10[data-id=pcat]');await W8(120);
@@ -148,8 +148,8 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  await shot('world');
  // ---- E closes / Esc closes
  await E(({hx,gy})=>{const r=PET10.RT.get('prabbit');PET10.force('prabbit','sit');r.tm=30;r.x=(hx+1)*T;r.y=gy*T;r.vy=0;P.x=r.x+24;P.y=gy*T-P.h-1;P.vx=0},yard);await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++)await new Promise(q=>setTimeout(q,50))});
- await p.keyboard.press('e');await W8(250);const o1=await E(()=>PET10.ui.on&&!!PET10.ui.pid);await shot('ui');
- await p.keyboard.press('e');await W8(200);const o2=await E(()=>!PET10.ui.on);await p.keyboard.press('e');await W8(200);await p.keyboard.press('Escape');await W8(200);const o3=await E(()=>!PET10.ui.on&&document.getElementById('petui').style.display=='none');
+ await p.keyboard.press('f');await W8(250);const o1=await E(()=>PET10.ui.on&&!!PET10.ui.pid);await shot('ui');
+ await p.keyboard.press('f');await W8(200);const o2=await E(()=>!PET10.ui.on);await p.keyboard.press('f');await W8(200);await p.keyboard.press('Escape');await W8(200);const o3=await E(()=>!PET10.ui.on&&document.getElementById('petui').style.display=='none');
  ok('E opens the nearest pet, E and Esc close the Pet UI',o1&&o2&&o3,[o1,o2,o3]);
  // ---- persistence across a reload
  await E(()=>{PET10.timeShift(0);PET10.save()});const before=await E(()=>JSON.parse(localStorage.getItem((typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpet10')));

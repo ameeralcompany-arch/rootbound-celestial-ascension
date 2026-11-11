@@ -22,7 +22,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:20,3:40,208:6,17:1,735:1},gems:1000,own:{f
  // restart: still there, and not back in your bag
  await sleep(5500);await p.reload({waitUntil:'commit'});await boot();ok('after a restart it is still on the ground and you still do not have it',await p.evaluate(()=>DROP2.local.length==1&&!own.astralkat));
  // E picks up
- await p.evaluate(()=>{const d=DROP2.local[0];P.x=d.x;P.y=d.y-30;P.vx=P.vy=0});await sleep(1300);await p.keyboard.press('e');await sleep(400);ok('E picks it up, once',await p.evaluate(()=>!!own.astralkat&&DROP2.local.length==0));
+ await p.evaluate(()=>{const d=DROP2.local[0];P.x=d.x;P.y=d.y-30;P.vx=P.vy=0});await sleep(1300);await p.keyboard.press('f');await sleep(400);ok('E picks it up, once',await p.evaluate(()=>!!own.astralkat&&DROP2.local.length==0));
  // stacks
  const s=await p.evaluate(()=>{const n=cnt(208);DROP2.drop(208,4);return{n,after:cnt(208),ld:DROP2.local.length,sum:cnt(208)+DROP2.local[0].n}});ok('a stack drops the amount asked, and the total never changes',s.after==s.n-4&&s.sum==s.n,s);
  // it comes home after 15 minutes

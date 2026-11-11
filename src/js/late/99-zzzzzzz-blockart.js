@@ -129,8 +129,8 @@ const BART9=(()=>{
   for(let i=0;i<(o.small==null?6:o.small);i++){const r=.75+R()*1.1;pebble(x,2+R()*(T-4),top+2+R()*(split-top-1),r*1.2,r*.9,mx('#8e8d8a',c,.2*R()),R()*.6,.35)}
   const nr=o.roots==null?1+(R()<.35?1:0):o.roots;if(nr)roots(x,R,top+2,split+2,nr);
   // the lower soil, packed with round grey-brown pebbles of many sizes (big ones first so the small ones tuck in between)
-  const P=[];for(let t=0;t<260&&P.length<(o.peb||17);t++){const r=P.length<4?3+R()*1.8:1.2+R()*2.2,cx=r+R()*(T-2*r),cy=split+r*.5+R()*(T-split-r*.9);if(free(P,cx,cy,r*.8-.8))P.push([cx,cy,r])}
-  for(const[cx,cy,r]of P.sort((a,b)=>a[1]-b[1]))pebble(x,cx,cy,r*1.1,r*.86,mx(['#9b8e7e','#8a7f70','#a69a88','#7d7265','#b3a793','#94877a'][R()*6|0],c,.22),(R()-.5)*.7,.38)}
+  const P=[];for(let t=0;t<260&&P.length<(o.peb||9);t++){const r=P.length<4?3+R()*1.8:1.2+R()*2.2,cx=r+R()*(T-2*r),cy=split+r*.5+R()*(T-split-r*.9);if(free(P,cx,cy,r*.8-.8))P.push([cx,cy,r])}
+  for(const[cx,cy,r]of P.sort((a,b)=>a[1]-b[1]))pebble(x,cx,cy,r*1.1,r*.86,mx(['#9b8e7e','#8a7f70','#a69a88','#7d7265','#b3a793','#94877a'][R()*6|0],c,.46),(R()-.5)*.7,.24)}
  function roots(x,R,y0,y1,n){x.lineCap='round';x.lineJoin='round';for(let i=0;i<n;i++){const p=[];let px=R()<.5?-2:T*R(),py=y0+R()*(y1-y0),a=(px<0?0:Math.PI/2*(R()<.5?1:-1)*.4)+(R()-.5)*.8;for(let k=0;k<8;k++){p.push([px,py]);a+=(R()-.5)*1.2;px+=Math.cos(a)*5.5;py+=Math.sin(a)*3.5;py=Math.max(y0,Math.min(y1,py))}
    const path=()=>{x.beginPath();x.moveTo(p[0][0],p[0][1]);for(let k=1;k<p.length-1;k++){x.quadraticCurveTo(p[k][0],p[k][1],(p[k][0]+p[k+1][0])/2,(p[k][1]+p[k+1][1])/2)}};
    x.save();x.shadowColor='rgba(70,255,210,.95)';x.shadowBlur=3.2*Q;path();x.strokeStyle='rgba(40,170,150,.75)';x.lineWidth=1.25;x.stroke();x.restore();path();x.strokeStyle='#7ff7dc';x.lineWidth=.6;x.stroke();

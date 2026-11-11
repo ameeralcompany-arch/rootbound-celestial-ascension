@@ -67,7 +67,8 @@ try{(()=>{
  function onBeat(){WASH.beat=1;const s=ST.get('me');if(!s||!s.W||!fxOn())return;const rkv=rk(s.W),L=s.W.a.L,c=s.W.pal[3];if(s.gap<3.4*T&&!WASH.water){const n=Math.round(5*WASH.k*kOf());for(let i=0;i<n;i++){const d=i%2?1:-1,x=P.x+d*(10+RN()*L*.8),y=s.wy+s.gap;spawn(1,x,y-3,d*(90+RN()*140),-(10+RN()*30),.32+RN()*.26,10+RN()*12,.4,tileCol(x,y))}}
   spawn(5,P.x,P.y+P.h*.5+10,0,50,.26,L*.6,.09+rkv*.018,'#ffffff');
   if(rkv>=5&&s.tp)for(let k=0;k<2;k++){const i=k?6:0;spawn(4,s.tp[i],s.tp[i+1],P.vx*.15,P.vy*.15+22,.55,12+rkv*2,.36,c,RN()*6)}
-  if(s.W.a.sig=='hours')spawn(7,P.x,P.y+P.h*.4,0,0,.8,L*.9,.5,c,RN()*6)}
+  {const P0=s.W.a.parts[0],m0=String((P0.e||[])[0]||P0.tip||''),dark=s.W.fam=='dark',cry=/prism|shard|ice/.test(m0);if(cry&&s.tp)for(let k=0;k<3;k++){const i=k*4;spawn(2,s.tp[i],s.tp[i+1],0,-6,.34,2.4,1,'#ffffff')}else if(dark&&s.tp)for(let k=0;k<2;k++){const i=k*6;spawn(1,s.tp[i],s.tp[i+1],P.vx*.1,16,.5,13,.45,s.W.pal[0])}}
+ if(s.W.a.sig=='hours')spawn(7,P.x,P.y+P.h*.4,0,0,.8,L*.9,.5,c,RN()*6)}
  try{const _f=WINGSFX.flap;WINGSFX.flap=function(){try{onBeat()}catch(_){}return _f.apply(this,arguments)}}catch(_){}
  // ---------- drawing from the wing POST hook, once per frame ----------
  const TIP=new Float32Array(12);let lastT=-1;

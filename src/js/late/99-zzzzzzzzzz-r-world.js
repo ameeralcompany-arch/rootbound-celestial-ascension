@@ -1,5 +1,5 @@
 // ===== DISC1: things to find on the First Realm road. Each of the three lands holds eight: three lore fragments (they become Journal pages), two buried caches (the ground above them glitters),
-// two rare gathering points and one chime puzzle. Places come from the land's name, so everyone's land matches. Press E beside one. Rewards follow the game's income, once each. State: RB_PREFIX+'rbdisc'.
+// two rare gathering points and one chime puzzle. Places come from the land's name, so everyone's land matches. Press F beside one. Rewards follow the game's income, once each. State: RB_PREFIX+'rbdisc'.
 // LOGBOOK1: Quests > Logbook, everything you have found and done, read from the game's own records.  WXAUTO: weather is on by default and pauses by itself when the frame rate slips.
 // MOMENT2: small personal moments: a thought bubble when you stand still a while, a reaction to rain and to a rare find. Local only, never sent to other players. =====
 try{(()=>{

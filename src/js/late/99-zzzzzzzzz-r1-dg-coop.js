@@ -45,7 +45,7 @@ try{(()=>{
   gate(q){if(!C||C.quiet)return;pg({e:'g',i:DG.L.gates.indexOf(q)})},
   bossDown(run){if(!C||C.guest)return;ns({t:'party',op:'done',run:C.run})},
   gateBlock(q){if(!C||C.quiet)return false;return DG.duoP?DG.duoP.gateBlock(q):false},
-  near(){if(!C||!C.mate||!C.mateIn)return null;const M=C.mate;if(M.dn&&!C.down&&Math.hypot(P.x-M.x,P.y-M.y)<T*3.2)return{t:'Hold E to revive '+((C.mate.pr&&C.mate.pr.n)||'your friend'),go(){}};return DG.duoP?DG.duoP.near():null},
+  near(){if(!C||!C.mate||!C.mateIn)return null;const M=C.mate;if(M.dn&&!C.down&&Math.hypot(P.x-M.x,P.y-M.y)<T*3.2)return{t:'Hold F to revive '+((C.mate.pr&&C.mate.pr.n)||'your friend'),go(){}};return DG.duoP?DG.duoP.near():null},
   begun(){if(!C)return;C.t0=performance.now();C.mateIn=false;announce();hudOn()},
   ended(){if(!C)return;hudOff()},
   left(){if(!C)return;ns({t:'party',op:'out',run:C.run});stop()},
@@ -134,7 +134,7 @@ try{(()=>{
   if(op=='invited'){invite={id:m.id,from:m.from,lvl:m.lvl,exp:performance.now()+(m.ms||60000)};invEl();setTimeout(()=>{if(invite&&invite.id==m.id){invite=null;invEl()}},m.ms||60000);fireL();return}
   if(op=='sent'){toast('Invitation sent to '+m.to);return}
   if(op=='declined'){toast(m.name+' said no this time');return}
-  if(op=='ask'){let why=null;try{why=DG.lockReason(m.d);const d=DG.BY[m.d];if(!why&&d&&!DG.diffOpen(d,m.df))why='Has not finished the difficulty before this one';if(!why&&(DG.run||!entered))why='Is busy right now'}catch(_){why='Is busy right now'}ns({t:'party',op:'ready',ok:why?0:1,why:why||''});if(why)toast('You cannot enter: '+why);return}
+  if(op=='ask'){let why=null;try{why=DG.lockReason(m.d);const d=DG.BY[m.d];if(!why&&d&&!DG.diffOpen(d,m.df))why='Has not finished the difficulty before this one';if(!why&&(DG.run||!entered||(window.MOVIE1&&MOVIE1.on)||document.getElementById('mv1u')))why='Is busy right now'}catch(_){why='Is busy right now'}ns({t:'party',op:'ready',ok:why?0:1,why:why||''});if(why)toast('You cannot enter: '+why);return}
   if(op=='go'){begin(PT,m);return}
   if(op=='mate_off'){if(C){C.mateOn=false;toast(m.name+' lost connection. Waiting for them')}fireL();return}
   if(op=='mate_back'){if(C){C.mateOn=true;toast(m.name+' is back');if(DG.run&&!C.guest)setTimeout(()=>{if(C&&DG.run)pg(fullState())},300);announce()}fireL();return}

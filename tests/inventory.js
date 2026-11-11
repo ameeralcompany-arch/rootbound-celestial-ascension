@@ -24,9 +24,9 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
  await p.click('#inv7 [data-k="w:cinder"]');await W8();await p.click('#inv7 aside [data-a="equip"]');await W8();
  ok('Equip button holds the weapon and shows it in the hand slot',await E(()=>wp=='cinder'&&document.querySelector('#inv7 .es8[data-slot=hand]').dataset.ek=='w:cinder'));
  await p.dblclick('#inv7 [data-k="w:solarfang"]');await W8(150);ok('double-click equips a weapon',await E(()=>wp=='solarfang'));
- await p.click('#inv7 [data-k="w:popgun"]');await W8();await p.keyboard.press('e');await W8();ok('E equips the selected weapon (and opens nothing else)',await E(()=>wp=='popgun'&&!dlgOpen));
+ await p.click('#inv7 [data-k="w:popgun"]');await W8();await p.keyboard.press('f');await W8();ok('E equips the selected weapon (and opens nothing else)',await E(()=>wp=='popgun'&&!dlgOpen));
  await p.click('#inv7 [data-k="w:cinder"]');await W8();await p.keyboard.press('Enter');await W8();ok('Enter equips the selected weapon',await E(()=>wp=='cinder'));
- await p.click('#inv7 [data-k="w:sniper"]');await W8();await E(()=>{msg=''});await p.keyboard.press('e');await W8();ok('E on an under-level weapon says why and changes nothing',await E(()=>wp=='cinder'&&/Reach level/.test(String(msg))));
+ await p.click('#inv7 [data-k="w:sniper"]');await W8();await E(()=>{msg=''});await p.keyboard.press('f');await W8();ok('E on an under-level weapon says why and changes nothing',await E(()=>wp=='cinder'&&/Reach level/.test(String(msg))));
  await E(()=>DRAWER1.setLevel('full'));await p.waitForTimeout(800);
  await p.click('#inv7 .es8[data-slot=hand] .ux8');await W8();ok('✕ on the hand slot puts the weapon away (fists)',await E(()=>wp=='fist'&&HOTBAR.cur==-1&&!document.querySelector('#inv7 .es8[data-slot=hand]').dataset.ek));
  // ---- wearables: right-click menu, drag onto the strip, unequip

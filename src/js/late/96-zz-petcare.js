@@ -3,7 +3,7 @@
 // pathfinding). Timed behaviours: walk, sit, hop, stretch, chase their tail, flips, sleep (zzz), state-aware voices (VOX, below), and a happy pet
 // follows you a little. Care: hungry again 2 h after a meal (real time via Date.now, so it carries across sessions; a hungry pet looks sad
 // and will not play or do tricks, it never dies), happiness from petting, treats and fetch (throw a ball, it runs after it and brings it
-// back). Clothes: bow, top hat, flower crown, bandana, scarf, bell collar, sweater, cape, fairy wings, each in any colour (Pet UI: press E
+// back). Clothes: bow, top hat, flower crown, bandana, scarf, bell collar, sweater, cape, fairy wings, each in any colour (Pet UI: press F
 // next to a pet or its home). Store: adopt pets, clothes, Pet Food, Pet Treats, Pet Home (tools/pets-v11.json).
 // Cost: every pose is drawn once into a cached sprite per species/fur/frame/mood/outfit (one drawImage per pet per frame: no paths, gradients
 // or blur in the loop); only pets near the screen run physics, the rest just keep their timers; at most 40 little particles. =====
@@ -48,7 +48,7 @@ const PET10=(()=>{
  // ---- adoption: every owned pet_* store item becomes a pet (works for store buys, creative mode and the server wallet alike)
  function ensure(){let add=0;for(const s of SPECIES){if(!ownP(s)||S.pets.some(p=>p.sp==s))continue;const h=homesHere().find(h=>petsAt(h.id).length<MAXH);
    S.pets.push({id:'p'+s,sp:s,fur:0,nm:SP[s].nm,home:h?h.id:'',clo:{},fed:now(),hap:80,hapT:now(),n:{meals:0,pets:0,plays:0}});add++;
-   if(entered)try{say('You adopted a '+SP[s].n+'! '+(h?'It moved into your Pet Home. Press E next to it to open its Pet UI.':'Place a Pet Home (store, Pets) to give it a place to live.'))}catch(_){}}
+   if(entered)try{say('You adopted a '+SP[s].n+'! '+(h?'It moved into your Pet Home. Press F next to it to open its Pet UI.':'Place a Pet Home (store, Pets) to give it a place to live.'))}catch(_){}}
   if(add)save();return add}
  setTimeout(ensure,0);setInterval(()=>{try{ensure()}catch(_){}},4000);
  {const _b=SHOP7.buy;SHOP7.buy=function(){return Promise.resolve(_b.apply(this,arguments)).then(r=>{try{ensure();if(UI.el&&UI.on)render()}catch(_){}return r})}}

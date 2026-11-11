@@ -2,7 +2,7 @@
 // deterministic (world-seeded) set: a beach umbrella over a sun lounger, a deck chair or a bench on the other bank, a sandcastle, a beach
 // ball, swim rings / a duck ring / an air mattress bobbing and tilting on the real wavy surface (WATER9), and on wider lakes a little
 // wooden dock. In the Plaza only the pond gets a ring and a deck chair on its pier. Seats (loungers, deck chairs, benches, the dock edge,
-// and the placeable Bench / Sun Lounger / Deck Chair objects): press E nearby to sit (AC6 sitting pose), any movement key or E stands up.
+// and the placeable Bench / Sun Lounger / Deck Chair objects): press F nearby to sit (AC6 sitting pose), any movement key or E stands up.
 // Decor is never saved: it is rebuilt from the generated terrain on every load and an item hides itself while a block fills its spot or
 // its ground / water is gone. The new store objects (tiles 90-92, 97-98) reuse the object pipeline. All art is anime-style vector drawn
 // once into cached sprites (2x for crisp zoom); per frame it costs one drawImage per item on screen. =====
@@ -145,7 +145,7 @@ const SUMMER9=(()=>{
  const MOVE=['a','d','w','s',' ','arrowleft','arrowright','arrowup','arrowdown'];
  {const _u=update;update=function(dt){if(SIT){let mv=false;for(const k of MOVE)if(K[k])mv=true;if(mv||!entered||!seatOk(SIT))stand()}const r=_u.apply(this,arguments);if(SIT){P.x=SIT.sx;P.y=SIT.fy-P.h;P.vx=0;P.vy=0;P.g=true;P.f=SIT.f;try{P.hp=Math.min(maxHP(),P.hp+3*dt)}catch(_){}/* resting heals a little */}return r}}
  {const _i=interact;interact=function(){if(SIT&&!dlgOpen){stand();return}if(!dlgOpen&&!creatorOn&&!showInv&&menuEl.style.display=='none'){const ns=nearSeat();if(ns&&ns.d<=objDist()&&ns.d<=npcDist(nearNPC())){sit(ns.s);return}}return _i.apply(this,arguments)}}
- {const _pt=OBJ6.promptText;OBJ6.promptText=function(npc){if(SIT)return 'Sitting on the '+SIT.n+'  ·  E or move to stand up';const ns=nearSeat();if(ns&&ns.d<=objDist()&&ns.d<=npcDist(npc))return 'Press E to sit on the '+ns.s.n;return _pt.apply(this,arguments)}}
+ {const _pt=OBJ6.promptText;OBJ6.promptText=function(npc){if(SIT)return 'Sitting on the '+SIT.n+'  ·  F or move to stand up';const ns=nearSeat();if(ns&&ns.d<=objDist()&&ns.d<=npcDist(npc))return 'Press F to sit on the '+ns.s.n;return _pt.apply(this,arguments)}}
  {const _lw=loadWorld;loadWorld=function(){SIT=null;return _lw.apply(this,arguments)}}
  AC6.SIT=()=>SIT?{h:SIT.fy-SIT.hy,lean:SIT.lean||0}:0;
  // ---------------- placeable store objects (tiles 90-92, 97, 98) ----------------

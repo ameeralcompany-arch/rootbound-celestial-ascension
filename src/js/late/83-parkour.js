@@ -1,6 +1,6 @@
 // ===== Sky Run: a parkour course of floating platforms high in the sky above the Plaza (PLZ7.COURSE: rows 40 -> 13, at least
 // 25 rows above every roof, so it never crowds the town). Way up: the Sky Beam on the dais in Gate Square - stand still on the glowing
-// pad (or press E) and the beam lifts you to START. Climb east to the Sky Spire (FINISH); its RETURN pad glides you back down.
+// pad (or press F) and the beam lifts you to START. Climb east to the Sky Spire (FINISH); its RETURN pad glides you back down.
 // The timer runs while you stay on the course; touching the town ground stops it. Best time is saved. First finish under 90 s pays
 // gems (offline/guest play only) and unlocks the "Sky Runner" title. PL keeps DX-relative x (PL[k].x + DX = first tile column).
 const RUN7=(()=>{
@@ -23,7 +23,7 @@ const RUN7=(()=>{
   if(ride){rideTick(dt);return}
   const pd=pad();if(pd&&Math.abs(P.vx)<30&&!dlgOpen){charge+=dt;if(charge>=1)launch(pd)}else charge=Math.max(0,charge-dt*2);
   // the legacy HUD refreshes the E-prompt on a 120 ms timer; on a pad we overwrite it every frame (before paint, so no flicker)
-  if(pd&&!dlgOpen&&!creatorOn&&menuEl.style.display=='none'){const pr=document.getElementById('prompt');if(pr){pr.style.display='block';const s=pd=='up'?'Stand still on the Sky Beam (or press E) to fly up to the Sky Run':'Stand still (or press E) to glide back down to town';if(pr.textContent!=s)pr.textContent=s}}
+  if(pd&&!dlgOpen&&!creatorOn&&menuEl.style.display=='none'){const pr=document.getElementById('prompt');if(pr){pr.style.display='block';const s=pd=='up'?'Stand still on the Sky Beam (or press F) to fly up to the Sky Run':'Stand still (or press F) to glide back down to town';if(pr.textContent!=s)pr.textContent=s}}
   const k=platAt(),onGround=P.g&&(P.y+P.h)>=(S*T-4);
   if(k==0&&state!='run'){state='run';t0=now;toast=now+1200;try{SFX7.tone(520,780,.15,'sine',.05)}catch(_){}}
   else if(k==0&&state=='run'){t0=now}

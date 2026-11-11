@@ -1,0 +1,2 @@
+// ===== A gate in front of every key handler, the first one registered. While something full-screen owns the keyboard (the class story movies) it sets window.RB_KEYGATE, and no other handler sees the key, so a skill can't fire or a menu open behind a movie. Costs one check per key press. =====
+(function(){for(const t of['keydown','keyup','keypress'])addEventListener(t,e=>{const f=window.RB_KEYGATE;if(!f)return;e.stopImmediatePropagation();e.preventDefault();try{f(e)}catch(_){}},true)})();

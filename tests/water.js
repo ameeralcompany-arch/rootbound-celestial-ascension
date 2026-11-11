@@ -70,7 +70,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  const s1=await E(async()=>{const s=SUMMER9.SEATS.find(s=>s.n=='Sun Lounger')||SUMMER9.SEATS.find(s=>!s.dock);P.x=s.ex+20;P.y=s.ey-P.h-1;P.vx=P.vy=0;await new Promise(r=>setTimeout(r,250));const pr=document.getElementById('prompt').textContent;
   return{n:s.n,pr,sx:s.sx,fy:s.fy}});
  ok('standing by a seat shows "Press E to sit"',/Press E to sit on the/.test(s1.pr),s1.pr);
- await p.keyboard.press('e');await wait(350);
+ await p.keyboard.press('f');await wait(350);
  const s2=await E(o=>({sit:!!SUMMER9.SIT,n:SUMMER9.SIT&&SUMMER9.SIT.n,pose:AC6.SIT(),x:P.x,feet:P.y+P.h,vy:P.vy,g:P.g,pr:document.getElementById('prompt').textContent,ox:o.sx,of:o.fy}),s1);
  ok('E sits down: the player is locked on the seat in the sitting pose',s2.sit&&Math.abs(s2.x-s2.ox)<.5&&Math.abs(s2.feet-s2.of)<.5&&s2.vy==0&&s2.g&&s2.pose&&s2.pose.h>10,s2);
  ok('the lounger reclines',s2.n!='Sun Lounger'||s2.pose.lean>.3,s2.pose);

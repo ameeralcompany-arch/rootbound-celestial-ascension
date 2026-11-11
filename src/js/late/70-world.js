@@ -112,8 +112,8 @@ const SKY6=(()=>{
  const mix=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t),rgb=(c,a)=>'rgba('+c.map(Math.round)+','+(a==null?1:a)+')',cl01=v=>v<0?0:v>1?1:v;
  const hs=n=>{n=Math.imul(n^61,2246822519)>>>0;n^=n>>>13;n=Math.imul(n,3266489917)>>>0;return((n^n>>>16)>>>0)/4294967296};
  const stars=[];for(let i=0;i<140;i++)stars.push([hs(i*3+1),hs(i*3+2)*.7,hs(i*3+3)]);
- function mountains(w,hh,off,k,base,amp,col,snowCap,seed,sx){g.fillStyle=col;g.beginPath();g.moveTo(0,hh);const step=18;let pts=[];for(let x=0;x<=w+step;x+=step){const wx=(x+off*k)/ (sx||1),y=base-(Math.abs(Math.sin(wx*.0042+seed))*.7+Math.abs(Math.sin(wx*.0097+seed*2))*.3)*amp;pts.push([x,y]);g.lineTo(x,y)}g.lineTo(w+step,hh);g.closePath();g.fill();
-  if(snowCap){g.fillStyle=snowCap;g.beginPath();for(const[x,y]of pts){if(y<base-amp*.62){g.moveTo(x-step,y+amp*.07);g.lineTo(x,y);g.lineTo(x+step,y+amp*.07);g.closePath()}}g.fill()}}
+ function mountains(w,hh,off,k,base,amp,col,snowCap,seed,sx){g.fillStyle=col;g.beginPath();g.moveTo(0,hh);const step=18;let pts=[];for(let x=0;x<=w+step;x+=step){const wx=(x+off*k)/ (sx||1),y=base-(Math.abs(Math.sin(wx*.0042+seed))*.7+Math.abs(Math.sin(wx*.0097+seed*2))*.3)*amp;pts.push([x,y,wx]);g.lineTo(x,y)}g.lineTo(w+step,hh);g.closePath();g.fill();
+  if(snowCap){const th=base-amp*.6;g.fillStyle=snowCap;let s=-1;const fl=e=>{if(e<=s)return;g.beginPath();g.moveTo(pts[s][0],pts[s][1]);for(let i=s+1;i<=e;i++)g.lineTo(pts[i][0],pts[i][1]);for(let i=e;i>=s;i--){const[x,y,wx]=pts[i];g.lineTo(x,y+Math.max(0,th-y)*(.58+.26*Math.sin(wx*.031+seed)+.1*Math.sin(wx*.083)))}g.closePath();g.fill()};for(let i=0;i<pts.length;i++){if(pts[i][1]<th){if(s<0)s=i}else if(s>=0){fl(i-1);s=-1}}if(s>=0)fl(pts.length-1)}}
  function island(x,y,s,col,topc,glow,t){g.save();g.translate(x,y);g.scale(s,s);g.fillStyle=col;g.beginPath();g.moveTo(-70,0);g.quadraticCurveTo(-60,34,-20,52+Math.sin(t)*2);g.quadraticCurveTo(0,86,18,50);g.quadraticCurveTo(58,32,70,0);g.closePath();g.fill();g.fillStyle=topc;g.beginPath();g.ellipse(0,0,72,12,0,0,6.3);g.fill();
   if(glow){g.globalAlpha*=.3;g.fillStyle=glow;g.beginPath();g.moveTo(-24,-2);g.lineTo(-12,-38);g.lineTo(0,-3);g.lineTo(10,-28);g.lineTo(20,-2);g.closePath();g.fill();g.globalAlpha/=.3;g.fillStyle=glow;g.beginPath();g.moveTo(-18,-2);g.lineTo(-10,-30);g.lineTo(-2,-3);g.lineTo(6,-22);g.lineTo(14,-2);g.closePath();g.fill()}
   g.restore()}
@@ -134,8 +134,8 @@ const SKY6=(()=>{
   const sdt=Math.min(.12,Math.max(0,t-lastT));lastT=t;
   // sky colour: zenith / middle / horizon, blended smoothly through day, dusk, night and every weather state
   const ovc=cl*.85*(1-night*.55),stm=I.storm,rn=WX6.rain*(1-night*.5),sno=Math.min(1,WX6.snow)*(1-night*.5),fg=WX6.fog*(1-night*.4);
-  let Z=mix([84,156,236],[5,9,28],night),M=mix([146,198,248],[14,20,54],night),Hz=mix([216,236,250],[36,36,84],night);
-  Z=mix(Z,[86,92,168],tw*.5);M=mix(M,[238,150,140],tw*.72);Hz=mix(Hz,[255,194,126],tw*.85);
+  let Z=mix([34,122,246],[8,14,52],night),M=mix([104,186,255],[24,30,92],night),Hz=mix([214,240,255],[66,52,128],night);
+  Z=mix(Z,[86,84,190],tw*.5);M=mix(M,[255,150,150],tw*.72);Hz=mix(Hz,[255,206,132],tw*.85);
   Z=mix(Z,[124,134,152],ovc);M=mix(M,[156,166,182],ovc);Hz=mix(Hz,[190,198,210],ovc*.9);
   if(rn>.01){Z=mix(Z,[98,106,122],rn*.6);M=mix(M,[132,140,154],rn*.55);Hz=mix(Hz,[162,170,182],rn*.5)}
   if(stm>.01){Z=mix(Z,[34,38,54],stm*.7);M=mix(M,[58,62,80],stm*.65);Hz=mix(Hz,[92,98,116],stm*.55)}
@@ -159,7 +159,7 @@ const SKY6=(()=>{
   if(birds.length){birds.x+=birds.d*birds.v*sdt;birds.y+=Math.sin(t*.4)*3*sdt;if(birds.x<-260||birds.x>w+260)birds=[];else{g.strokeStyle=rgb(mix([46,56,78],[90,96,120],ovc),.62*(1-night*1.5));g.lineWidth=1.6*hh/1080+.4;g.lineCap='round';g.beginPath();const bs=hh/1080;
     for(const b of birds){const x=birds.x+b.ox*birds.d*bs,y=birds.y+b.oy*bs,f=Math.sin(t*7+b.p),s=(5+1.5*Math.sin(b.p))*bs;g.moveTo(x-s,y-f*s*.6);g.quadraticCurveTo(x-s*.4,y-s*.5*(1+f*.3),x,y);g.quadraticCurveTo(x+s*.4,y-s*.5*(1+f*.3),x+s,y-f*s*.6)}g.stroke();g.lineCap='butt'}}
   const nm=night*.85,haze=(c)=>rgb(mix(mix(mix(c,gry,cl*.35+rn*.25),[205,212,224],fg*.45+sno*.2),[16,22,48],nm),1);
-  const cov=cl01(.2+cl*.95),stv=cl01(I.storm+I.rain*.65+I.drizzle*.35+I.blizzard*.7+I.snow*.3+cl01((night-.45)*1.8)*.8),dsk=cl01(tw*1.3)*(1-night*.5),wind=WX6.wind;
+  const cov=cl01(.42+cl*.75),stv=cl01(I.storm+I.rain*.65+I.drizzle*.35+I.blizzard*.7+I.snow*.3+cl01((night-.45)*1.8)*.8),dsk=cl01(tw*1.3)*(1-night*.5),wind=WX6.wind;
   // far clouds and the overcast deck sit behind the mountains
   clouds(w,hh,t,LAY[0],cov,stv,dsk,night,wind,cx,dy(.02));
   if(cl>.4){const oa=cl01((cl-.4)*1.7)*.9*(1-night*.35),bw=1024*hh/600,bh=240*hh/600,off=((t*3.5-cx*.01)%bw+bw)%bw;for(const[pal,wt]of[['day',1-stv],['storm',stv]]){if(wt<.02)continue;g.globalAlpha=oa*wt;for(let x=-off;x<w;x+=bw)g.drawImage(WXS8.strip(pal),x,-bh*.12+dy(.015),bw+1,bh)}g.globalAlpha=1}
@@ -180,7 +180,7 @@ drawSky=function(w,hh,now){SKY6.draw(w,hh,now)};
 // ---------- post: color grade, vignette, bloom, cinematic bars (run after legacy draw + VFX)
 const POST6=(()=>{const bc=document.createElement('canvas'),bx=bc.getContext('2d'),b2=document.createElement('canvas'),b2x=b2.getContext('2d'),can=('filter'in bx);let bars=0,bf=0;   // bf: the blurred bloom buffer is refreshed every 2nd frame (copying the frame stalls the GPU)
  return{run(w,hh){const q=QM.cur;
-  if(q.grade&&entered){const d=clock(),tw=Math.max(0,1-Math.abs(night-.5)*4);g.save();g.globalCompositeOperation='soft-light';const tint=night>.5?[40,50,140]:tw>.3?[255,150,90]:[255,245,220],a=q.grade==2?.34:.2;g.globalAlpha=a*(night>.5?night:tw>.3?tw:.3);g.fillStyle='rgb('+tint+')';g.fillRect(0,0,w,hh);if(WX6.cloud>.3){g.globalAlpha=.18*WX6.cloud;g.fillStyle='rgb(120,130,150)';g.fillRect(0,0,w,hh)}g.restore();
-   const vg=g.createRadialGradient(w/2,hh/2,hh*.45,w/2,hh/2,hh*.95);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(6,4,16,'+(q.grade==2?.5:.3)+')');g.fillStyle=vg;g.fillRect(0,0,w,hh)}
+  if(q.grade&&entered){const d=clock(),tw=Math.max(0,1-Math.abs(night-.5)*4);g.save();g.globalCompositeOperation='soft-light';const tint=night>.5?[40,50,140]:tw>.3?[255,150,90]:[255,245,220],a=q.grade==2?.34:.2;g.globalAlpha=a*(night>.5?night:tw>.3?tw:.3);g.fillStyle='rgb('+tint+')';g.fillRect(0,0,w,hh);if(WX6.cloud>.3){g.globalAlpha=.18*WX6.cloud;g.fillStyle='rgb(120,130,150)';g.fillRect(0,0,w,hh)}{const lf=.14*Math.max(0,1-night*2)*Math.max(0,1-WX6.cloud*1.4-WX6.rain-WX6.I.storm*1.4);if(lf>.004){g.globalAlpha=lf;g.fillStyle='#fff';g.fillRect(0,0,w,hh)}}g.restore();
+   const vg=g.createRadialGradient(w/2,hh/2,hh*.45,w/2,hh/2,hh*.95);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(6,4,16,'+((q.grade==2?.5:.3)*(.32+.68*night))+')');g.fillStyle=vg;g.fillRect(0,0,w,hh)}
   if(q.bloom&&cel.opt.bloom&&ZM>=.7&&can&&entered){const bw=w>>2,bh=hh>>2;let fresh=false;if(bc.width!=bw||bc.height!=bh){bc.width=b2.width=bw;bc.height=b2.height=bh;fresh=true}if(fresh||(bf++&1)==0){bx.globalCompositeOperation='copy';bx.drawImage(cv,0,0,bw,bh);b2x.filter='brightness(.8) contrast(2.6) saturate(1.3) blur('+(q.bloom==2?5:3)+'px)';b2x.globalCompositeOperation='copy';b2x.drawImage(bc,0,0);b2x.filter='none'}g.save();g.globalCompositeOperation='lighter';g.globalAlpha=(q.bloom==2?.38:.22)*(QM.reduce?.6:1);g.drawImage(b2,0,0,w,hh);g.restore()}
   const tb=q.cine&&cel.opt.cine!==0?1:0;bars+=(tb-bars)*.08;if(bars>.01){const bh2=hh*.07*bars;g.fillStyle='#000';g.fillRect(0,0,w,bh2);g.fillRect(0,hh-bh2,w,bh2)}}}})();

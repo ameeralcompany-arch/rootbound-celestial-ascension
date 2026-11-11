@@ -1,0 +1,36 @@
+{
+  "_note": "Every spoken line of the Reaper's story movie. record.js turns these into audio/movie/reaper/<id>.mp3 and the timing data the game reads. p lines (the hero) are recorded twice, for the two voice types. say = what is spoken when it differs from the subtitle. speed: pacing of the delivery. lift: below 1 deepens. space: close, far, grove, void, memory. gain: quiet lines are quiet. shake: a slight trembling of the voice, 0 to 1.",
+  "voices": {
+    "hero":   { "voice": "am_michael", "lift": 1.0 },
+    "heroF":  { "voice": "af_bella", "lift": 1.0 },
+    "lavi":   { "voice": "af_heart", "lift": 1.03 },
+    "hollow": { "voice": "bm_fable", "lift": 0.84 },
+    "gardener": { "voice": "af_nicole", "lift": 0.9 }
+  },
+  "lines": {
+    "h1": { "v": "hollow", "text": "Do not fear the dark. It is only light, waiting.", "speed": 0.86, "space": "far", "gain": 0.92 },
+    "l1": { "v": "lavi", "text": "It's the middle of the night. Even the crows went to bed.", "speed": 1.02, "space": "close", "gain": 1 },
+    "p1": { "v": "hero", "text": "I don't sleep much.", "speed": 0.9, "space": "close", "gain": 0.78 },
+    "l2": { "v": "lavi", "text": "You slept a hundred years. I think you're covered.", "speed": 1.05, "space": "close", "gain": 1 },
+    "p2": { "v": "hero", "text": "...No.", "say": "No.", "speed": 0.82, "space": "close", "gain": 0.7 },
+    "h2": { "v": "hollow", "text": "The Grove is forgetting again.", "speed": 0.86, "space": "far", "gain": 0.92 },
+    "h3": { "v": "hollow", "text": "A reaper does not take. A reaper only collects what is already falling.", "speed": 0.84, "space": "far", "gain": 0.92 },
+    "g1": { "v": "gardener", "text": "I have no name. Only the grove.", "speed": 0.9, "space": "grove", "gain": 0.95 },
+    "p3": { "v": "hero", "text": "Then give back the ones you stole.", "speed": 0.98, "space": "grove", "gain": 1 },
+    "g2": { "v": "gardener", "text": "The garden remembers what you broke.", "speed": 0.9, "space": "grove", "gain": 0.95 },
+    "l3": { "v": "lavi", "text": "Left! Go left! I can't see, I can't...", "say": "Left! Go left! I can't see, I can't!", "speed": 1.2, "space": "close", "gain": 1, "shake": 0.25 },
+    "l4": { "v": "lavi", "text": "It's so dark. I don't... I don't like it.", "speed": 0.88, "space": "void", "gain": 0.72, "shake": 0.7 },
+    "p4": { "v": "hero", "text": "Go. Get out of here.", "speed": 0.92, "space": "void", "gain": 0.78 },
+    "l5": { "v": "lavi", "text": "And let you get lost without me? Please.", "speed": 0.94, "space": "void", "gain": 0.8, "shake": 0.45 },
+    "p5": { "v": "hero", "text": "Lavi. No, no... I still have your name. I still...", "say": "Lavi. No. No. I still have your name. I still.", "speed": 0.78, "space": "void", "gain": 0.72, "shake": 0.8 },
+    "l6": { "v": "lavi", "text": "You're finally awake! Do you know how long I've been waiting?", "speed": 1.05, "space": "memory", "gain": 0.86 },
+    "h4": { "v": "hollow", "text": "The thorns do not hurt. They remind me where I end.", "speed": 0.84, "space": "far", "gain": 0.9 },
+    "p6": { "v": "hero", "text": "A hundred names. Every night I cut at you to get them back.", "speed": 0.86, "space": "void", "gain": 0.8 },
+    "p7": { "v": "hero", "text": "You've been keeping them. Haven't you.", "speed": 0.82, "space": "void", "gain": 0.72 },
+    "p8": { "v": "hero", "text": "I was never taking them. I was carrying them home.", "speed": 0.92, "space": "void", "gain": 1 },
+    "g3": { "v": "gardener", "text": "The roots... let me go.", "speed": 0.86, "space": "grove", "gain": 0.86 },
+    "g4": { "v": "gardener", "text": "What... was my name?", "speed": 0.8, "space": "grove", "gain": 0.8, "shake": 0.2 },
+    "l7": { "v": "lavi", "text": "Why is it so... oh. It isn't dark at all.", "speed": 0.92, "space": "void", "gain": 0.82 },
+    "l8": { "v": "lavi", "text": "You're still not sleeping, though.", "speed": 1.02, "space": "close", "gain": 0.92 }
+  }
+}

@@ -2,74 +2,62 @@
 // Older weapons stay exactly as they are, owned and forged, as Collection weapons with no weapon skill. This file sits ahead of the save check that gives items back, so owned weapons from here survive a restart. =====
 try{(()=>{
  const CLS={brawler:'gaunt',knight:'sword',samurai:'katana',archer:'bow',mage:'staff',demon:'dagger',reaper:'scythe',elementalist:'orb',stormcaller:'hammer',berserker:'axe',ninja:'kunai',druid:'branch',gunslinger:'gun'};
+ // Mythics are not here: each class has exactly one, its original myth_<class>.
  // [class, slot, name, palette dark/mid/light/glow, material, design, description]
  const D=[
  ['brawler','r1','Ironclad Knuckles',['#26282e','#6a7078','#d8dde4','#ffb27a'],'steel',{sp:3,pl:.5},'Plain iron and honest work. They ring when they land.'],
  ['brawler','r2','Cinderwrap Fists',['#3a160c','#a83a18','#ffb060','#ffd27a'],'ember',{sp:0,pl:.72,wrap:1},'Hot coals sewn under leather wraps. Every hit lets a little out.'],
  ['brawler','l1','Meteor Gauntlets',['#1a1020','#603870','#ffa060','#ffe08a'],'star',{sp:5,pl:.9,orb:1},'Beaten out of something that fell burning from the sky.'],
  ['brawler','l2','Titanpalm Bracers',['#2a2418','#8a6a30','#f0d48a','#fff0b0'],'gold',{sp:2,pl:1.15,fin:1},'Made for a much larger hand. They have adjusted.'],
- ['brawler','m','Sunbreaker Fists',['#280a04','#d84a10','#ffe080','#fff6c8'],'sun',{sp:7,pl:1.1,orb:1,fin:1},'Two small suns on chains of light. Open your hands and they roar.'],
  ['knight','r1','Oathkeeper',['#2c303a','#a0a8b8','#f4f6fa','#ffd86a'],'steel',{w:.075,p:2.2,g:'cross'},'A straight blade, sworn plainly.'],
  ['knight','r2','Bastion Edge',['#2a2c34','#6a7488','#dfe6f0','#8ab8ff'],'steel',{w:.11,p:5,g:'bar',fuller:1},'Wide as a door and about as easy to get past.'],
  ['knight','l1','Dawnplate Blade',['#3c2c10','#c8a040','#fff4c8','#ffe89a'],'gold',{w:.085,p:1.6,flare:.5,g:'wings',fuller:1},'The first light of morning, kept at a sharp edge.'],
  ['knight','l2','Aegiscleave',['#141c30','#3a5a98','#c0d8ff','#7fd0ff'],'crystal',{w:.1,p:3,notch:[.3,.55],g:'crown'},'Notches in its blade catch and turn what strikes it.'],
- ['knight','m','Everlight Verdict',['#3c3010','#f0d070','#ffffff','#fff2b0'],'sun',{w:.1,p:1.4,flare:.8,g:'wings',fuller:1,fork:.16,len:1.15},'It has never once been raised in doubt.'],
  ['samurai','r1','Kazekiri',['#1c2a30','#7aa8b8','#eaf8ff','#a8f0ff'],'steel',{w:.04,p:2.8,cv:.14,g:'disc'},'The wind parts for it, and closes late.'],
  ['samurai','r2','Shiranami',['#142840','#4a90c8','#f0fbff','#c0ecff'],'frost',{w:.05,p:4,cv:.2,g:'disc',wave:1},'A white line along the edge, like surf at night.'],
  ['samurai','l1','Tsukikage',['#0e0e24','#404080','#e0e4ff','#bfc8ff'],'void',{w:.042,p:2,cv:.26,g:'moon'},'Its shadow falls a moment before the blade.'],
  ['samurai','l2','Ryuugen',['#3a0e10','#c02a2a','#ffd0a0','#ff9a6a'],'ember',{w:.058,p:3,cv:.16,g:'fang',serr:7,td:.018},'Dragon scales run down the back of the blade.'],
- ['samurai','m','Mugen Hanaki',['#3c1030','#ff7aa8','#fff0f6','#ffc0d8'],'petal',{w:.05,p:2.4,cv:.3,g:'bloom',len:1.14,wave:1},'Drawn once, it does not stop blooming.'],
  ['archer','r1','Hawkrest Bow',['#2a1c10','#8a6034','#e0c090','#ffe0b0'],'wood',{rc:.2,tip:'plain'},'Short and quick, made for watching things move.'],
  ['archer','r2','Windstring',['#143028','#3a9078','#d8fff0','#a8ffd8'],'crystal',{rc:.42,tip:'curl'},'Its string hums a note before it is touched.'],
  ['archer','l1','Moonwhisper',['#141838','#5868c0','#e8ecff','#c8d4ff'],'void',{rc:.1,tip:'moon',long:1.15},'Arrows from it land quietly, even for the target.'],
  ['archer','l2','Skyreach Longbow',['#3a2c10','#c8a040','#fff4c8','#ffe89a'],'gold',{rc:.3,tip:'wing',long:1.32},'Taller than most of the people who draw it.'],
- ['archer','m','Starfall Meridian',['#0c1040','#4a48e0','#ffe8a0','#fff4c8'],'star',{rc:.55,tip:'star',long:1.25,twin:1},'A line drawn across the sky. It can be drawn again.'],
  ['mage','r1','Hollowglass Rod',['#1c1830','#6a5ab0','#e0d8ff','#b8a8ff'],'crystal',{head:'crystal',hs:.12},'A glass tube with a small storm kept in it.'],
  ['mage','r2','Runebound Staff',['#241a34','#5a3a88','#d8b8ff','#c88aff'],'wood',{head:'ring',hs:.14,runes:1},'Every ring of the grain is a line of a very long spell.'],
  ['mage','l1','Astral Lantern',['#0e1438','#3a50b8','#d8e8ff','#a8ecff'],'star',{head:'lantern',hs:.16},'It lights the way to places that are not there yet.'],
  ['mage','l2','Voidspiral Staff',['#0a0618','#3a1a70','#b888ff','#e8c8ff'],'void',{head:'spiral',hs:.2},'Look at the end of it for too long and it looks back, inward.'],
- ['mage','m','Worldthought',['#10082c','#7a3cff','#ffe0a0','#e8d8ff'],'star',{head:'orrery',hs:.24,runes:1,len:1.1},'Whatever the universe was thinking of, this is holding it.'],
  ['demon','r1','Redthirst',['#26060a','#902030','#ff8088','#ff4a5a'],'blood',{w:.08,p:1.4,cv:.12,g:'bar'},'Dry when you buy it. It does not stay dry.'],
  ['demon','r2','Veinripper',['#1c0408','#6a1020','#d84a58','#ff6a7a'],'blood',{w:.06,p:2.6,cv:-.18,serr:5,td:.03,g:'fang'},'Hooked on the way in. Hooked more on the way out.'],
  ['demon','l1','Sanguine Crescent',['#28040c','#b0142a','#ffa0a8','#ff5a6a'],'blood',{w:.12,p:2,cv:.42,g:'none'},'A curved thing that fits the ribs too well.'],
  ['demon','l2','Heartpiercer',['#14040e','#5a1038','#f07ab0','#ff8ad0'],'void',{w:.05,p:1.1,fork:.3,g:'crown'},'Two points, a heart\'s width apart.'],
- ['demon','m','Crimson Accord',['#180208','#d01030','#ffe0e0','#ff7080'],'blood',{w:.1,p:1.6,cv:.36,fork:.22,serr:6,td:.022,g:'wings',len:1.1},'You sign it with the hand that holds it.'],
  ['reaper','r1','Gravekeeper\'s Hook',['#1c1a20','#5a5660','#d8d4dc','#b8a8ff'],'steel',{w:.11,cv:.5,bl:.42,hook:1},'For pulling things out of the ground, or putting them in.'],
  ['reaper','r2','Mournscythe',['#14101c','#4a3a68','#c8b8e8','#9a7aff'],'void',{w:.08,cv:.72,bl:.56},'Long and thin and always slightly sorry.'],
  ['reaper','l1','Nightreaper',['#08060c','#2a2438','#9088b8','#c8b8ff'],'void',{w:.14,cv:.62,bl:.62,serr:6,td:.03},'It cuts the dark, too. You can see the seams.'],
  ['reaper','l2','Soulwake',['#101a24','#3a7a88','#c8fff0','#88ffe0'],'crystal',{w:.1,cv:.85,bl:.5,twin:1},'A second blade of cold light follows the first.'],
- ['reaper','m','Last Hour',['#050308','#3a1a70','#f0e0ff','#c89aff'],'star',{w:.16,cv:.78,bl:.76,twin:1,clock:1,len:1.12},'Every scythe keeps time. This one keeps the end of it.'],
  ['elementalist','r1','Emberrime Focus',['#2a1a24','#c05a48','#a8e8ff','#ffc890'],'ember',{head:'twin',hs:.13},'One half burns, one half freezes, and they argue.'],
  ['elementalist','r2','Stormglass Sceptre',['#142440','#4a80c8','#d8f0ff','#a8e0ff'],'crystal',{head:'crystal',hs:.15,runes:1},'A little weather, under glass.'],
  ['elementalist','l1','Prism Heart',['#241444','#b05ae0','#ffe0f8','#ffb8f0'],'crystal',{head:'prism',hs:.18},'It takes in plain light and lets out every kind of trouble.'],
  ['elementalist','l2','Fourfold Sceptre',['#1a2024','#3a8870','#f0e8a0','#a8ffd8'],'gold',{head:'quad',hs:.2},'Fire, ice, wind and stone, each at a compass point.'],
- ['elementalist','m','Worldcore',['#180c28','#ff6a3a','#a0f0ff','#fff0c8'],'sun',{head:'core',hs:.24,runes:1,len:1.08},'The four elements, before anyone told them apart.'],
  ['stormcaller','r1','Thunderhead Mallet',['#1c2230','#5a6a90','#d8e4ff','#fff07a'],'steel',{hd:'block',hw:.26,hh:.16},'Plain and heavy. Clouds gather anyway.'],
  ['stormcaller','r2','Gale Hammer',['#142c34','#3a8898','#d8f8ff','#a8f4ff'],'crystal',{hd:'wedge',hw:.5,hh:.09},'Thin at one end, to get under the wind.'],
  ['stormcaller','l1','Skyforge Maul',['#2a2010','#b08030','#ffe8a0','#fff4a8'],'gold',{hd:'drum',hw:.34,hh:.2,bolt:1},'Forged in a storm, by someone with no sense.'],
  ['stormcaller','l2','Tempest\'s Anvil',['#0e1430','#3048a8','#b0c8ff','#d0e8ff'],'storm',{hd:'anvil',hw:.4,hh:.17,bolt:1},'Something has been striking it for a very long time.'],
- ['stormcaller','m','Worldthunder',['#080c28','#3a6cff','#fff8b0','#ffffff'],'storm',{hd:'star',hw:.44,hh:.24,bolt:1,len:1.1},'It does not make the thunder. It tells it where to go.'],
  ['berserker','r1','Bonecleaver',['#28201a','#b0a088','#f0e8d8','#ff9a5a'],'bone',{ax:'crescent',ar:.26},'A jawbone, an edge and a bad idea.'],
  ['berserker','r2','Ragehook',['#2a1610','#8a4a28','#e8c090','#ff8a4a'],'steel',{ax:'hook',ar:.3},'The hook is for afterwards.'],
  ['berserker','l1','Dreadmaw',['#14100c','#4a3c30','#d8c8a8','#ff5a2a'],'bone',{ax:'maw',ar:.36},'It has teeth. It is not clear why it needed them.'],
  ['berserker','l2','Titan\'s Grief',['#20242c','#60687c','#dce4f0','#ffb060'],'steel',{ax:'double',ar:.4},'A pair of axe-heads meant for one enormous mourner.'],
- ['berserker','m','Ruinsong',['#1c0604','#c8341a','#ffd080','#ffe8a8'],'sun',{ax:'wingaxe',ar:.5,len:1.12},'Swing it once and you can hear what it was built to end.'],
  ['ninja','r1','Shadowfang Kunai',['#14141c','#44445c','#c8c8e0','#9adcff'],'steel',{w:.13,p:1.05,g:'ring',ln:.7},'Nothing about it catches the light on purpose.'],
  ['ninja','r2','Nightwire Blades',['#0e1420','#2a4060','#a8d0f0','#7ac8ff'],'void',{w:.07,p:2,fork:.12,g:'ring',ln:.74,cord:1},'A blade on a wire, and a wire on a thought.'],
  ['ninja','l1','Moonless Step',['#08080e','#22223a','#b0b0d8','#d8d8ff'],'void',{w:.17,p:1.3,cv:.18,g:'none',ln:.68},'Named for the nights it is best at.'],
  ['ninja','l2','Inkrain',['#04040a','#181820','#808090','#ffffff'],'ink',{w:.11,p:1.1,serr:4,td:.04,g:'ring',ln:.76},'It drips, and the drips go where it wants.'],
- ['ninja','m','Thousand Shadows',['#05050c','#2a1a58','#b8c8ff','#d8e8ff'],'ink',{w:.15,p:1.2,cv:.14,fork:.3,g:'ring',ln:.84,cord:1},'There is only one of it. Remember that, if you can.'],
  ['druid','r1','Thornwood Staff',['#26180c','#6a4a28','#b8d088','#d8f0a0'],'wood',{head:'thorn',hs:.14},'Cut from a hedge that had been left alone for a long time.'],
  ['druid','r2','Willowlash',['#1a2a14','#4a7a38','#c8e8a0','#e0ffa8'],'wood',{head:'willow',hs:.18},'Bends, and comes back faster.'],
  ['druid','l1','Verdant Heart',['#0e2a18','#2a8a4a','#d8ffb0','#c8ff90'],'jade',{head:'bloom',hs:.2},'Its heart still beats, about once a season.'],
  ['druid','l2','Ancient\'s Bough',['#2a1a0c','#7a5828','#e8d090','#fff0a0'],'wood',{head:'antler',hs:.26},'It gave this up willingly. Probably.'],
- ['druid','m','Rootsong',['#1a1006','#5a7a28','#fff0a0','#f0ffc0'],'jade',{head:'world',hs:.3,runes:1,len:1.12},'Roots hear it from further away than you would think.'],
  ['gunslinger','r1','Brass Comet',['#2a1c0c','#b08838','#ffe8a8','#ffd88a'],'brass',{b:.7,cal:.05,drum:1},'A plain revolver with a very long memory.'],
  ['gunslinger','r2','Dustdevil',['#2a1a10','#8a6038','#e8d0a0','#ffc090'],'brass',{b:.5,cal:.08,flare:1},'A short barrel with a wide opinion.'],
  ['gunslinger','l1','Silver Lament',['#20242c','#a0a8b8','#ffffff','#c8d8ff'],'steel',{b:1,cal:.045,scope:1},'Engraved with the names of everyone it has missed. There is room.'],
- ['gunslinger','l2','Clockwork Arbiter',['#1c1408','#c89838','#fff0b8','#8ae6ff'],'gold',{b:.82,cal:.06,drum:1,gear:1},'It ticks between shots and is always on time.'],
- ['gunslinger','m','Last Light',['#0c1030','#3a68e8','#fff0a0','#ffffff'],'star',{b:.95,cal:.07,twin:1,gear:1,scope:1,len:1.1},'A gun that fires the last of whatever you give it.']];
- const SLOTS={r1:{rar:'rare',lv:18},r2:{rar:'rare',lv:26},l1:{rar:'legendary',lv:48},l2:{rar:'legendary',lv:58},m:{rar:'mythic',lv:70}};
+ ['gunslinger','l2','Clockwork Arbiter',['#1c1408','#c89838','#fff0b8','#8ae6ff'],'gold',{b:.82,cal:.06,drum:1,gear:1},'It ticks between shots and is always on time.']];
+ const SLOTS={r1:{rar:'rare',lv:18},r2:{rar:'rare',lv:26},l1:{rar:'legendary',lv:48},l2:{rar:'legendary',lv:58}};
  const BY={},byC={};
  for(const[c,slot,n,pal,mat,dz,d]of D){const id='ars_'+c.slice(0,6)+'_'+slot,S=SLOTS[slot],q=[1,3,5],hx=s=>{const v=parseInt(s.slice(1),16);return[v>>16&255,v>>8&255,v&255]};
   WPN[id]={id,n,g:hx(pal[3]),bd:3,md:40,cd:.4,k:'ars',cost:0,fx:'',rar:S.rar,lv:S.lv,cls:c,ars:{slot,pal,mat,dz,type:CLS[c]},d,kn:0};BY[id]=WPN[id];(byC[c]=byC[c]||{})[slot]=id}
@@ -116,5 +104,10 @@ try{(()=>{
  function sprite(id,L,w){const lb=Math.round(L/4)*4,k=id+':'+lb;let s=CAN.get(k);if(s)return s;const S=3,sz=Math.ceil(lb*2.6*(w.ars.dz.len||1)*S),c=document.createElement('canvas');c.width=c.height=sz;const x=c.getContext('2d'),o=sz/2,uu=lb*S*(w.ars.dz.len||1);x.translate(o,o);x.scale(uu,uu);x.lineJoin='round';x.lineCap='round';try{ART[w.ars.type](x,w,w.ars.dz,w.ars.pal,w.ars.mat)}catch(e){console.error('ARS art',id,e)}s={c,o:o/S,z:sz/S};CAN.set(k,s);if(CAN.size>60)CAN.delete(CAN.keys().next().value);return s}
  {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){const w=WPN[id];if(!w||!w.ars)return _dw.apply(this,arguments);const L0=L||40,s=sprite(id,L0,w);x.drawImage(s.c,-s.o,-s.o,s.z,s.z)}}
  {const _iu=iconURL;iconURL=function(k){if(ICON[k])return ICON[k];const id=typeof k=='string'&&k.startsWith('w:')?k.slice(2):'',w=id&&WPN[id];if(!w||!w.ars)return _iu.apply(this,arguments);const S=64,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),rs=(w.ars.type=='gaunt')?1.1:(w.ars.type=='gun'?.95:.72);x.translate(S*.18,S*.82);x.rotate(-.78);try{drawWeapon(x,id,S*rs,0)}catch(_){}return ICON[k]=c.toDataURL()}}
+ // anyone holding one of the short-lived second Mythics gets their class's real Mythic instead, with its forge level
+ try{const H=window.RB_HELD,KS=Object.keys(CLS);for(const c of KS){const old='ars_'+c.slice(0,6)+'_m',nw='myth_'+c;if(H&&H.own&&H.own[old]){delete H.own[old];own[nw]=1;try{MYTH.S.t[c]=Math.max(1,MYTH.S.t[c]|0);MYTH.save()}catch(_){}if(typeof wUp!='undefined'&&wUp[old]){wUp[nw]=Math.max(wUp[nw]|0,wUp[old]|0);delete wUp[old]}if(H.wp===old)H.wp=nw}}}catch(e){console.error('ARS1 migrate',e)}
+ try{for(const id in BAL11.XR)if(BAL11.XR[id]=='mythic'){BAL11.XR[id]='legendary';if(WPN[id])WPN[id].wasM=1}}catch(_){}
+ // one Mythic per class: the others that carried the name stay owned and just as strong, but are Legendary now
+ for(const id of Object.keys(WPN)){const w=WPN[id];if(w.myth||w.ars||w.k=='tool')continue;let r=w.rar;try{const it=SHOP7.byId.get('wpn_'+id);if(!r&&it)r=it.rar;if(it&&(it.rar=='mythic'||it.rar=='exclusive'))it.rar='legendary'}catch(_){}if(r=='mythic'||r=='exclusive'){w.rar='legendary';w.wasM=1}}
  window.ARS1={D,BY,byC,IDS,CLS,SLOTS,ART,sprite};
 })()}catch(e){console.error('ARS1',e)}

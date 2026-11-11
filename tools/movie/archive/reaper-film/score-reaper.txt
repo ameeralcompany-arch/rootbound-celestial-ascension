@@ -1,0 +1,80 @@
+// The Reaper's score, "What the Dark Keeps". Original music written as code. E minor, resolving to E major.
+// A theme with Korean-inspired phrasing: a plucked long zither that bends and wavers on its held notes, and a nasal two-string fiddle for the melody, over piano, strings, low percussion and choir.
+const C = cues.C, D = cues.D, bt = .75;            // C[n], D[n]: when shot n starts and how long it runs (n counts from 1)
+const E0 = m => 440 * Math.pow(2, (m - 69) / 12);
+const PBUF = {};
+function plBuf(m) { if (PBUF[m]) return PBUF[m]; const f = E0(m), N = Math.max(2, Math.round(SR / f)), len = SR * 4, b = ac.createBuffer(1, len, SR), d = b.getChannelData(0), ring = new Float32Array(N); for (let i = 0; i < N; i++) ring[i] = (rnd() * 2 - 1) * (i / N < .5 ? 1 : .55); let p = 0, damp = .4985 + Math.min(.0012, f / 900000); for (let t = 0; t < len; t++) { const n = (p + 1) % N, y = ring[p]; ring[p] = (y + ring[n]) * damp; d[t] = y; p = n; } return PBUF[m] = b; }
+// the zither: bright pluck, then the held note wavers as if the string were pressed behind the bridge
+function pluck(t, m, v = .6, dur = 2.2, p = -.2, bend = 0) { const s = ac.createBufferSource(); s.buffer = plBuf(m); const g = G(0); g.gain.setValueAtTime(v * .85, t); g.gain.setTargetAtTime(0, t + dur, .3); if (bend) { s.detune.setValueAtTime(0, t + .18); for (let k = 0; k < dur * 6; k++) s.detune.linearRampToValueAtTime((k % 2 ? -1 : 1) * bend * Math.min(1, k / 4), t + .18 + (k + 1) * .17); } s.connect(g); pan(g, p, PIANO); s.start(t); s.stop(t + dur + 1.5); }
+// the fiddle: two strings, a nasal band, slides into its notes, a slow wide vibrato
+function haegeum(t, m, dur, v = .4, from = null, p = .12) { const f0 = E0(m), out = G(0), b1 = bp(1050, 1.3), l1 = bp(3400, .6, 'lowpass'); adsr(out, t, .1, v * .3, .6, .86, .32, t + dur); b1.connect(l1); l1.connect(out); pan(out, p, STR); const lfo = osc('sine', 5.2, t, dur + 2), ld = G(0); ld.gain.setValueAtTime(0, t); ld.gain.linearRampToValueAtTime(f0 * .014, t + Math.min(.8, dur * .6)); lfo.connect(ld); for (const c of [-7, 6]) { const s = osc('sawtooth', f0, t, dur + 2); s.detune.value = c; if (from != null) { s.frequency.setValueAtTime(E0(from), t); s.frequency.exponentialRampToValueAtTime(f0, t + .17); } ld.connect(s.frequency); s.connect(b1); } }
+const THEME = [[0, 76, 1.5], [1.5, 74, .5], [2, 71, 2], [4, 67, 1], [5, 69, 1], [6, 71, 2], [8, 74, 1.5], [9.5, 71, .5], [10, 69, 2], [12, 67, 1], [13, 66, 1], [14, 64, 2]];
+const up = (ms, n) => ms.map(m => m + n);
+const Em = [40, 52, 55, 59], Cm7 = [36, 52, 55, 59], G_ = [43, 50, 55, 59], Bs = [35, 52, 54, 59], Am = [45, 52, 57, 60], Bb7 = [35, 51, 54, 57], EM = [40, 52, 56, 59], CsM = [37, 49, 56, 61], AM = [45, 52, 57, 61], BM = [47, 51, 54, 59];
+const pads = (t, list, bar, v, o) => list.forEach((c, i) => chord(t + i * bar, c, bar * .98, v, o));
+const melody = (t, sc, sh, fn) => THEME.forEach(([b, m, d]) => fn(t + b * sc, m + sh, d * sc));
+// ---------- A: opening atmosphere
+SFX.wind(0, C[9] + 1);
+drone(.4, C[3] + 1, [28, 40, 47], .34, 220);
+[[2.2, 64, 1.4], [3.0, 67, 1.2], [3.8, 69, 1.2], [4.6, 71, 2.8], [8.0, 74, 1], [8.6, 71, .9], [9.2, 69, 1.2], [10.1, 67, 1.1], [10.9, 64, 2.4]].forEach(([t, m, d], i) => pluck(t, m, .55, d, -.2 + i * .05, d > 2 ? 30 : 0));
+// ---------- B: the emotional theme, the first time, gentle
+{ const t = C[3], bar = bt * 4; pads(t, [Em, Cm7, G_, Bs], bar, .3, { bright: .18, a: 1.1, r: 1.4 }); melody(t + .1, bt, -12, (x, m, d) => piano(x, m, .46, d)); melody(t + bar * .5, bt, 0, (x, m, d) => 0);
+  [[0, 76, 1.5, null], [1.5, 74, .5, 76], [2, 71, 2, 74], [4, 67, 1, 71], [5, 69, 1, 67], [6, 71, 2.4, 69]].forEach(([b, m, d, f]) => haegeum(t + bar * 2 + b * bt, m - 12, d * bt, .34, f == null ? null : f - 12)); }
+// the name fades: the harmony stumbles, one note hangs in the air
+piano(C[6] + .2, 64, .3, 2.4); piano(C[6] + 1.5, 65, .24, 2.2); piano(C[6] + 2.7, 64, .2, 2);
+lowStr(C[6], 40, D[6] + D[7], .3, 400); SFX.breath(C[7] + .9, 1.3);
+SFX.step(C[8] + .2, .28);
+// ---------- C: tension
+drone(C[8], D[8] + D[9] + D[10] + D[11], [28, 40], .36, 300);
+{ const t0 = C[8], end = C[12]; for (let t = t0 + 1, i = 0; t < end - .2; t += bt * 2, i++) { lowStr(t, i % 2 ? 41 : 40, bt * 2, .34 + (t - t0) / (end - t0) * .3, 500 + (t - t0) * 30); if (t > C[9]) taiko(t, .32 + (t - t0) / (end - t0) * .4, 1, 0); } chord(C[9], [52, 55, 59], D[9] + D[10], .22, { a: 2, bright: .24 }); choirs(C[10] + .4, [52, 59, 64], D[10] + D[11] - .4, .3, 'o', { }); braam(C[9] + .05, 2.8, .55); braam(C[10] + 1.2, 2.2, .6); riser(C[12] - 2.2, 2.2, .85); }
+SFX.ring(C[10] + 1.1, .6);
+// ---------- D: action. 150 to the minute. Everything lands on the cuts.
+{ const a = C[12], z = C[21], q = .4; let i = 0; const roots = [40, 40, 36, 38]; for (let t = a; t < z; t += q / 2, i++) { const bar = Math.floor(i / 16), s = i % 16; const ost = [52, 52, 55, 52, 59, 57, 55, 52, 52, 52, 55, 52, 60, 59, 57, 55]; spic(t, ost[s] + 12, .42, .1, .6); if (s % 4 === 0) lowStr(t, roots[bar % 4], q * 2, .55, 900); if (s % 8 === 0) taiko(t, 1, 1, 0); if (s === 3 || s === 6 || s === 11 || s === 14) taiko(t, .55, 1.6, .2); if (s % 2 === 1) hat(t, .16); if (s === 12) snare(t, .55); }
+  // the theme over the top, on horns
+  melody(a + q * 8, q * 1, 0, (x, m, d) => { if (x < z - .2) brass(x, m - 12, d * .92, .5, {}); }); chord(a, [52, 55, 59], z - a, .3, { a: .3, bright: .6 }); choirs(a, [52, 59], z - a, .24, 'a', {}); }
+// the defeat, and a pause in the fight
+lowStr(C[21], 40, D[21] + D[22], .4, 500); choirs(C[22], [52, 55], D[22] + D[23] - .2, .32, 'o', {}); drone(C[21], D[21] + D[22] + D[23], [28, 40], .4, 280);
+// the second charge, faster and angrier
+{ const a = C[24], z = C[25] + 1.1, q = .36; let i = 0; for (let t = a; t < Math.min(C[24] + 2.1, z); t += q / 2, i++) { const s = i % 16; const ost = [52, 52, 55, 52, 59, 57, 55, 52]; spic(t, ost[s % 8] + 12, .56, .1, .8); if (s % 4 === 0) { lowStr(t, 40, q * 2, .7, 1100); taiko(t, 1.1, 1, 0); } if (s % 2) hat(t, .22); } melody(a, q, 0, (x, m, d) => { if (x < C[24] + 2.1) brass(x, m - 12, d * .9, .62, {}); }); chord(C[24] + 2.1, [40, 52, 58, 64], D[24] - 2.1 + D[25], .5, { a: .2, bright: .7 }); choirs(C[24] + 2.1, [52, 58, 64, 70], D[24] - 2.1 + D[25], .4, 'a', {}); roll(C[24] + 2.5, D[24] - 2.5 + 1, .2, .75); }
+// ---------- E: the collapse
+music.gain.setValueAtTime(.9, C[26] - .02); music.gain.linearRampToValueAtTime(.05, C[26] + .9);
+SFX.slowmo(C[26] + .1, .6);
+music.gain.setValueAtTime(.05, C[27] - .1); music.gain.linearRampToValueAtTime(.9, C[27] + .4);
+for (let i = 0; i < 12; i++) { bell(C[27] + .3 + i * .22, 72 - (i % 4) * 2, .13, (i % 2 ? .3 : -.3)); }
+piano(C[28] + .3, 64, .42, 3.2); piano(C[29] + .2, 59, .34, 2.6); piano(C[30] + .3, 62, .36, 2); piano(C[30] + 1.6, 64, .34, 2.6);
+bell(C[32] + .02, 96, .6, 0);
+{ const t = C[33]; chord(t, [64, 67, 71, 76], D[33] + D[34], .22, { bright: .3, a: 2, r: 2 }); [[.4, 76], [1.6, 74], [2.6, 71]].forEach(([b, m]) => piano(t + b, m - 12, .34, 2)); melody(C[34] + 1, bt * 1.1, -12, (x, m, d) => { if (x < C[35]) piano(x, m, .3, d + .4); }); }
+{ const t = C[35]; pads(t, [G_, Em], D[35] / 2, .18, { bright: .3, a: 1, r: 1.4 }); [[.3, 79], [1, 83], [1.7, 86]].forEach(([b, m]) => pluck(t + b, m - 12, .34, 2, .1, 20)); }
+// after the light goes out: true silence for as long as the voice needs
+drone(C[38] + 1.6, D[38] + 2, [28, 40], .18, 200);
+// ---------- F: the walk into the dark. Twelve seconds of nearly nothing.
+for (let t = C[39] + 1.4, i = 0; t < C[40] - .5; t += 1.3, i++) SFX.step(t, .035);
+SFX.heartbeat(C[39] + 6.4, .07); SFX.heartbeat(C[39] + 10.4, .1);
+// ---------- G: the climax
+music.gain.setValueAtTime(.9, C[43] - .05); music.gain.linearRampToValueAtTime(.5, C[43]);
+SFX.breath(C[40] + .35, 1.8);
+{ const t = C[41]; drone(t, D[41] + D[42] + D[43] + 4, [28, 40, 47], .45, 500); pads(t, [Em, Cm7, G_], D[41] / 3, .34, { bright: .34, a: 1.1, r: 1.5 }); choirs(t + .4, [64, 67, 71], D[41] - .4, .42, 'a', {}); choirs(t + 2.4, [71, 76, 79], D[41] - 2.4 + D[42], .48, 'a', {}); SFX.shimmer(t + 1, .8); SFX.shimmer(t + 3.5, 1); melody(t + 1.2, bt * .78, 0, (x, m, d) => haegeum(x, m, d * 1.05, .42, m + 2)); riser(C[43] - 2, 2, .7); }
+SFX.wings(C[42] + .4, .7); SFX.wings(C[42] + 1.5, .9);
+const HIT = (t, v, c) => { boom(t, v * .42, sfx); braam(t + .02, 1.3, .34 * v); taiko(t, .7 * v, 1, 0); chord(t, c, 1.45, .5, { a: .05, bright: .75 }); choirs(t, up(c.slice(1), 12), 1.45, .46, 'a', {}); };
+HIT(C[43], .9, Em); SFX.shing(C[43] + .1, .9);
+HIT(C[44], .9, Cm7); HIT(C[45], .9, Am); HIT(C[46], .92, Bb7); HIT(C[47], .94, Bb7);
+SFX.burst(C[47] + .2, .7);
+// the top of the climax: the black flash lands on the major chord
+{ const t = C[48] + .9; boom(t, .7, sfx); braam(t, 3, .5); SFX.slash(t, .9); taiko(t, .95, 1, 0); taiko(t + .4, .65, 1.4, 0); chord(C[48], [40, 52, 59, 64], .9, .5, { a: .3, bright: .7 }); chord(t, EM, 3, .6, { a: .04, bright: .85 }); choirs(t, [52, 56, 59, 64, 68, 71], 3, .5, 'a', {}); horns(t, [52, 59, 64, 68], 2.8, .55, {}); }
+// the whole figure: the theme in the major, full
+{ const t = C[50]; const bar = D[50] / 2; const m2 = THEME.map(([b, m, d]) => [b, ({ 74: 75, 67: 68 })[m] || m, d]); pads(t - 1.2, [EM, AM, EM], 2.9, .5, { bright: .7, a: .4 }); m2.forEach(([b, m, d]) => { const x = t - .6 + b * .46; if (x < C[51] + .4) { brass(x, m - 12, d * .46, .6, {}); haegeum(x, m, d * .46, .4, m - 1); } }); choirs(t - 1.2, [64, 68, 71, 76], D[50] + 1.2, .5, 'a', {}); for (let x = t - 1.2, i = 0; x < C[51]; x += .46, i++) { if (i % 4 === 0) taiko(x, 1.05, 1, 0); if (i % 4 === 2) taiko(x, .6, 1.5, .2); } }
+SFX.wings(C[49] + .1, 1); SFX.wings(C[49] + 1.2, .9); SFX.wings(C[50] + .3, .9); SFX.wings(C[50] + 2.6, .8); SFX.shimmer(C[50] + 1, 1); SFX.glint(C[51] + 1.2, 1);
+// evolved combat: faster than before, cleaner
+{ const a = C[52], z = C[54] + .85, q = .3; let i = 0; for (let t = a; t < z; t += q / 2, i++) { const s = i % 8; spic(t, [64, 64, 68, 71, 76, 71, 68, 64][s] + 0, .55, .08, .85); if (s === 0) { lowStr(t, 40, q * 2, .75, 1200); taiko(t, 1.1, 1, 0); } if (s % 2) hat(t, .22); } chord(a, [40, 52, 59, 64, 68], z - a, .5, { a: .1, bright: .8 }); choirs(a, [64, 68, 71], z - a, .36, 'a', {}); riser(C[54] - .1, .9, .9); }
+SFX.whoosh(C[52] + .05, 1, .4); SFX.wings(C[52] + .1, .9); SFX.slash(C[53] + .2, .9); SFX.shing(C[53] + .8, .6);
+// the Final Hour: one cut, then nothing at all
+music.gain.setValueAtTime(.5, C[54] + .88); music.gain.linearRampToValueAtTime(0, C[54] + .95);
+music.gain.setValueAtTime(0, C[55] - .02); music.gain.linearRampToValueAtTime(.9, C[55] + 1.2);
+SFX.slash(C[54] + .86, 1.5); SFX.shing(C[54] + .9, 1.3); bell(C[54] + 1.0, 88, .6, 0); bell(C[54] + 1.5, 76, .4, 0);
+// ---------- H: the resolution, in the major
+{ const t = C[55]; pads(t, [EM, CsM, AM, EM], D[55] / 2, .26, { bright: .32, a: 1.4, r: 1.6 }); const m2 = THEME.map(([b, m, d]) => [b, ({ 74: 75, 67: 68 })[m] || m, d]); m2.forEach(([b, m, d]) => { const x = t + .4 + b * bt * 1.15; if (x < C[57]) piano(x, m - 12, .4, d * bt * 1.2); }); }
+{ const t = C[56] + 2.4; bell(t, 84, .34, 0); bell(t + .5, 88, .26, .2); SFX.shimmer(t + .9, .7); }
+{ const t = C[57]; pads(t, [AM, EM], D[57] / 2, .24, { bright: .36, a: 1, r: 1.5 }); [[1.3, 76], [1.9, 80], [2.5, 83], [3.1, 88]].forEach(([b, m], i) => pluck(t + b, m - 12, .4, 2.2, -.1 + i * .1, 18)); SFX.shimmer(t + 2.6, .8); }
+{ const t = C[58]; pads(t, [EM], D[58], .24, { bright: .36, a: .9, r: 1.5 }); }
+{ const t = C[59], bar = D[59] / 2; pads(t, [AM, EM], bar, .36, { bright: .5, a: 1, r: 1.6 }); choirs(t, [64, 68, 71], D[59], .3, 'a', {}); const m2 = [[0, 76, 1.4], [1.4, 75, .5], [1.9, 71, 2.6]]; m2.forEach(([b, m, d]) => haegeum(t + .4 + b, m, d, .4, m - 1)); SFX.wind(t, D[59] + D[60]); }
+{ const t = C[60]; chord(t, [52, 59, 64, 68, 71], D[60] - .5, .34, { bright: .34, a: 1, r: 2 }); choirs(t + .3, [64, 68, 76], D[60] - 1, .3, 'a', {}); piano(t + .2, 40, .6, 4); piano(t + .2, 52, .5, 4); piano(t + .2, 64, .46, 4); piano(t + .45, 68, .36, 4); piano(t + .65, 71, .32, 4); piano(t + .9, 76, .3, 4); bell(t + 1.5, 88, .28, 0); }

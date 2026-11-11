@@ -13,7 +13,7 @@ const R3D=(()=>{
   const m=g.getTransform(),sc=Math.min(4,Math.max(.25,Math.hypot(m.a,m.b)));if(Math.abs(sc-cScale)>.001){cScale=sc;cache.clear()}
   const now=performance.now();
   for(let cy=Math.floor(y0/CH);cy<=Math.floor(y1/CH);cy++)for(let cx=Math.floor(x0/CH);cx<=Math.floor(x1/CH);cx++){const key=cy*1024+cx,s=sig(cx,cy);let e=cache.get(key);
-   if(!e||e.s!==s){if(!e){e={c:document.createElement('canvas')};e.c.width=e.c.height=Math.ceil(CW*sc);cache.set(key,e)}e.s=s;const c=e.c.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,e.c.width,e.c.height);c.setTransform(sc,0,0,sc,0,0);
+   if(!e||e.s!==s){if(!e){e={c:document.createElement('canvas')};e.c.width=e.c.height=Math.ceil(CW*sc);cache.set(key,e)}e.s=s;const c=e.c.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,e.c.width,e.c.height);c.setTransform(sc,0,0,sc,0,0);c.globalAlpha=.55;
     for(let y=cy*CH;y<cy*CH+CH&&y<H;y++)for(let x=cx*CH;x<cx*CH+CH&&x<W;x++)paint(c,x,y,(x-cx*CH)*T,(y-cy*CH)*T)}
    e.u=now;g.drawImage(e.c,cx*CH*T-cam.x,cy*CH*T-cam.y,CW,CW)}
   if(cache.size>MAXC){const old=[...cache].sort((a,b)=>a[1].u-b[1].u).slice(0,cache.size-MAXC);for(const[k]of old)cache.delete(k)}}

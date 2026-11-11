@@ -16,7 +16,7 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
   tiles[k]=27;pushEdit(k);tiles[k+1]=3;pushEdit(k+1);tiles[k-W]=3;pushEdit(k-W);tiles[k+1-W]=3;pushEdit(k+1-W);for(const q of[k-1,k-1-W,k-1-W-W]){if(tiles[q]&&q!=k)tiles[q]=0}window._k=k;return k});
  const k=await place();await W8(200);
  await E(()=>{inv={};inv[1]=50;inv[3]=30;inv[8]=7;inv[205]=9;barDirty=1;HOTBAR.set(4,1,{quiet:1});renderBar()});await W8(200);
- await p.keyboard.press('e');await W8(250);ok('E opens the chest even when it is boxed in by blocks',await E(k=>CHEST6.k==k&&document.getElementById('chestui').style.display=='block',k));
+ await p.keyboard.press('f');await W8(250);ok('E opens the chest even when it is boxed in by blocks',await E(k=>CHEST6.k==k&&document.getElementById('chestui').style.display=='block',k));
  const tot=id=>E(([k,id])=>cnt(id)+(OBJ[k].c.it.find(x=>x[0]==id)||[0,0])[1],[k,id]);
  // ---- clicks
  await p.click('#chestui [data-m=put][data-i="3"]');await W8();let s=await E(k=>({c:OBJ[k].c.it.map(x=>x.join(':')).join(),n:cnt(3)}),k);ok('click a backpack item stores 1',s.c=='3:1'&&s.n==29,s);
@@ -53,8 +53,8 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  await p.click('#chestui [data-a=ren]');await W8(150);await p.fill('#dlg7 input','Ore Box');await p.click('#dlg7 [data-ok]');await W8(250);await p.click('#chestui [data-col="2"]');await W8();
  ok('rename + colour the chest',await E(k=>OBJ[k].c.nm=='Ore Box'&&OBJ[k].c.col==2&&document.querySelector('#chestui .nm8').textContent=='Ore Box',k));
  // ---- closing: E, Esc, walking away
- await p.keyboard.press('e');await W8(150);ok('E closes the chest window',await E(()=>CHEST6.k==-1));
- await p.keyboard.press('e');await W8(150);await p.keyboard.press('Escape');await W8(150);ok('Esc closes it',await E(()=>CHEST6.k==-1&&document.getElementById('chestui').style.display=='none'));
+ await p.keyboard.press('f');await W8(150);ok('E closes the chest window',await E(()=>CHEST6.k==-1));
+ await p.keyboard.press('f');await W8(150);await p.keyboard.press('Escape');await W8(150);ok('Esc closes it',await E(()=>CHEST6.k==-1&&document.getElementById('chestui').style.display=='none'));
  await E(k=>CHEST6.open(k),k);await W8(100);await E(()=>{P.x-=T*6});await W8(300);ok('walking away closes it',await E(()=>CHEST6.k==-1));await E(()=>{P.x+=T*6});await W8(100);
  // ---- saving: world A chest, travel to B at once, B chest, reload: both chests and the backpack agree
  await E(k=>{OBJ[k].c.it=[[3,11],[205,4]];inv[3]=5;inv[205]=1;CHEST6.open(k);CHEST6.move(k,'put',3,2);CHEST6.close()},k);await E(()=>enterWorld('chestb'));await W8(900);

@@ -1,4 +1,4 @@
-// ===== DROP2: dropping anything you may give up, as a real object lying in the world. Blocks, materials, weapons, wearables, store wings and charms. Press E beside it to pick it up.
+// ===== DROP2: dropping anything you may give up, as a real object lying in the world. Blocks, materials, weapons, wearables, store wings and charms. Press F beside it to pick it up.
 // Rules, the same for everyone: it stays for 15 minutes; anyone nearby can take it; if nobody does it comes back to whoever dropped it, so timing never loses you anything.
 // Never droppable: what you are wearing or holding, upgraded weapons, starter tools, level-earned wings, World Locks and quest items.
 // Online: the server decides. The item leaves your inventory only when the server says the drop exists (server/economy.js), so lag, double clicks or a disconnect can not duplicate or lose it.
