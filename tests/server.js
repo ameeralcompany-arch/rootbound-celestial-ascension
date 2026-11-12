@@ -17,7 +17,7 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
  r=spawnSync('node',[path.join(__dirname,'..','server','cli.js'),'set-owner','Other','--password-stdin'],{input:'another-long-pass\n',env});ok('CLI refuses to replace owner without --force',r.status!=0);
  r=spawnSync('node',[path.join(__dirname,'..','server','cli.js'),'set-owner','Creator','--password-stdin'],{input:'short\n',env});ok('CLI rejects weak owner password',r.status!=0);
  const accRaw=fs.readFileSync(path.join(dir,'accounts.json'),'utf8');ok('owner password is stored only as a scrypt hash',!accRaw.includes('a-long-owner-pass')&&accRaw.includes('"h"'));
- process.env.DATA_DIR=dir;let S=createServer({port:0,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});let port=await S.listen();
+ process.env.DATA_DIR=dir;let S=createServer({allowGuests:true,port:0,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});let port=await S.listen();
  const h=await get(port,'/health');ok('/health reports ownerConfigured',h.s==200&&JSON.parse(h.b).ownerConfigured===true);
  const idx=await get(port,'/');ok('server serves the game client at /',idx.s==200&&idx.b.includes('Rootbound'));
  ok('unknown http path 404',(await get(port,'/data/accounts.json')).s==404);
@@ -74,7 +74,7 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
  const nd=await O.c.rpc({t:'admin',op:'world_delete',world:'aliceland',confirm:'wrong',rid:9},m=>m.t=='admin_res');ok('destructive op needs typed confirmation',!nd.ok);
  // --- persistence across restart
  await sleep(2000);await S.close();
- S=createServer({port:0,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200});port=await S.listen();
+ S=createServer({allowGuests:true,port:0,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200});port=await S.listen();
  const A2=await login(port,'alice','alice-password');ok('account survives server restart',A2.r.ok);
  const j=await A2.c.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello');ok('world edits persisted across restart',j.d.edits[2000]&&j.d.edits[2000][0]==3&&j.d.edits.m&&j.d.edits.m.o==A2.r.uid);
  ok('weather persisted across restart',j.d.wx=='blossom',j.d.wx);ok('objects (chest contents) persisted',j.d.edits.o&&j.d.edits.o[2200]&&j.d.edits.o[2200].c.it[0][1]==7);
@@ -104,7 +104,7 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
   const r5=await buy({id:'blk_1',qty:-3,rid:'r5'});const r6=await buy({id:'blk_1',qty:1000,rid:'r6'});ok('negative / huge quantities rejected',!r5.ok&&!r6.ok);
   const r7=await buy({id:'wing_dragon',rid:'r7'});ok('too-expensive purchase rejected without charge',!r7.ok&&r7.gems===r4.gems,r7.m);
   const wl=await sc.rpc({t:'wallet'},m=>m.t=='wallet');ok('wallet view shows ownership',wl.owned.wing_dove===1&&wl.owned.blk_1===5&&wl.gems===r4.gems);
-  await sleep(1700);await S.close();S=createServer({port,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});await S.listen();
+  await sleep(1700);await S.close();S=createServer({allowGuests:true,port,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});await S.listen();
   const SH2=await login(port,'shopper','shopper-pass-1');const wl2=await SH2.c.wait(m=>m.t=='wallet');ok('wallet and ownership survive a server restart',wl2.owned.wing_dove===1&&wl2.gems===r4.gems,JSON.stringify(wl2));
   ok('every catalog item has a valid price, rarity and unique id',[...cat.values()].every(i=>i.price>0&&['common','uncommon','rare','epic','legendary','mythic','exclusive'].includes(i.rar)&&i.n&&i.d&&i.cat));}
  await S.close();console.log(fails?'FAILURES '+fails:'all server tests passed');process.exit(fails?1:0)})().catch(e=>{console.log('FAIL exception',e&&e.stack||e);process.exit(1)});

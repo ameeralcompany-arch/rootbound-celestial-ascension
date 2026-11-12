@@ -12,7 +12,7 @@ const CHROME='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 const mkdir=n=>fs.mkdtempSync(path.join(os.tmpdir(),n));
 (async()=>{
  // ---- the server in app-only mode
- const S=createServer({port:0,host:'127.0.0.1',dataDir:mkdir('rbwin-'),scryptN:64,appOnly:true});const port=await S.listen();
+ const S=createServer({allowGuests:true,port:0,host:'127.0.0.1',dataDir:mkdir('rbwin-'),scryptN:64,appOnly:true});const port=await S.listen();
  {const r=await get(port,'/');ok('the address shows the download page',r.s==200&&r.b.includes(ZIP)&&r.b.includes('Rootbound.exe'));ok('the page holds none of the game',!/NAV16|RB_HOSTED|RB_SERVER/.test(r.b)&&r.b.length<12000,r.b.length);ok('the page has its security policy',/script-src 'sha256-/.test(r.h['content-security-policy']||''));
   const r2=await get(port,'/index.html');ok('the old game address shows the same page',r2.s==200&&r2.b==r.b)}
  for(const p of['/manifest.webmanifest','/icons/icon-192.png','/audio/intro-song.mp3','/audio/intro-cinematic.mp4','/assets/sprites/x.png','/api/worlds','/server/server.js','/download.html'])ok('not handed out: '+p,(await get(port,p)).s==404);
@@ -37,7 +37,7 @@ const mkdir=n=>fs.mkdtempSync(path.join(os.tmpdir(),n));
   const g=await p.evaluate(()=>({wd:navigator.webdriver,blocked:window.RB_BLOCKED,gate:!!document.getElementById('rbgate'),href:(document.getElementById('rbgatedl')||{}).href||'',boot:!!document.getElementById('rbboot'),canvas:document.querySelectorAll('canvas').length,diag:typeof RBDIAG,nav:typeof NAV16,text:document.body.innerText.slice(0,60)}));
   ok('a browser opening the game file is stopped and shown the download',g.wd===false&&g.blocked===true&&g.gate&&g.href.endsWith(ZIP),g);ok('none of the game runs in that browser',g.canvas==0&&g.nav=='undefined'&&g.diag=='undefined'&&!g.boot,g);ok('no errors behind it',errs.length==0,errs);await c.close()}
  // ---- moving a browser save: the download page, in the browser that holds the save
- const S2=createServer({port:0,host:'127.0.0.1',dataDir:mkdir('rbwin2-'),scryptN:64,appOnly:true});const p2=await S2.listen();let file=null;
+ const S2=createServer({allowGuests:true,port:0,host:'127.0.0.1',dataDir:mkdir('rbwin2-'),scryptN:64,appOnly:true});const p2=await S2.listen();let file=null;
  {const c=await plain.newContext({viewport:{width:1280,height:720},acceptDownloads:true});const p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));const url='http://127.0.0.1:'+p2+'/';await p.goto(url);
   ok('no save in this browser: no save button',!(await p.isVisible('#savebtn')));
   await p.evaluate(()=>{const s={rbp:JSON.stringify({v:1,inv:{1:5},gems:4321,own:{fist:1},ownW:{},wear:{},wp:'fist',bar:[1],done:{},xp:3,lvl:17,prof:{mine:{l:2,x:0},farm:{l:1,x:0},fight:{l:1,x:0}},look:{skin:'#f1c9a0',hair:'#3a2a1a',style:0,shirt:'#3c6fd1',pants:'#2b3a5a'},made:true}),rbmile:'{"seen":{"x":1}}',rbload:'{"l":1}',rbbiome:'{"w":{"h":1}}',rbopt:'{"mus":1}',rbmyth:'{"t":{"a":1}}',rbdepth:'{"x":2}',rbw_home:'{"e":{}}',rbpbrk:'stars',rbtok:'SECRET',rbsrv:'evil.example',rb_acct:'abc',a_abc_rbp:'{}',other:'x',rbdiag:'y'};for(const k in s)localStorage.setItem(k,s[k])});await p.reload();

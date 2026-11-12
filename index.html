@@ -67,7 +67,8 @@ var mo=new MutationObserver(function(){if(document.body){mo.disconnect();start()
    peer: your own PeerJS server, e.g. {host:'my-peer.example.com',port:443,path:'/',secure:true,key:'peerjs'} */
 var RB_HOSTED=false;   // on only in test runs, where a local test server hands out this page. The live server gives browsers the download page instead
 const RB_SERVER='https://rootbound-rcvi.onrender.com';   // the online server the Windows app connects to (see server/DEPLOY.md)
-window.RB_CONFIG=Object.assign({ice:null,peer:null,server:RB_SERVER,solo:!RB_HOSTED&&(!RB_SERVER||!!navigator.webdriver)},window.RB_CONFIG_OVERRIDE||{});   // solo: single-player, never connects to a server (automated test browsers stay offline)
+window.RB_AUTOMATION=!!navigator.webdriver;   // automated test browsers only. Players always run the one online game: sign in, connect, play
+window.RB_CONFIG=Object.assign({ice:null,peer:null,server:RB_SERVER,solo:!RB_HOSTED&&RB_AUTOMATION},window.RB_CONFIG_OVERRIDE||{});   // solo: automated tests run the game without a server. There is no offline mode for players
 </script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#0a0d1c;--pn:rgba(16,21,46,.82);--bd:rgba(255,255,255,.13);--ac:#ffb545;--ac2:#6c5cff;--tx:#f4f6ff;--mu:#9aa3c7;font-family:'Pixelify Sans','Fredoka',system-ui,-apple-system,'Segoe UI',sans-serif}
@@ -3588,6 +3589,7 @@ html.rb-title #menu{justify-content:flex-end;padding-right:6vw;box-sizing:border
 #menu #card{position:relative;z-index:1}
 html.rb-title body #menu #card{zoom:.74}
 #clp1 .cp-c img{width:72px;height:72px;border-radius:50%}
+.sk9.lk4 em{right:0;left:0;text-align:center;font-size:8px;letter-spacing:.04em}
 
 /* ========== CSS: 99-zzzzzzzz-tools.css ========== */
 /* ===== WRENCH2 panel, TOOLI1 tool introductions, and how rarity shows when you inspect an item. ===== */
@@ -3649,6 +3651,121 @@ html[data-reduce=true] .tr-card,html[data-reduce=true] #trdone,html[data-reduce=
 @keyframes wrv-rise{from{transform:translateY(26px) scale(.94);opacity:.2}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.wrv,.wrv canvas{animation:none}}
 html.reduce-motion .wrv canvas{animation:none}
+
+/* ========== CSS: 99-zzzzzzzzz-login.css ========== */
+/* ===== LOGIN1: the login screen. Dark, cinematic, glass panel over the animated class showcase. Every size scales with the window. ===== */
+#rbl{position:fixed;inset:0;z-index:2147483000;background:#05030c;color:#f4eefc;font-family:Montserrat,system-ui,sans-serif;overflow:hidden;user-select:none;--cc:#c9a8ff;--cc2:#7a5ad0}
+#rbl canvas#rblc{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#rbl .rbl-shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 34% 26% at 14% 9%,rgba(5,3,12,.62),rgba(5,3,12,0)),linear-gradient(90deg,rgba(5,3,12,.55) 0%,rgba(5,3,12,0) 30%,rgba(5,3,12,0) 52%,rgba(5,3,12,.62) 74%,rgba(5,3,12,.8) 100%),linear-gradient(0deg,rgba(5,3,12,.86) 0%,rgba(5,3,12,0) 34%),radial-gradient(ellipse at 50% 120%,rgba(0,0,0,0) 40%,rgba(0,0,0,.35) 100%)}
+#rbl .rbl-fade{position:absolute;inset:0;pointer-events:none;background:#000;opacity:1;transition:opacity 1.1s ease}
+#rbl.on .rbl-fade{opacity:0}
+#rbl.leaving .rbl-fade{opacity:1;transition:opacity .9s ease}
+/* the logo */
+#rbl .rbl-logo{position:absolute;left:clamp(28px,5vw,96px);top:clamp(22px,5vh,64px);pointer-events:none;filter:drop-shadow(0 0 18px rgba(255,214,140,.3)) drop-shadow(0 4px 10px rgba(0,0,0,.6))}
+#rbl .rbl-mark{display:flex;align-items:center;gap:clamp(10px,1vw,18px)}
+#rbl .rbl-sym{width:clamp(48px,5vw,88px);height:auto;flex:none;opacity:0;animation:rblSym 1.4s .1s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rblSym{from{opacity:0;transform:scale(.7) rotate(-20deg)}to{opacity:1;transform:none}}
+#rbl .rbl-logo b{display:block;font:700 clamp(40px,5.2vw,92px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.16em;background:linear-gradient(100deg,#fff6dc 0%,#ffd98a 30%,#fff 45%,#e9c6ff 60%,#ffd98a 80%,#fff6dc 100%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rblShine 7s linear infinite,rblLogo 1.6s .2s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rblLogo{from{opacity:0;letter-spacing:.5em;clip-path:inset(-30% 100% -30% -5%)}to{opacity:1;letter-spacing:.16em;clip-path:inset(-30% -5% -30% -5%)}}
+#rbl .rbl-logo i{display:flex;align-items:center;gap:12px;margin-top:10px;font:600 clamp(9px,.7vw,12px)/1 Montserrat,sans-serif;letter-spacing:.42em;font-style:normal;color:rgba(255,236,200,.86);opacity:0;animation:rblFadeUp 1.2s 1.1s ease forwards}
+#rbl .rbl-logo i:before,#rbl .rbl-logo i:after{content:'';height:1px;width:clamp(30px,4vw,70px);background:linear-gradient(90deg,rgba(255,217,138,0),rgba(255,217,138,.9))}
+#rbl .rbl-logo i:after{transform:scaleX(-1)}
+@keyframes rblShine{0%{background-position:0% 0}100%{background-position:240% 0}}
+@keyframes rblLetter{to{opacity:1;transform:none;filter:none}}
+@keyframes rblFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* the class on stage */
+#rbl .rbl-class{position:absolute;left:clamp(28px,5vw,96px);bottom:clamp(118px,17vh,190px);width:min(34vw,520px);pointer-events:none}
+#rbl .rbl-class small{display:block;font:700 clamp(10px,.78vw,13px)/1 Montserrat,sans-serif;letter-spacing:.42em;color:var(--cc);text-shadow:0 0 12px rgba(0,0,0,.8)}
+#rbl .rbl-class h2{margin:10px 0 6px;font:700 clamp(36px,4.2vw,74px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.08em;color:#fff;text-shadow:0 0 28px var(--cc),0 4px 14px rgba(0,0,0,.8)}
+#rbl .rbl-class .w{font:600 clamp(12px,.95vw,16px)/1.3 Montserrat,sans-serif;color:#fff2d6;letter-spacing:.06em}
+#rbl .rbl-class .w em{font-style:normal;color:var(--cc)}
+#rbl .rbl-class p{margin:10px 0 0;font:italic 500 clamp(15px,1.25vw,22px)/1.35 'Cormorant Garamond',Georgia,serif;color:rgba(244,238,252,.92);text-shadow:0 2px 8px rgba(0,0,0,.9)}
+#rbl .rbl-class.swap>*{animation:rblIn .8s cubic-bezier(.2,.7,.2,1) both}
+#rbl .rbl-class.swap h2{animation-delay:.06s}#rbl .rbl-class.swap .w{animation-delay:.14s}#rbl .rbl-class.swap p{animation-delay:.2s}
+@keyframes rblIn{from{opacity:0;transform:translateX(-26px);letter-spacing:.3em;filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+/* the roster */
+#rbl .rbl-roster{position:absolute;left:clamp(28px,5vw,96px);bottom:clamp(30px,5vh,58px);display:flex;align-items:center;gap:clamp(4px,.45vw,10px);flex-wrap:nowrap}
+#rbl .rbl-roster button{position:relative;width:clamp(36px,3.1vw,64px);height:clamp(36px,3.1vw,64px);flex:none;border-radius:50%;padding:0;border:2px solid rgba(255,255,255,.22);background:#120c22;cursor:pointer;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;outline:none}
+#rbl .rbl-roster button canvas{width:100%;height:100%;display:block}
+#rbl .rbl-roster button:hover,#rbl .rbl-roster button:focus-visible{transform:translateY(-4px) scale(1.06);border-color:rgba(255,255,255,.7)}
+#rbl .rbl-roster button.on{border-color:var(--cc);box-shadow:0 0 0 3px rgba(0,0,0,.5),0 0 18px var(--cc);transform:translateY(-6px) scale(1.12)}
+#rbl .rbl-roster .arr{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:16px;line-height:1}
+#rbl .rbl-roster .arr:hover{background:rgba(255,255,255,.18)}
+/* the glass panel */
+#rbl .rbl-panel{position:absolute;right:clamp(24px,5vw,110px);top:50%;transform:translateY(-50%);width:clamp(320px,24vw,500px);padding:clamp(22px,2.2vw,40px);box-sizing:border-box;border-radius:22px;background:linear-gradient(160deg,rgba(40,28,74,.62),rgba(12,8,28,.74));border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);opacity:0;animation:rblPanel 1s .5s cubic-bezier(.2,.7,.2,1) forwards;user-select:text}
+#rbl .rbl-panel:before{content:'';position:absolute;inset:-1px;border-radius:22px;padding:1px;background:linear-gradient(160deg,var(--cc),rgba(255,255,255,0) 40%,rgba(255,255,255,0) 70%,var(--cc2));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.75;pointer-events:none;transition:background .8s}
+@keyframes rblPanel{from{opacity:0;transform:translate(26px,-50%)}to{opacity:1;transform:translateY(-50%)}}
+#rbl .rbl-panel h3{margin:0 0 4px;font:700 clamp(22px,1.7vw,30px)/1.1 'Cormorant Garamond',Georgia,serif;letter-spacing:.04em;color:#fff}
+#rbl .rbl-panel .sub{margin:0 0 18px;font-size:13px;line-height:1.45;color:rgba(232,222,250,.72)}
+#rbl .rbl-panel .fade{animation:rblFadeUp .45s ease both}
+#rbl .rbl-f{position:relative;margin:0 0 12px}
+#rbl .rbl-f label{display:block;margin:0 0 6px;font:700 10.5px/1 Montserrat,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(232,222,250,.7)}
+#rbl .rbl-f input{width:100%;box-sizing:border-box;height:46px;padding:0 44px 0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(6,4,16,.55);color:#fff;font:500 15px Montserrat,system-ui,sans-serif;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+#rbl .rbl-f input::placeholder{color:rgba(232,222,250,.36)}
+#rbl .rbl-f input:focus{border-color:var(--cc);box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 16px -2px var(--cc);background:rgba(10,6,26,.75)}
+#rbl .rbl-f .eye{position:absolute;right:8px;bottom:8px;width:32px;height:30px;border:0;border-radius:8px;background:none;color:rgba(255,255,255,.55);cursor:pointer;font-size:15px}
+#rbl .rbl-f .eye:hover{color:#fff;background:rgba(255,255,255,.08)}
+#rbl .rbl-key{font:700 17px/1.4 Consolas,'Courier New',monospace;letter-spacing:.12em;text-align:center;padding:14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px dashed var(--cc);color:#fff;user-select:all;margin:0 0 12px}
+#rbl .rbl-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 16px;font-size:13px;color:rgba(232,222,250,.8)}
+#rbl .rbl-check{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+#rbl .rbl-check input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:5px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.3);display:grid;place-items:center;margin:0;cursor:pointer;transition:.2s}
+#rbl .rbl-check input:checked{background:var(--cc);border-color:var(--cc)}
+#rbl .rbl-check input:checked:after{content:'';width:5px;height:9px;border:solid #120a24;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+#rbl a.rbl-link,#rbl button.rbl-link{background:none;border:0;padding:0;color:var(--cc);font:600 13px Montserrat,sans-serif;cursor:pointer;text-decoration:none}
+#rbl a.rbl-link:hover,#rbl button.rbl-link:hover{text-decoration:underline;color:#fff}
+/* the big button */
+#rbl .rbl-go{position:relative;width:100%;height:54px;border:0;border-radius:14px;cursor:pointer;overflow:hidden;color:#120a24;font:800 15px/1 Montserrat,sans-serif;letter-spacing:.24em;text-transform:uppercase;background:linear-gradient(100deg,var(--cc) 0%,#fff1d0 50%,var(--cc) 100%);background-size:220% 100%;box-shadow:0 10px 30px -8px var(--cc),inset 0 1px 0 rgba(255,255,255,.7);transition:transform .18s,box-shadow .3s,background-position .8s,filter .2s}
+#rbl .rbl-go:hover:not(:disabled){background-position:100% 0;box-shadow:0 14px 40px -6px var(--cc),0 0 0 1px rgba(255,255,255,.4) inset;transform:translateY(-1px)}
+#rbl .rbl-go:active:not(:disabled){transform:translateY(1px) scale(.985)}
+#rbl .rbl-go:after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));transform:skewX(-20deg);animation:rblSweep 3.6s 1.6s ease-in-out infinite}
+@keyframes rblSweep{0%,62%{left:-60%}100%{left:130%}}
+#rbl .rbl-go:disabled{cursor:default;filter:saturate(.4) brightness(.75)}
+#rbl .rbl-go.busy{color:transparent}
+#rbl .rbl-go.busy:before{content:'';position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid rgba(18,10,36,.25);border-top-color:#120a24;animation:rblSpin .8s linear infinite}
+#rbl .rbl-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.6);transform:scale(0);animation:rblRipple .6s ease-out forwards;pointer-events:none}
+@keyframes rblRipple{to{transform:scale(4);opacity:0}}
+@keyframes rblSpin{to{transform:rotate(360deg)}}
+#rbl .rbl-alt{width:100%;margin-top:12px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;font:700 12.5px Montserrat,sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:.2s}
+#rbl .rbl-alt:hover{background:rgba(255,255,255,.12);border-color:var(--cc)}
+#rbl .rbl-err{min-height:18px;margin:-4px 0 12px;font-size:13px;line-height:1.4;color:#ffb0bf}
+#rbl .rbl-ok{color:#bff5cf}
+#rbl .rbl-busy{display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 0 8px}
+#rbl .rbl-busy .ring{width:62px;height:62px;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:var(--cc);border-right-color:var(--cc);animation:rblSpin 1s linear infinite;box-shadow:0 0 24px -6px var(--cc);margin-bottom:16px}
+#rbl .rbl-busy b{font:600 16px Montserrat,sans-serif}
+#rbl .rbl-busy small{margin-top:6px;color:rgba(232,222,250,.7);font-size:12.5px}
+#rbl .rbl-bar{width:100%;height:3px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:16px}
+#rbl .rbl-bar i{display:block;height:100%;width:30%;background:linear-gradient(90deg,transparent,var(--cc),transparent);animation:rblBar 1.4s ease-in-out infinite}
+@keyframes rblBar{from{transform:translateX(-120%)}to{transform:translateX(360%)}}
+#rbl .rbl-who{display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+#rbl .rbl-who .av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:700 20px 'Cormorant Garamond',serif;color:#120a24;background:radial-gradient(circle at 35% 30%,#fff,var(--cc))}
+#rbl .rbl-who b{display:block;font:700 18px Montserrat,sans-serif}
+#rbl .rbl-who small{color:rgba(232,222,250,.66);font-size:12px}
+/* the foot: server and version */
+#rbl .rbl-foot{position:absolute;right:clamp(24px,5vw,110px);bottom:clamp(18px,3.4vh,34px);width:clamp(320px,24vw,500px);display:flex;align-items:center;justify-content:space-between;gap:12px;font:600 11.5px Montserrat,sans-serif;letter-spacing:.06em;color:rgba(232,222,250,.75)}
+#rbl .rbl-srv{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(6,4,16,.6);border:1px solid rgba(255,255,255,.12)}
+#rbl .rbl-srv i{width:8px;height:8px;border-radius:50%;background:#ffcf4a;box-shadow:0 0 10px #ffcf4a;animation:rblPulse 1.2s ease-in-out infinite}
+#rbl .rbl-srv.ok i{background:#5cffa0;box-shadow:0 0 10px #5cffa0;animation:none}
+#rbl .rbl-srv.bad i{background:#ff5a72;box-shadow:0 0 10px #ff5a72;animation:none}
+@keyframes rblPulse{50%{opacity:.35}}
+#rbl .rbl-ver{display:flex;align-items:center;gap:10px}
+#rbl .rbl-mus{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(6,4,16,.6);color:#fff;cursor:pointer;font-size:13px}
+#rbl .rbl-mus.off{opacity:.45}
+/* lost connection, in game */
+#rblost{position:fixed;inset:0;z-index:2147482900;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(10,6,26,.72),rgba(3,2,10,.9));color:#f4eefc;font-family:Montserrat,system-ui,sans-serif}
+#rblost.on{display:flex;animation:rblFadeUp .4s ease both}
+#rblost .p{width:min(440px,90vw);padding:30px;border-radius:20px;text-align:center;background:linear-gradient(160deg,rgba(40,28,74,.75),rgba(12,8,28,.85));border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 80px rgba(0,0,0,.55)}
+#rblost .ring{width:54px;height:54px;margin:0 auto 16px;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:#c9a8ff;animation:rblSpin 1s linear infinite}
+#rblost b{display:block;font:700 26px 'Cormorant Garamond',Georgia,serif}
+#rblost p{margin:8px 0 18px;color:rgba(232,222,250,.78);font-size:14px;line-height:1.5}
+#rblost button{margin:4px;padding:11px 22px;border-radius:12px;border:0;font:700 12.5px Montserrat,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;background:#c9a8ff;color:#120a24}
+#rblost button.s{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+@media (max-width:1100px){#rbl .rbl-class{width:min(44vw,460px)}#rbl .rbl-roster button{width:32px;height:32px}}
+@media (min-width:2000px){#rbl .rbl-panel .sub,#rbl .rbl-row{font-size:15px}#rbl .rbl-f input{height:54px;font-size:17px}#rbl .rbl-go{height:62px;font-size:17px}#rbl .rbl-alt{height:52px;font-size:14px}#rbl .rbl-f label{font-size:12px}}
+@media (max-height:720px){#rbl .rbl-class p{display:none}#rbl .rbl-panel{padding:20px}}
+@media (prefers-reduced-motion:reduce){#rbl *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* a safety net: whatever happened to the entrance animations, everything that must be read is visible after a moment */
+#rbl.settled .rbl-panel{animation:none;opacity:1;transform:translateY(-50%)}#rbl.settled .rbl-logo i,#rbl.settled .rbl-sym{animation:none;opacity:1;transform:none}#rbl.settled .rbl-logo b{animation:rblShine 7s linear infinite;opacity:1;clip-path:none;letter-spacing:.16em}#rbl.settled .rbl-fade{opacity:0}#rbl.settled.leaving .rbl-fade{opacity:1}
 
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
@@ -3971,8 +4088,8 @@ addEventListener('blur',()=>{for(const k in K)K[k]=0;mdL=mdR=false});
 addEventListener('keydown',e=>{ac();startBGM();if(isTextEl(e.target)&&e.target.id!='chat')return;/* only text fields capture keys; a focused button/checkbox/slider gives the keys back to the game */if(e.target!==document.body&&e.target.blur&&e.target.id!='chat'&&e.target.tagName!='SELECT'&&/^(a|d|w|s| |arrowleft|arrowright|arrowup|arrowdown)$/i.test(e.key))e.target.blur();if(e.target.id=='chat'){if(e.key=='Enter')sendChat();if(e.key=='Escape'){chatEl.style.display='none';chatEl.blur()}return}
  const k=e.key.toLowerCase();if(e.key==' '||k=='tab')e.preventDefault();if(e.repeat)return;K[k]=1;if(menuEl.style.display!='none'){if(k=='escape'&&entered)closeMenu();return}
  if(k=='enter'){chatEl.style.display='block';chatEl.focus();e.preventDefault();return}
- if(k=='tab'||k=='i')setInv(!showInv);if(k=='escape')setInv(false);if(k=='m')toggleMute();if(e.key=='+'||e.key=='=')setZoom(ZM*1.15);if(e.key=='-'||e.key=='_')setZoom(ZM/1.15);if(e.key=='0')setZoom(1);if(k=='j')toggleQM();if(k=='f3'){e.preventDefault();$('fps').style.display=$('fps').style.display=='none'?'block':'none'}if(k=='t')cycleW();if(k=='h')$('quest').style.display=$('quest').style.display=='none'?'block':'none';
- if(e.key>='1'&&e.key<='9')selBar(+e.key-1);if(k=='q')useSkill('hat');if(k=='r')useSkill('body');if(k=='z')useSkill('wing');if(e.key=='Shift')useSkill('boot');if(k=='f')useSkill('glove');if(k=='e')interact();
+ if(k=='i')setInv(!showInv);if(k=='escape')setInv(false);if(k=='f2'){e.preventDefault();toggleMute()}if(e.key=='+'||e.key=='=')setZoom(ZM*1.15);if(e.key=='-'||e.key=='_')setZoom(ZM/1.15);if(e.key=='0')setZoom(1);if(k=='j')toggleQM();if(k=='f3'){e.preventDefault();$('fps').style.display=$('fps').style.display=='none'?'block':'none'}if(k=='t')cycleW();if(k=='h')$('quest').style.display=$('quest').style.display=='none'?'block':'none';
+ if(e.key>='1'&&e.key<='9')selBar(+e.key-1);if(k=='e')interact();
  if(k=='w'||k==' '||k=='arrowup')jumpPress()});
 addEventListener('keyup',e=>{const k=e.key.toLowerCase();K[k]=0;if(k=='w'||k==' '||k=='arrowup')jumpRelease()});
 cv.addEventListener('mousemove',e=>{mx=e.clientX*cv.width/innerWidth/ZM;my=e.clientY*cv.height/innerHeight/ZM});cv.addEventListener('mousedown',e=>{ac();if(e.button==0)mdL=true;if(e.button==2)mdR=true;e.preventDefault()});addEventListener('mouseup',e=>{if(e.button==0)mdL=false;if(e.button==2)mdR=false});cv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -4485,6 +4602,8 @@ $('crnd').onclick=()=>{const p=a=>a[Math.random()*a.length|0];look={skin:p(SKINS
 // "a_<account id>_", so a new account starts empty (level 1) whatever this computer has played before, and the offline save stays untouched under the plain
 // keys. This runs before anything reads a save. Device-wide keys keep their names: "rb_*", the sign-in token and the server address. Which account is active
 // is decided by ACCT13 (late), which reloads the page when it changes. =====
+// "Remember me" off: a new launch of the app starts signed out (the login screen sets rb_remember; sessionStorage lives only as long as this window)
+try{const L0=window.localStorage,S0=window.sessionStorage;if(!S0.getItem('rb_alive')){S0.setItem('rb_alive','1');if(L0.getItem('rb_remember')==='0'){L0.removeItem('rb_acct');L0.removeItem('rbtok')}}}catch(_){}
 const RB_ACCT=(()=>{let id='',ls=null,fz=false;try{ls=window.localStorage;id=ls.getItem('rb_acct')||''}catch(_){return{id:'',pre:'',free:()=>true,freeze(){}}}
  if(!/^[A-Za-z0-9_-]{1,40}$/.test(id))id='';const pre=id?'a_'+id+'_':'',free=k=>/^rb_|^rbtok$|^rbsrv$|^a_/.test(k);
  const S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem,mp=(o,k)=>{k=String(k);return id&&o===ls&&!free(k)?pre+k:k};
@@ -4494,8 +4613,8 @@ const RB_ACCT=(()=>{let id='',ls=null,fz=false;try{ls=window.localStorage;id=ls.
  return{id,pre,free,freeze(){fz=true}}})();
 
 /* ========== EARLY: 00-00-0-keygate.js ========== */
-// ===== A gate in front of every key handler, the first one registered. While something full-screen owns the keyboard (the class story movies) it sets window.RB_KEYGATE, and no other handler sees the key, so a skill can't fire or a menu open behind a movie. Costs one check per key press. =====
-(function(){for(const t of['keydown','keyup','keypress'])addEventListener(t,e=>{const f=window.RB_KEYGATE;if(!f)return;e.stopImmediatePropagation();e.preventDefault();try{f(e)}catch(_){}},true)})();
+// ===== A gate in front of every key handler, the first one registered. While something full-screen owns the keyboard (the class story movies) it sets window.RB_KEYGATE, and no other handler sees the key (the login screen also sets RB_KEYOWN, its own element, so its fields can still be typed in), so a skill can't fire or a menu open behind a movie. Costs one check per key press. =====
+(function(){for(const t of['keydown','keyup','keypress'])addEventListener(t,e=>{const f=window.RB_KEYGATE;if(!f)return;e.stopImmediatePropagation();/* keys typed into the gate owner's own fields (the login screen) still type */const o=window.RB_KEYOWN;if(!(o&&e.target&&o.contains&&o.contains(e.target)&&/^(INPUT|TEXTAREA|BUTTON|A)$/.test(e.target.tagName)))e.preventDefault();try{f(e)}catch(_){}},true)})();
 
 /* ========== EARLY: 00-00-keys.js ========== */
 // ===== Keys work on any keyboard layout. On Arabic and other non-Latin layouts the W key types another letter, so every control that listens for "w" would go dead. This runs before every other key handler and, when a key produced a non-Latin character, reports the English letter of that physical key.
@@ -4555,7 +4674,7 @@ $('wn').onkeydown=e=>{if(e.key=='Enter')enterWorld($('wn').value)};$('bzi').oncl
 $('nm').oninput=e=>{myName=e.target.value.slice(0,14)||myName;saveP()};$('ov').oninput=e=>{OPT.mv=e.target.value/100;if(bgm)bgm.m.gain.value=mute?0:OPT.mv;saveP()};$('os').oninput=e=>{OPT.sv=e.target.value/100;saveP()};$('oq').onchange=e=>{OPT.q=+e.target.value;saveP()};$('osh').onchange=e=>{OPT.sh=e.target.checked?1:0;saveP()};
 document.addEventListener('pointerdown',()=>startBGM());
 gen();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;for(const f of[renderBar,renderSkills,renderW,renderQuest,hud])try{f()}catch(_){/* items added by later scripts are not defined yet; they re-render once everything has loaded */}
-if(!made){enterWorld('plaza');made=true}// ---------- pixel-art pipeline (chibi sprites with black pixel outline)
+if(!made&&navigator.webdriver){enterWorld('plaza');made=true}/* players: a new character enters the online Plaza after signing in (LOGIN1, then the Play step) */// ---------- pixel-art pipeline (chibi sprites with black pixel outline)
 const PXS=2,pxC=document.createElement('canvas'),pxG=pxC.getContext('2d',{willReadFrequently:true});
 const PXCACHE=new WeakMap();function pixelize(cx,cy,hw,hh,fn,key){const ps=PXS,sx=Math.round(cx/ps)*ps,sy=Math.round(cy/ps)*ps,w=Math.ceil(hw/ps)*2,h=Math.ceil(hh/ps)*2;if(key){const c=PXCACHE.get(key);if(c&&c.hw==hw&&c.hh==hh&&c.ps==ps&&performance.now()-c.t<(window.pxTtl6||55)){g.save();g.imageSmoothingEnabled=false;g.drawImage(c.cv,sx-c.w/2*ps,sy-c.h/2*ps,c.w*ps,c.h*ps);g.restore();return}}if(pxC.width!=w||pxC.height!=h){pxC.width=w;pxC.height=h}
  pxG.setTransform(1,0,0,1,0,0);pxG.globalAlpha=1;pxG.globalCompositeOperation='source-over';pxG.clearRect(0,0,w,h);pxG.setTransform(1/ps,0,0,1/ps,w/2-sx/ps,h/2-sy/ps);
@@ -8166,10 +8285,13 @@ const ITEM7=(()=>{
 /* ========== LATE: 75-net.js ========== */
 // ===== NET7: persistent shared worlds over WebSocket (replaces the old PeerJS host rooms) =====
 // The server (server/server.js) is authoritative for world data, roles and every privileged action. This file never trusts
-// local flags for authorization; it only displays what the server tells it. The game works fully offline when no server is reachable.
+// local flags for authorization; it only displays what the server tells it. Rootbound is one online game: players sign in (LOGIN1) and play on the server.
+// There is no offline fallback for players: a slow server is waited for, a lost connection is retried behind a cover, and a server that cannot be reached
+// shows a connection screen with Retry. Only automated test browsers (RB_AUTOMATION) still run a world without a server or play as a guest.
 const say6=(a,b,c)=>{try{UI6.say6(a,b,c)}catch(_){}};
 const NET7=(()=>{
- const LOCAL_ID=myId,esc=DLG7.esc,SOLO=!!(window.RB_CONFIG&&RB_CONFIG.solo);   // single-player build: no server, no online UI
+ const LOCAL_ID=myId,esc=DLG7.esc,SOLO=!!(window.RB_CONFIG&&RB_CONFIG.solo);   // automated tests only: no server, no online UI
+ const PLAYER=!SOLO&&!window.RB_AUTOMATION,SL=[],AL=[],LG=()=>window.LOGIN1||null;   // PLAYER: the real game, online only
  const HH={},HK=[];let mySid='',st='offline',ws=null,url='',auth=null,info=null,list=[],room=null,want=null,joinedW=null,tries=0,retry=false,rt=0,hbT=0,lastPong=0,rtt=0,err='',manual=false,wantCreate=false,lastEnter=0,saved=null,resyncAt=0;
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
  const D=window.RBDIAG||{stage(){},err(){}};
@@ -8181,7 +8303,7 @@ const NET7=(()=>{
   return s?norm(s):''}
  const send=m=>{try{if(ws&&ws.readyState==1){ws.send(JSON.stringify(m));return true}}catch(_){}return false};
  // ---- connection lifecycle
- function setSt(s,e){st=s;err=e||'';try{if(menuEl.style.display!='none')render()}catch(_){}try{TOOLS7.sync()}catch(_){}}
+ function setSt(s,e){st=s;err=e||'';for(const f of SL)try{f(st,err)}catch(_){}try{if(menuEl.style.display!='none')render()}catch(_){}try{TOOLS7.sync()}catch(_){}}
  let wakeN=0;function connect(u,isManual){if(ws){try{ws.onclose=null;ws.close()}catch(_){}ws=null}url=u;manual=!!isManual;if(isManual)retry=false;if(!u){setSt('offline');return}setSt(retry?'reconnecting':'connecting',err);D.stage('net-connect',u.replace(/^wss?:\/\//,'').slice(0,60));
   let w,opened=false;try{w=new WebSocket(u)}catch(e){setSt('offline','Could not open a connection: '+e.message);D.err&&0;return}ws=w;
   const to=setTimeout(()=>{if(!opened){try{w.close()}catch(_){}}},7000);
@@ -8189,8 +8311,8 @@ const NET7=(()=>{
   w.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(_){return}onMsg(m)};
   w.onerror=()=>{};
   w.onclose=()=>{clearTimeout(to);if(ws!==w)return;ws=null;clearInterval(hbT);const was=st;auth=null;info=null;drop();
-   if(was=='online'||was=='reconnecting'||retry){retry=true;setSt('reconnecting','Connection lost');say6&&say6('Connection lost','Your changes are not being saved. Reconnecting…',4000);sched()}
-   else if(!opened&&!manual&&wakeN<14){/* a free server sleeps and takes about a minute to wake */if(!wakeN)say('Waking the online server, about a minute. You can play here meanwhile.');wakeN++;setSt('connecting','Waking the server…');clearTimeout(rt);rt=setTimeout(()=>{if(st=='connecting')connect(url,false)},4000)}else{wakeN=0;setSt('offline',opened?'The server closed the connection':'Could not reach the server')}}}
+   if(was=='online'||was=='reconnecting'||retry){retry=true;setSt('reconnecting','Connection lost');if(!PLAYER)say6&&say6('Connection lost','Your changes are not being saved. Reconnecting…',4000);sched()}
+   else if(!opened&&!manual&&wakeN<14){/* a free server sleeps and takes about a minute to wake */if(!wakeN&&!PLAYER)say('Waking the online server, about a minute. You can play here meanwhile.');wakeN++;setSt('connecting','Waking the server…');clearTimeout(rt);rt=setTimeout(()=>{if(st=='connecting')connect(url,false)},4000)}else{wakeN=0;setSt('offline',opened?'The server closed the connection':'Could not reach the server')}}}
  function sched(){clearTimeout(rt);tries++;const d=Math.min(30000,1000*Math.pow(2,Math.min(5,tries-1)))+Math.random()*500;rt=setTimeout(()=>{if(st=='reconnecting')connect(url,false)},d)}
  function drop(){window.RB_OWN=null;if(room){room.dead=1}if(rm===room){rm=null}room=null;if(joinedW){const hm=(typeof WBOSS13!='undefined'&&WBOSS13.home)||P;saved={w:joinedW,x:hm.x,y:hm.y}}joinedW=null;guest=false;roomCode='';myId=LOCAL_ID;try{OBJ6&&0}catch(_){}}
  function startPing(){clearInterval(hbT);hbT=setInterval(()=>{if(Date.now()-lastPong>40000){try{ws.close()}catch(_){}return}send({t:'ping',n:Date.now()})},6000)}
@@ -8200,17 +8322,17 @@ const NET7=(()=>{
   if(t=='server'){info={max:m.max,ownerConfigured:m.ownerConfigured};lastPong=Date.now();startPing();beginAuth();return}
   if(t=='pong'){lastPong=Date.now();if(m.n>0&&lastPong-m.n<60000)rtt=lastPong-m.n;return}
   if(HH[t]){try{HH[t](m)}catch(e){console.error(e)}return}
-  if(t=='auth'){try{if(typeof ACCT13!='undefined'&&ACCT13.auth(m)){if(ws){ws.onmessage=null;ws.onclose=null}return}}catch(e){console.error(e)}if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
+  if(t=='auth'){if(m.ok&&m.rkey)try{sessionStorage.setItem('rb_newkey',JSON.stringify({k:m.rkey,n:m.name,r:m.recovered?1:0}))}catch(_){}for(const f of AL)try{f(m)}catch(_){}try{if(typeof ACCT13!='undefined'&&ACCT13.auth(m)){if(ws){ws.onmessage=null;ws.onclose=null}return}}catch(e){console.error(e)}if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
    const was=auth;auth={uid:m.uid,name:m.name,kind:m.kind,owner:!!m.owner};if(m.token&&m.kind!='guest')lsSet('rbtok',m.token);tries=0;D.stage('net-auth',m.kind);
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
   if(t=='worlds'){list=m.list||[];noRf=1;try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}noRf=0;return}
-  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';/* still starting up: go to the plaza, nobody is asked anything yet */if(!entered){if(lastTry!='plaza'){go('plaza',false);return}_enterLocal('plaza');return}if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
+  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';/* still starting up: go to the plaza, nobody is asked anything yet */if(!entered){if(lastTry!='plaza'){go('plaza',false);return}if(PLAYER){try{LG().fatal('The Plaza could not be opened: '+msg)}catch(_){}return}_enterLocal('plaza');return}if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Owner','Tools are in the top bar · type /help for commands',2600);return}
   if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}
   if(t=='notice'){const d=m.d||{};say6&&say6(String(d.by||'Server'),String(d.text||'').slice(0,160),5200);return}
-  if(t=='_kick'||t=='_ban'){const why=t=='_ban'?(m.m||'You were banned from this server'):String(m.m||'You were removed');say6&&say6('Disconnected',why,6000);toOffline();return}
+  if(t=='_kick'||t=='_ban'){const why=t=='_ban'?(m.m||'You were banned from this server'):String(m.m||'You were removed');say6&&say6('Disconnected',why,6000);toOffline(why);return}
   if(t=='sys'){const d=m.d||{};if(d.op=='tp'&&Number.isFinite(+d.x)&&Number.isFinite(+d.y)){P.x=+d.x;P.y=+d.y;P.vx=P.vy=0;if(d.by)say(String(d.by).slice(0,14)+' pulled you here')}else if(d.op=='world'&&d.w){
     // a realm above your level cannot load, so the summon stops here instead of leaving you between two worlds
     try{const sg=WORD9.stageOf(d.w);if(sg&&(lvl|0)<WORD9.CH[sg].lv){say('Summoned to '+WORD9.CH[sg].t+', but it needs level '+WORD9.CH[sg].lv);return}if(window.PATH1&&PATH1.locked(d.w)){say('Summoned to a land you have not opened yet');return}}catch(_){}
@@ -8222,9 +8344,9 @@ const NET7=(()=>{
   if(t=='_rej'){if(Date.now()-resyncAt>4000){resyncAt=Date.now();say('That change is not allowed here');if(joinedW){const w=joinedW;setTimeout(()=>{if(joinedW==w){send({t:'leave'});joinedW=null;send({t:'enter',w,create:false})}},200)}}return}
   if(t=='admin_res'){try{TOOLS7.res(m)}catch(_){}return}
   if(typeof t=='string'&&t[0]!='_'){const fn=room.h[t];if(fn)try{fn({data:m.d,isMe:false,peer:m.f})}catch(e){console.error(e)}}}
- function beginAuth(){const tok=lsGet('rbtok');if(tok&&!auth){send({t:'resume',token:tok});return}
+ function beginAuth(){const tok=lsGet('rbtok');if(tok&&!auth){send({t:'resume',token:tok});return}if(PLAYER){setSt('ready');return}
   send({t:'guest',name:(window.RB_SESS&&RB_SESS.name&&RB_SESS.id!='guest')?RB_SESS.name:myName})}
- function authDone(a,e){if(!a){if(st=='connecting'||st=='reconnecting'){// fall back to a guest session so the player can still look around
+ function authDone(a,e){if(!a&&PLAYER){setSt('ready',e);return}if(!a){if(st=='connecting'||st=='reconnecting'){// fall back to a guest session so the player can still look around
     if(!authDone.g){authDone.g=1;send({t:'guest',name:myName});setSt('connecting',e);return}}setSt('offline',e);return}authDone.g=0;retry=true;setSt('online');refresh();
   // rejoin after a reconnect or enter the plaza on first connect
   const w=saved&&saved.w||want||(entered?cur:null);const keep=saved;saved=null;/* in a dungeon you are on your own computer: a dropped connection never pulls you out */if(window.DG&&DG.run)return;if(w)go(w,false,keep)}
@@ -8244,10 +8366,11 @@ const NET7=(()=>{
   bindRoom(r);joinedW=w;if(keep&&keep.w==w&&Number.isFinite(keep.x)){P.x=keep.x;P.y=keep.y}
   try{ENV7.set(d.wx||'default',{instant:true})}catch(_){}
   try{renderWorlds()}catch(_){}for(const f of HK)try{f(d)}catch(e){console.error(e)}}
- function toOffline(){retry=false;if(ws){const w=ws;ws=null;try{w.onclose=null;w.close()}catch(_){}}auth=null;drop();clearInterval(hbT);clearTimeout(rt);setSt('offline');try{_enterLocal('plaza')}catch(_){}}
+ function toOffline(why){if(PLAYER){retry=false;if(ws){const w=ws;ws=null;try{w.onclose=null;w.close()}catch(_){}}auth=null;drop();clearInterval(hbT);clearTimeout(rt);setSt('offline',why||'Disconnected');try{LG().fatal(why||'You were disconnected from the server')}catch(_){}return}retry=false;if(ws){const w=ws;ws=null;try{w.onclose=null;w.close()}catch(_){}}auth=null;drop();clearInterval(hbT);clearTimeout(rt);setSt('offline');try{_enterLocal('plaza')}catch(_){}}
  // ---- legacy entry points rebound to the network layer
  const _enterLocal=n=>{leaveNet();loadWorld(n);try{ENV7.set(X6.wx&&X6.wx[cur]||'default',{instant:true})}catch(_){}};
  enterWorld=function(n){n=String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
+  if(PLAYER){menuEl.style.display='none';if(st=='online'&&auth){if(joinedW==n&&entered)return;go(n,false);return}want=n;try{LG().needNet()}catch(_){}return}
   if(st=='online'){if(joinedW==n&&entered){menuEl.style.display='none';return}menuEl.style.display='none';go(n,false);if(!entered)setTimeout(()=>{if(!entered)_enterLocal('plaza')},6000);return}
   if(st=='connecting'||st=='reconnecting'){say('Still connecting to the server… playing locally for now')}
   _enterLocal(n)};
@@ -8256,13 +8379,15 @@ const NET7=(()=>{
  function render(){const el=$('wnet');if(!el)return;if(SOLO){el.innerHTML='';el.style.display='none';return}const online=st=='online';let h='<div class="netcard '+st+'"><div class="nrow"><span class="dot"></span><b>'+({offline:'Offline',connecting:'Connecting…',reconnecting:'Reconnecting…',online:'Online'}[st])+'</b>';
   if(online)h+='<span class="nsub">'+esc(auth.name)+(auth.kind=='guest'?' · guest':auth.owner?' · owner':'')+'</span>';else if(url)h+='<span class="nsub">'+esc(url.replace(/^wss?:\/\//,'').replace(/\/ws$/,''))+'</span>';h+='</div>';
   if(err&&!online)h+='<div class="nerr">'+esc(err)+'</div>';
-  if(!online&&st=='offline')h+='<p class="nmsg">Worlds you open now are saved on this device only. Connect to a Rootbound server to play in shared worlds that stay saved for everyone.</p><div class="nrow"><input id="nsrv" placeholder="Server address, e.g. play.example.com" value="'+esc(lsGet('rbsrv')||'')+'" maxlength="120"><button id="nco">Connect</button></div>';
-  if(online){h+='<div class="nrow">'+(auth.kind=='guest'?'<button id="nli">Sign in</button><button id="nre">Create account</button>':'<button id="npw">Change password</button><button id="nlo">Sign out</button>')+'<button id="ndc">Disconnect</button></div>'}
+  if(!online&&st=='offline'&&!PLAYER)h+='<p class="nmsg">Worlds you open now are saved on this device only. Connect to a Rootbound server to play in shared worlds that stay saved for everyone.</p><div class="nrow"><input id="nsrv" placeholder="Server address, e.g. play.example.com" value="'+esc(lsGet('rbsrv')||'')+'" maxlength="120"><button id="nco">Connect</button></div>';
+  if(online&&PLAYER)h+='<div class="nrow">'+(auth.kind=='user'?'<button id="npw">Change password</button><button id="nrk">New recovery key</button>':'')+'<button id="nlo">Sign out</button></div>';
+  else if(online){h+='<div class="nrow">'+(auth.kind=='guest'?'<button id="nli">Sign in</button><button id="nre">Create account</button>':'<button id="npw">Change password</button><button id="nlo">Sign out</button>')+'<button id="ndc">Disconnect</button></div>'}
   h+='</div>';el.innerHTML=h;const b=id=>el.querySelector('#'+id);
   if(b('nco'))b('nco').onclick=()=>{const v=b('nsrv').value.trim();if(!v)return;lsSet('rbsrv',v);authDone.g=0;connect(norm(v),true)};
   if(b('nsrv'))b('nsrv').onkeydown=e=>{if(e.key=='Enter')b('nco').click()};
   if(b('ndc'))b('ndc').onclick=()=>{try{if(ACCT13.leave(true))return}catch(_){}toOffline();say('Disconnected. Playing offline.')};
-  if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
+  if(b('nrk'))b('nrk').onclick=()=>{try{LG().newKey()}catch(_){}};
+  if(b('nlo')&&PLAYER)b('nlo').onclick=()=>signOut();else if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
   if(b('npw'))b('npw').onclick=changePw;if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
  async function changePw(){const v=await DLG7.open({title:'Change password',text:'This also signs you out on every other device.',fields:[{k:'o',label:'Current password',type:'password',max:128},{k:'p',label:'New password',type:'password',ph:'at least 8 characters',max:128},{k:'q',label:'New password again',type:'password',max:128}],ok:'Change password'});if(!v)return;if(v.p!==v.q){say6&&say6('Change password','The new passwords do not match',3500);return}send({t:'chpass',old:v.o,pass:v.p})}
  async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:(reg?'':lsGet('rb_lastname')||'')},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
@@ -8283,9 +8408,11 @@ const NET7=(()=>{
  // HUD status chip text
  function chip(n){if(SOLO)return'';if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
  // boot: try to discover a server without ever blocking the game
- async function boot(){try{let off=false;try{off=!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
+ // sign out: the server forgets this sign-in, this computer forgets the account, and the page comes back to the login screen
+ function signOut(){send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{sessionStorage.setItem('rb_signedout','1')}catch(_){}try{if(ACCT13.leave(false))return}catch(_){}try{location.reload()}catch(_){}}
+ async function boot(){try{let off=false;try{off=!PLAYER&&!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
- return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW},get rtt(){return rtt},get quiet(){return lastPong?Date.now()-lastPong:0}}})();
+ return{PLAYER,onState:f=>{SL.push(f)},onAuth:f=>{AL.push(f)},get err(){return err},get hasUrl(){return !!url},login:(n,p)=>send({t:'login',name:n,pass:p}),register:(n,p)=>send({t:'register',name:n,pass:p}),recover:(n,k,p)=>send({t:'recover',name:n,key:k,pass:p}),newKey:()=>send({t:'rkey'}),signOut,retry:async()=>{tries=0;wakeN=0;retry=false;const u=url||await discover();if(u){authDone.g=0;connect(u,false)}else setSt('offline','No server address is set')},on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW},get rtt(){return rtt},get quiet(){return lastPong?Date.now()-lastPong:0}}})();
 
 /* ========== LATE: 76-env.js ========== */
 // ===== ENV7: persistent world environments (Blossom / Space / Galaxy) =====
@@ -9797,7 +9924,7 @@ const UI6=(()=>{
  function open(t){hubOn=true;if(t)tab=t;const h=el('hub');clearTimeout(close.t);h.classList.remove('out');if(h.style.display!='flex')lastTab='';h.style.display='flex';render()}
  function close(){if(!hubOn)return;hubOn=false;const h=el('hub');h.classList.add('out');clearTimeout(close.t);close.t=setTimeout(()=>{h.classList.remove('out');if(!hubOn)h.style.display='none'},MOTION7.reduce()?0:170)}
  el('hubx').onclick=close;el('hub').addEventListener('mousedown',e=>{if(e.target.id=='hub')close()});
- addEventListener('keydown',e=>{if(!entered||RB_SESS==null)return;const k=e.key.toLowerCase();if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||e.target.isContentEditable)return;if(hubOn){e.stopPropagation();if(k=='escape')close();else if(k=='c'&&!e.repeat){close();try{EQM9.show()}catch(_){}}return}/* C: the Character Equipment menu (the hub is one click away from it) */if(k=='c'&&!e.repeat&&!e.ctrlKey&&!e.metaKey){try{if(EQM9.toggle())e.stopPropagation()}catch(er){console.error('EQM9',er)}}},true);
+ addEventListener('keydown',e=>{if(!entered||RB_SESS==null)return;const k=e.key.toLowerCase();if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||e.target.isContentEditable)return;if(hubOn){e.stopPropagation();if(k=='escape')close();else if(k=='p'&&!e.repeat){close();try{EQM9.show()}catch(_){}}return}/* P: the Character Equipment menu (the hub is one click away from it). Every key does one thing: C is Class skill 2 */if(k=='p'&&!e.repeat&&!e.ctrlKey&&!e.metaKey){try{if(EQM9.toggle())e.stopImmediatePropagation()}catch(er){console.error('EQM9',er)}}},true);
  function canvasFor(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
  function previewChar(c,scale,over){const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);withCtx(x,()=>{const o=cam.x,oy=cam.y;try{AC6.draw(c.width/2,c.height/2-30*scale/2.2,1,0,over&&over.name||myName,performance.now()/1000,0,false,'',wp,0,0,{},false,look,'me')}finally{}})}
  function wingCard(i,w){const u=wingOwned(w),c=canvasFor(260,170);const x=c.getContext('2d');withCtx(x,()=>{x.save();x.fillStyle='rgba(0,0,0,0)';WingArt.draw(x,i,130,90,1,performance.now()/1000,0,0,0,u?1:.35);x.restore()});return c}
@@ -11658,7 +11785,7 @@ const TOOLS8=(()=>{
   bubbles:{n:'Bubbles the Fishing Rod',g:[120,200,255],tool:'rod',d:'A cute rod with a duck bobber. Click water to cast, click when it bites, then hold to keep the fish in the green zone and reel it in! Bait from Tackle Boxes helps.'}};
  for(const id in TL){const t=TL[id];WPN[id]={n:t.n,g:t.g,bd:1,md:0,cd:t.tool=='rod'?.25:.18,k:'tool',cost:0,fx:'',d:t.d,tool:t.tool,id};own[id]=1}
  // the Wrench: never digs, never fights. Click a player to open their card and trade (ONL10), or a World Lock for its settings. Not a levelled tool (not in TL).
- WPN.wrench={n:'Wrench',g:[200,210,225],bd:1,md:0,cd:.3,k:'tool',cost:0,fx:'',d:'Inspects anything, sets up doors, chests and World Locks, and opens another player\'s card. Press V to hold it.',tool:'wrench',id:'wrench'};own.wrench=1;
+ WPN.wrench={n:'Wrench',g:[200,210,225],bd:1,md:0,cd:.3,k:'tool',cost:0,fx:'',d:'Inspects anything, sets up doors, chests and World Locks, and opens another player\'s card. Press N to hold it.',tool:'wrench',id:'wrench'};own.wrench=1;
  // ---- what kind of block is it?
  const ORE=new Set([9,10,60,61,62,65,71,72,73,74,75,76]);
  // CAT pins a block's kind when its name would mislead the regex (Geode Rock is stone, not ore); ONLY[b] is the one tool that may break b at all
@@ -13422,7 +13549,7 @@ const INV7=(()=>{
  const RARA=k=>' data-cat="'+ITEM7.cat(k)+'" data-rar="'+ITEM7.RAR[tierOf(k)]+'"';
  const isWpn=k=>typeof k=='string'&&k.startsWith('w:');
  const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Hold it on the hotbar and click to place it; break it with a tool.';if(t=='seeds')return 'Hold it and click soil to plant. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. '+(()=>{try{const u=matUses(k),p=[];if(u.tribute)p.push('A tribute for ascending Mythic weapons: keep it.');if(u.craft.length)p.push('Crafts: '+u.craft.join(', ')+'.');return p.length?p.join(' '):'Sold at the market.'}catch(_){return'Sold at the market.'}})();
-  if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then press G beside it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Place it, then press F beside it to open it.':'A world object. Press F beside it to use it.');
+  if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then hold the wrench (N) in Configure mode and click it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Place it, then press F beside it to open it.':'A world object. Press F beside it to use it.');
   if(t=='wings'){const w=wingOf(k);return(w&&(w.d||w.desc))||'Wings: worn on your back, they let you glide and fly.'}if(t=='charms'){const it=shopOf(k);return(it&&it.d)||''}return ''};
  // ---- what is equipped: the hand (held hotbar item / weapon), the four wearable slots, wings and the charm
  const HB=()=>typeof HOTBAR!='undefined'?HOTBAR:null,hbSlot=k=>{const h=HB();return h?h.slotOf(k):-1},hbOk=k=>{const h=HB();return!!h&&h.assignable(k)};
@@ -15534,7 +15661,7 @@ function evTick(dt){if(!entered)return;try{FX7.tick(dt)}catch(_){}const e=EV6;if
 (()=>{const X=UI6.ext,el=id=>document.getElementById(id),esc=UI6.esc;
  const _post=X.post;X.post=(tab,body)=>{try{_post&&_post(tab,body)}catch(e){console.error(e)}if(tab=='settings'){const s=body.querySelector('#brk7'),old=s&&s.closest('.hrow'),gfx=body.querySelector('#ss-graphics');if(s&&gfx){const w=document.createElement('div');w.innerHTML=row('brk7','Break effect','What a block bursts into when you break it','');const r=w.firstChild;r.querySelector('.sc7').appendChild(s);gfx.appendChild(r);if(old)old.remove()}}if(tab=='plates'){try{X.postPlates(body)}catch(e){console.error(e)}}};
  const CATS=[['general','General','◎','Theme, name and save data'],['graphics','Graphics','✧','Quality and visual effects'],['audio','Audio','♪','Music, effects and interface sounds'],['controls','Controls','⌘','Camera and key reference'],['interface','Interface','▣','HUD size, opacity and panels'],['access','Accessibility','◐','Motion, shake and contrast']];
- const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 – 7 · Mouse wheel','Hotbar slots'],['T','Next weapon'],['X','Swap weapon ⇄ tool'],['Q E R Z V','Skills'],['X C','Class skills, while your Mythic is out'],['Shift','Dash'],['F','Use / talk'],['V','Hold the wrench: click a player to trade'],['B','Emote'],['Enter','Chat'],['P','Character'],['C','Equipment'],['I / Tab','Inventory (you can keep walking while it is open)'],['K','Classes'],['U','Skills'],['N','Bosses'],['J','Quests'],['Y','Achievements'],['G','Guide · beside a door or object: set it up'],['O','Settings'],['L','Hidden word'],['F1','Starting guide'],['H','Show / hide quest tracker'],['M','Rootlink (your phone: every menu)'],['Shift + M','Music on / off'],['+ / − / 0','Zoom in / out / reset'],['F3','FPS counter'],['Esc','Close the open panel']];
+ const KEYS=[['A / D','Move'],['W / Space','Jump (again in the air to double jump)'],['Left click','Attack with a weapon · break blocks with a tool'],['Right click','Place block or seed'],['1 – 7 · Mouse wheel','Hotbar slots'],['T','Next weapon'],['Tab','Swap weapon ⇄ tool'],['Q E R Z V','Skills'],['X C','Class skills'],['Shift','Dash'],['F','Use · talk · pick up'],['N','Hold the wrench: inspect, set up doors and chests (R changes its mode), trade with a player'],['B','Emote'],['Enter','Chat'],['P','Equipment'],['I','Inventory (you can keep walking while it is open · Delete drops the selected item)'],['K','Classes'],['U','Skills'],['J','Quests (Bosses is a tab here)'],['Y','Achievements'],['G','Guide'],['O','Settings'],['L','Hidden word'],['F1','Starting guide'],['H','Show / hide quest tracker'],['M','Rootlink (your phone: every menu)'],['F2','Music on / off'],['= / − / 0','Zoom in / out / reset'],['F3','FPS counter'],['Esc','Close the open panel']];
  const row=(id,label,desc,ctl)=>'<div class="srow7" data-k="'+esc((label+' '+desc).toLowerCase())+'"><div class="sl7"><label for="'+id+'">'+label+'</label><small>'+desc+'</small></div><div class="sc7">'+ctl+'</div></div>';
  const tog=(id,on,lbl)=>'<input type="checkbox" role="switch" class="rb-toggle" id="'+id+'"'+(on?' checked':'')+' aria-label="'+esc(lbl)+'">';
  const rng=(id,min,max,v,u)=>'<input type="range" id="'+id+'" min="'+min+'" max="'+max+'" value="'+Math.round(v)+'"><output id="'+id+'n">'+Math.round(v)+(u==null?'%':u)+'</output>';
@@ -15941,7 +16068,7 @@ const DOORS6=(()=>{
   const sv=ui.querySelector('#op_save');if(sv)sv.onclick=()=>{const g2=id=>{const e=ui.querySelector('#'+id);return e?e.type=='checkbox'?e.checked?1:0:e.value:undefined},v=Object.assign({},c);for(const f of['nm','dt','d','lb','ac','lv','kr','kc','sw','tx']){const x=g2('f_'+f);if(x!==undefined)v[f]=x}if(OBJ6.configure(k,v)){say('Saved');OBJ6.sfx('ok');close()}};
 }
  UI6.chestRefresh=()=>{if(uiK>=0&&OBJ[uiK]&&ui.style.display=='block'&&ODEF[OBJ[uiK].t].cat=='cont')config(uiK,true)};
- addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;const k=e.key.toLowerCase();if(k=='escape'&&ui&&ui.style.display=='block'){close();return}if(k=='g'&&entered&&!e.repeat){const n=OBJ6.near();if(n)config(n.k,false)}});
+ addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;const k=e.key.toLowerCase();if(k=='escape'&&ui&&ui.style.display=='block'){close();return}});
  return{use,config,cancel,close,check,find,go,get busy(){return busy}}})();
 const _int6=interact;interact=function(){if(dlgOpen)return _int6();if(creatorOn||showInv||menuEl.style.display!='none')return;const npc=nearNPC(),n=OBJ6.near();if(n&&OBJ6.beatsNpc(n,npc)){DOORS6.use(n.k);return}if(npc)return _int6();_int6()};
 
@@ -16569,12 +16696,12 @@ const GUIDE8=(()=>{
    +'<section><h5>Earns tool XP for</h5><p>'+d.xp+'. The wrong tool earns nothing.</p></section></div></div>'
    +'<section class="tg8lvls"><h5>Levels and rewards</h5><p class="dim">Each level pays gems and adds a perk. The tool shines brighter as it climbs, and level 10 turns it rainbow.</p>'+lvList(id)+'</section>'}
  function basics(){const rows=[['Dirt · grass · sand · glass · leaves','pip'],['Stone · cobble · brick · marble · deepslate','pebble'],['Ores · crystal · gold · Crystal Geodes','glimmer'],['Trees · wood · planks · bamboo · crates','twiggy'],['Lakes and pools (fish)','bubbles']];
-  return'<div class="tg8cards"><div class="tg8card"><h5>1 · Hold a tool</h5><p>Put a tool in a <b>hotbar slot (1–7)</b> and press its number, or <b>scroll the mouse wheel</b> to it. <kbd>X</kbd> swaps between your last weapon and your last tool.</p></div>'
+  return'<div class="tg8cards"><div class="tg8card"><h5>1 · Hold a tool</h5><p>Put a tool in a <b>hotbar slot (1–7)</b> and press its number, or <b>scroll the mouse wheel</b> to it. <kbd>Tab</kbd> swaps between your last weapon and your last tool.</p></div>'
    +'<div class="tg8card"><h5>2 · Mine</h5><p><b>Left-click</b> a block within reach. Hold the button to keep mining. The right tool breaks a block in <b>one hit</b> with its own sound: a soft crunch for dirt, a knock for wood, a crack for stone and a crystal <i>ting</i> for ore.</p></div>'
    +'<div class="tg8card"><h5>3 · Pick the right one</h5><p>The wrong tool still works but needs many slow taps, makes a dull <i>tok</i> and earns no XP. You will see “Slow — try another tool”.</p></div>'
    +'<div class="tg8card warn"><h5>Only tools break blocks</h5><p>Weapons fight; they never dig. Your fists can still open Tackle Boxes for bait. Tools never wear out or break.</p></div></div>'
    +'<section><h5>Which tool for which block?</h5><div class="tg8tbl">'+rows.map(([a,id])=>'<button class="tg8row" data-g="'+id+'" style="--tc:'+TOOLLV.COL[id]+'"><span>'+esc(a)+'</span><b><img alt="" src="'+ico('w:'+id)+'">'+esc(NM(id))+'</b></button>').join('')+'</div></section>'
-   +'<section><h5>Opening this guide</h5><p>Press <kbd>G</kbd> anywhere (beside a door or object G sets that object up instead), open the hub with <kbd>C</kbd> and choose <b>Tool Guide</b>, or press <b>Tool guide</b> in your inventory.</p></section>'}
+   +'<section><h5>Opening this guide</h5><p>Press <kbd>G</kbd> anywhere, open Rootlink with <kbd>M</kbd> and choose <b>Guide</b>, or press <b>Tool guide</b> in your inventory. To set up a door, chest or teleporter, hold the wrench (<kbd>N</kbd>), press <kbd>R</kbd> until it says Configure, and click the object.</p></section>'}
  function levels(){const sel=IDS.includes(pg)?pg:(IDS.includes(wp)?wp:'pip');let tot=0;
   let h='<section><h5>How tools level up</h5><p>Every tool goes from <b>level 1 to 10</b> by doing its own job. Glimmer learns from ores, Pebble from stone, Pip from soft blocks, Twiggy from trees, Bubbles from fish. Each level pays gems, adds a perk and makes the tool shine brighter.</p>'
    +'<ul class="tg8sp">'+IDS.map(id=>'<li><b>'+esc(NM(id))+':</b> '+D[id].xp+'</li>').join('')+'</ul></section>';
@@ -16610,7 +16737,7 @@ const GUIDE8=(()=>{
  function close(){if(on())UI6.close()}
  function refresh(){if(on())render()}
  addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.altKey||e.metaKey||String(e.key).toLowerCase()!='g')return;try{if(isTextEl(e.target))return}catch(_){}
-  if(typeof entered=='undefined'||!entered||creatorOn||dlgOpen||menuEl.style.display!='none'||UI6.on)return;try{if(OBJ6.near())return}catch(_){}open()});
+  if(typeof entered=='undefined'||!entered||creatorOn||dlgOpen||menuEl.style.display!='none'||UI6.on)return;open()});
  // one-time hint
  const HK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbptgh';
  let hT=0;const hI=setInterval(()=>{try{if(hinted){clearInterval(hI);return}if(localStorage.getItem(HK())){hinted=true;clearInterval(hI);return}if(!entered||menuEl.style.display!='none'){hT=0;return}hT+=3;if(hT<15||UI6.on||showInv)return;
@@ -17504,8 +17631,10 @@ function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlg
 {const _cs=celSave;celSave=function(){try{if(typeof SHOW7!='undefined'&&X6&&X6.sc&&!(X6.sc.act>0&&0)){X6.sc.looks[X6.sc.act|0]=sanAp(cel.ap);x6Save()}}catch(_){}_cs()}}
 // the home page was removed (v10): the story intro hands straight over to the game (the same as its old Play button), and there is no HUD
 // Home button. SHOW7 stays as a library (its portrait gallery code), but SHOW7.open() now just starts the game.
-if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{const home=()=>{try{SHOW7.open()}catch(_){}};
- /* every launch: the intro film (INTRO60, or the CINE7 story when it can't play) comes first, then the game starts */try{INTRO60.launch(home)}catch(e){console.error('INTRO60',e);home()}}
+{const home=()=>{try{SHOW7.open()}catch(_){}};
+ /* players: the login screen (LOGIN1, last in the page) comes first; after signing in and connecting, the game starts (with the intro film for a new character).
+    Automated browsers skip the launch screens unless a test asks for the old film-first start. */
+ if(!navigator.webdriver)window.RB_LOGINHOME=home;else if(localStorage.getItem('rb_force_launch')){try{INTRO60.launch(home)}catch(e){console.error('INTRO60',e);home()}}}
 // (the HUD Home button was removed with the home page)
 // ---- CHARMIG9: remove the old preset character slots from every save (any computer). Keeps slot 0 (your own look), your level, gems,
 // inventory, gear and wings untouched; if a preset was the active character, your own saved look becomes active again.
@@ -17603,7 +17732,7 @@ const CLS9=(()=>{
  return{open,close,isOpen,pick,step,act,status,weapons,equip,refresh(){render.keep=true;render()},get sel(){return sel},el:()=>el}})();
 
 /* ========== LATE: 98-z-equipmenu.js ========== */
-// ===== EQM9: the Character Equipment menu (C). The character in the middle is the game's own renderer (AC6.draw, the same call as the hub's preview) wearing what's really on;
+// ===== EQM9: the Character Equipment menu (P). The character in the middle is the game's own renderer (AC6.draw, the same call as the hub's preview) wearing what's really on;
 // the slots are the inventory's (INV7.slots), the item facts come from the item definitions (WEAR, WPN, WINGS, SHOP7) and the totals from bonus(). Nothing here keeps its own
 // copy of an item or a stat. Hovering a slot shows that item's tooltip; clicking one selects it and offers Unequip / Replace, which go through the inventory's own equip and unequip,
 // so the character, the hotbar, the stats and what other players see all follow as they always have. Gear is an owned item you put on or take off, so there is no bag to overflow. =====
@@ -17658,7 +17787,7 @@ const EQM9=(()=>{
  function signature(){let w='';try{w=allSlots().map(s=>keyOf(s[0])).join('|')}catch(_){}let b='';try{b=JSON.stringify(bonus())}catch(_){}return w+'#'+b}
  function fill(){if(!el)return;const S=slots(),L=S.filter(s=>['hat','body','boot','glove'].includes(s[0])),R=S.filter(s=>!['hat','body','boot','glove'].includes(s[0]));el.querySelector('.eq9L').innerHTML=L.map(slotHtml).join('');el.querySelector('.eq9R').innerHTML=R.map(slotHtml).join('');el.querySelector('.eq9fx').innerHTML=FXS.map(slotHtml).join('');const A=el.querySelector('.eq9act'),st=A.querySelector('.eq9list')?A.querySelector('.eq9list').scrollTop:0;A.innerHTML=actHtml();A.classList.toggle('on',!!sel);if(sel&&!picking)try{A.scrollIntoView({block:'nearest'})}catch(_){}if(A.querySelector('.eq9list'))A.querySelector('.eq9list').scrollTop=st;if(sel){const b=el.querySelector('.eq9s[data-slot="'+sel+'"]');if(b)b.classList.add('sel')}if(!sel&&note){const m=note;note='';try{say(m)}catch(_){}}el.querySelector('.eq9tot').innerHTML=totalsHtml();el.querySelector('.eq9nm').textContent=typeof myName!='undefined'?myName:'';el.querySelector('.eq9lv').textContent='Level '+(lvl|0);if(hoverSlot)showTip(hoverSlot)}
  function mk(){if(el)return;el=document.createElement('div');el.id='eq9';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Character equipment');
-  el.innerHTML='<div class="eq9box"><header><div><h3>Equipment</h3><span class="eq9nm"></span> <span class="eq9lv"></span></div><div class="eq9hd"><button type="button" class="eq9x" aria-label="Close">✕</button></div></header><div class="eq9body"><div class="eq9L"></div><div class="eq9mid"><canvas width="360" height="440" aria-hidden="true"></canvas></div><div class="eq9R"></div></div><div class="eq9fx" role="group" aria-label="Effects"></div><div class="eq9act"></div><div class="eq9tot"></div><footer>Hover an item to see what it does. Click a slot to change it. <kbd>C</kbd> closes.</footer></div>';
+  el.innerHTML='<div class="eq9box"><header><div><h3>Equipment</h3><span class="eq9nm"></span> <span class="eq9lv"></span></div><div class="eq9hd"><button type="button" class="eq9x" aria-label="Close">✕</button></div></header><div class="eq9body"><div class="eq9L"></div><div class="eq9mid"><canvas width="360" height="440" aria-hidden="true"></canvas></div><div class="eq9R"></div></div><div class="eq9fx" role="group" aria-label="Effects"></div><div class="eq9act"></div><div class="eq9tot"></div><footer>Hover an item to see what it does. Click a slot to change it. <kbd>P</kbd> closes.</footer></div>';
   document.body.appendChild(el);tip=document.createElement('div');tip.id='eq9tip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);canvas=el.querySelector('canvas');cx=canvas.getContext('2d');
   el.addEventListener('click',e=>{if(e.target===el)return close();if(e.target.closest('.eq9x'))return close();const c=e.target.closest('.eq9c');if(c){const q=c.dataset.k;equipIt(/^\d+$/.test(q)?+q:q);hideTip();return}const d=e.target.closest('[data-do]');if(d){const a=d.dataset.do;if(a=='un')unequipIt();else if(a=='rep'){picking=!picking;note='';fill()}else if(a=='x')select(sel);else if(a=='inv'){const F={hand:'weapons',hat:'wear',body:'wear',boot:'wear',glove:'wear',wings:'wings'}[sel]||'charms';close();try{INV7.open(F)}catch(_){}}return}const b=e.target.closest('.eq9s');if(b)select(b.dataset.slot)});
   el.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();const b=e.target.closest('.eq9s');if(b&&sel!==b.dataset.slot)select(b.dataset.slot)});
@@ -17828,7 +17957,7 @@ const PLAY8=(()=>{
   if(now-G.tinkT>140){G.tinkT=now;try{for(let i=0;i<3;i++)VFX.add(1,'#e8eef8',px+(Math.random()-.5)*16,py+(Math.random()-.5)*16,(Math.random()-.5)*60,-20-Math.random()*40,.3,8,2,{a:.7})}catch(_){}try{SFX7.tone(260,220,.05,'triangle',.02)}catch(_){}}
   if(now-G.hintT<40000)return;// gentle: at most once every 40 s, never while fighting next to the cursor
   const cx=mx+cam.x,cy=my+cam.y;for(const m of mobs)if(!m.dead&&Math.hypot(m.x-cx,m.y+m.h/2-cy)<T*3)return;
-  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–7 / wheel) or press X')}catch(_){}}
+  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–7 / wheel) or press Tab')}catch(_){}}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&w.k=='tool')return _uw.apply(this,arguments);G.wpn++;try{return _uw.apply(this,arguments)}finally{G.wpn--}}}
  {const _ba=breakAt;breakAt=function(){if(G.wpn>0&&!G.allow)return false;return _ba.apply(this,arguments)}}
  // ---- switching
@@ -17853,7 +17982,7 @@ const PLAY8=(()=>{
   if(Math.abs(acc)>=45&&now-lastStep>100){lastStep=now;step(acc>0?1:-1);acc=0}}
  // number keys + wheel: HOTBAR (99-zzz-hotbar.js); X swaps weapon <-> tool
  cycleWeapon=function(){step(1)};cycleW=function(){step(1)};
- addEventListener('keydown',e=>{if(e.repeat||isTextEl(e.target)||e.ctrlKey||e.altKey||e.metaKey)return;if(e.key.toLowerCase()=='x'&&free())swap()});
+ addEventListener('keydown',e=>{if(e.repeat||isTextEl(e.target)||e.ctrlKey||e.altKey||e.metaKey)return;if(e.key=='Tab'&&free()){e.preventDefault();swap()}});
  // remember the last weapon/tool whatever changed it (inventory, store, shop equip)
  {const _u=update;update=function(dt){const r=_u.apply(this,arguments);if(seen!==wp){seen=wp;note(wp)}return r}}
  // weapon clicked on a block: no damage; fists still open Tackle Boxes (bait)
@@ -21432,7 +21561,7 @@ const GUIDE10=(()=>{
  const kb=k=>'<kbd>'+k+'</kbd>';
  const PAGES=[
   ['🌱','Welcome to Rootbound','A cozy anime block adventure. Explore hand-made worlds, mine and build, fight monsters, and rise from a little sprout to a <b>Celestial Ascension</b> through ever stranger realms.'],
-  ['🎮','Moving and doing',kb('A')+' '+kb('D')+' move · '+kb('W')+' or '+kb('Space')+' jump · aim with the mouse and <b>left-click</b> to attack or use.<br>Your hotbar ('+kb('1')+'–'+kb('7')+') holds weapons and tools: only <b>tools break blocks</b>. '+kb('E')+' talks, opens and uses things · '+kb('I')+' opens your bag.'],
+  ['🎮','Moving and doing',kb('A')+' '+kb('D')+' move · '+kb('W')+' or '+kb('Space')+' jump · aim with the mouse and <b>left-click</b> to attack or use.<br>Your hotbar ('+kb('1')+'–'+kb('7')+') holds weapons and tools: only <b>tools break blocks</b>. '+kb('F')+' talks, opens, uses and picks things up · '+kb('I')+' opens your bag · '+kb('Q')+' '+kb('E')+' '+kb('R')+' '+kb('Z')+' '+kb('V')+' skills, '+kb('X')+' '+kb('C')+' class skills, '+kb('Shift')+' dash.'],
   ['🔤','Every world hides a word','Shiny <b>letter blocks</b> are hidden on the surface, in caves and deep below. Each one is guarded by a <b>Letter Warden</b>. Find them all and a huge <b>World Boss</b> wakes to take them back: the world collapses and you fight it alone. Defeat it, then solve the <b>Word Gate</b> to open the next realm:<br><b>World → Inferno → Galaxy → Abyssal Sea → Crystal Realm</b>, each with a longer word, new biomes and tougher monsters.'],
   ['🗡️','Grow stronger','Visit a <b>class master</b> in the Plaza to pick a class (Brawler, Knight, Mage, Archer and more), then press '+kb('K')+' to see it. Level up, buy gear and weapons in the <b>Store</b>, forge your class\'s <b>mythic weapon</b>, and light the <b>totems</b> in each biome.'],
   ['🎁','Everything is rewarded','Breaking, building, fighting, farming, fishing, exploring: it all adds up to <b>milestones</b> that pay gems and XP. Quests and achievements are under '+kb('J')+', and new <b>avatar frames</b> unlock as you level (click your portrait).'],
@@ -21965,11 +22094,12 @@ const ONL10=(()=>{
   '/ban':a=>{if(!a[1])return say('Usage: /ban name [minutes] [reason]');const m=/^\d+$/.test(a[2]||'');return adm('ban',{who:a[1],mins:m?+a[2]:0,reason:a.slice(m?3:2).join(' ')})},
   '/unban':a=>a[1]?adm('unban',{who:a[1]}):say('Usage: /unban name'),
   '/kick':a=>a[1]?adm('kick',{who:a[1]}):say('Usage: /kick name'),
+  '/resetpw':a=>a[1]?adm('pwreset',{who:a[1]}):say('Usage: /resetpw name  (gives that account a temporary password)'),
   '/smute':a=>a[1]?adm('mute',{who:a[1],mins:+a[2]||10}):say('Usage: /smute name [minutes]'),
   '/sunmute':a=>a[1]?adm('unmute',{who:a[1]}):say('Usage: /sunmute name'),
   '/announce':a=>a[1]?adm('announce',{text:a.slice(1).join(' '),scope:'all'}):say('Usage: /announce message'),
   '/give':a=>{if(!a[1]||!a[2])return say('Usage: /give name item [amount]  (item: gems, a number or a name like iron_ore)');const i=itemId(a[2]);if(i==null)return say('No item called '+a[2]);return adm('give',{who:a[1]=='me'&&NET7.auth?NET7.auth.name:a[1],item:i,n:Math.max(1,Math.floor(+a[3]||1))})}};
- const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  place a World Lock to claim a world  ·  owner: /god /pull /summon /ban /unban /give /kick /smute /announce';
+ const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  place a World Lock to claim a world  ·  owner: /god /pull /summon /ban /unban /give /kick /resetpw /smute /announce';
  {const _c=SOC6.cmd;SOC6.cmd=function(t){const a=String(t).trim().split(/\s+/),c=a[0].toLowerCase();
    if(OWNER[c]){OWNER[c](a);return true}
    if(c=='/help'||c=='/?'){const r=_c.apply(this,arguments);say(HELP2);return r}
@@ -22000,7 +22130,7 @@ const ONL10=(()=>{
  // /trade name  or  /trade name giveItem n wantItem n
  function typed(a){const p=SOC6.byName(a[1]);if(!p)return say(a[1]?'That player is not in this world':'Usage: /trade name [giveItem n wantItem n]  (id 0 = gems)');if(a.length<3)return ask(p.peer);
   const gi=itemId(a[2]),gn=+a[3],wi=itemId(a[4]),wn=+a[5];if(gi==null||wi==null||!(gn>=1)||!(wn>=1))return say('Usage: /trade name giveItem n wantItem n  (id 0 = gems)');ask(p.peer,[gi,Math.floor(gn)],[wi,Math.floor(wn)])}
- // ---- the wrench tool (TOOLS8 calls this on click, key V holds it): a player opens their card, a World Lock its settings
+ // ---- the wrench tool (TOOLS8 calls this on click, key N holds it): a player opens their card, a World Lock its settings
  let pEl=null;
  function card(p){const q=p.presence;if(!pEl){pEl=document.createElement('div');pEl.id='pcard10';pEl.setAttribute('role','dialog');document.body.appendChild(pEl)}const o=NET7.owner;
   const blocked=n=>{try{return X6.mute.includes(String(n).toLowerCase())}catch(_){return false}};
@@ -22014,7 +22144,7 @@ const ONL10=(()=>{
  function peerAt(c){if(!rm)return null;let best=null,bd=1e9;for(const p of SOC6.peers()){const r=rp[p.peer]||p.presence;if(!r||!(Math.abs(r.x-c.x)<34&&c.y>r.y-14&&c.y<r.y+70))continue;const d=Math.hypot(r.x-c.x,r.y+28-c.y);if(d<bd){bd=d;best=p}}return best}
  function wrenchAt(c){try{return WRENCH2.use(c)}catch(e){console.error('wrench',e)}}
  function openCard(p){snd('open');return card(p)}
- let lastHand='';function toggleWrench(){if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench'}snd('select')}addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='v')return;toggleWrench()});
+ let lastHand='';function toggleWrench(){if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench'}snd('select')}addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='n')return;toggleWrench()});
  // ---- items dropped for others (the server owns them; the first player to reach one gets it)
  const ND=[];
  const addD=(d,old)=>{if(ND.some(x=>x.id==d.id))return;const o={id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,by:d.by||'',vy:old?0:-260,ph:Math.random()*6,t:old?9:0,sent:0,rest:0};try{DROP2.unclip(o)}catch(_){}ND.push(o)};
@@ -22062,12 +22192,15 @@ const ACCT13=(()=>{
   last=s;const id=++seq,n=Math.max(1,Math.ceil(s.length/CH));for(let i=0;i<n;i++)NET7.send({t:'prof_put',id,i,n,base,d:s.slice(i*CH,(i+1)*CH)})}
  // once the game is showing: the account and its progress are safe, only the sign-in ran out
  function askSignIn(){let n=0;const t=setInterval(()=>{if(++n>480){clearInterval(t);return}try{if(window.RB_COVER||!entered||DLG7.isOpen)return;clearInterval(t);DLG7.confirm('Your sign-in ended','You are on this computer\'s offline save right now. Your account and its progress are safe. Sign in again to get back to them.','Sign in').then(ok=>{if(ok)NET7.signIn()})}catch(_){clearInterval(t)}},500)}
+ // Rootbound is online only: progress made on this computer before accounts were required (the plain save) moves into the first account made here,
+ // once, when the player ticks "Bring my progress" while creating it. Local worlds (rbw_) and backups are left behind; the account starts from the copy and the server keeps it.
+ function importLocal(uid){try{if(sessionStorage.getItem('rb_import')!=='1'||LS.getItem('rb_imported'))return;sessionStorage.removeItem('rb_import');const keys=[];for(let i=0;i<LS.length;i++){const k=LS.key(i);if(k&&!/^a_/.test(k)&&!RB_ACCT.free(k)&&!SKIP.test(k))keys.push(k)}for(const k of keys){const v=LS.getItem(k);if(typeof v=='string')LS.setItem('a_'+uid+'_'+k,v)}LS.setItem('rb_imported',uid)}catch(e){console.error('ACCT13 import',e)}}
  // called by NET7 for every auth answer; true = the page is reloading, stop here
  function auth(m){if(!LS)return false;
   if(!m.ok){if(ID&&m.expired){try{LS.removeItem('rbtok');LS.setItem('rb_relogin','1')}catch(_){}setActive('');reload();return true}return false}
   if(m.kind=='guest'){if(ID){setActive('');reload();return true}try{if(LS.getItem('rb_relogin')){LS.removeItem('rb_relogin');askSignIn()}}catch(_){}return false}
   try{if(m.name)LS.setItem('rb_lastname',String(m.name).slice(0,64))}catch(_){}
-  if(m.uid!==ID){try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}setActive(m.uid);reload();return true}
+  if(m.uid!==ID){try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}if(m.fresh&&!ID)importLocal(m.uid);setActive(m.uid);reload();return true}
   const g=m.gen|0,lg=LS.getItem('rbprofgen');if(lg!=null&&+lg!==g){wipe();LS.setItem('rbprofgen',String(g));LS.setItem('rbprofrev','0');try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}RB_ACCT.freeze();reload();return true}LS.setItem('rbprofgen',String(g));
   const srv=m.prev|0,mine=+LS.getItem('rbprofrev')||0;base=srv;
   if(srv>mine){asked=true;setTimeout(()=>NET7.send({t:'prof_get'}),0);return false}   // another computer saved something newer
@@ -22226,15 +22359,15 @@ const NAV16=(()=>{
  // ---- the features
  const HUB=t=>({hub:t,open:()=>UI6.open(t),close:()=>UI6.close(),on:()=>UI6.on&&SEC[secOf(UI6.tab)].tabs.includes(t)});
  const F=[
-  {id:'character',btn:'bhub',ic:'character',g:'Character',key:'P',n:'Character',d:'Profile, appearance, wings and nameplates',row:0,...HUB('profile')},
-  {id:'equipment',btn:'beq9',ic:'equipment',g:'Character',key:'C',n:'Equipment',d:'See and change the gear you are wearing',row:0,open:()=>EQM9.show(),close:()=>EQM9.close(),on:()=>EQM9.isOpen},
+  {id:'character',btn:'bhub',ic:'character',g:'Character',n:'Character',d:'Profile, appearance, wings and nameplates',row:0,...HUB('profile')},
+  {id:'equipment',btn:'beq9',ic:'equipment',g:'Character',key:'P',n:'Equipment',d:'See and change the gear you are wearing',row:0,open:()=>EQM9.show(),close:()=>EQM9.close(),on:()=>EQM9.isOpen},
   {id:'inventory',btn:'binv7',ic:'inventory',g:'Character',key:'I',n:'Inventory',d:'Your items, blocks and tools',row:0,open:()=>INV7.open(),close:()=>INV7.close(),on:()=>INV7.isOpen},
   {id:'classes',btn:'bcls',ic:'classes',g:'Character',key:'K',n:'Classes',d:'Your class, its skills and its gear',row:0,open:()=>CLS9.open(),close:()=>CLS9.close(),on:()=>live('cls9')},
   {id:'skills',btn:'bskl',ic:'skills',g:'Character',key:'U',n:'Skills',d:'Spend your skill points',row:0,...HUB('skills')},
   {id:'store',btn:'bstore',ic:'store',g:'Shop',n:'Store',d:'Buy weapons, wings, gear and more',row:0,gold:1,open:()=>STORE7.open(),close:()=>STORE7.close(),on:()=>live('store7')},
   {id:'settings',btn:'bset16',ic:'settings',g:'System',key:'O',n:'Settings',d:'Graphics, audio, controls and your save',row:0,hub:'settings',open:()=>UI6.open('settings'),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='system'},
   {id:'worlds',btn:'bworlds',ic:'worlds',g:'World',n:'Worlds',d:'Travel, realms, your worlds and events',row:1,open:()=>openMenu('mworlds'),close:()=>closeMenu(),on:()=>menuOn()||UI6.on&&secOf(UI6.tab)=='world',hubAlso:1},
-  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',key:'N',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,nodock:1,...HUB('bosses'),on:()=>UI6.on&&UI6.tab=='bosses'},
+  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,nodock:1,...HUB('bosses'),on:()=>UI6.on&&UI6.tab=='bosses'},
   {id:'quests',btn:'bqm',ic:'quests',g:'World',key:'J',n:'Quests',d:'Daily challenges, your first steps and town quests',row:1,...HUB('quests'),on:()=>UI6.on&&UI6.tab=='quests'},
   {id:'ach',btn:'bach',ic:'achievements',g:'World',key:'Y',n:'Achievements',d:'Achievements and milestones',row:1,nodock:1,...HUB('ach'),on:()=>UI6.on&&UI6.tab=='ach'},
   {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Everything you have collected, with rewards',row:1,nodock:1,open:()=>BOOK7.open(),close:()=>BOOK7.close(),on:()=>BOOK7.isOpen},
@@ -22262,7 +22395,7 @@ const NAV16=(()=>{
    grid.appendChild(row)}
   tip=document.createElement('div');tip.id='nav16tip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);
   // the map tools, attached to the minimap
-  const hr=el('hudR'),mini=el('mini');if(hr&&mini){const t=document.createElement('div');t.className='maptools';for(const[id,ic,lab,d]of[['bzi','plus','Zoom in','Keys + and 0 to reset'],['bzo','minus','Zoom out','Key −'],['bmus','soundon','Music','Turn the music on or off|Shift + M']]){const b=el(id);if(!b)continue;b.removeAttribute('title');b.innerHTML=icon(ic);b.setAttribute('aria-label',lab);b.dataset.n16tip=lab+'|'+d;t.appendChild(b)}hr.innerHTML='';hr.append(t,mini)}
+  const hr=el('hudR'),mini=el('mini');if(hr&&mini){const t=document.createElement('div');t.className='maptools';for(const[id,ic,lab,d]of[['bzi','plus','Zoom in','Keys + and 0 to reset'],['bzo','minus','Zoom out','Key −'],['bmus','soundon','Music','Turn the music on or off|F2']]){const b=el(id);if(!b)continue;b.removeAttribute('title');b.innerHTML=icon(ic);b.setAttribute('aria-label',lab);b.dataset.n16tip=lab+'|'+d;t.appendChild(b)}hr.innerHTML='';hr.append(t,mini)}
   // a tooltip for everything that has one
   const show=b=>{const p=String(b.dataset.n16tip).split('|');tip.innerHTML='<b>'+esc(p[0])+(p[2]?'<kbd>'+esc(p[2])+'</kbd>':'')+'</b>'+(p[1]?'<small>'+esc(p[1])+'</small>':'');tip.classList.add('on');const r=b.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;let x=r.left+r.width/2-w/2,y=r.top-h-8;if(y<6)y=r.bottom+8;x=Math.max(6,Math.min(innerWidth-w-6,x));tip.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)'};
   const hide=()=>tip.classList.remove('on');
@@ -22328,13 +22461,13 @@ const NAV16=(()=>{
   h+='<p class="dim">Everyone in this world sees the same events at the same time.</p><h4>In '+esc(cur)+'</h4><div class="ql16">'+(L.length?L.slice(0,5).map(e=>'<div class="q16'+(e===lv?' live':'')+'"><div><b>'+esc(WEV7.names[e.kind])+'</b><small>'+esc(EVD[e.kind])+'</small></div><span class="n" data-t0="'+e.t0+'" data-t1="'+e.t1+'"></span></div>').join(''):'<p class="dim">Nothing is planned here for now.</p>')+'</div>';b.innerHTML=h;tickEvents()};
  function tickEvents(){if(!UI6.on||UI6.tab!='events')return;const now=Date.now();UI6.body.querySelectorAll('[data-t0]').forEach(s=>{const a=+s.dataset.t0,z=+s.dataset.t1,t=now>=z?'Ended':now>=a?'Now · '+clock(z-now)+' left':'In '+clock(a-now);if(s.textContent!==t)s.textContent=t})}
  // ---- keys. The old keys keep working; P U N Y O are new. These also let you jump between panels while the Hub has the keyboard.
- const KEYS={p:'character',u:'skills',n:'bosses',y:'ach',o:'settings'};
+ const KEYS={u:'skills',y:'ach',o:'settings'};
  addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.tagName=='SELECT'||t.isContentEditable))return;const k=String(e.key).toLowerCase();
   if(k=='escape'){if(folded&&root&&root.classList.contains('open')){pop(false);e.stopImmediatePropagation();return}
    const pc=el('pcard10');if(pc&&pc.style.display!='none'&&getComputedStyle(pc).display!='none'){pc.style.display='none';e.stopImmediatePropagation();return}
    if(safe(()=>dlgOpen)&&!UI6.on){try{closeDlg()}catch(_){}e.stopImmediatePropagation();return}return}
   if(!safe(()=>entered)||window.RB_COVER||safe(()=>dlgOpen)||safe(()=>DLG7.isOpen)||safe(()=>CINE7.playing)||safe(()=>creatorOn))return;
-  let id=KEYS[k];if(!id&&UI6.on){if(k=='j')id='quests';else if(k=='i'||k=='tab')id='inventory';else if(k=='g')id='guide'}if(!id)return;
+  let id=KEYS[k];if(!id&&UI6.on){if(k=='j')id='quests';else if(k=='i')id='inventory';else if(k=='g')id='guide'}if(!id)return;
   e.preventDefault();e.stopImmediatePropagation();act(id)},true);
  // ---- start
  function start(){build();sync();badges();setInterval(()=>{if(document.hidden)return;try{enforce();sync();tickEvents()}catch(er){if(!start.e){start.e=1;console.error('NAV16',er)}}},150);setInterval(()=>{if(document.hidden)return;try{badges();layout()}catch(_){}},1000)}
@@ -26522,7 +26655,7 @@ try{(()=>{
 })()}catch(e){console.error('NET17',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-c-phone.js ========== */
-// ===== ROOTLINK: your adventure device. M opens it (Shift+M still mutes the music); Esc, M or a click outside puts it away.
+// ===== ROOTLINK: your adventure device. M opens it (F2 turns the music on or off); Esc, M or a click outside puts it away.
 // A glass phone slides up beside the game, its screen lights, its apps settle into place. The home screen shows who you are (portrait, name, level,
 // class, world, Combat Power, gems), what needs you (the dock's badges), today's three challenges and a way into the dungeons. Every app opens a real
 // screen that already exists (NAV16's features, the dungeon page, the trailer); the phone holds no game state of its own.
@@ -26593,7 +26726,7 @@ try{(()=>{
   closing=setTimeout(()=>{root.classList.remove('out');if(then)try{then()}catch(e){console.error('ROOTLINK app',e)}else try{lastFocus&&lastFocus.focus&&lastFocus.focus({preventScroll:true})}catch(_){}},then?170:240);return true}
  function launch(id){const a=APPS.find(z=>z.id==id);if(!a||!usable(a))return;tone('tap');const b=root.querySelector('.rlk-app[data-app="'+id+'"]');if(b){b.classList.add('press');setTimeout(()=>b.classList.remove('press'),200)}
   close(()=>{if(a.open)return a.open();const f=navF(a.nav);let up=false;try{up=!!(f&&f.on&&f.on())}catch(_){}if(!up)try{NAV16.act(a.nav)}catch(e){console.error('ROOTLINK',e)}})}
- // M: open or put away. Shift+M is left to the game (mute). Typing in a field never opens it
+ // M: open or put away. Shift+M is ignored here (Shift is Dash; F2 is the music). Typing in a field never opens it
  addEventListener('keydown',e=>{if(e.key!='m'&&e.key!='M')return;if(e.shiftKey||e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
   if(on){close();e.preventDefault();e.stopImmediatePropagation();return}if(open()){e.preventDefault();e.stopImmediatePropagation()}},true);
  addEventListener('keydown',e=>{if(on&&e.key=='Escape'){close();e.preventDefault();e.stopImmediatePropagation()}},true);
@@ -26890,7 +27023,7 @@ try{(()=>{
   +'<path class="br-root" pathLength="1" d="M60 86 C55 92 46 96 37 104" stroke-width="2.6"/><path class="br-root" pathLength="1" d="M60 86 C60.6 94 60 100 60 109" stroke-width="2.6"/><path class="br-root" pathLength="1" d="M60 86 C65 92 74 96 83 104" stroke-width="2.6"/>'
   +'<path class="br-root br-r2" pathLength="1" d="M53 93 C49 92 45 93 41 90" stroke-width="1.8"/><path class="br-root br-r2" pathLength="1" d="M67 93 C71 92 75 93 79 90" stroke-width="1.8"/></g>'
   +'<g fill="url(#brG)"><path class="br-leaf br-l1" d="M60 55 C52 54 44 49 39 40 C49 39 57 44 60 55 Z"/><path class="br-leaf br-l2" d="M60.4 47 C67 45 76 39 81 30 C70 30 62 36 60.4 47 Z"/><path class="br-star" d="M60 2.5 L62.2 9.3 L69 11.5 L62.2 13.7 L60 20.5 L57.8 13.7 L51 11.5 L57.8 9.3 Z"/></g></svg>';
- const WORD='ROOTBOUND';let uid=0;const sym=()=>{const id='brG'+(++uid);return SYM.split('brG').join(id)};
+ window.RB_BRANDSYM=SYM;const WORD='ROOTBOUND';let uid=0;const sym=()=>{const id='brG'+(++uid);return SYM.split('brG').join(id)};
  function mount(){const card=document.getElementById('card');if(!card||document.getElementById('brand1'))return;const b=document.createElement('div');b.id='brand1';b.setAttribute('role','img');b.setAttribute('aria-label','Rootbound');
   b.innerHTML=sym()+'<div class="br-word">'+[...WORD].map((ch,i)=>'<span style="--i:'+i+'">'+ch+'</span>').join('')+'</div><div class="br-tag">Every world is waiting to be remembered.</div>';
   card.insertBefore(b,card.querySelector('#mhome')||card.firstChild);update()}
@@ -26902,7 +27035,7 @@ try{(()=>{
  // the page's own icon is the symbol, not an emoji
  try{const l=document.querySelector('link[rel=icon]');if(l)l.href='data:image/svg+xml,'+encodeURIComponent(SYM.replace('class="br-sym"','xmlns="http://www.w3.org/2000/svg"'))}catch(_){}
  // the launch title: after the intro film the game starts under a short logo reveal (4.6 s, never blocks input, removed afterwards)
- function reveal(){if(document.getElementById('brandrev'))return;const o=document.createElement('div');o.id='brandrev';o.setAttribute('aria-hidden','true');
+ function reveal(){if(document.getElementById('brandrev'))return;/* players already saw the logo on the login screen (LOGIN1) */if(window.RB_LOGINHOME)return;const o=document.createElement('div');o.id='brandrev';o.setAttribute('aria-hidden','true');
   o.innerHTML='<div class="brv-in">'+sym()+'<div class="br-word">'+[...WORD].map((ch,i)=>'<span style="--i:'+i+'">'+ch+'</span>').join('')+'</div><div class="br-tag">Every world is waiting to be remembered.</div></div>';
   document.body.appendChild(o);void o.offsetWidth;o.classList.add('go');try{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{try{snd(f,1.4,'sine',.03)}catch(_){}},1100+i*160))}catch(_){}setTimeout(()=>{try{o.remove()}catch(_){}},4800)}
  try{const o=SHOW7.open;SHOW7.open=function(){const r=o.apply(this,arguments);try{reveal()}catch(_){}return r}}catch(_){}
@@ -27049,7 +27182,7 @@ try{(()=>{
 // ===== DRAWER1: the inventory (INV7) as a bottom drawer. It grows out of the hotbar, which stays visible and stays a drop target. Three states: collapsed (a small handle on the
 // hotbar), expanded and full view. Drag the handle or the drawer's header up and down (6 px before a drag begins, so a click stays a click), flick it, or tap to toggle.
 // A spring runs the motion, transform only; the sheet's height is set just once, when it comes to rest, so the grid inside scrolls normally and nothing reflows while it moves.
-// Keys while open: arrows move the selection, [ and ] change category, Enter or E uses, D drops, Page Up / Page Down grow and shrink, Esc closes. No controller: the game has no gamepad layer.
+// Keys while open: arrows move the selection, [ and ] change category, Enter or E uses, Delete drops, Page Up / Page Down grow and shrink, Esc closes. No controller: the game has no gamepad layer.
 // ITEMSRC: "Where to find" and "What is it used for?" on every item kind, read from the same data the game runs on (RPG.items, BIOME17, WPN, WEAR, WINGS, SHOP7); no rate is ever made up. =====
 try{(()=>{
  const reduce=()=>{try{return MOTION7.reduce()}catch(_){return false}};
@@ -27085,7 +27218,7 @@ try{(()=>{
    if(k=='PageUp'||k=='PageDown'){e.preventDefault();e.stopPropagation();if(k=='PageUp')setLevel('full');else if(level=='full')setLevel('half');else INV7.close();return}
    if(k=='['||k==']'){e.preventDefault();e.stopPropagation();const c=CATS(),i=c.findIndex(b=>b.classList.contains('on')),n=c[(i+(k==']'?1:-1)+c.length)%c.length];if(n)n.click();return}
    if(k=='ArrowLeft'||k=='ArrowRight'||k=='ArrowUp'||k=='ArrowDown'){const g=el.querySelector('.grid7'),L=[...g.querySelectorAll('.it7')];if(!L.length)return;e.preventDefault();e.stopPropagation();let i=L.findIndex(t=>t.classList.contains('sel'));const y0=L[0].offsetTop;let cols=L.findIndex(t=>t.offsetTop!=y0);if(cols<1)cols=L.length;const d=k=='ArrowLeft'?-1:k=='ArrowRight'?1:k=='ArrowUp'?-cols:cols;i=i<0?0:Math.max(0,Math.min(L.length-1,i+d));const t=L[i];INV7.select(/^\d+$/.test(t.dataset.k)?+t.dataset.k:t.dataset.k);t.scrollIntoView({block:'nearest'});return}
-   if((k=='d'||k=='D')&&INV7.selK!=null){const b=el.querySelector('aside [data-a=drop]');if(b){e.preventDefault();e.stopPropagation();b.click()}}}catch(_){}},true);
+   if(k=='Delete'&&INV7.selK!=null){const b=el.querySelector('aside [data-a=drop]');if(b){e.preventDefault();e.stopPropagation();b.click()}}}catch(_){}},true);
  // ---- the collapsed handle, on top of the hotbar
  let h=null;function build(){h=document.createElement('button');h.id='invh7';h.type='button';h.setAttribute('aria-label','Open your items (I)');h.dataset.n16tip='Items|Drag up, or click|I';h.innerHTML='<i></i><span>Items</span>';document.body.appendChild(h);h.addEventListener('pointerdown',e=>{if(e.button==0){e.preventDefault();begin(e,true)}});h.addEventListener('keydown',e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();e.stopPropagation();try{NAV16.act('inventory')}catch(_){}}})}
  setInterval(()=>{try{if(!h)build();const b=bar(),show=typeof entered!='undefined'&&entered&&!window.RB_COVER&&!INV7.isOpen&&b&&b.getClientRects().length&&menuEl.style.display=='none'&&!(typeof creatorOn!='undefined'&&creatorOn);h.style.display=show?'':'none';if(show){const r=b.getBoundingClientRect();h.style.left=Math.round(r.left+r.width/2)+'px';h.style.top=Math.round(r.top-24)+'px'}}catch(_){}},300);
@@ -27209,11 +27342,11 @@ try{(()=>{
 })()}catch(e){console.error('DROP2',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-n-wrench.js ========== */
-// ===== WRENCH2: the wrench as a real tool. Holding it (V, or from the hotbar) opens a small panel with three modes, each one a thing the wrench truly does:
+// ===== WRENCH2: the wrench as a real tool. Holding it (N, or from the hotbar) opens a small panel with three modes, each one a thing the wrench truly does:
 //   Inspect   click anything: a block (what it is, how tough, who may build here), an object, a World Lock, or another player
 //   Configure click a door, teleporter, chest or other object you are allowed to set up, or your World Lock
 //   People    click another player for their card: trade, friend, block, report (and the owner's tools)
-// What is under the mouse is outlined: gold when it can be used, red when it can not, and the panel says why. R changes mode. V or Esc puts the wrench away.
+// What is under the mouse is outlined: gold when it can be used, red when it can not, and the panel says why. R changes mode. N or Esc puts the wrench away.
 // TOOLI1: the first time you hold each tool, a card says what it does, how to use it, why it helps, its special trick and its controls. Once per tool. =====
 try{(()=>{
  const MODES=[{id:'inspect',n:'Inspect',d:'Point at anything and click to see what it is.'},{id:'config',n:'Configure',d:'Click a door, chest, teleporter or your World Lock to set it up.'},{id:'people',n:'People',d:'Click another player to trade, add a friend, block or report.'}];
@@ -27241,7 +27374,7 @@ try{(()=>{
   if(t.kind=='obj'){try{DOORS6.config(t.k,false)}catch(e){console.error(e)}return}
   if(t.kind=='objinfo'){const d=ODEF[t.o.t];info={h:t.o.c&&t.o.c.nm||d.n,rows:[['Kind',String(d.cat||'object')],['Who can set it up',OBJ6.canConfig(myId)?'You can':'The owner and builders']],m};paint();return}
   if(t.kind=='tile'){const b=BLK[t.t]||['Block',0,1];info={h:b[0],rows:[['Toughness',String(b[2])],['Building here',buildRule()]],m};paint();return}}
- function build(){el=document.createElement('section');el.id='wr2';el.setAttribute('aria-label','Wrench');el.innerHTML='<header><span class="wr-i">'+ICON+'</span><b>Wrench</b><button type="button" class="wr-x" aria-label="Put the wrench away (V)">✕</button></header><nav>'+MODES.map((m,i)=>'<button type="button" data-m="'+i+'">'+m.n+'</button>').join('')+'</nav><p class="wr-d"></p><div class="wr-t" role="status"></div><div class="wr-info"></div><footer><kbd>R</kbd> mode <kbd>V</kbd> put away</footer>';document.body.appendChild(el);
+ function build(){el=document.createElement('section');el.id='wr2';el.setAttribute('aria-label','Wrench');el.innerHTML='<header><span class="wr-i">'+ICON+'</span><b>Wrench</b><button type="button" class="wr-x" aria-label="Put the wrench away (V)">✕</button></header><nav>'+MODES.map((m,i)=>'<button type="button" data-m="'+i+'">'+m.n+'</button>').join('')+'</nav><p class="wr-d"></p><div class="wr-t" role="status"></div><div class="wr-info"></div><footer><kbd>R</kbd> mode <kbd>N</kbd> put away</footer>';document.body.appendChild(el);
   el.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b){setMode(+b.dataset.m);return}if(e.target.closest('.wr-x'))putAway()});el.addEventListener('pointerdown',e=>e.stopPropagation())}
  function putAway(){try{ONL10.toggleWrench()}catch(_){}}
  function setMode(i){mode=(i+MODES.length)%MODES.length;info=null;tone(520,700,.08,'triangle',.04);paint()}
@@ -27263,7 +27396,7 @@ try{(()=>{
   glimmer:{t:'Glimmer the Ore Pick',what:'Mines ores, and only ores.',how:'Hold it and left-click an ore.',why:'Takes the whole vein at once.',spec:'Finds bonus ore and makes nearby ores twinkle.',keys:'Left-click an ore'},
   twiggy:{t:'Twiggy the Tree Axe',what:'Chops trees and wooden blocks.',how:'Hold it and left-click a tree.',why:'Gives extra wood from every tree.',spec:'Splits wooden blocks too.',keys:'Left-click a tree'},
   bubbles:{t:'Bubbles the Fishing Rod',what:'Catches fish from any water.',how:'Click water to cast, click when it bites, then hold to keep the fish in the green zone.',why:'Fish sell well, and some are rare.',spec:'Bait from Tackle Boxes helps.',keys:'Click to cast, hold to reel'},
-  wrench:{t:'The Wrench',what:'Inspects anything, sets up objects and reaches other players.',how:'Choose a mode in its panel, then click your target.',why:'Everything you can set up, in one tool.',spec:'Outlines what you can use in gold, and what you can not in red.',keys:'V hold, R mode, Esc put away'}};
+  wrench:{t:'The Wrench',what:'Inspects anything, sets up objects and reaches other players.',how:'Choose a mode in its panel, then click your target.',why:'Everything you can set up, in one tool.',spec:'Outlines what you can use in gold, and what you can not in red.',keys:'N hold, R mode, Esc put away'}};
  let el=null,tm=0;
  function show(id){const q=T1[id];if(!q)return;if(el)el.remove();el=document.createElement('aside');el.id='tooli1';let pic='';try{pic=iconURL('w:'+id)}catch(_){}el.innerHTML='<img alt="" src="'+pic+'"><div><small>New tool</small><h4>'+q.t+'</h4><dl><dt>What it does</dt><dd>'+q.what+'</dd><dt>How to use it</dt><dd>'+q.how+'</dd><dt>Why it helps</dt><dd>'+q.why+'</dd><dt>Special</dt><dd>'+q.spec+'</dd><dt>Controls</dt><dd>'+q.keys+'</dd></dl></div><button type="button" aria-label="Got it">Got it</button>';document.body.appendChild(el);const done=()=>{clearTimeout(tm);if(el){el.classList.add('out');const e=el;el=null;setTimeout(()=>e.remove(),240)}};el.querySelector('button').onclick=done;tm=setTimeout(done,16000);try{SFX7.tone(560,840,.16,'triangle',.05)}catch(_){}}
  setInterval(()=>{try{if(!entered||window.RB_COVER||typeof wp=='undefined'||!T1[wp]||seen[wp]||menuEl.style.display!='none')return;if(typeof creatorOn!='undefined'&&creatorOn)return;seen[wp]=1;localStorage.setItem(KEY(),JSON.stringify(seen));show(wp)}catch(_){}},500);
@@ -28112,31 +28245,33 @@ try{(()=>{
   g2.save();g2.globalCompositeOperation='lighter';g2.globalAlpha=on*.9;g2.translate(X,Y+2);g2.scale(1,.28);const R0=lerp(120,620,Math.min(1,u*1.8));g2.rotate(t*.8);g2.strokeStyle=C[0];g2.lineWidth=3;for(const f of[1,.82,.5]){g2.beginPath();g2.arc(0,0,R0*f,0,6.3);g2.stroke()}const n=5+(hS(C.cls)%5);g2.beginPath();for(let i=0;i<=n;i++){const b=i*2*TAU/n;g2[i?'lineTo':'moveTo'](Math.cos(b)*R0*.82,Math.sin(b)*R0*.82)}g2.stroke();for(let i=0;i<24;i++){const b=i*.2618;g2.beginPath();g2.moveTo(Math.cos(b)*R0*.82,Math.sin(b)*R0*.82);g2.lineTo(Math.cos(b)*R0,Math.sin(b)*R0);g2.stroke()}g2.restore();
   if(!reduce()&&Math.abs(tl-last)<.17){const k=1-Math.abs(tl-last)/.17;g2.save();g2.globalCompositeOperation='source-over';g2.globalAlpha=k;g2.fillStyle='#fff8ea';g2.fillRect(X-1800,Y-1200,3600,2400);g2.globalAlpha=1;try{g2.filter='brightness(0)';AC6.quiet=1;AC6.draw(P.x-cam.x,P.y-cam.y,P.f,0,'',t,P.vx,!P.g,'',wp,0,1,wear,false,look,'me')}catch(_){}finally{AC6.quiet=0;g2.filter='none'}g2.restore()}}
  window.STY1={P:PNT,tone,impact,dash:dashGo,trail:trailStep,stage,KIT,DSH,DS,REST};
- // ---------- keys: default Q E R Z V, Use on F, class skills X C while the Mythic is out
- const DEF={s1:'q',s2:'e',s3:'r',s4:'z',s5:'v',c1:'x',c2:'c',dash:'shift',use:'f'},LBL={s1:'Skill 1',s2:'Skill 2',s3:'Skill 3',s4:'Skill 4',s5:'Skill 5',c1:'Class skill 1 (Mythic out)',c2:'Class skill 2 (Mythic out)',dash:'Dash',use:'Use / Talk'};
- const bind=()=>{const o=cel.opt.kb;return Object.assign({},DEF,o&&typeof o=='object'?o:{})};
+ // ---------- keys: default Q E R Z V weapon skills, X C class skills (always, Mythic or not), Use on F, Dash on Shift. Every key does exactly one thing: a key another control owns can not be bound here
+ const DEF={s1:'q',s2:'e',s3:'r',s4:'z',s5:'v',c1:'x',c2:'c',dash:'shift',use:'f'},LBL={s1:'Skill 1',s2:'Skill 2',s3:'Skill 3',s4:'Skill 4',s5:'Skill 5',c1:'Class skill 1',c2:'Class skill 2',dash:'Dash',use:'Use / Talk'};
+ // keys that belong to a control that can not be rebound: binding a skill to one would make that key do two things
+ const FIXED={a:'Move',d:'Move',w:'Jump',s:'Down',' ':'Jump',enter:'Chat',tab:'Swap weapon / tool',t:'Next weapon',n:'Wrench',b:'Emote',i:'Inventory',p:'Equipment',k:'Classes',u:'Skills',j:'Quests',y:'Achievements',o:'Settings',g:'Guide',l:'Hidden word',h:'Quest tracker',m:'Rootlink',f1:'Starting guide',f2:'Music',f3:'FPS counter','=':'Zoom','+':'Zoom','-':'Zoom','0':'Zoom',delete:'Drop (inventory)','[':'Inventory tabs',']':'Inventory tabs',arrowleft:'Move',arrowright:'Move',arrowup:'Jump',arrowdown:'Down'};
+ const bind=()=>{const o=cel.opt.kb;const b=Object.assign({},DEF,o&&typeof o=='object'?o:{});for(const q in b)if(FIXED[b[q]])b[q]=DEF[q];return b};
  const pub=()=>{window.RB_KB=bind()};pub();
  const label=k=>k==' '?'Space':k=='shift'?'⇧':k.length==1?k.toUpperCase():k.replace(/^arrow/,'').replace(/^./,c=>c.toUpperCase());
  const isM=()=>!!(WPN[wp]&&WPN[wp].myth&&own[wp]&&SK1.WK[wp]);
- function slots(){const cs=SK1.classSkills(),ws=SK1.weaponSkills();if(isM())return[ws[0],ws[1],ws[2],ws[3],ws[4]].concat([cs[0]||null,cs[1]||null]);return[ws[0]||null,cs[0]||null,cs[1]||null,null,null,null,null]}
+ function slots(){const cs=SK1.classSkills(),ws=SK1.weaponSkills();return[ws[0]||null,ws[1]||null,ws[2]||null,ws[3]||null,ws[4]||null,cs[0]||null,cs[1]||null]}
  const ORDER=['s1','s2','s3','s4','s5','c1','c2'];
  function act(a){const i=ORDER.indexOf(a);if(i<0)return null;return slots()[i]||null}
  function press(a){const sk=act(a);if(!sk)return false;const ok=SK1.cast(sk);flash(sk,ok);return ok}
  function flash(sk,ok){const d=document.querySelector('#skills [data-sk="'+sk.id+'"]');if(!d)return;d.classList.remove('pr','no');void d.offsetWidth;d.classList.add(ok?'pr':'no')}
- addEventListener('keydown',e=>{try{const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA)$/.test(t.tagName)&&!/range|checkbox/.test(t.type||'')))return;if(window.__kbCap)return;if(e.ctrlKey||e.metaKey||e.altKey)return;const raw=e.rbKey||e.key.toLowerCase(),b=bind();let a=null;for(const n of ORDER)if(b[n]===raw){a=n;break}if(!a&&raw===b.dash)a='dash';if(!a)return;
-   if(a[0]=='c'&&a!='dash'&&!isM())return;   // without the Mythic these keys keep their normal jobs
-   const w=WPN[wp],tool=w&&w.k=='tool';if(tool&&(raw=='r'||raw=='v'))return;if(!entered)return;
+ addEventListener('keydown',e=>{try{const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA)$/.test(t.tagName)&&!/range|checkbox/.test(t.type||'')))return;if(window.__kbCap)return;/* a full-screen film owns the keyboard: any key skips it, so no skill fires underneath */try{if((typeof INTRO60!='undefined'&&INTRO60.playing)||(typeof CINE7!='undefined'&&CINE7.playing))return}catch(_){}if(e.ctrlKey||e.metaKey||e.altKey)return;const raw=e.rbKey||e.key.toLowerCase(),b=bind();let a=null;for(const n of ORDER)if(b[n]===raw){a=n;break}if(!a&&raw===b.dash)a='dash';if(!a)return;
+   if(raw=='r'&&wp=='wrench')return;   // holding the wrench, R changes its mode (no skill can be used with a tool in hand)
+   if(!entered)return;
    e.stopImmediatePropagation();e.preventDefault();if(e.repeat||showInv||dlgOpen)return;if(a=='dash')SK1.cast(SK1.SK['c:dash']);else press(a)}catch(_){}},true);
  // ---------- the bar
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const slotH=(sk,key,x)=>sk?'<div class="sk9 '+(sk.ult?'ult ':'')+(x||'')+'" data-sk="'+sk.id+'"><img alt="" src="'+SK1.icon(sk)+'"><u></u><span class="cdn"></span><em>'+esc(key)+'</em></div>':'<div class="sk9 empty '+(x||'')+'" title="Earn your class Mythic to unlock"><i class="lk9" aria-hidden="true"></i><em>'+esc(key)+'</em></div>';
  let lastSig='';
- renderSkills=function(){const el=$('skills');if(!el)return;const s=slots(),b=bind(),w=WPN[wp],m=isM();lastSig=(CLASS7.cur&&CLASS7.cur())+'|'+wp;let h='<div class="sk9g"><small>'+(m?esc(w.n):'SKILLS')+'</small><div class="sk9r">'+ORDER.slice(0,5).map((a,i)=>slotH(s[i],label(b[a]))).join('')+'</div></div>';if(m||s[5])h+='<div class="sk9g"><small>CLASS</small><div class="sk9r mini">'+slotH(s[5],label(b.c1),'sm')+slotH(s[6],label(b.c2),'sm')+'</div></div>';h+='<div class="sk9g"><small>&nbsp;</small><div class="sk9r mini">'+slotH(SK1.SK['c:dash'],label(b.dash),'sm')+'</div></div>';el.innerHTML=h;el.className='sk9w';el.querySelectorAll('[data-sk]').forEach(d=>{const sk=SK1.SK[d.dataset.sk];d.onclick=()=>{const ok=SK1.cast(sk);flash(sk,ok)};d.onmouseenter=()=>SK1.tip(d);d.onmouseleave=SK1.untip})};
+ renderSkills=function(){const el=$('skills');if(!el)return;const s=slots(),b=bind(),w=WPN[wp],m=isM();lastSig=(CLASS7.cur&&CLASS7.cur())+'|'+wp;const more=s.slice(1,5).some(Boolean);let h='<div class="sk9g"><small>'+(m?esc(w.n):'SKILLS')+'</small><div class="sk9r">'+(m||more?ORDER.slice(0,5).map((a,i)=>slotH(s[i],label(b[a]))).join(''):slotH(s[0],label(b.s1))+'<div class="sk9 empty sm lk4" title="Earn your class Mythic to unlock the skills on '+esc(['s2','s3','s4','s5'].map(q=>label(b[q])).join(' '))+'"><i class="lk9" aria-hidden="true"></i><em>'+esc(['s2','s3','s4','s5'].map(q=>label(b[q])).join(' '))+'</em></div>')+'</div></div>';if(s[5]||s[6])h+='<div class="sk9g"><small>CLASS</small><div class="sk9r mini">'+slotH(s[5],label(b.c1),'sm')+slotH(s[6],label(b.c2),'sm')+'</div></div>';h+='<div class="sk9g"><small>&nbsp;</small><div class="sk9r mini">'+slotH(SK1.SK['c:dash'],label(b.dash),'sm')+'</div></div>';el.innerHTML=h;el.className='sk9w';el.querySelectorAll('[data-sk]').forEach(d=>{const sk=SK1.SK[d.dataset.sk];d.onclick=()=>{const ok=SK1.cast(sk);flash(sk,ok)};d.onmouseenter=()=>SK1.tip(d);d.onmouseleave=SK1.untip})};
  setInterval(()=>{try{if(entered&&(CLASS7.cur()+'|'+wp)!==lastSig)renderSkills()}catch(_){}},250);
  // ---------- rebinding (Settings > Controls)
  document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-kb]');if(!t)return;e.preventDefault();e.stopPropagation();if(t.dataset.kb=='reset'){cel.opt.kb={};celSave();pub();try{renderSkills()}catch(_){}document.querySelectorAll('[data-kb]').forEach(b=>{if(DEF[b.dataset.kb])b.textContent=label(DEF[b.dataset.kb])});return}t.textContent='Press a key';window.__kbCap=t.dataset.kb},true);
- addEventListener('keydown',e=>{const a=window.__kbCap;if(!a)return;e.preventDefault();e.stopImmediatePropagation();window.__kbCap=null;const k=e.key.toLowerCase();const btn=document.querySelector('[data-kb="'+a+'"]');if(k!='escape'&&!/^(a|d|w|s| |enter|tab)$/.test(k)&&!/^[1-9]$/.test(k)){const b=bind(),o=Object.assign({},cel.opt.kb||{});for(const n in b)if(b[n]===k&&n!==a){o[n]=b[a];const q=document.querySelector('[data-kb="'+n+'"]');if(q)q.textContent=label(b[a])}o[a]=k;cel.opt.kb=o;celSave();pub();try{renderSkills()}catch(_){}}if(btn)btn.textContent=label(bind()[a])},true);
- window.KB1={bind,DEF,LBL,label,press,slots,ORDER,pub};
+ addEventListener('keydown',e=>{const a=window.__kbCap;if(!a)return;e.preventDefault();e.stopImmediatePropagation();window.__kbCap=null;const k=(e.rbKey||e.key).toLowerCase();const btn=document.querySelector('[data-kb="'+a+'"]');const own=FIXED[k]||(/^[1-9]$/.test(k)?'Hotbar slot '+k:null);if(own&&k!='escape'){if(btn){btn.textContent=label(k)+' is '+own;setTimeout(()=>{btn.textContent=label(bind()[a])},1800)}return}if(k!='escape'){const b=bind(),o=Object.assign({},cel.opt.kb||{});for(const n in b)if(b[n]===k&&n!==a){o[n]=b[a];const q=document.querySelector('[data-kb="'+n+'"]');if(q)q.textContent=label(b[a])}o[a]=k;cel.opt.kb=o;celSave();pub();try{renderSkills()}catch(_){}}if(btn)btn.textContent=label(bind()[a])},true);
+ window.KB1={bind,DEF,LBL,label,press,slots,ORDER,pub,FIXED};
  // ---------- controller: left stick moves, A jumps, X attacks, Y uses, B dashes, the shoulders and triggers fire skills, right stick aims. Only acts while a controller is really in use
  const PAD={on:0,was:{},ax:0,ay:0};const held=(p,i)=>!!(p.buttons[i]&&(p.buttons[i].pressed||p.buttons[i].value>.5));
  function padTick(){try{if(!entered||!navigator.getGamepads)return;const p=[...navigator.getGamepads()].find(Boolean);if(!p)return;const lx=Math.abs(p.axes[0])>.32?p.axes[0]:0,rx=Math.abs(p.axes[2])>.28?p.axes[2]:0,ry=Math.abs(p.axes[3])>.28?p.axes[3]:0,any=p.buttons.some(b=>b.pressed)||lx||rx||ry;if(!any&&!PAD.on)return;PAD.on=any?1:PAD.on;const pad=!!any;if(lx>0){K.d=1;K.a=0;PAD.mv=1}else if(lx<0){K.a=1;K.d=0;PAD.mv=1}else if(PAD.mv){K.a=K.d=0;PAD.mv=0}
@@ -28707,7 +28842,9 @@ try{window.EVC1=(()=>{
  function add(k,sp){SPEC[k]=sp;const S=shots(k);let reveal=0;{let a=0;for(const s of S){if(s.evoPeak)reveal=a;a+=s.d}}
   let nm=k;try{nm=EVO1.E[k].n}catch(_){}
   MOVIE1.register(k,{id:k,kind:'evo',title:nm,cls:nm,score:'audio/movie/evo/'+k+'.mp3',reveal,shots:S,lines:[],setup:setup(k),teardown(m){m.ctx=null},hits:((sp.sig&&sp.sig.hits)||[.35]).map(h=>+(AT.sig+h).toFixed(3))})}
- return{add,SPEC,TL,AT,POSE,REG,WLEN,TYPE,plain,mixC,rgba,vg,impact}})()}catch(e){console.error('EVC1',e)}
+ // for the login screen's class showcase: a class's stage (look, outfit, place) and its drawing pieces outside a movie
+ const ctx=(k,look)=>setup(k)({k:1,o:{look}});
+ return{add,SPEC,TL,AT,POSE,REG,WLEN,TYPE,plain,mixC,rgba,vg,impact,ctx,hero:(q,T,y,X,Y,s,p,o)=>hero(q,{T},y,X,Y,s,p,o),aura:(q,y,X,Y,k,t)=>aura(q,y,X,Y,k,t),sigil:(q,y,X,Y,R0,k,t,a)=>sigilAt(q,y,X,Y,R0,k,t,a),wpn:(q,y,X,Y,a,len,t)=>wpn(q,y,X,Y,a,len,t),rays}})()}catch(e){console.error('EVC1',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-z8-evc-archer.js ========== */
 // ===== Archer evolution cinematic: Galewarden. A windswept plateau at sunrise above a sea of cloud; the gale coils up around the archer; a spiral vortex on the grass; leaf-blade pauldrons, a leaf crest at the temples, a short wind-torn mantle;
@@ -31460,6 +31597,193 @@ try{(()=>{const F=()=>FILM1,sin=Math.sin,cos=Math.cos,TAU=6.2832,PI=Math.PI;
   sig:{hits:[H0,H1,H2],draw:sigDraw},
   evo:null
  })})()}catch(e){console.error('EVC stormcaller',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-zz-login.js ========== */
+// ===== LOGIN1: the login screen, and the one way into Rootbound. Rootbound is one online game: launch, sign in (or create an account), connect, load your
+// progress from the server, enter the world. There is no offline mode and no guest play for players. A server that cannot be reached shows a connection
+// screen with Retry; a free server that is asleep is waited for. In the world, a lost connection freezes the game behind a cover while it reconnects.
+// Behind the panel, each class is on stage: its own character (look, outfit, weapon, place, aura and sigil come from the evolution cinematics, EVC1),
+// breathing, with wind in the hair and cloth, a weapon flourish now and then, and a cinematic change between classes.
+// Sign-in, accounts and progress are the existing ones: NET7 (connection and auth), ACCT13 (the account's save on the server), RB_ACCT (its storage).
+// Automated test browsers never see this screen (RB_LOGINHOME is only set for players). =====
+try{window.LOGIN1=(()=>{
+ const HOME=window.RB_LOGINHOME;if(!HOME||typeof NET7=='undefined'||!NET7.PLAYER||!window.EVC1||!window.FILM1)return{needNet(){},fatal(){},newKey(){},on:false};
+ const W=1920,H=1080,TAU=6.2832,sin=Math.sin,cos=Math.cos,K=MOVIE1.kit,{glow,motes,sparks,ez,eo,lerp,cl,sr}=K;
+ const LS=(()=>{try{return localStorage}catch(_){return null}})(),SS=(()=>{try{return sessionStorage}catch(_){return null}})();
+ const lg=k=>{try{return LS.getItem(k)}catch(_){return null}},ls=(k,v)=>{try{v==null?LS.removeItem(k):LS.setItem(k,v)}catch(_){}},sg=k=>{try{return SS.getItem(k)}catch(_){return null}},ss=(k,v)=>{try{v==null?SS.removeItem(k):SS.setItem(k,v)}catch(_){}};
+ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ // ---------- the classes on stage: each its own character, not the player's
+ const ORDER=['knight','samurai','archer','mage','demon','elementalist','stormcaller','berserker','ninja','druid','gunslinger','brawler','reaper'];
+ const LOOK={knight:{skin:'#f6dcc8',hair:'#f2d27a',hs:0,es:0,eyeCol:'#3a6ad8',gd:0},samurai:{skin:'#f8e0d0',hair:'#1c1418',hs:1,es:1,eyeCol:'#c03a6a',gd:2},archer:{skin:'#f3d6bc',hair:'#b8582a',hs:3,es:2,eyeCol:'#2a9a5a',gd:1},mage:{skin:'#fbe6dc',hair:'#c8b8ff',hs:5,es:3,eyeCol:'#8a4aff',gd:2},
+  demon:{skin:'#f0d8d0',hair:'#7a1424',hs:8,es:2,eyeCol:'#ff3a4a',gd:2},elementalist:{skin:'#f4d4b8',hair:'#ff8a3a',hs:2,es:0,eyeCol:'#3ac8ff',gd:0},stormcaller:{skin:'#f1d8c4',hair:'#3a4a9a',hs:4,es:2,eyeCol:'#ffe03a',gd:1},berserker:{skin:'#d8a07a',hair:'#c83a1a',hs:6,es:2,eyeCol:'#ff8a2a',gd:0},
+  ninja:{skin:'#f2dccb',hair:'#1a2030',hs:7,es:1,eyeCol:'#7ad0ff',gd:1},druid:{skin:'#f4e0c8',hair:'#5a8a3a',hs:9,es:3,eyeCol:'#9aff7a',gd:2},gunslinger:{skin:'#e8c4a0',hair:'#d8b07a',hs:3,es:1,eyeCol:'#c89a3a',gd:1},brawler:{skin:'#c8865a',hair:'#ff6a2a',hs:2,es:2,eyeCol:'#ffb03a',gd:0},reaper:{skin:'#f0e4f0',hair:'#e8e8ff',hs:5,es:1,eyeCol:'#b48aff',gd:1}};
+ const ROLE={knight:'Guardian',samurai:'Duelist',archer:'Ranger',mage:'Arcanist',demon:'Blood pact',elementalist:'Elemental caster',stormcaller:'Storm warrior',berserker:'Warrior',ninja:'Assassin',druid:'Nature keeper',gunslinger:'Gunner',brawler:'Fighter',reaper:'Shadow reaper'};
+ const KIND={great:'Greatsword',katana:'Katana',bow:'Bow',staff:'Staff',dagger:'Blade',scythe:'Scythe',spear:'Spear',hammer:'Hammer',axe:'Axe',kunai:'Chakram',branch:'Living staff',gun:'Pistol',gaunt:'Gauntlets'};
+ const DESC={knight:'A shield for the many. Holds the line with a greatsword and answers every blow.',samurai:'One clean draw. A wandering blade that cuts like falling petals.',archer:'Swift and far-seeing. The wind carries every arrow home.',mage:'Reads the old equations of the sky and writes them in starlight.',
+  demon:'Power taken by pact. Every wound feeds the blade.',elementalist:'Fire, frost, storm and stone, bent to a single will.',stormcaller:'Calls the storm down and rides the thunder in.',berserker:'Rage turned to strength. Every swing shakes the ground.',ninja:'Unseen until the cut. Ink, shadow and a spinning blade.',
+  druid:'Speaks for the forest. Roots rise and blossoms heal.',gunslinger:'Six shots and steady hands. Time slows when the hammer falls.',brawler:'Fists like rising suns. Fast, fearless and close.',reaper:'Walks with the dusk, carrying a blade older than its name.'};
+ const cname=k=>{try{return CLASS7.C[k].n}catch(_){return k[0].toUpperCase()+k.slice(1)}},wname=k=>{try{return MYART.TH[k].n}catch(_){return''}};
+ const STG={},STQ=[];function stage(k){if(STG[k])return STG[k];const q=EVC1.ctx(k,LOOK[k]);STG[k]=q;STQ.push(k);while(STQ.length>3){const o=STQ.shift();if(o!==cur&&o!==nxt){const z=STG[o];delete STG[o];try{z.plate.width=z.plate.height=1;z.plateB.width=z.plateB.height=1}catch(_){}}else STQ.push(o)}return q}
+ // ---------- the page
+ const root=document.createElement('div');root.id='rbl';root.setAttribute('role','dialog');root.setAttribute('aria-label','Rootbound sign in');
+ root.innerHTML='<canvas id="rblc" width="'+W+'" height="'+H+'"></canvas><div class="rbl-shade"></div>'+
+  '<div class="rbl-logo" aria-label="Rootbound"><div class="rbl-mark">'+(window.RB_BRANDSYM?String(RB_BRANDSYM).split('brG').join('rblG').replace('class="br-sym"','class="rbl-sym"'):'')+'<b>ROOTBOUND</b></div><i>EVERY WORLD IS WAITING TO BE REMEMBERED</i></div>'+
+  '<div class="rbl-class"><small></small><h2></h2><div class="w"></div><p></p></div><nav class="rbl-roster" aria-label="Classes"></nav>'+
+  '<aside class="rbl-panel"><div class="rbl-body"></div></aside><div class="rbl-foot"><div class="rbl-srv"><i></i><span>Connecting…</span></div><div class="rbl-ver"><span class="v"></span><button class="rbl-mus" title="Music" aria-label="Music">♪</button></div></div><div class="rbl-fade"></div>';
+ const $q=s=>root.querySelector(s),cv=$q('#rblc'),x=cv.getContext('2d',{alpha:false}),body=$q('.rbl-body'),srv=$q('.rbl-srv'),clsEl=$q('.rbl-class'),roster=$q('.rbl-roster');
+ const ver=(navigator.userAgent.match(/Rootbound\/(\d+\.\d+\.\d+)/i)||[])[1];$q('.rbl-ver .v').textContent=ver?'Version '+ver:'';
+ // ---------- quiet interface sounds and the login music
+ let AC0=null;const actx=()=>{try{if(!AC0)AC0=new(window.AudioContext||window.webkitAudioContext)();if(AC0.state=='suspended')AC0.resume();return AC0}catch(_){return null}};
+ const vol=()=>{try{return mute?0:cl(OPT.sv==null?1:+OPT.sv,0,1)}catch(_){return 1}},mvol=()=>{try{return mute?0:cl(OPT.mv==null?1:+OPT.mv,0,1)}catch(_){return 1}};
+ function blip(f0,f1,d,type,v,dl){const a=actx();if(!a||!vol())return;const t=a.currentTime+(dl||0),o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*vol(),t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.05)}
+ const SND={hover:()=>blip(1500,1250,.05,'sine',.018),click:()=>{blip(660,640,.16,'triangle',.035);blip(990,980,.2,'sine',.022,.04)},ok:()=>{[523,659,784,1047].forEach((f,i)=>blip(f,f,.5,'sine',.03,i*.08))},err:()=>{blip(240,200,.3,'triangle',.035)},swap:()=>{blip(400,900,.28,'sine',.016)}};
+ const mus=new Audio('audio/login/theme.mp3');mus.loop=true;mus.preload='auto';mus.volume=0;let musOn=lg('rb_loginmusic')!=='0',musT=0;
+ function musGo(){if(!musOn||!vis)return;try{const p=mus.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}cancelAnimationFrame(musT);const t0=performance.now(),v0=mus.volume,to=.55*mvol(),f=n=>{const k=cl((n-t0)/2200,0,1);mus.volume=cl(v0+(to-v0)*k,0,1);if(k<1)musT=requestAnimationFrame(f)};musT=requestAnimationFrame(f)}
+ function musFade(ms,then){cancelAnimationFrame(musT);const t0=performance.now(),v0=mus.volume,f=n=>{const k=cl((n-t0)/ms,0,1);mus.volume=cl(v0*(1-k),0,1);if(k<1)musT=requestAnimationFrame(f);else{try{mus.pause()}catch(_){}then&&then()}};musT=requestAnimationFrame(f)}
+ const musBtn=$q('.rbl-mus');musBtn.classList.toggle('off',!musOn);musBtn.onclick=()=>{musOn=!musOn;ls('rb_loginmusic',musOn?'1':'0');musBtn.classList.toggle('off',!musOn);if(musOn)musGo();else musFade(400)};
+ const firstTouch=()=>{actx();musGo();removeEventListener('pointerdown',firstTouch,true);removeEventListener('keydown',firstTouch,true)};addEventListener('pointerdown',firstTouch,true);addEventListener('keydown',firstTouch,true);
+ root.addEventListener('mouseover',e=>{const b=e.target.closest&&e.target.closest('button,a');if(b&&!b.disabled&&b!==root.__hov){root.__hov=b;SND.hover()}});
+ // the game's own music waits until the player is in
+ let held=false;{const _sb=startBGM;startBGM=function(){if(vis){held=true;return}return _sb.apply(this,arguments)}}
+ // ---------- the showcase
+ let cur=ORDER[(Math.random()*ORDER.length)|0],nxt=null,tx0=0,last=0,raf=0,vis=false,tLast=performance.now(),T=0,autoT=0,hoverRoster=false;
+ const BUST={};function bust(k){if(BUST[k])return BUST[k];const c=document.createElement('canvas');c.width=c.height=112;const y=c.getContext('2d'),sp=EVC1.SPEC[k],P=sp.pal||['#c9a8ff','#2a1a4a','#fff'];
+  const G=y.createRadialGradient(56,40,8,56,56,80);G.addColorStop(0,P[2]||'#fff');G.addColorStop(.35,P[0]);G.addColorStop(1,P[1]);y.fillStyle=G;y.fillRect(0,0,112,112);
+  try{const s=.118,pose=Object.assign({},EVC1.POSE.great.gather,{noWpn:1,nh:[-16,560],fh:[10,556],hd:{yaw:.28,eye:{open:.95,col:sp.eye}}});y.save();y.translate(56+14*s,70+1422*s);y.scale(s,s);FILM1.body(y,LOOK[k],pose,{t:2,C:sp.C,dress:sp.dress,dk:{p1:1,p2:1,p3:1},evo:sp.evo?sp.evo({p1:1,p2:1,p3:1},true):null,wind:.25});y.restore()}catch(e){console.error('LOGIN1 bust',k,e)}
+  return BUST[k]=c}
+ function buildRoster(){roster.innerHTML='';const prev=document.createElement('button');prev.className='arr';prev.textContent='‹';prev.setAttribute('aria-label','Previous class');prev.onclick=()=>step(-1);roster.appendChild(prev);
+  for(const k of ORDER){const b=document.createElement('button');b.dataset.k=k;b.title=cname(k);b.setAttribute('aria-label',cname(k));b.onclick=()=>{if(k!==cur)swapTo(k)};roster.appendChild(b)}
+  const nx=document.createElement('button');nx.className='arr';nx.textContent='›';nx.setAttribute('aria-label','Next class');nx.onclick=()=>step(1);roster.appendChild(nx);
+  roster.onmouseenter=()=>hoverRoster=true;roster.onmouseleave=()=>hoverRoster=false;
+  // the portraits are painted one per frame by the showcase loop, so the first frame is not held up
+  bustQ=ORDER.slice()}
+ let bustQ=[];
+ function step(d){const i=ORDER.indexOf(nxt||cur);swapTo(ORDER[(i+d+ORDER.length)%ORDER.length])}
+ function showText(k){const sp=EVC1.SPEC[k],P=sp.pal;root.style.setProperty('--cc',P[0]);root.style.setProperty('--cc2',P[1]);const n=ORDER.indexOf(k)+1;
+  clsEl.classList.remove('swap');void clsEl.offsetWidth;clsEl.classList.add('swap');clsEl.querySelector('small').textContent=ROLE[k].toUpperCase()+'  ·  '+String(n).padStart(2,'0')+' / '+ORDER.length;clsEl.querySelector('h2').textContent=cname(k);
+  clsEl.querySelector('.w').innerHTML=esc(KIND[EVC1.TYPE(k)]||'')+(wname(k)?'  ·  <em>'+esc(wname(k))+'</em>':'');clsEl.querySelector('p').textContent=DESC[k];
+  for(const b of roster.querySelectorAll('[data-k]'))b.classList.toggle('on',b.dataset.k==k)}
+ let queued=null;function swapTo(k){if(!EVC1.SPEC[k])return;if(nxt){if(k!==nxt)queued=k;return}if(k===cur)return;nxt=k;tx0=T;autoT=0;SND.swap();try{stage(k)}catch(e){console.error('LOGIN1 stage',k,e);nxt=null;return}showText(k)}
+ // one frame: the place, the sigil, the aura, the character, the light, the motes; and the change between two classes
+ const HX=790,HY=1010,HS=.5;
+ function idlePose(q,t){const p=q.pose.hero,hd=Object.assign({},p.hd||{}),bl=(t%4.6)<.11;hd.yaw=(hd.yaw==null?.26:hd.yaw)+sin(t*.37)*.05;hd.eye=Object.assign({open:.95},hd.eye||{});if(bl)hd.eye.open=.06;
+  let P=Object.assign({},p,{py:(p.py||0)+sin(t*1.6)*7,lean:(p.lean||0)+sin(t*.8)*.012,hd});
+  // a flourish every eleven seconds: the class's wind-up, half way, and back
+  const f=(t+3)%11;if(f>9.2&&f<10.6){const k=sin(Math.PI*(f-9.2)/1.4)*.5;P=FILM1.lerpPose(P,Object.assign({},q.pose.windup,{hd}),k)}return P}
+ function drawClass(q,k,a,dx,t){const sp=q.sp,P=sp.pal;x.save();x.globalAlpha=a;
+  const px=sin(t*.05)*30+dx*.25,py=sin(t*.07)*12;x.drawImage(q.plate,-80+px,-50+py,W+160,H+100);
+  x.restore();x.save();x.globalAlpha=a;x.translate(dx,0);
+  try{EVC1.sigil(q,x,HX,HY+6,480,1,t*.45,.6)}catch(_){}try{EVC1.aura(q,x,HX,HY,.7,t)}catch(_){}
+  try{EVC1.rays(x,HX,HY+60,12,900,P[0],.12+.06*sin(t*.9),t,7)}catch(_){}
+  const f=(t+3)%11,fl=f>9.6&&f<10.4?sin(Math.PI*(f-9.6)/.8):0;if(fl>0)glow(x,HX+180,HY-560,420,P[2]||'#fff',.35*fl);
+  try{EVC1.hero(q,t,x,HX,HY,HS,idlePose(q,t),{wind:.38+.16*sin(t*.9)+.1*sin(t*2.3),act:{rim:[P[2]||'#fff',1,-8,-3],rim2:[P[0],.55,9,-2]}})}catch(e){if(!drawClass.e){drawClass.e=1;console.error('LOGIN1 hero',k,e)}}
+  motes(x,ORDER.indexOf(k)+40,t,70,0,0,W,H,P[0],6,-26,.75);x.restore()}
+ const STAR=(()=>{const c=document.createElement('canvas');c.width=W;c.height=H*.55|0;const y=c.getContext('2d'),R=sr(5);for(let i=0;i<220;i++){const s=R()*1.6+.3;y.globalAlpha=.2+R()*.7;y.fillStyle=R()<.15?'#ffe6c0':'#fff';y.fillRect(R()*W,R()*c.height,s,s)}return c})();
+ function frame(now){raf=0;if(!vis)return;if(document.hidden){raf=requestAnimationFrame(frame);tLast=now;return}let dt=(now-tLast)/1000;tLast=now;if(dt>.1)dt=.1;
+  // about 60 frames a second at most; the showcase never needs more
+  if(now-last<15.5){raf=requestAnimationFrame(frame);return}last=now;T+=dt;
+  autoT+=dt;if(!nxt&&autoT>11&&!hoverRoster&&!document.hidden)step(1);
+  if(bustQ.length&&T>.35){const k=bustQ.shift(),b=roster.querySelector('[data-k="'+k+'"]');if(b&&!b.firstChild)try{b.appendChild(bust(k))}catch(_){}}
+  x.setTransform(1,0,0,1,0,0);x.globalAlpha=1;x.globalCompositeOperation='source-over';x.fillStyle='#05030c';x.fillRect(0,0,W,H);
+  const q0=STG[cur]||stage(cur);
+  if(nxt){const u=cl((T-tx0)/1.05,0,1),q1=STG[nxt];drawClass(q0,cur,1-ez(u),-260*ei2(u),T);drawClass(q1,nxt,ez(u),300*(1-eo(u)),T);
+   // the change: a sweep of the incoming class's light, a flash at its middle, streaks
+   const P=q1.sp.pal,sx=lerp(-400,W+400,eo(u));x.save();x.globalCompositeOperation='lighter';const G=x.createLinearGradient(sx-380,0,sx+380,0);G.addColorStop(0,'rgba(0,0,0,0)');G.addColorStop(.5,P[0]);G.addColorStop(1,'rgba(0,0,0,0)');x.globalAlpha=.45*sin(Math.PI*u);x.fillStyle=G;x.fillRect(0,0,W,H);x.restore();
+   if(u>.3&&u<.6)K.speedLines(x,HX,HY-400,ORDER.indexOf(nxt),T,'rgba(255,255,255,.8)',.4*sin(Math.PI*(u-.3)/.3),40,360);
+   if(u>=1){cur=nxt;nxt=null;autoT=0;if(queued){const q=queued;queued=null;swapTo(q)}else setTimeout(prefetch,1200)}}
+  else drawClass(q0,cur,1,0,T);
+  // high stars and drifting cloud light over every place
+  x.save();x.globalCompositeOperation='lighter';x.globalAlpha=.35+.1*sin(T*.7);x.drawImage(STAR,0,0);x.restore();
+  raf=requestAnimationFrame(frame)}
+ const ei2=u=>u*u;
+ function prefetch(){if(!vis)return;const k=ORDER[(ORDER.indexOf(cur)+1)%ORDER.length];const run=()=>{try{if(vis&&!STG[k])stage(k)}catch(_){}};if(window.requestIdleCallback)requestIdleCallback(run,{timeout:3000});else setTimeout(run,200)}
+ // ---------- the panel
+ let view='',prevForm='login',waitT=0,net0=Date.now();
+ const remember=()=>lg('rb_remember')!=='0';
+ const hasLocal=()=>{try{if(RB_ACCT.id||lg('rb_imported'))return false;const p=JSON.parse(LS.getItem('rbp')||'null');return !!(p&&(p.made||(p.lvl|0)>1||(p.xp|0)>3))}catch(_){return false}};
+ function field(id,label,type,ph,val,ac){return'<div class="rbl-f"><label for="'+id+'">'+label+'</label><input id="'+id+'" type="'+type+'" placeholder="'+esc(ph)+'" value="'+esc(val||'')+'" autocomplete="'+(ac||'off')+'" spellcheck="false" maxlength="'+(type=='password'?128:40)+'">'+(type=='password'?'<button type="button" class="eye" tabindex="-1" aria-label="Show password" data-eye="'+id+'">👁</button>':'')+'</div>'}
+ function goBtn(id,txt){return'<button class="rbl-go" id="'+id+'">'+txt+'</button>'}
+ function render(v,o){view=v;o=o||{};let h='';
+  if(v=='login'){prevForm='login';h='<h3>Welcome to Rootbound</h3><p class="sub">'+esc(o.msg||'Sign in to enter the world.')+'</p>'+field('rbn','Account name','text','Your account name',o.name!=null?o.name:(lg('rb_lastname')||''),'username')+field('rbp','Password','password','Your password','','current-password')+
+   '<div class="rbl-row"><label class="rbl-check"><input type="checkbox" id="rbr"'+(remember()?' checked':'')+'> Remember me</label><button class="rbl-link" data-a="forgot">Forgot password?</button></div><div class="rbl-err" role="alert">'+esc(o.err||'')+'</div>'+goBtn('rbgo','Sign in')+'<button class="rbl-alt" data-a="register">Create an account</button>'}
+  else if(v=='register'){prevForm='register';const lp=hasLocal();h='<h3>Create your account</h3><p class="sub">One account keeps your character and progress safe on the server, on any computer.</p>'+field('rbn','Account name','text','3–16 letters, numbers, _ or -',o.name||'','username')+field('rbp','Password','password','At least 8 characters','','new-password')+field('rbp2','Password again','password','The same password','','new-password')+
+   (lp?'<div class="rbl-row"><label class="rbl-check"><input type="checkbox" id="rbim" checked> Bring my progress from this computer</label></div>':'')+'<div class="rbl-err" role="alert">'+esc(o.err||'')+'</div>'+goBtn('rbgo','Create account')+'<button class="rbl-alt" data-a="login">I already have an account</button>'}
+  else if(v=='forgot'){prevForm='forgot';h='<h3>Forgot your password?</h3><p class="sub">Enter your account name and the recovery key you were given when you made it. If you lost the key too, the server owner can reset your password.</p>'+field('rbn','Account name','text','Your account name',o.name!=null?o.name:(lg('rb_lastname')||''),'username')+field('rbk','Recovery key','text','XXXXX-XXXXX-XXXXX-XXXXX','','off')+field('rbp','New password','password','At least 8 characters','','new-password')+field('rbp2','New password again','password','The same password','','new-password')+
+   '<div class="rbl-err" role="alert">'+esc(o.err||'')+'</div>'+goBtn('rbgo','Reset password')+'<button class="rbl-alt" data-a="login">Back to sign in</button>'}
+  else if(v=='welcome'){const n=(NET7.auth&&NET7.auth.name)||lg('rb_lastname')||'';h='<h3>Welcome back</h3><p class="sub">Your character and progress are waiting on the server.</p><div class="rbl-who"><div class="av">'+esc((n[0]||'?').toUpperCase())+'</div><div><b>'+esc(n)+'</b><small>'+(NET7.auth&&NET7.auth.owner?'Server owner':'Signed in')+'</small></div></div>'+goBtn('rbgo','Enter Rootbound')+'<button class="rbl-alt" data-a="switch">Use another account</button>'}
+  else if(v=='key'){h='<h3>'+(o.r?'Password reset':'Your recovery key')+'</h3><p class="sub">'+(o.r?'Your new password is set and you are signed in. Here is a new recovery key; the old one no longer works.':'This key resets your password if you ever forget it. It is shown only once: write it down or keep it somewhere safe.')+'</p><div class="rbl-key">'+esc(o.k)+'</div>'+
+   '<div class="rbl-row"><button class="rbl-link" data-a="copy">Copy key</button><span class="rbl-ok" id="rbcp"></span></div><div class="rbl-row"><label class="rbl-check"><input type="checkbox" id="rbsv"> I have saved my recovery key</label></div>'+goBtn('rbgo','Continue')}
+  else if(v=='busy'){h='<div class="rbl-busy"><div class="ring"></div><b>'+esc(o.t||'Connecting…')+'</b><small>'+esc(o.s||'')+'</small><div class="rbl-bar"><i></i></div></div>'}
+  else if(v=='error'){h='<h3>'+esc(o.title||'Can’t reach the servers')+'</h3><p class="sub">'+esc(o.msg||'Rootbound is an online game and needs its server. Check your internet connection, then try again.')+'</p><div class="rbl-err" role="alert">'+esc(o.err||'')+'</div>'+goBtn('rbgo',o.btn||'Retry')+(o.alt?'<button class="rbl-alt" data-a="'+o.alt[0]+'">'+esc(o.alt[1])+'</button>':'')}
+  body.innerHTML='<div class="fade">'+h+'</div>';
+  for(const b of body.querySelectorAll('[data-eye]'))b.onclick=()=>{const i=body.querySelector('#'+b.dataset.eye);i.type=i.type=='password'?'text':'password'};
+  for(const b of body.querySelectorAll('[data-a]'))b.onclick=()=>act(b.dataset.a);
+  const go=body.querySelector('#rbgo');if(go){go.onclick=e=>{ripple(go,e);submit()};if(v=='key'){go.disabled=true;body.querySelector('#rbsv').onchange=e=>{go.disabled=!e.target.checked}}}
+  for(const i of body.querySelectorAll('input'))i.addEventListener('input',()=>{const e=body.querySelector('.rbl-err');if(e&&e.textContent)e.textContent=''});
+  netUi();const f=body.querySelector('input:not([type=checkbox])');if(f&&vis)setTimeout(()=>{try{(f.value&&body.querySelectorAll('input:not([type=checkbox])')[1]||f).focus()}catch(_){}},60)}
+ function ripple(b,e){try{const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height),s=document.createElement('span');s.className='rbl-ripple';s.style.cssText='width:'+d+'px;height:'+d+'px;left:'+((e.clientX||r.left+r.width/2)-r.left-d/2)+'px;top:'+((e.clientY||r.top+r.height/2)-r.top-d/2)+'px';b.appendChild(s);setTimeout(()=>s.remove(),650)}catch(_){}SND.click()}
+ const val=id=>{const i=body.querySelector('#'+id);return i?i.value:''},err=(m)=>{const e=body.querySelector('.rbl-err');if(e)e.textContent=m;SND.err()};
+ function act(a){SND.click();if(a=='forgot')render('forgot',{name:val('rbn')});else if(a=='register')render('register',{name:val('rbn')});else if(a=='login')render('login',{name:val('rbn')});
+  else if(a=='switch'){render('busy',{t:'Signing out…'});NET7.signOut()}else if(a=='copy'){const k=body.querySelector('.rbl-key').textContent;try{navigator.clipboard.writeText(k).then(()=>{const c=body.querySelector('#rbcp');if(c)c.textContent='Copied'})}catch(_){}}
+  else if(a=='reload'){try{location.reload()}catch(_){}}}
+ const online=()=>NET7.state=='ready'||NET7.state=='online';
+ function submit(){if(view=='error'){if(NET7.state=='offline'||!NET7.hasUrl){render('busy',{t:'Connecting…',s:'Reaching the Rootbound servers'});NET7.retry()}else location.reload();return}
+  if(view=='welcome'){ss('rb_login_go','1');proceed();return}
+  if(view=='key'){ss('rb_newkey',null);proceed();return}
+  if(!online()){err('Not connected yet. Please wait a moment.');return}
+  const n=val('rbn').trim(),p=val('rbp');
+  if(view=='login'){if(!n||!p)return err('Enter your account name and password.');ls('rb_remember',body.querySelector('#rbr').checked?'1':'0');ls('rb_lastname',n);begin('Signing in…');NET7.login(n,p);return}
+  if(view=='register'){if(!/^[A-Za-z0-9_-]{3,16}$/.test(n))return err('Account name: 3–16 letters, numbers, _ or -');if(p.length<8)return err('The password needs at least 8 characters.');if(p!==val('rbp2'))return err('The two passwords are not the same.');const im=body.querySelector('#rbim');ss('rb_import',im&&im.checked?'1':null);ls('rb_lastname',n);if(lg('rb_remember')==null)ls('rb_remember','1');begin('Creating your account…');NET7.register(n,p);return}
+  if(view=='forgot'){const k=val('rbk').trim();if(!n||!k)return err('Enter your account name and recovery key.');if(p.length<8)return err('The new password needs at least 8 characters.');if(p!==val('rbp2'))return err('The two passwords are not the same.');ls('rb_lastname',n);begin('Checking your recovery key…');NET7.recover(n,k,p);return}}
+ function begin(t){ss('rb_login_go','1');const n=val('rbn');render('busy',{t,s:'Talking to the Rootbound servers'});render.n=n;clearTimeout(waitT);waitT=setTimeout(()=>{if(view=='busy'&&!NET7.auth){ss('rb_login_go',null);render(prevForm,{name:render.n,err:'The server did not answer. Please try again.'})}},20000)}
+ // signed in (and on this account's own save): load the progress, then enter
+ function proceed(){const nk=sg('rb_newkey');if(nk){try{const o=JSON.parse(nk);render('key',o);SND.ok();return}catch(_){ss('rb_newkey',null)}}
+  render('busy',{t:'Loading your progress…',s:'Your character is kept on the server'});const t0=Date.now();
+  const tick=()=>{if(!vis)return;let live=false;try{live=!!ACCT13.live}catch(_){}if(NET7.online&&NET7.auth&&live){render('busy',{t:'Entering the world…',s:'The Plaza is opening'});SND.ok();setTimeout(leave,650);return}
+   if(Date.now()-t0>30000){ss('rb_login_go',null);render('error',{title:'Your progress did not load',msg:'The server did not send your saved progress in time. Your account is safe. Please try again.',btn:'Try again'});return}setTimeout(tick,120)};tick()}
+ // ---------- the network, as the player sees it
+ function netUi(){const st=NET7.state,e=NET7.err;let t='Connecting…',c='';
+  if(st=='ready'||st=='online'){c='ok';t='Online'+(NET7.rtt?' · '+NET7.rtt+' ms':'')}else if(st=='connecting')t=/Waking/.test(e)?'Waking the server…':'Connecting…';else if(st=='reconnecting')t='Reconnecting…';else if(st=='offline'&&e){c='bad';t='Server unreachable'}
+  srv.className='rbl-srv '+c;srv.querySelector('span').textContent=t;
+  const go=body.querySelector('#rbgo');if(go&&/^(login|register|forgot)$/.test(view)){const okNet=st=='ready'||st=='online';go.disabled=!okNet;go.classList.toggle('busy',!okNet&&st!='offline');go.title=okNet?'':'Connecting to the server…'}}
+ function onNet(st,e){netUi();if(!vis){lost.state(st,e);return}
+  if(st=='offline'&&e&&view!='error'&&!(view=='busy'&&NET7.auth)){ss('rb_login_go',null);render('error',{msg:'Rootbound is an online game and needs its server. Check your internet connection, then try again.',err:e});return}
+  if(st=='connecting'&&/Waking/.test(e||'')&&view=='busy'&&!NET7.auth)render('busy',{t:'Waking the server…',s:'The server sleeps when nobody is playing. This takes up to a minute.'});
+  if(st=='ready'){// connected and nobody is signed in on this connection
+   if(view=='busy'||view=='error'||!view){const rl=lg('rb_relogin');ls('rb_relogin',null);const so=sg('rb_signedout');ss('rb_signedout',null);ss('rb_login_go',null);render('login',{msg:rl?'Your sign-in ended. Please sign in again.':so?'You are signed out.':null})}}}
+ function onAuth(m){clearTimeout(waitT);if(!vis)return;
+  if(!m.ok){if(m.expired)return;/* the page is reloading */ss('rb_login_go',null);if(view=='busy'||/^(login|register|forgot)$/.test(view)){render(prevForm,{name:render.n,err:m.m||'That did not work'});SND.err()}return}
+  if(m.kind=='guest')return;
+  if(m.uid!==RB_ACCT.id){render('busy',{t:'Opening your account…',s:'Loading your character'});return}/* ACCT13 switches to this account's own save and reloads */
+  if(sg('rb_login_go'))proceed();else render('welcome')}
+ // ---------- leaving the login screen for the world
+ function leave(){if(!vis)return;ss('rb_login_go',null);root.classList.add('leaving');SND.swap();musFade(900);
+  setTimeout(()=>{vis=false;cancelAnimationFrame(raf);window.RB_KEYGATE=null;window.RB_KEYOWN=null;window.RB_COVER=cov0;root.remove();
+   for(const k in STG){try{STG[k].plate.width=STG[k].plate.height=1;STG[k].plateB.width=STG[k].plateB.height=1}catch(_){}delete STG[k]}
+   const neu=typeof made!='undefined'&&!made;try{if(neu&&typeof INTRO60!='undefined'){INTRO60.launch(()=>{try{HOME()}catch(_){}});}else{if(held)startBGM();HOME()}}catch(e){console.error('LOGIN1 home',e);try{HOME()}catch(_){}}
+   // the world should be open within a few seconds; if it is not, say so instead of leaving the player looking at nothing
+   const t0=Date.now(),chk=()=>{if(typeof entered!='undefined'&&entered)return;if(typeof INTRO60!='undefined'&&INTRO60.playing){setTimeout(chk,1000);return}if(Date.now()-t0>25000){lost.show('The world did not open','The server did not open the Plaza in time.',true);return}setTimeout(chk,500)};setTimeout(chk,1500)},950)}
+ // ---------- a lost connection while playing
+ const lost=(()=>{const el=document.createElement('div');el.id='rblost';el.setAttribute('role','alertdialog');document.body.appendChild(el);let on=false,t0=0,c0=false,iv=0;
+  function paint(title,msg,btns,spin){el.innerHTML='<div class="p">'+(spin?'<div class="ring"></div>':'')+'<b>'+esc(title)+'</b><p>'+esc(msg)+'</p>'+(btns||[]).map(b=>'<button data-l="'+b[0]+'"'+(b[2]?' class="s"':'')+'>'+esc(b[1])+'</button>').join('')+'</div>';
+   for(const b of el.querySelectorAll('[data-l]'))b.onclick=()=>{const a=b.dataset.l;if(a=='retry'){t0=Date.now();NET7.retry();paint('Reconnecting…','Reaching the Rootbound servers.',null,true)}else if(a=='login'){try{location.reload()}catch(_){}}else if(a=='close')hide()}}
+  function show(title,msg,fatal){if(!on){on=true;c0=!!window.RB_COVER;t0=Date.now()}window.RB_COVER=true;try{for(const q in K0)K0[q]=0}catch(_){}el.classList.add('on');paint(title,msg,fatal?[['login','Back to sign in']]:null,!fatal);clearInterval(iv);if(!fatal)iv=setInterval(()=>{if(!on)return clearInterval(iv);const s=(Date.now()-t0)/1000|0;if(s>=40)paint('Still reconnecting…','The connection to the server was lost '+s+' seconds ago. Your progress up to then is saved.',[['retry','Retry now'],['login','Back to sign in',1]],true)},1000)}
+  function hide(){if(!on)return;on=false;clearInterval(iv);el.classList.remove('on');window.RB_COVER=c0}
+  function state(st,e){if(typeof entered=='undefined'||!entered){return}if(st=='reconnecting'||st=='connecting'){show('Connection lost','Reconnecting to the Rootbound servers. The game is paused meanwhile.')}else if((st=='online')&&NET7.auth){hide()}else if(st=='offline'&&e&&!on)show('Connection lost',e,true)}
+  return{show,hide,state,el,get on(){return on}}})();
+ const K0=(()=>{try{return new Function('return typeof K!="undefined"?K:{}')()}catch(_){return{}}})();
+ // ---------- start
+ let cov0=false;
+ function boot(){vis=true;cov0=!!window.RB_COVER;window.RB_COVER=true;window.RB_KEYOWN=root;window.RB_KEYGATE=e=>{if(e.type!='keydown')return;actx();if(musOn&&mus.paused)musGo();const t=e.target,typing=t&&/^(INPUT|TEXTAREA)$/.test(t.tagName);if(e.key=='Enter'&&(typing||t===document.body)){const g=body.querySelector('#rbgo');if(g&&!g.disabled){ripple(g,{});submit()}}else if(!typing&&e.key=='ArrowLeft')step(-1);else if(!typing&&e.key=='ArrowRight')step(1)};
+  document.body.appendChild(root);buildRoster();showText(cur);try{stage(cur)}catch(e){console.error('LOGIN1 stage',e)}requestAnimationFrame(()=>root.classList.add('on'));setTimeout(()=>root.classList.add('settled'),2600);tLast=performance.now();raf=requestAnimationFrame(frame);setTimeout(prefetch,2500);musGo();
+  const tok=lg('rbtok');if(sg('rb_login_go')&&tok)render('busy',{t:'Signing in…',s:'Opening your account'});else if(tok)render('busy',{t:'Connecting…',s:'Reaching the Rootbound servers'});else render('busy',{t:'Connecting…',s:'Reaching the Rootbound servers'});
+  NET7.onState(onNet);NET7.onAuth(onAuth);NET7.on('rkey',m=>{if(m.ok)keyBox(m.key);else lost.show('Recovery key',m.m||'That did not work',false)});
+  // already answered before this screen was ready (a fast local server)
+  setTimeout(()=>{const st=NET7.state;if(st=='online'&&NET7.auth&&NET7.auth.kind!='guest'&&NET7.auth.uid===RB_ACCT.id)onAuth({ok:1,uid:NET7.auth.uid,kind:NET7.auth.kind});else onNet(st,NET7.err)},30)}
+ function keyBox(k){lost.show('Your new recovery key','',true);lost.el.querySelector('.p').innerHTML='<b>Your new recovery key</b><p>It resets your password if you forget it. The old key no longer works. Keep this one somewhere safe.</p><div style="font:700 18px Consolas,monospace;letter-spacing:.12em;padding:14px;border:1px dashed #c9a8ff;border-radius:12px;margin:0 0 16px;user-select:all">'+esc(k)+'</div><button data-l="copy">Copy</button><button data-l="close" class="s">Done</button>';
+  lost.el.querySelector('[data-l=copy]').onclick=()=>{try{navigator.clipboard.writeText(k)}catch(_){}};lost.el.querySelector('[data-l=close]').onclick=()=>lost.hide()}
+ boot();
+ return{get on(){return vis},needNet(){if(vis)return;lost.show('Connection lost','Reconnecting to the Rootbound servers. The game is paused meanwhile.')},fatal(msg){ss('rb_login_go',null);if(vis){render('error',{title:'Disconnected',msg:String(msg||'You were disconnected from the server.'),btn:'Back to sign in'});view='error';body.querySelector('#rbgo').onclick=()=>location.reload();return}lost.show('Disconnected',String(msg||'You were disconnected from the server.'),true)},newKey(){NET7.newKey()},swapTo,get cur(){return cur},LOOK,ORDER}})()}catch(e){console.error('LOGIN1',e);try{window.RB_LOGINHOME&&window.RB_LOGINHOME()}catch(_){}}
 
 
 </script></body></html>

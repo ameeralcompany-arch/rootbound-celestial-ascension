@@ -47,12 +47,12 @@ const GUIDE8=(()=>{
    +'<section><h5>Earns tool XP for</h5><p>'+d.xp+'. The wrong tool earns nothing.</p></section></div></div>'
    +'<section class="tg8lvls"><h5>Levels and rewards</h5><p class="dim">Each level pays gems and adds a perk. The tool shines brighter as it climbs, and level 10 turns it rainbow.</p>'+lvList(id)+'</section>'}
  function basics(){const rows=[['Dirt · grass · sand · glass · leaves','pip'],['Stone · cobble · brick · marble · deepslate','pebble'],['Ores · crystal · gold · Crystal Geodes','glimmer'],['Trees · wood · planks · bamboo · crates','twiggy'],['Lakes and pools (fish)','bubbles']];
-  return'<div class="tg8cards"><div class="tg8card"><h5>1 · Hold a tool</h5><p>Put a tool in a <b>hotbar slot (1–7)</b> and press its number, or <b>scroll the mouse wheel</b> to it. <kbd>X</kbd> swaps between your last weapon and your last tool.</p></div>'
+  return'<div class="tg8cards"><div class="tg8card"><h5>1 · Hold a tool</h5><p>Put a tool in a <b>hotbar slot (1–7)</b> and press its number, or <b>scroll the mouse wheel</b> to it. <kbd>Tab</kbd> swaps between your last weapon and your last tool.</p></div>'
    +'<div class="tg8card"><h5>2 · Mine</h5><p><b>Left-click</b> a block within reach. Hold the button to keep mining. The right tool breaks a block in <b>one hit</b> with its own sound: a soft crunch for dirt, a knock for wood, a crack for stone and a crystal <i>ting</i> for ore.</p></div>'
    +'<div class="tg8card"><h5>3 · Pick the right one</h5><p>The wrong tool still works but needs many slow taps, makes a dull <i>tok</i> and earns no XP. You will see “Slow — try another tool”.</p></div>'
    +'<div class="tg8card warn"><h5>Only tools break blocks</h5><p>Weapons fight; they never dig. Your fists can still open Tackle Boxes for bait. Tools never wear out or break.</p></div></div>'
    +'<section><h5>Which tool for which block?</h5><div class="tg8tbl">'+rows.map(([a,id])=>'<button class="tg8row" data-g="'+id+'" style="--tc:'+TOOLLV.COL[id]+'"><span>'+esc(a)+'</span><b><img alt="" src="'+ico('w:'+id)+'">'+esc(NM(id))+'</b></button>').join('')+'</div></section>'
-   +'<section><h5>Opening this guide</h5><p>Press <kbd>G</kbd> anywhere (beside a door or object G sets that object up instead), open the hub with <kbd>C</kbd> and choose <b>Tool Guide</b>, or press <b>Tool guide</b> in your inventory.</p></section>'}
+   +'<section><h5>Opening this guide</h5><p>Press <kbd>G</kbd> anywhere, open Rootlink with <kbd>M</kbd> and choose <b>Guide</b>, or press <b>Tool guide</b> in your inventory. To set up a door, chest or teleporter, hold the wrench (<kbd>N</kbd>), press <kbd>R</kbd> until it says Configure, and click the object.</p></section>'}
  function levels(){const sel=IDS.includes(pg)?pg:(IDS.includes(wp)?wp:'pip');let tot=0;
   let h='<section><h5>How tools level up</h5><p>Every tool goes from <b>level 1 to 10</b> by doing its own job. Glimmer learns from ores, Pebble from stone, Pip from soft blocks, Twiggy from trees, Bubbles from fish. Each level pays gems, adds a perk and makes the tool shine brighter.</p>'
    +'<ul class="tg8sp">'+IDS.map(id=>'<li><b>'+esc(NM(id))+':</b> '+D[id].xp+'</li>').join('')+'</ul></section>';
@@ -88,7 +88,7 @@ const GUIDE8=(()=>{
  function close(){if(on())UI6.close()}
  function refresh(){if(on())render()}
  addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.altKey||e.metaKey||String(e.key).toLowerCase()!='g')return;try{if(isTextEl(e.target))return}catch(_){}
-  if(typeof entered=='undefined'||!entered||creatorOn||dlgOpen||menuEl.style.display!='none'||UI6.on)return;try{if(OBJ6.near())return}catch(_){}open()});
+  if(typeof entered=='undefined'||!entered||creatorOn||dlgOpen||menuEl.style.display!='none'||UI6.on)return;open()});
  // one-time hint
  const HK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbptgh';
  let hT=0;const hI=setInterval(()=>{try{if(hinted){clearInterval(hI);return}if(localStorage.getItem(HK())){hinted=true;clearInterval(hI);return}if(!entered||menuEl.style.display!='none'){hT=0;return}hT+=3;if(hT<15||UI6.on||showInv)return;

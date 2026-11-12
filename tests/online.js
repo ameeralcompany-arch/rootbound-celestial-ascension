@@ -5,7 +5,7 @@ const {chromium}=require('playwright');const {createServer}=require('../server/s
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&x!==''?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unref();
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbonlb-'));const PW='owner-password-1';
-const S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,wxCooldownMs:0,maxConnsPerIp:200,ownerName:'Boss',ownerPass:PW,client:path.join(__dirname,'..','index.html')});
+const S=createServer({allowGuests:true,csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,wxCooldownMs:0,maxConnsPerIp:200,ownerName:'Boss',ownerPass:PW,client:path.join(__dirname,'..','index.html')});
 const errs=[];
 async function client(b,url,tag){const ctx=await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();p.on('pageerror',e=>errs.push(tag+': '+e.message.slice(0,200)));
  await p.goto(url);await p.waitForTimeout(800);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(400);await p.evaluate(()=>{try{SHOW7.close()}catch(_){}});
@@ -60,7 +60,7 @@ const hash=p=>ev(p,()=>{let h=0;for(let i=0;i<tiles.length;i++)h=(h*31+tiles[i])
   await ev(O,()=>{P.x=200;P.vx=P.vy=0});await sleep(800);
   await ev(A,()=>{inv[6]=25;barDirty=1;ONL10.report(true)});await sleep(300);
   // ---- wrench -> player card -> trade window
-  await ev(A,()=>{try{menuEl.style.display='none'}catch(_){}});await A.keyboard.press('v');await sleep(250);ok('V puts the wrench in your hand, and it draws without errors',await ev(A,()=>wp=='wrench'));
+  await ev(A,()=>{try{menuEl.style.display='none'}catch(_){}});await A.keyboard.press('n');await sleep(250);ok('N puts the wrench in your hand, and it draws without errors',await ev(A,()=>wp=='wrench'));
   const wr=await ev(A,()=>{const peer=SOC6.peers().find(p=>p.presence.n=='beatrix');const r=rp[peer.peer];mx=r.x-cam.x;my=r.y+20-cam.y;wcd=0;useWeapon();const c=document.getElementById('pcard10');return{open:c&&c.style.display=='block',txt:c&&c.textContent,trade:!!c.querySelector('[data-pc=trade]'),own:!!c.querySelector('[data-pc=ban]')}});
   ok('wrenching a player opens their card with Trade',wr.open&&/beatrix/.test(wr.txt)&&wr.trade&&!wr.own,wr);
   ok('the wrench is a real tool you can hold',await ev(A,()=>WPN.wrench.k=='tool'&&own.wrench&&wp=='wrench'));

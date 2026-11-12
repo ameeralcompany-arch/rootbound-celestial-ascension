@@ -1,9 +1,12 @@
 // ===== NET7: persistent shared worlds over WebSocket (replaces the old PeerJS host rooms) =====
 // The server (server/server.js) is authoritative for world data, roles and every privileged action. This file never trusts
-// local flags for authorization; it only displays what the server tells it. The game works fully offline when no server is reachable.
+// local flags for authorization; it only displays what the server tells it. Rootbound is one online game: players sign in (LOGIN1) and play on the server.
+// There is no offline fallback for players: a slow server is waited for, a lost connection is retried behind a cover, and a server that cannot be reached
+// shows a connection screen with Retry. Only automated test browsers (RB_AUTOMATION) still run a world without a server or play as a guest.
 const say6=(a,b,c)=>{try{UI6.say6(a,b,c)}catch(_){}};
 const NET7=(()=>{
- const LOCAL_ID=myId,esc=DLG7.esc,SOLO=!!(window.RB_CONFIG&&RB_CONFIG.solo);   // single-player build: no server, no online UI
+ const LOCAL_ID=myId,esc=DLG7.esc,SOLO=!!(window.RB_CONFIG&&RB_CONFIG.solo);   // automated tests only: no server, no online UI
+ const PLAYER=!SOLO&&!window.RB_AUTOMATION,SL=[],AL=[],LG=()=>window.LOGIN1||null;   // PLAYER: the real game, online only
  const HH={},HK=[];let mySid='',st='offline',ws=null,url='',auth=null,info=null,list=[],room=null,want=null,joinedW=null,tries=0,retry=false,rt=0,hbT=0,lastPong=0,rtt=0,err='',manual=false,wantCreate=false,lastEnter=0,saved=null,resyncAt=0;
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
  const D=window.RBDIAG||{stage(){},err(){}};
@@ -15,7 +18,7 @@ const NET7=(()=>{
   return s?norm(s):''}
  const send=m=>{try{if(ws&&ws.readyState==1){ws.send(JSON.stringify(m));return true}}catch(_){}return false};
  // ---- connection lifecycle
- function setSt(s,e){st=s;err=e||'';try{if(menuEl.style.display!='none')render()}catch(_){}try{TOOLS7.sync()}catch(_){}}
+ function setSt(s,e){st=s;err=e||'';for(const f of SL)try{f(st,err)}catch(_){}try{if(menuEl.style.display!='none')render()}catch(_){}try{TOOLS7.sync()}catch(_){}}
  let wakeN=0;function connect(u,isManual){if(ws){try{ws.onclose=null;ws.close()}catch(_){}ws=null}url=u;manual=!!isManual;if(isManual)retry=false;if(!u){setSt('offline');return}setSt(retry?'reconnecting':'connecting',err);D.stage('net-connect',u.replace(/^wss?:\/\//,'').slice(0,60));
   let w,opened=false;try{w=new WebSocket(u)}catch(e){setSt('offline','Could not open a connection: '+e.message);D.err&&0;return}ws=w;
   const to=setTimeout(()=>{if(!opened){try{w.close()}catch(_){}}},7000);
@@ -23,8 +26,8 @@ const NET7=(()=>{
   w.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(_){return}onMsg(m)};
   w.onerror=()=>{};
   w.onclose=()=>{clearTimeout(to);if(ws!==w)return;ws=null;clearInterval(hbT);const was=st;auth=null;info=null;drop();
-   if(was=='online'||was=='reconnecting'||retry){retry=true;setSt('reconnecting','Connection lost');say6&&say6('Connection lost','Your changes are not being saved. Reconnecting…',4000);sched()}
-   else if(!opened&&!manual&&wakeN<14){/* a free server sleeps and takes about a minute to wake */if(!wakeN)say('Waking the online server, about a minute. You can play here meanwhile.');wakeN++;setSt('connecting','Waking the server…');clearTimeout(rt);rt=setTimeout(()=>{if(st=='connecting')connect(url,false)},4000)}else{wakeN=0;setSt('offline',opened?'The server closed the connection':'Could not reach the server')}}}
+   if(was=='online'||was=='reconnecting'||retry){retry=true;setSt('reconnecting','Connection lost');if(!PLAYER)say6&&say6('Connection lost','Your changes are not being saved. Reconnecting…',4000);sched()}
+   else if(!opened&&!manual&&wakeN<14){/* a free server sleeps and takes about a minute to wake */if(!wakeN&&!PLAYER)say('Waking the online server, about a minute. You can play here meanwhile.');wakeN++;setSt('connecting','Waking the server…');clearTimeout(rt);rt=setTimeout(()=>{if(st=='connecting')connect(url,false)},4000)}else{wakeN=0;setSt('offline',opened?'The server closed the connection':'Could not reach the server')}}}
  function sched(){clearTimeout(rt);tries++;const d=Math.min(30000,1000*Math.pow(2,Math.min(5,tries-1)))+Math.random()*500;rt=setTimeout(()=>{if(st=='reconnecting')connect(url,false)},d)}
  function drop(){window.RB_OWN=null;if(room){room.dead=1}if(rm===room){rm=null}room=null;if(joinedW){const hm=(typeof WBOSS13!='undefined'&&WBOSS13.home)||P;saved={w:joinedW,x:hm.x,y:hm.y}}joinedW=null;guest=false;roomCode='';myId=LOCAL_ID;try{OBJ6&&0}catch(_){}}
  function startPing(){clearInterval(hbT);hbT=setInterval(()=>{if(Date.now()-lastPong>40000){try{ws.close()}catch(_){}return}send({t:'ping',n:Date.now()})},6000)}
@@ -34,17 +37,17 @@ const NET7=(()=>{
   if(t=='server'){info={max:m.max,ownerConfigured:m.ownerConfigured};lastPong=Date.now();startPing();beginAuth();return}
   if(t=='pong'){lastPong=Date.now();if(m.n>0&&lastPong-m.n<60000)rtt=lastPong-m.n;return}
   if(HH[t]){try{HH[t](m)}catch(e){console.error(e)}return}
-  if(t=='auth'){try{if(typeof ACCT13!='undefined'&&ACCT13.auth(m)){if(ws){ws.onmessage=null;ws.onclose=null}return}}catch(e){console.error(e)}if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
+  if(t=='auth'){if(m.ok&&m.rkey)try{sessionStorage.setItem('rb_newkey',JSON.stringify({k:m.rkey,n:m.name,r:m.recovered?1:0}))}catch(_){}for(const f of AL)try{f(m)}catch(_){}try{if(typeof ACCT13!='undefined'&&ACCT13.auth(m)){if(ws){ws.onmessage=null;ws.onclose=null}return}}catch(e){console.error(e)}if(!m.ok){if(m.expired)lsSet('rbtok','');if(st=='online'){say(m.m||'Sign-in failed');return}authDone(null,m.m||'Sign-in failed');return}
    const was=auth;auth={uid:m.uid,name:m.name,kind:m.kind,owner:!!m.owner};if(m.token&&m.kind!='guest')lsSet('rbtok',m.token);tries=0;D.stage('net-auth',m.kind);
    if(st=='online'&&was){render();try{TOOLS7.sync()}catch(_){}if(joinedW){const w=joinedW;send({t:'leave'});joinedW=null;go(w,false)}say('Signed in as '+m.name);return}
    authDone(auth);return}
   if(t=='worlds'){list=m.list||[];noRf=1;try{if(menuEl.style.display!='none')renderWorlds()}catch(_){}noRf=0;return}
-  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';/* still starting up: go to the plaza, nobody is asked anything yet */if(!entered){if(lastTry!='plaza'){go('plaza',false);return}_enterLocal('plaza');return}if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
+  if(t=='enter_err'){want=null;const msg=m.m||'Could not enter';/* still starting up: go to the plaza, nobody is asked anything yet */if(!entered){if(lastTry!='plaza'){go('plaza',false);return}if(PLAYER){try{LG().fatal('The Plaza could not be opened: '+msg)}catch(_){}return}_enterLocal('plaza');return}if(/does not exist/i.test(msg)&&lastTry){const n=lastTry;DLG7.confirm('Create “'+n+'”?','That world does not exist yet. You can create it, then place a World Lock to make it yours.','Create world').then(ok=>{if(ok)go(n,true)})}else say(msg);return}
   if(t=='joined'){mySid=m.sid;myId=m.uid;joinedW=m.w;if(m.owner)say6&&say6('Owner','Tools are in the top bar · type /help for commands',2600);return}
   if(t=='wallet'||t=='buy_res'){try{SHOP7.net(m)}catch(e){}return}
   if(t=='_hello'){onHello(m.d);return}
   if(t=='notice'){const d=m.d||{};say6&&say6(String(d.by||'Server'),String(d.text||'').slice(0,160),5200);return}
-  if(t=='_kick'||t=='_ban'){const why=t=='_ban'?(m.m||'You were banned from this server'):String(m.m||'You were removed');say6&&say6('Disconnected',why,6000);toOffline();return}
+  if(t=='_kick'||t=='_ban'){const why=t=='_ban'?(m.m||'You were banned from this server'):String(m.m||'You were removed');say6&&say6('Disconnected',why,6000);toOffline(why);return}
   if(t=='sys'){const d=m.d||{};if(d.op=='tp'&&Number.isFinite(+d.x)&&Number.isFinite(+d.y)){P.x=+d.x;P.y=+d.y;P.vx=P.vy=0;if(d.by)say(String(d.by).slice(0,14)+' pulled you here')}else if(d.op=='world'&&d.w){
     // a realm above your level cannot load, so the summon stops here instead of leaving you between two worlds
     try{const sg=WORD9.stageOf(d.w);if(sg&&(lvl|0)<WORD9.CH[sg].lv){say('Summoned to '+WORD9.CH[sg].t+', but it needs level '+WORD9.CH[sg].lv);return}if(window.PATH1&&PATH1.locked(d.w)){say('Summoned to a land you have not opened yet');return}}catch(_){}
@@ -56,9 +59,9 @@ const NET7=(()=>{
   if(t=='_rej'){if(Date.now()-resyncAt>4000){resyncAt=Date.now();say('That change is not allowed here');if(joinedW){const w=joinedW;setTimeout(()=>{if(joinedW==w){send({t:'leave'});joinedW=null;send({t:'enter',w,create:false})}},200)}}return}
   if(t=='admin_res'){try{TOOLS7.res(m)}catch(_){}return}
   if(typeof t=='string'&&t[0]!='_'){const fn=room.h[t];if(fn)try{fn({data:m.d,isMe:false,peer:m.f})}catch(e){console.error(e)}}}
- function beginAuth(){const tok=lsGet('rbtok');if(tok&&!auth){send({t:'resume',token:tok});return}
+ function beginAuth(){const tok=lsGet('rbtok');if(tok&&!auth){send({t:'resume',token:tok});return}if(PLAYER){setSt('ready');return}
   send({t:'guest',name:(window.RB_SESS&&RB_SESS.name&&RB_SESS.id!='guest')?RB_SESS.name:myName})}
- function authDone(a,e){if(!a){if(st=='connecting'||st=='reconnecting'){// fall back to a guest session so the player can still look around
+ function authDone(a,e){if(!a&&PLAYER){setSt('ready',e);return}if(!a){if(st=='connecting'||st=='reconnecting'){// fall back to a guest session so the player can still look around
     if(!authDone.g){authDone.g=1;send({t:'guest',name:myName});setSt('connecting',e);return}}setSt('offline',e);return}authDone.g=0;retry=true;setSt('online');refresh();
   // rejoin after a reconnect or enter the plaza on first connect
   const w=saved&&saved.w||want||(entered?cur:null);const keep=saved;saved=null;/* in a dungeon you are on your own computer: a dropped connection never pulls you out */if(window.DG&&DG.run)return;if(w)go(w,false,keep)}
@@ -78,10 +81,11 @@ const NET7=(()=>{
   bindRoom(r);joinedW=w;if(keep&&keep.w==w&&Number.isFinite(keep.x)){P.x=keep.x;P.y=keep.y}
   try{ENV7.set(d.wx||'default',{instant:true})}catch(_){}
   try{renderWorlds()}catch(_){}for(const f of HK)try{f(d)}catch(e){console.error(e)}}
- function toOffline(){retry=false;if(ws){const w=ws;ws=null;try{w.onclose=null;w.close()}catch(_){}}auth=null;drop();clearInterval(hbT);clearTimeout(rt);setSt('offline');try{_enterLocal('plaza')}catch(_){}}
+ function toOffline(why){if(PLAYER){retry=false;if(ws){const w=ws;ws=null;try{w.onclose=null;w.close()}catch(_){}}auth=null;drop();clearInterval(hbT);clearTimeout(rt);setSt('offline',why||'Disconnected');try{LG().fatal(why||'You were disconnected from the server')}catch(_){}return}retry=false;if(ws){const w=ws;ws=null;try{w.onclose=null;w.close()}catch(_){}}auth=null;drop();clearInterval(hbT);clearTimeout(rt);setSt('offline');try{_enterLocal('plaza')}catch(_){}}
  // ---- legacy entry points rebound to the network layer
  const _enterLocal=n=>{leaveNet();loadWorld(n);try{ENV7.set(X6.wx&&X6.wx[cur]||'default',{instant:true})}catch(_){}};
  enterWorld=function(n){n=String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
+  if(PLAYER){menuEl.style.display='none';if(st=='online'&&auth){if(joinedW==n&&entered)return;go(n,false);return}want=n;try{LG().needNet()}catch(_){}return}
   if(st=='online'){if(joinedW==n&&entered){menuEl.style.display='none';return}menuEl.style.display='none';go(n,false);if(!entered)setTimeout(()=>{if(!entered)_enterLocal('plaza')},6000);return}
   if(st=='connecting'||st=='reconnecting'){say('Still connecting to the server… playing locally for now')}
   _enterLocal(n)};
@@ -90,13 +94,15 @@ const NET7=(()=>{
  function render(){const el=$('wnet');if(!el)return;if(SOLO){el.innerHTML='';el.style.display='none';return}const online=st=='online';let h='<div class="netcard '+st+'"><div class="nrow"><span class="dot"></span><b>'+({offline:'Offline',connecting:'Connecting…',reconnecting:'Reconnecting…',online:'Online'}[st])+'</b>';
   if(online)h+='<span class="nsub">'+esc(auth.name)+(auth.kind=='guest'?' · guest':auth.owner?' · owner':'')+'</span>';else if(url)h+='<span class="nsub">'+esc(url.replace(/^wss?:\/\//,'').replace(/\/ws$/,''))+'</span>';h+='</div>';
   if(err&&!online)h+='<div class="nerr">'+esc(err)+'</div>';
-  if(!online&&st=='offline')h+='<p class="nmsg">Worlds you open now are saved on this device only. Connect to a Rootbound server to play in shared worlds that stay saved for everyone.</p><div class="nrow"><input id="nsrv" placeholder="Server address, e.g. play.example.com" value="'+esc(lsGet('rbsrv')||'')+'" maxlength="120"><button id="nco">Connect</button></div>';
-  if(online){h+='<div class="nrow">'+(auth.kind=='guest'?'<button id="nli">Sign in</button><button id="nre">Create account</button>':'<button id="npw">Change password</button><button id="nlo">Sign out</button>')+'<button id="ndc">Disconnect</button></div>'}
+  if(!online&&st=='offline'&&!PLAYER)h+='<p class="nmsg">Worlds you open now are saved on this device only. Connect to a Rootbound server to play in shared worlds that stay saved for everyone.</p><div class="nrow"><input id="nsrv" placeholder="Server address, e.g. play.example.com" value="'+esc(lsGet('rbsrv')||'')+'" maxlength="120"><button id="nco">Connect</button></div>';
+  if(online&&PLAYER)h+='<div class="nrow">'+(auth.kind=='user'?'<button id="npw">Change password</button><button id="nrk">New recovery key</button>':'')+'<button id="nlo">Sign out</button></div>';
+  else if(online){h+='<div class="nrow">'+(auth.kind=='guest'?'<button id="nli">Sign in</button><button id="nre">Create account</button>':'<button id="npw">Change password</button><button id="nlo">Sign out</button>')+'<button id="ndc">Disconnect</button></div>'}
   h+='</div>';el.innerHTML=h;const b=id=>el.querySelector('#'+id);
   if(b('nco'))b('nco').onclick=()=>{const v=b('nsrv').value.trim();if(!v)return;lsSet('rbsrv',v);authDone.g=0;connect(norm(v),true)};
   if(b('nsrv'))b('nsrv').onkeydown=e=>{if(e.key=='Enter')b('nco').click()};
   if(b('ndc'))b('ndc').onclick=()=>{try{if(ACCT13.leave(true))return}catch(_){}toOffline();say('Disconnected. Playing offline.')};
-  if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
+  if(b('nrk'))b('nrk').onclick=()=>{try{LG().newKey()}catch(_){}};
+  if(b('nlo')&&PLAYER)b('nlo').onclick=()=>signOut();else if(b('nlo'))b('nlo').onclick=()=>{send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{if(ACCT13.leave(false))return}catch(_){}if(ws){const w=ws;ws=null;w.onclose=null;try{w.close()}catch(_){}}auth=null;drop();connect(url,true)};
   if(b('npw'))b('npw').onclick=changePw;if(b('nli'))b('nli').onclick=()=>account('login');if(b('nre'))b('nre').onclick=()=>account('register')}
  async function changePw(){const v=await DLG7.open({title:'Change password',text:'This also signs you out on every other device.',fields:[{k:'o',label:'Current password',type:'password',max:128},{k:'p',label:'New password',type:'password',ph:'at least 8 characters',max:128},{k:'q',label:'New password again',type:'password',max:128}],ok:'Change password'});if(!v)return;if(v.p!==v.q){say6&&say6('Change password','The new passwords do not match',3500);return}send({t:'chpass',old:v.o,pass:v.p})}
  async function account(mode){const reg=mode=='register';const v=await DLG7.open({title:reg?'Create a server account':'Sign in',text:reg?'Accounts let you create worlds and keep your name. Passwords are hashed on the server.':'Sign in with your server account.',fields:[{k:'n',label:'Account name',ph:'3-16 letters, numbers, _ or -',max:reg?16:64,val:window.RB_SESS&&RB_SESS.id!='guest'?RB_SESS.name:(reg?'':lsGet('rb_lastname')||'')},{k:'p',label:'Password',type:'password',ph:reg?'at least 8 characters':'',max:128}],ok:reg?'Create account':'Sign in'});if(!v)return;
@@ -117,6 +123,8 @@ const NET7=(()=>{
  // HUD status chip text
  function chip(n){if(SOLO)return'';if(st=='online'&&room)return (n||1)+' online · '+(auth&&auth.kind=='guest'?'guest':'server');if(st=='reconnecting')return 'reconnecting…';if(st=='connecting')return 'connecting…';return 'offline'}
  // boot: try to discover a server without ever blocking the game
- async function boot(){try{let off=false;try{off=!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
+ // sign out: the server forgets this sign-in, this computer forgets the account, and the page comes back to the login screen
+ function signOut(){send({t:'logout',token:lsGet('rbtok')});lsSet('rbtok','');try{sessionStorage.setItem('rb_signedout','1')}catch(_){}try{if(ACCT13.leave(false))return}catch(_){}try{location.reload()}catch(_){}}
+ async function boot(){try{let off=false;try{off=!PLAYER&&!!sessionStorage.getItem('rb_stayoff')}catch(_){}if(off){render();return}const u=await discover();if(u){authDone.g=0;connect(u,false)}else render()}catch(_){render()}}
  setTimeout(boot,50);
- return{on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW},get rtt(){return rtt},get quiet(){return lastPong?Date.now()-lastPong:0}}})();
+ return{PLAYER,onState:f=>{SL.push(f)},onAuth:f=>{AL.push(f)},get err(){return err},get hasUrl(){return !!url},login:(n,p)=>send({t:'login',name:n,pass:p}),register:(n,p)=>send({t:'register',name:n,pass:p}),recover:(n,k,p)=>send({t:'recover',name:n,key:k,pass:p}),newKey:()=>send({t:'rkey'}),signOut,retry:async()=>{tries=0;wakeN=0;retry=false;const u=url||await discover();if(u){authDone.g=0;connect(u,false)}else setSt('offline','No server address is set')},on:(t,f)=>{HH[t]=f},onHello:f=>{HK.push(f)},get state(){return st},get auth(){return auth},get online(){return st=='online'},get owner(){return st=='online'&&!!(auth&&auth.owner)},send,go,chip,connect:u=>connect(norm(u),true),signIn:()=>account('login'),refresh,get room(){return room},get list(){return list},get url(){return url},toOffline,norm,get world(){return joinedW},get rtt(){return rtt},get quiet(){return lastPong?Date.now()-lastPong:0}}})();

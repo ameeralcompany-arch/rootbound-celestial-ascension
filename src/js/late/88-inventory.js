@@ -33,7 +33,7 @@ const INV7=(()=>{
  const RARA=k=>' data-cat="'+ITEM7.cat(k)+'" data-rar="'+ITEM7.RAR[tierOf(k)]+'"';
  const isWpn=k=>typeof k=='string'&&k.startsWith('w:');
  const descOf=k=>{const t=kind(k);if(t=='blocks')return 'A building block. Hold it on the hotbar and click to place it; break it with a tool.';if(t=='seeds')return 'Hold it and click soil to plant. It grows in real time, even while the game is closed.';if(t=='mats')return 'Dropped by monsters and bosses. '+(()=>{try{const u=matUses(k),p=[];if(u.tribute)p.push('A tribute for ascending Mythic weapons: keep it.');if(u.craft.length)p.push('Crafts: '+u.craft.join(', ')+'.');return p.length?p.join(' '):'Sold at the market.'}catch(_){return'Sold at the market.'}})();
-  if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then press G beside it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Place it, then press F beside it to open it.':'A world object. Press F beside it to use it.');
+  if(t=='objects')return (ODEF[k].cat=='door'?'An interactive gate. Place it, then hold the wrench (N) in Configure mode and click it to choose where it leads.':ODEF[k].cat=='cont'?'Stores items. Place it, then press F beside it to open it.':'A world object. Press F beside it to use it.');
   if(t=='wings'){const w=wingOf(k);return(w&&(w.d||w.desc))||'Wings: worn on your back, they let you glide and fly.'}if(t=='charms'){const it=shopOf(k);return(it&&it.d)||''}return ''};
  // ---- what is equipped: the hand (held hotbar item / weapon), the four wearable slots, wings and the charm
  const HB=()=>typeof HOTBAR!='undefined'?HOTBAR:null,hbSlot=k=>{const h=HB();return h?h.slotOf(k):-1},hbOk=k=>{const h=HB();return!!h&&h.assignable(k)};

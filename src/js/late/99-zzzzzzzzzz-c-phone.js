@@ -1,4 +1,4 @@
-// ===== ROOTLINK: your adventure device. M opens it (Shift+M still mutes the music); Esc, M or a click outside puts it away.
+// ===== ROOTLINK: your adventure device. M opens it (F2 turns the music on or off); Esc, M or a click outside puts it away.
 // A glass phone slides up beside the game, its screen lights, its apps settle into place. The home screen shows who you are (portrait, name, level,
 // class, world, Combat Power, gems), what needs you (the dock's badges), today's three challenges and a way into the dungeons. Every app opens a real
 // screen that already exists (NAV16's features, the dungeon page, the trailer); the phone holds no game state of its own.
@@ -69,7 +69,7 @@ try{(()=>{
   closing=setTimeout(()=>{root.classList.remove('out');if(then)try{then()}catch(e){console.error('ROOTLINK app',e)}else try{lastFocus&&lastFocus.focus&&lastFocus.focus({preventScroll:true})}catch(_){}},then?170:240);return true}
  function launch(id){const a=APPS.find(z=>z.id==id);if(!a||!usable(a))return;tone('tap');const b=root.querySelector('.rlk-app[data-app="'+id+'"]');if(b){b.classList.add('press');setTimeout(()=>b.classList.remove('press'),200)}
   close(()=>{if(a.open)return a.open();const f=navF(a.nav);let up=false;try{up=!!(f&&f.on&&f.on())}catch(_){}if(!up)try{NAV16.act(a.nav)}catch(e){console.error('ROOTLINK',e)}})}
- // M: open or put away. Shift+M is left to the game (mute). Typing in a field never opens it
+ // M: open or put away. Shift+M is ignored here (Shift is Dash; F2 is the music). Typing in a field never opens it
  addEventListener('keydown',e=>{if(e.key!='m'&&e.key!='M')return;if(e.shiftKey||e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
   if(on){close();e.preventDefault();e.stopImmediatePropagation();return}if(open()){e.preventDefault();e.stopImmediatePropagation()}},true);
  addEventListener('keydown',e=>{if(on&&e.key=='Escape'){close();e.preventDefault();e.stopImmediatePropagation()}},true);

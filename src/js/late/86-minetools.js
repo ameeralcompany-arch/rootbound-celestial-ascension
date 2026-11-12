@@ -10,7 +10,7 @@ const TOOLS8=(()=>{
   bubbles:{n:'Bubbles the Fishing Rod',g:[120,200,255],tool:'rod',d:'A cute rod with a duck bobber. Click water to cast, click when it bites, then hold to keep the fish in the green zone and reel it in! Bait from Tackle Boxes helps.'}};
  for(const id in TL){const t=TL[id];WPN[id]={n:t.n,g:t.g,bd:1,md:0,cd:t.tool=='rod'?.25:.18,k:'tool',cost:0,fx:'',d:t.d,tool:t.tool,id};own[id]=1}
  // the Wrench: never digs, never fights. Click a player to open their card and trade (ONL10), or a World Lock for its settings. Not a levelled tool (not in TL).
- WPN.wrench={n:'Wrench',g:[200,210,225],bd:1,md:0,cd:.3,k:'tool',cost:0,fx:'',d:'Inspects anything, sets up doors, chests and World Locks, and opens another player\'s card. Press V to hold it.',tool:'wrench',id:'wrench'};own.wrench=1;
+ WPN.wrench={n:'Wrench',g:[200,210,225],bd:1,md:0,cd:.3,k:'tool',cost:0,fx:'',d:'Inspects anything, sets up doors, chests and World Locks, and opens another player\'s card. Press N to hold it.',tool:'wrench',id:'wrench'};own.wrench=1;
  // ---- what kind of block is it?
  const ORE=new Set([9,10,60,61,62,65,71,72,73,74,75,76]);
  // CAT pins a block's kind when its name would mislead the regex (Geode Rock is stone, not ore); ONLY[b] is the one tool that may break b at all

@@ -1,0 +1,113 @@
+/* ===== LOGIN1: the login screen. Dark, cinematic, glass panel over the animated class showcase. Every size scales with the window. ===== */
+#rbl{position:fixed;inset:0;z-index:2147483000;background:#05030c;color:#f4eefc;font-family:Montserrat,system-ui,sans-serif;overflow:hidden;user-select:none;--cc:#c9a8ff;--cc2:#7a5ad0}
+#rbl canvas#rblc{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#rbl .rbl-shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 34% 26% at 14% 9%,rgba(5,3,12,.62),rgba(5,3,12,0)),linear-gradient(90deg,rgba(5,3,12,.55) 0%,rgba(5,3,12,0) 30%,rgba(5,3,12,0) 52%,rgba(5,3,12,.62) 74%,rgba(5,3,12,.8) 100%),linear-gradient(0deg,rgba(5,3,12,.86) 0%,rgba(5,3,12,0) 34%),radial-gradient(ellipse at 50% 120%,rgba(0,0,0,0) 40%,rgba(0,0,0,.35) 100%)}
+#rbl .rbl-fade{position:absolute;inset:0;pointer-events:none;background:#000;opacity:1;transition:opacity 1.1s ease}
+#rbl.on .rbl-fade{opacity:0}
+#rbl.leaving .rbl-fade{opacity:1;transition:opacity .9s ease}
+/* the logo */
+#rbl .rbl-logo{position:absolute;left:clamp(28px,5vw,96px);top:clamp(22px,5vh,64px);pointer-events:none;filter:drop-shadow(0 0 18px rgba(255,214,140,.3)) drop-shadow(0 4px 10px rgba(0,0,0,.6))}
+#rbl .rbl-mark{display:flex;align-items:center;gap:clamp(10px,1vw,18px)}
+#rbl .rbl-sym{width:clamp(48px,5vw,88px);height:auto;flex:none;opacity:0;animation:rblSym 1.4s .1s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rblSym{from{opacity:0;transform:scale(.7) rotate(-20deg)}to{opacity:1;transform:none}}
+#rbl .rbl-logo b{display:block;font:700 clamp(40px,5.2vw,92px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.16em;background:linear-gradient(100deg,#fff6dc 0%,#ffd98a 30%,#fff 45%,#e9c6ff 60%,#ffd98a 80%,#fff6dc 100%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rblShine 7s linear infinite,rblLogo 1.6s .2s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rblLogo{from{opacity:0;letter-spacing:.5em;clip-path:inset(-30% 100% -30% -5%)}to{opacity:1;letter-spacing:.16em;clip-path:inset(-30% -5% -30% -5%)}}
+#rbl .rbl-logo i{display:flex;align-items:center;gap:12px;margin-top:10px;font:600 clamp(9px,.7vw,12px)/1 Montserrat,sans-serif;letter-spacing:.42em;font-style:normal;color:rgba(255,236,200,.86);opacity:0;animation:rblFadeUp 1.2s 1.1s ease forwards}
+#rbl .rbl-logo i:before,#rbl .rbl-logo i:after{content:'';height:1px;width:clamp(30px,4vw,70px);background:linear-gradient(90deg,rgba(255,217,138,0),rgba(255,217,138,.9))}
+#rbl .rbl-logo i:after{transform:scaleX(-1)}
+@keyframes rblShine{0%{background-position:0% 0}100%{background-position:240% 0}}
+@keyframes rblLetter{to{opacity:1;transform:none;filter:none}}
+@keyframes rblFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* the class on stage */
+#rbl .rbl-class{position:absolute;left:clamp(28px,5vw,96px);bottom:clamp(118px,17vh,190px);width:min(34vw,520px);pointer-events:none}
+#rbl .rbl-class small{display:block;font:700 clamp(10px,.78vw,13px)/1 Montserrat,sans-serif;letter-spacing:.42em;color:var(--cc);text-shadow:0 0 12px rgba(0,0,0,.8)}
+#rbl .rbl-class h2{margin:10px 0 6px;font:700 clamp(36px,4.2vw,74px)/1 'Cormorant Garamond',Georgia,serif;letter-spacing:.08em;color:#fff;text-shadow:0 0 28px var(--cc),0 4px 14px rgba(0,0,0,.8)}
+#rbl .rbl-class .w{font:600 clamp(12px,.95vw,16px)/1.3 Montserrat,sans-serif;color:#fff2d6;letter-spacing:.06em}
+#rbl .rbl-class .w em{font-style:normal;color:var(--cc)}
+#rbl .rbl-class p{margin:10px 0 0;font:italic 500 clamp(15px,1.25vw,22px)/1.35 'Cormorant Garamond',Georgia,serif;color:rgba(244,238,252,.92);text-shadow:0 2px 8px rgba(0,0,0,.9)}
+#rbl .rbl-class.swap>*{animation:rblIn .8s cubic-bezier(.2,.7,.2,1) both}
+#rbl .rbl-class.swap h2{animation-delay:.06s}#rbl .rbl-class.swap .w{animation-delay:.14s}#rbl .rbl-class.swap p{animation-delay:.2s}
+@keyframes rblIn{from{opacity:0;transform:translateX(-26px);letter-spacing:.3em;filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+/* the roster */
+#rbl .rbl-roster{position:absolute;left:clamp(28px,5vw,96px);bottom:clamp(30px,5vh,58px);display:flex;align-items:center;gap:clamp(4px,.45vw,10px);flex-wrap:nowrap}
+#rbl .rbl-roster button{position:relative;width:clamp(36px,3.1vw,64px);height:clamp(36px,3.1vw,64px);flex:none;border-radius:50%;padding:0;border:2px solid rgba(255,255,255,.22);background:#120c22;cursor:pointer;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;outline:none}
+#rbl .rbl-roster button canvas{width:100%;height:100%;display:block}
+#rbl .rbl-roster button:hover,#rbl .rbl-roster button:focus-visible{transform:translateY(-4px) scale(1.06);border-color:rgba(255,255,255,.7)}
+#rbl .rbl-roster button.on{border-color:var(--cc);box-shadow:0 0 0 3px rgba(0,0,0,.5),0 0 18px var(--cc);transform:translateY(-6px) scale(1.12)}
+#rbl .rbl-roster .arr{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:16px;line-height:1}
+#rbl .rbl-roster .arr:hover{background:rgba(255,255,255,.18)}
+/* the glass panel */
+#rbl .rbl-panel{position:absolute;right:clamp(24px,5vw,110px);top:50%;transform:translateY(-50%);width:clamp(320px,24vw,500px);padding:clamp(22px,2.2vw,40px);box-sizing:border-box;border-radius:22px;background:linear-gradient(160deg,rgba(40,28,74,.62),rgba(12,8,28,.74));border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);opacity:0;animation:rblPanel 1s .5s cubic-bezier(.2,.7,.2,1) forwards;user-select:text}
+#rbl .rbl-panel:before{content:'';position:absolute;inset:-1px;border-radius:22px;padding:1px;background:linear-gradient(160deg,var(--cc),rgba(255,255,255,0) 40%,rgba(255,255,255,0) 70%,var(--cc2));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.75;pointer-events:none;transition:background .8s}
+@keyframes rblPanel{from{opacity:0;transform:translate(26px,-50%)}to{opacity:1;transform:translateY(-50%)}}
+#rbl .rbl-panel h3{margin:0 0 4px;font:700 clamp(22px,1.7vw,30px)/1.1 'Cormorant Garamond',Georgia,serif;letter-spacing:.04em;color:#fff}
+#rbl .rbl-panel .sub{margin:0 0 18px;font-size:13px;line-height:1.45;color:rgba(232,222,250,.72)}
+#rbl .rbl-panel .fade{animation:rblFadeUp .45s ease both}
+#rbl .rbl-f{position:relative;margin:0 0 12px}
+#rbl .rbl-f label{display:block;margin:0 0 6px;font:700 10.5px/1 Montserrat,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(232,222,250,.7)}
+#rbl .rbl-f input{width:100%;box-sizing:border-box;height:46px;padding:0 44px 0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(6,4,16,.55);color:#fff;font:500 15px Montserrat,system-ui,sans-serif;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+#rbl .rbl-f input::placeholder{color:rgba(232,222,250,.36)}
+#rbl .rbl-f input:focus{border-color:var(--cc);box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 16px -2px var(--cc);background:rgba(10,6,26,.75)}
+#rbl .rbl-f .eye{position:absolute;right:8px;bottom:8px;width:32px;height:30px;border:0;border-radius:8px;background:none;color:rgba(255,255,255,.55);cursor:pointer;font-size:15px}
+#rbl .rbl-f .eye:hover{color:#fff;background:rgba(255,255,255,.08)}
+#rbl .rbl-key{font:700 17px/1.4 Consolas,'Courier New',monospace;letter-spacing:.12em;text-align:center;padding:14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px dashed var(--cc);color:#fff;user-select:all;margin:0 0 12px}
+#rbl .rbl-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 16px;font-size:13px;color:rgba(232,222,250,.8)}
+#rbl .rbl-check{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+#rbl .rbl-check input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:5px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.3);display:grid;place-items:center;margin:0;cursor:pointer;transition:.2s}
+#rbl .rbl-check input:checked{background:var(--cc);border-color:var(--cc)}
+#rbl .rbl-check input:checked:after{content:'';width:5px;height:9px;border:solid #120a24;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+#rbl a.rbl-link,#rbl button.rbl-link{background:none;border:0;padding:0;color:var(--cc);font:600 13px Montserrat,sans-serif;cursor:pointer;text-decoration:none}
+#rbl a.rbl-link:hover,#rbl button.rbl-link:hover{text-decoration:underline;color:#fff}
+/* the big button */
+#rbl .rbl-go{position:relative;width:100%;height:54px;border:0;border-radius:14px;cursor:pointer;overflow:hidden;color:#120a24;font:800 15px/1 Montserrat,sans-serif;letter-spacing:.24em;text-transform:uppercase;background:linear-gradient(100deg,var(--cc) 0%,#fff1d0 50%,var(--cc) 100%);background-size:220% 100%;box-shadow:0 10px 30px -8px var(--cc),inset 0 1px 0 rgba(255,255,255,.7);transition:transform .18s,box-shadow .3s,background-position .8s,filter .2s}
+#rbl .rbl-go:hover:not(:disabled){background-position:100% 0;box-shadow:0 14px 40px -6px var(--cc),0 0 0 1px rgba(255,255,255,.4) inset;transform:translateY(-1px)}
+#rbl .rbl-go:active:not(:disabled){transform:translateY(1px) scale(.985)}
+#rbl .rbl-go:after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));transform:skewX(-20deg);animation:rblSweep 3.6s 1.6s ease-in-out infinite}
+@keyframes rblSweep{0%,62%{left:-60%}100%{left:130%}}
+#rbl .rbl-go:disabled{cursor:default;filter:saturate(.4) brightness(.75)}
+#rbl .rbl-go.busy{color:transparent}
+#rbl .rbl-go.busy:before{content:'';position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid rgba(18,10,36,.25);border-top-color:#120a24;animation:rblSpin .8s linear infinite}
+#rbl .rbl-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.6);transform:scale(0);animation:rblRipple .6s ease-out forwards;pointer-events:none}
+@keyframes rblRipple{to{transform:scale(4);opacity:0}}
+@keyframes rblSpin{to{transform:rotate(360deg)}}
+#rbl .rbl-alt{width:100%;margin-top:12px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;font:700 12.5px Montserrat,sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:.2s}
+#rbl .rbl-alt:hover{background:rgba(255,255,255,.12);border-color:var(--cc)}
+#rbl .rbl-err{min-height:18px;margin:-4px 0 12px;font-size:13px;line-height:1.4;color:#ffb0bf}
+#rbl .rbl-ok{color:#bff5cf}
+#rbl .rbl-busy{display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 0 8px}
+#rbl .rbl-busy .ring{width:62px;height:62px;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:var(--cc);border-right-color:var(--cc);animation:rblSpin 1s linear infinite;box-shadow:0 0 24px -6px var(--cc);margin-bottom:16px}
+#rbl .rbl-busy b{font:600 16px Montserrat,sans-serif}
+#rbl .rbl-busy small{margin-top:6px;color:rgba(232,222,250,.7);font-size:12.5px}
+#rbl .rbl-bar{width:100%;height:3px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:16px}
+#rbl .rbl-bar i{display:block;height:100%;width:30%;background:linear-gradient(90deg,transparent,var(--cc),transparent);animation:rblBar 1.4s ease-in-out infinite}
+@keyframes rblBar{from{transform:translateX(-120%)}to{transform:translateX(360%)}}
+#rbl .rbl-who{display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+#rbl .rbl-who .av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:700 20px 'Cormorant Garamond',serif;color:#120a24;background:radial-gradient(circle at 35% 30%,#fff,var(--cc))}
+#rbl .rbl-who b{display:block;font:700 18px Montserrat,sans-serif}
+#rbl .rbl-who small{color:rgba(232,222,250,.66);font-size:12px}
+/* the foot: server and version */
+#rbl .rbl-foot{position:absolute;right:clamp(24px,5vw,110px);bottom:clamp(18px,3.4vh,34px);width:clamp(320px,24vw,500px);display:flex;align-items:center;justify-content:space-between;gap:12px;font:600 11.5px Montserrat,sans-serif;letter-spacing:.06em;color:rgba(232,222,250,.75)}
+#rbl .rbl-srv{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(6,4,16,.6);border:1px solid rgba(255,255,255,.12)}
+#rbl .rbl-srv i{width:8px;height:8px;border-radius:50%;background:#ffcf4a;box-shadow:0 0 10px #ffcf4a;animation:rblPulse 1.2s ease-in-out infinite}
+#rbl .rbl-srv.ok i{background:#5cffa0;box-shadow:0 0 10px #5cffa0;animation:none}
+#rbl .rbl-srv.bad i{background:#ff5a72;box-shadow:0 0 10px #ff5a72;animation:none}
+@keyframes rblPulse{50%{opacity:.35}}
+#rbl .rbl-ver{display:flex;align-items:center;gap:10px}
+#rbl .rbl-mus{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(6,4,16,.6);color:#fff;cursor:pointer;font-size:13px}
+#rbl .rbl-mus.off{opacity:.45}
+/* lost connection, in game */
+#rblost{position:fixed;inset:0;z-index:2147482900;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(10,6,26,.72),rgba(3,2,10,.9));color:#f4eefc;font-family:Montserrat,system-ui,sans-serif}
+#rblost.on{display:flex;animation:rblFadeUp .4s ease both}
+#rblost .p{width:min(440px,90vw);padding:30px;border-radius:20px;text-align:center;background:linear-gradient(160deg,rgba(40,28,74,.75),rgba(12,8,28,.85));border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 80px rgba(0,0,0,.55)}
+#rblost .ring{width:54px;height:54px;margin:0 auto 16px;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:#c9a8ff;animation:rblSpin 1s linear infinite}
+#rblost b{display:block;font:700 26px 'Cormorant Garamond',Georgia,serif}
+#rblost p{margin:8px 0 18px;color:rgba(232,222,250,.78);font-size:14px;line-height:1.5}
+#rblost button{margin:4px;padding:11px 22px;border-radius:12px;border:0;font:700 12.5px Montserrat,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;background:#c9a8ff;color:#120a24}
+#rblost button.s{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+@media (max-width:1100px){#rbl .rbl-class{width:min(44vw,460px)}#rbl .rbl-roster button{width:32px;height:32px}}
+@media (min-width:2000px){#rbl .rbl-panel .sub,#rbl .rbl-row{font-size:15px}#rbl .rbl-f input{height:54px;font-size:17px}#rbl .rbl-go{height:62px;font-size:17px}#rbl .rbl-alt{height:52px;font-size:14px}#rbl .rbl-f label{font-size:12px}}
+@media (max-height:720px){#rbl .rbl-class p{display:none}#rbl .rbl-panel{padding:20px}}
+@media (prefers-reduced-motion:reduce){#rbl *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* a safety net: whatever happened to the entrance animations, everything that must be read is visible after a moment */
+#rbl.settled .rbl-panel{animation:none;opacity:1;transform:translateY(-50%)}#rbl.settled .rbl-logo i,#rbl.settled .rbl-sym{animation:none;opacity:1;transform:none}#rbl.settled .rbl-logo b{animation:rblShine 7s linear infinite;opacity:1;clip-path:none;letter-spacing:.16em}#rbl.settled .rbl-fade{opacity:0}#rbl.settled.leaving .rbl-fade{opacity:1}

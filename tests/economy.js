@@ -48,7 +48,7 @@ async function enter(p,url){await p.addInitScript(()=>{if(!localStorage.getItem(
  ok('no errors in the game so far',errs.length==0,errs.slice(0,3).join(' | '));
  await p.close();
  // ---- a real server: purchases survive a lost or late answer
- const os=require('os');const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbecon-'));const S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});const port=await S.listen();
+ const os=require('os');const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbecon-'));const S=createServer({allowGuests:true,csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});const port=await S.listen();
  const q2=await (await b.newContext({viewport:{width:1280,height:720}})).newPage();const er2=[];q2.on('pageerror',e=>er2.push(e.message.slice(0,200)));await q2.goto('http://127.0.0.1:'+port+'/');await q2.waitForTimeout(800);await q2.evaluate(()=>{try{$('cgo').click()}catch(_){}});await q2.waitForTimeout(400);await q2.evaluate(()=>{try{SHOW7.close()}catch(_){}});await q2.waitForFunction(()=>NET7.online,null,{timeout:15000});
  await q2.evaluate(()=>NET7.send({t:'register',name:'econshop',pass:'econshop-password'}));await q2.waitForFunction(()=>NET7.auth&&NET7.auth.name=='econshop'&&typeof RB_ACCT!='undefined'&&!!RB_ACCT.id,null,{timeout:15000});await q2.waitForTimeout(600);
  const acct=()=>{for(const u of (S.store.accounts&&S.store.accounts.values?S.store.accounts.values():[]))if(u.name=='econshop')return u;return null};

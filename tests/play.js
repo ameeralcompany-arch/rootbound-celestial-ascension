@@ -29,7 +29,7 @@ let fails=0;const ok=(n,c,d)=>{if(!c)fails++;console.log((c?'PASS ':'FAIL ')+n+(
  ok('punching a Tackle Box with fists still gives bait (and the box stays)',bait.n1>bait.n0&&bait.box,bait);
  // switching: X swap, 9, wheel both ways
  await E(()=>{wp='pebble'});await p.waitForTimeout(80);await E(()=>{wp='cinder'});await p.waitForTimeout(80);
- await p.keyboard.press('x');await p.waitForTimeout(120);const a=await E(()=>wp);await p.keyboard.press('x');await p.waitForTimeout(120);const c=await E(()=>wp);
+ await p.keyboard.press('Tab');await p.waitForTimeout(120);const a=await E(()=>wp);await p.keyboard.press('Tab');await p.waitForTimeout(120);const c=await E(()=>wp);
  ok('X swaps between the last weapon and the last tool',a=='pebble'&&c=='cinder',[a,c]);
  await p.keyboard.press('6');await p.waitForTimeout(80);await p.keyboard.press('9');await p.waitForTimeout(80);ok('6 picks hotbar slot 6 (Bubbles); 9 does not switch',await E(()=>wp=='bubbles'&&HOTBAR.cur==5));await p.keyboard.press('7');await p.waitForTimeout(80);ok('7 picks hotbar slot 7 (Twiggy)',await E(()=>wp=='twiggy'&&HOTBAR.cur==6));await p.keyboard.press('6');await p.waitForTimeout(80);
  await p.mouse.move(640,200);const w0=await E(()=>[wp,HOTBAR.cur]);await p.mouse.wheel(0,120);await p.waitForTimeout(200);const w1=await E(()=>[wp,HOTBAR.cur]);await p.mouse.wheel(0,-120);await p.waitForTimeout(200);const w2=await E(()=>[wp,HOTBAR.cur]);

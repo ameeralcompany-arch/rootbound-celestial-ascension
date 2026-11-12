@@ -15,12 +15,15 @@ const ACCT13=(()=>{
   last=s;const id=++seq,n=Math.max(1,Math.ceil(s.length/CH));for(let i=0;i<n;i++)NET7.send({t:'prof_put',id,i,n,base,d:s.slice(i*CH,(i+1)*CH)})}
  // once the game is showing: the account and its progress are safe, only the sign-in ran out
  function askSignIn(){let n=0;const t=setInterval(()=>{if(++n>480){clearInterval(t);return}try{if(window.RB_COVER||!entered||DLG7.isOpen)return;clearInterval(t);DLG7.confirm('Your sign-in ended','You are on this computer\'s offline save right now. Your account and its progress are safe. Sign in again to get back to them.','Sign in').then(ok=>{if(ok)NET7.signIn()})}catch(_){clearInterval(t)}},500)}
+ // Rootbound is online only: progress made on this computer before accounts were required (the plain save) moves into the first account made here,
+ // once, when the player ticks "Bring my progress" while creating it. Local worlds (rbw_) and backups are left behind; the account starts from the copy and the server keeps it.
+ function importLocal(uid){try{if(sessionStorage.getItem('rb_import')!=='1'||LS.getItem('rb_imported'))return;sessionStorage.removeItem('rb_import');const keys=[];for(let i=0;i<LS.length;i++){const k=LS.key(i);if(k&&!/^a_/.test(k)&&!RB_ACCT.free(k)&&!SKIP.test(k))keys.push(k)}for(const k of keys){const v=LS.getItem(k);if(typeof v=='string')LS.setItem('a_'+uid+'_'+k,v)}LS.setItem('rb_imported',uid)}catch(e){console.error('ACCT13 import',e)}}
  // called by NET7 for every auth answer; true = the page is reloading, stop here
  function auth(m){if(!LS)return false;
   if(!m.ok){if(ID&&m.expired){try{LS.removeItem('rbtok');LS.setItem('rb_relogin','1')}catch(_){}setActive('');reload();return true}return false}
   if(m.kind=='guest'){if(ID){setActive('');reload();return true}try{if(LS.getItem('rb_relogin')){LS.removeItem('rb_relogin');askSignIn()}}catch(_){}return false}
   try{if(m.name)LS.setItem('rb_lastname',String(m.name).slice(0,64))}catch(_){}
-  if(m.uid!==ID){try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}setActive(m.uid);reload();return true}
+  if(m.uid!==ID){try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}if(m.fresh&&!ID)importLocal(m.uid);setActive(m.uid);reload();return true}
   const g=m.gen|0,lg=LS.getItem('rbprofgen');if(lg!=null&&+lg!==g){wipe();LS.setItem('rbprofgen',String(g));LS.setItem('rbprofrev','0');try{if(m.token)LS.setItem('rbtok',m.token)}catch(_){}RB_ACCT.freeze();reload();return true}LS.setItem('rbprofgen',String(g));
   const srv=m.prev|0,mine=+LS.getItem('rbprofrev')||0;base=srv;
   if(srv>mine){asked=true;setTimeout(()=>NET7.send({t:'prof_get'}),0);return false}   // another computer saved something newer

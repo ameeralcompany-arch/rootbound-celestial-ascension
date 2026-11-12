@@ -5,7 +5,7 @@ const {chromium}=require('playwright');const {createServer}=require('../server/s
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&x!==''?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unref();
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbacc-'));const OPT={host:'127.0.0.1',dataDir:dir,scryptN:64,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.join(__dirname,'..','index.html')};
-let S=createServer(Object.assign({csp:false,port:0},OPT));const errs=[];
+let S=createServer(Object.assign({allowGuests:true,csp:false,port:0},OPT));const errs=[];
 const ev=(p,f,a)=>p.evaluate(f,a);
 const enterGame=async p=>{await p.waitForFunction(()=>typeof NET7!='undefined'&&NET7.online,null,{timeout:15000});await p.waitForTimeout(300);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});await p.waitForTimeout(300)};
 async function open(b,url,tag,ctx){ctx=ctx||await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();p.on('pageerror',e=>errs.push(tag+': '+e.message.slice(0,200)));await p.goto(url);await enterGame(p);return p}
@@ -36,7 +36,7 @@ const state=p=>ev(p,()=>({lvl:lvl|0,gems:gems|0,acct:RB_ACCT.id,auth:NET7.auth&&
   const O=await open(b,url,'O');await login(O,'Boss','owner-password-1');s=await state(O);ok('the owner signs in',(await ev(O,()=>NET7.owner)),s);await ev(O,()=>{lvl=33;saveP();ACCT13.upload(true)});await sleep(700);const oid=await ev(O,()=>RB_ACCT.id);
   // ---- the reset
   await S.close();await sleep(500);const before=JSON.parse(fs.readFileSync(path.join(dir,'worlds','oldland.json'),'utf8'));ok('(the world had an owner)',!!before.ownerUid);
-  S=createServer(Object.assign({csp:false,port,resetGen:1},OPT));await S.listen();
+  S=createServer(Object.assign({allowGuests:true,csp:false,port,resetGen:1},OPT));await S.listen();
   let A=JSON.parse(fs.readFileSync(path.join(dir,'accounts.json'),'utf8'));ok('the reset removes every account but recreates the owner',Object.keys(A.users).length==1&&A.users.boss&&A.users.boss.id==oid&&A.gen==1,Object.keys(A.users));
   ok('saved progress is gone from the server',fs.readdirSync(path.join(dir,'profiles')).filter(f=>f.endsWith('.json')).length==0);
   const w1=JSON.parse(fs.readFileSync(path.join(dir,'worlds','oldland.json'),'utf8'));ok('worlds stay, with their builds, but belong to nobody',!w1.ownerUid&&!w1.ownerName&&w1.edits[k0],{owner:w1.ownerUid,edit:w1.edits[k0]});
@@ -46,7 +46,7 @@ const state=p=>ev(p,()=>({lvl:lvl|0,gems:gems|0,acct:RB_ACCT.id,auth:NET7.auth&&
   const ok1=await O.waitForFunction(()=>typeof NET7!='undefined'&&NET7.online&&NET7.auth,null,{timeout:30000}).then(()=>true).catch(()=>false);await sleep(1500);
   await O.reload();await enterGame(O);if(!(await ev(O,()=>NET7.owner)))await login(O,'Boss','owner-password-1');await sleep(600);s=await state(O);ok('the owner starts over at level 1 too, still owner',s.lvl<=1&&await ev(O,()=>NET7.owner),s);
   // the same reset does not run twice
-  await ev(O,()=>{lvl=4;saveP();ACCT13.upload(true)});await sleep(700);await S.close();await sleep(400);S=createServer(Object.assign({csp:false,port,resetGen:1},OPT));await S.listen();A=JSON.parse(fs.readFileSync(path.join(dir,'accounts.json'),'utf8'));ok('restarting does not reset again',Object.keys(A.users).length==2,Object.keys(A.users));
+  await ev(O,()=>{lvl=4;saveP();ACCT13.upload(true)});await sleep(700);await S.close();await sleep(400);S=createServer(Object.assign({allowGuests:true,csp:false,port,resetGen:1},OPT));await S.listen();A=JSON.parse(fs.readFileSync(path.join(dir,'accounts.json'),'utf8'));ok('restarting does not reset again',Object.keys(A.users).length==2,Object.keys(A.users));
   ok('no page errors',errs.length==0,errs.slice(0,4).join(' | '));
  }catch(e){ok('accounts harness',false,String(e.stack||e).slice(0,700))}
  await b.close();try{await S.close()}catch(_){}console.log(fails?'FAILURES '+fails:'all account tests passed');process.exit(fails?1:0)})();

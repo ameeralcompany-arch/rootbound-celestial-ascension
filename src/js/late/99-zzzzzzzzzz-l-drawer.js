@@ -1,7 +1,7 @@
 // ===== DRAWER1: the inventory (INV7) as a bottom drawer. It grows out of the hotbar, which stays visible and stays a drop target. Three states: collapsed (a small handle on the
 // hotbar), expanded and full view. Drag the handle or the drawer's header up and down (6 px before a drag begins, so a click stays a click), flick it, or tap to toggle.
 // A spring runs the motion, transform only; the sheet's height is set just once, when it comes to rest, so the grid inside scrolls normally and nothing reflows while it moves.
-// Keys while open: arrows move the selection, [ and ] change category, Enter or E uses, D drops, Page Up / Page Down grow and shrink, Esc closes. No controller: the game has no gamepad layer.
+// Keys while open: arrows move the selection, [ and ] change category, Enter or E uses, Delete drops, Page Up / Page Down grow and shrink, Esc closes. No controller: the game has no gamepad layer.
 // ITEMSRC: "Where to find" and "What is it used for?" on every item kind, read from the same data the game runs on (RPG.items, BIOME17, WPN, WEAR, WINGS, SHOP7); no rate is ever made up. =====
 try{(()=>{
  const reduce=()=>{try{return MOTION7.reduce()}catch(_){return false}};
@@ -37,7 +37,7 @@ try{(()=>{
    if(k=='PageUp'||k=='PageDown'){e.preventDefault();e.stopPropagation();if(k=='PageUp')setLevel('full');else if(level=='full')setLevel('half');else INV7.close();return}
    if(k=='['||k==']'){e.preventDefault();e.stopPropagation();const c=CATS(),i=c.findIndex(b=>b.classList.contains('on')),n=c[(i+(k==']'?1:-1)+c.length)%c.length];if(n)n.click();return}
    if(k=='ArrowLeft'||k=='ArrowRight'||k=='ArrowUp'||k=='ArrowDown'){const g=el.querySelector('.grid7'),L=[...g.querySelectorAll('.it7')];if(!L.length)return;e.preventDefault();e.stopPropagation();let i=L.findIndex(t=>t.classList.contains('sel'));const y0=L[0].offsetTop;let cols=L.findIndex(t=>t.offsetTop!=y0);if(cols<1)cols=L.length;const d=k=='ArrowLeft'?-1:k=='ArrowRight'?1:k=='ArrowUp'?-cols:cols;i=i<0?0:Math.max(0,Math.min(L.length-1,i+d));const t=L[i];INV7.select(/^\d+$/.test(t.dataset.k)?+t.dataset.k:t.dataset.k);t.scrollIntoView({block:'nearest'});return}
-   if((k=='d'||k=='D')&&INV7.selK!=null){const b=el.querySelector('aside [data-a=drop]');if(b){e.preventDefault();e.stopPropagation();b.click()}}}catch(_){}},true);
+   if(k=='Delete'&&INV7.selK!=null){const b=el.querySelector('aside [data-a=drop]');if(b){e.preventDefault();e.stopPropagation();b.click()}}}catch(_){}},true);
  // ---- the collapsed handle, on top of the hotbar
  let h=null;function build(){h=document.createElement('button');h.id='invh7';h.type='button';h.setAttribute('aria-label','Open your items (I)');h.dataset.n16tip='Items|Drag up, or click|I';h.innerHTML='<i></i><span>Items</span>';document.body.appendChild(h);h.addEventListener('pointerdown',e=>{if(e.button==0){e.preventDefault();begin(e,true)}});h.addEventListener('keydown',e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();e.stopPropagation();try{NAV16.act('inventory')}catch(_){}}})}
  setInterval(()=>{try{if(!h)build();const b=bar(),show=typeof entered!='undefined'&&entered&&!window.RB_COVER&&!INV7.isOpen&&b&&b.getClientRects().length&&menuEl.style.display=='none'&&!(typeof creatorOn!='undefined'&&creatorOn);h.style.display=show?'':'none';if(show){const r=b.getBoundingClientRect();h.style.left=Math.round(r.left+r.width/2)+'px';h.style.top=Math.round(r.top-24)+'px'}}catch(_){}},300);

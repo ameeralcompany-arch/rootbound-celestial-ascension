@@ -17,11 +17,12 @@ const ONL10=(()=>{
   '/ban':a=>{if(!a[1])return say('Usage: /ban name [minutes] [reason]');const m=/^\d+$/.test(a[2]||'');return adm('ban',{who:a[1],mins:m?+a[2]:0,reason:a.slice(m?3:2).join(' ')})},
   '/unban':a=>a[1]?adm('unban',{who:a[1]}):say('Usage: /unban name'),
   '/kick':a=>a[1]?adm('kick',{who:a[1]}):say('Usage: /kick name'),
+  '/resetpw':a=>a[1]?adm('pwreset',{who:a[1]}):say('Usage: /resetpw name  (gives that account a temporary password)'),
   '/smute':a=>a[1]?adm('mute',{who:a[1],mins:+a[2]||10}):say('Usage: /smute name [minutes]'),
   '/sunmute':a=>a[1]?adm('unmute',{who:a[1]}):say('Usage: /sunmute name'),
   '/announce':a=>a[1]?adm('announce',{text:a.slice(1).join(' '),scope:'all'}):say('Usage: /announce message'),
   '/give':a=>{if(!a[1]||!a[2])return say('Usage: /give name item [amount]  (item: gems, a number or a name like iron_ore)');const i=itemId(a[2]);if(i==null)return say('No item called '+a[2]);return adm('give',{who:a[1]=='me'&&NET7.auth?NET7.auth.name:a[1],item:i,n:Math.max(1,Math.floor(+a[3]||1))})}};
- const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  place a World Lock to claim a world  ·  owner: /god /pull /summon /ban /unban /give /kick /smute /announce';
+ const HELP2='Online: wrench a player (V) or /trade name [give n want n]  ·  /drop item [n]  ·  place a World Lock to claim a world  ·  owner: /god /pull /summon /ban /unban /give /kick /resetpw /smute /announce';
  {const _c=SOC6.cmd;SOC6.cmd=function(t){const a=String(t).trim().split(/\s+/),c=a[0].toLowerCase();
    if(OWNER[c]){OWNER[c](a);return true}
    if(c=='/help'||c=='/?'){const r=_c.apply(this,arguments);say(HELP2);return r}
@@ -52,7 +53,7 @@ const ONL10=(()=>{
  // /trade name  or  /trade name giveItem n wantItem n
  function typed(a){const p=SOC6.byName(a[1]);if(!p)return say(a[1]?'That player is not in this world':'Usage: /trade name [giveItem n wantItem n]  (id 0 = gems)');if(a.length<3)return ask(p.peer);
   const gi=itemId(a[2]),gn=+a[3],wi=itemId(a[4]),wn=+a[5];if(gi==null||wi==null||!(gn>=1)||!(wn>=1))return say('Usage: /trade name giveItem n wantItem n  (id 0 = gems)');ask(p.peer,[gi,Math.floor(gn)],[wi,Math.floor(wn)])}
- // ---- the wrench tool (TOOLS8 calls this on click, key V holds it): a player opens their card, a World Lock its settings
+ // ---- the wrench tool (TOOLS8 calls this on click, key N holds it): a player opens their card, a World Lock its settings
  let pEl=null;
  function card(p){const q=p.presence;if(!pEl){pEl=document.createElement('div');pEl.id='pcard10';pEl.setAttribute('role','dialog');document.body.appendChild(pEl)}const o=NET7.owner;
   const blocked=n=>{try{return X6.mute.includes(String(n).toLowerCase())}catch(_){return false}};
@@ -66,7 +67,7 @@ const ONL10=(()=>{
  function peerAt(c){if(!rm)return null;let best=null,bd=1e9;for(const p of SOC6.peers()){const r=rp[p.peer]||p.presence;if(!r||!(Math.abs(r.x-c.x)<34&&c.y>r.y-14&&c.y<r.y+70))continue;const d=Math.hypot(r.x-c.x,r.y+28-c.y);if(d<bd){bd=d;best=p}}return best}
  function wrenchAt(c){try{return WRENCH2.use(c)}catch(e){console.error('wrench',e)}}
  function openCard(p){snd('open');return card(p)}
- let lastHand='';function toggleWrench(){if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench'}snd('select')}addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='v')return;toggleWrench()});
+ let lastHand='';function toggleWrench(){if(wp=='wrench')wp=lastHand&&WPN[lastHand]?lastHand:'fist';else{lastHand=wp;wp='wrench'}snd('select')}addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT'||e.target.tagName=='TEXTAREA'||menuEl.style.display!='none'||!entered||e.repeat)return;if(e.key.toLowerCase()!='n')return;toggleWrench()});
  // ---- items dropped for others (the server owns them; the first player to reach one gets it)
  const ND=[];
  const addD=(d,old)=>{if(ND.some(x=>x.id==d.id))return;const o={id:d.id,i:d.i,n:d.n,x:d.x,y:d.y,by:d.by||'',vy:old?0:-260,ph:Math.random()*6,t:old?9:0,sent:0,rest:0};try{DROP2.unclip(o)}catch(_){}ND.push(o)};

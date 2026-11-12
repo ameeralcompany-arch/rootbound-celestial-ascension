@@ -5,7 +5,7 @@ const {chromium}=require('playwright');const {createServer}=require('../server/s
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&x!==''?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},280000).unref();
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbonlw-'));const OPT={host:'127.0.0.1',dataDir:dir,scryptN:64,wxCooldownMs:0,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',wbMinMs:800,client:path.join(__dirname,'..','index.html')};
-let S=createServer(Object.assign({csp:false,port:0},OPT));const errs=[];
+let S=createServer(Object.assign({allowGuests:true,csp:false,port:0},OPT));const errs=[];
 async function client(b,url,tag){const ctx=await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();p.on('pageerror',e=>errs.push(tag+': '+e.message.slice(0,200)));p.on('console',m=>{if(m.type()=='error'&&/WBOSS13/.test(m.text()))errs.push(tag+': '+m.text().slice(0,200))});
  await p.goto(url);await p.waitForTimeout(800);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(400);await p.evaluate(()=>{try{SHOW7.close()}catch(_){}});
  await p.waitForFunction(()=>NET7.online,null,{timeout:15000});return p}
@@ -69,7 +69,7 @@ const kill=p=>ev(p,()=>{const m=BOSS6.active();iT=99;m.shield=0;m.hp=1;P.hp=maxH
   r=await tilesOn(B);ok('and it is whole, with the boss still waiting',r>1000&&await ev(B,()=>WBOSS13.need(cur)),r);
   // ---- the server goes away mid-fight (a free host going to sleep, say)
   await go(B,'bossland2',true);await sleep(300);const hb=await ev(B,()=>({x:P.x,y:P.y}));await letters(B);await until(B,()=>WBOSS13.fight,4000);await until(B,()=>WBOSS13.void,9000);ok('fight before the drop',await toFight(B));await sleep(300);
-  await S.close();await sleep(800);S=createServer(Object.assign({csp:false,port},OPT));await S.listen();
+  await S.close();await sleep(800);S=createServer(Object.assign({allowGuests:true,csp:false,port},OPT));await S.listen();
   ok('after reconnecting, the world is back',await until(B,()=>NET7.online&&cur=='bossland2'&&!WBOSS13.void&&!WBOSS13.fight&&!BOSS6.active(),25000));await sleep(600);
   r=await ev(B,()=>{let n=0;for(let i=0;i<tiles.length;i++)if(tiles[i])n++;return{n,x:P.x,cover:window.RB_COVER,zm:ZM,body:document.body.classList.contains('wb13v')}});ok('whole, with you back where you stood',r.n>1000&&Math.abs(r.x-hb.x)<T48()*2&&!r.cover&&!r.body,{r,hb});
   ok('no page errors in any client',errs.length==0,errs.slice(0,4).join(' | '));

@@ -5,7 +5,7 @@ const {createServer}=require('../server/server');const {Cloud,KEY}=require('../s
 let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&x!==''?'  - '+(typeof x=='string'?x:JSON.stringify(x)):''));if(!c)fails++};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},120000).unref();
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbonl-')),SN=64,OWN={ownerName:'Boss',ownerPass:'owner-password-1',ownerEmail:'boss@example.com'};
-const mkS=(o)=>createServer(Object.assign({port:0,host:'127.0.0.1',dataDir:dir,scryptN:SN,wxCooldownMs:0,maxConnsPerIp:500,client:path.join(__dirname,'..','index.html')},OWN,o||{}));
+const mkS=(o)=>createServer(Object.assign({allowGuests:true,port:0,host:'127.0.0.1',dataDir:dir,scryptN:SN,wxCooldownMs:0,maxConnsPerIp:500,client:path.join(__dirname,'..','index.html')},OWN,o||{}));
 function get(port,p,h){return new Promise(r=>http.get({host:'127.0.0.1',port,path:p,headers:h||{}},res=>{const b=[];res.on('data',d=>b.push(d));res.on('end',()=>r({s:res.statusCode,h:res.headers,b:Buffer.concat(b)}))}).on('error',()=>r({s:0,h:{},b:Buffer.alloc(0)})))}
 let port;const mk=async()=>{const c=await new C(port).connect();await c.wait(m=>m.t=='server');return c};
 const auth=async(m)=>{const c=await mk();const r=await c.rpc(m,x=>x.t=='auth');return{c,r}};
@@ -176,10 +176,10 @@ const pres=async(c,x,y)=>{c.send({t:'_p',d:{x,y,f:1}});await sleep(50)};
  // ---- saves survive a wiped disk: a fake Redis REST API + a brand new data folder
  const db={};let cmds=0;const fake=http.createServer((q,r)=>{let b='';q.on('data',d=>b+=d);q.on('end',()=>{cmds++;if(q.headers.authorization!='Bearer tok'){r.writeHead(401);return r.end('{}')}const a=JSON.parse(b);let res=null;const h=db[a[1]]||(db[a[1]]={});if(a[0]=='HGETALL')res=Object.entries(h).flat();else if(a[0]=='HSET'){for(let i=2;i+1<a.length;i+=2)h[a[i]]=a[i+1];res=1}else if(a[0]=='HDEL'){for(let i=2;i<a.length;i++)delete h[a[i]];res=1}r.writeHead(200,{'Content-Type':'application/json'});r.end(JSON.stringify({result:res}))})});
  await new Promise(r=>fake.listen(0,'127.0.0.1',r));const cu='http://127.0.0.1:'+fake.address().port;
- const d1=fs.mkdtempSync(path.join(os.tmpdir(),'rbcl1-'));const cl1=new Cloud(cu,'tok',d1,50);S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:d1,scryptN:SN,cloud:cl1,maxConnsPerIp:500,...OWN});port=await S.listen();
+ const d1=fs.mkdtempSync(path.join(os.tmpdir(),'rbcl1-'));const cl1=new Cloud(cu,'tok',d1,50);S=createServer({allowGuests:true,csp:false,port:0,host:'127.0.0.1',dataDir:d1,scryptN:SN,cloud:cl1,maxConnsPerIp:500,...OWN});port=await S.listen();
  const cu1=await reg('cloudy');await enter(cu1.c,'cloudworld',true);cu1.c.send({t:'meta',d:{x:9,y:9,o:cu1.r.uid,on:'cloudy',f:[],pub:0}});cu1.c.send({t:'e',d:{k:4242,a:[3,0,0,0]}});await sleep(1800);await S.close();
  ok('saves reach the database',!!db[KEY]&&!!db[KEY]['accounts.json']&&!!db[KEY]['worlds/cloudworld.json'],Object.keys(db[KEY]||{}));
- const d2=fs.mkdtempSync(path.join(os.tmpdir(),'rbcl2-'));const cl2=new Cloud(cu,'tok',d2,50);const nr=await cl2.restore();S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:d2,scryptN:SN,cloud:cl2,maxConnsPerIp:500,...OWN});port=await S.listen();
+ const d2=fs.mkdtempSync(path.join(os.tmpdir(),'rbcl2-'));const cl2=new Cloud(cu,'tok',d2,50);const nr=await cl2.restore();S=createServer({allowGuests:true,csp:false,port:0,host:'127.0.0.1',dataDir:d2,scryptN:SN,cloud:cl2,maxConnsPerIp:500,...OWN});port=await S.listen();
  const cu2=await login('cloudy');const ch=await enter(cu2.c,'cloudworld');ok('after a wiped disk: account, world and ownership are back',nr>=2&&cu2.r.ok&&ch.d.edits[4242]&&ch.d.own.on=='cloudy',nr);
  const oc4=await login('Boss',OWN.ownerPass);ok('the owner keeps the same id after a wiped disk',oc4.r.uid==(JSON.parse(db[KEY]['owner.json']).ownerUid));
  await adm(oc4.c,'world_delete',{world:'cloudworld',confirm:'cloudworld'});await sleep(150);await cl2.flush();ok('a deleted world leaves the database too',!db[KEY]['worlds/cloudworld.json']);await S.close();

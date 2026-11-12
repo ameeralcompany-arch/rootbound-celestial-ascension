@@ -14,7 +14,7 @@ const PLAY8=(()=>{
   if(now-G.tinkT>140){G.tinkT=now;try{for(let i=0;i<3;i++)VFX.add(1,'#e8eef8',px+(Math.random()-.5)*16,py+(Math.random()-.5)*16,(Math.random()-.5)*60,-20-Math.random()*40,.3,8,2,{a:.7})}catch(_){}try{SFX7.tone(260,220,.05,'triangle',.02)}catch(_){}}
   if(now-G.hintT<40000)return;// gentle: at most once every 40 s, never while fighting next to the cursor
   const cx=mx+cam.x,cy=my+cam.y;for(const m of mobs)if(!m.dead&&Math.hypot(m.x-cx,m.y+m.h/2-cy)<T*3)return;
-  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–7 / wheel) or press X')}catch(_){}}
+  G.hintT=now;try{say('Use a tool to break blocks — pick one on the hotbar (1–7 / wheel) or press Tab')}catch(_){}}
  {const _uw=useWeapon;useWeapon=function(){const w=WPN[wp];if(w&&w.k=='tool')return _uw.apply(this,arguments);G.wpn++;try{return _uw.apply(this,arguments)}finally{G.wpn--}}}
  {const _ba=breakAt;breakAt=function(){if(G.wpn>0&&!G.allow)return false;return _ba.apply(this,arguments)}}
  // ---- switching
@@ -39,7 +39,7 @@ const PLAY8=(()=>{
   if(Math.abs(acc)>=45&&now-lastStep>100){lastStep=now;step(acc>0?1:-1);acc=0}}
  // number keys + wheel: HOTBAR (99-zzz-hotbar.js); X swaps weapon <-> tool
  cycleWeapon=function(){step(1)};cycleW=function(){step(1)};
- addEventListener('keydown',e=>{if(e.repeat||isTextEl(e.target)||e.ctrlKey||e.altKey||e.metaKey)return;if(e.key.toLowerCase()=='x'&&free())swap()});
+ addEventListener('keydown',e=>{if(e.repeat||isTextEl(e.target)||e.ctrlKey||e.altKey||e.metaKey)return;if(e.key=='Tab'&&free()){e.preventDefault();swap()}});
  // remember the last weapon/tool whatever changed it (inventory, store, shop equip)
  {const _u=update;update=function(dt){const r=_u.apply(this,arguments);if(seen!==wp){seen=wp;note(wp)}return r}}
  // weapon clicked on a block: no damage; fists still open Tackle Boxes (bait)

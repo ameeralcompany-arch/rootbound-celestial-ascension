@@ -10,7 +10,8 @@
    peer: your own PeerJS server, e.g. {host:'my-peer.example.com',port:443,path:'/',secure:true,key:'peerjs'} */
 var RB_HOSTED=false;   // on only in test runs, where a local test server hands out this page. The live server gives browsers the download page instead
 const RB_SERVER='https://rootbound-rcvi.onrender.com';   // the online server the Windows app connects to (see server/DEPLOY.md)
-window.RB_CONFIG=Object.assign({ice:null,peer:null,server:RB_SERVER,solo:!RB_HOSTED&&(!RB_SERVER||!!navigator.webdriver)},window.RB_CONFIG_OVERRIDE||{});   // solo: single-player, never connects to a server (automated test browsers stay offline)
+window.RB_AUTOMATION=!!navigator.webdriver;   // automated test browsers only. Players always run the one online game: sign in, connect, play
+window.RB_CONFIG=Object.assign({ice:null,peer:null,server:RB_SERVER,solo:!RB_HOSTED&&RB_AUTOMATION},window.RB_CONFIG_OVERRIDE||{});   // solo: automated tests run the game without a server. There is no offline mode for players
 </script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#0a0d1c;--pn:rgba(16,21,46,.82);--bd:rgba(255,255,255,.13);--ac:#ffb545;--ac2:#6c5cff;--tx:#f4f6ff;--mu:#9aa3c7;font-family:'Pixelify Sans','Fredoka',system-ui,-apple-system,'Segoe UI',sans-serif}
@@ -390,8 +391,8 @@ addEventListener('blur',()=>{for(const k in K)K[k]=0;mdL=mdR=false});
 addEventListener('keydown',e=>{ac();startBGM();if(isTextEl(e.target)&&e.target.id!='chat')return;/* only text fields capture keys; a focused button/checkbox/slider gives the keys back to the game */if(e.target!==document.body&&e.target.blur&&e.target.id!='chat'&&e.target.tagName!='SELECT'&&/^(a|d|w|s| |arrowleft|arrowright|arrowup|arrowdown)$/i.test(e.key))e.target.blur();if(e.target.id=='chat'){if(e.key=='Enter')sendChat();if(e.key=='Escape'){chatEl.style.display='none';chatEl.blur()}return}
  const k=e.key.toLowerCase();if(e.key==' '||k=='tab')e.preventDefault();if(e.repeat)return;K[k]=1;if(menuEl.style.display!='none'){if(k=='escape'&&entered)closeMenu();return}
  if(k=='enter'){chatEl.style.display='block';chatEl.focus();e.preventDefault();return}
- if(k=='tab'||k=='i')setInv(!showInv);if(k=='escape')setInv(false);if(k=='m')toggleMute();if(e.key=='+'||e.key=='=')setZoom(ZM*1.15);if(e.key=='-'||e.key=='_')setZoom(ZM/1.15);if(e.key=='0')setZoom(1);if(k=='j')toggleQM();if(k=='f3'){e.preventDefault();$('fps').style.display=$('fps').style.display=='none'?'block':'none'}if(k=='t')cycleW();if(k=='h')$('quest').style.display=$('quest').style.display=='none'?'block':'none';
- if(e.key>='1'&&e.key<='9')selBar(+e.key-1);if(k=='q')useSkill('hat');if(k=='r')useSkill('body');if(k=='z')useSkill('wing');if(e.key=='Shift')useSkill('boot');if(k=='f')useSkill('glove');if(k=='e')interact();
+ if(k=='i')setInv(!showInv);if(k=='escape')setInv(false);if(k=='f2'){e.preventDefault();toggleMute()}if(e.key=='+'||e.key=='=')setZoom(ZM*1.15);if(e.key=='-'||e.key=='_')setZoom(ZM/1.15);if(e.key=='0')setZoom(1);if(k=='j')toggleQM();if(k=='f3'){e.preventDefault();$('fps').style.display=$('fps').style.display=='none'?'block':'none'}if(k=='t')cycleW();if(k=='h')$('quest').style.display=$('quest').style.display=='none'?'block':'none';
+ if(e.key>='1'&&e.key<='9')selBar(+e.key-1);if(k=='e')interact();
  if(k=='w'||k==' '||k=='arrowup')jumpPress()});
 addEventListener('keyup',e=>{const k=e.key.toLowerCase();K[k]=0;if(k=='w'||k==' '||k=='arrowup')jumpRelease()});
 cv.addEventListener('mousemove',e=>{mx=e.clientX*cv.width/innerWidth/ZM;my=e.clientY*cv.height/innerHeight/ZM});cv.addEventListener('mousedown',e=>{ac();if(e.button==0)mdL=true;if(e.button==2)mdR=true;e.preventDefault()});addEventListener('mouseup',e=>{if(e.button==0)mdL=false;if(e.button==2)mdR=false});cv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -906,7 +907,7 @@ $('wn').onkeydown=e=>{if(e.key=='Enter')enterWorld($('wn').value)};$('bzi').oncl
 $('nm').oninput=e=>{myName=e.target.value.slice(0,14)||myName;saveP()};$('ov').oninput=e=>{OPT.mv=e.target.value/100;if(bgm)bgm.m.gain.value=mute?0:OPT.mv;saveP()};$('os').oninput=e=>{OPT.sv=e.target.value/100;saveP()};$('oq').onchange=e=>{OPT.q=+e.target.value;saveP()};$('osh').onchange=e=>{OPT.sh=e.target.checked?1:0;saveP()};
 document.addEventListener('pointerdown',()=>startBGM());
 gen();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;for(const f of[renderBar,renderSkills,renderW,renderQuest,hud])try{f()}catch(_){/* items added by later scripts are not defined yet; they re-render once everything has loaded */}
-if(!made){enterWorld('plaza');made=true}// ---------- pixel-art pipeline (chibi sprites with black pixel outline)
+if(!made&&navigator.webdriver){enterWorld('plaza');made=true}/* players: a new character enters the online Plaza after signing in (LOGIN1, then the Play step) */// ---------- pixel-art pipeline (chibi sprites with black pixel outline)
 const PXS=2,pxC=document.createElement('canvas'),pxG=pxC.getContext('2d',{willReadFrequently:true});
 const PXCACHE=new WeakMap();function pixelize(cx,cy,hw,hh,fn,key){const ps=PXS,sx=Math.round(cx/ps)*ps,sy=Math.round(cy/ps)*ps,w=Math.ceil(hw/ps)*2,h=Math.ceil(hh/ps)*2;if(key){const c=PXCACHE.get(key);if(c&&c.hw==hw&&c.hh==hh&&c.ps==ps&&performance.now()-c.t<(window.pxTtl6||55)){g.save();g.imageSmoothingEnabled=false;g.drawImage(c.cv,sx-c.w/2*ps,sy-c.h/2*ps,c.w*ps,c.h*ps);g.restore();return}}if(pxC.width!=w||pxC.height!=h){pxC.width=w;pxC.height=h}
  pxG.setTransform(1,0,0,1,0,0);pxG.globalAlpha=1;pxG.globalCompositeOperation='source-over';pxG.clearRect(0,0,w,h);pxG.setTransform(1/ps,0,0,1/ps,w/2-sx/ps,h/2-sy/ps);

@@ -11,7 +11,7 @@ const freePort=()=>new Promise(r=>{const s=net.createServer();s.listen(0,'127.0.
   await p.addInitScript(a=>{window.RB_CONFIG_OVERRIDE={solo:false,server:a}},'http://127.0.0.1:'+port);
   await p.goto(FILE);await sleep(1500);await p.evaluate(()=>{try{document.getElementById('bp').click()}catch(_){}});await sleep(400);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});
   await sleep(14000);let r=await p.evaluate(()=>({st:NET7.state,entered:!!entered,cur}));ok('14 s later (past the old 7 s give-up) it is still trying, and you can play meanwhile',r.st=='connecting'&&r.entered,r);
-  await sleep(14000);S=createServer({csp:false,port,host:'127.0.0.1',dataDir:dir,scryptN:64,client:path.join(__dirname,'..','index.html')});await S.listen();
+  await sleep(14000);S=createServer({allowGuests:true,csp:false,port,host:'127.0.0.1',dataDir:dir,scryptN:64,client:path.join(__dirname,'..','index.html')});await S.listen();
   const t0=Date.now();const on=await p.waitForFunction(()=>NET7.online,null,{timeout:30000}).then(()=>true).catch(()=>false);ok('when the server wakes, the game goes online by itself',on,{after:Math.round((Date.now()-t0)/1000)+'s'});
   await sleep(1000);r=await p.evaluate(()=>({world:NET7.world,cur,kind:NET7.auth&&NET7.auth.kind}));ok('and joins the shared Plaza as a guest',r.world=='plaza'&&r.cur=='plaza'&&r.kind=='guest',r);
   // Disconnect means disconnect: no more tries behind your back

@@ -7,7 +7,7 @@ try{(()=>{
   +'<path class="br-root" pathLength="1" d="M60 86 C55 92 46 96 37 104" stroke-width="2.6"/><path class="br-root" pathLength="1" d="M60 86 C60.6 94 60 100 60 109" stroke-width="2.6"/><path class="br-root" pathLength="1" d="M60 86 C65 92 74 96 83 104" stroke-width="2.6"/>'
   +'<path class="br-root br-r2" pathLength="1" d="M53 93 C49 92 45 93 41 90" stroke-width="1.8"/><path class="br-root br-r2" pathLength="1" d="M67 93 C71 92 75 93 79 90" stroke-width="1.8"/></g>'
   +'<g fill="url(#brG)"><path class="br-leaf br-l1" d="M60 55 C52 54 44 49 39 40 C49 39 57 44 60 55 Z"/><path class="br-leaf br-l2" d="M60.4 47 C67 45 76 39 81 30 C70 30 62 36 60.4 47 Z"/><path class="br-star" d="M60 2.5 L62.2 9.3 L69 11.5 L62.2 13.7 L60 20.5 L57.8 13.7 L51 11.5 L57.8 9.3 Z"/></g></svg>';
- const WORD='ROOTBOUND';let uid=0;const sym=()=>{const id='brG'+(++uid);return SYM.split('brG').join(id)};
+ window.RB_BRANDSYM=SYM;const WORD='ROOTBOUND';let uid=0;const sym=()=>{const id='brG'+(++uid);return SYM.split('brG').join(id)};
  function mount(){const card=document.getElementById('card');if(!card||document.getElementById('brand1'))return;const b=document.createElement('div');b.id='brand1';b.setAttribute('role','img');b.setAttribute('aria-label','Rootbound');
   b.innerHTML=sym()+'<div class="br-word">'+[...WORD].map((ch,i)=>'<span style="--i:'+i+'">'+ch+'</span>').join('')+'</div><div class="br-tag">Every world is waiting to be remembered.</div>';
   card.insertBefore(b,card.querySelector('#mhome')||card.firstChild);update()}
@@ -19,7 +19,7 @@ try{(()=>{
  // the page's own icon is the symbol, not an emoji
  try{const l=document.querySelector('link[rel=icon]');if(l)l.href='data:image/svg+xml,'+encodeURIComponent(SYM.replace('class="br-sym"','xmlns="http://www.w3.org/2000/svg"'))}catch(_){}
  // the launch title: after the intro film the game starts under a short logo reveal (4.6 s, never blocks input, removed afterwards)
- function reveal(){if(document.getElementById('brandrev'))return;const o=document.createElement('div');o.id='brandrev';o.setAttribute('aria-hidden','true');
+ function reveal(){if(document.getElementById('brandrev'))return;/* players already saw the logo on the login screen (LOGIN1) */if(window.RB_LOGINHOME)return;const o=document.createElement('div');o.id='brandrev';o.setAttribute('aria-hidden','true');
   o.innerHTML='<div class="brv-in">'+sym()+'<div class="br-word">'+[...WORD].map((ch,i)=>'<span style="--i:'+i+'">'+ch+'</span>').join('')+'</div><div class="br-tag">Every world is waiting to be remembered.</div></div>';
   document.body.appendChild(o);void o.offsetWidth;o.classList.add('go');try{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{try{snd(f,1.4,'sine',.03)}catch(_){}},1100+i*160))}catch(_){}setTimeout(()=>{try{o.remove()}catch(_){}},4800)}
  try{const o=SHOW7.open;SHOW7.open=function(){const r=o.apply(this,arguments);try{reveal()}catch(_){}return r}}catch(_){}

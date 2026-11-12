@@ -58,7 +58,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:20},gems:500000,own:{fist:1},ownW:{},wear:
  ok('no errors during the cinematic tests',errs.length==0,errs.slice(0,6));
  await c.close();
  // ---- staying online through a movie
- {const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbmv-')),S=createServer({csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,wxCooldownMs:0,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.join(__dirname,'..','index.html')});const port=await S.listen(),url='http://127.0.0.1:'+port+'/';
+ {const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rbmv-')),S=createServer({allowGuests:true,csp:false,port:0,host:'127.0.0.1',dataDir:dir,scryptN:64,wxCooldownMs:0,maxConnsPerIp:200,ownerName:'Boss',ownerPass:'owner-password-1',client:path.join(__dirname,'..','index.html')});const port=await S.listen(),url='http://127.0.0.1:'+port+'/';
   const cl=async tag=>{const ctx=await b.newContext({viewport:{width:1280,height:720}}),q=await ctx.newPage();q.on('pageerror',e=>errs.push(tag+': '+e.message.slice(0,200)));await q.goto(url);await q.waitForTimeout(800);await q.evaluate(()=>{try{$('cgo').click()}catch(_){}});await q.waitForTimeout(400);await q.evaluate(()=>{try{SHOW7.close()}catch(_){}});await q.waitForFunction(()=>NET7.online,null,{timeout:15000});return q};
   const A=await cl('A'),B=await cl('B');await A.evaluate(()=>{iT=1e9});await B.evaluate(()=>{iT=1e9});await sleep(1800);
   const w0=await A.evaluate(()=>NET7.world),vis=()=>B.evaluate(()=>SOC6.peers().length),v0=await vis();

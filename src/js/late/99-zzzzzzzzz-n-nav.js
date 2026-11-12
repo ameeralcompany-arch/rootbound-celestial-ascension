@@ -45,15 +45,15 @@ const NAV16=(()=>{
  // ---- the features
  const HUB=t=>({hub:t,open:()=>UI6.open(t),close:()=>UI6.close(),on:()=>UI6.on&&SEC[secOf(UI6.tab)].tabs.includes(t)});
  const F=[
-  {id:'character',btn:'bhub',ic:'character',g:'Character',key:'P',n:'Character',d:'Profile, appearance, wings and nameplates',row:0,...HUB('profile')},
-  {id:'equipment',btn:'beq9',ic:'equipment',g:'Character',key:'C',n:'Equipment',d:'See and change the gear you are wearing',row:0,open:()=>EQM9.show(),close:()=>EQM9.close(),on:()=>EQM9.isOpen},
+  {id:'character',btn:'bhub',ic:'character',g:'Character',n:'Character',d:'Profile, appearance, wings and nameplates',row:0,...HUB('profile')},
+  {id:'equipment',btn:'beq9',ic:'equipment',g:'Character',key:'P',n:'Equipment',d:'See and change the gear you are wearing',row:0,open:()=>EQM9.show(),close:()=>EQM9.close(),on:()=>EQM9.isOpen},
   {id:'inventory',btn:'binv7',ic:'inventory',g:'Character',key:'I',n:'Inventory',d:'Your items, blocks and tools',row:0,open:()=>INV7.open(),close:()=>INV7.close(),on:()=>INV7.isOpen},
   {id:'classes',btn:'bcls',ic:'classes',g:'Character',key:'K',n:'Classes',d:'Your class, its skills and its gear',row:0,open:()=>CLS9.open(),close:()=>CLS9.close(),on:()=>live('cls9')},
   {id:'skills',btn:'bskl',ic:'skills',g:'Character',key:'U',n:'Skills',d:'Spend your skill points',row:0,...HUB('skills')},
   {id:'store',btn:'bstore',ic:'store',g:'Shop',n:'Store',d:'Buy weapons, wings, gear and more',row:0,gold:1,open:()=>STORE7.open(),close:()=>STORE7.close(),on:()=>live('store7')},
   {id:'settings',btn:'bset16',ic:'settings',g:'System',key:'O',n:'Settings',d:'Graphics, audio, controls and your save',row:0,hub:'settings',open:()=>UI6.open('settings'),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='system'},
   {id:'worlds',btn:'bworlds',ic:'worlds',g:'World',n:'Worlds',d:'Travel, realms, your worlds and events',row:1,open:()=>openMenu('mworlds'),close:()=>closeMenu(),on:()=>menuOn()||UI6.on&&secOf(UI6.tab)=='world',hubAlso:1},
-  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',key:'N',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,nodock:1,...HUB('bosses'),on:()=>UI6.on&&UI6.tab=='bosses'},
+  {id:'bosses',btn:'bboss',ic:'bosses',g:'World',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,nodock:1,...HUB('bosses'),on:()=>UI6.on&&UI6.tab=='bosses'},
   {id:'quests',btn:'bqm',ic:'quests',g:'World',key:'J',n:'Quests',d:'Daily challenges, your first steps and town quests',row:1,...HUB('quests'),on:()=>UI6.on&&UI6.tab=='quests'},
   {id:'ach',btn:'bach',ic:'achievements',g:'World',key:'Y',n:'Achievements',d:'Achievements and milestones',row:1,nodock:1,...HUB('ach'),on:()=>UI6.on&&UI6.tab=='ach'},
   {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Everything you have collected, with rewards',row:1,nodock:1,open:()=>BOOK7.open(),close:()=>BOOK7.close(),on:()=>BOOK7.isOpen},
@@ -81,7 +81,7 @@ const NAV16=(()=>{
    grid.appendChild(row)}
   tip=document.createElement('div');tip.id='nav16tip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);
   // the map tools, attached to the minimap
-  const hr=el('hudR'),mini=el('mini');if(hr&&mini){const t=document.createElement('div');t.className='maptools';for(const[id,ic,lab,d]of[['bzi','plus','Zoom in','Keys + and 0 to reset'],['bzo','minus','Zoom out','Key −'],['bmus','soundon','Music','Turn the music on or off|Shift + M']]){const b=el(id);if(!b)continue;b.removeAttribute('title');b.innerHTML=icon(ic);b.setAttribute('aria-label',lab);b.dataset.n16tip=lab+'|'+d;t.appendChild(b)}hr.innerHTML='';hr.append(t,mini)}
+  const hr=el('hudR'),mini=el('mini');if(hr&&mini){const t=document.createElement('div');t.className='maptools';for(const[id,ic,lab,d]of[['bzi','plus','Zoom in','Keys + and 0 to reset'],['bzo','minus','Zoom out','Key −'],['bmus','soundon','Music','Turn the music on or off|F2']]){const b=el(id);if(!b)continue;b.removeAttribute('title');b.innerHTML=icon(ic);b.setAttribute('aria-label',lab);b.dataset.n16tip=lab+'|'+d;t.appendChild(b)}hr.innerHTML='';hr.append(t,mini)}
   // a tooltip for everything that has one
   const show=b=>{const p=String(b.dataset.n16tip).split('|');tip.innerHTML='<b>'+esc(p[0])+(p[2]?'<kbd>'+esc(p[2])+'</kbd>':'')+'</b>'+(p[1]?'<small>'+esc(p[1])+'</small>':'');tip.classList.add('on');const r=b.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;let x=r.left+r.width/2-w/2,y=r.top-h-8;if(y<6)y=r.bottom+8;x=Math.max(6,Math.min(innerWidth-w-6,x));tip.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)'};
   const hide=()=>tip.classList.remove('on');
@@ -147,13 +147,13 @@ const NAV16=(()=>{
   h+='<p class="dim">Everyone in this world sees the same events at the same time.</p><h4>In '+esc(cur)+'</h4><div class="ql16">'+(L.length?L.slice(0,5).map(e=>'<div class="q16'+(e===lv?' live':'')+'"><div><b>'+esc(WEV7.names[e.kind])+'</b><small>'+esc(EVD[e.kind])+'</small></div><span class="n" data-t0="'+e.t0+'" data-t1="'+e.t1+'"></span></div>').join(''):'<p class="dim">Nothing is planned here for now.</p>')+'</div>';b.innerHTML=h;tickEvents()};
  function tickEvents(){if(!UI6.on||UI6.tab!='events')return;const now=Date.now();UI6.body.querySelectorAll('[data-t0]').forEach(s=>{const a=+s.dataset.t0,z=+s.dataset.t1,t=now>=z?'Ended':now>=a?'Now · '+clock(z-now)+' left':'In '+clock(a-now);if(s.textContent!==t)s.textContent=t})}
  // ---- keys. The old keys keep working; P U N Y O are new. These also let you jump between panels while the Hub has the keyboard.
- const KEYS={p:'character',u:'skills',n:'bosses',y:'ach',o:'settings'};
+ const KEYS={u:'skills',y:'ach',o:'settings'};
  addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;const t=e.target;if(t&&(t.tagName=='INPUT'||t.tagName=='TEXTAREA'||t.tagName=='SELECT'||t.isContentEditable))return;const k=String(e.key).toLowerCase();
   if(k=='escape'){if(folded&&root&&root.classList.contains('open')){pop(false);e.stopImmediatePropagation();return}
    const pc=el('pcard10');if(pc&&pc.style.display!='none'&&getComputedStyle(pc).display!='none'){pc.style.display='none';e.stopImmediatePropagation();return}
    if(safe(()=>dlgOpen)&&!UI6.on){try{closeDlg()}catch(_){}e.stopImmediatePropagation();return}return}
   if(!safe(()=>entered)||window.RB_COVER||safe(()=>dlgOpen)||safe(()=>DLG7.isOpen)||safe(()=>CINE7.playing)||safe(()=>creatorOn))return;
-  let id=KEYS[k];if(!id&&UI6.on){if(k=='j')id='quests';else if(k=='i'||k=='tab')id='inventory';else if(k=='g')id='guide'}if(!id)return;
+  let id=KEYS[k];if(!id&&UI6.on){if(k=='j')id='quests';else if(k=='i')id='inventory';else if(k=='g')id='guide'}if(!id)return;
   e.preventDefault();e.stopImmediatePropagation();act(id)},true);
  // ---- start
  function start(){build();sync();badges();setInterval(()=>{if(document.hidden)return;try{enforce();sync();tickEvents()}catch(er){if(!start.e){start.e=1;console.error('NAV16',er)}}},150);setInterval(()=>{if(document.hidden)return;try{badges();layout()}catch(_){}},1000)}

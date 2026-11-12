@@ -56,7 +56,7 @@ const DOORS6=(()=>{
   const sv=ui.querySelector('#op_save');if(sv)sv.onclick=()=>{const g2=id=>{const e=ui.querySelector('#'+id);return e?e.type=='checkbox'?e.checked?1:0:e.value:undefined},v=Object.assign({},c);for(const f of['nm','dt','d','lb','ac','lv','kr','kc','sw','tx']){const x=g2('f_'+f);if(x!==undefined)v[f]=x}if(OBJ6.configure(k,v)){say('Saved');OBJ6.sfx('ok');close()}};
 }
  UI6.chestRefresh=()=>{if(uiK>=0&&OBJ[uiK]&&ui.style.display=='block'&&ODEF[OBJ[uiK].t].cat=='cont')config(uiK,true)};
- addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;const k=e.key.toLowerCase();if(k=='escape'&&ui&&ui.style.display=='block'){close();return}if(k=='g'&&entered&&!e.repeat){const n=OBJ6.near();if(n)config(n.k,false)}});
+ addEventListener('keydown',e=>{if(e.target.tagName=='INPUT'||e.target.tagName=='SELECT')return;const k=e.key.toLowerCase();if(k=='escape'&&ui&&ui.style.display=='block'){close();return}});
  return{use,config,cancel,close,check,find,go,get busy(){return busy}}})();
 const _int6=interact;interact=function(){if(dlgOpen)return _int6();if(creatorOn||showInv||menuEl.style.display!='none')return;const npc=nearNPC(),n=OBJ6.near();if(n&&OBJ6.beatsNpc(n,npc)){DOORS6.use(n.k);return}if(npc)return _int6();_int6()};
 

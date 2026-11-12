@@ -30,7 +30,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:4321,own:{fist:1,astralkat:1},ownW
  await sleep(300);await p.keyboard.press('ArrowRight');const foc=await p.evaluate(()=>document.activeElement&&document.activeElement.dataset.app);ok('arrow keys move between apps',foc=='journal',foc);
  await p.keyboard.press('Escape');await sleep(400);ok('Esc puts it away',await p.evaluate(()=>!ROOTLINK.on&&!document.getElementById('rlk').classList.contains('on')));
  // Shift+M still mutes; typing never opens it
- await p.keyboard.press('Shift+M');await sleep(200);const mu=await p.evaluate(()=>({mute,on:ROOTLINK.on}));ok('Shift+M mutes the music and leaves the phone shut',mu.mute===true&&!mu.on,mu);await p.keyboard.press('Shift+M');
+ await p.keyboard.press('F2');await sleep(200);const mu=await p.evaluate(()=>({mute,on:ROOTLINK.on}));ok('F2 mutes the music and leaves the phone shut',mu.mute===true&&!mu.on,mu);await p.keyboard.press('F2');await sleep(120);await p.keyboard.press('Shift+M');await sleep(200);const mu2=await p.evaluate(()=>({mute,on:ROOTLINK.on}));ok('Shift+M does nothing to the music or the phone (Shift is Dash)',mu2.mute===false&&!mu2.on,mu2);
  await p.evaluate(()=>{const i=document.createElement('input');i.id='tt';document.body.appendChild(i);i.focus()});await p.keyboard.press('m');await sleep(200);ok('typing an m in a text field does not open it',await p.evaluate(()=>!ROOTLINK.on&&document.getElementById('tt').value=='m'));await p.evaluate(()=>document.getElementById('tt').remove());
  // every app opens the real screen
  const RES={};for(const id of ['social','dungeons']){

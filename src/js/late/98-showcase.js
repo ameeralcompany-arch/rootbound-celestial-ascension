@@ -99,8 +99,10 @@ function openStore(){const n=NPCS.find(x=>x.k=='shop');if(!n)return;curNPC=n;dlg
 {const _cs=celSave;celSave=function(){try{if(typeof SHOW7!='undefined'&&X6&&X6.sc&&!(X6.sc.act>0&&0)){X6.sc.looks[X6.sc.act|0]=sanAp(cel.ap);x6Save()}}catch(_){}_cs()}}
 // the home page was removed (v10): the story intro hands straight over to the game (the same as its old Play button), and there is no HUD
 // Home button. SHOW7 stays as a library (its portrait gallery code), but SHOW7.open() now just starts the game.
-if(!(navigator.webdriver&&!localStorage.getItem('rb_force_launch')))/* automated browsers skip the launch screens unless a test asks for them */{const home=()=>{try{SHOW7.open()}catch(_){}};
- /* every launch: the intro film (INTRO60, or the CINE7 story when it can't play) comes first, then the game starts */try{INTRO60.launch(home)}catch(e){console.error('INTRO60',e);home()}}
+{const home=()=>{try{SHOW7.open()}catch(_){}};
+ /* players: the login screen (LOGIN1, last in the page) comes first; after signing in and connecting, the game starts (with the intro film for a new character).
+    Automated browsers skip the launch screens unless a test asks for the old film-first start. */
+ if(!navigator.webdriver)window.RB_LOGINHOME=home;else if(localStorage.getItem('rb_force_launch')){try{INTRO60.launch(home)}catch(e){console.error('INTRO60',e);home()}}}
 // (the HUD Home button was removed with the home page)
 // ---- CHARMIG9: remove the old preset character slots from every save (any computer). Keeps slot 0 (your own look), your level, gems,
 // inventory, gear and wings untouched; if a preset was the active character, your own saved look becomes active again.

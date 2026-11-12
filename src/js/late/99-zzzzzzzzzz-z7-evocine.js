@@ -92,4 +92,6 @@ try{window.EVC1=(()=>{
  function add(k,sp){SPEC[k]=sp;const S=shots(k);let reveal=0;{let a=0;for(const s of S){if(s.evoPeak)reveal=a;a+=s.d}}
   let nm=k;try{nm=EVO1.E[k].n}catch(_){}
   MOVIE1.register(k,{id:k,kind:'evo',title:nm,cls:nm,score:'audio/movie/evo/'+k+'.mp3',reveal,shots:S,lines:[],setup:setup(k),teardown(m){m.ctx=null},hits:((sp.sig&&sp.sig.hits)||[.35]).map(h=>+(AT.sig+h).toFixed(3))})}
- return{add,SPEC,TL,AT,POSE,REG,WLEN,TYPE,plain,mixC,rgba,vg,impact}})()}catch(e){console.error('EVC1',e)}
+ // for the login screen's class showcase: a class's stage (look, outfit, place) and its drawing pieces outside a movie
+ const ctx=(k,look)=>setup(k)({k:1,o:{look}});
+ return{add,SPEC,TL,AT,POSE,REG,WLEN,TYPE,plain,mixC,rgba,vg,impact,ctx,hero:(q,T,y,X,Y,s,p,o)=>hero(q,{T},y,X,Y,s,p,o),aura:(q,y,X,Y,k,t)=>aura(q,y,X,Y,k,t),sigil:(q,y,X,Y,R0,k,t,a)=>sigilAt(q,y,X,Y,R0,k,t,a),wpn:(q,y,X,Y,a,len,t)=>wpn(q,y,X,Y,a,len,t),rays}})()}catch(e){console.error('EVC1',e)}
