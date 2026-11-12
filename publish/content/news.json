@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.19",
+      "type": "update",
+      "title": "A new login screen, and Rootbound is online only",
+      "summary": "Rootbound now opens on an animated login screen with every class on stage. Sign in or create an account to play: progress lives on the server and follows your account, and the progress already on this computer moves into the first account y",
+      "body": "Rootbound now opens on an animated login screen with every class on stage. Sign in or create an account to play: progress lives on the server and follows your account, and the progress already on this computer moves into the first account you make here. New accounts get a recovery key for forgotten passwords. Every key now does one thing: Equipment is on P, the weapon/tool swap on Tab, the wrench on N.",
+      "date": "2026-11-12",
+      "version": "6.13.19"
+    },
+    {
       "id": "update-6.13.18",
       "type": "update",
       "title": "Evolution cinematics for every class",
