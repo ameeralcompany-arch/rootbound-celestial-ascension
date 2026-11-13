@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.20",
+      "type": "update",
+      "title": "Earned weapons, a cosmetic store and a living Plaza",
+      "summary": "Weapons are now earned by levelling your class and equip themselves, and the store sells looks only: seven new cosmetic collections. Breaking natural blocks can reveal a rare cosmetic (0.01% to 0.5%), and the new Collection shows them all. ",
+      "body": "Weapons are now earned by levelling your class and equip themselves, and the store sells looks only: seven new cosmetic collections. Breaking natural blocks can reveal a rare cosmetic (0.01% to 0.5%), and the new Collection shows them all. The Plaza has CHOOSE YOUR PATH arrows over the class masters, cherry trees, benches, Mochi the cat and full-body emotes. Dungeon fixes for chests, two-player boss rooms and the dash. A new smooth sound: every weapon type and every class ultimate has its own sound, with soft ambience. Wings now fly by your level, not by rarity.",
+      "date": "2026-11-13",
+      "version": "6.13.20"
+    },
+    {
       "id": "update-6.13.19",
       "type": "update",
       "title": "A new login screen, and Rootbound is online only",
