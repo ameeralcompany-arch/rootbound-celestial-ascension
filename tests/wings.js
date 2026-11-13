@@ -80,10 +80,10 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
   const r0=await E(()=>({st:{...WTRAIL.st}}));await E(()=>{P.y-=30;P.vy=40;P.g=false;K[' ']=true});await W(ms);
   const r=await E(()=>({c:WTRAIL.counts(),st:{...WTRAIL.st},on:FLY7.F.on,tk:FLY7.F.tk}));await E(()=>{for(const k in K)K[k]=false});return{...r,dB:r.st.bursts-r0.st.bursts,dR:r.st.rings-r0.st.rings,dBeat:r.st.beats-r0.st.beats}};
  const fe=await flyFor('storm',600),fl=await flyFor('ascendant',700),fm=await flyFor('cosmic',700);
- ok('trail effects only for legendary / mythic: an epic wing gets none, legendary sheds its trail + flakes + take-off ring, mythic a denser trail + orbiting motes + double ring',
-  fe.on&&fe.tk==0&&fe.c.trail==0&&fe.c.feathers==0&&fe.c.rings==0&&fe.dB==0&&fe.c.motes==0&&
-  fl.on&&fl.tk==1&&fl.c.trail>=3&&fl.c.feathers>0&&fl.dB==1&&fl.dR==1&&fl.c.motes==0&&
-  fm.on&&fm.tk==2&&fm.c.trail>=3&&fm.dB==1&&fm.dR==1&&fm.c.motes>.5,{epic:fe.c,leg:[fl.c,fl.dR],myth:[fm.c,fm.dR]});
+ ok('trail effects (looks) only for legendary / mythic: an epic wing gets none, legendary sheds its trail + flakes + take-off ring, mythic a denser trail + orbiting motes + double ring',
+  fe.on&&fe.c.trail==0&&fe.c.feathers==0&&fe.c.rings==0&&fe.dR==0&&fe.c.motes==0&&
+  fl.on&&fl.c.trail>=3&&fl.c.feathers>0&&fl.dB==1&&fl.dR==1&&fl.c.motes==0&&
+  fm.on&&fm.c.trail>=3&&fm.dB==1&&fm.dR==1&&fm.c.motes>.5,{epic:fe.c,leg:[fl.c,fl.dR],myth:[fm.c,fm.dR]});
  // ---- themed trails: the trail follows the wing's own theme (dark wings: smoky wisps drawn source-over), never a generic rainbow
  await E(async()=>{gems=1e9;lvl=150;await SHOP7.buy('wing_voidshroud')});
  r=await E(()=>{const t=id=>WTRAIL.theme(id),o={};for(const id of['voidshroud','nightforge','inkwraith','bonelight','eyemoth','haloseraph','eternity','ascendant','phoenix','drakelord','stormlance','frost','amethclaw','cosmic','storm'])o[id]=t(id);
@@ -110,15 +110,17 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
  ok('top-tier effects stay cheap: a full frame of effects (pools at their caps) costs < 2.5 ms on a software canvas; the burst sounds run without errors',r.o.none===null&&['ascendant','cosmic','eternity'].every(id=>r.o[id]&&r.o[id].ms<2.5)&&r.s==2,r);
  // climb: deterministic physics sim (1/120 s steps) in a tall cleared shaft, Space held from a standing hover
  r=await E(()=>{const s=window.__shaft,out={},real=performance.now.bind(performance);let clk=real();performance.now=()=>clk;
-  try{for(const id of['storm','ascendant','cosmic','eternity']){wingEquip(id);P.x=s.cx*T+T/2;P.y=s.FL*T-P.h-60;P.vx=P.vy=0;P.g=false;FLY7.F.sta=1;FLY7.F.on=false;FLY7.F.air=0;FLY7.F.burst=-1e9;for(const k in K)K[k]=false;K[' ']=true;
+  try{const one=(id,key)=>{wingEquip(id);P.x=s.cx*T+T/2;P.y=s.FL*T-P.h-60;P.vx=P.vy=0;P.g=false;FLY7.F.sta=1;FLY7.F.on=false;FLY7.F.air=0;FLY7.F.burst=-1e9;for(const k in K)K[k]=false;K[' ']=true;
    const y0=P.y;let t=0,y15=null,minY=P.y,started=false,vmin=0;for(let i=0;i<120*30;i++){clk+=1000/120;physics(1/120,0,false);moveE(P,1/120);t+=1/120;vmin=Math.min(vmin,P.vy);if(FLY7.F.on)started=true;minY=Math.min(minY,P.y);if(y15==null&&t>=1.5)y15=P.y;if(started&&!FLY7.F.on&&P.vy>0&&t>1.6)break}
-   out[id]={climb:Math.round(y0-y15),maxH:Math.round(y0-minY),vmin:Math.round(vmin)}}
+   out[key||id]={climb:Math.round(y0-y15),maxH:Math.round(y0-minY),vmin:Math.round(vmin)}};for(const id of['storm','ascendant','cosmic','eternity'])one(id);const lv0=lvl;lvl=1;try{one('cosmic','low')}finally{lvl=lv0}
   // low ceiling: a mythic wing under a 3-tile roof never pushes into the blocks
   const cx=s.cx,top=s.FL-4;for(let x=cx-5;x<=cx+5;x++)tiles[top*W+x]=1;wingEquip('cosmic');P.y=s.FL*T-P.h-30;P.vy=0;P.g=false;FLY7.F.sta=1;FLY7.F.on=false;FLY7.F.air=0;let minY=P.y;
   for(let i=0;i<240;i++){clk+=1000/120;physics(1/120,0,false);moveE(P,1/120);minY=Math.min(minY,P.y)}out.roof={minY:Math.round(minY),roof:(top+1)*T,ok:minY>=(top+1)*T-.5};for(let x=cx-5;x<=cx+5;x++)tiles[top*W+x]=0}
   finally{performance.now=real;for(const k in K)K[k]=false;FLY7.F.burst=0}return out});
- ok('legendary climbs clearly higher than epic (>= 1.35x in 1.5 s, >= 1.5x total height)',r.ascendant.climb>=r.storm.climb*1.35&&r.ascendant.maxH>=r.storm.maxH*1.5,r);
- ok('mythic climbs higher than legendary (>= 1.3x in 1.5 s, >= 1.5x total height); exclusive flies like mythic; peak climb stays below one tile per frame',r.cosmic.climb>=r.ascendant.climb*1.3&&r.cosmic.maxH>=r.ascendant.maxH*1.5&&r.eternity.climb>=r.cosmic.climb*.95&&Math.min(r.storm.vmin,r.ascendant.vmin,r.cosmic.vmin,r.eternity.vmin)>-900,r);
+ // wings are looks only (ultimate update): every wing flies alike at the same level, and flight grows with your level, never with the wing
+ {const ids=['storm','ascendant','cosmic','eternity'],H=ids.map(i=>r[i].maxH),C=ids.map(i=>r[i].climb);
+ ok('every wing flies alike at the same level: epic, legendary, mythic and exclusive reach the same height (within 5%) and climb alike (within 15%)',Math.min(...H)>=Math.max(...H)*.95&&Math.min(...C)>=Math.max(...C)*.85,r);
+ ok('flight grows with level: at level 150 a wing climbs at least 1.3x higher than at level 1; peak climb stays below one tile per frame',r.cosmic.maxH>=r.low.maxH*1.3&&r.cosmic.climb>r.low.climb&&Math.min(r.storm.vmin,r.ascendant.vmin,r.cosmic.vmin,r.eternity.vmin)>-900,{high:r.cosmic,low:r.low})}
  ok('low ceiling: a mythic climb under a 3-tile roof stops at the roof (no tunnelling)',r.roof.ok,r.roof);
  // the Plaza: mythic flight works there too, stays inside the world and on screen
  // start well off the ground: flight needs 0.1 s in the air, and at a low frame rate a small hop lands before that. A slow runner gets more samples to climb.

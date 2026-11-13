@@ -7,8 +7,10 @@
 // RBMIX.duck(amount, seconds) lowers the music for a moment (an ultimate's build-up), and RBMIX.stats() reports the peak level for tests. =====
 (function(){
  try{
-  if(typeof AudioNode=='undefined'||!AudioNode.prototype||AudioNode.prototype.__rbmix)return;
-  const raw=AudioNode.prototype.connect;AudioNode.prototype.__rbmix=1;
+  // the "installed" mark lives under its own name: every node inherits from AudioNode.prototype, so marking it __rbmix would make every sound look
+  // like a part of the desk and skip it (only the desk's own nodes carry __rbmix, set on each node)
+  if(typeof AudioNode=='undefined'||!AudioNode.prototype||AudioNode.prototype.__rbmixOn)return;
+  const raw=AudioNode.prototype.connect;AudioNode.prototype.__rbmixOn=1;
   const buses=new Map();let peak=0,peakT=0;
   function busFor(ctx){
    if(!ctx||(typeof OfflineAudioContext!='undefined'&&ctx instanceof OfflineAudioContext&&!window.RBMIX_OFFLINE))return null;   // tests render offline through the desk (RBMIX_OFFLINE)
@@ -19,7 +21,9 @@
     const hp=mk('highpass',28,null,.6),harsh=mk('peaking',3000,-2.5,.9),top=mk('highshelf',6200,-4.5),warm=mk('lowshelf',160,1.2);
     const glue=ctx.createDynamicsCompressor();glue.__rbmix=1;glue.threshold.value=-16;glue.knee.value=14;glue.ratio.value=2.6;glue.attack.value=.008;glue.release.value=.28;
     const lim=ctx.createDynamicsCompressor();lim.__rbmix=1;lim.threshold.value=-2.5;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=.001;lim.release.value=.12;
-    const out=ctx.createGain();out.__rbmix=1;out.gain.value=.96;
+    // the browser's compressors add their own make-up gain to quiet sound (about +5 dB here); the output takes it back, so the game sounds smoother at
+    // the loudness it was made at, never louder (measured: the same level as without the desk for swings, pickups and a long soak)
+    const out=ctx.createGain();out.__rbmix=1;out.gain.value=.55;
     const an=ctx.createAnalyser();an.__rbmix=1;an.fftSize=1024;
     for(const[a,z]of[[input,hp],[hp,harsh],[harsh,top],[top,warm],[warm,glue],[glue,lim],[lim,out]])raw.call(a,z);
     raw.call(out,ctx.destination);raw.call(out,an);

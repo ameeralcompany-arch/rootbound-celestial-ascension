@@ -16,8 +16,9 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:100,own:{fist:1,ember:1},wp:'ember
  const p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&!/ERR_|favicon/.test(m.text()))errs.push(m.text().slice(0,300))});
  await p.goto(FILE,{waitUntil:'commit'});await p.waitForFunction(()=>window.RBDIAG&&RBDIAG.ready,null,{timeout:90000});await p.evaluate(()=>enterWorld('plaza'));await sleep(1500);
  const setup=await p.evaluate(async()=>{ac();if(AC.state!='running')try{await AC.resume()}catch(_){}OPT.sv=1;try{startBGM()}catch(_){}await new Promise(r=>setTimeout(r,800));snd(440,.2,'square',.05);await new Promise(r=>setTimeout(r,300));
-  return{state:AC.state,bus:!!(window.RBMIX&&RBMIX.busFor(AC)),engines:RBMIX.stats().engines,soft:!!window.SOFTSYN,snd:!!window.RBSND}});
- ok('the audio runs, and the game\'s sounds go through the mixing desk',setup.state=='running'&&setup.bus&&setup.engines>=1&&setup.soft&&setup.snd,setup);
+  return{state:AC.state,bus:!!(window.RBMIX&&RBMIX.buses.has(AC)),engines:RBMIX.stats().engines,soft:!!window.SOFTSYN,snd:!!window.RBSND}});
+ // the desk is only built when a real sound reaches the speakers through it, so a desk for the game's own engine proves the routing
+ ok('the audio runs, and the game\'s sounds go through the mixing desk (a real sound built it)',setup.state=='running'&&setup.bus&&setup.engines>=1&&setup.soft&&setup.snd,setup);
  // ---- every weapon has a profile and swings without errors
  const pro=await p.evaluate(()=>{const o={},bad=[];for(const id in WPN){try{const k=RBSND.kindOf(WPN[id]);o[k]=(o[k]||0)+1;RBSND.swing(id)}catch(e){bad.push(id+' '+e.message)}}return{kinds:o,bad}});
  ok('every weapon has a sound profile and swings cleanly ('+Object.keys(pro.kinds).length+' kinds)',pro.bad.length==0&&['fast','heavy','scythe','magic','bow','gun','fist'].every(k=>pro.kinds[k]>0),pro);
@@ -27,29 +28,32 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:100,own:{fist:1,ember:1},wp:'ember
  // ---- offline rendering: the game's own sound code renders into an OfflineAudioContext through the same mixing desk, silently and exactly; the
  //      recording is then measured (peak, loudness, and the share of energy in the harsh band and the brittle top, by FFT)
  await p.evaluate(()=>{window.RBMIX_OFFLINE=true;window.__render=async(secs,script)=>{const sr=44100,off=new OfflineAudioContext(1,Math.ceil(sr*secs),sr);let sim=0;Object.defineProperty(off,'currentTime',{get:()=>sim,configurable:true});
-   const AC0=AC;AC=off;try{for(const[at,fn]of script){sim=at;fn()}}finally{AC=AC0}const buf=await off.startRendering(),d=buf.getChannelData(0);
+   const AC0=AC;AC=off;try{for(const[at,fn]of script){sim=at;fn()}}finally{AC=AC0}const routed=RBMIX.buses.has(off),buf=await off.startRendering(),d=buf.getChannelData(0);
    let peak=0,ss=0;for(let i=0;i<d.length;i++){const v=Math.abs(d[i]);if(v>peak)peak=v;ss+=d[i]*d[i]}
    // FFT band shares (2048-point frames, Hann window, every 4th frame)
    const N=2048,re=new Float64Array(N),im=new Float64Array(N),w=new Float64Array(N);for(let i=0;i<N;i++)w[i]=.5-.5*Math.cos(2*Math.PI*i/(N-1));
    const fft=()=>{for(let i=1,j=0;i<N;i++){let bit=N>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]]}}for(let len=2;len<=N;len<<=1){const ang=-2*Math.PI/len,wr=Math.cos(ang),wi=Math.sin(ang);for(let i=0;i<N;i+=len){let cr=1,ci=0;for(let k=0;k<len/2;k++){const ur=re[i+k],ui=im[i+k],vr=re[i+k+len/2]*cr-im[i+k+len/2]*ci,vi=re[i+k+len/2]*ci+im[i+k+len/2]*cr;re[i+k]=ur+vr;im[i+k]=ui+vi;re[i+k+len/2]=ur-vr;im[i+k+len/2]=ui-vi;const nr=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=nr}}}};
    let tot=0,harsh=0,top=0;for(let s=0;s+N<d.length;s+=N*4){for(let i=0;i<N;i++){re[i]=d[s+i]*w[i];im[i]=0}fft();for(let k=1;k<N/2;k++){const pw=re[k]*re[k]+im[k]*im[k],fq=k*sr/N;tot+=pw;if(fq>=2500&&fq<5000)harsh+=pw;if(fq>=8000)top+=pw}}
-   return{peak:+peak.toFixed(3),rms:+Math.sqrt(ss/d.length).toFixed(4),harsh:+(harsh/Math.max(1e-12,tot)*100).toFixed(2),top:+(top/Math.max(1e-12,tot)*100).toFixed(3),secs}}});
+   return{routed,peak:+peak.toFixed(3),rms:+Math.sqrt(ss/d.length).toFixed(4),harsh:+(harsh/Math.max(1e-12,tot)*100).toFixed(2),top:+(top/Math.max(1e-12,tot)*100).toFixed(3),secs}}});
  const soak=await p.evaluate(async SOAK=>{const W=['ember','titanmaul','void','starwand','zephyrbow','revolver','fist','blood','frost','spark2','smg','crimsonrift'].filter(id=>WPN[id]);const m={x:0,y:0,hp:1e9,mhp:1e9,dead:false};const sc=[];let at=.05,i=0;
   while(at<SOAK-1){const id=W[Math.floor(at/10)%W.length],cd=Math.max(.12,WPN[id].cd||.4);sc.push([at,()=>RBSND.swing(id)]);if(i%3!=2){const k=i%17==0;sc.push([at+.06,()=>RBSND.impact(m,WPN[id],12,k)])}i++;at+=cd}
   const r=await __render(SOAK,sc);r.swings=i;return r},SOAK);
+ ok('the soak is heard through the mixing desk',soak.routed===true,soak);
  ok('a '+soak.secs+'-second soak of '+soak.swings+' attacks with every kind of weapon never clips (peak under full scale)',soak.peak>.005&&soak.peak<.99,soak);
  ok('the harsh band (2.5-5 kHz) stays a small share of the sound',soak.harsh<12,soak);
  ok('and the brittle top (above 8 kHz) is barely there',soak.top<1.5,soak);
  ok('the number of sounds playing at once stays capped',await p.evaluate(()=>SOFTSYN.live<=SOFTSYN.MAX),'');
  // ---- picking things up: a soft pluck or bell, clean
- const pu=await p.evaluate(async()=>({item:await __render(.6,[[.02,()=>RBSND.pickup(false)]]),gem:await __render(.6,[[.02,()=>{RBSND.pickup(true)}]])}));
- ok('picking things up is a soft pluck (items) or bell (gems): audible, gentle, clean',pu.item.rms>.0004&&pu.item.peak<.3&&pu.gem.peak<.3&&pu.item.harsh<15,pu);
+ //  (each render starts with two quiet seconds: a fresh desk's compressor opens over its first second, while in the game the desk is already running;
+ //   and the pickups are spaced, because the game merges two pickups within 60 ms into one sound)
+ const pu=await p.evaluate(async()=>{const item=await __render(2.6,[[2.02,()=>RBSND.pickup(false)]]);await new Promise(r=>setTimeout(r,800));const gem=await __render(2.6,[[2.02,()=>{RBSND.pickup(true)}]]);return{item,gem}});
+ ok('picking things up is a soft pluck (items) or bell (gems): audible, gentle, clean',pu.item.routed&&pu.gem.routed&&pu.item.rms>.0004&&pu.gem.rms>.0004&&pu.item.peak<.3&&pu.gem.peak<.3&&pu.item.harsh<15,pu);
  // ---- ultimates: one per class, distinct, big but clean, ringing out after the last strike
  const ul=await p.evaluate(async()=>{const o={},ks=Object.keys(RBSND.ULT);const sig=new Set();for(const k of ks){const U=RBSND.ULT[k];sig.add(U.inst+':'+U.root+':'+U.ch.join(','))}o.n=ks.length;o.distinct=sig.size;o.each={};
-  for(const k of ks){const U=RBSND.ULT[k],last=U.h[U.h.length-1],full=await __render(last+3.2,[[.02,()=>RBSND.ultimate(k)]]);o.each[k]={peak:full.peak,rms:full.rms,harsh:full.harsh}}
+  for(const k of ks){const U=RBSND.ULT[k],last=U.h[U.h.length-1],full=await __render(last+5.2,[[2.02,()=>RBSND.ultimate(k)]]);o.each[k]={peak:full.peak,rms:full.rms,harsh:full.harsh,routed:full.routed}}
   o.maxPeak=Math.max(...Object.values(o.each).map(e=>e.peak));o.minRms=Math.min(...Object.values(o.each).map(e=>e.rms));o.maxHarsh=Math.max(...Object.values(o.each).map(e=>e.harsh));return o});
  ok('all 13 classes have their own ultimate sound',ul.n==13&&ul.distinct==13,{n:ul.n,distinct:ul.distinct});
- ok('every ultimate is big but clean: audible, under full scale, little harsh energy',ul.minRms>.002&&ul.maxPeak<.99&&ul.maxHarsh<14,{maxPeak:ul.maxPeak,minRms:ul.minRms,maxHarsh:ul.maxHarsh});
+ ok('every ultimate is big but clean: audible, under full scale, little harsh energy',Object.values(ul.each).every(e=>e.routed)&&ul.minRms>.002&&ul.maxPeak<.99&&ul.maxHarsh<14,{maxPeak:ul.maxPeak,minRms:ul.minRms,maxHarsh:ul.maxHarsh,routed:Object.values(ul.each).every(e=>e.routed)});
  const dk=await p.evaluate(async()=>{try{startBGM()}catch(_){}await new Promise(r=>setTimeout(r,400));const o={before:RBMIX.duckLevels()};RBMIX.duck(.7,1);await new Promise(r=>setTimeout(r,600));o.during=RBMIX.duckLevels();await new Promise(r=>setTimeout(r,2600));o.after=RBMIX.duckLevels();return o});
  ok('an ultimate dips the music and brings it back smoothly',dk.before.length>0&&dk.during.every(v=>v<.5)&&dk.after.every(v=>v>.9),dk);
  // ---- ambience follows the place

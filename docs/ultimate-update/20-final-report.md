@@ -2,7 +2,7 @@
 
 - **Started:** 2026-11-13, from the checkpoint tag `checkpoint-before-ultimate-update` (6.13.19, b29999b).
 - **Status:** everything below is built and tested by automated players in an off-screen browser and against local servers.
-- **Not yet done:** no human has played any of it, and nothing is pushed or published.
+- **Released:** pushed to the live server on 2026-11-13 (9da374f) and published as 6.13.20 with the fixes from the release check (section 2). No human has played any of it yet.
 - **Audio:** this update also covers the signature audio direction ("smooth, chill and satisfying").
 
 ## 1. Completed features
@@ -18,6 +18,7 @@
 - **The store is cosmetic-only.**
   - It opens on the seven cosmetic collections, each marked "looks only, no stats".
   - It also sells wings, effects, charms, pets, weather and blocks, as before.
+  - **Wings are looks only now.** Every wing flies the same at the same level, and flight grows with your level (at level 150 about 2.8 times higher than at level 1). A legendary or mythic wing keeps its own trail, flakes, rings and motes, but no longer flies higher than an epic one.
   - The server refuses any weapon, gear or rare-find purchase with "This is earned by playing, not sold".
 
 ### Cosmetics
@@ -92,7 +93,8 @@
   - gently cuts the harsh band around 3 kHz and the brittle top above 6 kHz;
   - keeps the low end clean;
   - "glues" loud moments with a soft compressor;
-  - ends with a limiter, so nothing can clip.
+  - ends with a limiter, so nothing can clip;
+  - plays at the loudness the game was made at, never louder (its output takes back the volume the browser's compressors add).
 - **A softer synth for the hundreds of game sounds:** no clicks, no raw buzzing square or saw waves, a slightly different pitch on each repeat, and at most 28 sounds at once. The dull 420 Hz muffle on noise sounds is gone.
 - **Weapon sound profiles** for every weapon type, each one layered sound:
   - fast blades: an airy whoosh and a clean slice;
@@ -136,6 +138,10 @@
   - a load-order mistake that stopped dungeons loading;
   - a name clash between the new class arrows and the existing guide path;
   - the revive key check.
+- **Found by the release check (the packaged game on a copy of a real save), fixed in 6.13.20:**
+  - **The mixing desk was bypassed.** Its "installed" mark was set where every sound node inherits it, so every sound looked like part of the desk and skipped it. The first audio test missed this because it built the desk by hand before measuring. The sound now really goes through the desk, the audio test proves it (a real sound has to build the desk, and every measured recording is checked), and the desk's output was set so the game is no louder than before.
+  - **Holding a class-skill key (X, C, Q, E…) did not skip a world boss's opening film**: it fired the skill underneath instead. This was already in 6.13.19. The skill keys now stand aside during that film, as they already did for the other films.
+  - **The wings test still expected the old rule** that rarer wings fly higher. It was rewritten to the looks-only rule above (it had not been run during the update).
 
 ## 3. Preserved systems
 - **Online-only:** unchanged, and the login screen is untouched.
@@ -192,10 +198,10 @@ All tests run off-screen: headless browsers, local servers and temporary data on
   | Measure | Result |
   |---|---|
   | Peak | 0.06, far under full scale |
-  | Harsh band (2.5-5 kHz) | 4% of the energy |
-  | Above 8 kHz | 0.1% |
+  | Harsh band (2.5-5 kHz) | 2.3% of the energy (5.7% without the desk) |
+  | Above 8 kHz | 0.04% (0.14% without the desk) |
 
-  It also checks that all 13 ultimates are distinct, audible and under full scale (harsh band at most 12%), that the music dips and comes back, and that the ambience follows the place.
+  It also checks that the game's own sounds build and use the desk, that all 13 ultimates are distinct, audible and under full scale (harsh band at most 6%), that pickups are audible, that the music dips and comes back, and that the ambience follows the place. 14 checks, all pass.
 
 **Existing suites:**
 
@@ -228,6 +234,9 @@ All tests run off-screen: headless browsers, local servers and temporary data on
 | `gear` | 12 pass |
 | `economy` | 39 pass |
 | `e2e` | every check reached passes |
+| `wings` (looks-only flight) | all pass |
+
+**Rechecked for the release:** login 21, boot 10, cosmetics 38, cinematics 21, bosses 150, world bosses (with the skip fix) all pass, combat and Plaza life all pass.
 
 **Not caused by this update:**
 - **Store music-mood check:** it fails the same way on the published version 6.13.19.
@@ -256,7 +265,7 @@ All tests run off-screen: headless browsers, local servers and temporary data on
 ### Sound
 - **Voices:** at most 28 at once.
 - **Clipping:** none over a 150-second attack soak (the peak is 0.06 of full scale).
-- **Mixing desk:** one per audio engine, created once.
+- **Mixing desk:** one per audio engine, created once. In the packaged game on a real save it ran at 143-144 fps on the login screen and in the Plaza.
 
 ### Multiplayer
 Every server and online suite passes on local servers:
@@ -270,7 +279,7 @@ Every server and online suite passes on local servers:
 | Two-player dungeons | 67 |
 | Cosmetics server | 38 |
 
-The live server was not touched.
+The live server took this update on 2026-11-13 and answered healthy after its restart.
 
 ## 7. Unfinished work (honest list)
 - **Phase 5 (movement, physics, animation, skill VFX): not reworked.**
@@ -290,6 +299,8 @@ The live server was not touched.
 ## 8. Known issues and risks
 - **Unseen by a human:** nobody has seen or heard any of this in real play yet. Rare-find announcements and duo dungeons need real players.
 - **Old saves:** players whose gear was bought before the update keep it. The first time an existing player loads, the guide's one-time goals ("Hold your class weapon", "Reach 200 Combat Power") may pay out together, because earned weapons can complete them at once.
+- **Wing owners:** players who bought a legendary or mythic wing for its flight lose that edge. The wing keeps its look and its trail effects.
+- **The first second of sound:** a fresh desk's compressor opens over its first second, so the very first sound after the game starts can be a little softer.
 - **Cosmetic cost in crowds:** with 9 or more other players around (or on Low quality), other players' cosmetics draw with flat shading. That looks the same at game size, but it is a little simpler.
 - **Fake breaks:** the server cannot see terrain, so a modified client could fake "natural" breaks. The caps (60 a minute, 4,000 a day, and only near the player) limit this to what a fast real player could reach anyway.
 
