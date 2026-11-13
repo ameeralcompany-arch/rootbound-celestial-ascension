@@ -18,7 +18,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
   window.__portrait=(gear,ap)=>{const c=document.createElement('canvas');c.width=310;c.height=430;const x=c.getContext('2d');SHOWART.draw(x,310,430,{look:SHOWART.info(ap||sanAp(cel.ap)),t:1.2,wpn:'fist',wings:false,gear});return __px(c)}});
  // ---- every new wearable: catalog entry, buy, equip, icon, worn art in-game + portrait
  let r=await E(async()=>{const out={bad:[],n:0};for(const id of GEAR8.IDS){out.n++;const w=WEAR[id],it=SHOP7.byId.get('wear_'+id);if(!w||!it){out.bad.push('missing '+id);continue}
-   if(it.price!=w.cost||it.sub!=w.s||it.lv!=w.lv||it.cat!='gear')out.bad.push('catalog '+id);delete ownW[id];const g0=gems;const res=await SHOP7.buy(it.id);if(!res.ok||g0-gems!=it.price)out.bad.push('buy '+id+' '+res.m);
+   if(it.sub!=w.s||it.cat!='gear'||it.sale!==0||!EARN1.ruleOf(it.id,'g')&&!EARN1.ruleOf(id,'g'))out.bad.push('catalog '+id);delete ownW[id];const g0=gems;const res=await SHOP7.buy(it.id);if(res.ok||gems!=g0)out.bad.push('sold '+id);ownW[id]=1;/* earned by playing (ultimate update): granted here */
    if(!SHOP7.equip(it.id)||wear[w.s]!=id)out.bad.push('equip '+id);
    const c=document.createElement('canvas');c.width=c.height=96;try{if(!GEAR7.icon(c.getContext('2d'),id,96))out.bad.push('icon '+id)}catch(e){out.bad.push('icon '+id+' '+e.message)}if(__px(c).n<400)out.bad.push('icon empty '+id);
    const u=iconURL('a:'+id);if(!u||u.length<500)out.bad.push('iconURL '+id);
@@ -26,7 +26,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
    if(w.s=='hat'||w.s=='body'){const p0=__portrait(base),p1=__portrait(wr);if(p1.n<1000||p0.h==p1.h)out.bad.push('portrait '+id)}
    if(!(w.d&&!w.sd&&Object.keys(w.b).length))out.bad.push('stats '+id)}
   for(const k in wear)wear[k]='';return out});
- ok('12 new wearables: catalog, buy charges the price, equip, icon, worn art in-game and in the portrait',r.n>=12&&r.bad.length==0,r.bad.slice(0,8).join(', '));
+ ok('12 new wearables: catalog (earned, never sold, with an earn rule), equip, icon, worn art in-game and in the portrait',r.n>=12&&r.bad.length==0,r.bad.slice(0,8).join(', '));
  // ---- every slot gets something, several rarities
  r=await E(()=>{const s={},rr={};for(const id of GEAR8.IDS){s[WEAR[id].s]=1;rr[SHOP7.byId.get('wear_'+id).rar]=1}return{slots:Object.keys(s).sort().join(),rars:Object.keys(rr).length}});
  ok('new wearables cover hat/body/boot/glove across 4+ rarities',r.slots=='body,boot,glove,hat'&&r.rars>=4,r);
@@ -51,10 +51,9 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
    try{for(let i=0;i<5;i++)FX7.tick(.05);__char({},{me:1})}catch(e){o.bad.push('tick '+c+' '+e.message)}}
   o.comp=['pip','gloop','cinder'].every(c=>COMP7.IDS.includes(c));o.book=BOOK7.stats().find(s=>s.c=='charms').l.length;o.store=SHOP7.items.filter(i=>i.cat=='charms').length;o.cx=cleanCx({fx:{ch:'cinder'}}).fx.ch;return o});
  ok('6 new charms (3 companions + 3 effects): buy, equip, draw, emit, in the store + collection book',r.bad.length==0&&r.comp&&r.store>=15&&r.book==r.store&&r.cx=='cinder',r);
- // ---- store UI shows the mythic tiles
- await E(()=>{STORE7.open();STORE7.setFilter({cat:'gear',sort:'pd',q:'',rar:'all',owned:false})});await p.waitForTimeout(500);
- r=await E(()=>{const c=[...document.querySelectorAll('#store7 .card')];const f=c[0];return{first:f&&f.dataset.id,myth:c.filter(x=>x.dataset.rar=='mythic').length,bg:f&&getComputedStyle(f).backgroundImage.includes('gradient'),pulse:f&&getComputedStyle(f,'::before').animationName}});
- r.clean=await E(()=>document.documentElement.dataset.skin=='clean');ok('store: the mythic Anonymous tiles lead the gear shelf with the obsidian treatment (the Clean skin keeps cards plain: no pulse)',r.first=='wear_anonsuit'&&r.myth>=2&&r.bg&&(r.clean?r.pulse=='none':r.pulse=='g8pulse'),r);await E(()=>STORE7.close());
+ // ---- the store sells no stat gear any more (it is earned): the gear shelf is empty
+ await E(()=>{STORE7.open();STORE7.setFilter({cat:'gear',sort:'pd',q:'',rar:'all',owned:false})});await p.waitForTimeout(400);
+ r=await E(()=>({cards:document.querySelectorAll('#store7 .card').length,sold:SHOP7.items.filter(i=>i.cat=='gear'&&i.sale!==0).length}));ok('the store sells no stat gear: it is earned by playing',r.cards==0&&r.sold==0,r);await E(()=>STORE7.close());
  // ---- body type
  r=await E(()=>{const o={};o.opts=AP.hair.length==10&&AP.gd.length==3;delete cel.ap.gd;cel.ap.hair=0;
   const ap0=sanAp(cel.ap),cl=__portrait(null,ap0),sp0=__char({});o.san=ap0.gd===0;

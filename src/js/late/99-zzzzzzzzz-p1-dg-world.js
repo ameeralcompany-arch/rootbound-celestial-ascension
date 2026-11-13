@@ -5,6 +5,10 @@
 // Cost: gadgets and hazards only touch what exists, pre-rendered glows, at most 90 ambient particles, nothing is O(world) per frame. =====
 try{(()=>{
  const DG=window.DG,R=Math.random,TAU=Math.PI*2,rn=(a,b)=>a+R()*(b-a),cl=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,k)=>a+(b-a)*k,ez=x=>{x=cl(x,0,1);return x*x*(3-2*x)},eo=x=>1-Math.pow(1-cl(x,0,1),3);
+ DG.keyName=a=>{try{const k=RB_KB[a];return k=='shift'?'Shift':KB1.label(k)}catch(_){return a=='dash'?'Shift':'F'}};
+ // dashing: the old dash timer (still set by some class skills) or the class dash on Shift (STY1); a dash that ended a moment ago still counts, so a
+ // dash started a little short of a gate carries you through instead of bouncing you back on its last frame
+ window.DASHING=()=>{if(dash>0||(window.STY1&&STY1.DS&&STY1.DS.on)){DASHING.t=performance.now();return true}return performance.now()-(DASHING.t||0)<140};
  const reduced=()=>{try{return !!(cel.opt.reduce||QM.reduce)||!DG.S.opt.fx}catch(_){return false}};
  const tone=(a,b,d,ty,v,dl,vib)=>{try{SFX7.tone(a,b,d,ty,v,dl,vib)}catch(_){}};
  const shk=v=>{try{if(DG.S.opt.shake&&!QM.reduce&&OPT.sh!==0)shake=Math.max(shake,v)}catch(_){}};
@@ -174,7 +178,7 @@ try{(()=>{
  function resetGad(){for(const g of L.gad){if(g.k=='fall'){g.st=0;g.y=g.y0;g.vy=0;g.t=0}if(g.k=='bridge'){g.st=0;g.t=0;for(const s of g.segs){s.f=0;s.y=0;s.vy=0}}if(g.k=='seq'&&g.st!=3){g.st=0;g.i=0}}}
  // what the player can stand on this frame, filled while the gadgets tick
  const PL=[];
- function tickGad(dt,t){PL.length=0;const lim=(g)=>g.rm&&(P.x<(g.rm.x0-30)*T||P.x>(g.rm.x1+30)*T);
+ function tickGad(dt,t){PL.length=0;DASHING();const lim=(g)=>g.rm&&(P.x<(g.rm.x0-30)*T||P.x>(g.rm.x1+30)*T);
   for(const k in groups){const q=groups[k];if(q.t>0){q.t-=dt;if(q.t<=0){q.on=0;tone(300,120,.3,'sine',.03)}}}
   for(const g of L.gad){if(lim(g))continue;g.t+=dt;switch(g.k){
    case'mover':{const s=(Math.sin((g.t/g.per+g.ph)*TAU)+1)/2,x=g.bx+g.dx*s,y=g.by+g.dy*s;const dx=g.x==null?0:x-g.x,dy=g.y==null?0:y-g.y;g.x=x;g.y=y;PL.push({x,y,w:g.w,dx,dy});break}
@@ -182,10 +186,10 @@ try{(()=>{
    case'rotor':{g.pts=g.pts||[];for(let i=0;i<g.n;i++){const a=(g.t/g.per+i/g.n)*TAU,x=g.cx+Math.cos(a)*g.r-g.w/2,y=g.cy+Math.sin(a)*g.r,o=g.pts[i],dx=o?x-o.x:0,dy=o?y-o.y:0;g.pts[i]={x,y};PL.push({x,y,w:g.w,dx,dy})}break}
    case'fall':{if(g.st==0&&standOn(g.x,g.y,g.w)){g.st=1;g.tt=g.delay;tone(120,60,.3,'sine',.04)}if(g.st==1){g.tt-=dt;if(g.tt<=0){g.st=2;g.vy=0;tone(90,40,.4,'sawtooth',.04)}}if(g.st==2){g.vy+=1500*dt;g.y+=g.vy*dt;if(g.y>g.y0+T*14){g.st=3;g.tt=2.2}}if(g.st==3){g.tt-=dt;if(g.tt<=0){g.st=0;g.y=g.y0;g.vy=0}}if(g.st<3)PL.push({x:g.x+(g.st==1?Math.sin(g.t*60)*1.5:0),y:g.y,w:g.w,dx:0,dy:g.st==2?g.vy*dt:0});break}
    case'bridge':{if(g.st==0&&standOn(g.x,g.y,g.n*g.sw)){g.st=1;g.tt=0;g.ni=0;tone(180,90,.5,'sawtooth',.03)}if(g.st==1){g.tt+=dt;while(g.ni<g.n&&g.tt>g.ni*g.iv+.25){g.segs[g.ni].f=1;g.ni++;tone(90,50,.2,'square',.02);shk(.03)}if(g.ni>=g.n&&g.tt>g.n*g.iv+5){g.st=0;for(const s of g.segs){s.f=0;s.y=0;s.vy=0}}}g.segs.forEach((s,i)=>{if(s.f){s.vy+=1500*dt;s.y+=s.vy*dt}else PL.push({x:g.x+i*g.sw,y:g.y,w:g.sw,dx:0,dy:0})});break}
-   case'dashgate':{g.fl=Math.max(0,g.fl-dt*3);if(P.x+P.w/2>g.x-6&&P.x-P.w/2<g.x+6&&P.y+P.h>g.y0&&P.y<g.y1){if(dash>0){if(g.fl<=0){g.fl=1;tone(900,1800,.2,'sine',.05);try{VFX.burst(g.x,P.y+P.h/2,[L.d.p.glow,'#fff'],16,260,1,.5,10)}catch(_){}}}else{P.x=g.x+(P.vx>0?-1:1)*(P.w/2+8);P.vx=(P.vx>0?-1:1)*420;P.vy=-160;if(g.fl<=0){g.fl=1;say('Dash through it! (Shift)');tone(180,90,.2,'square',.04)}}}break}
+   case'dashgate':{g.fl=Math.max(0,g.fl-dt*3);if(P.x+P.w/2>g.x-6&&P.x-P.w/2<g.x+6&&P.y+P.h>g.y0&&P.y<g.y1){if(DASHING()){if(g.fl<=0){g.fl=1;tone(900,1800,.2,'sine',.05);try{VFX.burst(g.x,P.y+P.h/2,[L.d.p.glow,'#fff'],16,260,1,.5,10)}catch(_){}}}else{P.x=g.x+(P.vx>0?-1:1)*(P.w/2+8);P.vx=(P.vx>0?-1:1)*420;P.vy=-160;if(g.fl<=0){g.fl=1;say('Dash through it! (Shift)');tone(180,90,.2,'square',.04)}}}break}
    case'blade':{const s=(Math.sin((g.t/g.per+g.ph)*TAU)+1)/2;g.x=g.bx+g.dx*s;g.y=g.by+g.dy*s;g.a+=dt*10;if(Math.hypot(P.x-g.x,P.y+P.h/2-g.y)<g.r+P.w*.32)hurtP(DG.mobDmg(run.d,'regular',.14,run.df),Math.sign(P.x-g.x||1)*340);break}
    case'jet':{const per=g.on+g.off,u=(g.t+g.ph*per)%per;g.fire=u<g.on;g.warn=!g.fire&&per-u<.55;if(g.fire&&Math.abs(P.x-g.x)<T*.55+P.w/2){const y0=g.dir<0?g.y-g.h:g.y,y1=g.dir<0?g.y:g.y+g.h;if(P.y+P.h>y0&&P.y<y1)hurtP(DG.mobDmg(run.d,'regular',.13,run.df),Math.sign(P.x-g.x||1)*260)}break}
-   case'laser':{g.x=g.bx+g.dx*((Math.sin((g.t/g.per+g.ph)*TAU)+1)/2);if(Math.abs(P.x-g.x)<4+P.w/2&&P.y+P.h>g.y0&&P.y<g.y1&&dash<=0)hurtP(DG.mobDmg(run.d,'regular',.13,run.df),Math.sign(P.x-g.x||P.vx||1)*300);break}
+   case'laser':{g.x=g.bx+g.dx*((Math.sin((g.t/g.per+g.ph)*TAU)+1)/2);if(Math.abs(P.x-g.x)<4+P.w/2&&P.y+P.h>g.y0&&P.y<g.y1&&!DASHING())hurtP(DG.mobDmg(run.d,'regular',.13,run.df),Math.sign(P.x-g.x||P.vx||1)*300);break}
    case'door':{const per=g.on+g.off,u=(g.t+g.ph*per)%per,open=u<g.on;g.o+=((open?1:0)-g.o)*Math.min(1,dt*9);g.warn=open&&g.on-u<.6;g.sol.on=g.o<.55?1:0;g.sol.y1=g.y+g.h*(1-g.o);break}
    case'plate':{const onit=standOn(g.x,g.y,g.w);if(onit&&!g.on){g.on=1;g.t2=.2;if(g.grp&&groups[g.grp]){groups[g.grp].on=1;groups[g.grp].t=g.dur||4.5;groups[g.grp].t0=g.dur||4.5}if(g.seq){const s=L.gad.find(q=>q.k=='seq'&&q.grp==g.seq);if(s&&s.st==0){s.st=1;s.i=0;s.tt=0}}tone(520,1040,.25,'sine',.05)}if(!onit&&g.on){g.t2-=dt;if(g.t2<=0)g.on=0}PL.push({x:g.x,y:g.y,w:g.w,dx:0,dy:0});break}
    case'path':{const q=groups[g.grp],vis=q&&q.on,warn=vis&&q.t<1.1;g.a+=((vis?1:0)-g.a)*Math.min(1,dt*10);g.warn=warn;if(vis)PL.push({x:g.x,y:g.y,w:g.w,dx:0,dy:0});break}
@@ -221,7 +225,7 @@ try{(()=>{
    const slip=P.dgSlip>0||(P.g&&(()=>{const b=tiles[Math.floor((P.y+P.h+2)/T)*W+Math.floor(P.x/T)];return b==ICE})());if(P.dgSlip>0)P.dgSlip-=dt;if(slip&&P.g){P.vx=ax?pvx+(P.vx-pvx)*.22:pvx*(1-1.1*dt)}
    if(P.dgGrav!=null&&P.dgGrav!==1){P.vy+=(P.dgGrav-1)*1900*dt}P.dgGrav=null;
    return r}}
- addEventListener('keydown',e=>{if(!run||e.key!='Shift'||e.repeat||DG.locked)return;try{if(dlgOpen||document.activeElement==chatEl)return}catch(_){}if(dashCD>0||dash>0)return;const ax=(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0);dash=.2;dashDir=ax||P.f||1;dashCD=.7;iT=Math.max(iT,.24);tone(420,900,.14,'sine',.04);try{VFX.burst(P.x,P.y+P.h/2,[run.d.p.glow,'#fff'],6,120,1,.3,8)}catch(_){}});
+ addEventListener('keydown',e=>{if(!run||e.key!='Shift'||e.repeat||DG.locked||window.STY1)return;try{if(dlgOpen||document.activeElement==chatEl)return}catch(_){}if(dashCD>0||dash>0)return;const ax=(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0);dash=.2;dashDir=ax||P.f||1;dashCD=.7;iT=Math.max(iT,.24);tone(420,900,.14,'sine',.04);try{VFX.burst(P.x,P.y+P.h/2,[run.d.p.glow,'#fff'],6,120,1,.3,8)}catch(_){}});
  Object.defineProperty(DG,'dashCD',{get(){return dashCD}});
 
  // ================= drawing the gadgets and the room furniture =================
@@ -306,7 +310,7 @@ try{(()=>{
  {const _lw=loadWorld;loadWorld=function(n,e){if(run&&!DG.loading){const was=run;endRun(true)}return _lw.apply(this,arguments)}}
  // ---- E: what is in front of you
  {const _i=interact;interact=function(){if(run&&!dlgOpen&&!DG.locked){const a=nearby();if(a){a.go();return}return}return _i.apply(this,arguments)}}
- function nearby(){if(!L)return null;if(DG.coop&&DG.coop.on){const a=DG.coop.near();if(a)return a}for(const q of L.portals)if(Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2.2)return{t:'Leave the dungeon (E)',go:()=>DG.ui.askLeave()};for(const q of L.gates)if(!q.open&&Math.abs(P.x-q.x)<T*2.2&&Math.abs(P.y+P.h-q.y)<T*3)return{t:q.key?(cnt(q.key)>0?'Open the sealed gate (E)':'Sealed. It needs the '+DG.ITEMS[q.key].n):'Open (E)',go:()=>tryGate(q)};for(const q of L.chests)if(!q.open&&!q.hid&&Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2)return{t:'Open the chest (E)',go:()=>DG.rew.open(q)};return null}
+ function nearby(){if(!L)return null;if(DG.coop&&DG.coop.on){const a=DG.coop.near();if(a)return a}for(const q of L.portals)if(Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2.2)return{t:'Leave the dungeon ('+DG.keyName('use')+')',go:()=>DG.ui.askLeave()};for(const q of L.gates)if(!q.open&&Math.abs(P.x-q.x)<T*2.2&&Math.abs(P.y+P.h-q.y)<T*3)return{t:q.key?(cnt(q.key)>0?'Open the sealed gate ('+DG.keyName('use')+')':'Sealed. It needs the '+DG.ITEMS[q.key].n):'Open ('+DG.keyName('use')+')',go:()=>tryGate(q)};for(const q of L.chests)if(!q.open&&!q.hid&&Math.hypot(P.x-q.x,P.y+P.h-q.y)<T*2)return{t:'Open the chest ('+DG.keyName('use')+')',go:()=>DG.rew.open(q)};return null}
  function tryGate(q){if(DG.coop&&DG.coop.gateBlock(q))return;if(q.key&&cnt(q.key)<=0&&!DG.unlockAll&&!(DG.coop&&DG.coop.C&&DG.coop.C.quiet)){say('You need the '+DG.ITEMS[q.key].n+'. It waits at the end of the trial');try{UIS.play('error')}catch(_){}return}q.open=true;q.t=0;q.sol.on=0;tone(60,30,1.4,'sawtooth',.08);tone(140,220,1,'sine',.04,.2);shk(.25);DG.ui&&DG.ui.banner('The gate opens','');DG.flow.objective();if(DG.coop)DG.coop.gate(q)}
  // ---- saving a run's place in the world you came from
  function currentRet(){return{w:cur,x:P.x,y:P.y,net:(()=>{try{return !!NET7.world}catch(_){return false}})()}}

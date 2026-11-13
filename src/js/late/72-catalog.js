@@ -5,7 +5,7 @@ const CATALOG7=/*@@CATALOG@@*/{items:[]};
 const SHOP7=(()=>{
  const items=CATALOG7.items,byId=new Map(items.map(i=>[i.id,i])),RAR=['common','uncommon','rare','epic','legendary','mythic','exclusive'];
  const RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive'};
- const CATS=[['featured','Featured'],['weapons','Weapons'],['wings','Wings'],['effects','Effects'],['charms','Charms'],['weather','Weather'],['gear','Gear'],['blocks','Blocks'],['seeds','Seeds'],['objects','Objects']];
+ const CATS=[['featured','Featured'],['cosmetics','Cosmetics'],['wings','Wings'],['effects','Effects'],['charms','Charms'],['weather','Weather'],['blocks','Blocks'],['seeds','Seeds'],['objects','Objects']];   // weapons and gear are earned by playing (EARN1), never sold
  const SLOTS=['aura','trail','spawn','victory','wtrail','wskin','break']; // effect sub-types, one equipped at a time each (+ 'charm')
  const st={own:{},eq:{},seen:{},pend:0,first:1};
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
@@ -38,7 +38,7 @@ const SHOP7=(()=>{
  const open=new Map();
  function settle(it,qty,res){let sp=res.spent|0;if(res.dup){const fp=Math.min(st.pend,sp);st.pend-=fp;sp-=fp}gems=Math.max(0,(gems|0)-sp);if(!srv.owned)srv.owned={};srv.owned[it.id]=res.owned|0;grantLocal(it,res.qty||qty);try{renderBar&&renderBar()}catch(_){}}
  function sfx(n){try{UIS.play(n)}catch(_){}}
- async function buy(id,qty){const it=byId.get(id);if(!it)return{ok:0,m:'That item does not exist'};
+ async function buy(id,qty){const it=byId.get(id);if(!it)return{ok:0,m:'That item does not exist'};if(it.sale===0)return{ok:0,m:'This is earned by playing, not sold'};
   qty=it.stack?Math.max(1,Math.min(99,qty|0||1)):1;const total=it.price*qty;
   if(!lvOk(it)){sfx('error');return{ok:0,m:'Requires level '+needLv(it)}}
   if(!it.stack&&has(id)){sfx('error');return{ok:0,m:'You already own this'}}

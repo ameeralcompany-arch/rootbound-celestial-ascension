@@ -50,13 +50,13 @@ const NAV16=(()=>{
   {id:'inventory',btn:'binv7',ic:'inventory',g:'Character',key:'I',n:'Inventory',d:'Your items, blocks and tools',row:0,open:()=>INV7.open(),close:()=>INV7.close(),on:()=>INV7.isOpen},
   {id:'classes',btn:'bcls',ic:'classes',g:'Character',key:'K',n:'Classes',d:'Your class, its skills and its gear',row:0,open:()=>CLS9.open(),close:()=>CLS9.close(),on:()=>live('cls9')},
   {id:'skills',btn:'bskl',ic:'skills',g:'Character',key:'U',n:'Skills',d:'Spend your skill points',row:0,...HUB('skills')},
-  {id:'store',btn:'bstore',ic:'store',g:'Shop',n:'Store',d:'Buy weapons, wings, gear and more',row:0,gold:1,open:()=>STORE7.open(),close:()=>STORE7.close(),on:()=>live('store7')},
+  {id:'store',btn:'bstore',ic:'store',g:'Shop',n:'Store',d:'Outfits, wings, effects and more: looks only',row:0,gold:1,open:()=>STORE7.open(),close:()=>STORE7.close(),on:()=>live('store7')},
   {id:'settings',btn:'bset16',ic:'settings',g:'System',key:'O',n:'Settings',d:'Graphics, audio, controls and your save',row:0,hub:'settings',open:()=>UI6.open('settings'),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='system'},
   {id:'worlds',btn:'bworlds',ic:'worlds',g:'World',n:'Worlds',d:'Travel, realms, your worlds and events',row:1,open:()=>openMenu('mworlds'),close:()=>closeMenu(),on:()=>menuOn()||UI6.on&&secOf(UI6.tab)=='world',hubAlso:1},
   {id:'bosses',btn:'bboss',ic:'bosses',g:'World',n:'Bosses',d:'Every boss: rewards, difficulty and your progress',row:1,nodock:1,...HUB('bosses'),on:()=>UI6.on&&UI6.tab=='bosses'},
   {id:'quests',btn:'bqm',ic:'quests',g:'World',key:'J',n:'Quests',d:'Daily challenges, your first steps and town quests',row:1,...HUB('quests'),on:()=>UI6.on&&UI6.tab=='quests'},
   {id:'ach',btn:'bach',ic:'achievements',g:'World',key:'Y',n:'Achievements',d:'Achievements and milestones',row:1,nodock:1,...HUB('ach'),on:()=>UI6.on&&UI6.tab=='ach'},
-  {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Everything you have collected, with rewards',row:1,nodock:1,open:()=>BOOK7.open(),close:()=>BOOK7.close(),on:()=>BOOK7.isOpen},
+  {id:'collection',btn:'bbook',ic:'collection',g:'World',n:'Collection',d:'Every cosmetic, where to find it, and what you wear',row:1,nodock:1,open:()=>{try{COL1.open()}catch(_){BOOK7.open()}},close:()=>{try{COL1.close()}catch(_){}try{BOOK7.close()}catch(_){}},on:()=>!!((window.COL1&&COL1.isOpen)||BOOK7.isOpen)},
   {id:'guide',btn:'bguide',ic:'guide',g:'World',key:'G',n:'Guide',d:'How to use every tool, recipes and the starting guide',row:1,hub:'toolguide',open:()=>GUIDE8.open(),close:()=>UI6.close(),on:()=>UI6.on&&secOf(UI6.tab)=='guide'},
   {id:'social',btn:'bsoc',ic:'social',g:'Social',n:'Social',d:'Emotes, players here and friends',row:1,solo:1,...HUB('social')}];
  const byId=id=>F.find(f=>f.id==id);

@@ -105,13 +105,14 @@ const AC6=(()=>{
   const {t,vx,air,f,sw,wpn,fm,wr}=o,fa=o.fa,so=o.sit,sd=so?Math.max(0,21-so.h/.9):0,sl=so&&so.lean||0;if(sd)g.translate(0,sd);if(sl){g.translate(0,-21);g.rotate(-sl);g.translate(0,21)}// sitting (92-zz-summer.js): body lowered onto the seat (h = seat height) and leaned back on loungers (lean); legs bent down, or straight out when reclining
   const run=Math.abs(vx)>10;let rk=run?1:0;if(o.me){const n9=performance.now();BL9.k+=(rk-BL9.k)*Math.min(1,(n9-BL9.t)/80);BL9.t=n9;rk=BL9.k}const gait=t*14,ph=run?gait:t*2.4,ls=Math.sin(gait)*rk,as=Math.sin(gait+3.1)*rk,breath=(1-rk)*Math.sin(t*2.2)*.5,bob=fa?0:(Math.abs(Math.sin(gait))*-2.7*rk+breath*.8)+(air?-1:0);
   const hs=clamp(-vx*.018,-6,6)+Math.sin(t*2.6)*1.1+(air?-2:0),blink=(t%4.2)<.13,out=L.out,trim=L.trim,sh=-37+bob+(fa?fa.by:0),hip=-21+bob*.5+(fa?fa.by:0);if(fa&&(fa.spin||fa.turn!=null||fa.rx||fa.ry)){if(fa.rx||fa.ry)g.translate(fa.rx||0,fa.ry||0);g.translate(0,-28);if(fa.spin)g.rotate(fa.spin);if(fa.turn!=null){const c=Math.cos(fa.turn);g.scale(Math.abs(c)<.2?.2*(c<0?-1:1):c,1)}g.translate(0,28)}const leanOn=()=>{if(fa){g.translate(fa.bx,hip);g.rotate(fa.lean);g.translate(0,-hip)}},leanOff=()=>{if(fa){g.translate(0,hip);g.rotate(-fa.lean);g.translate(-fa.bx,-hip)}};
-  const boot=wr.boot&&WEAR[wr.boot]?WEAR[wr.boot].c:'#2a2030',glove=wr.glove&&WEAR[wr.glove]?WEAR[wr.glove].c:L.skin,bodyW=wr.body&&WEAR[wr.body]?WEAR[wr.body].c:null,oc=bodyW||out;
+  const boot=wr.boot&&WEAR[wr.boot]?WEAR[wr.boot].c:'#2a2030',glove=wr.glove&&WEAR[wr.glove]?WEAR[wr.glove].c:L.skin,bodyW=wr.body&&WEAR[wr.body]&&!(o.cos&&o.cos.hb)?WEAR[wr.body].c:null,oc=(o.cos&&o.cos.oc)||bodyW||out;
   // equipment art (GEAR7): a worn body piece replaces the outfit's own details; hats, boots and gloves draw from cached sprites
-  const G7=GEAR7,GH=wr.hat&&WEAR[wr.hat]?wr.hat:'',GB=wr.body&&WEAR[wr.body]&&G7.has(wr.body,'torso')?wr.body:'',GF=wr.boot&&WEAR[wr.boot]?wr.boot:'',GG=wr.glove&&WEAR[wr.glove]?wr.glove:'',paw=G7.paws(GB),lc=G7.legs(GB);G7.begin(g);
-  const of=GB?-1:L.of,ac=GB&&G7.D[GB].arms=='out'?out:oc,gd=L.gd|0,ash=gd==1?.6:gd==2?-.4:0; // gd: body type (shoulder offset)
+  /* a cosmetic hat, outfit or suit (COS1) shows instead of the worn gear's look; the gear's stats are untouched */const G7=GEAR7,GH=wr.hat&&WEAR[wr.hat]&&!(o.cos&&o.cos.hh)?wr.hat:'',GB=wr.body&&WEAR[wr.body]&&G7.has(wr.body,'torso')&&!(o.cos&&o.cos.hb)?wr.body:'',GF=wr.boot&&WEAR[wr.boot]?wr.boot:'',GG=wr.glove&&WEAR[wr.glove]?wr.glove:'',paw=G7.paws(GB),lc=G7.legs(GB);G7.begin(g);
+  const of=GB||(o.cos&&o.cos.hb)?-1:L.of,ac=GB&&G7.D[GB].arms=='out'?out:oc,gd=L.gd|0,ash=gd==1?.6:gd==2?-.4:0; // gd: body type (shoulder offset)
   const hand=(x0,y0,r)=>{if(GG&&G7.glove(g,GG,x0,y0))return;if(paw&&!GG&&G7.glove(g,GB,x0,y0))return;g.fillStyle=glove;g.strokeStyle=OL;g.lineWidth=1;g.beginPath();g.arc(x0,y0,r,0,6.3);g.fill();g.stroke()};
   leanOn();
   if(o.evo&&api.EVB)api.EVB(g,o.evo,{t,sh,hip,vx,hy:-50+bob});
+  const CC=o.cos&&api.COS?{t,sh,hip,vx,hy:-50+bob,air,run,ls,as,gd,L,oc,trim,f:o.f,me:o.me}:null;if(CC)api.COS(g,'back',o.cos,CC);
   // --- cape (behind)
   if(L.cape){const len=L.cape==2?30:19,fl=clamp(-vx*.03,-10,10)+Math.sin(t*3)*1.5+(air?-6:0);celf(g,()=>{g.beginPath();g.moveTo(-5,sh+2);g.lineTo(6,sh+2);g.bezierCurveTo(8+fl*.3,sh+len*.5,10+fl,sh+len,6+fl*1.3,sh+len+4);g.lineTo(-9+fl*1.4,sh+len+3);g.bezierCurveTo(-11+fl*.6,sh+len*.5,-8,sh+8,-5,sh+2);g.closePath()},shade(trim,-.45),1.1)}
   if(GB){G7.tail(g,GB,-7.5,hip-3.5,t,run,air);if(!(GB=='sparksuit'&&GH=='sparkhood'))G7.put(g,GB,'back',0,sh)}
@@ -151,6 +152,7 @@ const AC6=(()=>{
   if(of==2){g.fillStyle=trim;g.beginPath();g.moveTo(-9,sh+1);g.lineTo(9,sh+1);g.lineTo(0,sh+10);g.closePath();g.globalAlpha=.9;g.fill();g.globalAlpha=1}
   // trim on hem/cuff
   if(!GB){g.strokeStyle=trim;g.lineWidth=1;g.beginPath();g.moveTo(-9.3,sh+1.4);g.lineTo(9.3,sh+1.4);g.stroke()}
+  if(CC)api.COS(g,'torso',o.cos,CC);
   // pauldrons / mantle
   if(of==1||L.acc==5){for(const s of[-1,1]){celf(g,()=>{g.beginPath();g.ellipse(s*9.3,sh+2,L.acc==5?5.6:4.6,3.6,0,0,6.3)},L.acc==5?shade(trim,-.35):shade(trim,-.2),1)}}
   // scarf
@@ -165,6 +167,7 @@ const AC6=(()=>{
   if(L.acc==4&&!G7.cover(GH)){g.fillStyle=trim;g.strokeStyle=OL;g.lineWidth=.9;g.fillRect(-10,-50+bob-5,20,2.8);g.strokeRect(-10,-50+bob-5,20,2.8)}
   // hat item (cached GEAR7 sprite; unknown ids fall back to the icon art)
   if(GH&&!G7.hat(g,GH,-50+bob,t,'F',1.24)){g.save();g.translate(0,-62+bob);g.scale(.62,.62);g.translate(-24,-24);try{drawWearIcon(g,wr.hat,48)}catch(_){}g.restore()}
+  if(CC)api.COS(g,'head',o.cos,CC);
   g.restore();
   // --- near arm (+ weapon)
   const hx=6+ash,hy2=sh+4;let hxp,hyp;
@@ -174,6 +177,7 @@ const AC6=(()=>{
   if(fa&&fa.hide){}else if(fa&&wpn!='fist'){g.save();if(fa.off){g.translate(fax,fay)}else g.translate(hxp,hyp);g.rotate(fa.wa-fa.lean);drawWeapon(g,wpn,fa.len||40,t);g.restore()}else if(bw){g.save();g.translate(bhx,bhy);g.rotate(bw.a);BOW15.art(g,wpn,bw.pull,t);g.restore()}else if(wpn!='fist'&&fm&&!(o.ph>.4)){g.save();g.translate(hxp,hyp);g.rotate(armA!=null?armA+.15:-.6+Math.sin(t*3)*.05);drawWeapon(g,wpn,WPN[wpn].k=='sword'?44:WPN[wpn].k=='scythe'?46:WPN[wpn].k=='glaive'?34:40,t);g.restore()}
   if(o.ph>.05){/* the phone in the hand, its screen lit */g.save();g.translate(hxp+1,hyp-7);g.rotate(.12);g.globalAlpha=Math.min(1,o.ph*1.6);g.fillStyle='#14111f';g.strokeStyle='#000';g.lineWidth=1;g.beginPath();g.roundRect(-4.5,-8,9,16,2);g.fill();g.stroke();g.fillStyle='#8ab8ff';g.globalAlpha*=.9*o.ph;g.fillRect(-3.3,-6.8,6.6,13.4);g.restore()}
   if(o.evo&&api.EVF)api.EVF(g,o.evo,{t,sh,hip,vx,hy:-50+bob});
+  if(CC)api.COS(g,'front',o.cos,CC);
   hand(hxp,hyp+.6,2.6);leanOff();
   if(!fa&&fm&&sw>0&&wpn=='fist'){g.fillStyle=L.skin;g.beginPath();g.arc(hxp+8*(1-sw/.22),hyp,4,0,6.3);g.fill();g.stroke()}
  }
@@ -201,7 +205,7 @@ const AC6=(()=>{
   if(pz&&api.PZG)api.PZG(g,pz,cx,feet-ly,t);
   g.save();g.translate(cx,feet-ly);if(pz&&pz.lean){g.translate(0,-30);g.rotate(pz.lean*f);g.translate(0,30)}g.imageSmoothingEnabled=true;{const sq=local?SQUISH.v():0,st=local&&!air?0:local&&P.vy<-200?.05:0;g.scale(.9*f*(1+sq*.45),.9*(1-sq+st))}g.lineJoin='round';g.lineCap='round';
   FX7.ld=local;
-  try{drawBody(g,L,{evo:api.EVK?api.EVK(local,cxo):null,fa:api.FA?api.FA(local?'me':'p:'+name,wpn,fm):null,t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,me:local,ph:local&&window.ROOTLINK?ROOTLINK.pose():0,sit:local&&api.SIT?api.SIT():0})}finally{g.restore();FX7.ld=false}
+  try{drawBody(g,L,{evo:api.EVK?api.EVK(local,cxo):null,cos:api.COSK?api.COSK(local,cxo):null,fa:api.FA?api.FA(local?'me':'p:'+name,wpn,fm):null,t,vx:vx*f*1,air,f,sw,wpn,fm,wr,pz,me:local,ph:local&&window.ROOTLINK?ROOTLINK.pose():0,sit:local?(api.SIT?api.SIT():0):(api.RSIT?api.RSIT(cxo):0)})}finally{g.restore();FX7.ld=false}
   // idle VFX
   if(local||QM.cur.wfx>=2){if(wingIdx>=0&&Math.random()<.05)WingArt.idleFx(WINGS[wingIdx],cx+cam.x,cy+cam.y+10+Math.random()*30,f);
    if(aura&&aura.id!='none'&&Math.random()<.12)VFX.mote(cx+cam.x+(Math.random()-.5)*60,feet+cam.y,aura.c2)}

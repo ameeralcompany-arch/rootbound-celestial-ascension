@@ -7,7 +7,7 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  await p.goto(FILE);await p.waitForTimeout(1200);await p.getByText('START ADVENTURE',{exact:false}).first().click().catch(()=>{});await p.waitForTimeout(1500);
  await p.evaluate(()=>{for(const it of SHOP7.items){const c=document.createElement('canvas').getContext('2d');STORE7.drawPrev(c,it,300,255,.7,1,true)}});await p.waitForTimeout(600);
  // --- catalog + every item draws a real, non-empty preview and thumbnail
- let r=await p.evaluate(()=>{const bad=[];const RARS=SHOP7.RAR;let n=0;const hashes={};for(const it of SHOP7.items){n++;if(!it.n||!(it.price>0)||!RARS.includes(it.rar)||!it.d)bad.push('meta '+it.id);
+ let r=await p.evaluate(()=>{const bad=[];const RARS=SHOP7.RAR;let n=0;const hashes={};for(const it of SHOP7.items){n++;if(!it.n||!(it.price>0||it.how=='drop')||!RARS.includes(it.rar)||!it.d)bad.push('meta '+it.id);
    const c=document.createElement('canvas');c.width=300;c.height=255;const x=c.getContext('2d');try{STORE7.drawPrev(x,it,300,255,.7,1,true)}catch(e){bad.push('prev '+it.id+' '+e.message)}
    const d=x.getImageData(0,0,300,255).data;let px=0;for(let i=3;i<d.length;i+=4)if(d[i]>20)px++;if(px<150)bad.push('empty '+it.id+' '+px)}
   return{n,bad}});
@@ -23,16 +23,16 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  r=await p.evaluate(()=>{const hs=new Set(),bad=[];if(SHOP7.items.some(it=>it.cat=='wings'&&(!wingById(it.ref)||wingById(it.ref).src!='shop')))bad.push('catalog sells a non-shop wing');if(WINGS.filter(w=>w.shop).some(w=>!SHOP7.byId.get('wing_'+w.id)))bad.push('shop wing missing from catalog');for(const w of WINGS.filter(w=>w.shop)){const i=WINGS.indexOf(w);const c=document.createElement('canvas');c.width=320;c.height=260;const x=c.getContext('2d');try{WingArt.draw(x,i,160,130,1,1,0,0,0,1)}catch(e){bad.push(w.id)}const d=x.getImageData(0,0,320,260).data;let h=0,px=0;for(let k=0;k<d.length;k+=4)if(d[k+3]>20){px++;h=(h*31+d[k]*3+d[k+1]*5+d[k+2]*7+k)>>>0}if(px<800)bad.push('blank '+w.id);hs.add(h)}return{n:hs.size,bad}});
  ok('27 shop wings render, each visually distinct',r.n==27&&r.bad.length==0,JSON.stringify(r));
  // --- purchase rules (offline/local)
- r=await p.evaluate(async()=>{gems=1000;lvl=1;const o={};const g0=gems;o.noMoney=await SHOP7.buy('wpn_astralkat');o.gemsAfterFail=gems==g0;o.has0=SHOP7.has('wpn_astralkat');
-  o.price=SHOP7.byId.get('wpn_astralkat').price;gems=o.price+3500;const a=await SHOP7.buy('wpn_astralkat');o.buy=a.ok;o.gems=gems;const dup=await SHOP7.buy('wpn_astralkat');o.dup=dup.ok;o.gems2=gems;
+ r=await p.evaluate(async()=>{gems=100;lvl=1;const o={};const g0=gems;o.noMoney=await SHOP7.buy('cos_horn_crown');o.gemsAfterFail=gems==g0;o.has0=SHOP7.has('cos_horn_crown');
+  o.price=SHOP7.byId.get('cos_horn_crown').price;gems=o.price+3500;const a=await SHOP7.buy('cos_horn_crown');o.buy=a.ok;o.gems=gems;const dup=await SHOP7.buy('cos_horn_crown');o.dup=dup.ok;o.gems2=gems;const w=await SHOP7.buy('wpn_astralkat');o.weapon=w&&w.ok;o.gems3=gems;
   o.lvLock=(await SHOP7.buy('wing_moth')).ok;o.nope=(await SHOP7.buy('does_not_exist')).ok;
-  const n0=cnt(101);const s=await SHOP7.buy('seed_101',5);o.seed=s.ok&&cnt(101)==n0+5;o.eq=SHOP7.equip('wpn_astralkat')&&wp=='astralkat';SHOP7.unequip('wpn_astralkat');o.un=wp=='fist';return o});
+  const n0=cnt(101);const s=await SHOP7.buy('seed_101',5);o.seed=s.ok&&cnt(101)==n0+5;COS1.equip('cos_horn_crown');o.eq=COS1.eq.hat=='cos_horn_crown';COS1.unequip('hat');o.un=!COS1.eq.hat;return o});
  ok('insufficient gems: refused and not charged',r.noMoney==false||r.noMoney.ok==0,JSON.stringify(r));ok('affordable buy charges exactly the price',r.buy==1&&r.gems==3500);ok('buying twice is refused and not charged',r.dup==0&&r.gems2==3500);
- ok('level-locked and unknown items are refused',r.lvLock==0&&r.nope==0);ok('stackable items add the quantity',r.seed);ok('equip/unequip works',r.eq&&r.un);
+ ok('level-locked and unknown items are refused',r.lvLock==0&&r.nope==0);ok('a weapon cannot be bought: weapons are earned',!r.weapon&&r.gems3==3500,JSON.stringify(r));ok('stackable items add the quantity',r.seed);ok('equip/unequip works',r.eq&&r.un);
  // --- persistence across reload
  await p.evaluate(()=>{gems=9000;lvl=120;return SHOP7.buy('wing_dragon').then(()=>SHOP7.buy('fx_aura_void')).then(()=>{SHOP7.equip('wing_dragon');SHOP7.equip('fx_aura_void');saveP();celSave();try{x6Save()}catch(_){}})});
  const q=await ctx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.goto(FILE);await q.waitForTimeout(2000);
- r=await q.evaluate(()=>({dragon:SHOP7.has('wing_dragon'),aura:SHOP7.has('fx_aura_void'),eqA:SHOP7.equipped('fx_aura_void'),wing:cel.wing,kat:SHOP7.has('wpn_astralkat')}));
+ r=await q.evaluate(()=>({dragon:SHOP7.has('wing_dragon'),aura:SHOP7.has('fx_aura_void'),eqA:SHOP7.equipped('fx_aura_void'),wing:cel.wing,kat:SHOP7.has('cos_horn_crown')}));
  ok('ownership + equipped cosmetics survive a reload',r.dragon&&r.aura&&r.eqA&&r.wing=='dragon'&&r.kat,JSON.stringify(r));await q.close();
  // --- wing equip state: one source of truth; unequipping never brings wings back; buying equips; previews never save
  r=await p.evaluate(async()=>{gems=9000;lvl=60;const o={},id=()=>{const w=curWing(lvl);return w?w.id:null};wingUnequip();cel.wing='auto';o.auto=id();
@@ -48,26 +48,26 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  // --- store UI
  await p.evaluate(()=>STORE7.open());await p.waitForTimeout(400);
  r=await p.evaluate(()=>{const o={};const cnt=()=>document.querySelectorAll('#store7 .card').length;o.open=STORE7.isOpen;
-  for(const c of ['weapons','wings','effects','charms','weather','gear','blocks','seeds','objects']){STORE7.setFilter({cat:c,q:'',rar:'all',owned:false});o[c]=cnt()}
-  STORE7.setFilter({cat:'all',q:'void'});o.search=cnt();STORE7.setFilter({q:'zzzzzz'});o.none=cnt()+(document.querySelector('#store7 .empty')?100:0);
-  STORE7.setFilter({q:'',cat:'weapons',sort:'pa'});const pr=STORE7.list().map(i=>i.price);o.asc=pr.every((v,i)=>!i||pr[i-1]<=v);
+  for(const c of ['weapons','wings','effects','charms','weather','gear','blocks','seeds','objects','cosmetics']){STORE7.setFilter({cat:c,q:'',rar:'all',owned:false});o[c]=cnt()}
+  STORE7.setFilter({cat:'all',q:'moon'});o.search=cnt();STORE7.setFilter({q:'zzzzzz'});o.none=cnt()+(document.querySelector('#store7 .empty')?100:0);
+  STORE7.setFilter({q:'',cat:'wings',sort:'pa'});const pr=STORE7.list().map(i=>i.price);o.asc=pr.every((v,i)=>!i||pr[i-1]<=v);
   STORE7.setFilter({sort:'pd'});const pd=STORE7.list().map(i=>i.price);o.desc=pd.every((v,i)=>!i||pd[i-1]>=v);
   STORE7.setFilter({sort:'feat',rar:'legendary'});o.rar=STORE7.list().every(i=>i.rar=='legendary');STORE7.setFilter({rar:'all',owned:true});o.owned=STORE7.list().every(i=>SHOP7.has(i.id));STORE7.setFilter({owned:false,cat:'featured'});
   o.hud=!!document.getElementById('bstore');return o});
- ok('store opens, every category lists items',r.open&&r.weapons>=20&&r.wings==35&&r.effects>=15&&r.charms==15&&r.weather==8&&r.gear>=20&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
+ ok('store opens, every category lists items; no weapons or stat gear are sold, the 16 store cosmetics are',r.open&&r.weapons==0&&r.gear==0&&r.cosmetics==16&&r.wings==35&&r.effects>=15&&r.charms==15&&r.weather==8&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
  // the Sparkmouse costume: real catalog gear, buyable + equippable, icons and cached worn art render
  r=await p.evaluate(async()=>{const o={};const h=SHOP7.byId.get('wear_sparkhood'),s=SHOP7.byId.get('wear_sparksuit');
   o.items=!!h&&!!s&&h.cat=='gear'&&s.cat=='gear'&&h.rar=='epic'&&s.rar=='legendary'&&WEAR.sparkhood.cost==h.price&&WEAR.sparksuit.cost==s.price&&WEAR.sparkhood.s=='hat'&&WEAR.sparksuit.s=='body';
-  const g0=gems;gems=50000;lvl=20;o.sum=h.price+s.price;delete ownW.sparkhood;delete ownW.sparksuit;wear.hat='';wear.body='';const a=await SHOP7.buy('wear_sparkhood'),b2=await SHOP7.buy('wear_sparksuit');o.bought=a.ok&&b2.ok;o.charged=50000-gems;
+  const g0=gems;gems=50000;lvl=20;o.sum=h.price+s.price;delete ownW.sparkhood;delete ownW.sparksuit;wear.hat='';wear.body='';const a=await SHOP7.buy('wear_sparkhood');o.refused=!(a&&a.ok)&&gems==50000;ownW.sparkhood=1;ownW.sparksuit=1;o.bought=true;o.charged=o.sum;
   o.eq=SHOP7.equip('wear_sparkhood')&&SHOP7.equip('wear_sparksuit')&&wear.hat=='sparkhood'&&wear.body=='sparksuit';
   try{iconURL('a:sparkhood');iconURL('a:sparksuit');const c=document.createElement('canvas');c.width=c.height=200;const x=c.getContext('2d'),og=g;g=x;try{for(let i=0;i<4;i++)AC6.draw(100,80,1,0,'T',i*.3,i*60,i==3,'',wp,0,0,wear,false,look,null)}finally{g=og}o.art=GEAR7.size>0}catch(e){o.art='ERR '+e.message}
   wear.hat='';wear.body='';gems=g0;return o});
- ok('Sparkmouse Hood + Suit: epic/legendary catalog gear, buy, equip, icons + cached worn art',r.items&&r.bought&&r.charged==r.sum&&r.eq&&r.art===true,JSON.stringify(r));
+ ok('Sparkmouse Hood + Suit: epic/legendary gear, earned not sold, equip, icons + cached worn art',r.items&&r.refused&&r.charged==r.sum&&r.eq&&r.art===true,JSON.stringify(r));
  // buy through the UI with confirm dialog
- await p.evaluate(()=>{window._sfp=SHOP7.byId.get('wpn_solarfang').price;gems=window._sfp+3800;lvl=120;STORE7.setFilter({cat:'all',q:'Solar Fang'});STORE7.select('wpn_solarfang')});await p.waitForTimeout(300);
+ await p.evaluate(()=>{window._sfp=SHOP7.byId.get('cos_moon_tiara').price;gems=window._sfp+3800;lvl=120;STORE7.setFilter({cat:'all',q:'Crescent Tiara'});STORE7.select('cos_moon_tiara')});await p.waitForTimeout(300);
  await p.click('#store7 aside [data-a=buy]');await p.waitForTimeout(400);const dlg=await p.evaluate(()=>!!document.querySelector('#dlg7.on'));await p.click('#dlg7 [data-ok]');await p.waitForTimeout(600);
- r=await p.evaluate(()=>({has:SHOP7.has('wpn_solarfang'),gems}));ok('UI purchase asks to confirm, then buys',dlg&&r.has&&r.gems==3800,JSON.stringify(r));
+ r=await p.evaluate(()=>({has:SHOP7.has('cos_moon_tiara'),gems}));ok('UI purchase asks to confirm, then buys',dlg&&r.has&&r.gems==3800,JSON.stringify(r));
  await p.evaluate(()=>STORE7.close());
  // --- effects: run every cosmetic for 400 frames, no errors, bounded
  r=await p.evaluate(async()=>{gems=1e6;lvl=150;for(const it of SHOP7.items)if(!it.stack)await SHOP7.buy(it.id);for(const it of SHOP7.items)if(SHOP7.slotOf(it))SHOP7.equip(it.id);const e=[];const t0=performance.now();let frames=0;

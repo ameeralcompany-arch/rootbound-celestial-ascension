@@ -146,13 +146,14 @@ const MUS7=(()=>{
    else if(d.feel=='drive'){if(s==0||s==3||s==4||(s==7&&R()<.5))kick(t,.11);if(s==2||s==6)snare(t,.04);hat(t,(s%2?.014:.022)*hv);if(s==7&&bar%4==3){hand(t,.05,1);hand(t+e8*.5,.05,0)}if(R()<.1)drip(t+e8*R())}
    nextT+=e8;step++;if(step%8==0){songBar++;if(songBar>=BARS){endSong();return}}}}
  function endSong(){fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(0,t+3.2);setTimeout(()=>{song=null;fading=0;gap=ctx.currentTime+1.5+R()*3;nextT=gap;fadeIn()},3300)}
+ function swell(){const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(Math.max(.05,mg.gain.value),t);mg.gain.linearRampToValueAtTime(1,t+2.6)}
  function fadeIn(){const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(0,t);mg.gain.linearRampToValueAtTime(1,t+2.2)}
  function crackle(){if(!on||!ctx||window.MUS_HOLD)return;const t=ctx.currentTime;if(R()<.7)nz(t,.012+R()*.02,2500+R()*4000,'bandpass',.004+R()*.006);if(R()<.04)nz(t,.05,900,'bandpass',.008)}
  function start(){ac();if(on||!AC)return;ctx=AC;master=ctx.createGain();master.gain.value=mute?0:(OPT.mv==null?.5:OPT.mv);mg=ctx.createGain();mg.gain.value=1;lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;lp.Q.value=.4;
   wet=ctx.createGain();wet.gain.value=.34;const rv=mkReverb();lp.connect(mg);lp.connect(rv);rv.connect(wet);wet.connect(mg);mg.connect(master);
   // calm master: a treble shelf and a gentle lowpass take the edge off bright notes and crackle, and a slow soft compressor rounds drum transients
   {const hs=ctx.createBiquadFilter(),lp2=ctx.createBiquadFilter(),cp=ctx.createDynamicsCompressor();hs.type='highshelf';hs.frequency.value=2200;hs.gain.value=-5;lp2.type='lowpass';lp2.frequency.value=7000;lp2.Q.value=.5;
-   cp.threshold.value=-20;cp.knee.value=16;cp.ratio.value=2.5;cp.attack.value=.012;cp.release.value=.35;master.connect(hs);hs.connect(lp2);lp2.connect(cp);cp.connect(ctx.destination)}
+   cp.threshold.value=-20;cp.knee.value=16;cp.ratio.value=2.5;cp.attack.value=.012;cp.release.value=.35;master.connect(hs);hs.connect(lp2);lp2.connect(cp);const dk=ctx.createGain();dk.gain.value=1;cp.connect(dk);dk.connect(ctx.destination);try{RBMIX.addDuck(dk)}catch(_){}}
   // the cave echo (a dotted-eighth delay with feedback): marimba and drops go through it; underground moods also send the whole mix in
   cave=ctx.createGain();cave.gain.value=1;const dl=ctx.createDelay(1),fb=ctx.createGain(),dlp=ctx.createBiquadFilter();dl.delayTime.value=.33;fb.gain.value=.38;dlp.type='lowpass';dlp.frequency.value=1800;
   cave.connect(lp);cave.connect(dl);dl.connect(dlp);dlp.connect(fb);fb.connect(dl);dlp.connect(wet);caveSend=ctx.createGain();caveSend.gain.value=0;lp.connect(caveSend);caveSend.connect(dl);
@@ -160,11 +161,11 @@ const MUS7=(()=>{
   const lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=.13;lg.gain.value=260;lfo.connect(lg);lg.connect(lp.frequency);lfo.start();
   nb=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
   bgm={m:master};on=true;nextT=ctx.currentTime+.1;timer=setInterval(tick,120);crackT=setInterval(crackle,260);detT=setInterval(detect,1000);detect()}
- function switchTo(m2){if(m2==mood&&song)return;if(!ctx)return;fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(0,t+1.6);
-  setTimeout(()=>{mood=m2;song=null;fading=0;gap=0;nextT=ctx.currentTime+.2;try{const c=MOODS[m2]&&MOODS[m2].cave,tt=ctx.currentTime;caveSend.gain.setTargetAtTime(c?.32:0,tt,.4);lp.frequency.setTargetAtTime(String(m2).startsWith('cls_')?5600:c?2100:2600,tt,.4)}catch(_){}fadeIn()},1700)}
+ function switchTo(m2){if(m2==mood&&song)return;if(!ctx)return;fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(.2,t+1.1);
+  setTimeout(()=>{mood=m2;song=null;fading=0;gap=0;nextT=ctx.currentTime+.05;try{const c=MOODS[m2]&&MOODS[m2].cave,tt=ctx.currentTime;caveSend.gain.setTargetAtTime(c?.32:0,tt,.4);lp.frequency.setTargetAtTime(String(m2).startsWith('cls_')?5600:c?2100:2600,tt,.4)}catch(_){}swell()},1100)}
  // tiles below the surface under the player (the depth zones count the same way)
  const depthNow=()=>{try{const tx=Math.max(0,Math.min(W-1,Math.floor(P.x/T)));return Math.floor((P.y+P.h)/T)-sh(tx)}catch(_){return 0}};
- function classMood(){try{const k=CLASS7.cur();let near=null;if(typeof cur!='undefined'&&cur=='plaza'&&window.PLZ7)for(const h of PLZ7.HS){if(Math.abs((h.x0+h.w/2)*T-P.x)<T*6){near=h.c;break}}const fight=window.CLS9&&CLS9.isOpen()?1:0,cb=(window.SK1&&SK1.FX.length>0)||(mobs||[]).some(m=>m.hp>0&&Math.abs(m.x-P.x)<T*9&&(m.boss));const c=near||(fight||cb?k:null);return c&&MOODS['cls_'+c]?'cls_'+c:null}catch(_){return null}}
+ function classMood(){try{const k=CLASS7.cur();let near=null;if(typeof cur!='undefined'&&cur=='plaza'&&window.PLZ7)for(const h of PLZ7.HS){if(Math.abs((h.x0+h.w/2)*T-P.x)<T*6){near=h.c;break}}const fight=window.CLS9&&CLS9.isOpen()?1:0,cb=(mobs||[]).some(m=>m.hp>0&&Math.abs(m.x-P.x)<T*9&&(m.boss));const c=near||(fight||cb?k:null);return c&&MOODS['cls_'+c]?'cls_'+c:null}catch(_){return null}}
  function detect(){try{if(!entered)return;const cm0=classMood();if(cm0&&!window.MUS_HOLD){if(mood!=cm0)switchTo(cm0);return}let m='plaza';const e=ENV7.target,dep=depthNow();let rm=null;try{rm=typeof REALM10!='undefined'?REALM10.mood():null}catch(_){}if(rm&&!MOODS[rm])rm=null;
   if(rm)m=rm;
   else if(dep>=46)m='deep';else if(dep>=20)m='mine';

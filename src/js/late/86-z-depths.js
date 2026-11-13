@@ -49,6 +49,8 @@ const DEPTH8=(()=>{
  const save=()=>{try{localStorage.setItem(K(),JSON.stringify(db))}catch(_){}};
  const wr=()=>{const w=db.w[cur]||(db.w[cur]={});w.g=w.g||{};w.gd=w.gd||{};w.cb=w.cb||[];w.gb=w.gb||[];w.p=w.p||{};w.v=w.v||{};w.mg=w.mg||{};delete w.s/* old shrine cooldowns */;return w};
  const tot=k=>{db.tot[k]=(db.tot[k]|0)+1};
+ // never inside a dungeon: it builds its own map without genBase, so the last world's sites would otherwise survive into it
+ const inDg=()=>!!(window.DG&&(DG.run||DG.loading));
  // ---- generation (inside genBase, before the saved edits are applied)
  let S=[],CA=[],GE=[],pendE=null;
  {const _lw=loadWorld;loadWorld=function(n,e){pendE=e||null;try{return _lw.apply(this,arguments)}finally{pendE=null}}}
@@ -57,7 +59,7 @@ const DEPTH8=(()=>{
  // every room id is decided once per world (carve it only where the save has no edits nearby). w.sn lists the ids already decided; worlds
  // saved before the mini games existed decided exactly OLD_IDS, so rooms added later are decided on their first load and the old ones never move
  const OLD_IDS=['g0','g1','g2','g3','g4','p0','p1','s0','s1','v0','v1'];
- function gen(){S=[];CA=[];GE=[];if(cur=='plaza')return;const R=rr((5153+Math.floor(ws*92821))>>>0),w=wr(),fresh=!Array.isArray(w.ok),ok=fresh?[]:w.ok,seen=Array.isArray(w.sn)?w.sn:fresh?[]:OLD_IDS.slice();
+ function gen(){S=[];CA=[];GE=[];if(cur=='plaza'||inDg())return;const R=rr((5153+Math.floor(ws*92821))>>>0),w=wr(),fresh=!Array.isArray(w.ok),ok=fresh?[]:w.ok,seen=Array.isArray(w.sn)?w.sn:fresh?[]:OLD_IDS.slice();
   let ek=null,dirty=fresh||!Array.isArray(w.sn);
   const inb=(x,y)=>x>2&&x<W-3&&y>3&&y<H-4;
   // avoid: skip the spot if it would overlap a room already placed (used by the later mini game rooms)
@@ -205,7 +207,7 @@ const DEPTH8=(()=>{
    if(r.k=='forge'&&near(r,T*2.8,T*2.5)){if(r.st=='play')hammer(r);else startForge(r);return true}
    if(r.k=='vault'&&near(r,T*2,T*2.5)){const w=wr();if(w.v[r.id]){try{say('The relic chest is empty.')}catch(_){}return true}if(r.killed>=3){openVault(r);return true}try{say('The vault is sealed. Defeat its guardians ('+r.killed+'/3).')}catch(_){}return true}}
   return false}
- {const _i=interact;interact=function(){if(!dlgOpen&&!creatorOn&&!showInv&&menuEl.style.display=='none'&&entered&&cur!='plaza'){try{if(use())return}catch(e){console.error('DEPTH8',e)}}return _i.apply(this,arguments)}}
+ {const _i=interact;interact=function(){if(!dlgOpen&&!creatorOn&&!showInv&&menuEl.style.display=='none'&&entered&&cur!='plaza'&&!inDg()){try{if(use())return}catch(e){console.error('DEPTH8',e)}}return _i.apply(this,arguments)}}
  function strike(wx,wy){for(const r of S){
    if(r.k=='mole'){if(r.st=='play'&&near(r,(r.rw+3)*T,T*4))for(let j=0;j<5;j++){if(Math.abs(wx-holeX(r,j))<T*.8&&wy>r.fy*T-T*1.8&&wy<r.fy*T+6&&bonk(r,j))return true}continue}
    if(r.k=='gal'){if(r.st=='play'&&near(r,(r.rw+4)*T,T*6)&&shoot(r,wx,wy))return true;continue}
@@ -252,7 +254,7 @@ const DEPTH8=(()=>{
   else if(sid=='crystal'){const P5=[1047,1175,1319,1568,1760,2093],a=P5[R0()*6|0],c=P5[R0()*6|0];tone(a,a,.9,'triangle',.009);tone(c,c,1.1,'sine',.007,.22)}
   else{tone(58,44,1.6,'sawtooth',.014);if(R0()<.6)tone(190,110,.14,'sine',.016,.5)}}
  // ---- per frame
- function tick(dt){if(!entered||cur=='plaza'||creatorOn||(typeof WBOSS13!='undefined'&&WBOSS13.void)){if(el)el.classList.remove('on');band=null;blend=0;return}
+ function tick(dt){if(!entered||cur=='plaza'||inDg()||creatorOn||(typeof WBOSS13!='undefined'&&WBOSS13.void)){if(el)el.classList.remove('on');band=null;blend=0;return}
   const tx=Math.max(0,Math.min(W-1,P.x/T|0));depth=(P.y+P.h/2)/T-sh(tx);let nb=null;for(const b of BANDS)if(depth>=b.d0&&depth<b.d1){nb=b;break}
   if(band&&nb!==band&&depth>=band.d0-1.5&&depth<band.d1+1.5)nb=band;if(nb!==band){band=nb;if(nb)enter(nb)}
   blend+=((band?1:0)-blend)*Math.min(1,dt*1.6);if(band)tintB=band;ambient(dt,band);
@@ -274,7 +276,7 @@ const DEPTH8=(()=>{
   uiT-=dt;if(uiT<=0){uiT=.2;render()}}
  {const _et=evTick;evTick=function(dt){_et(dt);try{tick(dt)}catch(e){if(!tick.e){tick.e=1;console.error('DEPTH8',e)}}}}
  // ---- drawing: site art behind the characters (lit by the lighting pass), glows / spores / labels after it
- function drawBack(now){if(!S.length||cur=='plaza')return;const vw=cv.width/ZM,vh=cv.height/ZM,t=now/1000,lamps=[],w=wr();
+ function drawBack(now){if(!S.length||cur=='plaza'||inDg())return;const vw=cv.width/ZM,vh=cv.height/ZM,t=now/1000,lamps=[],w=wr();
   for(const r of S){const cx=ctr(r)-cam.x,by=r.fy*T-cam.y;if(cx<-(r.rw+3)*T||cx>vw+(r.rw+3)*T||by<-160||by>vh+220)continue;
    if(r.k=='grove'){for(const c of r.caps){const s=c.sz,wd=44*s,h=52*s;g.save();g.translate(c.x-cam.x,by);g.rotate(Math.sin(t*.8+c.ph)*.04);g.drawImage(CAPS[c.hue],-wd/2,-h,wd,h);g.restore()}lamps.push(cx,by-30)}
    else if(r.k=='reso'){for(let j=0;j<4;j++)g.drawImage(PIL[j],pillX(r,j)-cam.x-18,by-100,36,100);lamps.push(cx,by-50)}
@@ -296,7 +298,7 @@ const DEPTH8=(()=>{
   g2.fillStyle='#3a2420';g2.fillRect(x0,y-6,bw,12);g2.fillStyle='#e8a83a';g2.fillRect(x0+(r.zc-r.wz/2)*bw,y-6,r.wz*bw,12);g2.fillStyle='#fff3b0';g2.fillRect(x0+(r.zc-r.wz*.18)*bw,y-6,r.wz*.36*bw,12);
   const nx=x0+needle(r)*bw;g2.fillStyle='#ffffff';g2.fillRect(nx-1.5,y-10,3,20);g2.beginPath();g2.moveTo(nx-5,y-12);g2.lineTo(nx+5,y-12);g2.lineTo(nx,y-6);g2.closePath();g2.fill();
   for(let i=0;i<MG.forge.n;i++){const v=r.res[i];g2.fillStyle=v==null?'#5a4a44':v==2?'#ffe08a':v?'#ffffff':'#ff6a6a';g2.beginPath();g2.arc(cx+(i-2)*16,y+17,4,0,6.3);g2.fill()}g2.restore()}
- function drawTop(g2,ccx,ccy){if(!entered||cur=='plaza')return;const now=performance.now(),t=now/1000,vw=cv.width/ZM,vh=cv.height/ZM;
+ function drawTop(g2,ccx,ccy){if(!entered||cur=='plaza'||inDg())return;const now=performance.now(),t=now/1000,vw=cv.width/ZM,vh=cv.height/ZM;
   if(blend>.01&&tintB){g2.save();g2.globalAlpha=Math.min(1,blend)*.8;g2.drawImage(vig(tintB),0,0,vw,vh);g2.restore()}
   if(!S.length)return;const w=wr(),vis=[];for(const r of S){const cx=ctr(r)-ccx,by=r.fy*T-ccy;if(cx>-(r.rw+3)*T&&cx<vw+(r.rw+3)*T&&by>-160&&by<vh+220)vis.push([r,cx,by])}if(!vis.length)return;
   g2.save();g2.globalCompositeOperation='lighter';
@@ -326,5 +328,5 @@ const DEPTH8=(()=>{
    else if(r.k=='vault'){label(g2,cx,by-92+bob,w.v[r.id]?'Relic vault (empty)':r.killed>=3?'Press F: open the relic chest':r.gs.length?'Defeat the guardians  '+r.killed+' / 3':'A sealed relic vault','#ff7a3a')}
    else if(r.k=='grove'&&!ready(r))label(g2,cx,by-108+bob,'Regrowing  '+fmt((w.g[r.id]||0)-Date.now()),CAPC[0])}}
  {const _dp=BOSS6.drawProj;BOSS6.drawProj=function(g2,cx,cy){try{drawTop(g2,cx,cy)}catch(e){if(!drawTop.e){drawTop.e=1;console.error('DEPTH8 top',e)}}return _dp.apply(this,arguments)}}
- return{BANDS,theme,MG,MATS,holeX,bonk,tgPos,shoot,needle,hammer,startMole,startGal,startForge,strike,CACHE,GEODE,sites:()=>S,caches:()=>CA,geodes:()=>GE,get band(){return band&&band.id},get depth(){return depth},get db(){return db},wr,save,reload:load,spore,pillX,hit,listen,use,counts,el:()=>el,
+ return{BANDS,theme,MG,MATS,holeX,bonk,tgPos,shoot,needle,hammer,startMole,startGal,startForge,strike,CACHE,GEODE,sites:()=>inDg()?[]:S,caches:()=>inDg()?[]:CA,geodes:()=>inDg()?[]:GE,get band(){return band&&band.id},get depth(){return depth},get db(){return db},wr,save,reload:load,spore,pillX,hit,listen,use,counts,el:()=>el,
   find:k=>S.find(r=>r.k==k)}})();

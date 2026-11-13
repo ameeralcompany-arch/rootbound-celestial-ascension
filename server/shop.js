@@ -18,6 +18,8 @@ function buy(u,cat,m,now){const s=ensure(u);const rid=String(m.rid||'').slice(0,
  if(s.rids[rid])return Object.assign({},s.rids[rid],{dup:1});
  const it=cat.get(String(m.id||''));const fail=msg=>({ok:0,m:msg,rid,gems:Math.floor(s.g)});
  if(!it)return fail('That item does not exist');
+ // weapons and stat gear are earned by playing (catalog "sale":0, tools/earned-catalog.js); the store only sells what gives no advantage
+ if(it.sale===0)return fail('This is earned by playing, not sold');
  let qty=it.stack?Math.floor(+m.qty||1):1;if(!(qty>=1&&qty<=99))return fail('Invalid quantity');
  if(!it.stack&&s.owned[it.id])return fail('You already own this');
  const total=it.price*qty;if(!(total>0)||total>MAX_GEMS)return fail('Invalid price');

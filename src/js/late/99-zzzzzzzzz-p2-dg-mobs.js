@@ -53,9 +53,9 @@ try{(()=>{
  const flow={startRoom,clearRoom,begin(){const run=DG.run;run.room=DG.L.rooms[0];flow.objective()},objective,
   tick(dt){const run=DG.run,L=DG.L;if(!run||!L)return;const r=DG.duoInside&&DG.duoInside()?null:roomAt(P.x);if(r&&r!==run.room){run.room=r;if(r.kind=='trial'&&DG.music)DG.music.state('explore');objective()}
    if(!(r&&r.kind=='fight'&&r.state=='on')&&run.enemies){run.enemies=0;DG.ui&&DG.ui.enemies(0)}if(r&&r.kind=='fight'&&r.state=='on'&&r.survive){r.left-=dt;const u=1-r.left/r.survive.dur;try{r.survive.tick(dt,A,u,r)}catch(e){console.error('DG survive',e)}DG.ui&&DG.ui.objective('Survive '+Math.ceil(Math.max(0,r.left))+'s');if(r.left<=0&&!(DG.coop&&DG.coop.mirror)){for(const m of mobs.slice())if(m.dgx&&!m.dgb)m.dead=2;clearRoom(r)}}
-   if(r&&r.kind=='fight'&&r.state=='wait'&&P.x>(r.x0+2.5)*T){if(DG.coop&&DG.coop.mirror)DG.coop.want(r);else startRoom(r)}
+   if(r&&r.kind=='fight'&&r.state=='wait'&&P.x>(r.x0+2.5)*T){if(DG.coop&&DG.coop.mirror)DG.coop.want(r);else if(!(DG.coop&&DG.coop.hold&&DG.coop.hold(r)))startRoom(r)}
    if(r&&r.kind=='fight'&&r.state=='on'&&!r.survive&&performance.now()>(r.pend||0)&&!(DG.coop&&DG.coop.mirror)){const n=roomMobs().length;if(n!==run.enemies){run.enemies=n;DG.ui&&DG.ui.enemies(n)}if(n==0){if(r.wi<r.waves.length){waveSpawn(r)}else clearRoom(r)}}
-   if(r&&r.kind=='boss'&&r.state=='wait'&&P.x>(r.x0+5)*T){if(DG.coop&&DG.coop.mirror)DG.coop.want(r);else startRoom(r)}
+   if(r&&r.kind=='boss'&&r.state=='wait'&&P.x>(r.x0+5)*T){if(DG.coop&&DG.coop.mirror)DG.coop.want(r);else if(!(DG.coop&&DG.coop.hold&&DG.coop.hold(r)))startRoom(r)}
    // the corruption meter: Abyssal only. It climbs with time; each step brings a new danger; killing an elite pushes it back
    if(run.d.tier=='abyssal'&&!run.doneBoss&&!DG.locked){run.corr=Math.min(100,(run.corr||0)+dt*.42);run.corrT=(run.corrT||6)-dt;if(run.corrT<=0&&run.corr>=20){const lv=run.corr>=75?3:run.corr>=50?2:1;run.corrT=Math.max(5,13-lv*2.2);const c=run.d.p.glow,x=P.x+rn(-T*5,T*5),y=A.floor(x,P.y+P.h-8),d=DG.mobDmg(run.d,'aregular',.1+.02*lv,run.df);DG.fx.c(x,y-T*1.2,T*2.2,1.15,.3,{c,dmg:d,kind:'void'});if(lv>=2)DG.fx.shot(P.x+(R()<.5?-1:1)*T*11,P.y-T*2,0,0,{r:11,c,dmg:d,home:760,msp:300,l:5,ghost:1});if(lv>=3)DG.fx.mark({t:2.8,r:T*2.6,c,dmg:d*1.2})}}
    // the cursed mark that weakens you fades by itself

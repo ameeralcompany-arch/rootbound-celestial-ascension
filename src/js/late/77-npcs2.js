@@ -63,7 +63,7 @@ const NPC2=(()=>{
   kael:{g:['Halt! ...Ah, it is you.','All quiet.','Safe travels.','n|Stay near the lanterns.'],
    t:['Nothing passes this gate without me knowing. Except butterflies.','The World Gate in the square leads to other worlds. Monsters live out there, not here.','A knight keeps the keep. I keep the keep AND the gate. Double duty.','I have walked this patrol ten thousand times. Three steps, turn, three steps.','n|Monsters roam the wild worlds at night. Bring light and a good weapon.','l|Practice on small monsters first. Then see Bram.','h|With gear like that, maybe YOU should guard the gate.','r|Rain or shine, the watch goes on.']},
   pip:{g:['Hi hi!','Whoa, cool!','Are you an adventurer?'],
-   t:['Elder Oak is telling me about the First Root. Again! I love this part.','When I grow up I want wings like yours. Bigger, though.','Lumi naps on the stone lantern all day. I tried it. I fell off.','I am a Brawler! Hi-yah! Fists never break, so I never have to buy a sword.','l|I bet I can break blocks faster than you! ...Maybe not.','h|Level {lvl}?! That\'s like... a million!','n|I\'m not sleepy. Not even a little. *yawn*']},
+   t:['Elder Oak is telling me about the First Root. Again! I love this part.','When I grow up I want wings like yours. Bigger, though.','Lumi naps on the stone lantern all day. I tried it. I fell off.','I am a Brawler! Hi-yah! Fists never break, so I never need a sword.','l|I bet I can break blocks faster than you! ...Maybe not.','h|Level {lvl}?! That\'s like... a million!','n|I\'m not sleepy. Not even a little. *yawn*']},
   lulu:{g:['Welcome in!','Tea is ready!','Mind the clean floor!'],
    t:['Jasmine, mint or moonleaf? ...They come from the same pot, honestly.','The teahouse has two floors. I have swept both twice today.','Seren drinks her tea cold. She forgets it while she reads.','I was a samurai once. Now I cut tea leaves. The blade is just as sharp.','r|Rainy days are teahouse days.','s|Hot tea, snow outside. Perfect.','n|We are closed... but for you, one quiet cup.']},
   tobi:{g:['Fresh bread!','Morning!','Smell that?','n|Midnight snack?'],
@@ -185,8 +185,10 @@ const NPC2=(()=>{
   for(const n of L){if(!n.vis)continue;const px=n.wx-cam.x,top=n.wy-n.top-cam.y,cl=n.pd<1.8*T?min(1,(1.8*T-n.pd)/(.8*T)):0;let y=min(top-6,top-6-cl*(n.top<64?62:50)+(n.top<64?0:0));
    if(n.na>0){const c=plate(n);g.save();g.globalAlpha=n.na*(n.alpha==null?1:n.alpha);g.drawImage(c,round(px-c.w/2),round(y-c.h-(1-n.na)*4),c.w,c.h);g.restore();y-=c.h+2}
    if(!n.amb&&n.k){const k=n.k=='shop'?'shop':n.k=='smith'?'smith':(qs.some(q=>q.p>=q.need)?'q2':'q');const ic=icon(k),bob=sin(now/420+n.wx)*1.5;g.save();g.globalAlpha=n.na>0?1:.8;g.drawImage(ic,round(px-9),round(y-18+bob),18,18);g.restore();y-=18}
+   /* class masters: the CHOOSE YOUR PATH arrow (99-zzzzzzzzzz-k1-path-arrow.js) */if(n.cls&&window.MASTER1)try{y=MASTER1.mark(g,n,px,y,now)}catch(_){}
    try{if(window.STORY2&&STORY2.has(n.id))STORY2.mark(g,px,y-8,now)}catch(_){}
-   bubble(n,px,y-2,now)}}
+   bubble(n,px,y-2,now)}
+  try{window.MASTER1&&MASTER1.edge(g,L,now)}catch(_){}}
  // ---- dialogs
  function onTalk(n){if(!n||!LINES[n.id])return;let sl=null;try{sl=window.STORY2&&STORY2.take(n.id)}catch(_){}n.line=sl||pick(LINES[n.id].t,n.line);n.bub=null;n.seen=1}
  function nextLine(n){if(!n||!LINES[n.id])return;let sl=null;try{sl=window.STORY2&&STORY2.take(n.id)}catch(_){}n.line=sl||pick(LINES[n.id].t,n.line)}

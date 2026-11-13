@@ -16,21 +16,18 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},300000).unre
  await E(()=>{WX6.force='clear';mobs.length=0;gems=99999});await p.waitForTimeout(200);
  const IDS=await E(()=>GUN9.IDS);
  // --- data, store items, icons and held art
- const meta=await E(()=>{const bad=[];for(const id of GUN9.IDS){const w=WPN[id],it=SHOP7.byId.get('wpn_'+id);if(!w||!w.n||!w.d||!(w.md>0)||!(w.cd>0)||!(w.lv>=1)||!w.rar)bad.push('wpn '+id);if(!it||it.lv!==w.lv||it.price!==w.cost||!SHOP7.RAR.includes(it.rar))bad.push('store '+id);
+ const meta=await E(()=>{const bad=[];for(const id of GUN9.IDS){const w=WPN[id],it=SHOP7.byId.get('wpn_'+id);if(!w||!w.n||!w.d||!(w.md>0)||!(w.cd>0)||!(w.lv>=1||EARN1.ruleOf(id))||!w.rar)bad.push('wpn '+id);if(!it||it.sale!==0||!SHOP7.RAR.includes(it.rar))bad.push('catalog '+id);
    if(!(iconURL('w:'+id)||'').startsWith('data:image'))bad.push('icon '+id);const c=GUN9.art(id,40),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let px=0;for(let i=3;i<d.length;i+=4)if(d[i]>40)px++;if(px<120)bad.push('art '+id+' '+px);
    const k=CLASS7.of(w);if(!k)bad.push('class '+id)}
   const lv=GUN9.IDS.map(id=>WPN[id].lv),guns=GUN9.IDS.filter(id=>WPN[id].gun).length;return{bad,n:GUN9.IDS.length,guns,rising:lv.every((v,i)=>!i||lv[i-1]<=v),gs:CLASS7.of(WPN.sniper),rar:ITEM7.rar('w:sniper')}});
- ok('14 new weapons (8 guns): stats, level + rarity, store items, icons, cached held art, a class each',meta.n==14&&meta.guns==8&&meta.bad.length==0&&meta.rising&&meta.gs=='gunslinger',meta);
+ok('14 new weapons (8 guns): stats, an earn rule or level, rarity, an earned (never sold) catalog entry, icons, cached held art, a class each',meta.n==14&&meta.guns==8&&meta.bad.length==0&&meta.gs=='gunslinger',meta);
  // --- level gating
- const gate=await E(async()=>{lvl=1;const o={};o.buy=(await SHOP7.buy('wpn_sniper')).ok;o.has=SHOP7.has('wpn_sniper');own.sniper=1;o.eq=SHOP7.equip('wpn_sniper');o.wpEq=wp;
-  wp='sniper';await new Promise(r=>setTimeout(r,150));o.reverted=wp!='sniper';o.msg=String(msg);
-  const a0=GUN9.alive;wp='sniper';wcd=0;useWeapon();o.fired=GUN9.alive!=a0||GUN9.SH.sn;o.wp2=wp;
-  INV7.open('weapons');await new Promise(r=>setTimeout(r,120));const t=document.querySelector('#inv7 [data-k="w:sniper"]');if(t)t.click();await new Promise(r=>setTimeout(r,80));o.lockBtn=/Reach level 28/.test(document.querySelector('#inv7 aside').textContent);o.tip=t&&/Lv 28/.test(t.title);INV7.close();
-  o.storeLv=SHOP7.byId.get('wpn_sniper').lv==28&&!SHOP7.lvOk(SHOP7.byId.get('wpn_sniper'));delete own.sniper;wp='fist';return o});
- ok('under-level weapons: store refuses, equip refuses, a forced equip reverts with a message, cannot fire',gate.buy==0&&!gate.has&&gate.eq===false&&gate.reverted&&/level 28/i.test(gate.msg)&&!gate.fired&&gate.wp2!='sniper',gate);
- ok('inventory + store show the level requirement (tooltip, locked button)',gate.lockBtn&&gate.tip&&gate.storeLv,gate);
- const buy=await E(async()=>{lvl=30;gems=20000;const pr=SHOP7.byId.get('wpn_sniper').price;const r=await SHOP7.buy('wpn_sniper');const o={ok:r.ok,gems,pr,has:SHOP7.has('wpn_sniper')};o.eq=SHOP7.equip('wpn_sniper')&&wp=='sniper';delete own.sniper;wp='fist';gems=99999;return o});
- ok('at the right level a new weapon can be bought (gems charged) and equipped',buy.ok&&buy.gems==20000-buy.pr&&buy.has&&buy.eq,buy);
+const gate=await E(async()=>{EARN1.hold(true);lvl=1;const o={};const r=EARN1.ruleOf('sniper');o.rule=r&&r.clv;delete own.sniper;o.buy=(await SHOP7.buy('wpn_sniper')).ok;o.has=SHOP7.has('wpn_sniper');o.eq=SHOP7.equip('wpn_sniper');o.wpEq=wp;
+  INV7.open('weapons');await new Promise(r=>setTimeout(r,120));const t=document.querySelector('#inv7 [data-k="w:sniper"]');if(t)t.click();await new Promise(r=>setTimeout(r,80));o.how=(document.querySelector('#inv7 aside')||{}).textContent||'';INV7.close();wp='fist';return o});
+ ok('a weapon you have not earned: the store will not sell it and it cannot be equipped',gate.buy==0&&!gate.has&&!gate.eq&&gate.wpEq!='sniper',gate);
+ ok('the inventory says how it is earned (class and class level)',/Earned at Gunslinger level \d+/.test(gate.how)&&gate.how.includes('level '+gate.rule),{rule:gate.rule,tail:gate.how.slice(-330)});
+ const earn=await E(async()=>{EARN1.hold(false);const o={};const k='gunslinger',r=EARN1.ruleOf('sniper');o.clv=r.clv;const cur0=CJOB.S.cur,lv0=CLASS7.S.lv[k];CJOB.S.cur=k;if(!CJOB.S.learned.includes(k))CJOB.S.learned.push(k);CLASS7.S.lv[k]=r.clv-1;EARN1.check();await new Promise(r=>setTimeout(r,300));o.before=!!own.sniper;CLASS7.S.lv[k]=r.clv;EARN1.check();await new Promise(r=>setTimeout(r,600));o.after=!!own.sniper;o.wp=wp;o.samurai=Object.keys(own).filter(id=>{const q=EARN1.ruleOf(id);return q&&EARN1.LAD.samurai&&EARN1.LAD.samurai.includes(q)});EARN1.hold(true);CJOB.S.cur=cur0;CLASS7.S.lv[k]=lv0;return o});
+ ok('reaching the class level earns the weapon by itself; a level short does not; no other class’s weapons come with it',!earn.before&&earn.after&&earn.samurai.length==0,earn);
  // --- every new weapon fires and hurts a monster (no page errors)
  await E(()=>{lvl=60;for(const id of GUN9.IDS)own[id]=1;// a flat, open strip so nothing blocks the shots
   const px=Math.floor(P.x/T),fy=Math.floor((P.y+P.h-2)/T);for(let x=px-3;x<=px+10;x++){for(let y=fy-5;y<=fy;y++){const k=y*W+x;tiles[k]=0;wl[k]=0}const k=(fy+1)*W+x;tiles[k]=1;hp[k]=BLK[1][2]}P.vx=0});await p.waitForTimeout(400);

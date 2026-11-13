@@ -1,290 +1,290 @@
 {
-  "_note": "Every line Lavi speaks. tools/voice/record.js turns these into audio/lavi/<id>.mp3 and src/js/late/99-zzzzzzzzz-s5-lavi-voice.js. The subtitle may be richer than the spoken words: {name} and numbers appear in text only, because a recording cannot say a player's own name. say = what is spoken, when it differs from text.",
-  "lines": {
-    "hello": {
-      "text": "Oh! You're finally here, {name}! Welcome to Rootbound!",
-      "say": "Oh! You're finally here! Welcome to Rootbound!",
-      "mood": "excited"
-    },
-    "intro2": {
-      "text": "I'm Lavi. I'm going to help you become one of the strongest adventurers here.",
-      "mood": "happy"
-    },
-    "intro3": {
-      "text": "Hehe, shall we begin?",
-      "mood": "happy"
-    },
-    "tour_profile": {
-      "text": "This is your character. Open it, and I'll show you who you are so far.",
-      "mood": "pointing"
-    },
-    "tour_profile_ok": {
-      "text": "That's you! Your level, your health, and how far you've come.",
-      "mood": "happy"
-    },
-    "tour_inventory": {
-      "text": "Everything you find lands in your bag. Go on, take a peek inside.",
-      "mood": "pointing"
-    },
-    "tour_inventory_ok": {
-      "text": "See? Click any item, and it tells you exactly what it's for.",
-      "mood": "happy"
-    },
-    "tour_equipment": {
-      "text": "Armour, wings and accessories go here. Try opening your equipment.",
-      "mood": "pointing"
-    },
-    "tour_equipment_ok": {
-      "text": "Lovely! Better gear means more health, and harder hits.",
-      "mood": "happy"
-    },
-    "tour_hotbar": {
-      "text": "These are your weapon slots. Press a number key, or scroll, to swap what you're holding.",
-      "mood": "pointing"
-    },
-    "tour_hotbar_ok": {
-      "text": "Perfect! Your class is simply the class of the weapon in your hand.",
-      "mood": "excited"
-    },
-    "tour_cp": {
-      "text": "See that number next to your character? That's your Combat Power! It tells you how strong you really are.",
-      "mood": "pointing"
-    },
-    "tour_cp2": {
-      "text": "Want to know a little secret? Your weapon is the most important way to raise it. Click it to see why.",
-      "mood": "thinking"
-    },
-    "tour_cp_ok": {
-      "text": "Every point comes from something real. Nothing is hidden from you here.",
-      "mood": "happy"
-    },
-    "tour_skills": {
-      "text": "Each level gives you skill points. Spend them here on the things you like best.",
-      "mood": "pointing"
-    },
-    "tour_skills_ok": {
-      "text": "You can come back whenever you have more to spend.",
-      "mood": "happy"
-    },
-    "tour_classes": {
-      "text": "There are thirteen classes, and each one fights its own way. Have a look!",
-      "mood": "pointing"
-    },
-    "tour_classes_ok": {
-      "text": "Every class can become just as strong. So pick the one you love!",
-      "mood": "excited"
-    },
-    "tour_worlds": {
-      "text": "This is how you travel. Every world hides monsters, treasure and secrets.",
-      "mood": "pointing"
-    },
-    "tour_worlds_ok": {
-      "text": "So many places to see! We'll get there, one step at a time.",
-      "mood": "happy"
-    },
-    "tour_quests": {
-      "text": "Quests pay you in gems and experience. They're the fastest way to level up early on.",
-      "mood": "pointing"
-    },
-    "tour_quests_ok": {
-      "text": "Finish a few of these, and you'll grow really quickly.",
-      "mood": "happy"
-    },
-    "tour_store": {
-      "text": "The store sells weapons and gear. Gems are all you ever need here, and you earn them just by playing.",
-      "mood": "pointing"
-    },
-    "tour_store_ok": {
-      "text": "A better weapon is a great first purchase, once you can afford one.",
-      "mood": "happy"
-    },
-    "tour_dungeon": {
-      "text": "Now, the exciting part. Open the dungeons!",
-      "mood": "excited"
-    },
-    "tour_dungeon2": {
-      "text": "Each dungeon has its own entry requirements. The first one needs level ten, and two hundred Combat Power. Both are important!",
-      "mood": "pointing"
-    },
-    "tour_rewards": {
-      "text": "Look at these materials! They're not just collectibles. Click one, and see what it does.",
-      "mood": "excited"
-    },
-    "tour_rewards_ok": {
-      "text": "Now you know exactly what it's for, and where to farm more.",
-      "mood": "happy"
-    },
-    "tour_enhance": {
-      "text": "This is the forge. You can make your weapon stronger, using materials and a few gems. Open it!",
-      "mood": "pointing"
-    },
-    "tour_enhance_ok": {
-      "text": "It always shows you the exact price, and how much stronger you'll get. An upgrade can never fail.",
-      "mood": "happy"
-    },
-    "tour_achievements": {
-      "text": "Achievements pay gems too, so little goals are always worth finishing.",
-      "mood": "pointing"
-    },
-    "tour_achievements_ok": {
-      "text": "You've probably earned some already!",
-      "mood": "happy"
-    },
-    "tour_settings": {
-      "text": "And if I ever talk too much, you can turn my voice down or off in here.",
-      "mood": "thinking"
-    },
-    "tour_settings_ok": {
-      "text": "Hehe, I won't be offended. Promise.",
-      "mood": "happy"
-    },
-    "tour_end": {
-      "text": "Now you know the secret! Clear dungeons, collect materials, earn gems, enhance your weapon, and watch your Combat Power rise!",
-      "mood": "excited"
-    },
-    "tour_end2": {
-      "text": "If you ever wonder what to do next, just click me. I'll always have an idea.",
-      "mood": "happy"
-    },
-    "stronger": {
-      "text": "To get stronger, your weapon comes first. Enhance it, buy a better one, and level up your class.",
-      "mood": "thinking"
-    },
-    "stronger2": {
-      "text": "Better gear helps as well, and every level you gain makes you hit harder.",
-      "mood": "happy"
-    },
-    "almost": {
-      "text": "You're almost ready! You just need a little more Combat Power.",
-      "mood": "excited"
-    },
-    "need_level": {
-      "text": "You need a few more levels first. Quests and monsters are the quickest way.",
-      "mood": "thinking"
-    },
-    "need_both": {
-      "text": "Not quite yet. Let's get you some levels, and a stronger weapon.",
-      "mood": "thinking"
-    },
-    "need_clear": {
-      "text": "You'll need to finish the dungeon before this one first.",
-      "mood": "thinking"
-    },
-    "ready": {
-      "text": "Your next challenge is waiting! You're strong enough for this dungeon.",
-      "mood": "excited"
-    },
-    "can_upgrade": {
-      "text": "Good news! You can already afford an upgrade. Let's go to the forge!",
-      "mood": "excited"
-    },
-    "farm_mats": {
-      "text": "You need more materials for your next upgrade. I know just where to find them.",
-      "mood": "pointing"
-    },
-    "farm_gems": {
-      "text": "You're a little short on gems. Quests, levels and dungeons all pay well.",
-      "mood": "thinking"
-    },
-    "better_weapon": {
-      "text": "A stronger weapon would really help you right now. Let's check the store.",
-      "mood": "pointing"
-    },
-    "all_done": {
-      "text": "Wow, you've done everything! You really are one of the strongest now.",
-      "mood": "excited"
-    },
-    "upgraded": {
-      "text": "Yay! Your weapon just got stronger!",
-      "mood": "excited"
-    },
-    "unlocked": {
-      "text": "You did it! A new dungeon is open for you!",
-      "mood": "excited"
-    },
-    "cleared": {
-      "text": "You won! That was amazing! Let's see what you found.",
-      "mood": "excited"
-    },
-    "levelup": {
-      "text": "Level up! You're getting stronger already.",
-      "mood": "happy"
-    },
-    "welcome_back": {
-      "text": "Welcome back! I missed you. Click me if you want an idea of what to do next.",
-      "mood": "happy"
-    },
-    "offer": {
-      "text": "Hi there! I'm Lavi. Would you like a quick tour of what's new?",
-      "mood": "happy"
-    },
-    "paused": {
-      "text": "Okay! I'll wait right here.",
-      "mood": "happy"
-    },
-    "skipped": {
-      "text": "No problem! I'll be here if you need me.",
-      "mood": "happy"
-    },
-    "surprised": {
-      "text": "Oh! Look at that!",
-      "mood": "surprised"
-    },
-    "st_silence": {
-      "text": "Long ago, travelers walked the Rootways between every world. Then the Great Silence came, and the roads went quiet.",
-      "mood": "thinking"
-    },
-    "st_w1_letters": {
-      "text": "Look! The flowers here grow in the shapes of letters. I think this world is trying to say its name.",
-      "mood": "excited"
-    },
-    "st_word": {
-      "text": "You spoke its word! Can you hear that? This world just remembered itself.",
-      "mood": "excited"
-    },
-    "st_guard_root": {
-      "text": "Thornmaw was only guarding the roots from thieves... and we looked like thieves. It can rest now.",
-      "mood": "thinking"
-    },
-    "st_guard_pyre": {
-      "text": "Vulkhar kept the forges burning alone for a hundred years. Pride is a heavy thing to carry.",
-      "mood": "thinking"
-    },
-    "st_guard_nyx": {
-      "text": "Nyx ate the dying stars so their light would not go to waste. Now new ones can grow.",
-      "mood": "happy"
-    },
-    "st_guard_mael": {
-      "text": "Maelor held that city's last song for so long. Listen... the sea is singing again.",
-      "mood": "happy"
-    },
-    "st_guard_prism": {
-      "text": "Aurelia froze the festival so it would never end. But festivals are meant to end, so they can happen again!",
-      "mood": "excited"
-    },
-    "st_dungeon_first": {
-      "text": "Every dungeon is an old Rootway, buried deep. Whoever guarded it... the Silence changed them.",
-      "mood": "thinking"
-    },
-    "st_shadow": {
-      "text": "That was only its shadow? Then what is waiting at the very bottom?",
-      "mood": "surprised"
-    },
-    "st_end": {
-      "text": "Even when worlds drift apart, the moments we share still leave something behind. Thank you for remembering.",
-      "mood": "happy"
-    },
-    "st_end_a": {
-      "text": "Do you remember the first thing you heard, when you woke up? The roots. You were the only one who could hear them.",
-      "mood": "thinking"
-    },
-    "st_end_b": {
-      "text": "My world was the first one it swallowed. I could not remember it... until now. It had blue grass. Isn't that silly?",
-      "mood": "happy"
-    },
-    "st_end_d": {
-      "text": "Come on. The festival is starting, and Tobi has already burnt the bread.",
-      "mood": "excited"
-    }
+ "_note": "Every line Lavi speaks. tools/voice/record.js turns these into audio/lavi/<id>.mp3 and src/js/late/99-zzzzzzzzz-s5-lavi-voice.js. The subtitle may be richer than the spoken words: {name} and numbers appear in text only, because a recording cannot say a player's own name. say = what is spoken, when it differs from text.",
+ "lines": {
+  "hello": {
+   "text": "Oh! You're finally here, {name}! Welcome to Rootbound!",
+   "say": "Oh! You're finally here! Welcome to Rootbound!",
+   "mood": "excited"
+  },
+  "intro2": {
+   "text": "I'm Lavi. I'm going to help you become one of the strongest adventurers here.",
+   "mood": "happy"
+  },
+  "intro3": {
+   "text": "Hehe, shall we begin?",
+   "mood": "happy"
+  },
+  "tour_profile": {
+   "text": "This is your character. Open it, and I'll show you who you are so far.",
+   "mood": "pointing"
+  },
+  "tour_profile_ok": {
+   "text": "That's you! Your level, your health, and how far you've come.",
+   "mood": "happy"
+  },
+  "tour_inventory": {
+   "text": "Everything you find lands in your bag. Go on, take a peek inside.",
+   "mood": "pointing"
+  },
+  "tour_inventory_ok": {
+   "text": "See? Click any item, and it tells you exactly what it's for.",
+   "mood": "happy"
+  },
+  "tour_equipment": {
+   "text": "Armour, wings and accessories go here. Try opening your equipment.",
+   "mood": "pointing"
+  },
+  "tour_equipment_ok": {
+   "text": "Lovely! Better gear means more health, and harder hits.",
+   "mood": "happy"
+  },
+  "tour_hotbar": {
+   "text": "These are your weapon slots. Press a number key, or scroll, to swap what you're holding.",
+   "mood": "pointing"
+  },
+  "tour_hotbar_ok": {
+   "text": "Perfect! Your class is simply the class of the weapon in your hand.",
+   "mood": "excited"
+  },
+  "tour_cp": {
+   "text": "See that number next to your character? That's your Combat Power! It tells you how strong you really are.",
+   "mood": "pointing"
+  },
+  "tour_cp2": {
+   "text": "Want to know a little secret? Your weapon is the most important way to raise it. Click it to see why.",
+   "mood": "thinking"
+  },
+  "tour_cp_ok": {
+   "text": "Every point comes from something real. Nothing is hidden from you here.",
+   "mood": "happy"
+  },
+  "tour_skills": {
+   "text": "Each level gives you skill points. Spend them here on the things you like best.",
+   "mood": "pointing"
+  },
+  "tour_skills_ok": {
+   "text": "You can come back whenever you have more to spend.",
+   "mood": "happy"
+  },
+  "tour_classes": {
+   "text": "There are thirteen classes, and each one fights its own way. Have a look!",
+   "mood": "pointing"
+  },
+  "tour_classes_ok": {
+   "text": "Every class can become just as strong. So pick the one you love!",
+   "mood": "excited"
+  },
+  "tour_worlds": {
+   "text": "This is how you travel. Every world hides monsters, treasure and secrets.",
+   "mood": "pointing"
+  },
+  "tour_worlds_ok": {
+   "text": "So many places to see! We'll get there, one step at a time.",
+   "mood": "happy"
+  },
+  "tour_quests": {
+   "text": "Quests pay you in gems and experience. They're the fastest way to level up early on.",
+   "mood": "pointing"
+  },
+  "tour_quests_ok": {
+   "text": "Finish a few of these, and you'll grow really quickly.",
+   "mood": "happy"
+  },
+  "tour_store": {
+   "text": "The store sells weapons and gear. Gems are all you ever need here, and you earn them just by playing.",
+   "mood": "pointing"
+  },
+  "tour_store_ok": {
+   "text": "A better weapon is a great first purchase, once you can afford one.",
+   "mood": "happy"
+  },
+  "tour_dungeon": {
+   "text": "Now, the exciting part. Open the dungeons!",
+   "mood": "excited"
+  },
+  "tour_dungeon2": {
+   "text": "Each dungeon has its own entry requirements. The first one needs level ten, and two hundred Combat Power. Both are important!",
+   "mood": "pointing"
+  },
+  "tour_rewards": {
+   "text": "Look at these materials! They're not just collectibles. Click one, and see what it does.",
+   "mood": "excited"
+  },
+  "tour_rewards_ok": {
+   "text": "Now you know exactly what it's for, and where to farm more.",
+   "mood": "happy"
+  },
+  "tour_enhance": {
+   "text": "This is the forge. You can make your weapon stronger, using materials and a few gems. Open it!",
+   "mood": "pointing"
+  },
+  "tour_enhance_ok": {
+   "text": "It always shows you the exact price, and how much stronger you'll get. An upgrade can never fail.",
+   "mood": "happy"
+  },
+  "tour_achievements": {
+   "text": "Achievements pay gems too, so little goals are always worth finishing.",
+   "mood": "pointing"
+  },
+  "tour_achievements_ok": {
+   "text": "You've probably earned some already!",
+   "mood": "happy"
+  },
+  "tour_settings": {
+   "text": "And if I ever talk too much, you can turn my voice down or off in here.",
+   "mood": "thinking"
+  },
+  "tour_settings_ok": {
+   "text": "Hehe, I won't be offended. Promise.",
+   "mood": "happy"
+  },
+  "tour_end": {
+   "text": "Now you know the secret! Clear dungeons, collect materials, earn gems, enhance your weapon, and watch your Combat Power rise!",
+   "mood": "excited"
+  },
+  "tour_end2": {
+   "text": "If you ever wonder what to do next, just click me. I'll always have an idea.",
+   "mood": "happy"
+  },
+  "stronger": {
+   "text": "To get stronger, your weapon comes first. Enhance it, and level up your class to earn a better one.",
+   "mood": "thinking"
+  },
+  "stronger2": {
+   "text": "Better gear helps as well, and every level you gain makes you hit harder.",
+   "mood": "happy"
+  },
+  "almost": {
+   "text": "You're almost ready! You just need a little more Combat Power.",
+   "mood": "excited"
+  },
+  "need_level": {
+   "text": "You need a few more levels first. Quests and monsters are the quickest way.",
+   "mood": "thinking"
+  },
+  "need_both": {
+   "text": "Not quite yet. Let's get you some levels, and a stronger weapon.",
+   "mood": "thinking"
+  },
+  "need_clear": {
+   "text": "You'll need to finish the dungeon before this one first.",
+   "mood": "thinking"
+  },
+  "ready": {
+   "text": "Your next challenge is waiting! You're strong enough for this dungeon.",
+   "mood": "excited"
+  },
+  "can_upgrade": {
+   "text": "Good news! You can already afford an upgrade. Let's go to the forge!",
+   "mood": "excited"
+  },
+  "farm_mats": {
+   "text": "You need more materials for your next upgrade. I know just where to find them.",
+   "mood": "pointing"
+  },
+  "farm_gems": {
+   "text": "You're a little short on gems. Quests, levels and dungeons all pay well.",
+   "mood": "thinking"
+  },
+  "better_weapon": {
+   "text": "A stronger weapon would really help you right now. Let's check the store.",
+   "mood": "pointing"
+  },
+  "all_done": {
+   "text": "Wow, you've done everything! You really are one of the strongest now.",
+   "mood": "excited"
+  },
+  "upgraded": {
+   "text": "Yay! Your weapon just got stronger!",
+   "mood": "excited"
+  },
+  "unlocked": {
+   "text": "You did it! A new dungeon is open for you!",
+   "mood": "excited"
+  },
+  "cleared": {
+   "text": "You won! That was amazing! Let's see what you found.",
+   "mood": "excited"
+  },
+  "levelup": {
+   "text": "Level up! You're getting stronger already.",
+   "mood": "happy"
+  },
+  "welcome_back": {
+   "text": "Welcome back! I missed you. Click me if you want an idea of what to do next.",
+   "mood": "happy"
+  },
+  "offer": {
+   "text": "Hi there! I'm Lavi. Would you like a quick tour of what's new?",
+   "mood": "happy"
+  },
+  "paused": {
+   "text": "Okay! I'll wait right here.",
+   "mood": "happy"
+  },
+  "skipped": {
+   "text": "No problem! I'll be here if you need me.",
+   "mood": "happy"
+  },
+  "surprised": {
+   "text": "Oh! Look at that!",
+   "mood": "surprised"
+  },
+  "st_silence": {
+   "text": "Long ago, travelers walked the Rootways between every world. Then the Great Silence came, and the roads went quiet.",
+   "mood": "thinking"
+  },
+  "st_w1_letters": {
+   "text": "Look! The flowers here grow in the shapes of letters. I think this world is trying to say its name.",
+   "mood": "excited"
+  },
+  "st_word": {
+   "text": "You spoke its word! Can you hear that? This world just remembered itself.",
+   "mood": "excited"
+  },
+  "st_guard_root": {
+   "text": "Thornmaw was only guarding the roots from thieves... and we looked like thieves. It can rest now.",
+   "mood": "thinking"
+  },
+  "st_guard_pyre": {
+   "text": "Vulkhar kept the forges burning alone for a hundred years. Pride is a heavy thing to carry.",
+   "mood": "thinking"
+  },
+  "st_guard_nyx": {
+   "text": "Nyx ate the dying stars so their light would not go to waste. Now new ones can grow.",
+   "mood": "happy"
+  },
+  "st_guard_mael": {
+   "text": "Maelor held that city's last song for so long. Listen... the sea is singing again.",
+   "mood": "happy"
+  },
+  "st_guard_prism": {
+   "text": "Aurelia froze the festival so it would never end. But festivals are meant to end, so they can happen again!",
+   "mood": "excited"
+  },
+  "st_dungeon_first": {
+   "text": "Every dungeon is an old Rootway, buried deep. Whoever guarded it... the Silence changed them.",
+   "mood": "thinking"
+  },
+  "st_shadow": {
+   "text": "That was only its shadow? Then what is waiting at the very bottom?",
+   "mood": "surprised"
+  },
+  "st_end": {
+   "text": "Even when worlds drift apart, the moments we share still leave something behind. Thank you for remembering.",
+   "mood": "happy"
+  },
+  "st_end_a": {
+   "text": "Do you remember the first thing you heard, when you woke up? The roots. You were the only one who could hear them.",
+   "mood": "thinking"
+  },
+  "st_end_b": {
+   "text": "My world was the first one it swallowed. I could not remember it... until now. It had blue grass. Isn't that silly?",
+   "mood": "happy"
+  },
+  "st_end_d": {
+   "text": "Come on. The festival is starting, and Tobi has already burnt the bread.",
+   "mood": "excited"
   }
+ }
 }

@@ -4,12 +4,13 @@ const CHEST7=(()=>{
  const load=()=>{try{opened=JSON.parse(localStorage.getItem(K())||'{}')||{}}catch(_){opened={}}};const save=()=>{try{localStorage.setItem(K(),JSON.stringify(opened))}catch(_){}};load();
  const rr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
  const tierOf=dp=>dp<20?0:dp<32?1:2;const TN=['Wooden','Iron','Golden'];
- function build(){list=[];if(cur=='plaza')return;const R=rr((9157+Math.floor(ws*65537))>>>0);let lastX=-99;
+ const inDg=()=>!!(window.DG&&(DG.run||DG.loading));
+ function build(){list=[];if(cur=='plaza'||inDg())return;const R=rr((9157+Math.floor(ws*65537))>>>0);let lastX=-99;
   for(let x=4;x<W-4;x++){if(x-lastX<10)continue;const s=sh(x);for(let y=s+10;y<H-4;y++){if(!tiles[y*W+x]&&!tiles[(y-1)*W+x]&&tiles[(y+1)*W+x]&&tiles[(y+1)*W+x]!=17&&R()<.07){list.push({i:list.length,tx:x,ty:y,dp:y-s});lastX=x;break}}}
   list=list.slice(0,Math.round(9*W/100));list.forEach((c,i)=>c.i=i)}
  {const _gb=genBase;genBase=function(){const r=_gb.apply(this,arguments);try{build()}catch(e){console.error('chests',e)}return r}}
  const isOpen=c=>!!(opened[cur]&&opened[cur].includes(c.i));
- const near=()=>{let b=null,bd=T*1.7;for(const c of list){if(isOpen(c))continue;const d=Math.hypot((c.tx+.5)*T-P.x,(c.ty+.5)*T-(P.y+P.h/2));if(d<bd){bd=d;b=c}}return b};
+ const near=()=>{if(inDg())return null;let b=null,bd=T*1.7;for(const c of list){if(isOpen(c))continue;const d=Math.hypot((c.tx+.5)*T-P.x,(c.ty+.5)*T-(P.y+P.h/2));if(d<bd){bd=d;b=c}}return b};
  function loot(c){const t=tierOf(c.dp),R=Math.random,px=(c.tx+.5)*T,py=(c.ty+.2)*T;const gemsN=Math.round((60+c.dp*7)*(.7+R()*.6)*(1+t*.5));
   for(let i=0;i<5;i++)spawnDrop(px+(R()-.5)*30,py,'gem',Math.max(1,Math.round(gemsN/5)));
   for(const j of[249,610,611,612])if(MAT[j])MAT[j].nochest=1;const pool=[];const deep=[60,61,62,63,64,65].filter((id,k)=>c.dp>8+k*5);for(const id of deep)pool.push([id,1+t,3]);for(const k in MAT)if(!MAT[k].nochest)pool.push([+k,1,2+t]);for(const k of[1,3,5,8,9,10])pool.push([100+k,1,2]);pool.push([10,1,1+t],[9,1,2+t]);
@@ -22,7 +23,7 @@ const CHEST7=(()=>{
   try{say(TN[r.t]+' chest: +'+r.gemsN+' gems'+(r.got.length?', '+r.got.slice(0,3).join(', ')+(r.got.length>3?'...':''):''))}catch(_){}
   try{G('chest')}catch(_){}}
  {const _i=interact;interact=function(){if(!dlgOpen&&!creatorOn&&!showInv&&menuEl.style.display=='none'){const c=near();if(c){let npc=null;try{npc=nearNPC()}catch(_){}if(!npc){open(c);return}}}return _i.apply(this,arguments)}}
- function draw(g,cx,cy){if(!list.length||cur=='plaza')return;const t=performance.now()/1000,nr=near();
+ function draw(g,cx,cy){if(!list.length||cur=='plaza'||inDg())return;const t=performance.now()/1000,nr=near();
   for(const c of list){const x=(c.tx+.5)*T-cx,y=(c.ty+1)*T-cy;if(x<-60||x>cv.width/ZM+60||y<-60||y>cv.height/ZM+80)continue;const op=isOpen(c),tt=tierOf(c.dp),pal=[['#9a6a36','#6a4420','#e8c070'],['#8a96ac','#4e586c','#dfe8ff'],['#e8b83a','#9a6a10','#fff3b0']][tt];
    // a chest that lost its floor drops until something solid is below
    if(!solidAt(c.tx,c.ty+1)&&c.ty<H-3)c.ty++;
@@ -37,4 +38,4 @@ const CHEST7=(()=>{
    if(c===nr){g.font='bold 12px system-ui,sans-serif';g.textAlign='center';const tw=g.measureText('Press F').width+18;g.fillStyle='rgba(20,18,30,.78)';g.beginPath();g.roundRect(-tw/2,-58+Math.sin(t*4)*2,tw,20,10);g.fill();g.fillStyle='#fff';g.fillText('Press F',0,-44+Math.sin(t*4)*2)}
    g.restore()}}
  {const _d=BOSS6.drawProj;BOSS6.drawProj=function(g,cx,cy){try{draw(g,cx,cy)}catch(_){}_d.call(this,g,cx,cy)}}
- return{build,list:()=>list,near,open,opened:()=>opened,reload:load}})();
+ return{build,list:()=>inDg()?[]:list,near,open,opened:()=>opened,reload:load}})();

@@ -35,7 +35,7 @@ const SFX7=(()=>{
  const _pa=placeAction;placeAction=function(){let k=-1,w0=0,c0=0;try{const it=bar[sel],tx=Math.floor((mx+cam.x)/T),ty=Math.floor((my+cam.y)/T);k=ty*W+tx;w0=wl[k]|0;c0=it?cnt(it):0;const r=_pa.apply(this,arguments);if(w0>0&&it&&cnt(it)<c0)SFX7.bloop(.9);return r}catch(e){throw e}};
  // rain/storm bed was a constant noisy hiss: removed. Thunder is kept but quiet and low.
  ambUpdate=function(){try{if(typeof ambG!='undefined'&&ambG)ambG.gain.value=0}catch(_){}};
- const _nz=noise;noise=function(d,f,v){return _nz(d,Math.min(f,420),(v||.1)*.3)};
+ const _nz=noise;noise=function(d,f,v){return _nz(d,Math.min(f,1500),(v||.1)*.26)};   // soft and airy (was clamped to a dull 420 Hz)
  // swim bubbles/jump in water use the soft sounds
  const _bf=bubFx;bubFx=function(n){_bf.apply(this,arguments);if(Math.random()<.5)SFX7.bubble()};
 }

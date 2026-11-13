@@ -23,10 +23,11 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
  await E(()=>{INV7.filter='weapons';INV7.render()});await W8(200);
  await p.click('#inv7 [data-k="w:cinder"]');await W8();await p.click('#inv7 aside [data-a="equip"]');await W8();
  ok('Equip button holds the weapon and shows it in the hand slot',await E(()=>wp=='cinder'&&document.querySelector('#inv7 .es8[data-slot=hand]').dataset.ek=='w:cinder'));
+ await E(()=>{try{EARN1.hold(true)}catch(_){}delete own.sniper});/* weapons are earned automatically now: hold that while this test sets weapons by hand */
  await p.dblclick('#inv7 [data-k="w:solarfang"]');await W8(150);ok('double-click equips a weapon',await E(()=>wp=='solarfang'));
  await p.click('#inv7 [data-k="w:popgun"]');await W8();await p.keyboard.press('f');await W8();ok('E equips the selected weapon (and opens nothing else)',await E(()=>wp=='popgun'&&!dlgOpen));
  await p.click('#inv7 [data-k="w:cinder"]');await W8();await p.keyboard.press('Enter');await W8();ok('Enter equips the selected weapon',await E(()=>wp=='cinder'));
- await p.click('#inv7 [data-k="w:sniper"]');await W8();await E(()=>{msg=''});await p.keyboard.press('f');await W8();ok('E on an under-level weapon says why and changes nothing',await E(()=>wp=='cinder'&&/Reach level/.test(String(msg))));
+ await p.click('#inv7 [data-k="w:sniper"]');await W8();await E(()=>{msg=''});await p.keyboard.press('f');await W8();{const q=await E(()=>({wp,msg:String(msg),has:!!own.sniper}));ok('E on a weapon not earned yet says how to earn it and changes nothing',q.wp=='cinder'&&/Earned at|Reach level/i.test(q.msg),q)}
  await E(()=>DRAWER1.setLevel('full'));await p.waitForTimeout(800);
  await p.click('#inv7 .es8[data-slot=hand] .ux8');await W8();ok('✕ on the hand slot puts the weapon away (fists)',await E(()=>wp=='fist'&&HOTBAR.cur==-1&&!document.querySelector('#inv7 .es8[data-slot=hand]').dataset.ek));
  // ---- wearables: right-click menu, drag onto the strip, unequip
@@ -70,10 +71,8 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
   const L=INV7.list.filter(k=>own[k.slice(2)]),c=L.indexOf('w:cinder'),before=L.slice(0,c).every(k=>ITEM7.tier(k)>ITEM7.tier('w:cinder'));const pv=ITEM7.power('w:cinder');delete window.WPOWER;INV7.render();return{before,pv}});
  ok('window.WPOWER(id) drives the power number and the order within a rarity',wpw.pv==9999&&wpw.before,wpw);
  // store weapons: same order by default, power chips
- const st=await E(async()=>{INV7.close();STORE7.open();STORE7.setFilter({cat:'weapons',sort:'feat',q:'',rar:'all',owned:false});await new Promise(r=>setTimeout(r,300));const RO={common:0,uncommon:1,rare:2,epic:3,legendary:4,mythic:5,exclusive:6};
-  const L=STORE7.list();let good=true;for(let i=1;i<L.length;i++){const a=L[i-1],c=L[i];if(RO[c.rar]>RO[a.rar]||RO[c.rar]==RO[a.rar]&&ITEM7.power('w:'+c.ref)>ITEM7.power('w:'+a.ref))good=false}
-  const chips=document.querySelectorAll('#store7 .card .pw8').length,cards=document.querySelectorAll('#store7 .card').length;STORE7.setFilter({sort:'pow'});const L2=STORE7.list().map(i=>i.id).join();STORE7.close();return{good,n:L.length,chips,cards,same:L2==L.map(i=>i.id).join()}});
- ok('store weapons: rarity then power by default (and the "Power" sort), every card shows its power',st.good&&st.n>10&&st.chips==st.cards&&st.same,st);
+ const st=await E(async()=>{INV7.close();STORE7.open();STORE7.setFilter({cat:'weapons',sort:'feat',q:'',rar:'all',owned:false});await new Promise(r=>setTimeout(r,300));const n=STORE7.list().length,anyW=SHOP7.items.filter(i=>i.cat=='weapons'&&i.sale!==0).length;STORE7.close();return{n,anyW}});
+ ok('the store sells no weapons: every weapon is earned by playing',st.n==0&&st.anyW==0,st);
  // ---- perf: nothing is rebuilt while nothing changes
  // on a slow runner the panel can still re-render once as it settles after opening, so one of three windows has to be fully quiet; rebuilding all the time never is
  await W8(300);await p.keyboard.press('i');await W8(400);let pf=-1;for(let t=0;t<3&&pf!=0;t++)pf=await E(async()=>{let m=0;const ob=new MutationObserver(r=>{m+=r.length});ob.observe(document.getElementById('inv7'),{childList:true,subtree:true,attributes:true,characterData:true});for(let i=0;i<40;i++)await new Promise(r=>requestAnimationFrame(r));ob.disconnect();return m});

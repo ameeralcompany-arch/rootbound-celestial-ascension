@@ -2,7 +2,7 @@
 // Rootbound persistent multiplayer server. Zero dependencies (Node 18+). See server/README.md.
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {cleanText}=require('./moderation');
-const ENH=require('./enhance'),{upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),PARTY=require('./party'),zlib=require('zlib');
+const ENH=require('./enhance'),{upgrade}=require('./ws'),R=require('./rules'),{Store}=require('./store'),SHOP=require('./shop'),ECON=require('./economy'),COSM=require('./cosmetics'),PARTY=require('./party'),zlib=require('zlib');
 const ENV=process.env;
 const WORLDS_A_DAY=10;   // new worlds one account may make in a day (claiming them is limited separately, to 5 at a time)
 const ACCOUNT_GEN=1;   // raise this by one to reset every account again when the server next starts
@@ -98,6 +98,7 @@ function createAccount(name,pw,role){const id='a'+crypto.randomBytes(4).toString
  const chatLog=Object.create(null),reports=store.readJSON(store.p('reports.json'),{list:[]});if(!Array.isArray(reports.list))reports.list=[];
  function setGod(s,u,on){const sh=SHOP.ensure(u);if(on&&!u.god){sh.realG=sh.g;sh.g=Math.max(sh.g,999999)}else if(!on&&u.god){sh.g=Number.isFinite(sh.realG)?sh.realG:sh.g;delete sh.realG}u.god=on?1:0;s.god=!!on;saveAcc();send(s,{t:'god',on:on?1:0});sendWallet(s,u)}
  const parties=PARTY.createParties({send,sessions,userById,saveAcc:()=>saveAcc(),bonus:(u,n)=>SHOP.bonus(u,n),bucket:(s,k,n,ms)=>bucket(s,k,n,ms),minRunMs:cfg.dgMinMs,graceMs:cfg.dgGraceMs});
+ const cos=COSM.createCosmetics({CAT,send,sessions,saveAccNow:()=>store.writeJSON(store.p('accounts.json'),accounts),store,sendWallet:(s,u)=>sendWallet(s,u),acc:()=>accounts,roll:opts.cosRoll/* tests only: force a tier */});
  const tradeLog=(()=>{try{return JSON.parse(fs.readFileSync(store.p('trades.json'),'utf8'))}catch(_){return[]}})();
  const eco=ECON.createEconomy({send,sessions,userById,saveAcc:()=>saveAcc(),saveAccNow:()=>store.writeJSON(store.p('accounts.json'),accounts),logTrade:o=>{tradeLog.push(o);if(tradeLog.length>500)tradeLog.splice(0,tradeLog.length-500);store.later('trades',()=>store.writeJSON(store.p('trades.json'),tradeLog))},relay:(w,m)=>relay(w,m),dropsOf:id=>id=='plaza'?plazaDrops:(worlds.get(id)||{drops:[]}).drops,loadW:id=>loadWorld(id,false),allDrops:()=>[['plaza',plazaDrops],...[...worlds].map(([id,w])=>[id,w.drops])],touchWorld:id=>{const w=worlds.get(id);if(w)saveWorld(w)},bucket:(s,k,c,ms)=>bucket(s,k,c,ms),audit:o=>store.audit(o),rid:()=>crypto.randomBytes(2).toString('hex')});
  // ---------- admin (OWNER ONLY, verified server-side on every call)
@@ -141,7 +142,7 @@ function createAccount(name,pw,role){const id='a'+crypto.randomBytes(4).toString
  function failed(key,lim){const a=authFail[key]||(authFail[key]={n:0,until:0,first:Date.now()});a.n++;if(a.n>=lim)a.until=Date.now()+60000}
  function setAuth(s,u,tokenTtl,extra){s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';s.oInv=s.owner?ownerHidden:false;const token=newToken(u.id,s.owner?12*3600e3:tokenTtl||30*86400e3);send(s,Object.assign({t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token,gen:accounts.gen|0,prev:(u.prof&&u.prof.rev)|0,rk:!!u.rk},extra||{}));signedIn(s,u);store.audit({ev:s.owner?'owner-login':'login',uid:s.uid,ip:s.ip})}
  // what every sign-in gets: wallet, bag, the owner's god mode if it was left on, the owned-world list
- function signedIn(s,u){parties.onAuth(s);sendWallet(s,u);eco.signedIn(s,u);s.god=!!(s.owner&&u.god);if(s.god)send(s,{t:'god',on:1});sendMine(s)}
+ function signedIn(s,u){parties.onAuth(s);sendWallet(s,u);if(u.earn&&typeof u.earn=='object')send(s,{t:'earned',ids:Object.keys(u.earn)});try{cos.resend(s,u)}catch(_){}eco.signedIn(s,u);s.god=!!(s.owner&&u.god);if(s.god)send(s,{t:'god',on:1});sendMine(s)}
  function sendWallet(s,u){if(!u)return;send(s,Object.assign({t:'wallet'},SHOP.view(u)))}
  const watched=new Map();function watch(s,u,what,over){if(!(over>300))return;const k=u.id+what,now=Date.now();if(now-(watched.get(k)||0)<300000)return;watched.set(k,now);if(watched.size>5000)watched.clear();store.audit({ev:'cheat-watch',what,over,uid:u.id,name:u.name,ip:s.ip})}
  function onMsg(s,raw){let m;if(raw.length>20000&&!/^\{"t":"(e|o|meta|_p)"/.test(raw.slice(0,12)))return;try{m=JSON.parse(raw)}catch(_){if(++s.strikes>8)s.conn.close(1008);return}
@@ -175,6 +176,16 @@ function createAccount(name,pw,role){const id='a'+crypto.randomBytes(4).toString
    s.uid=u.id;s.name=u.name;s.kind=isOwnerUid(u.id)?'owner':'user';s.owner=s.kind=='owner';s.oInv=s.owner?ownerHidden:false;send(s,{t:'auth',ok:1,uid:s.uid,name:s.name,kind:s.kind,owner:s.owner,token:m.token,resumed:1,gen:accounts.gen|0,prev:(u.prof&&u.prof.rev)|0});signedIn(s,u);return}
   case 'logout':{const h=hashTok(String(m.token||''));if(sess[h]){delete sess[h];saveSess()}return}
   case 'rkey':{if(s.kind!='user'||!bucket(s,'rkey',3,60000))return send(s,{t:'rkey',ok:0,m:s.kind=='owner'?'The owner password is set on the host':'Try again in a minute'});const u=userById(s.uid);if(!u)return;const rk=newRk();u.rk=hashPw(rkNorm(rk));saveAcc();store.audit({ev:'rkey',uid:u.id,ip:s.ip});return send(s,{t:'rkey',ok:1,key:rk})}
+  // a weapon or gear piece the game granted for reaching its class level or player level (catalog earn rules). The server checks each one against
+  // the catalog and the reported levels and keeps its own record, which it hands back on every sign-in, so the reward follows the account.
+  case 'plz':{if(s.kind=='guest'||s.world!='plaza'||!bucket(s,'plz',16,60000))return;const u=userById(s.uid);if(!u)return;const z=u.plz&&typeof u.plz=='object'?u.plz:(u.plz={st:{},sky:0,all:0});if(!z.st||typeof z.st!='object')z.st={};let g=0,what='';
+   if(m.op=='stone'){const i=Math.floor(+m.id);if(!(i>=0&&i<7)||z.st[i])return send(s,{t:'plz',op:'stone',id:i,gems:0,dup:1});z.st[i]=1;g=50;what='stone';if(Object.keys(z.st).length>=7&&!z.all){z.all=1;g+=500;what='all'}}
+   else if(m.op=='sky'){const ms=Math.floor(+m.ms);/* the course cannot be run in under 20 s */if(!(ms>=20000&&ms<90000)||z.sky)return send(s,{t:'plz',op:'sky',gems:0,dup:1});z.sky=1;g=150;what='sky'}else return;
+   SHOP.ensure(u).g+=g;saveAcc();store.audit({ev:'plaza',uid:s.uid,what,g});sendWallet(s,u);return send(s,{t:'plz',op:m.op,id:m.id|0,gems:g,what})}
+  case 'cosack':{const u=userById(s.uid);if(u)cos.ack(u,String(m.id||'').slice(0,40));return}
+  case 'earn':{if(s.kind=='guest'||!bucket(s,'earn',12,60000))return;const u=userById(s.uid);if(!u)return;if(!u.earn||typeof u.earn!='object')u.earn={};const ids=Array.isArray(m.ids)?m.ids.slice(0,80):[],clv=Math.floor(+m.clv),lv=Math.floor(+m.lv),cl=String(m.cls||'');let n=0;
+   for(const id0 of ids){const id=String(id0).slice(0,40),it=CAT.get(id);if(!it||it.sale!==0||!it.earn||u.earn[id])continue;const e=it.earn;if(e.cls?(e.cls!==cl||!(clv>=e.clv&&clv<=75)):!(lv>=e.lv&&lv<=200))continue;u.earn[id]=Date.now();n++}
+   if(n){saveAcc();store.audit({ev:'earn',uid:s.uid,n,cls:cl.slice(0,16),clv,lv})}return send(s,{t:'earned',ids:Object.keys(u.earn)})}
   case 'chpass':{const no=x=>send(s,{t:'chpass',ok:0,m:x});if(s.kind!='user'&&s.kind!='owner')return no('Sign in first');if(!bucket(s,'auth',10,60000)||!ipBucket(s.ip,'auth',cfg.authPerIp,60000))return no('Too many attempts. Wait a minute.');if(s.owner)return no('The owner password is set on the host (OWNER_PASSWORD)');const u=userById(s.uid);if(!u)return;const ak='pw:'+s.uid;if(loginThrottle(ak,5))return no('Too many failed attempts. Try again in a minute.');if(!checkPw(String(m.old||'').slice(0,256),u.pw)){failed(ak,5);store.audit({ev:'chpass-failed',uid:s.uid,ip:s.ip});return no('Your current password is not right')}const np=String(m.pass||''),bad=pwProblem(np,u.name);if(bad)return no(bad);u.pw=hashPw(np);for(const k of Object.keys(sess))if(sess[k].uid===u.id)delete sess[k];for(const o of sessions.values())if(o.uid===u.id&&o!==s){send(o,{t:'_kick',m:'Your password was changed'});o.conn.close(1000)}saveAcc();saveSess();store.audit({ev:'chpass',uid:s.uid,ip:s.ip});return send(s,{t:'chpass',ok:1,token:newToken(u.id,30*86400e3)})}
   }
   if(!s.uid)return;// everything below requires an identity (account or guest)
@@ -219,7 +230,7 @@ function createAccount(name,pw,role){const id='a'+crypto.randomBytes(4).toString
   case 'world_release':{const u=userById(s.uid),id=wname(m.w);if(!u||!(u.worlds||[]).includes(id))return notify(s,'You do not own that world');const rw=loadWorld(id,false),hadLock=!!(rw&&rw.meta&&rw.lockPaid);u.worlds=u.worlds.filter(x=>x!=id);saveAcc();setOwner(id,'','');if(hadLock)eco.give(s,u,17,1);store.audit({ev:'world-released',w:id,by:s.uid});notify(s,'Released '+id+': it no longer counts as yours');return sendMine(s)}
   }
   const wid=s.world;if(!wid)return;const w=wid=='plaza'?null:worlds.get(wid);
-  if(t=='_p'){if(!bucket(s,'p',40,1000))return;const pr=R.cleanPres(m.d);pr.uid=s.uid;pr.n=s.name.slice(0,14);if(ownerSess(s)){pr.own=1;if(m.d&&m.d.oa)pr.oa=1;if(m.d&&m.d.ofl)pr.ofl=1}s.pres=pr;if(s.oInv)return;
+  if(t=='_p'){if(!bucket(s,'p',40,1000))return;const pr=R.cleanPres(m.d);if(pr.cx&&pr.cx.cz!==undefined){/* only cosmetics you own are shown to others */const cu=s.kind=='guest'?null:(s.cosU&&s.cosU.id===s.uid?s.cosU:(s.cosU=userById(s.uid)));pr.cx.cz=cos.filterCz(cu,pr.cx.cz)}pr.uid=s.uid;pr.n=s.name.slice(0,14);if(ownerSess(s)){pr.own=1;if(m.d&&m.d.oa)pr.oa=1;if(m.d&&m.d.ofl)pr.ofl=1}s.pres=pr;if(s.oInv)return;
    // free hosts meter outbound traffic: the full look goes out when it changes (and every 5s for late joiners), movement goes out as a small delta and not at all while standing still
    const now=Date.now(),look=JSON.stringify([pr.hat,pr.body,pr.wing,pr.boot,pr.glove,pr.lk,pr.cx,pr.lv,pr.oa,pr.ofl]);if(look!==s.presLook||now-(s.presFull||0)>5000){s.presLook=look;s.presFull=now;relay(wid,{t:'_p',d:pr,f:s.sid},s.sid);return}
    const d={dl:1,x:pr.x,y:pr.y,f:pr.f,h:pr.h,vx:pr.vx,wp:pr.wp,sw:pr.sw,fm:pr.fm,wo:pr.wo},key=JSON.stringify(d);if(key===s.presKey&&now-(s.presAt||0)<2000)return;s.presKey=key;s.presAt=now;relay(wid,{t:'_p',d,f:s.sid},s.sid);return}
@@ -231,7 +242,7 @@ function createAccount(name,pw,role){const id='a'+crypto.randomBytes(4).toString
   if(w&&t=='mb'){if(w.mobHost!==s.sid||!bucket(s,'mb',80,10000)||!Array.isArray(m.d)||m.d.length>80)return;relay(wid,{t:'mb',d:m.d,f:s.sid},s.sid);return}
   if(w&&t=='mh'){if(!bucket(s,'mh',150,10000))return;const h=w.mobHost&&sessions.get(w.mobHost),d=m.d;if(h&&h!==s&&d&&Number.isFinite(+d.id)&&Number.isFinite(+d.n))send(h,{t:'mh',d:{id:+d.id,n:Math.max(0,Math.min(1e7,+d.n)),k:d.k?1:0},f:s.sid});return}
   if(w&&t=='mb_away'){s.mbAway=!!m.d;mbElect(wid);return}
-  if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid,s.god)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);return}
+  if(t=='e'){if(!bucket(s,'e',70,8000))return;if(!R.checkEdit(w,m.d,s.uid,s.god)){if(bucket(s,'rej',3,5000))send(s,{t:'_rej',op:'e',k:m.d&&m.d.k});return}const wasNat=w.edits[m.d.k]===undefined;R.applyEdit(w,m.d.k,m.d.a);saveWorld(w);relay(wid,{t:'e',d:{k:m.d.k,a:m.d.a},f:s.sid},s.sid);if(wasNat&&m.d.br===1&&s.kind!='guest'){try{cos.onBreak(s,userById(s.uid),w,m.d,true)}catch(e){console.error('cosmetics',e)}}return}
   if(t=='meta'){if(!bucket(s,'meta',6,8000))return;if(s.kind=='guest')return;const r=R.checkMeta(w,m.d,s.uid);if(!r){send(s,{t:'_rej',op:'meta'});return}if(r.v)r.v.on=s.name;
    // placing a World Lock in an unowned world claims it, within the same limit
    if(!w.ownerUid&&r.v){const u=userById(s.uid);if(!u||R.realmStage(wid)||R.PATH_LANDS.has(wid)||!canOwn(u)){send(s,{t:'_rej',op:'meta'});return notify(s,'You already own '+cfg.maxWorldsPerAccount+' worlds. Release one first')}u.worlds=(u.worlds||[]).concat(wid);saveAcc();setOwner(wid,u.id,u.name);sendMine(s)}
@@ -280,7 +291,7 @@ function createAccount(name,pw,role){const id='a'+crypto.randomBytes(4).toString
  function listen(){return new Promise(res=>server.listen(cfg.port,cfg.host,()=>res(server.address().port)))}
  function close(){clearInterval(hb);for(const w of worlds.values())if(w.dirty)saveWorld(w,true);for(const k of store.flush());try{store.writeJSON(store.p('accounts.json'),accounts);store.writeJSON(store.p('bans.json'),bans);store.writeJSON(store.p('sessions.json'),sess);store.writeJSON(store.p('reports.json'),reports)}catch(_){}
   for(const s of sessions.values())try{s.conn.close(1001)}catch(_){}const flushed=cfg.cloud?cfg.cloud.flush().catch(e=>console.error('cloud save failed:',e.message)):Promise.resolve();return Promise.all([flushed,new Promise(r=>server.close(()=>r()))]).then(()=>{})}
- return{server,listen,close,cfg,store,worlds,sessions,sweepDrops:now=>eco.sweep(now)}}
+ return{server,listen,close,cfg,store,worlds,sessions,cos,sweepDrops:now=>eco.sweep(now)}}
 module.exports={createServer};
 if(require.main===module)process.on('uncaughtException',e=>console.error('uncaught:',e&&e.stack||e)),process.on('unhandledRejection',e=>console.error('unhandled:',e&&e.stack||e));
 if(require.main===module)(async()=>{const dir=ENV.DATA_DIR||path.join(__dirname,'data'),cloud=require('./cloud').fromEnv(dir);

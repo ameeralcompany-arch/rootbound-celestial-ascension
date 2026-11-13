@@ -15,7 +15,7 @@ const STORE7=(()=>{
  let thumbF=0;function thumbsLater(){if(thumbF)return;thumbF=requestAnimationFrame(()=>{thumbF=0;if(isOpen())paintThumbs(el.querySelector('.grid'))})}
  function silhouette(x,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='rgba(70,60,110,.55)';x.beginPath();x.arc(0,-34,11,0,6.3);x.fill();x.beginPath();x.moveTo(-13,-20);x.lineTo(13,-20);x.lineTo(10,22);x.lineTo(-10,22);x.closePath();x.fill();x.fillRect(-9,22,7,26);x.fillRect(2,22,7,26);x.restore()}
  function sparkle(x,px,py,c,r,a){x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;x.fillStyle=c;x.beginPath();x.arc(px,py,r,0,6.3);x.fill();x.restore()}
- function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
+ function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);if(it.cat=='cosmetics'&&window.COS1&&COS1.preview(x,it,W,H,t,{scale:Math.min(W,H)/62}))return;/* cosmetics: your own character wearing it */const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
   const z=still?1.35:1; // card thumbnails show weapons and wings larger so their silhouettes read at a glance
   try{
   if(it.cat=='weapons'){x.save();x.translate(cx,cy+8*k);x.scale(k*1.25*z,k*1.25*z);const a=still?-.9:-1.1+Math.sin(t*2.4)*.7;x.rotate(a);x.translate(-30,0);const w=WPN[ref];
@@ -43,10 +43,10 @@ const STORE7=(()=>{
   }catch(e){}
   if(!still){for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.l-=.016;if(p.l<=0||parts.length>160){parts.splice(i,1);continue}p.x+=p.vx*.016;p.y+=p.vy*.016;sparkle(x,p.x,p.y,p.c,p.r,Math.min(1,p.l*2))}}}
  // ---- state helpers
- const has=it=>SHOP7.has(it.id),cnt=it=>SHOP7.count(it.id),eqd=it=>SHOP7.equipped(it.id),equipable=it=>!!SHOP7.slotOf(it);
+ const has=it=>SHOP7.has(it.id),cnt=it=>SHOP7.count(it.id),eqd=it=>it.cat=='cosmetics'?!!(window.COS1&&COS1.eq[it.sub]===it.id):SHOP7.equipped(it.id),equipable=it=>it.cat=='cosmetics'?true:!!SHOP7.slotOf(it);
  const stateOf=it=>it.stack?(cnt(it)>0?'Owned x'+cnt(it):''):eqd(it)?'EQUIPPED':has(it)?'OWNED':'';
  const buyable=it=>!(!it.stack&&has(it))&&SHOP7.lvOk(it)&&gems>=it.price;
- function list(){let L=SHOP7.items.slice();
+ function list(){let L=SHOP7.items.filter(i=>i.sale!==0);   /* weapons and gear are earned, not sold */
   if(cat=='featured')L=L.filter(i=>i.feat||i.new&&!i.legacy&&i.cat!='gear'&&0);else if(cat!='all')L=L.filter(i=>i.cat==cat);
   if(q){const s=q.toLowerCase();L=L.filter(i=>(i.n+' '+i.d+' '+i.cat+' '+i.rar+' '+(i.sub||'')).toLowerCase().includes(s))}
   if(rar!='all')L=L.filter(i=>i.rar==rar);if(ownedOnly)L=L.filter(has);if(buyOnly)L=L.filter(buyable);
@@ -58,7 +58,7 @@ const STORE7=(()=>{
  function render(){if(!el)return;MOTION7.tick(el.querySelector('#s7g'),gems|0);el.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.c==cat));try{MOTION7.ind(el.querySelector('nav'),'button.on','v')}catch(_){}
   const key=cat+'|'+sort+'|'+rar+'|'+ownedOnly+'|'+buyOnly,anim=key!=lastKey;lastKey=key; // cards cascade in when the shelf changes, not on every refresh
   const g=el.querySelector('.grid');let h='';
-  if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly&&!buyOnly){const now=SHOP7.items.filter(i=>buyable(i)&&!i.stack&&CATBUY.has(i.cat)).sort((a,b)=>a.price-b.price).slice(0,12);if(now.length)h+='<h4>You can buy now</h4><div class="cards">'+now.map(card).join('')+'</div>';h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
+  if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly&&!buyOnly){{const cs=SHOP7.items.filter(i=>i.cat=='cosmetics'&&i.sale!==0),sets=[];for(const i of cs){let s=sets.find(x=>x.k==i.set);if(!s)sets.push(s={k:i.set,n:i.setn||'Cosmetics',L:[]});s.L.push(i)}for(const s of sets)h+='<h4>'+esc(s.n)+' · looks only, no stats</h4><div class="cards">'+s.L.sort((a,b)=>a.ord-b.ord).map(card).join('')+'</div>'}const now=SHOP7.items.filter(i=>i.sale!==0&&buyable(i)&&!i.stack&&CATBUY.has(i.cat)).sort((a,b)=>a.price-b.price).slice(0,12);if(now.length)h+='<h4>You can buy now</h4><div class="cards">'+now.map(card).join('')+'</div>';h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
   else{const L=list();h+=L.length?'<div class="cards">'+L.map(card).join('')+'</div>':'<div class="empty">Nothing matches. Try a different search or filter.</div>'}
   if(!anim)MOTION7.still(g);g.innerHTML=h;paintThumbs(g);if(anim){g.scrollTop=0;MOTION7.stagger(g,'.card,h4',16)}g.querySelectorAll('.card').forEach(c=>{c.onclick=()=>select(c.dataset.id);c.ondblclick=()=>{select(c.dataset.id);const it=SHOP7.byId.get(c.dataset.id);if(it&&buyable(it))act('buy');else if(it&&has(it)&&equipable(it)&&!eqd(it))act('eq')}});renderDetail()}
  function renderDetail(){const a=el.querySelector('aside');const it=selId&&SHOP7.byId.get(selId);if(!it){a.innerHTML='<h3>Pick an item</h3><p>Select anything to see a live preview, what it does, and how to get it.</p>';pv=null;return}
@@ -71,8 +71,8 @@ const STORE7=(()=>{
  function select(id){selId=id;SHOP7.markSeen(id);try{UIS.play('select')}catch(_){}render()}
  const msg=t=>{const m=el&&el.querySelector('#s7m');if(m)m.textContent=t;else try{say(t)}catch(_){}};
  async function act(a){const it=SHOP7.byId.get(selId);if(!it||busy)return;
-  if(a=='eq'){if(SHOP7.equip(it.id))msg(it.n+' equipped');render();return}
-  if(a=='un'){SHOP7.unequip(it.id);render();return}
+  if(a=='eq'){if(it.cat=='cosmetics'?COS1.equip(it.id):SHOP7.equip(it.id))msg(it.n+(it.cat=='cosmetics'?' worn':' equipped'));render();return}
+  if(a=='un'){if(it.cat=='cosmetics')COS1.unequip(it.sub);else SHOP7.unequip(it.id);render();return}
   if(a=='buy'){const qEl=el.querySelector('#s7q'),qty=it.stack?Math.max(1,Math.min(99,(qEl&&+qEl.value)|0||1)):1,total=it.price*qty;
    if(total>=500||qty>1){const ok=await DLG7.confirm('Buy '+it.n+(qty>1?' x'+qty:'')+'?','This costs '+total+' gems. You have '+(gems|0)+'.','Buy for '+total);if(!ok)return}
    busy=1;const r=await SHOP7.buy(it.id,qty);busy=0;msg(r.m);if(r.ok){try{VFX.add(1,'#ffe9a0',P.x,P.y,0,-30,1,14,2)}catch(_){}if(SHOP7.slotOf(it)&&!it.stack)msg(r.m+' — press Equip to use it.')}render()}}

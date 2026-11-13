@@ -15,7 +15,7 @@ try{(()=>{
   for(const m of s.miss){if(m.k=='level')out.push({t:'Reach level '+m.need+' for the next upgrade',go:['quests']});else if(m.k=='gems')out.push({t:'Earn '+(m.need-m.have)+' more gems: quests, levels and dungeon clears',go:['quests']});else{const f=farmable(m.id),nmm=RPG.items.nameOf(m.id);if(f)out.push({t:'Collect '+(m.need-m.have)+' more '+nmm+' in '+f.n,go:['dungeon',f.id]});else if(m.id==3)out.push({t:'Break '+(m.need-m.have)+' more Stone with a pickaxe, anywhere underground',go:['worlds']});else out.push({t:'Unlock the dungeon that drops '+nmm,go:null,later:1})}}return{out,s,gain}}
  // the answer. line: what Lavi says out loud. text: the same with your real numbers. steps: only things you can do now
  function next(){const d=target(),res={d,line:'ready',text:'',steps:[]};const up=upgradeSteps(),bw=betterWeapon();
-  const addUp=()=>{for(const q of up.out)if(!q.later)res.steps.push(q)};const addBw=()=>{if(bw)res.steps.push({t:bw.can?'Buy '+bw.w.n+' from the Store ('+bw.w.cost+' gems)':'Save '+(bw.w.cost-(gems|0))+' more gems for '+bw.w.n,go:['store']})};
+  const addUp=()=>{for(const q of up.out)if(!q.later)res.steps.push(q)};const addBw=()=>{/* weapons are earned on your class's ladder (EARN1), never bought */try{const k=CJOB.cur,nx=k&&EARN1.next(k);if(nx){let c='';try{c=CLASS7.C[k].n}catch(_){c=k}res.steps.push({t:'Reach '+c+' level '+nx.clv+' to earn '+nx.n+' (you are level '+nx.now+')',go:['classes']})}}catch(_){}};
   const addLv=()=>{res.steps.push({t:'Finish quests and defeat monsters to level up',go:['quests']})};
   if(!d){res.line=up.s&&up.s.cost?(up.s.ok?'can_upgrade':'farm_mats'):'all_done';res.text=up.s&&up.s.cost?'Every dungeon has fallen to you. Keep sharpening your weapon.':'You have cleared every dungeon and fully enhanced your weapon.';addUp();if(!res.steps.length)res.steps.push({t:'Try a harder difficulty in any dungeon',go:['dungeon',DG.LIST[DG.LIST.length-1].id]});return res}
   const r=RPG.reqs(d.id),sh=RPG.short(d.id),other=r.filter(q=>!q.ok&&q.k!='level'&&q.k!='cp');
@@ -33,10 +33,10 @@ try{(()=>{
   ['BEGINNER','Your first steps',[
    ['move','Learn the controls','Mine a block and defeat a monster',()=>(stats.break|0)>0&&(stats.kill|0)>0,0,0,50,'Any world',['worlds']],
    ['cls','Understand your class','Open the Classes page',()=>!!RPG.S.seenCls,0,0,50,'Classes page',['classes']],
-   ['wpn','Equip a suitable weapon','Buy any weapon and hold it',()=>RPG.activeId()!='fist',0,0,80,'The Store',['store']],
+   ['wpn','Hold your class weapon','Choose a class: it gives you its first weapon. Hold it',()=>RPG.activeId()!='fist',0,0,80,'Your class',['classes']],
    ['cpk','Learn Combat Power','Open your Combat Power breakdown',()=>!!RPG.S.seenCP,0,0,50,'This page',null],
    ['l10','Reach level 10','Quests and monsters',()=>(lvl|0)>=10,10,0,200,'Quests',['quests']],
-   ['c200','Reach 200 Combat Power','Enhance your weapon, or buy a better one',()=>RPG.cp()>=200,0,200,200,'The forge',['forge']]]],
+   ['c200','Reach 200 Combat Power','Enhance your weapon, or level up your class to earn a better one',()=>RPG.cp()>=200,0,200,200,'The forge',['forge']]]],
   ['DUNGEON APPRENTICE','Into the dark',[
    ['d1','Unlock the first dungeon','Level 10 and 200 Combat Power',()=>!DG.lockReason('ruins'),10,200,150,'Dungeons',['dungeon','ruins']],
    ['boss','Learn boss mechanics','Defeat a dungeon boss',()=>Object.keys(DG.S.bosses||{}).length>0,10,200,400,'Forgotten Ruins',['dungeon','ruins']],

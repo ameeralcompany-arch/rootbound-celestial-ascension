@@ -142,7 +142,7 @@ try{(()=>{
    for(let i=0;i<8;i++)I.at(2.6+i*.22,()=>{const a=(r.x0+i*3)*T,b=(r.x1-i*3)*T;slick(a,a+T*3,fy,0,6.5);slick(b-T*3,b,fy,0,6.5);X.burst(a,fy-4,[ICE,PALE],8,160);X.burst(b,fy-4,[ICE,PALE],8,160);DG.music.sfx('crack',.4);X.shk(.04)});
    I.at(3,()=>DG.music.sfx('freeze',1.1));I.at(4.3,()=>{DG.music.sfx('glow',1);X.wave(m.x,fy,ICE,T*6,1,.4)});rz(I,m,4.4,2.5);I.at(5.6,()=>DG.music.sfx('choir',.7));
    I.at(6.9,()=>{DG.music.sfx('freeze',1.2);DG.music.sfx('boom',.5);X.shk(.4);X.wave(m.x,m.y+m.h/2,PALE,T*14,1,.3);X.burst(m.x,m.y+m.h/2,['#fff',ICE,PALE],44,420,12)});I.dur=9},
-  tick(m,dt,X){if(m.cage){const q=m.cage,mv=K.a||K.d||K.arrowleft||K.arrowright;q.t-=dt*(mv?2.4:1);if(dash>0)q.t=0;P.x=lerp(P.x,q.x,Math.min(1,dt*20));if(P.vy<0)P.vy=0;if(q.t<=0){m.cage=null;X.burst(P.x,P.y+P.h/2,[ICE,PALE,'#fff'],18,280);X.tone(1500,400,.25,'square',.05)}}
+  tick(m,dt,X){if(m.cage){const q=m.cage,mv=K.a||K.d||K.arrowleft||K.arrowright;q.t-=dt*(mv?2.4:1);if(DASHING())q.t=0;P.x=lerp(P.x,q.x,Math.min(1,dt*20));if(P.vy<0)P.vy=0;if(q.t<=0){m.cage=null;X.burst(P.x,P.y+P.h/2,[ICE,PALE,'#fff'],18,280);X.tone(1500,400,.25,'square',.05)}}
    if(m.storm){const q=m.storm;q.t-=dt;if(q.flip>0&&q.t<q.flip){q.flip=0;q.dir=-q.dir;X.say('','The wind turns',900);DG.music.sfx('wind',.9)}P.vx+=q.dir*520*dt;
     q.sh=q.walls.some(s=>s.on&&(q.dir>0?(P.x>=s.x1-2&&P.x<s.x1+T*6):(P.x<=s.x0+2&&P.x>s.x0-T*6))&&P.y+P.h>s.y0+4);if(q.sh||Math.abs(P.vx)>140)q.e=Math.max(0,q.e-dt*.8);else q.e+=dt;if(q.e>=1.1){q.e=0;DG.hurtP(X.dmg(m,.85),q.dir*160);X.burst(P.x,P.y+P.h/2,[ICE,'#fff'],14,220)}
     if(X.mech()>=1){q.ic-=dt;if(q.ic<=0){q.ic=1.5;fallIce(X.clX(P.x+rn(-T*3,T*3)),.85,m,X,.8)}}if(q.t<=0){m.storm=null;X.say('','The wind drops',600)}}},

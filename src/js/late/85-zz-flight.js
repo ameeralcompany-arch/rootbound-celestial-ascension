@@ -12,7 +12,7 @@ const FLY7=(()=>{
   if(typeof WINGSFX!='undefined'){WINGSFX.flap(strong);return}
   const v=Math.min(.12,.07+F.tier*.004);noise(.16,520+F.tier*30,v);snd(90+F.tier*3,.14,'sine',.05,.55)}
  function step(dt,ax,busy){const w=wingNow(),hold=!busy&&(K.w||K[' ']||K.arrowup),down=K.s||K.arrowdown;
-  F.tier=w?(Number.isFinite(w.pw)?w.pw:(w.pw=Math.max(0,WRAR.indexOf(w.rar))+(w.a&&w.a.L>90?1:0))):0;F.tk=tkOf(w);   // flight power follows rarity (and size), not the table index
+  /* every wing flies the same: flight grows with your level, never with which wing you wear (wings are looks only, so none can be bought as an advantage) */F.tier=w?Math.min(8,1+Math.floor((lvl|0)/9)):0;F.tk=w&&(lvl|0)>=60?1:0;
   if(P.g||P.sw){F.air=0;F.sta=Math.min(1,F.sta+dt*1.1);if(F.on){F.on=false;WingArt.FL.on=false}F.last=0;return}
   F.air+=dt;
   const can=!!w&&!busy&&hold&&F.sta>0&&F.air>.1&&(P.vy>-150||F.on);

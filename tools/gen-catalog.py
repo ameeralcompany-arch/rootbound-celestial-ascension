@@ -144,4 +144,7 @@ for i in items:
 feat+=['wpn_popgun','wpn_sniper','wpn_rocket']
 for i in items: i['feat']=1 if i['id'] in feat else 0
 json.dump({'v':1,'items':items},open(os.path.join(R,'server/catalog.json'),'w'),separators=(',',':'))
+# weapons and stat gear are earned by playing, never sold: mark them and give each its earn rule
+os.system('node "'+os.path.join(R,'tools','earned-catalog.js')+'"')
+os.system('node "'+os.path.join(R,'tools','cosmetics-catalog.js')+'"')
 print(len(items),'items')

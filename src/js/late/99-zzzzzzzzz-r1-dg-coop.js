@@ -27,6 +27,7 @@ try{(()=>{
  const coop={
   get on(){return !!C},get run(){return C&&C.run},get leader(){return !!(C&&!C.guest)},get mirror(){return !!(C&&C.guest)},get mateIn(){return !!(C&&C.mateIn)},get down(){return !!(C&&C.down)},get fast(){return !!(C&&C.fast)},get C(){return C},get party(){return PT},
   get hitMate(){return !!(C&&C.fromMate)},
+  hold(r){if(!C||C.guest||!C.mateOn||C.mateIn||C.soloed)return false;if(performance.now()-(C.t0||C.started)>20000)return false;const n=performance.now();if(n-(C.holdT||0)>2500){C.holdT=n;say('WAITING FOR YOUR FRIEND','The fight starts when they arrive',2200)}return true},
   // ---- targets: a monster goes for whoever is nearest, and stays on them for a few seconds so it does not twitch between you
   swap(m){if(!C||C.guest||!C.mate||!C.mateIn||!C.mateOn)return null;const M=C.mate;m.tgT=(m.tgT||0)-1/60;if(M.dn){m.tg=0}else if(C.down){m.tg=1}else if(m.dgb&&C.aggro){m.tg=C.aggro-1}else if(m.own){m.tg=m.own-1}else if(m.tgT<=0||m.tg==null){m.tgT=2.5+R()*1.5;m.tg=Math.hypot(M.x-m.x,M.y-m.y)<Math.hypot(P.x-m.x,P.y-m.y)?1:0}if(m.tg!==1)return null;const sv={x:P.x,y:P.y,g:P.g};P.x=M.x;P.y=M.y;P.g=!M.a;DG.aimed=1;return sv},
   unswap(sv){P.x=sv.x;P.y=sv.y;P.g=sv.g;DG.aimed=0},
@@ -45,7 +46,7 @@ try{(()=>{
   gate(q){if(!C||C.quiet)return;pg({e:'g',i:DG.L.gates.indexOf(q)})},
   bossDown(run){if(!C||C.guest)return;ns({t:'party',op:'done',run:C.run})},
   gateBlock(q){if(!C||C.quiet)return false;return DG.duoP?DG.duoP.gateBlock(q):false},
-  near(){if(!C||!C.mate||!C.mateIn)return null;const M=C.mate;if(M.dn&&!C.down&&Math.hypot(P.x-M.x,P.y-M.y)<T*3.2)return{t:'Hold F to revive '+((C.mate.pr&&C.mate.pr.n)||'your friend'),go(){}};return DG.duoP?DG.duoP.near():null},
+  near(){if(!C||!C.mate||!C.mateIn)return null;const M=C.mate;if(M.dn&&!C.down&&Math.hypot(P.x-M.x,P.y-M.y)<T*3.2)return{t:'Hold '+DG.keyName('use')+' to revive '+((C.mate.pr&&C.mate.pr.n)||'your friend'),go(){}};return DG.duoP?DG.duoP.near():null},
   begun(){if(!C)return;C.t0=performance.now();C.mateIn=false;announce();hudOn()},
   ended(){if(!C)return;hudOff()},
   left(){if(!C)return;ns({t:'party',op:'out',run:C.run});stop()},
@@ -76,7 +77,7 @@ try{(()=>{
  function snap(){const a=[];for(const m of mobs)if(m.dgx&&m.nid&&!m.stub)a.push([m.nid,m.x|0,m.y|0,Math.ceil(m.hp),m.f||1,Math.ceil(m.shield||0),m.hide>0?1:0,m.inv?1:0]);if(a.length)pg({e:'m',a:a.slice(0,48)})}
  function groupSync(){const G=DG.groups;for(const k in G){const v=G[k]&&G[k].on?1:0;if(C.groups[k]===undefined)C.groups[k]=v;if(v&&!C.groups[k]){C.groups[k]=1;pg({e:'grp',k})}}}
  // whoever is outside a room that has just shut is brought in
- function pull(r){if(!r||!DG.run)return;if(P.x<(r.x0+1.5)*T||P.x>(r.x1-1)*T){P.x=(r.x0+3)*T;P.y=r.fy*T-P.h-2;P.vx=P.vy=0;toast('Your friend started the fight')}}
+ function pull(r){if(!r||!DG.run)return;if(P.x<(r.x0+1.5)*T||P.x>(r.x1-1)*T||(r.y0!=null&&P.y+P.h<(r.y0-1)*T)||P.y>(r.fy+1)*T){P.x=(r.x0+3)*T;P.y=r.fy*T-P.h-2;P.vx=P.vy=0;toast('Your friend started the fight')}}
  function rise(){if(!C)return;C.down=false;P.hp=Math.round(maxHP()*.4);iT=Math.max(iT,2.2);say('BACK ON YOUR FEET','',1400);hudTick(1)}
  function selfRise(){C.down=false;P.hp=Math.round(maxHP()*.3);iT=Math.max(iT,2.2)}
  // ---- knocked out: while your friend still stands you wait for them instead of leaving. When both are down the party restarts from the checkpoint
@@ -89,19 +90,20 @@ try{(()=>{
  // a blow on a copy: the leader decides what it did
  {const _h=hurtMob;hurtMob=function(m,d,w,ang){if(C&&m&&m.dgx){if(m.stub)return;if(C.guest&&!C.fromLead){if(m.inv||m.hide>=1)return;let dm=d;if(w&&d>0){try{if(R()<Math.min(.6,.06+prof.fight.l*.004+bonus().crit))dm=Math.round(d*(1.75+bonus().cdmg))}catch(_){}if(w.fx=='leech')P.hp=Math.min(maxHP(),P.hp+dm*.25);if(w.fx=='heal')P.hp=Math.min(maxHP(),P.hp+3)}if(!(dm>0))return;m.fl=.15;C.dealt+=dm;try{ft(m.x,m.y-10,''+Math.round(dm),'#fff');burst(m.x,m.y+m.h/2,'rgb('+(w&&w.g?w.g:[255,255,255])+')',6,120,3)}catch(_){}{const hq=C.hq||(C.hq=new Map()),q=hq.get(m.nid);if(q){q[1]+=Math.round(dm);q[2]=+(ang||0).toFixed(2);if(w&&w.fx)q[3]=w.fx}else hq.set(m.nid,[m.nid,Math.round(dm),+(ang||0).toFixed(2),w&&w.fx||0])};return}
     if(!C.fromMate&&d>0)C.dealt+=Math.min(d,m.hp)}return _h.apply(this,arguments)}}
- const onE=e=>{if(e.key=='e'||e.key=='E'){if(C&&!e.repeat)C.eH=e.type=='keydown';if(C&&e.type=='keyup')C.eH=false;if(C&&e.type=='keydown'&&DG.duoP)try{DG.duoP.press()}catch(_){}}};addEventListener('keydown',onE,true);addEventListener('keyup',onE,true);
+ /* the Use key: 00-00-keys.js hands older code the Use key as 'e' and keeps the physical key in e.rbKey (the real E is Skill 2 and never gets here) */const onE=e=>{const uk=(window.RB_KB&&RB_KB.use)||'f',raw=e.rbKey||String(e.key||'').toLowerCase();if(raw===uk){if(C&&!e.repeat)C.eH=e.type=='keydown';if(C&&e.type=='keyup')C.eH=false;if(C&&e.type=='keydown'&&DG.duoP)try{DG.duoP.press()}catch(_){}}};addEventListener('keydown',onE,true);addEventListener('keyup',onE,true);
  // the chest: the server says whether this run has paid you already, so a resend or a dropped connection can never pay twice
  const opChest=DG.rew.open;
  {DG.rew.open=function(q){if(!C||q.kind!='final')return opChest.apply(this,arguments);if(q.open||C.claiming||!DG.run)return;C.claiming=q;C.claimN=0;ns({t:'party',op:'claim',run:C.run});toast('Opening the chest')}}
  // the mate leaves: the one who stays takes over and the monsters shrink to a one-player fight
- function solo(why,leaderUid){if(!C)return;const was=C.guest;if(leaderUid)C.leaderUid=leaderUid;C.mateOn=false;C.mateIn=false;C.mate=null;C.scale=false;for(const m of mobs)if(m.dgx&&!m.stub){const k=K_HP[m.dgx.cls||(m.dgb?'boss':'regular')]||1.6;m.mhp/=k;m.hp/=k;m.dmg/=.92;m.sx=null;if(m.st=='wind'||m.st=='rec'){m.st='idle';m.acd=1;m.atk=null;m.bt=1}}if(C.down){C.down=false;P.hp=Math.round(maxHP()*.5);iT=Math.max(iT,2)}if(DG.run&&DG.run.doneBoss&&!C.guest)ns({t:'party',op:'done',run:C.run});if(was&&!C.guest)toast('You now run the fight');say('YOUR FRIEND '+(why=='lost'?'LOST CONNECTION':'LEFT'),'The dungeon has adjusted to one player',3000);hudTick(1)}
+ function solo(why,leaderUid){if(!C)return;const was=C.guest;if(leaderUid)C.leaderUid=leaderUid;if(C.soloed){if(was&&!C.guest){for(const q of mobs)if(q.dgx){q.sx=null;if(q.st!='idle'){q.st='idle';q.acd=1;q.bt=1;q.atk=null}}toast('You now run the fight')}return}C.soloed=1;C.mateOn=false;C.mateIn=false;C.mate=null;C.scale=false;for(const m of mobs)if(m.dgx&&!m.stub){const k=K_HP[m.dgx.cls||(m.dgb?'boss':'regular')]||1.6;m.mhp/=k;m.hp/=k;m.dmg/=.92;m.sx=null;if(m.st=='wind'||m.st=='rec'){m.st='idle';m.acd=1;m.atk=null;m.bt=1}}if(C.down){C.down=false;P.hp=Math.round(maxHP()*.5);iT=Math.max(iT,2)}if(DG.run&&DG.run.doneBoss&&!C.guest)ns({t:'party',op:'done',run:C.run});if(was&&!C.guest)toast('You now run the fight');say('YOUR FRIEND '+(why=='lost'?'LOST CONNECTION':'LEFT'),'The dungeon has adjusted to one player',3000);hudTick(1)}
 
  // ================= what comes from the other computer =================
  function fullState(){const L=DG.L,run=DG.run;return{e:'full',rooms:L.rooms.map(r=>r.state),gates:L.gates.map(q=>q.open?1:0),key:!!(L.keyAt&&L.keyAt.got),groups:Object.keys(DG.groups).filter(k=>DG.groups[k]&&DG.groups[k].on),mobs:mobs.filter(m=>m.dgx&&m.nid&&!m.dgb).map(m=>({n:m.nid,id:m.dgx.id,x:m.x|0,y:(m.y+m.h)|0,hp:m.hp,mhp:m.mhp})),boss:(()=>{const m=DG.boss.act;return m?{hp:m.hp,mhp:m.mhp,ph:m.phase}:null})(),done:!!run.doneBoss,nid:C.nid,pz:DG.duoP?DG.duoP.state():null,check:run.check}}
- function onFull(e){const L=DG.L,run=DG.run;if(!L||!run)return;C.quiet=1;try{for(let i=0;i<L.rooms.length;i++){const r=L.rooms[i],s=e.rooms[i];if(s==r.state)continue;if(s=='done'){if(r.state=='on'){DG.flow.clearRoom(r)}else{r.state='done';if(r.doors)for(const q of r.doors)q.on=0}}else if(s=='on'&&r.kind=='fight'){DG.flow.startRoom(r);pull(r)}}
+ function onFull(e){const L=DG.L,run=DG.run;if(!L||!run)return;C.quiet=1;try{for(let i=0;i<L.rooms.length;i++){const r=L.rooms[i],s=e.rooms[i];if(s==r.state)continue;if(s=='done'){if(r.state=='on'){DG.flow.clearRoom(r)}else{r.state='done';if(r.doors)for(const q of r.doors)q.on=0}}else if(s=='on'&&r.kind=='fight'){pull(r);DG.flow.startRoom(r)}}
    e.gates.forEach((o,i)=>{const q=L.gates[i];if(o&&q&&!q.open){q.open=true;q.t=2;q.sol.on=0}});if(e.key&&L.keyAt&&!L.keyAt.got)DG.gotKey();for(const k of e.groups||[])if(DG.groups[k])DG.groups[k].on=1;
    for(const q of e.mobs||[])if(!byN(q.n)){const m=DG.mobs.DEF[q.id]&&DG.mobs.spawn(q.id,q.x,q.y,{net:q.n,quiet:1});if(m){m.hp=q.hp;m.mhp=q.mhp}}
-   if(e.boss&&!DG.boss.act){const r=L.rooms.find(q=>q.kind=='boss');if(r){C.fast=true;r.state='wait';DG.flow.startRoom(r);C.fast=false;pull(r);const m=DG.boss.act;if(m){m.hp=e.boss.hp;m.mhp=e.boss.mhp;m.phase=e.boss.ph}}}
+   if(e.boss&&!DG.boss.act){const r=L.rooms.find(q=>q.kind=='boss');if(r){C.fast=true;r.state='wait';pull(r);DG.flow.startRoom(r);C.fast=false;const m=DG.boss.act;if(m){m.hp=e.boss.hp;m.mhp=e.boss.mhp;m.phase=e.boss.ph}}}
+   /* back after a dropped connection: a boss phase change sent meanwhile was missed */else if(e.boss&&DG.boss.act){const m=DG.boss.act;if(e.boss.ph&&m.phase!==e.boss.ph)try{DG.boss.phaseTo(m,e.boss.ph)}catch(_){}m.hp=e.boss.hp}
    if(DG.duoP&&e.pz)DG.duoP.restore(e.pz);if(e.check)run.check=e.check}finally{C.quiet=0}}
  NET7.on('pg',msg=>{const e=msg.d;if(!e||!C)return;const run=DG.run;const k=e.e;
   if(k=='in'){if(!run)return;const first=!C.mate||!C.mateIn;C.mate=C.mate||{x:e.pr&&e.pr.x||P.x,y:e.pr&&e.pr.y||P.y,dx:P.x,dy:P.y,f:1,vx:0,hp:1,mh:1,dn:0};C.mate.pr=e.pr||C.mate.pr;C.mateIn=true;C.mateOn=true;if(!C.guest&&(first||!e.i))pg(fullState());if(first)say('YOUR FRIEND HAS ARRIVED','',1600);if(!e.i)announce();return}
@@ -115,7 +117,7 @@ try{(()=>{
   if(k=='g'){const q=DG.L.gates[e.i];if(q&&!q.open){C.quiet=1;try{DG.tryGate(q)}finally{C.quiet=0};if(!q.open){q.open=true;q.t=0;q.sol.on=0}}return}
   if(k=='grp'){const g=DG.groups[e.k];if(g){g.on=1;C.groups[e.k]=1}return}
   if(k=='want'){if(C.guest)return;const r=DG.L.rooms[e.i];if(r&&r.state=='wait')DG.flow.startRoom(r);return}
-  if(k=='pz'||k=='pe'||k=='bm'){if(DG.duoP)DG.duoP.net(e);return}
+  if(k=='pz'||k=='pe'||k=='bm'||k=='pad'){if(DG.duoP)DG.duoP.net(e);return}
   if(!C.guest){if(k=='hits'){for(const q of Array.isArray(e.l)?e.l.slice(0,40):[]){const m=byN(q[0]);if(m&&!m.dead){C.fromMate=true;C.mdealt+=q[1]|0;try{hurtMob(m,q[1]|0,null,+q[2]||0);if(q[3]=='burn')m.burn=3;if(q[3]=='stun'||q[3]=='smash')m.stun=1.5;if(q[3]=='slow')m.slow=3}finally{C.fromMate=false}}}return}if(k=='hit'){const m=byN(e.n);if(m&&!m.dead){C.fromMate=true;C.mdealt+=e.d;try{hurtMob(m,e.d,null,e.a||0);if(e.fx=='burn')m.burn=3;if(e.fx=='stun'||e.fx=='smash')m.stun=1.5;if(e.fx=='slow')m.slow=3}finally{C.fromMate=false}}return}return}
   // ---- only the guest copies these
   if(k=='m'){for(const q of e.a){const m=byN(q[0]);if(!m)continue;m.sx=q[1];m.sy=q[2];m.hp=q[3];m.f=q[4];m.shield=q[5];m.hide=q[6];m.inv=!!q[7]}return}
@@ -126,7 +128,7 @@ try{(()=>{
   if(k=='f'){const m=byN(e.n);if(!m)return;const a=findAtk(m,e.a);if(!a)return;if(a.fire)aim(e,()=>{try{a.fire(m,A)}catch(err){console.error('DG atk',err)}});m.st='rec';m.tt=a.rec==null?.5:a.rec;m.at=.35;if(a.vul)m.vul=a.vul;return}
   if(k=='ph'){const m=DG.boss.act;if(m&&m.phase!==e.ph)DG.boss.phaseTo(m,e.ph);return}
   if(k=='bo'){const m=DG.boss.act;if(m)DG.boss.fall(m);return}
-  if(k=='rm'){const r=DG.L.rooms[e.i];if(!r)return;C.quiet=1;try{if(e.s==1&&r.state=='wait'){DG.flow.startRoom(r);pull(r)}else if(e.s==2&&r.state!='done')DG.flow.clearRoom(r)}finally{C.quiet=0}return}});
+  if(k=='rm'){const r=DG.L.rooms[e.i];if(!r)return;C.quiet=1;try{if(e.s==1&&r.state=='wait'){pull(r);DG.flow.startRoom(r)}else if(e.s==2&&r.state!='done')DG.flow.clearRoom(r)}finally{C.quiet=0}return}});
  // ================= the party, from the server =================
  NET7.on('party',m=>{const op=m.op;
   if(op=='state'){const had=PT;if(C)C.stateAt=Date.now();if(!m.p&&C&&DG.run&&had&&!C.resumed){const mt=(had.m||[]).find(x=>x.uid!==me());if(mt){C.resumed=1;ns({t:'party',op:'resume',mate:mt.uid,run:{id:C.run,d:C.d,df:C.df,seed:C.seed,leader:C.leaderUid}});setTimeout(()=>{if(C)C.resumed=0},8000);return}}PT=m.p;if(!PT&&C&&!DG.run)C=null;fireL();if(m.back&&PT&&PT.run&&!C)rejoin();else if(m.back&&C&&DG.run)announce();return}
@@ -138,7 +140,7 @@ try{(()=>{
   if(op=='go'){begin(PT,m);return}
   if(op=='mate_off'){if(C){C.mateOn=false;toast(m.name+' lost connection. Waiting for them')}fireL();return}
   if(op=='mate_back'){if(C){C.mateOn=true;toast(m.name+' is back');if(DG.run&&!C.guest)setTimeout(()=>{if(C&&DG.run)pg(fullState())},300);announce()}fireL();return}
-  if(op=='mate_out'){toast(m.name+' left the dungeon');return}
+  if(op=='mate_out'){toast(m.name+' left the dungeon');if(C&&DG.run)solo('left');fireL();return}
   if(op=='mate_gone'){if(C)solo(m.why,m.leader);fireL();return}
   if(op=='run_done'){return}
   if(op=='reward'){if(!C||m.run!==C.run)return;const q=C.claiming;C.claiming=null;if(!q)return;if(!m.ok){if((C.claimN=(C.claimN|0)+1)<12){C.claiming=q;setTimeout(()=>{if(C&&C.claiming===q)ns({t:'party',op:'claim',run:C.run})},1000)}else toast('The chest would not open. Try again');return}
