@@ -33320,10 +33320,18 @@ try{window.RBSND=(()=>{
   if(killed){tone(784,t+.05,.32,{v:.009,a:.01});tone(1175,t+.09,.36,{v:.007,a:.01})}}
  // ---- the older swing beeps are held back while the new swing sound plays (the same with your own hits)
  let hold=0;
- if(typeof snd=='function'){const _s=snd;snd=function(){if(hold>0)return;return _s.apply(this,arguments)}}
+ let inDrops=false;
+ if(typeof snd=='function'){const _s=snd;snd=function(f,d,ty,v){if(hold>0)return;if(inDrops&&d===.08&&ty==='triangle'&&(f===900||f===600))return;return _s.apply(this,arguments)}}
  if(typeof noise=='function'){const _n=noise;noise=function(){if(hold>0)return;return _n.apply(this,arguments)}}
  if(typeof useWeapon=='function'){const _u=useWeapon;useWeapon=function(){const id=wp;hold++;let r;try{r=_u.apply(this,arguments)}finally{hold--}try{if(id&&WPN[id]&&!(WPN[id].tool))swing(id)}catch(_){}return r}}
  if(typeof hurtMob=='function'){const _h=hurtMob;hurtMob=function(m,d,w,ang){const mine=!!(w&&w.id&&d>0&&m&&!m.dead),was=m&&m.hp>0;if(mine)hold++;let r;try{r=_h.apply(this,arguments)}finally{if(mine)hold--}try{if(mine)impact(m,w,d,was&&m.hp<=0)}catch(_){}return r}}
+ // ---- picking things up: a soft pluck that climbs a pentatonic scale while you collect several in a row (a little melody), a brighter bell for gems,
+ //      at most one note every 60 ms (the old fixed-pitch blip, with no limit, is skipped)
+ let pk={i:0,t:0,last:0};
+ function pickup(isGem){if(!okAC())return;const now=performance.now();if(now-pk.last<60)return;pk.i=now-pk.t<650?Math.min(pk.i+1,9):0;pk.t=now;pk.last=now;const t=AC.currentTime+.002,n=hz([0,2,4,7,9,12,14,16,19,21][pk.i]+12);
+  if(isGem){tone(n*2,t,.26,{v:.012,a:.004});tone(n*3,t+.01,.16,{v:.004,a:.004})}else{tone(n,t,.2,{type:'triangle',v:.016,a:.004,lp:2600});tone(n*2,t,.1,{v:.004,a:.004})}}
+ if(typeof updDrops=='function'){const _ud=updDrops;updDrops=function(){const n0=drops.length,before=n0?drops.slice():null;inDrops=true;let r;try{r=_ud.apply(this,arguments)}finally{inDrops=false}
+   try{if(before&&drops.length<n0){const after=new Set(drops);for(const d of before)if(!after.has(d)&&Math.hypot(d.x-P.x,d.y-(P.y+P.h/2))<T*3){pickup(d.k=='gem');break}}}catch(_){}return r}}
  // ---- ultimates, one sound per class, timed to the class's ultimate (x-skills SC: its length and the moments its strikes land)
  const ULT={brawler:{h:[.55,.9,1.25,1.6],ch:[5,9,12],root:53,inst:'taiko'},knight:{h:[1.3,1.55],ch:[2,6,9],root:50,inst:'brass'},samurai:{h:[1.1,1.35,1.6],ch:[9,11,12,16,17],root:57,inst:'koto'},
   archer:{h:[.9,1.15,1.4,1.65],ch:[7,11,14],root:55,inst:'chime'},mage:{h:[1.5,1.9],ch:[4,8,11],root:64,inst:'bell'},demon:{h:[1,1.5,1.85],ch:[0,3,7],root:36,inst:'pad'},
@@ -33371,7 +33379,7 @@ try{window.RBSND=(()=>{
   if(nite&&R()<.35){const b=t+R()*.4;for(let i=0;i<6;i++)tone(4200,b+i*.045,.025,{v:.0018,k,a:.004})}
   if((p=='under'||p=='dungeon')&&R()<.25){const f=900+R()*700;tone(f,t+R()*.4,.12,{to:f*.55,v:.006,k,a:.002})}}catch(_){}}
  setInterval(ambTick,700);
- return{swing,impact,ultimate,tone,air,kindOf,elemOf,darkOf,ULT,get hold(){return hold},get amb(){return A.state||''},place}})()}catch(e){console.error('RBSND',e)}
+ return{pickup,swing,impact,ultimate,tone,air,kindOf,elemOf,darkOf,ULT,get hold(){return hold},get amb(){return A.state||''},place}})()}catch(e){console.error('RBSND',e)}
 
 
 </script></body></html>

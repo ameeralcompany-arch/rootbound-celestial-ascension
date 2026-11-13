@@ -104,6 +104,10 @@
   - Element touches: ice, fire, storm, starlight and nature, plus a warm low undertone for demonic weapons.
   - Three rotating variations, with very fast weapons sounding on every other shot.
 - **Clean impacts** for your own hits, and a soft chime when a monster falls.
+- **Picking things up:** a soft pluck that climbs a pentatonic scale while you collect several in a row, and a brighter bell for gems.
+  - At most one note every 60 ms.
+  - It replaces the fixed-pitch blip, which had no limit.
+- **Unchanged:** the breaking sounds (each material already had its own soft sound) and the interface sounds (already soft) were kept, and now pass through the mixing desk.
 - **A different ultimate sound for each of the 13 classes**, timed to its own strikes:
   - a smooth build-up while the music dips;
   - a clean release on each strike, the last one the biggest;

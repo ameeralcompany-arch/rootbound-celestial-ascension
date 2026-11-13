@@ -41,6 +41,9 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:100,own:{fist:1,ember:1},wp:'ember
  ok('the harsh band (2.5-5 kHz) stays a small share of the sound',soak.harsh<12,soak);
  ok('and the brittle top (above 8 kHz) is barely there',soak.top<1.5,soak);
  ok('the number of sounds playing at once stays capped',await p.evaluate(()=>SOFTSYN.live<=SOFTSYN.MAX),'');
+ // ---- picking things up: a soft pluck or bell, clean
+ const pu=await p.evaluate(async()=>({item:await __render(.6,[[.02,()=>RBSND.pickup(false)]]),gem:await __render(.6,[[.02,()=>{RBSND.pickup(true)}]])}));
+ ok('picking things up is a soft pluck (items) or bell (gems): audible, gentle, clean',pu.item.rms>.0004&&pu.item.peak<.3&&pu.gem.peak<.3&&pu.item.harsh<15,pu);
  // ---- ultimates: one per class, distinct, big but clean, ringing out after the last strike
  const ul=await p.evaluate(async()=>{const o={},ks=Object.keys(RBSND.ULT);const sig=new Set();for(const k of ks){const U=RBSND.ULT[k];sig.add(U.inst+':'+U.root+':'+U.ch.join(','))}o.n=ks.length;o.distinct=sig.size;o.each={};
   for(const k of ks){const U=RBSND.ULT[k],last=U.h[U.h.length-1],full=await __render(last+3.2,[[.02,()=>RBSND.ultimate(k)]]);o.each[k]={peak:full.peak,rms:full.rms,harsh:full.harsh}}
