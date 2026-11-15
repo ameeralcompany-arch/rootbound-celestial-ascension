@@ -20,7 +20,7 @@ try{(()=>{
   M={kind,o:o||{},c,x:c.getContext('2d'),t0:performance.now(),dur:kind=='rest'?7:kind=='wake'?4.6:32.5,said:{},red:reduce()};
   if(kind=='rest')chord([392,494,587,784,988],140,'triangle');if(kind=='wake')chord([523,659,784],120,'sine');
   M.raf=requestAnimationFrame(frame);return true}
- function stop(){if(!M)return;cancelAnimationFrame(M.raf);try{M.c.remove()}catch(_){}const k=M.kind;M=null;if(k=='end')try{RPG.guide.say('st_end_d')}catch(_){}}
+ function stop(){if(!M)return;cancelAnimationFrame(M.raf);try{M.c.remove()}catch(_){}const k=M.kind;M=null;if(k=='end')try{RPG.guide.say('st_end_d',{force:1})}catch(_){}}
  // where the player is on screen, for the waves to start from
  const pScreen=()=>{try{const s=M.c.width/innerWidth;const r=document.getElementById('c').getBoundingClientRect();return{x:((P.x+P.w/2-cam.x)*ZM*(r.width/document.getElementById('c').width)+r.left)*s,y:((P.y+P.h/2-cam.y)*ZM*(r.height/document.getElementById('c').height)+r.top)*s}}catch(_){return{x:M.c.width/2,y:M.c.height*.6}}};
  function title(x,W,H,a,big,small,col){if(a<=0)return;x.save();x.globalAlpha=a;x.textAlign='center';x.fillStyle='#fff8ea';x.shadowColor=col||'rgba(255,220,160,.8)';x.shadowBlur=24*W/1920;
@@ -45,7 +45,7 @@ try{(()=>{
    const v=x.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.9);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(4,2,12,'+(.55*ez(t/2))+')');x.fillStyle=v;x.fillRect(0,0,W,H);
    // Lavi's last words, one after another, in her own voice (lengths from her recordings)
    const L=window.LAVIVOICE||{},seq=[['st_end_a',1.5],['st_end_b',0],['st_end',0]];let at=1.5;
-   for(const[id]of seq){const d=(L[id]&&L[id].dur)||5;if(t>=at&&!m.said[id]){m.said[id]=1;try{RPG.guide.say(id)}catch(_){}}at+=d+1.2}
+   for(const[id]of seq){const d=(L[id]&&L[id].dur)||5;if(t>=at&&!m.said[id]){m.said[id]=1;try{RPG.guide.say(id,{force:1})}catch(_){}}at+=d+1.2}
    const fin=at+.6;title(x,W,H,ez((t-fin)/1.2)*(1-ez((t-31.4)/1)),'THE WORLDS WE LEFT BEHIND','Thank you for remembering.','rgba(255,214,160,.9)');
    if(t>fin+3.5&&!m.red){x.save();x.globalCompositeOperation='lighter';for(let i=0;i<50;i++){const a=Math.abs(Math.sin(i*91.7)*4375.85)%1,b=Math.abs(Math.sin(i*17.3)*9123.4)%1,k=((t-fin-3.5)*.12+b)%1;
      const px=a*W,py=H*(1-k),r=(2+b*3)*W/1920;x.globalAlpha=.7*Math.sin(Math.PI*k);x.fillStyle=(window.RESTORE1?RESTORE1.COL[i%5]:'#ffe2a8');x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.fill()}x.restore()}

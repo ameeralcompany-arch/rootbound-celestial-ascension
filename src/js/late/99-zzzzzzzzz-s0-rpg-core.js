@@ -62,8 +62,9 @@ try{window.RPG=(()=>{
  function short(id){const r=reqs(id),l=r.find(q=>q.k=='level'),c=r.find(q=>q.k=='cp');return{level:l&&!l.ok?l.need-l.have:0,cp:c&&!c.ok?c.need-c.have:0}}
  {const _lr=DG.lockReason;DG.lockReason=function(id){const w=_lr.apply(this,arguments);if(w)return w;try{const c=CFG.dungeon[id];if(c&&!DG.cleared(id)&&!(DG.unlocked&&DG.unlocked[id])&&!DG.creative()){const C=cp();if(C<c.cp)return'You need '+(c.cp-C)+' more Combat Power ('+C+' of '+c.cp+')'}}catch(e){console.error('RPG lock',e)}return''}}
  // ---- saved progress of the guide, the roadmap and paid-out milestones, one per account
- const KEY=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbrpg',blank=()=>({v:1,tour:{step:0,done:0,off:0,paused:0},paid:{},opt:{vol:.9,mute:0,sub:1,auto:1},seenLv:0});
- let S=blank();function load(){try{const o=JSON.parse(localStorage.getItem(KEY())||'null');if(o&&typeof o=='object'){S=Object.assign(blank(),o);S.tour=Object.assign(blank().tour,o.tour||{});S.opt=Object.assign(blank().opt,o.opt||{});S.paid=o.paid&&typeof o.paid=='object'?o.paid:{}}}catch(_){S=blank()}}load();
+ const KEY=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbrpg',blank=()=>({v:1,tour:{step:0,done:0,off:0,paused:0},paid:{},opt:{vol:.9,mute:0,sub:1,auto:1},seenLv:0,said:{},pos:null});
+ // said: Lavi's lines you have already heard (id -> when), so she never repeats them on her own; pos: where you parked her on screen (fractions of the window)
+ let S=blank();function load(){try{const o=JSON.parse(localStorage.getItem(KEY())||'null');if(o&&typeof o=='object'){S=Object.assign(blank(),o);S.tour=Object.assign(blank().tour,o.tour||{});S.opt=Object.assign(blank().opt,o.opt||{});S.paid=o.paid&&typeof o.paid=='object'?o.paid:{};S.said=o.said&&typeof o.said=='object'?o.said:{};S.pos=o.pos&&Number.isFinite(+o.pos.fx)&&Number.isFinite(+o.pos.fy)?{fx:Math.max(0,Math.min(1,+o.pos.fx)),fy:Math.max(0,Math.min(1,+o.pos.fy))}:null}}catch(_){S=blank()}}load();
  const save=()=>{try{if(DG.creative())return}catch(_){}try{localStorage.setItem(KEY(),JSON.stringify(S))}catch(_){}};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  return{CFG,parts,cp,hitDamage,dps,reqs,short,activeId,isW,classOf,esc,save,load,get S(){return S}}})()}catch(e){console.error('RPG core',e)}

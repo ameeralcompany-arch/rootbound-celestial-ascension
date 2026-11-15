@@ -12,7 +12,7 @@ try{(()=>{
  const fill=s=>String(s).replace(/\{name\}/g,(typeof myName!='undefined'&&myName)||'traveler').replace(/\{lvl\}/g,typeof lvl!='undefined'?lvl:1);
  let au=null;
  function stop(){if(au){try{au.pause()}catch(_){}au=null}}
- function play(id){stop();try{const v=typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1;if(!(v>0))return;au=new Audio('audio/town/'+id+'.mp3');au.volume=Math.min(1,v*.95);const p=au.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}}
+ function play(id){stop();try{const v=typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1;if(!(v>0))return;au=new Audio('audio/town/'+id+'.mp3');try{VOX1.claim(au,'town')}catch(_){}au.volume=Math.min(1,v*.95);const p=au.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}}
  // a little gold spark over their head: something new to say
  function mark(g,x,y,now){const b=Math.sin(now/380+x)*2,s=5+Math.sin(now/260)*.8;g.save();g.translate(Math.round(x),Math.round(y+b));g.globalCompositeOperation='lighter';
   const gr=g.createRadialGradient(0,0,0,0,0,s*2.6);gr.addColorStop(0,'rgba(255,226,150,.85)');gr.addColorStop(1,'rgba(255,200,90,0)');g.fillStyle=gr;g.fillRect(-s*3,-s*3,s*6,s*6);

@@ -1,0 +1,12 @@
+/* Lavi: carrying her (press, hold, drag) and her menu. She glows softly while held; the menu is a calm list of real pages, two columns where there is room. */
+#lavibtn{cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
+#lavibtn.drag{cursor:grabbing}
+#lavi.drag canvas{filter:drop-shadow(0 0 10px rgba(255,236,196,.55)) drop-shadow(0 6px 14px rgba(20,12,40,.45));transition:filter .18s ease}
+#lavi canvas{transition:filter .3s ease;transform-origin:150px 200px}
+#lavib.menu{width:min(400px,90vw)}
+#lavib.menu .ac{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#lavib.menu .ac button{text-align:left;padding:7px 11px;font-weight:600;line-height:1.25;min-height:34px}
+#lavib.menu .ac button.pri{grid-column:1/-1}
+#lavib.menu .ac button:last-child{grid-column:1/-1;text-align:center;background:transparent;border-color:rgba(190,170,255,.2)}
+@media (max-width:520px){#lavib.menu .ac{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){#lavi.drag canvas,#lavi canvas{transition:none}}
