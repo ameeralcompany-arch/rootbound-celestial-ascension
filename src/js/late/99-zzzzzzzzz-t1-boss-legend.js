@@ -8,7 +8,7 @@ try{(()=>{
  const B=()=>A.box(),F=()=>A.fl();
  const toast=s=>{try{DG.ui.toast(s)}catch(_){}};
  // ---- the boss's voice, with a subtitle that stays readable over any weather
- let sub=null,subT=0;function line(id){const V=window.BOSSVOICE||{},q=V[id];if(!q)return;try{const a=new Audio('audio/bosses/'+id+'.mp3');try{VOX1.claim(a,'boss')}catch(_){}let v=1;try{v=Math.max(0,Math.min(1,(OPT.sv==null?1:+OPT.sv)))}catch(_){}a.volume=v;const p=a.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}
+ let sub=null,subT=0;function line(id){const V=window.BOSSVOICE||{},q=V[id];if(!q)return;try{const a=new Audio('audio/bosses/'+id+'.mp3');try{VOICE1.claim(a,'boss')}catch(_){}let v=1;try{v=Math.max(0,Math.min(1,(OPT.sv==null?1:+OPT.sv)))}catch(_){}a.volume=v;const p=a.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}
   if(!sub){sub=document.createElement('div');sub.id='bsub';document.body.appendChild(sub)}const def=DG.boss.DEF[id.replace(/_[a-z0-9]+$/,'')];sub.innerHTML='<b>'+(def?def.n:'')+'</b><span>'+String(q.text).replace(/[<>&]/g,'')+'</span>';sub.classList.add('on');clearTimeout(subT);subT=setTimeout(()=>sub.classList.remove('on'),(q.dur+1.2)*1000)}
  // ---- signature abilities. Each is an ordinary boss attack: warned, then hurts, then a cooldown
  const k=(m,v)=>A.dmg(m,v);

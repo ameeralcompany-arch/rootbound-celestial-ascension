@@ -18,7 +18,7 @@ Overlaps: her own lines cut each other off. Town, side-story and boss voices cou
 **Decision:**
 - A per-account `said` memory: a line is spoken once and comes back as text only.
 - Self-offered lines go through a queue: once ever, after 3 calm seconds, 25 s apart, never near a fight, a boss, a film or another voice.
-- One voice channel (VOX1).
+- One voice channel (VOICE1).
 - Press-and-hold to drag, with the position saved as screen fractions.
 - Click opens a menu of real pages.
 - Replaying one step leaves the tour progress alone.

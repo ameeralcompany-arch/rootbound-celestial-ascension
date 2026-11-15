@@ -16,7 +16,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:20,own:{fist:1},wp:'fist',bar:[1],
   window.__plays=[];window.__paused=0;const pl=HTMLMediaElement.prototype.play,pa=HTMLMediaElement.prototype.pause;
   HTMLMediaElement.prototype.play=function(){this.muted=true;window.__plays.push(String(this.src||'').replace(/^.*\/audio\//,''));const a=this;setTimeout(()=>{if(!a.__stopped)a.dispatchEvent(new Event('ended'))},80);return Promise.resolve()};
   HTMLMediaElement.prototype.pause=function(){this.__stopped=true;window.__paused++;try{return pa.call(this)}catch(_){}}},SAVE);
- const errs=[];const page=async()=>{const p=await c.newPage();p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/Lavi|RPG|VOX1/.test(m.text()))errs.push(m.text().slice(0,300))});await p.goto(FILE,{waitUntil:'commit'});await p.waitForFunction(()=>window.RBDIAG&&RBDIAG.ready&&window.RPG&&RPG.guide,null,{timeout:90000});await p.evaluate(()=>enterWorld('plaza'));return p};
+ const errs=[];const page=async()=>{const p=await c.newPage();p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/Lavi|RPG|VOICE1/.test(m.text()))errs.push(m.text().slice(0,300))});await p.goto(FILE,{waitUntil:'commit'});await p.waitForFunction(()=>window.RBDIAG&&RBDIAG.ready&&window.RPG&&RPG.guide,null,{timeout:90000});await p.evaluate(()=>enterWorld('plaza'));return p};
  const lavi=p=>p.evaluate(()=>window.__plays.filter(s=>s.startsWith('lavi/')).map(s=>s.slice(5,-4)));
  let p=await page();
  // ---- the tour: welcome, then the first step, every line once
@@ -74,7 +74,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:5},gems:20,own:{fist:1},wp:'fist',bar:[1],
  const kp=await p.evaluate(()=>({x:RPG.guide.st.x,y:RPG.guide.st.y,W:innerWidth,H:innerHeight}));ok('after a reload she is where you left her',Math.abs(kp.x-kp.W*.7)<30&&Math.abs(kp.y-kp.H*.4)<30,kp);
  // ---- one voice at a time
  const vx=await p.evaluate(async()=>{try{RPG.guide.stop()}catch(_){}window.__paused=0;RPG.guide.say('stronger',{force:1});await new Promise(r=>setTimeout(r,30));const sp=RPG.guide.speaking;
-  const fake={paused:false,ended:false,currentTime:0,duration:5,addEventListener(){}};VOX1.claim(fake,'town');const o={sp,paused:window.__paused,still:RPG.guide.speaking,busy:VOX1.busy(),quiet:RPG.guide.quiet()};fake.paused=true;o.after=VOX1.busy();return o});
+  const fake={paused:false,ended:false,currentTime:0,duration:5,addEventListener(){}};VOICE1.claim(fake,'town');const o={sp,paused:window.__paused,still:RPG.guide.speaking,busy:VOICE1.busy(),quiet:RPG.guide.quiet()};fake.paused=true;o.after=VOICE1.busy();return o});
  ok('another voice starting stops hers (her words stay on screen), and she waits while it talks',vx.sp=='stronger'&&vx.paused>=1&&vx.still=='stronger'&&vx.busy&&vx.quiet&&!vx.after,vx);
  // ---- muting her mid-line does not start the line again
  const mu=await p.evaluate(async()=>{RPG.guide.setMute(0);window.__plays.length=0;RPG.guide.say('stronger2',{force:1});await new Promise(r=>setTimeout(r,20));document.querySelector('#lavib [data-m]').click();await new Promise(r=>setTimeout(r,300));const o={plays:window.__plays.filter(s=>/stronger2/.test(s)).length,mute:RPG.guide.opt().mute};RPG.guide.setMute(0);return o});

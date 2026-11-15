@@ -369,12 +369,12 @@ function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=h
 // ---------- update
 function update(dt){tm+=dt;mt-=dt;wcd-=dt;rcd-=dt;swing-=dt;iT-=dt;shake=Math.max(0,shake-dt*1.2);hurtF=Math.max(0,hurtF-dt);flare-=dt;lucky-=dt;midas-=dt;over-=dt;for(const s in cdT)cdT[s]=Math.max(0,cdT[s]-dt);
  updWeather(dt);/* the inventory and other side panels are not modal: walking and jumping keep working while they are open */const busy=dlgOpen||creatorOn||menuEl.style.display!='none'||document.activeElement==chatEl;
- const ax=busy?0:(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0);if(ax)P.f=ax;
+ const ax=busy?0:(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0);/* walking turns you, except while an attack holds your facing toward its aim (FACE1) */if(ax&&!(window.FACE1&&FACE1.held()))P.f=ax;
  if(dash>0){dash-=dt;P.vx=dashDir*860;P.vy=0;dashFx(dt)}else{physics(dt,ax,busy)}
  
  moveE(P,dt);if(P.wall&&P.g&&ax)stepUp(ax);landFx(dt);waterFx(dt);if(P.g){P.jumps=0;if(slam){slam=0;/* the ground pound shakes the ground but no longer breaks blocks (only tools do) */rings.push({x:P.x,y:P.y+P.h,c:'#9ee',t:performance.now()});shake=.3;noise(.4,500,.3);for(const m of mobs)if(Math.hypot(m.x-P.x,m.y-P.y)<T*3)hurtMob(m,12,null,-1.5)}}
  P.x=Math.max(T*1.5,Math.min((W-1.5)*T,P.x));if(P.y>H*T)P.y=0;
- if(!busy&&!showInv&&wcd<=0&&(mdL||(window.ATKQ&&performance.now()-window.ATKQ<140))){window.ATKQ=0;useWeapon()}if(!busy&&!showInv&&rcd<=0&&mdR){rcd=.15;placeAction()}
+ if(!busy&&!showInv&&wcd<=0&&(mdL||(window.ATKQ&&performance.now()-window.ATKQ<220))){window.ATKQ=0;useWeapon()}if(!busy&&!showInv&&rcd<=0&&mdR){rcd=.15;placeAction()}
  if(Math.abs(P.x-(DX*T))>T*3)G('move');
  for(const[k,t]of hitAt)if(performance.now()-t>3500){hp[k]=tiles[k]?BLK[tiles[k]][2]:0;hitAt.delete(k)}
  updMobs(dt);updDrops(dt);if(P.hp<=0){P.hp=maxHP();P.x=DX*T+T/2;P.y=sh(DX)*T-P.h-2;P.vx=P.vy=0;mobs.length=0;say('You were knocked out. Back at the door.')}else if(iT<-4)P.hp=Math.min(maxHP(),P.hp+dt*3);

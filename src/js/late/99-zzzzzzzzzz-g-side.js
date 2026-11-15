@@ -29,7 +29,7 @@ try{(()=>{
  const ready=q=>{const s=qs(q.id);return !!(s&&!s.done&&prog(q)>=1)};
  const offerable=q=>!qs(q.id)&&(()=>{try{return q.when()}catch(_){return false}})();
  const lines=()=>window.TOWNVOICE||{};
- let au=null;function play(id){try{if(au)au.pause();const v=typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1;if(!(v>0)||!lines()[id])return;au=new Audio('audio/town/'+id+'.mp3');try{VOX1.claim(au,'town')}catch(_){}au.volume=Math.min(1,v*.95);const p=au.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}}
+ let au=null;function play(id){try{if(au)au.pause();const v=typeof OPT!='undefined'&&OPT.sv!=null?+OPT.sv:1;if(!(v>0)||!lines()[id])return;au=new Audio('audio/town/'+id+'.mp3');try{VOICE1.claim(au,'town')}catch(_){}au.volume=Math.min(1,v*.95);const p=au.play();if(p&&p.catch)p.catch(()=>{})}catch(_){}}
  // watching for 'visit' and 'clear' stories, every 2 s
  setInterval(()=>{let ch=false;for(const q of Q){const s=qs(q.id);if(!s||s.done||s.met)continue;if(q.kind=='visit'&&inWorld(q.sg)&&(!q.night||isNight())){s.met=1;ch=true;try{say(q.t+': done. Talk to '+q.npc[0].toUpperCase()+q.npc.slice(1)+' in the Plaza.')}catch(_){}}
   if(q.kind=='clear'&&clears()>s.c){s.met=1;ch=true}}if(ch)save()},2000);
