@@ -11,7 +11,7 @@ const NEW=['sparrow','gull','thistle','mossback','kestrel','coppervane','snowdri
  const p=await c.newPage();p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()=='error'&&/AERO1|WINGS3/.test(m.text()))errs.push(m.text())});
  await p.goto(FILE,{waitUntil:'commit'});await p.waitForFunction(()=>window.RBDIAG&&RBDIAG.ready,null,{timeout:90000});await sleep(1500);await p.evaluate(()=>{try{RPG.guide.stop()}catch(_){}enterWorld('plaza')});await sleep(2600);
  // ---- the collection
- const col=await p.evaluate(NEW=>{const n={};for(const w of WINGS)n[w.rar]=(n[w.rar]||0)+1;const first=NEW.map(id=>WINGS.findIndex(w=>w.id==id));const reli=Object.keys(n);return{n,first,tail:WINGS.length,cel:WINGS[0].id,dg:WINGS.findIndex(w=>w.id=='dgstar'),names:NEW.map(id=>wingById(id).n)}},NEW);
+ const col=await p.evaluate(NEW=>{const n={};for(const w of WINGS)n[w.rar]=(n[w.rar]||0)+1;const first=NEW.map(id=>WINGS.findIndex(w=>w.id==id));const reli=Object.keys(n);return{n,first,tail:WINGS.length-((window.WINGS4||[]).length),cel:WINGS[0].id,dg:WINGS.findIndex(w=>w.id=='dgstar'),names:NEW.map(id=>wingById(id).n)}},NEW);
  ok('every rarity now has several wings, and Relic exists',col.n.common>=8&&col.n.uncommon>=13&&col.n.rare>=15&&col.n.epic>=12&&col.n.legendary>=14&&col.n.mythic>=11&&col.n.relic>=5,col.n);
  ok('new wings come last, so what other players are sent still means the same wing',col.first.every((v,i)=>v>col.dg&&(i==0||v==col.first[i-1]+1))&&col.first[col.first.length-1]==col.tail-1&&col.cel=='celestial',{first:col.first[0],dg:col.dg});
  ok('no religious names among them',!/angel|seraph|holy|divine|heaven|saint|bless|sacred/i.test(col.names.join(' ')));

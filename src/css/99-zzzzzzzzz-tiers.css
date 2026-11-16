@@ -1,0 +1,35 @@
+/* Rarity, presented (master update 2): each tier has its own identity on item tiles (backpack), Collection cards and reward cards, never one shared
+   golden glow. Rare: a crisp cool edge. Epic: a violet edge with a slow breathing glow. Legendary: a gold edge and a soft light sweep every few seconds.
+   Mythic: a rose-violet edge that slowly turns, with drifting glints. Exclusive / relic: a prismatic edge turning slowly over a faint starfield.
+   Everything is calm (no flashing) and stops for players who reduce motion. */
+@property --rbt-a{syntax:'<angle>';inherits:false;initial-value:0deg}
+:root{--rbt-rare:#8db8f5;--rbt-epic:#c3a9ff;--rbt-leg:#f0cf83;--rbt-myth:#ff8fae;--rbt-ex:#7ff5e0}
+html:root:root body #inv7 .it7[data-rar],html:root:root body #col1 .c1c[data-rar],#rw8 .rw8c{position:relative!important;isolation:isolate!important}
+/* the edge: a gradient ring drawn on ::before and masked to the border */
+html:root:root body #inv7 .it7[data-rar=rare]::before,html:root:root body #inv7 .it7[data-rar=epic]::before,html:root:root body #inv7 .it7[data-rar=legendary]::before,html:root:root body #inv7 .it7[data-rar=mythic]::before,
+html:root:root body #col1 .c1c[data-rar=rare]::before,html:root:root body #col1 .c1c[data-rar=epic]::before,html:root:root body #col1 .c1c[data-rar=legendary]::before,html:root:root body #col1 .c1c[data-rar=mythic]::before,html:root:root body #col1 .c1c[data-rar=exclusive]::before{
+ content:''!important;position:absolute!important;inset:0!important;border-radius:inherit!important;padding:1.5px!important;pointer-events:none!important;z-index:2!important;
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)!important;-webkit-mask-composite:xor!important;mask-composite:exclude!important}
+html:root:root body #inv7 .it7[data-rar=rare]::before,html:root:root body #col1 .c1c[data-rar=rare]::before{background:linear-gradient(160deg,rgba(141,184,245,.9),rgba(141,184,245,.25) 60%,rgba(141,184,245,.6))!important}
+html:root:root body #inv7 .it7[data-rar=epic]::before,html:root:root body #col1 .c1c[data-rar=epic]::before{background:linear-gradient(160deg,#c3a9ff,rgba(195,169,255,.3) 55%,#9a7cf0)!important}
+html:root:root body #inv7 .it7[data-rar=epic],html:root:root body #col1 .c1c[data-rar=epic]{animation:rbt-breathe 4.5s ease-in-out infinite!important}
+@keyframes rbt-breathe{0%,100%{box-shadow:inset 0 0 0 0 rgba(195,169,255,0),0 0 0 rgba(195,169,255,0)}50%{box-shadow:inset 0 0 18px -6px rgba(195,169,255,.45),0 0 10px -4px rgba(195,169,255,.35)}}
+html:root:root body #inv7 .it7[data-rar=legendary]::before,html:root:root body #col1 .c1c[data-rar=legendary]::before{background:linear-gradient(160deg,#ffe7a8,#c99a3e 45%,#ffe7a8 70%,#b8862e)!important}
+html:root:root body #inv7 .it7[data-rar=legendary]::after,html:root:root body #col1 .c1c[data-rar=legendary]::after{content:''!important;position:absolute!important;inset:0!important;border-radius:inherit!important;pointer-events:none!important;z-index:1!important;
+ background:linear-gradient(105deg,transparent 35%,rgba(255,240,200,.22) 48%,rgba(255,255,255,.32) 50%,rgba(255,240,200,.22) 52%,transparent 65%)!important;background-size:260% 100%!important;background-position:130% 0!important;animation:rbt-sweep 6.5s ease-in-out infinite!important}
+@keyframes rbt-sweep{0%,62%{background-position:130% 0}100%{background-position:-30% 0}}
+html:root:root body #inv7 .it7[data-rar=mythic]::before,html:root:root body #col1 .c1c[data-rar=mythic]::before{background:conic-gradient(from var(--rbt-a),#ff8fae,#c3a9ff,#ffd0e0,#ff8fae)!important;animation:rbt-turn 9s linear infinite!important}
+html:root:root body #inv7 .it7[data-rar=mythic]::after,html:root:root body #col1 .c1c[data-rar=mythic]::after{content:''!important;position:absolute!important;inset:0!important;border-radius:inherit!important;pointer-events:none!important;z-index:1!important;
+ background:radial-gradient(1.6px 1.6px at 22% 80%,rgba(255,220,235,.9),transparent),radial-gradient(1.4px 1.4px at 70% 65%,rgba(255,200,230,.8),transparent),radial-gradient(1.2px 1.2px at 48% 92%,rgba(255,235,245,.85),transparent)!important;
+ background-size:100% 100%!important;animation:rbt-rise 5s linear infinite!important;opacity:.9!important}
+@keyframes rbt-rise{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-38%);opacity:0}}
+@keyframes rbt-turn{to{--rbt-a:360deg}}
+html:root:root body #col1 .c1c[data-rar=exclusive]::before{background:conic-gradient(from var(--rbt-a),#7ff5e0,#8db8f5,#c3a9ff,#ff8fae,#f0cf83,#7ff5e0)!important;animation:rbt-turn 14s linear infinite!important;padding:2px!important}
+html:root:root body #col1 .c1c[data-rar=exclusive]::after{content:''!important;position:absolute!important;inset:0!important;border-radius:inherit!important;pointer-events:none!important;z-index:1!important;opacity:.7!important;
+ background:radial-gradient(1px 1px at 12% 20%,#fff,transparent),radial-gradient(1px 1px at 82% 30%,#fff,transparent),radial-gradient(1.2px 1.2px at 40% 70%,#e8fff8,transparent),radial-gradient(1px 1px at 66% 86%,#fff,transparent),radial-gradient(1px 1px at 28% 52%,#fff,transparent)!important;animation:rbt-twinkle 3.2s ease-in-out infinite alternate!important}
+@keyframes rbt-twinkle{from{opacity:.35}to{opacity:.85}}
+/* reward cards: the tier shows in the card's own edge, not just its colour */
+#rw8 .rw8c[data-tier="4"]{box-shadow:0 0 0 1.5px rgba(240,207,131,.75),0 18px 40px -16px rgba(0,0,0,.6)}
+#rw8 .rw8c[data-tier="5"]{box-shadow:0 0 0 1.5px rgba(255,143,174,.75),0 0 22px -8px rgba(255,143,174,.5),0 18px 40px -16px rgba(0,0,0,.6)}
+@media (prefers-reduced-motion:reduce){html:root:root body #inv7 .it7[data-rar],html:root:root body #col1 .c1c[data-rar],html:root:root body #inv7 .it7[data-rar]::before,html:root:root body #inv7 .it7[data-rar]::after,html:root:root body #col1 .c1c[data-rar]::before,html:root:root body #col1 .c1c[data-rar]::after{animation:none!important}}
+html[data-reduce=true] html:root:root body #inv7 .it7[data-rar],html[data-reduce=true] html:root:root body #col1 .c1c[data-rar],html[data-reduce=true] html:root:root body #inv7 .it7[data-rar]::before,html[data-reduce=true] html:root:root body #inv7 .it7[data-rar]::after,html[data-reduce=true] html:root:root body #col1 .c1c[data-rar]::before,html[data-reduce=true] html:root:root body #col1 .c1c[data-rar]::after{animation:none!important}

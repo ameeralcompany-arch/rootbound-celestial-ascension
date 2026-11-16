@@ -57,7 +57,7 @@ const REW8=(()=>{
  let host=null;const cards=[];
  function ensure(){if(host&&host.isConnected)return host;host=document.createElement('div');host.id='rw8';host.setAttribute('role','status');host.setAttribute('aria-live','polite');document.body.appendChild(host);return host}
  function out(c,fast){clearTimeout(c._t);const i=cards.indexOf(c);if(i>=0)cards.splice(i,1);c.classList.remove('in');c.classList.add('out');setTimeout(()=>{try{c.remove()}catch(_){}},fast?180:460)}
- function card(o){o=o||{};ensure();const t=Math.max(0,Math.min(5,o.tier|0)),c=document.createElement('div');c.className='rw8c'+(o.icon!=null?' ic':'');c.setAttribute('data-rar',RK[t]);c.style.setProperty('--rw',RC[t]);c.dataset.kind=o.kind||'';
+ function card(o){o=o||{};ensure();const t=Math.max(0,Math.min(5,o.tier|0)),c=document.createElement('div');c.className='rw8c'+(o.icon!=null?' ic':'');try{c.dataset.tier=String(o.tier==null?'':o.tier);if(o.kind)c.dataset.kind=c.dataset.kind||o.kind}catch(_){}c.setAttribute('data-rar',RK[t]);c.style.setProperty('--rw',RC[t]);c.dataset.kind=o.kind||'';
   let h='<i class="rw8g" aria-hidden="true"></i>'+(o.icon!=null?'<img class="rw8ic" alt="" src="'+ico(o.icon)+'">':'')+(o.showTier?'<i class="rw8tier">'+RN[t]+'</i>':'')+'<div class="rw8b"><small class="rw8k">'+esc(o.kick||'Reward')+'</small><b class="rw8t">'+esc(o.title||'')+'</b>'+(o.sub?'<span class="rw8s">'+esc(o.sub)+'</span>':'');
   const ln=[];if(o.gems>0)ln.push('<span class="rw8n"><i class="gem"></i>+<em data-to="'+Math.round(o.gems)+'">0</em></span>');if(o.xp>0)ln.push('<span class="rw8n x"><i>XP</i>+<em data-to="'+Math.round(o.xp)+'">0</em></span>');
   if(ln.length)h+='<div class="rw8r">'+ln.join('')+'</div>';
