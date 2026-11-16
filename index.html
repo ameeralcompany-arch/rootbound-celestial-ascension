@@ -3829,6 +3829,26 @@ html.reduce-motion .wrv canvas{animation:none}
 /* small windows (under ~980 px wide): the class-skill buttons sit above the hotbar instead of beside it, where the two collided */
 @media (max-width:980px){html body #skills{bottom:calc(104px + env(safe-area-inset-bottom,0px))!important}}
 
+/* ========== CSS: 99-zzzzzzzzz-toolforge.css ========== */
+/* The Tool Forge panel (Tool Guide) and its anvil moment */
+.tf9wrap{margin-top:12px}
+.tf9{border:1px solid rgba(244,213,154,.22);border-radius:12px;padding:12px 14px;background:rgba(21,17,42,.72)}
+.tf9.ok{border-color:rgba(244,213,154,.55);box-shadow:0 0 0 1px rgba(244,213,154,.15) inset}
+.tf9h{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}.tf9h b{font:700 13px/1 var(--ui-font,Montserrat,system-ui);letter-spacing:.14em;text-transform:uppercase;color:#f4d59a}.tf9h small{color:#a9a1be;font-size:12px}
+.tf9 ul{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.tf9 li{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#d9d2e6;min-width:0}.tf9 li img{width:20px;height:20px;image-rendering:auto;flex:none}
+.tf9 li .gem{width:14px;height:14px;flex:none;background:linear-gradient(135deg,#8fe0ff,#5ab2ff);transform:rotate(45deg);border-radius:2px;margin:0 3px}
+.tf9 li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tf9 li em{font-style:normal;font-variant-numeric:tabular-nums;color:#f6f1e7}.tf9 li.no em{color:#f08a8a}
+.tf9w{margin:2px 0 8px;font-size:12px;color:#a9a1be}.tf9m{margin:2px 0 8px;font-size:12px;color:#f08a8a}
+.tf9b{height:36px;padding:0 22px;border-radius:10px;border:0;background:#f4d59a;color:#1b1530;font:700 13px var(--ui-font,Montserrat,system-ui);letter-spacing:.06em;cursor:pointer;transition:transform .12s ease,filter .12s ease}
+.tf9b:hover:not(:disabled){filter:brightness(1.06)}.tf9b:active:not(:disabled){transform:translateY(1px)}.tf9b:disabled{background:rgba(255,255,255,.08);color:#776f8e;cursor:default}
+.tf9.max b{color:#f4d59a}.tf9.max small{display:block;color:#a9a1be;font-size:12px;margin-top:4px}
+#tf9anim{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%) scale(.96);z-index:9300;pointer-events:none;opacity:0;transition:opacity .2s ease,transform .2s ease;text-align:center}
+#tf9anim.on{opacity:1;transform:translate(-50%,-50%) scale(1)}#tf9anim canvas{width:420px;height:300px;filter:drop-shadow(0 18px 40px rgba(0,0,0,.45))}
+#tf9anim p{margin:4px 0 0;font:700 13px var(--ui-font,Montserrat,system-ui);letter-spacing:.16em;text-transform:uppercase;color:#f4d59a;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+@media (max-width:620px){.tf9 ul{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){#tf9anim{transition:none}}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -11832,6 +11852,55 @@ const GUN9=(()=>{
  {const _t=BOSS6.tick,_dp=BOSS6.drawProj;BOSS6.tick=function(dt){_t.call(this,dt);try{tick(dt)}catch(e){console.error('GUN9',e)}};BOSS6.drawProj=function(gc,cx,cy){_dp.call(this,gc,cx,cy);try{draw(gc,cx,cy)}catch(e){console.error('GUN9d',e)}}}
  return{D,IDS,GUNS,AIM,MODEL,B,BEH,POOL,FXP,S,art,lvOk,get alive(){return nAlive},SH,WS,spr}})();
 
+/* ========== LATE: 86-a-toolart.js ========== */
+// ===== TOOLART: the five tools as real equipment, each with its own silhouette, in four grades that follow the tool's level (TOOLLV):
+//   levels 1-3 wood and copper  ·  4-6 steel with a leather grip  ·  7-9 gem-set, gold fittings  ·  10 celestial (ivory and pale gold, a star)
+// Pip is a spade, Pebble a mason's hammer (flat face and chisel back), Glimmer a double pickaxe, Twiggy a bearded axe, Bubbles a rod with a reel.
+// Drawn in the game's cel style (dark outline, a lit face and a shade face, no gradients) with the origin at the hand, pointing +x; the level shine
+// (TOOLLV) still draws around them. 86-minetools.js uses these in place of its older cute models. =====
+const TOOLART=(()=>{
+ const OL='#1e1430';
+ const GR=[{h:'#9a6a3c',hl:'#c08a52',m:'#c7783f',ml:'#eaa56e',md:'#8a4a26',band:'#5a3a22'},
+  {h:'#6b4a3a',hl:'#8a6450',m:'#9aa6b8',ml:'#e2e9f3',md:'#5d6878',band:'#2e2430',grip:'#3a2a24'},
+  {h:'#4a3428',hl:'#6a4c3a',m:'#b8c2d4',ml:'#f4f7ff',md:'#6f7a90',band:'#e0b85a',grip:'#2a2030'},
+  {h:'#efe6d2',hl:'#fffaf0',m:'#f3d996',ml:'#fff6dc',md:'#c9a24e',band:'#f4d59a',grip:'#d9c9a6'}];
+ const GEM={pip:'#7fe0a0',pebble:'#ff9ac8',glimmer:'#8fe0ff',twiggy:'#a8e070',bubbles:'#7fc8ff'};
+ const grade=id=>{try{const l=TOOLLV.lvl(id);return l>=10?3:l>=7?2:l>=4?1:0}catch(_){return 0}};
+ const poly=(x,pts,fill,lw)=>{x.beginPath();x.moveTo(pts[0],pts[1]);for(let i=2;i<pts.length;i+=2)x.lineTo(pts[i],pts[i+1]);x.closePath();x.fillStyle=fill;x.fill();x.strokeStyle=OL;x.lineWidth=lw||1.6;x.stroke()};
+ // a handle from the hand to `len`, with grip wraps, metal bands and (grade 3) gold caps
+ function handle(x,len,th,G,g){x.fillStyle=G.h;x.beginPath();x.roundRect(-3,-th/2,len+3,th,th/2);x.fill();x.strokeStyle=OL;x.lineWidth=1.6;x.stroke();x.fillStyle=G.hl;x.fillRect(0,-th/2+1,len,th*.3);
+  if(g>=1){x.fillStyle=G.grip;for(let i=0;i<4;i++){x.fillRect(2+i*4.2,-th/2-.5,2.6,th+1)}}
+  x.fillStyle=G.band;x.fillRect(len-5,-th/2-1,3.5,th+2);x.strokeRect(len-5,-th/2-1,3.5,th+2);if(g>=2){x.fillRect(-4,-th/2-1,3.2,th+2);x.strokeRect(-4,-th/2-1,3.2,th+2)}}
+ function gem(x,cx,cy,r,c){x.fillStyle=c;x.beginPath();x.moveTo(cx,cy-r);x.lineTo(cx+r*.8,cy);x.lineTo(cx,cy+r);x.lineTo(cx-r*.8,cy);x.closePath();x.fill();x.strokeStyle=OL;x.lineWidth=1.2;x.stroke();x.fillStyle='rgba(255,255,255,.75)';x.beginPath();x.moveTo(cx-r*.2,cy-r*.6);x.lineTo(cx+r*.25,cy-r*.15);x.lineTo(cx-r*.05,cy-r*.05);x.closePath();x.fill()}
+ function star(x,cx,cy,r){x.fillStyle='#ffffff';x.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,rr=i%2?r*.38:r;x.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr)}x.closePath();x.fill()}
+ const D={
+  // a spade: straight shaft, a socket, a rounded-tip blade; grade 1 adds a D-grip and a rolled edge, 2 an engraved line and a gem, 3 a star cut-out
+  pip(x,L,t,g,G){const s=L*.58;handle(x,s,4.4,G,g);if(g>=1){x.strokeStyle=OL;x.lineWidth=4;x.beginPath();x.moveTo(-3,0);x.lineTo(-9,-5);x.lineTo(-9,5);x.closePath();x.stroke();x.strokeStyle=G.h;x.lineWidth=2;x.stroke()}
+   poly(x,[s-2,-3.5,s+5,-4.5,s+5,4.5,s-2,3.5],G.md);const b0=s+4,b1=L*.98;poly(x,[b0,-8.5,b1-6,-9.5,b1,-4,b1+1,0,b1,4,b1-6,9.5,b0,8.5],G.m);poly(x,[b0+2,-7,b1-7,-8,b1-2,-4,b0+2,-3.5],G.ml,0.01);
+   if(g>=1){x.strokeStyle=G.md;x.lineWidth=1.4;x.beginPath();x.moveTo(b0+2,6.5);x.lineTo(b1-6,7.5);x.stroke()}if(g>=2){x.strokeStyle=G.md;x.lineWidth=1;x.beginPath();x.moveTo(b0+5,0);x.lineTo(b1-6,0);x.stroke();gem(x,b0+1,0,3.4,GEM.pip)}
+   if(g>=3){x.save();x.globalCompositeOperation='destination-out';star(x,b0+(b1-b0)*.55,0,4.2);x.restore();star(x,b0+(b1-b0)*.55,0,2.2)}},
+  // a mason's hammer: a square striking face and a chisel back on a crossways head
+  pebble(x,L,t,g,G){const s=L*.66;handle(x,s,4.6,G,g);const hx=s+1,hw=8.5;poly(x,[hx-hw/2,-15,hx+hw/2,-15,hx+hw/2,15,hx-hw/2,15],G.m);poly(x,[hx-hw/2+1.4,-13.5,hx+hw/2-1.6,-13.5,hx+hw/2-1.6,-1,hx-hw/2+1.4,-1],G.ml,.01);
+   poly(x,[hx-hw/2-1,-17,hx+hw/2+1,-17,hx+hw/2+1,-13,hx-hw/2-1,-13],G.md);poly(x,[hx-hw/2,15,hx+hw/2,15,hx+1,22,hx-1,22],G.md);
+   if(g>=1){x.fillStyle=G.band;x.fillRect(hx-hw/2-.5,-3,hw+1,6);x.strokeRect(hx-hw/2-.5,-3,hw+1,6)}if(g>=2)gem(x,hx,-7,3.2,GEM.pebble);if(g>=3)star(x,hx,7,3.4)},
+  // a double pickaxe: a curved head with a point at each end, wedged on the shaft
+  glimmer(x,L,t,g,G){const s=L*.64;handle(x,s,4.4,G,g);const hx=s+1;x.beginPath();x.moveTo(hx-3,-1);x.quadraticCurveTo(hx-8,-12,hx-2,-24);x.quadraticCurveTo(hx+2,-12,hx+5,-2);x.lineTo(hx+5,2);x.quadraticCurveTo(hx+2,12,hx-2,24);x.quadraticCurveTo(hx-8,12,hx-3,1);x.closePath();
+   x.fillStyle=G.m;x.fill();x.strokeStyle=OL;x.lineWidth=1.6;x.stroke();x.beginPath();x.moveTo(hx-2,-3);x.quadraticCurveTo(hx-5,-12,hx-2,-20);x.quadraticCurveTo(hx,-12,hx+2,-3);x.closePath();x.fillStyle=G.ml;x.fill();
+   poly(x,[hx-4.5,-4,hx+6,-4,hx+6,4,hx-4.5,4],G.md);if(g>=2)gem(x,hx+.6,0,3.1,GEM.glimmer);if(g>=3){star(x,hx-2,-20,2.6);star(x,hx-2,20,2.6)}if(g>=1){x.strokeStyle=G.ml;x.lineWidth=1;x.beginPath();x.moveTo(hx-1,8);x.quadraticCurveTo(hx-3,14,hx-2,19);x.stroke()}},
+  // a bearded axe: a long low beard and a straight top, with a poll on the back
+  twiggy(x,L,t,g,G){const s=L*.66;handle(x,s,4.6,G,g);const hx=s-2;poly(x,[hx-3,-6,hx+4,-6,hx+4,6,hx-3,6],G.md);
+   poly(x,[hx+3,-6,hx+12,-9,hx+17,-4,hx+18,6,hx+15,16,hx+8,20,hx+5,9,hx+3,6],G.m);poly(x,[hx+5,-5,hx+12,-7.5,hx+15.5,-3.5,hx+16,4,hx+6,4],G.ml,.01);
+   x.strokeStyle=G.md;x.lineWidth=1.2;x.beginPath();x.moveTo(hx+17,-3);x.lineTo(hx+17.5,6);x.lineTo(hx+14.5,15);x.stroke();if(g>=1){poly(x,[hx-7,-4,hx-3,-4,hx-3,4,hx-7,4],G.md)}if(g>=2)gem(x,hx+8,4,3,GEM.twiggy);if(g>=3)star(x,hx+10,-2,3)},
+  // a rod with a cork grip and a reel; the line and bobber are drawn as before (fishing state)
+  bubbles(x,L,t,g,G){let bd=0;try{bd=TOOLS8.FISH.S.st=='reel'&&typeof FISHGAME!='undefined'?.25+FISHGAME.G.ten*.6:0}catch(_){}const tipX=L*.95,tipY=-L*.35;
+   x.strokeStyle=OL;x.lineWidth=4.6;x.beginPath();x.moveTo(-2,0);x.lineTo(tipX,tipY);x.stroke();x.strokeStyle=g>=3?G.band:g>=2?'#3a3a5a':g>=1?'#5a5a6a':'#8a5a30';x.lineWidth=2.6;x.stroke();
+   x.fillStyle=g>=3?G.h:'#c8a070';x.beginPath();x.roundRect(-3,-3,L*.22,6,3);x.fill();x.strokeStyle=OL;x.lineWidth=1.4;x.stroke();
+   const rx=L*.17,ry=5;x.fillStyle=G.m;x.beginPath();x.arc(rx,ry,4.4,0,6.3);x.fill();x.stroke();x.fillStyle=G.md;x.beginPath();x.arc(rx,ry,1.6,0,6.3);x.fill();
+   for(const u of[.45,.7,.88]){x.strokeStyle=g>=2?G.band:'#c8c8d0';x.lineWidth=1.2;x.beginPath();x.arc(tipX*u,tipY*u-2,1.8,0,6.3);x.stroke()}if(g>=2)gem(x,L*.27,-L*.1,2.6,GEM.bubbles);if(g>=3)star(x,tipX,tipY,2.4);
+   x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=1;x.beginPath();x.moveTo(tipX,tipY);let st='idle';try{st=TOOLS8.FISH.S.st}catch(_){}if(bd)x.quadraticCurveTo(L*.98,tipY+L*.2,L*1.0,tipY+bd*L*.5+8);else x.lineTo(tipX,tipY+8+(st=='idle'?Math.sin(t*3)*2:0));x.stroke()}};
+ function draw(x,id,L,t){const f=D[id];if(!f)return false;const g=grade(id);x.save();x.lineJoin='round';x.lineCap='round';try{f(x,L,t||0,g,GR[g])}finally{x.restore()}return true}
+ return{draw,grade,GR,IDS:Object.keys(D)}})();
+
 /* ========== LATE: 86-classes.js ========== */
 // ===== CLASS7: weapon classes (Brawler, Knight, Samurai, Archer, Mage, Demon, Reaper, Elementalist, Stormcaller, Berserker, Ninja, Druid, Gunslinger).
 // Your class is the class of the weapon in your hand. Each class levels up on its own from hits and kills made with its weapons,
@@ -11959,7 +12028,7 @@ const TOOLS8=(()=>{
  const tone=(a,b,d,ty,v,dl)=>{try{SFX7.tone(a,b,d,ty,v,dl)}catch(_){}};
  const inReach=(x,y)=>Math.hypot(x-P.x,y-(P.y+P.h/2))<REACH;
  function vein(tx,ty,id,n){const seen=new Set([ty*W+tx]),q=[[tx,ty]],out=[];while(q.length&&out.length<n){const[x,y]=q.shift();for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=ny*W+nx;if(nx<1||ny<1||nx>=W-1||ny>=H-1||seen.has(k))continue;seen.add(k);if(tiles[k]==id){out.push([nx,ny]);q.push([nx,ny])}}}return out}
- function use(w){wcd=w.cd/(1+bonus().atk*.5);swing=.15;const c={x:mx+cam.x,y:my+cam.y};P.f=c.x>=P.x?1:-1;
+ function use(w){wcd=w.cd/(1+bonus().atk*.5);/* the full arm arc (built for .22): a wind-up, the strike and a follow-through, not a swing that starts halfway */swing=.22;const c={x:mx+cam.x,y:my+cam.y};P.f=c.x>=P.x?1:-1;
   if(w.tool=='wrench'){try{ONL10.wrench(c)}catch(e){console.error(e)}return}
   if(w.tool=='rod'){FISH.click(c);return}
   const tk=pickTree(c.x,c.y);if(tk>=0&&Math.hypot((tk%W)*T+T/2-P.x,(tk/W|0)*T+T/2-(P.y+P.h/2))<REACH+T){const crop=typeof FARM9!='undefined'&&FARM9.isCrop(trees.get(tk));harvest(tk);if(w.tool=='tree'&&!crop&&!trees.has(tk)){const px=(tk%W)*T+T/2,py=(tk/W|0)*T;spawnDrop(px,py,5,2);ft(px,py-10,'+2 Wood','#d8ffb0')}tone(500,700,.08,'triangle',.04);return}
@@ -11991,7 +12060,7 @@ const TOOLS8=(()=>{
   wrench(x,L){const st=x.createLinearGradient(0,-L*.2,0,L*.2);st.addColorStop(0,'#f2f6fc');st.addColorStop(.5,'#b4c0d2');st.addColorStop(1,'#6e7b92');x.fillStyle=st;x.beginPath();x.roundRect(L*.04,-L*.075,L*.62,L*.15,L*.05);x.fill();x.stroke();/* open jaw */const r=L*.23,cx=L*.8,ja=.6;x.beginPath();x.arc(cx,0,r,ja,Math.PI*2-ja);x.lineTo(cx+r*.12,-r*.36);x.lineTo(cx-r*.18,-r*.36);x.lineTo(cx-r*.18,r*.36);x.lineTo(cx+r*.12,r*.36);x.closePath();x.fill();x.stroke();/* ring end */x.beginPath();x.arc(L*.02,0,L*.13,0,6.3);x.fill();x.stroke();x.fillStyle='#2a1a4a';x.beginPath();x.arc(L*.02,0,L*.06,0,6.3);x.fill();x.stroke();/* the gold band that marks it */x.fillStyle='#f4d59a';x.beginPath();x.rect(L*.46,-L*.1,L*.08,L*.2);x.fill();x.stroke()},
   bubbles(x,L,t){const bd=FISH.S.st=='reel'&&typeof FISHGAME!='undefined'?.25+FISHGAME.G.ten*.6:0;x.strokeStyle='#5a3a1a';x.lineWidth=3;x.beginPath();x.moveTo(-2,0);if(bd)x.quadraticCurveTo(L*.6,-L*.42,L*.95,-L*.35+bd*L*.5);else x.lineTo(L*.95,-L*.35);x.stroke();x.strokeStyle='#ffd34a';x.lineWidth=1.5;x.beginPath();x.moveTo(L*.1,-L*.04);x.lineTo(L*.22,-L*.08);x.stroke();
    x.fillStyle='#9ad8ff';x.strokeStyle='#000';x.lineWidth=1.5;x.beginPath();x.arc(L*.12,1,3.5,0,6.3);x.fill();x.stroke();if(FISH.S.st=='idle'){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=1;x.beginPath();x.moveTo(L*.95,-L*.35);x.lineTo(L*.95,-L*.35+8+Math.sin(t*3)*2);x.stroke()}}};
- {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){if((TL[id]||id=='wrench')&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';x.strokeStyle='#000';x.lineWidth=1.6;/* bigger in the hand than on an icon, so a tool reads at a glance */if(x===g)x.scale(1.28,1.28);try{MODEL[id](x,L,t||0)}finally{x.restore()}return}return _dw.apply(this,arguments)}}
+ {const _dw=drawWeapon;drawWeapon=function(x,id,L,t){if((TL[id]||id=='wrench')&&MODEL[id]){x.save();x.lineJoin='round';x.lineCap='round';x.strokeStyle='#000';x.lineWidth=1.6;/* bigger in the hand than on an icon, so a tool reads at a glance */if(x===g)x.scale(1.28,1.28);try{/* the graded equipment art (86-a-toolart.js); the older cute models remain for anything it does not draw */if(!(typeof TOOLART!='undefined'&&TOOLART.draw(x,id,L,t||0)))MODEL[id](x,L,t||0)}finally{x.restore()}return}return _dw.apply(this,arguments)}}
  // ======================= FISHING =======================
  // fish 240-249, bait 250-252 (materials: they stack, sell, trade)
  const FISHES={240:{n:'Minnow',c:'#b8c8d0',p:4,w:30},241:{n:'Bluegill',c:'#5aa0d8',p:7,w:24},242:{n:'Rainbow Trout',c:'#ff9ac8',p:12,w:16},243:{n:'Koi',c:'#ff8a3a',p:25,w:9},244:{n:'Pufferfish',c:'#ffe07a',p:30,w:7},
@@ -13014,9 +13083,12 @@ const TOOLLV=(()=>{
  let fst='idle';function fishWatch(){const s=TOOLS8.FISH.S;if(s.st===fst)return;const l=lvl('bubbles');if(s.st=='wait')s.t*=waitM(l);else if(s.st=='bite')s.t+=bite(l);fst=s.st}
  // ---- XP and level-ups
  const red=()=>{try{return !!(cel.opt.reduce||QM.reduce)}catch(_){return false}};
- function addXP(id,n){const s=S[id];if(!s||!(n>0))return;s.n=(s.n|0)+1;s.tx=(s.tx||0)+n;if(s.l>=MAX){dirty=1;chip(id);return}s.x+=n;dirty=1;while(s.l<MAX&&s.x>=need(s.l)){s.x-=need(s.l);s.l++;levelUp(id,s.l)}if(s.l>=MAX)s.x=0;chip(id)}
+ // use fills the bar; a full bar is "ready to forge" and waits for the Tool Forge (TFORGE, zt-toolforge.js), which charges gems and the tool's own
+ // materials (checked by the server online). Levels and progress already earned are kept exactly as they were
+ function addXP(id,n){const s=S[id];if(!s||!(n>0))return;s.n=(s.n|0)+1;s.tx=(s.tx||0)+n;if(s.l>=MAX){dirty=1;chip(id);return}s.x+=n;dirty=1;if(s.x>=need(s.l)){s.x=need(s.l);if(!s.rdy){s.rdy=1;try{if(typeof TFORGE!='undefined')TFORGE.ready(id)}catch(_){}}}chip(id)}
+ function forged(id){const s=S[id];if(!s||s.l>=MAX)return false;s.l++;s.x=0;s.rdy=0;levelUp(id,s.l);return true}
  const nameOf=id=>TL8[id].n.replace(/ the .*$/,'');
- function levelUp(id,l){flush(id);const g=GEMS[l]|0,nm=nameOf(id),pk=PERKS[id][l],ct=l>=10?5:l>=8?4:l>=6?3:l>=4?2:1;LOG.push({id,l,g});if(LOG.length>30)LOG.shift();
+ function levelUp(id,l){flush(id);const g=0,nm=nameOf(id),pk=PERKS[id][l],ct=l>=10?5:l>=8?4:l>=6?3:l>=4?2:1;LOG.push({id,l,g});if(LOG.length>30)LOG.shift();
   if(g>0){gems+=g;try{stat('gems',g)}catch(_){}}try{MSFX8.levelup(l)}catch(_){}
   const Rw=typeof REW8!='undefined'?REW8:null;
   if(Rw&&typeof entered!='undefined'&&entered){const x=P.x,y=P.y+P.h,c=l>=10?'#ff5f9e':l>=7?GOLD:COL[id];
@@ -13044,7 +13116,7 @@ const TOOLLV=(()=>{
  // ---- api
  function info(k){const id=String(k).replace(/^w:/,''),s=S[id];if(!s)return null;return{id,l:s.l,x:s.x,need:s.l>=MAX?0:need(s.l),tier:TIER[s.l],tierName:TIERN[TIER[s.l]],perk:s.l>=2?PERKS[id][s.l]:null,next:s.l<MAX?PERKS[id][s.l+1]:null,gemsNext:s.l<MAX?GEMS[s.l+1]:0,summary:summary(id,s.l),uses:s.n|0}}
  function set(id,l,x){if(!S[id])return;S[id].tx=S[id].tx||0;S[id].l=Math.max(1,Math.min(MAX,l|0));S[id].x=x|0;flush(id);save();try{renderBar()}catch(_){}try{dispatchEvent(new CustomEvent('rbtoollevel',{detail:{id,l:S[id].l,tier:TIER[S[id].l]}}))}catch(_){}}
- return{IDS,MAX,need,TIER,TIERN,GEMS,XP,PERKS,VEIN,COL,RB,summary,info,lvl,tier,add:addXP,set,save,reload:()=>{load();for(const id of IDS)flush(id)},get S(){return S},LOG,decorate,badge,badgeUnder,drawTool,under,over,
+ return{IDS,MAX,need,TIER,TIERN,GEMS,XP,PERKS,VEIN,COL,RB,summary,info,lvl,tier,add:addXP,forged,ready:id=>!!(S[id]&&S[id].l<MAX&&S[id].x>=need(S[id].l)),set,save,reload:()=>{load();for(const id of IDS)flush(id)},get S(){return S},LOG,decorate,badge,badgeUnder,drawTool,under,over,
   cls:k=>{const id=String(k).replace(/^w:/,'');return TL8[id]?'tl8 tl8-t'+tier(id):''},stats:{spd,drop,gemCh,wood,worm,glowB,quartz,amet,waitM,bite,luck,dbl},get U(){return U},get VN(){return VN},K,fishWatch}})();
 
 /* ========== LATE: 87-music.js ========== */
@@ -16849,10 +16921,10 @@ const GUIDE8=(()=>{
  function navBtn(id){const i=TOOLLV.info(id);return'<button role="tab" class="tg8t'+(pg==id?' on':'')+'" data-g="'+id+'" style="--tc:'+TOOLLV.COL[id]+'" aria-selected="'+(pg==id)+'"><img alt="" src="'+ico('w:'+id)+'"><span><b>'+esc(NM(id))+'</b><small>Lv '+i.l+(i.l>=10?' · MAX':'')+'</small>'+bar(i.l>=10?1:i.x/i.need)+'</span></button>'}
  function lvList(id){const i=TOOLLV.info(id),P=TOOLLV.PERKS[id];let h='<ol class="tg8pl">';
   for(let l=1;l<=10;l++){const st=l<=i.l?(l==i.l?'cur':'got'):l==i.l+1?'next':'',p=l==1?['Starter','Breaks its own blocks in one hit']:P[l];
-   h+='<li class="'+st+'" data-tier="'+TOOLLV.TIER[l]+'"><i>'+l+'</i><div><b>'+esc(p[0])+'</b><small>'+esc(p[1])+'</small></div>'+(TOOLLV.GEMS[l]?'<em><i class="gem"></i>'+TOOLLV.GEMS[l]+'</em>':'<em></em>')+'</li>'}return h+'</ol>'}
+   h+='<li class="'+st+'" data-tier="'+TOOLLV.TIER[l]+'"><i>'+l+'</i><div><b>'+esc(p[0])+'</b><small>'+esc(p[1])+'</small></div>'+'<em></em></li>'}return h+'</ol>'}
  function toolPage(id){const d=D[id],i=TOOLLV.info(id),nx=i.next;
   return'<div class="tg8tool" style="--tc:'+TOOLLV.COL[id]+'"><div class="tg8hero"><canvas class="tg8cv" width="440" height="300" data-id="'+id+'" aria-label="'+esc(NM(id))+' with its current shine"></canvas>'
-   +'<div class="tg8lv"><div class="tg8lvt"><b>Level '+i.l+'</b><span class="tg8tn" data-tier="'+i.tier+'">'+esc(i.tierName)+'</span></div>'+bar(i.l>=10?1:i.x/i.need)+'<small>'+(i.l>=10?'Max level · rainbow shine':Math.floor(i.x)+' / '+i.need+' XP · next: <b>'+esc(nx[0])+'</b> (+'+i.gemsNext+' gems)')+'</small></div>'
+   +'<div class="tg8lv"><div class="tg8lvt"><b>Level '+i.l+'</b><span class="tg8tn" data-tier="'+i.tier+'">'+esc(i.tierName)+'</span></div>'+bar(i.l>=10?1:i.x/i.need)+'<small>'+(i.l>=10?'Max level · rainbow shine':(i.x>=i.need?'<b>Ready to forge</b> · next: <b>'+esc(nx[0])+'</b>':Math.floor(i.x)+' / '+i.need+' XP · next: <b>'+esc(nx[0])+'</b>'))+'</small></div>'
    +'<div class="tg8now"><h5>Right now</h5><ul>'+i.summary.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div></div>'
    +'<div class="tg8info"><small class="tg8k">Tool</small><h4>'+esc(TL[id].n)+'</h4><p class="tg8d">'+esc(d.role)+'</p>'
    +'<section><h5>'+(id=='bubbles'?'Catches':'Breaks in one hit')+'</h5><div class="tg8chips">'+d.best().map(chip).join('')+(id=='twiggy'?'<span class="tg8c tg8tree"><i aria-hidden="true"></i>Whole trees</span>':'')+'</div></section>'
@@ -33315,6 +33387,67 @@ try{window.FACE1=(()=>{
  // their move plays with their own facing, not the last sampled walking direction
  try{const _o=FIGHT.onRemote;FIGHT.onRemote=function(key,id,q){try{const fa=q&&q.cx&&q.cx.fa;if(Array.isArray(fa)&&fa[2])q=Object.assign({},q,{f:fa[2]})}catch(_){}return _o?_o.call(this,key,id,q):undefined}}catch(_){}
  return{held,lock,side,aimA,freshAim,get pending(){return pend&&pend.sk&&pend.sk.id}}})()}catch(e){console.error('FACE1',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-zt-toolforge.js ========== */
+// ===== TFORGE: the Tool Forge. Using a tool fills its bar (TOOLLV); a full bar is "ready to forge", and forging to the next level costs gems plus the
+// tool's own materials, rarer at each step, with Monster Cores, Dungeon Essence, Tempering Oil and a Masterwork Component near the top. Online the server
+// checks and charges it (server/toolforge.js, the same table; a retried request is charged once); offline the same price comes off your bag.
+// A success plays a short anvil moment (three soft strikes, sparks, a bloom) before the level-up celebration. The forge lives in the Tool Guide (G),
+// under each tool's level bar, and a card says when a tool is ready. =====
+try{const TFORGE=window.TFORGE=(()=>{
+ const NAT={pip:[1,8,250,260,265],pebble:[3,77,262,263,264],glimmer:[71,72,73,75,76],twiggy:[5,260,706,261,265],bubbles:[240,242,244,246,248]};
+ const RECIPE={2:[60,[[0,30]],[]],3:[120,[[0,60]],[]],4:[220,[[0,40],[1,10]],[]],5:[350,[[1,20]],[[701,4]]],6:[550,[[1,30],[2,8]],[[701,8]]],
+  7:[800,[[2,14]],[[702,3]]],8:[1200,[[2,20],[3,6]],[[702,5]]],9:[1700,[[3,10]],[[702,8],[709,2]]],10:[2500,[[3,16],[4,2]],[[720,1]]]};
+ function cost(id,to){const r=RECIPE[to],nat=NAT[id];if(!r||!nat)return null;const out=[[0,r[0]]];for(const[t,n]of r[1])out.push([nat[t],n]);for(const[i,n]of r[2])out.push([i,n]);const m=new Map();for(const[i,n]of out)m.set(i,(m.get(i)||0)+n);return[...m.entries()]}
+ const have=i=>i===0?(gems|0):cnt(i);
+ const nm=i=>{try{return i===0?'Gems':iname(i)}catch(_){return'#'+i}};
+ const tname=id=>{try{return TOOLS8.TL[id].n.replace(/ the .*$/,'')}catch(_){return id}};
+ const creative=()=>{try{return DG.creative()}catch(_){return false}};
+ const srv=()=>{try{return NET7.online&&NET7.auth&&NET7.auth.kind!='guest'}catch(_){return false}};
+ function state(id){const i=TOOLLV.info(id);if(!i)return{ok:false,why:'Not a tool'};const s={id,l:i.l,max:i.l>=TOOLLV.MAX,ready:TOOLLV.ready(id),cost:null,miss:[],ok:false,why:''};
+  if(s.max){s.why=tname(id)+' is at its highest level';return s}s.cost=cost(id,i.l+1).map(([it,n])=>({it,n,have:have(it),name:nm(it)}));s.miss=s.cost.filter(c=>c.have<c.n);
+  if(!s.ready)s.why='Use '+tname(id)+' to fill its bar first ('+Math.floor(i.x)+' / '+i.need+')';else if(s.miss.length)s.why='Still needed: '+s.miss.map(c=>(c.n-c.have)+' '+c.name).join(', ');else s.ok=true;if(creative()&&s.ready)s.ok=true;return s}
+ // ---- forging
+ let busy=false;const open4=new Map(),pending=new Map();try{NET7.on('tup_res',m=>{const f=pending.get(String(m.rid||''));if(f){pending.delete(String(m.rid||''));f(m)}})}catch(_){}
+ async function forge(id){if(busy)return{ok:0,m:'One moment…'};const s=state(id);if(!s.ok)return{ok:0,m:s.why};busy=true;
+  try{if(srv()&&!creative()){const rid=open4.get(id+':'+s.l)||('t'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));open4.set(id+':'+s.l,rid);
+    try{NET7.send({t:'sync',gems:Math.max(0,(gems|0)+(SHOP7.pend|0))})}catch(_){}try{window.RB_BAGREPORT&&RB_BAGREPORT()}catch(_){}
+    const r=await new Promise(ok=>{const t=setTimeout(()=>{pending.delete(rid);ok({ok:0,m:'The server is slow to answer. Nothing is lost: try again and you will only be charged once.'})},8000);pending.set(rid,v=>{clearTimeout(t);ok(v)});if(!NET7.send({t:'tup',tool:id,from:s.l,rid})){clearTimeout(t);pending.delete(rid);ok({ok:0,m:'Not connected. You were not charged.'})}});
+    if(!r.ok){if(r.to!=null&&r.to>s.l){while(TOOLLV.lvl(id)<r.to&&TOOLLV.forged(id)){}}return{ok:0,m:r.m||'That did not work. Nothing was spent.'}}open4.delete(id+':'+s.l)}
+   else if(!creative()){for(const c of s.cost){if(c.it===0)gems-=c.n;else addI(c.it,-c.n)}try{saveP()}catch(_){}}
+   await anvil(id,s.l+1);TOOLLV.forged(id);decorate();return{ok:1,to:s.l+1}}finally{busy=false}}
+ // ---- the anvil moment: three soft strikes with sparks, then a bloom, then TOOLLV's level-up celebration
+ const reduce=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches||!!(cel.opt&&cel.opt.reduce)}catch(_){return false}};
+ function strikeSnd(i){try{const f=[392,440,523][i]||523;snd(f,.09,'triangle',.035,.55);noise(.05,2600+i*400,.04)}catch(_){}}
+ function chime(){try{[784,988,1175,1568].forEach((f,i)=>setTimeout(()=>{try{snd(f,.32,'sine',.028,1.4)}catch(_){}},i*80))}catch(_){}}
+ function anvil(id,to){return new Promise(res=>{if(reduce()){chime();return res()}const el=document.createElement('div');el.id='tf9anim';el.setAttribute('aria-hidden','true');const cv2=document.createElement('canvas');cv2.width=420;cv2.height=300;el.appendChild(cv2);
+  const cap=document.createElement('p');cap.textContent='Forging '+tname(id)+' to level '+to;el.appendChild(cap);document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('on'));
+  const x=cv2.getContext('2d'),t0=performance.now(),D=1500,sp=[];let hit=-1;const col=TOOLLV.COL[id]||'#ffd27a';
+  const frame=now=>{const t=now-t0;x.clearRect(0,0,420,300);
+   // anvil
+   x.fillStyle='#3a3350';x.beginPath();x.moveTo(110,206);x.lineTo(310,206);x.quadraticCurveTo(330,196,336,180);x.lineTo(150,180);x.quadraticCurveTo(116,186,110,206);x.fill();x.fillRect(176,206,68,30);x.fillRect(150,236,120,14);x.strokeStyle='#1e1430';x.lineWidth=3;x.strokeRect(176,206,68,30);
+   // the tool on the anvil, glowing more with each strike
+   const glow=Math.min(1,Math.max(0,hit+1)/3);x.save();x.translate(210,168);x.rotate(-.18);try{drawWeapon(x,id,92,0)}catch(_){}x.restore();if(glow>0){x.save();x.globalCompositeOperation='lighter';const g=x.createRadialGradient(210,168,4,210,168,90);g.addColorStop(0,'rgba(255,240,200,'+(.5*glow)+')');g.addColorStop(1,'rgba(255,200,120,0)');x.fillStyle=g;x.fillRect(110,80,200,180);x.restore()}
+   // the hammer: three strikes
+   const k=Math.min(2,Math.floor(t/380)),u=(t%380)/380,down=u<.35?u/.35:u<.5?1:1-(u-.5)/.5;if(t<1140&&k>hit&&u>.33){hit=k;strikeSnd(k);for(let i=0;i<14;i++)sp.push({x:210,y:172,vx:(Math.random()-.5)*360,vy:-Math.random()*280-60,l:.6+Math.random()*.4,c:i%3?col:'#fff2c0'})}
+   if(t<1140){x.save();x.translate(286,40);x.rotate(-1.1+down*1.05);x.fillStyle='#6b4a3e';x.fillRect(-5,0,10,120);x.fillStyle='#8f8aa6';x.fillRect(-26,112,52,26);x.strokeStyle='#1e1430';x.lineWidth=2.5;x.strokeRect(-26,112,52,26);x.restore()}
+   // sparks
+   const dt=1/60;for(const s of sp){s.l-=dt;s.x+=s.vx*dt;s.y+=s.vy*dt;s.vy+=700*dt;if(s.l>0){x.globalAlpha=Math.min(1,s.l*1.6);x.fillStyle=s.c;x.fillRect(s.x,s.y,3,3)}}x.globalAlpha=1;
+   // the bloom
+   if(t>1150){const b=(t-1150)/350;x.save();x.globalCompositeOperation='lighter';x.fillStyle='rgba(255,236,190,'+(Math.max(0,1-b)*.6)+')';x.beginPath();x.arc(210,168,40+b*160,0,6.3);x.fill();x.restore()}
+   if(t<D)requestAnimationFrame(frame);else{chime();el.classList.remove('on');setTimeout(()=>{try{el.remove()}catch(_){}},260);res()}};requestAnimationFrame(frame)})}
+ // ---- telling you when a tool is ready
+ function ready(id){try{const i=TOOLLV.info(id);REW8.card({kind:'tool',kick:'Ready to forge',title:tname(id)+' → level '+(i.l+1),sub:'Open the Tool Guide (G) and forge it with its materials',tier:2,icon:'w:'+id,ms:4200})}catch(_){}}
+ // ---- the forge panel under the level bar on each tool's page of the Tool Guide
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ let msg='';
+ function panel(id){const s=state(id);if(s.max)return'<div class="tf9 max"><b>Highest level</b><small>'+esc(tname(id))+' is fully forged.</small></div>';
+  const rows=s.cost.map(c=>'<li class="'+(c.have>=c.n?'ok':'no')+'">'+(c.it===0?'<i class="gem" aria-hidden="true"></i>':'<img alt="" src="'+(()=>{try{return iconURL(c.it)}catch(_){return''}})()+'">')+'<span>'+esc(c.name)+'</span><em>'+Math.min(c.have,c.n).toLocaleString()+' / '+c.n.toLocaleString()+'</em></li>').join('');
+  return'<div class="tf9'+(s.ok?' ok':'')+'"><div class="tf9h"><b>Tool Forge</b><small>to level '+(s.l+1)+'</small></div><ul>'+rows+'</ul>'+(s.why?'<p class="tf9w">'+esc(s.why)+'</p>':'')+(msg?'<p class="tf9m">'+esc(msg)+'</p>':'')+'<button type="button" class="tf9b"'+(s.ok?'':' disabled')+' data-tf="'+id+'">Forge</button></div>'}
+ function decorate(){try{if(!(UI6.on&&UI6.tab=='toolguide'))return;const id=GUIDE8.page;if(!TOOLLV.IDS.includes(id))return;const lv=UI6.body&&UI6.body.querySelector('.tg8lv');if(!lv)return;let box=lv.parentNode.querySelector('.tf9wrap');if(!box){box=document.createElement('div');box.className='tf9wrap';lv.after(box)}box.innerHTML=panel(id);
+   const b=box.querySelector('[data-tf]');if(b)b.onclick=async()=>{b.disabled=true;msg='';const r=await forge(id);msg=r.ok?'':r.m||'';try{GUIDE8.refresh()}catch(_){}decorate()}}catch(e){console.error('TFORGE panel',e)}}
+ try{for(const k of['open','refresh','go']){const f0=GUIDE8[k];GUIDE8[k]=function(){const r=f0.apply(this,arguments);try{decorate()}catch(_){}return r}}}catch(_){}
+ return{NAT,RECIPE,cost,state,forge,ready,decorate,panel}})()}catch(e){console.error('TFORGE',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-zv-valley.js ========== */
 // ===== The compact valley of a g3 world (VILL9): cut last, after every other part of world generation (caves, lakes, chests, depths), so nothing

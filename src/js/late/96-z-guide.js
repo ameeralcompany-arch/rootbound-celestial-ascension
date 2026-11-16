@@ -34,10 +34,10 @@ const GUIDE8=(()=>{
  function navBtn(id){const i=TOOLLV.info(id);return'<button role="tab" class="tg8t'+(pg==id?' on':'')+'" data-g="'+id+'" style="--tc:'+TOOLLV.COL[id]+'" aria-selected="'+(pg==id)+'"><img alt="" src="'+ico('w:'+id)+'"><span><b>'+esc(NM(id))+'</b><small>Lv '+i.l+(i.l>=10?' · MAX':'')+'</small>'+bar(i.l>=10?1:i.x/i.need)+'</span></button>'}
  function lvList(id){const i=TOOLLV.info(id),P=TOOLLV.PERKS[id];let h='<ol class="tg8pl">';
   for(let l=1;l<=10;l++){const st=l<=i.l?(l==i.l?'cur':'got'):l==i.l+1?'next':'',p=l==1?['Starter','Breaks its own blocks in one hit']:P[l];
-   h+='<li class="'+st+'" data-tier="'+TOOLLV.TIER[l]+'"><i>'+l+'</i><div><b>'+esc(p[0])+'</b><small>'+esc(p[1])+'</small></div>'+(TOOLLV.GEMS[l]?'<em><i class="gem"></i>'+TOOLLV.GEMS[l]+'</em>':'<em></em>')+'</li>'}return h+'</ol>'}
+   h+='<li class="'+st+'" data-tier="'+TOOLLV.TIER[l]+'"><i>'+l+'</i><div><b>'+esc(p[0])+'</b><small>'+esc(p[1])+'</small></div>'+'<em></em></li>'}return h+'</ol>'}
  function toolPage(id){const d=D[id],i=TOOLLV.info(id),nx=i.next;
   return'<div class="tg8tool" style="--tc:'+TOOLLV.COL[id]+'"><div class="tg8hero"><canvas class="tg8cv" width="440" height="300" data-id="'+id+'" aria-label="'+esc(NM(id))+' with its current shine"></canvas>'
-   +'<div class="tg8lv"><div class="tg8lvt"><b>Level '+i.l+'</b><span class="tg8tn" data-tier="'+i.tier+'">'+esc(i.tierName)+'</span></div>'+bar(i.l>=10?1:i.x/i.need)+'<small>'+(i.l>=10?'Max level · rainbow shine':Math.floor(i.x)+' / '+i.need+' XP · next: <b>'+esc(nx[0])+'</b> (+'+i.gemsNext+' gems)')+'</small></div>'
+   +'<div class="tg8lv"><div class="tg8lvt"><b>Level '+i.l+'</b><span class="tg8tn" data-tier="'+i.tier+'">'+esc(i.tierName)+'</span></div>'+bar(i.l>=10?1:i.x/i.need)+'<small>'+(i.l>=10?'Max level · rainbow shine':(i.x>=i.need?'<b>Ready to forge</b> · next: <b>'+esc(nx[0])+'</b>':Math.floor(i.x)+' / '+i.need+' XP · next: <b>'+esc(nx[0])+'</b>'))+'</small></div>'
    +'<div class="tg8now"><h5>Right now</h5><ul>'+i.summary.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div></div>'
    +'<div class="tg8info"><small class="tg8k">Tool</small><h4>'+esc(TL[id].n)+'</h4><p class="tg8d">'+esc(d.role)+'</p>'
    +'<section><h5>'+(id=='bubbles'?'Catches':'Breaks in one hit')+'</h5><div class="tg8chips">'+d.best().map(chip).join('')+(id=='twiggy'?'<span class="tg8c tg8tree"><i aria-hidden="true"></i>Whole trees</span>':'')+'</div></section>'

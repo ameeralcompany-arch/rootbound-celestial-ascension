@@ -123,9 +123,12 @@ const TOOLLV=(()=>{
  let fst='idle';function fishWatch(){const s=TOOLS8.FISH.S;if(s.st===fst)return;const l=lvl('bubbles');if(s.st=='wait')s.t*=waitM(l);else if(s.st=='bite')s.t+=bite(l);fst=s.st}
  // ---- XP and level-ups
  const red=()=>{try{return !!(cel.opt.reduce||QM.reduce)}catch(_){return false}};
- function addXP(id,n){const s=S[id];if(!s||!(n>0))return;s.n=(s.n|0)+1;s.tx=(s.tx||0)+n;if(s.l>=MAX){dirty=1;chip(id);return}s.x+=n;dirty=1;while(s.l<MAX&&s.x>=need(s.l)){s.x-=need(s.l);s.l++;levelUp(id,s.l)}if(s.l>=MAX)s.x=0;chip(id)}
+ // use fills the bar; a full bar is "ready to forge" and waits for the Tool Forge (TFORGE, zt-toolforge.js), which charges gems and the tool's own
+ // materials (checked by the server online). Levels and progress already earned are kept exactly as they were
+ function addXP(id,n){const s=S[id];if(!s||!(n>0))return;s.n=(s.n|0)+1;s.tx=(s.tx||0)+n;if(s.l>=MAX){dirty=1;chip(id);return}s.x+=n;dirty=1;if(s.x>=need(s.l)){s.x=need(s.l);if(!s.rdy){s.rdy=1;try{if(typeof TFORGE!='undefined')TFORGE.ready(id)}catch(_){}}}chip(id)}
+ function forged(id){const s=S[id];if(!s||s.l>=MAX)return false;s.l++;s.x=0;s.rdy=0;levelUp(id,s.l);return true}
  const nameOf=id=>TL8[id].n.replace(/ the .*$/,'');
- function levelUp(id,l){flush(id);const g=GEMS[l]|0,nm=nameOf(id),pk=PERKS[id][l],ct=l>=10?5:l>=8?4:l>=6?3:l>=4?2:1;LOG.push({id,l,g});if(LOG.length>30)LOG.shift();
+ function levelUp(id,l){flush(id);const g=0,nm=nameOf(id),pk=PERKS[id][l],ct=l>=10?5:l>=8?4:l>=6?3:l>=4?2:1;LOG.push({id,l,g});if(LOG.length>30)LOG.shift();
   if(g>0){gems+=g;try{stat('gems',g)}catch(_){}}try{MSFX8.levelup(l)}catch(_){}
   const Rw=typeof REW8!='undefined'?REW8:null;
   if(Rw&&typeof entered!='undefined'&&entered){const x=P.x,y=P.y+P.h,c=l>=10?'#ff5f9e':l>=7?GOLD:COL[id];
@@ -153,5 +156,5 @@ const TOOLLV=(()=>{
  // ---- api
  function info(k){const id=String(k).replace(/^w:/,''),s=S[id];if(!s)return null;return{id,l:s.l,x:s.x,need:s.l>=MAX?0:need(s.l),tier:TIER[s.l],tierName:TIERN[TIER[s.l]],perk:s.l>=2?PERKS[id][s.l]:null,next:s.l<MAX?PERKS[id][s.l+1]:null,gemsNext:s.l<MAX?GEMS[s.l+1]:0,summary:summary(id,s.l),uses:s.n|0}}
  function set(id,l,x){if(!S[id])return;S[id].tx=S[id].tx||0;S[id].l=Math.max(1,Math.min(MAX,l|0));S[id].x=x|0;flush(id);save();try{renderBar()}catch(_){}try{dispatchEvent(new CustomEvent('rbtoollevel',{detail:{id,l:S[id].l,tier:TIER[S[id].l]}}))}catch(_){}}
- return{IDS,MAX,need,TIER,TIERN,GEMS,XP,PERKS,VEIN,COL,RB,summary,info,lvl,tier,add:addXP,set,save,reload:()=>{load();for(const id of IDS)flush(id)},get S(){return S},LOG,decorate,badge,badgeUnder,drawTool,under,over,
+ return{IDS,MAX,need,TIER,TIERN,GEMS,XP,PERKS,VEIN,COL,RB,summary,info,lvl,tier,add:addXP,forged,ready:id=>!!(S[id]&&S[id].l<MAX&&S[id].x>=need(S[id].l)),set,save,reload:()=>{load();for(const id of IDS)flush(id)},get S(){return S},LOG,decorate,badge,badgeUnder,drawTool,under,over,
   cls:k=>{const id=String(k).replace(/^w:/,'');return TL8[id]?'tl8 tl8-t'+tier(id):''},stats:{spd,drop,gemCh,wood,worm,glowB,quartz,amet,waitM,bite,luck,dbl},get U(){return U},get VN(){return VN},K,fishWatch}})();

@@ -12,9 +12,9 @@ async function enter(p,url){await p.addInitScript(()=>{if(!localStorage.getItem(
  // ---- natural blocks pay, your own blocks only come back
  const r=await E(()=>{const gemsIn=(n0)=>drops.slice(n0).filter(d=>d.k==='gem').reduce((s,d)=>s+(d.n||1),0);const seedsIn=n0=>drops.slice(n0).filter(d=>typeof d.k=='number'&&d.k>=100&&d.k<200).length;
   const out={};const R0=Math.random;Math.random=()=>.05;try{
-   const k0=(20*W)+40;const nat=(id)=>{const x=40,y=20,k=y*W+x;edits[k]=undefined;delete edits[k];tiles[k]=id;hp[k]=1;const xp0=JSON.stringify(typeof skills!='undefined'?skills:0),n0=drops.length;const r=breakAt(x,y,255);return{r,g:gemsIn(n0),s:seedsIn(n0),same:JSON.stringify(typeof skills!='undefined'?skills:0)==xp0,blk:drops.slice(n0).filter(d=>d.k===id).length}};
-   const placed=(id)=>{const x=40,y=20,k=y*W+x;tiles[k]=id;hp[k]=1;pushEdit(k);const xp0=JSON.stringify(typeof skills!='undefined'?skills:0),n0=drops.length;const r=breakAt(x,y,255);return{r,g:gemsIn(n0),s:seedsIn(n0),same:JSON.stringify(typeof skills!='undefined'?skills:0)==xp0,blk:drops.slice(n0).filter(d=>d.k===id).length}};
-   out.nat=nat(3);out.pl=placed(3);out.oreNat=nat(63);out.orePl=placed(63);out.urnPl=placed(93);out.was=[(()=>{const k=21*W+40;tiles[k]=3;pushEdit(k);return wasPlaced(k)})(),(()=>{const k=22*W+40;delete edits[k];return wasPlaced(k)})()];
+   const k0=(20*W)+100;const nat=(id)=>{const x=100,y=20,k=y*W+x;edits[k]=undefined;delete edits[k];tiles[k]=id;hp[k]=1;const xp0=JSON.stringify(typeof skills!='undefined'?skills:0),n0=drops.length;const r=breakAt(x,y,255);return{r,g:gemsIn(n0),s:seedsIn(n0),same:JSON.stringify(typeof skills!='undefined'?skills:0)==xp0,blk:drops.slice(n0).filter(d=>d.k===id).length}};
+   const placed=(id)=>{const x=100,y=20,k=y*W+x;tiles[k]=id;hp[k]=1;pushEdit(k);const xp0=JSON.stringify(typeof skills!='undefined'?skills:0),n0=drops.length;const r=breakAt(x,y,255);return{r,g:gemsIn(n0),s:seedsIn(n0),same:JSON.stringify(typeof skills!='undefined'?skills:0)==xp0,blk:drops.slice(n0).filter(d=>d.k===id).length}};
+   out.nat=nat(3);out.pl=placed(3);out.oreNat=nat(63);out.orePl=placed(63);out.urnPl=placed(93);out.was=[(()=>{const k=21*W+100;tiles[k]=3;pushEdit(k);return wasPlaced(k)})(),(()=>{const k=22*W+100;delete edits[k];return wasPlaced(k)})()];
   }finally{Math.random=R0}return out});
  ok('a natural block pays gems and sometimes a seed',r.nat.r&&r.nat.g>=0&&r.nat.s==1,JSON.stringify(r.nat));
  ok('a block you placed yourself comes back',r.pl.r&&r.pl.blk>=1,JSON.stringify(r.pl));
