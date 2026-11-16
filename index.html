@@ -141,6 +141,25 @@ img{image-rendering:pixelated}
 @font-face{font-family:'Montserrat';font-style:normal;font-weight:500 900;font-display:swap;src:url(assets/fonts/montserrat-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
 @font-face{font-family:'Montserrat';font-style:normal;font-weight:500 900;font-display:swap;src:url(assets/fonts/montserrat-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 
+/* ========== CSS: 01-tokens.css ========== */
+/* ===== Rootbound design tokens (master update 2). One set for the whole game: calm night surfaces, warm ivory text, one gold for primary actions,
+   one rarity table (also used by the canvas, RBRAR in JS), a short type scale, a 4-based spacing scale, four radii, three shadows, four motion speeds.
+   99-zzzzzzzzzz-unify.css points every older variable at these, so screens built over the years speak one visual language. ===== */
+:root{
+ --rb-bg:#0b0a16;--rb-s1:#15112a;--rb-s2:#1d1838;--rb-s3:#262046;
+ --rb-line:rgba(244,213,154,.14);--rb-line-2:rgba(244,213,154,.32);
+ --rb-ink:#f6f1e7;--rb-ink-2:#d9d2e6;--rb-ink-3:#a9a1be;
+ --rb-gold:#f4d59a;--rb-gold-2:#d9b773;--rb-rose:#e8899f;--rb-info:#7ad8ff;--rb-ok:#8fd9a8;--rb-danger:#f08a8a;
+ --rb-common:#b8b3c7;--rb-uncommon:#8bd9ae;--rb-rare:#8db8f5;--rb-epic:#c3a9ff;--rb-legendary:#f0cf83;--rb-mythic:#ff8fae;--rb-relic:#7ff5e0;
+ --rb-font:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;--rb-font-display:'Cormorant Garamond','Cormorant',Georgia,serif;
+ --rb-fs-xs:11px;--rb-fs-s:12px;--rb-fs-m:13px;--rb-fs-l:15px;--rb-fs-xl:18px;--rb-fs-h3:22px;--rb-fs-h2:30px;
+ --rb-sp-1:4px;--rb-sp-2:8px;--rb-sp-3:12px;--rb-sp-4:16px;--rb-sp-5:24px;--rb-sp-6:32px;
+ --rb-r-s:8px;--rb-r-m:12px;--rb-r-l:20px;--rb-r-pill:999px;
+ --rb-sh-1:0 1px 2px rgba(0,0,0,.35);--rb-sh-2:0 12px 32px -12px rgba(0,0,0,.55);--rb-sh-3:0 40px 90px -30px rgba(0,0,0,.65);
+ --rb-ease:cubic-bezier(.16,1,.3,1);--rb-ease-io:cubic-bezier(.65,0,.35,1);--rb-t-1:120ms;--rb-t-2:200ms;--rb-t-3:320ms;--rb-t-4:600ms;
+}
+@media (prefers-reduced-motion:reduce){:root{--rb-t-1:0ms;--rb-t-2:0ms;--rb-t-3:0ms;--rb-t-4:0ms}}
+
 /* ========== CSS: 10-theme.css ========== */
 :root{--ink:#07060d;--panel:#0d0b16;--panel2:#15111f;--line:#3a2a3f;--gold:#d9b46a;--gold2:#f3dca0;--rose:#b3263a;--vio:#9a6bff;--ice:#9fd8ff;--txt:#ece6f4;--dim:#9a90ad;--green:#4dff9a}
 
@@ -3890,6 +3909,39 @@ html[data-reduce=true] html:root:root body #inv7 .it7[data-rar],html[data-reduce
 @media (max-width:620px){.tf9 ul{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){#tf9anim{transition:none}}
 
+/* ========== CSS: 99-zzzzzzzzzz-unify.css ========== */
+/* ===== One visual language (master update 2). Loads last. Every older design variable, from all the layers that redefined it over time, now points at the
+   Rootbound tokens (01-tokens.css); panels, tooltips and primary buttons share one shape. Nothing here changes a layout size or an element id. ===== */
+html:root:root{
+ --ink:var(--rb-ink);--ink-2:var(--rb-ink-2);--muted:var(--rb-ink-3);--ed-ink:var(--rb-ink);--ed-mute:var(--rb-ink-3);
+ --line:var(--rb-line);--line-strong:var(--rb-line-2);--ed-rule:var(--rb-line);
+ --accent:var(--rb-gold);--accent-2:var(--rb-rare);--g-accent:var(--rb-gold);--btn-primary:var(--rb-gold);
+ --surface:rgba(21,17,42,.94);--surface-solid:var(--rb-s1);--surface-2:var(--rb-s2);--panel:rgba(21,17,42,.94);
+ --sel-bd:var(--rb-line-2);--sel-bg:rgba(244,213,154,.08);
+ --font-ui:var(--rb-font);--font-display:var(--rb-font-display);--ed-font:var(--rb-font-display);--ui-font:var(--rb-font);
+ --rad-xs:4px;--rad-sm:var(--rb-r-s);--rad-md:var(--rb-r-m);--rad-lg:var(--rb-r-l);--rad-pill:var(--rb-r-pill);--rad-glass:var(--rb-r-l);
+ --sh-1:var(--rb-sh-1);--sh-2:var(--rb-sh-2);--sh-3:var(--rb-sh-3);
+ --mo-ease:var(--rb-ease);--mo-fast:var(--rb-t-1);--t-fast:var(--rb-t-1);--t-med:var(--rb-t-2);--t-slow:var(--rb-t-3);--dur-1:var(--rb-t-2);--dur-2:var(--rb-t-3);--ease-out:var(--rb-ease);
+ --r-common-c:var(--rb-common);--r-uncommon-c:var(--rb-uncommon);--r-rare-c:var(--rb-rare);--r-epic-c:var(--rb-epic);--r-legendary-c:var(--rb-legendary);--r-mythic-c:var(--rb-mythic);
+ --ds-gold:var(--rb-gold);
+}
+/* the big panels: one radius, one hairline, one deep shadow */
+html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7){border-radius:var(--rb-r-l)!important;border:1px solid var(--rb-line)!important;box-shadow:var(--rb-sh-3)!important}
+/* tooltips: four older styles become one */
+html:root:root body :is(#eq9tip,#nav16tip,#sk9tip,.tip7,.tooltip){background:var(--rb-s2)!important;color:var(--rb-ink)!important;border:1px solid var(--rb-line-2)!important;border-radius:10px!important;box-shadow:var(--rb-sh-2)!important;font-family:var(--rb-font)!important;font-size:var(--rb-fs-s)!important;line-height:1.45!important;backdrop-filter:none!important}
+/* primary actions: one warm gold with dark ink, the same pressed and disabled states everywhere */
+html:root:root body :is(button.pri,.btn.pri,#lavib .ac button.pri,#dlg7 [data-ok]:not([data-danger]),.rpgov button.pri,#store7 aside [data-a=buy]){background:var(--rb-gold)!important;color:#1b1530!important;border:0!important;border-radius:var(--rb-r-m)!important;font-weight:700!important;transition:filter var(--rb-t-1) var(--rb-ease),transform var(--rb-t-1) var(--rb-ease)!important}
+html:root:root body :is(button.pri,.btn.pri,#lavib .ac button.pri,.rpgov button.pri,#store7 aside [data-a=buy]):hover:not(:disabled){filter:brightness(1.07)}
+html:root:root body :is(button.pri,.btn.pri,#lavib .ac button.pri,.rpgov button.pri,#store7 aside [data-a=buy]):active:not(:disabled){transform:translateY(1px)}
+html:root:root body :is(button.pri,.btn.pri,.rpgov button.pri,#store7 aside [data-a=buy]):disabled{background:rgba(255,255,255,.08)!important;color:var(--rb-ink-3)!important}
+/* Lavi's bubble joins the same surfaces (she keeps her violet name) */
+html:root:root body #lavib{background:var(--rb-s2);border:1px solid var(--rb-line-2);border-radius:var(--rb-r-l);box-shadow:var(--rb-sh-2);font-family:var(--rb-font)}
+html:root:root body #lavib .ac button:not(.pri){background:rgba(255,255,255,.05);border:1px solid var(--rb-line);border-radius:var(--rb-r-m)}
+/* focus is always visible, the same gold ring */
+html:root:root body :is(button,[role=tab],input,select):focus-visible{outline:2px solid var(--rb-gold)!important;outline-offset:2px}
+/* the big panels sit on a near-solid surface, so the world behind never shows through their text */
+html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7){background:linear-gradient(180deg,rgba(29,24,56,.985),rgba(21,17,42,.99))!important;backdrop-filter:none!important}
+
 </style></head><body><canvas id="c"></canvas>
 <div id="hudL" class="pn"><div id="pname"></div><div class="hpb"><i id="hpf"></i></div><div class="hpb xp"><i id="xpf"></i></div><div><span class="gem"></span><b id="gv">0</b></div></div>
 <div id="hudC" class="pn"><span id="wname"></span><span id="wchip"></span></div>
@@ -3911,7 +3963,7 @@ html[data-reduce=true] html:root:root body #inv7 .it7[data-rar],html[data-reduce
 <script>
 let g;const $=id=>document.getElementById(id),cv=$('c'),g0=cv.getContext('2d',{alpha:false}),lc=document.createElement('canvas'),lg=lc.getContext('2d');g=g0;
 let RSC=1;function rs(){const a=Math.min(1,Math.sqrt(2073600/(innerWidth*innerHeight))),k=a*RSC*(window.zlow6?.85:1);cv.width=Math.round(innerWidth*k);cv.height=Math.round(innerHeight*k);lc.width=cv.width>>1;lc.height=cv.height>>1}addEventListener('resize',rs);rs();
-const T=48,W=256,H=128,DAY=240,FONT="'Pixelify Sans','Fredoka',system-ui,sans-serif",DX=W>>1,REACH=4.6*T;
+const T=48,W=256,H=128,DAY=240,FONT="'Montserrat',system-ui,sans-serif",DX=W>>1,REACH=4.6*T;
 const rr=(x,y,w,h,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,w,h,r):g.rect(x,y,w,h)},rnd=(a,b)=>a+Math.random()*(b-a);
 const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),mixc=(c,k)=>'rgb('+hx(c).map(v=>Math.max(0,Math.min(255,v*k|0)))+')',blend=(a,b,t)=>'rgb('+hx(a).map((v,i)=>v*(1-t)+hx(b)[i]*t|0)+')';
 // ---------- data
@@ -17045,7 +17097,7 @@ const STORE7=(()=>{
  function render(){if(!el)return;MOTION7.tick(el.querySelector('#s7g'),gems|0);el.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.c==cat));try{MOTION7.ind(el.querySelector('nav'),'button.on','v')}catch(_){}
   const key=cat+'|'+sort+'|'+rar+'|'+ownedOnly+'|'+buyOnly,anim=key!=lastKey;lastKey=key; // cards cascade in when the shelf changes, not on every refresh
   const g=el.querySelector('.grid');let h='';
-  if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly&&!buyOnly){{const cs=SHOP7.items.filter(i=>i.cat=='cosmetics'&&i.sale!==0),sets=[];for(const i of cs){let s=sets.find(x=>x.k==i.set);if(!s)sets.push(s={k:i.set,n:i.setn||'Cosmetics',L:[]});s.L.push(i)}for(const s of sets)h+='<h4>'+esc(s.n)+' · looks only, no stats</h4><div class="cards">'+s.L.sort((a,b)=>a.ord-b.ord).map(card).join('')+'</div>'}const now=SHOP7.items.filter(i=>i.sale!==0&&buyable(i)&&!i.stack&&CATBUY.has(i.cat)).sort((a,b)=>a.price-b.price).slice(0,12);if(now.length)h+='<h4>You can buy now</h4><div class="cards">'+now.map(card).join('')+'</div>';h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){const its=ids.map(i=>SHOP7.byId.get(i)).filter(Boolean);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
+  if(cat=='featured'&&!q&&rar=='all'&&!ownedOnly&&!buyOnly){{const cs=SHOP7.items.filter(i=>i.cat=='cosmetics'&&i.sale!==0),sets=[];for(const i of cs){let s=sets.find(x=>x.k==i.set);if(!s)sets.push(s={k:i.set,n:i.setn||'Cosmetics',L:[]});s.L.push(i)}for(const s of sets)h+='<h4>'+esc(s.n)+' · looks only, no stats</h4><div class="cards">'+s.L.sort((a,b)=>a.ord-b.ord).map(card).join('')+'</div>'}const now=SHOP7.items.filter(i=>i.sale!==0&&buyable(i)&&!i.stack&&CATBUY.has(i.cat)).sort((a,b)=>a.price-b.price).slice(0,12);if(now.length)h+='<h4>You can buy now</h4><div class="cards">'+now.map(card).join('')+'</div>';h+='<h4>Featured</h4><div class="cards">'+list().map(card).join('')+'</div>';for(const[n,sub,ids]of COLL){/* only what is still sold: looks are earned now (master update 2) */const its=ids.map(i=>SHOP7.byId.get(i)).filter(i=>i&&i.sale!==0);if(its.length)h+='<h4>'+esc(n)+' · '+esc(sub)+'</h4><div class="cards">'+its.map(card).join('')+'</div>'}}
   else{const L=list();h+=L.length?'<div class="cards">'+L.map(card).join('')+'</div>':'<div class="empty">Nothing matches. Try a different search or filter.</div>'}
   if(!anim)MOTION7.still(g);g.innerHTML=h;paintThumbs(g);if(anim){g.scrollTop=0;MOTION7.stagger(g,'.card,h4',16)}g.querySelectorAll('.card').forEach(c=>{c.onclick=()=>select(c.dataset.id);c.ondblclick=()=>{select(c.dataset.id);const it=SHOP7.byId.get(c.dataset.id);if(it&&buyable(it))act('buy');else if(it&&has(it)&&equipable(it)&&!eqd(it))act('eq')}});renderDetail()}
  function renderDetail(){const a=el.querySelector('aside');const it=selId&&SHOP7.byId.get(selId);if(!it){a.innerHTML='<h3>Pick an item</h3><p>Select anything to see a live preview, what it does, and how to get it.</p>';pv=null;return}
@@ -19853,7 +19905,7 @@ const FISHGAME=(()=>{
  function win(){if(!G.on)return false;G.pr=1;return true}
  // result popup (fish preview) shown above the player for a moment
  function show(fid,ok){G.res={fid,ok,t:performance.now()};if(ok){tone(660,990,.12,'sine',.04);tone(990,1480,.2,'triangle',.035,.1)}else{tone(520,90,.35,'sawtooth',.04);tone(180,90,.2,'square',.02,.05)}}
- const RC=['#d8e0ea','#6fe3a0','#64b0ff','#b98aff','#ffc640','#ff5f9e'];
+ const RC=['#b8b3c7','#8bd9ae','#8db8f5','#c3a9ff','#f0cf83','#ff8fae'];
  const tier=fid=>{try{return ITEM7.tier(fid)}catch(_){return 0}};
  function fishShape(g,x,y,s,col,dir){g.save();g.translate(x,y);g.scale(dir*s,s);g.fillStyle=col;g.beginPath();g.ellipse(0,0,8,4.4,0,0,6.283);g.fill();g.beginPath();g.moveTo(-7,0);g.lineTo(-12,-4);g.lineTo(-12,4);g.closePath();g.fill();g.restore()}
  function rr(g,x,y,w,h,r){g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h)}
@@ -20519,7 +20571,7 @@ const WINGX=(()=>{
  return{has,req,rewards,REQ,S,save,flags,HOW:null,TITLE:null,tick(){levelTick();flags();exTick()},grant(id){if(wingById(id)&&wingById(id).src=='excl'){S.ex[id]=Date.now();save();return true}return false}}})();
 
 // ---- collection UI (Wings & Aura tab)
-(()=>{const RC={common:'#aab6d8',uncommon:'#6ad88a',rare:'#5aa8ff',epic:'#c05cff',legendary:'#ffb347',mythic:'#ff5a8a',exclusive:'#ff3a4a',relic:'#7ff5e0'},RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive',relic:'Relic'};
+(()=>{const RC={common:'#b8b3c7',uncommon:'#8bd9ae',rare:'#8db8f5',epic:'#c3a9ff',legendary:'#f0cf83',mythic:'#ff8fae',exclusive:'#ff8fae',relic:'#7ff5e0'},RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive',relic:'Relic'};
  const F={rar:'all',fam:'all',own:'all'};let selId=null,raf=0,root=null;
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const item=w=>{try{return SHOP7.byId.get('wing_'+w.id)}catch(_){return null}};
@@ -23349,7 +23401,7 @@ const _int6=interact;interact=function(){if(dlgOpen)return _int6();if(creatorOn|
 // colour, particles use the pooled VFX system, cards animate transform/opacity only, nothing blocks play, and reduced motion
 // (cel.opt.reduce / QM.reduce) drops pillars, rays, flashes and flights (numbers simply update). =====
 const REW8=(()=>{
- const RC=['#e4e9f2','#6fe3a0','#64b0ff','#b98aff','#ffc640','#ff5f9e'],RK=['common','uncommon','rare','epic','legendary','mythic'],RN=['Common','Uncommon','Rare','Epic','Legendary','Mythic'];
+ const RC=['#b8b3c7','#8bd9ae','#8db8f5','#c3a9ff','#f0cf83','#ff8fae']/* the Rootbound rarity table (01-tokens.css) */,RK=['common','uncommon','rare','epic','legendary','mythic'],RN=['Common','Uncommon','Rare','Epic','Legendary','Mythic'];
  const CF=['#ff6fa8','#ffd24a','#6fe3ff','#9dff8a','#b98aff','#ffffff'];
  const red=()=>{try{return !!(cel.opt.reduce||QM.reduce)}catch(_){return false}},vk=()=>{try{return Math.max(.25,QM.vfxK)}catch(_){return 1}};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

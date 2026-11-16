@@ -1,0 +1,17 @@
+/* ===== Rootbound design tokens (master update 2). One set for the whole game: calm night surfaces, warm ivory text, one gold for primary actions,
+   one rarity table (also used by the canvas, RBRAR in JS), a short type scale, a 4-based spacing scale, four radii, three shadows, four motion speeds.
+   99-zzzzzzzzzz-unify.css points every older variable at these, so screens built over the years speak one visual language. ===== */
+:root{
+ --rb-bg:#0b0a16;--rb-s1:#15112a;--rb-s2:#1d1838;--rb-s3:#262046;
+ --rb-line:rgba(244,213,154,.14);--rb-line-2:rgba(244,213,154,.32);
+ --rb-ink:#f6f1e7;--rb-ink-2:#d9d2e6;--rb-ink-3:#a9a1be;
+ --rb-gold:#f4d59a;--rb-gold-2:#d9b773;--rb-rose:#e8899f;--rb-info:#7ad8ff;--rb-ok:#8fd9a8;--rb-danger:#f08a8a;
+ --rb-common:#b8b3c7;--rb-uncommon:#8bd9ae;--rb-rare:#8db8f5;--rb-epic:#c3a9ff;--rb-legendary:#f0cf83;--rb-mythic:#ff8fae;--rb-relic:#7ff5e0;
+ --rb-font:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;--rb-font-display:'Cormorant Garamond','Cormorant',Georgia,serif;
+ --rb-fs-xs:11px;--rb-fs-s:12px;--rb-fs-m:13px;--rb-fs-l:15px;--rb-fs-xl:18px;--rb-fs-h3:22px;--rb-fs-h2:30px;
+ --rb-sp-1:4px;--rb-sp-2:8px;--rb-sp-3:12px;--rb-sp-4:16px;--rb-sp-5:24px;--rb-sp-6:32px;
+ --rb-r-s:8px;--rb-r-m:12px;--rb-r-l:20px;--rb-r-pill:999px;
+ --rb-sh-1:0 1px 2px rgba(0,0,0,.35);--rb-sh-2:0 12px 32px -12px rgba(0,0,0,.55);--rb-sh-3:0 40px 90px -30px rgba(0,0,0,.65);
+ --rb-ease:cubic-bezier(.16,1,.3,1);--rb-ease-io:cubic-bezier(.65,0,.35,1);--rb-t-1:120ms;--rb-t-2:200ms;--rb-t-3:320ms;--rb-t-4:600ms;
+}
+@media (prefers-reduced-motion:reduce){:root{--rb-t-1:0ms;--rb-t-2:0ms;--rb-t-3:0ms;--rb-t-4:0ms}}

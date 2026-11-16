@@ -1,0 +1,31 @@
+/* ===== One visual language (master update 2). Loads last. Every older design variable, from all the layers that redefined it over time, now points at the
+   Rootbound tokens (01-tokens.css); panels, tooltips and primary buttons share one shape. Nothing here changes a layout size or an element id. ===== */
+html:root:root{
+ --ink:var(--rb-ink);--ink-2:var(--rb-ink-2);--muted:var(--rb-ink-3);--ed-ink:var(--rb-ink);--ed-mute:var(--rb-ink-3);
+ --line:var(--rb-line);--line-strong:var(--rb-line-2);--ed-rule:var(--rb-line);
+ --accent:var(--rb-gold);--accent-2:var(--rb-rare);--g-accent:var(--rb-gold);--btn-primary:var(--rb-gold);
+ --surface:rgba(21,17,42,.94);--surface-solid:var(--rb-s1);--surface-2:var(--rb-s2);--panel:rgba(21,17,42,.94);
+ --sel-bd:var(--rb-line-2);--sel-bg:rgba(244,213,154,.08);
+ --font-ui:var(--rb-font);--font-display:var(--rb-font-display);--ed-font:var(--rb-font-display);--ui-font:var(--rb-font);
+ --rad-xs:4px;--rad-sm:var(--rb-r-s);--rad-md:var(--rb-r-m);--rad-lg:var(--rb-r-l);--rad-pill:var(--rb-r-pill);--rad-glass:var(--rb-r-l);
+ --sh-1:var(--rb-sh-1);--sh-2:var(--rb-sh-2);--sh-3:var(--rb-sh-3);
+ --mo-ease:var(--rb-ease);--mo-fast:var(--rb-t-1);--t-fast:var(--rb-t-1);--t-med:var(--rb-t-2);--t-slow:var(--rb-t-3);--dur-1:var(--rb-t-2);--dur-2:var(--rb-t-3);--ease-out:var(--rb-ease);
+ --r-common-c:var(--rb-common);--r-uncommon-c:var(--rb-uncommon);--r-rare-c:var(--rb-rare);--r-epic-c:var(--rb-epic);--r-legendary-c:var(--rb-legendary);--r-mythic-c:var(--rb-mythic);
+ --ds-gold:var(--rb-gold);
+}
+/* the big panels: one radius, one hairline, one deep shadow */
+html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7){border-radius:var(--rb-r-l)!important;border:1px solid var(--rb-line)!important;box-shadow:var(--rb-sh-3)!important}
+/* tooltips: four older styles become one */
+html:root:root body :is(#eq9tip,#nav16tip,#sk9tip,.tip7,.tooltip){background:var(--rb-s2)!important;color:var(--rb-ink)!important;border:1px solid var(--rb-line-2)!important;border-radius:10px!important;box-shadow:var(--rb-sh-2)!important;font-family:var(--rb-font)!important;font-size:var(--rb-fs-s)!important;line-height:1.45!important;backdrop-filter:none!important}
+/* primary actions: one warm gold with dark ink, the same pressed and disabled states everywhere */
+html:root:root body :is(button.pri,.btn.pri,#lavib .ac button.pri,#dlg7 [data-ok]:not([data-danger]),.rpgov button.pri,#store7 aside [data-a=buy]){background:var(--rb-gold)!important;color:#1b1530!important;border:0!important;border-radius:var(--rb-r-m)!important;font-weight:700!important;transition:filter var(--rb-t-1) var(--rb-ease),transform var(--rb-t-1) var(--rb-ease)!important}
+html:root:root body :is(button.pri,.btn.pri,#lavib .ac button.pri,.rpgov button.pri,#store7 aside [data-a=buy]):hover:not(:disabled){filter:brightness(1.07)}
+html:root:root body :is(button.pri,.btn.pri,#lavib .ac button.pri,.rpgov button.pri,#store7 aside [data-a=buy]):active:not(:disabled){transform:translateY(1px)}
+html:root:root body :is(button.pri,.btn.pri,.rpgov button.pri,#store7 aside [data-a=buy]):disabled{background:rgba(255,255,255,.08)!important;color:var(--rb-ink-3)!important}
+/* Lavi's bubble joins the same surfaces (she keeps her violet name) */
+html:root:root body #lavib{background:var(--rb-s2);border:1px solid var(--rb-line-2);border-radius:var(--rb-r-l);box-shadow:var(--rb-sh-2);font-family:var(--rb-font)}
+html:root:root body #lavib .ac button:not(.pri){background:rgba(255,255,255,.05);border:1px solid var(--rb-line);border-radius:var(--rb-r-m)}
+/* focus is always visible, the same gold ring */
+html:root:root body :is(button,[role=tab],input,select):focus-visible{outline:2px solid var(--rb-gold)!important;outline-offset:2px}
+/* the big panels sit on a near-solid surface, so the world behind never shows through their text */
+html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7){background:linear-gradient(180deg,rgba(29,24,56,.985),rgba(21,17,42,.99))!important;backdrop-filter:none!important}

@@ -38,7 +38,7 @@ const FISHGAME=(()=>{
  function win(){if(!G.on)return false;G.pr=1;return true}
  // result popup (fish preview) shown above the player for a moment
  function show(fid,ok){G.res={fid,ok,t:performance.now()};if(ok){tone(660,990,.12,'sine',.04);tone(990,1480,.2,'triangle',.035,.1)}else{tone(520,90,.35,'sawtooth',.04);tone(180,90,.2,'square',.02,.05)}}
- const RC=['#d8e0ea','#6fe3a0','#64b0ff','#b98aff','#ffc640','#ff5f9e'];
+ const RC=['#b8b3c7','#8bd9ae','#8db8f5','#c3a9ff','#f0cf83','#ff8fae'];
  const tier=fid=>{try{return ITEM7.tier(fid)}catch(_){return 0}};
  function fishShape(g,x,y,s,col,dir){g.save();g.translate(x,y);g.scale(dir*s,s);g.fillStyle=col;g.beginPath();g.ellipse(0,0,8,4.4,0,0,6.283);g.fill();g.beginPath();g.moveTo(-7,0);g.lineTo(-12,-4);g.lineTo(-12,4);g.closePath();g.fill();g.restore()}
  function rr(g,x,y,w,h,r){g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h)}

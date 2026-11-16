@@ -46,7 +46,7 @@ const WINGX=(()=>{
  return{has,req,rewards,REQ,S,save,flags,HOW:null,TITLE:null,tick(){levelTick();flags();exTick()},grant(id){if(wingById(id)&&wingById(id).src=='excl'){S.ex[id]=Date.now();save();return true}return false}}})();
 
 // ---- collection UI (Wings & Aura tab)
-(()=>{const RC={common:'#aab6d8',uncommon:'#6ad88a',rare:'#5aa8ff',epic:'#c05cff',legendary:'#ffb347',mythic:'#ff5a8a',exclusive:'#ff3a4a',relic:'#7ff5e0'},RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive',relic:'Relic'};
+(()=>{const RC={common:'#b8b3c7',uncommon:'#8bd9ae',rare:'#8db8f5',epic:'#c3a9ff',legendary:'#f0cf83',mythic:'#ff8fae',exclusive:'#ff8fae',relic:'#7ff5e0'},RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive',relic:'Relic'};
  const F={rar:'all',fam:'all',own:'all'};let selId=null,raf=0,root=null;
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const item=w=>{try{return SHOP7.byId.get('wing_'+w.id)}catch(_){return null}};

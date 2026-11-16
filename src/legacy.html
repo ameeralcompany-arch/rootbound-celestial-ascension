@@ -91,7 +91,7 @@ img{image-rendering:pixelated}
 <script>
 let g;const $=id=>document.getElementById(id),cv=$('c'),g0=cv.getContext('2d',{alpha:false}),lc=document.createElement('canvas'),lg=lc.getContext('2d');g=g0;
 let RSC=1;function rs(){const a=Math.min(1,Math.sqrt(2073600/(innerWidth*innerHeight))),k=a*RSC*(window.zlow6?.85:1);cv.width=Math.round(innerWidth*k);cv.height=Math.round(innerHeight*k);lc.width=cv.width>>1;lc.height=cv.height>>1}addEventListener('resize',rs);rs();
-const T=48,W=256,H=128,DAY=240,FONT="'Pixelify Sans','Fredoka',system-ui,sans-serif",DX=W>>1,REACH=4.6*T;
+const T=48,W=256,H=128,DAY=240,FONT="'Montserrat',system-ui,sans-serif",DX=W>>1,REACH=4.6*T;
 const rr=(x,y,w,h,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,w,h,r):g.rect(x,y,w,h)},rnd=(a,b)=>a+Math.random()*(b-a);
 const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),mixc=(c,k)=>'rgb('+hx(c).map(v=>Math.max(0,Math.min(255,v*k|0)))+')',blend=(a,b,t)=>'rgb('+hx(a).map((v,i)=>v*(1-t)+hx(b)[i]*t|0)+')';
 // ---------- data

@@ -5,7 +5,7 @@
 // colour, particles use the pooled VFX system, cards animate transform/opacity only, nothing blocks play, and reduced motion
 // (cel.opt.reduce / QM.reduce) drops pillars, rays, flashes and flights (numbers simply update). =====
 const REW8=(()=>{
- const RC=['#e4e9f2','#6fe3a0','#64b0ff','#b98aff','#ffc640','#ff5f9e'],RK=['common','uncommon','rare','epic','legendary','mythic'],RN=['Common','Uncommon','Rare','Epic','Legendary','Mythic'];
+ const RC=['#b8b3c7','#8bd9ae','#8db8f5','#c3a9ff','#f0cf83','#ff8fae']/* the Rootbound rarity table (01-tokens.css) */,RK=['common','uncommon','rare','epic','legendary','mythic'],RN=['Common','Uncommon','Rare','Epic','Legendary','Mythic'];
  const CF=['#ff6fa8','#ffd24a','#6fe3ff','#9dff8a','#b98aff','#ffffff'];
  const red=()=>{try{return !!(cel.opt.reduce||QM.reduce)}catch(_){return false}},vk=()=>{try{return Math.max(.25,QM.vfxK)}catch(_){return 1}};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
