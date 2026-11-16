@@ -4036,12 +4036,12 @@ function useWeapon(){const w=WPN[wp],cdm=over>0?.5:1;wcd=w.cd*cdm/(1+bonus().atk
 function useSkill(slot){const id=wear[slot];if(!id||cdT[slot]>0||showInv)return;const px=P.x,py=P.y;cdT[slot]=WEAR[id].cd*(1-bonus().cdr);G('skill');snd(600,.25,'triangle',.07,1.6);rings.push({x:px,y:py+30,c:WEAR[id].c,t:performance.now()});burst(px,py+30,WEAR[id].c,18,200,5,'p');
  if(id=='helmet')flare=10;else if(id=='clover')lucky=10;else if(id=='crown'){gems+=25;ft(px,py-20,'+25','#7ee8ff')}else if(id=='angel'){P.vy=-980}else if(id=='fire'||id=='rocket'){dash=.22;dashDir=P.f}else if(id=='spring'){slam=1;P.vy=1000}else if(id=='power')over=6;else if(id=='midas')midas=8}
 // ---------- monsters
-/* psh: the ground under the player, for depth only (darkness, music, depth zones); sh() stays the world's surface (GARDEN1 sets PSH) */const psh=x=>{try{if(window.PSH){const r=PSH(x);if(r!=null)return r}}catch(_){}return sh(x)};const depthAt=(x,y)=>y/T-psh(Math.max(0,Math.min(W-1,x/T|0)));
+/* psh: the ground under the player, for depth only (darkness, music, depth zones); sh() stays the world's surface (GARDEN1 sets PSH) */const psh=x=>{try{if(window.PSH){const r=PSH(x);if(r!=null)return r}}catch(_){}return sh(x)};const depthAt=(x,y)=>y/T-psh(Math.max(0,Math.min(W-1,x/T|0)));/* XSPAN: the usable columns of the world being made: [0,W], or a compact world's valley (VILL9 g3 sets WBND before generating) */const XSPAN=()=>window.WBND?[Math.round(WBND[0]/T)+1,Math.round(WBND[1]/T)-1]:[0,W];
 function pickMob(dp){const pool=[];for(const k in MK){const d=MK[k];if(dp<d.min||dp>d.max)continue;if(d.surf&&dp<6&&night<.62)continue;pool.push([k,d.min>0?2.2:1])}let t=0;for(const p of pool)t+=p[1];let r=Math.random()*t;for(const p of pool){r-=p[1];if(r<=0)return p[0]}return pool.length?pool[0][0]:null}
 function spawnMob(){const dp=depthAt(P.x,P.y+P.h/2),k=pickMob(dp);if(!k)return false;const d=MK[k],hv=cv.width/ZM/2/T,vv=cv.height/ZM/2/T;let x,y;
  const mk=()=>mobs.push({k,x,y,w:d.w,h:d.h,vx:0,vy:0,hp:d.hp,fl:0,burn:0,slow:0,ph:Math.random()*6,t:rnd(.5,1.5),dir:Math.random()<.5?-1:1,fade:0,g:false,wall:0});
- if(dp<6){const side=Math.random()<.5?-1:1;x=Math.max(3*T,Math.min((W-3)*T,P.x+side*(hv+rnd(2,7))*T));const col=Math.floor(x/T);if(d.fly)y=P.y-rnd(2,5)*T;else{let r=0;while(r<H&&!solidAt(col,r))r++;y=r*T-d.h-2}mk();return true}
- for(let i=0;i<50;i++){const tx=Math.floor(P.x/T+rnd(-hv-8,hv+8)),ty=Math.floor(P.y/T+rnd(-vv-6,vv+6));if(Math.abs(tx*T-P.x)<(hv+1)*T&&Math.abs(ty*T-P.y)<(vv+1)*T)continue;if(tx<2||tx>=W-2||ty<2||ty>=H-3)continue;if(solidAt(tx,ty)||solidAt(tx,ty-1)||wl[ty*W+tx]>3)continue;if(!d.fly&&!solidAt(tx,ty+1))continue;x=tx*T+T/2;y=d.fly?ty*T:ty*T+T-d.h-2;mk();return true}
+ if(dp<6){const side=Math.random()<.5?-1:1,b0=window.WBND?WBND[0]:0,b1=window.WBND?WBND[1]:W*T;x=Math.max(b0+3*T,Math.min(b1-3*T,P.x+side*(hv+rnd(2,7))*T));const col=Math.floor(x/T);if(d.fly)y=P.y-rnd(2,5)*T;else{let r=0;while(r<H&&!solidAt(col,r))r++;y=r*T-d.h-2}mk();return true}
+ for(let i=0;i<50;i++){const tx=Math.floor(P.x/T+rnd(-hv-8,hv+8)),ty=Math.floor(P.y/T+rnd(-vv-6,vv+6));if(Math.abs(tx*T-P.x)<(hv+1)*T&&Math.abs(ty*T-P.y)<(vv+1)*T)continue;if(tx<2||tx>=W-2||ty<2||ty>=H-3)continue;if(window.WBND&&(tx*T<WBND[0]+T||tx*T>WBND[1]-2*T))continue;if(solidAt(tx,ty)||solidAt(tx,ty-1)||wl[ty*W+tx]>3)continue;if(!d.fly&&!solidAt(tx,ty+1))continue;x=tx*T+T/2;y=d.fly?ty*T:ty*T+T-d.h-2;mk();return true}
  return false}
 function updMobs(dt){const online=rm?Math.max(1,rm.peers().filter(p=>p.kind=='viewer').length):1,dpP=depthAt(P.x,P.y+P.h/2),cap=Math.min(14,2+online+Math.floor(Math.max(0,dpP)/6)),canSpawn=cur!='plaza'&&(dpP>=6||night>.62);spawnT-=dt;
  if(canSpawn&&mobs.length<cap&&spawnT<=0){const ok=spawnMob();spawnT=ok?(dpP<6?rnd(12,20):dpP<20?rnd(7,12):rnd(4.5,8)):1.5}
@@ -4094,7 +4094,7 @@ function drawPrecip(w,hh,now){if(wxI<.02)return;const t=now/1000,snow=ptype=='sn
 function updSplash(dt,w,hh){if(wxI>.15&&ptype!='snow'&&splashes.length<44&&Math.random()<dt*50*wxI){const x=cam.x+rnd(0,w);let r=Math.max(0,Math.floor(cam.y/T)-1),n=0;const c=Math.floor(x/T);while(r<H&&!solidAt(c,r)&&n++<40)r++;if(r<H&&r>0&&!solidAt(c,r-1))splashes.push({x,y:r*T,t:performance.now()})}}
 // ---------- main draw
 function draw(){const w=cv.width,hh=cv.height,now=performance.now(),vw=w/ZM,vh=hh/ZM;
- const ck=1-Math.pow(.82,Math.min(.05,window.FDT||1/144)*144);/* same follow speed as .18 per frame at 144 fps, at any frame rate */const ctx_=window.CAMT?CAMT.x:P.x,cty_=window.CAMT?CAMT.y:P.y+P.h/2-(window.CAMUP||0);/* CAMUP: look-ahead upward (the plaza town frames its rooftops) *//* CAMT: a fixed camera target (boss arena) */cam.x+=(Math.max(0,Math.min(W*T-vw,ctx_-vw/2))-cam.x)*ck;cam.y+=(Math.max(-200,Math.min(H*T-vh,cty_-vh/2))-cam.y)*ck;
+ const ck=1-Math.pow(.82,Math.min(.05,window.FDT||1/144)*144);/* same follow speed as .18 per frame at 144 fps, at any frame rate */const ctx_=window.CAMT?CAMT.x:P.x,cty_=window.CAMT?CAMT.y:P.y+P.h/2-(window.CAMUP||0);/* CAMUP: look-ahead upward (the plaza town frames its rooftops) *//* CAMT: a fixed camera target (boss arena) *//* WBND: a compact world's valley (VILL9 g3): the camera stays between its cliffs */const bl_=window.WBND?WBND[0]:0,br_=window.WBND?WBND[1]:W*T;cam.x+=(Math.max(bl_,Math.min(br_-vw,ctx_-vw/2))-cam.x)*ck;cam.y+=(Math.max(-200,Math.min(H*T-vh,cty_-vh/2))-cam.y)*ck;
  const sx=(shake?(Math.random()-.5)*shake*34*OPT.sh:0)+(window.KICK?KICK.x:0),sy=(shake?(Math.random()-.5)*shake*34*OPT.sh:0)+(window.KICK?KICK.y:0);drawSky(w,hh,now);
  g.save();g.scale(ZM,ZM);g.translate(sx,sy);const x0=Math.max(0,cam.x/T|0),x1=Math.min(W-1,(cam.x+vw)/T|0),y0=Math.max(0,cam.y/T|0),y1=Math.min(H-1,(cam.y+vh)/T|0);
  
@@ -7859,7 +7859,7 @@ const MINE7=(()=>{
    let lastBox=-99;for(let x=3;x<W-3;x++){if(x-lastBox<14)continue;const s=sh(x);let wy=-1;for(let y=Math.max(1,s-2);y<s+8&&y<H-2;y++)if(wl[y*W+x]>0&&!tiles[y*W+x]){wy=y;break}
     if(wy<0)continue;for(const dx of[-2,-3,2,3,-4,4]){const bx=x+dx;let y=Math.max(1,wy-4);while(y<H-3&&!tiles[(y+1)*W+bx])y++;const k=y*W+bx;if(!tiles[k]&&!wl[k]&&tiles[(y+1)*W+bx]&&tiles[(y+1)*W+bx]!=70){set(bx,y,70);lastBox=x;break}}}
    // floating sky islands with a little loot on top
-   const nI=Math.max(2,Math.round(W/42));for(let i=0;i<nI;i++){const cx=6+Math.floor(R()*(W-12)),s=sh(cx),cy=Math.max(3,s-7-Math.floor(R()*5)),rw=3+Math.floor(R()*4),rh=2+Math.floor(R()*2);
+   const nI=Math.max(2,Math.round(W/42));for(let i=0;i<nI;i++){const XS=XSPAN(),cx=XS[0]+6+Math.floor(R()*(XS[1]-XS[0]-12)),s=sh(cx),cy=Math.max(3,s-7-Math.floor(R()*5)),rw=3+Math.floor(R()*4),rh=2+Math.floor(R()*2);
     if(Math.abs(cx-DX)<8)continue;
     for(let x=cx-rw;x<=cx+rw;x++){const u=(x-cx)/rw,depth=Math.max(1,Math.round(rh*(1-u*u)+R()*.8));for(let y=cy;y<cy+depth;y++)if(ok(x,y)&&!tiles[y*W+x])set(x,y,y==cy?2:1)}
     const r=R();if(r<.4)set(cx,cy-1,64);else if(r<.65)set(cx,cy-1,63);else if(r<.85)set(cx,cy-1,70)}}}
@@ -7964,9 +7964,12 @@ const VILL9=(()=>{
  const rr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296,wsOf=n=>[...n].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7)%1000/10;
  let GV=0,info=null;const CHIM=[];
  const norm=n=>String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
- // ---- which generator does this world use? 0 plaza, 1 classic (any save made before the marker existed), 2 new
+ // ---- which generator does this world use? 0 plaza, 1 classic (any save made before the marker existed), 2 new, 3 new and compact (worlds made
+ //      from 6.13.21 on: the same land in a valley about 160 blocks wide between two cliff faces; older worlds keep their size and every build)
  function verOf(n,e){if(n=='plaza')return 0;let s=e;if(!s){try{s=JSON.parse(localStorage.getItem('rbw_'+n)||'null')}catch(_){s=null}}
-  if(s&&typeof s=='object'){if(s.g===2)return 2;if(s.g===1)return 1;for(const k in s)if(k!='W'&&k!='g')return 1}return 2}
+  if(s&&typeof s=='object'){if(s.g===3)return 3;if(s.g===2)return 2;if(s.g===1)return 1;for(const k in s)if(k!='W'&&k!='g')return 1}return special(n)?2:3}
+ // designed places keep the full width: dungeons, the World Gate's path lands, and realms (their quests and boss gates span the whole land)
+ function special(n){return /^dg_/.test(n)||n=='rootbound'||n=='biome-reach'||n=='biome-wastes'||/-(inf|gal|sea|cry)$/.test(n)}
  // ---- terrain: smooth value noise at three scales, damped on plains, plus mesas (cliffs) and a flat landing at the spawn door
  function terrain(w){const R=rr((90001+Math.floor(w*7907))>>>0),h=new Int16Array(W),a=new Float32Array(W);
   const nz=(L,amp)=>{const n=Math.ceil(W/L)+3,v=[];for(let i=0;i<n;i++)v.push(R()*2-1);return x=>{const f=x/L,i=Math.floor(f),t=f-i,u=t*t*(3-2*t);return(v[i]*(1-u)+v[i+1]*u)*amp}};
@@ -7979,7 +7982,7 @@ const VILL9=(()=>{
   for(let x=DX-10;x>=0;x--){const c=Math.max(h[x+1]-1,Math.min(h[x+1]+1,h[x]));if(c==h[x]&&x<DX-16)break;h[x]=c}
   return{h,cl}}
  // ---- decide + precompute before the world is generated; stamp the marker into the edits afterwards
- {const _lw=loadWorld;loadWorld=function(n,e){const nm=norm(n);try{GV=verOf(nm,e);SHN=GV==2?(info=terrain(wsOf(nm))).h:null;if(GV!=2)info=null}catch(err){console.error('VILL9',err);GV=1;SHN=null;info=null}
+ {const _lw=loadWorld;loadWorld=function(n,e){const nm=norm(n);try{GV=verOf(nm,e);SHN=GV>=2?(info=terrain(wsOf(nm))).h:null;if(GV<2)info=null;window.WBND=GV==3?[BX0*T,(BX1+1)*T]:null}catch(err){console.error('VILL9',err);GV=1;SHN=null;info=null;window.WBND=null}
    const r=_lw.apply(this,arguments);try{if(cur!='plaza'&&GV&&!edits.g)edits.g=GV}catch(_){}return r}}
  const setT=(x,y,b)=>{if(x>0&&x<W-1&&y>0&&y<H-2){const k=y*W+x;tiles[k]=b;hp[k]=b?BLK[b][2]:0;if(b)wl[k]=0}};
  // ---- rocky faces on cliffs: the exposed side of a 2+ tile step is stone, not dirt
@@ -8029,16 +8032,22 @@ const VILL9=(()=>{
  function wild(R,v){let last=-99,n=0;for(let x=4;x<W-4;x++){if(x-last<5||Math.abs(x-DX)<14||(v&&x>=v.x0-3&&x<=v.x1+3))continue;const s=SHN[x],k=(s-1)*W+x;if(tiles[s*W+x]!=2||tiles[k]||wl[k])continue;
    let ok=true;for(let y=s-7;y<s;y++)if(y>0&&tiles[y*W+x]){ok=false;break}if(!ok||R()>.32)continue;let wet=false;for(let dx=-6;dx<=6&&!wet;dx++){const xx=x+dx;if(xx>0&&xx<W)for(let y=SHN[xx]-1;y<=SHN[xx]+2;y++)if(wl[y*W+xx]){wet=true;break}}
    const r=R(),t=wet&&r<.55?8:r<.58?5:r<.76?50:r<.9?15:5;trees.set(k,{s:t,r:t,p:0,deco:1});last=x;n++}return n}
- {const _gb=genBase;genBase=function(){CHIM.length=0;const r=_gb.apply(this,arguments);if(cur=='plaza'||GV!=2||!SHN)return r;
+ {const _gb=genBase;genBase=function(){CHIM.length=0;const r=_gb.apply(this,arguments);if(cur=='plaza'||GV<2||!SHN)return r;
    try{const R=rr((61001+Math.floor(ws*48611))>>>0);R0=R;cliffs();const v=village(R);const nt=wild(R,v);info=Object.assign(info||{},{v,trees:nt})}catch(e){console.error('VILL9 gen',e)}return r}}
+ // ---- the compact valley: two cliff faces, solid to the top of the sky, close the land at BX0 and BX1 (camera and monsters stay inside: WBND)
+ const BX0=DX-80,BX1=DX+80;
+ function valley(){const face=(x,top)=>{for(let y=1;y<H-2;y++)setT(x,y,y<top?0:y==top?2:y<top+3?1:3)};
+  for(let x=1;x<W-1;x++){if(x>BX0+2&&x<BX1-2)continue;let top;if(x<=BX0||x>=BX1)top=1;else{const d=x<BX0+3?x-BX0:BX1-x;top=Math.max(2,(SHN[x]|0)-[0,9,5][d])}face(x,top);if(x<=BX0||x>=BX1)for(let y=1;y<H-2;y++)setT(x,y,3)}
+  // the faces themselves: stone with grassy ledges, so the valley reads as land ending in cliffs, not a wall
+  for(const x of[BX0,BX1])for(let y=2;y<H-2;y+=7)setT(x,y,2)}
  // ---- chimney smoke (soft grey puffs from a pre-rendered sprite; time based, only for chimneys on screen) + campfire crackle
  let puff=null;const mkPuff=()=>{const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d'),g2=x.createRadialGradient(16,16,0,16,16,16);g2.addColorStop(0,'rgba(236,236,240,.9)');g2.addColorStop(.6,'rgba(220,220,228,.45)');g2.addColorStop(1,'rgba(210,210,220,0)');x.fillStyle=g2;x.fillRect(0,0,32,32);return c};
- function drawFx(vw,vh,t){if(!CHIM.length||GV!=2)return;if(!puff)puff=mkPuff();const wind=(typeof WX6!='undefined'?WX6.wind:0)*30+8;for(const[cx,cy]of CHIM){const px=(cx+.5)*T-cam.x,py=cy*T-cam.y;if(px<-120||px>vw+120||py<-200||py>vh+60)continue;
+ function drawFx(vw,vh,t){if(!CHIM.length||GV<2)return;if(!puff)puff=mkPuff();const wind=(typeof WX6!='undefined'?WX6.wind:0)*30+8;for(const[cx,cy]of CHIM){const px=(cx+.5)*T-cam.x,py=cy*T-cam.y;if(px<-120||px>vw+120||py<-200||py>vh+60)continue;
    for(let i=0;i<5;i++){const a=(t*.22+i/5)%1,s=10+a*26;g.globalAlpha=.32*(1-a)*Math.min(1,a*6);g.drawImage(puff,px-s/2+a*wind+Math.sin(t*1.3+i*2)*4,py-a*110-s/2,s,s)}}g.globalAlpha=1}
  let crT=0;function crackle(dt){if(!entered||cur=='plaza')return;crT-=dt;if(crT>0)return;crT=.12+Math.random()*.35;const tx=Math.floor(P.x/T),ty=Math.floor((P.y+P.h/2)/T);let best=1e9;
   for(let y=ty-4;y<=ty+4;y++)for(let x=tx-8;x<=tx+8;x++){if(x<0||y<0||x>=W||y>=H||tiles[y*W+x]!=69)continue;const d=Math.hypot((x+.5)*T-P.x,(y+.5)*T-(P.y+P.h/2));if(d<best)best=d}
   if(best>T*7.5)return;const v=Math.min(1,1.25-best/(T*6));try{noise(.03+Math.random()*.04,1800+Math.random()*2600,.05*v);if(Math.random()<.25)snd(90+Math.random()*60,.06,'triangle',.012*v)}catch(_){}}
- return{get gv(){return GV},get info(){return info},verOf,terrain,drawFx,crackle,chimneys:CHIM}})();
+ return{get gv(){return GV},get info(){return info},verOf,terrain,drawFx,crackle,chimneys:CHIM,BX0,BX1,valley}})();
 
 /* ========== LATE: 71-zz-water.js ========== */
 // ===== WATER9: smooth, flowing liquid water (replaces R3D's tile-by-tile water; R3D still paints the block shadows first).
@@ -12219,7 +12228,7 @@ const DEPTH8=(()=>{
   let ek=null,dirty=fresh||!Array.isArray(w.sn);
   const inb=(x,y)=>x>2&&x<W-3&&y>3&&y<H-4;
   // avoid: skip the spot if it would overlap a room already placed (used by the later mini game rooms)
-  function room(id,cx,dep,rw,rh,minD,avoid){const s=sh(cx);dep=Math.min(dep,H-6-s);if(dep<minD||cx-rw<3||cx+rw>W-4)return null;const fy=s+dep;if(fy-rh<s+5)return null;
+  function room(id,cx,dep,rw,rh,minD,avoid){const s=sh(cx);dep=Math.min(dep,H-6-s);if(dep<minD||cx-rw<XSPAN()[0]+3||cx+rw>XSPAN()[1]-4)return null;const fy=s+dep;if(fy-rh<s+5)return null;
    if(avoid&&S.some(r=>Math.abs(r.x-cx)<r.rw+rw+3&&fy-rh-3<r.fy+2&&r.fy-r.rh-3<fy+2))return null;
    if(!seen.includes(id)){ek=ek||editKeys();let bad=false;for(let y=fy-rh-2;y<=fy+2&&!bad;y++)for(let x=cx-rw-2;x<=cx+rw+2;x++)if(ek.has(y*W+x)){bad=true;break}if(!bad)ok.push(id);seen.push(id);dirty=true}
    if(!ok.includes(id))return null;
@@ -12227,17 +12236,17 @@ const DEPTH8=(()=>{
     const kf=fy*W+x;if(!tiles[kf]||!SOLID6[tiles[kf]]){tiles[kf]=dep>44?77:3;hp[kf]=BLK[tiles[kf]][2];wl[kf]=0}}
    return{id,x:cx,fy,rw,rh,dep,lit:[0,0,0,0],st:'idle',bad:0,got:new Set(),gs:[],killed:0}}
   function deco(r,id,n){for(let i=0,t=0;i<n&&t<n*12;t++){const x=r.x-r.rw-1+Math.floor(R()*(r.rw*2+3)),y=r.fy-r.rh-1+Math.floor(R()*(r.rh+3));if(!inb(x,y))continue;const k=y*W+x,b=tiles[k];if(b!=3&&b!=77&&b!=1)continue;if(tiles[k-1]&&tiles[k+1]&&tiles[k-W]&&tiles[k+W])continue;tiles[k]=id;hp[k]=BLK[id][2];i++}}
-  const seg=(i,n)=>Math.floor(12+(i+.5)*(W-24)/n+(R()-.5)*((W-24)/n-18));
+  const XS=XSPAN(),XW=XS[1]-XS[0],seg=(i,n)=>Math.floor(XS[0]+12+(i+.5)*(XW-24)/n+(R()-.5)*((XW-24)/n-18));
   for(let i=0;i<5;i++){const cx=seg(i,5),dep=12+Math.floor(R()*9),caps=[];for(let j=0;j<5;j++)caps.push({o:(j-2)*1.75+(R()-.5)*.5,sz:.8+R()*.45,hue:j%3,ph:R()*6});const r=room('g'+i,cx,dep,5,4,10);if(r){r.k='grove';r.caps=caps.map(c=>({x:(r.x+.5+c.o)*T,sz:c.sz,hue:c.hue,ph:c.ph}));S.push(r)}}
   for(let i=0;i<2;i++){const cx=seg(i*2+1,4),dep=29+Math.floor(R()*9),len=4+i,seq=[];for(let j=0;j<len;j++)seq.push(Math.floor(R()*4));const r=room('p'+i,cx,dep,7,4,28);if(r){r.k='reso';r.seq=seq;deco(r,9,6);S.push(r)}}
   for(let i=0;i<2;i++){const cx=seg(i*2,4),dep=50+Math.floor(R()*10),r=room('s'+i,cx,dep,4,3,48);if(r){r.k='forge';deco(r,62,5);S.push(r)}}   // the old shrine rooms (ids s0 / s1): same spots, now forges
   for(let i=0;i<2;i++){const cx=seg(i*2+1,4),dep=55+Math.floor(R()*12),r=room('v'+i,cx,dep,8,4,50);if(r){r.k='vault';deco(r,62,9);S.push(r)}}
-  const scatter=(arr,id,n,d0,d1)=>{for(let t=0;t<n*40&&arr.length<n;t++){const x=4+Math.floor(R()*(W-8)),y=sh(x)+d0+Math.floor(R()*(d1-d0));if(!inb(x,y))continue;const k=y*W+x,b=tiles[k];if(b!=3&&b!=1&&b!=77)continue;
+  const scatter=(arr,id,n,d0,d1)=>{for(let t=0;t<n*40&&arr.length<n;t++){const x=XSPAN()[0]+4+Math.floor(R()*(XSPAN()[1]-XSPAN()[0]-8)),y=sh(x)+d0+Math.floor(R()*(d1-d0));if(!inb(x,y))continue;const k=y*W+x,b=tiles[k];if(b!=3&&b!=1&&b!=77)continue;
    if(!(tiles[k-1]==0||tiles[k+1]==0||tiles[k-W]==0||tiles[k+W]==0))continue;if(arr.some(q=>Math.abs(q%W-x)<7&&Math.abs((q/W|0)-y)<6))continue;tiles[k]=id;hp[k]=BLK[id][2];arr.push(k)}};
   scatter(CA,CACHE,10,9,25);scatter(GE,GEODE,12,27,45);
   // mini game rooms come last, so everything placed before them (and the random numbers it used) stays exactly where it was
   // each one tries 6 spots (drawn up front, so the random sequence never depends on which spot fits) and takes the first that is clear
-  const place=(id,i,n,d0,dr,rw,rh,minD)=>{const c=[];for(let t=0;t<6;t++)c.push([seg(i,n)+Math.round((R()-.5)*((W-24)/n*.6)),d0+Math.floor(R()*dr)]);for(const[cx,dep]of c){const r=room(id,cx,dep,rw,rh,minD,true);if(r)return r;if(seen.includes(id)&&!ok.includes(id))return null}return null};
+  const place=(id,i,n,d0,dr,rw,rh,minD)=>{const c=[];for(let t=0;t<6;t++)c.push([seg(i,n)+Math.round((R()-.5)*((XW-24)/n*.6)),d0+Math.floor(R()*dr)]);for(const[cx,dep]of c){const r=room(id,cx,dep,rw,rh,minD,true);if(r)return r;if(seen.includes(id)&&!ok.includes(id))return null}return null};
   for(let i=0;i<3;i++){const r=place('m'+i,i,3,13,10,6,3,11);if(r){r.k='mole';r.mo=[0,1,2,3,4].map(()=>({u:0,l:0,gold:0,bonk:0}));S.push(r)}}
   for(let i=0;i<3;i++){const r=place('c'+i,i,3,31,11,7,5,29);if(r){r.k='gal';r.tg=[];deco(r,9,5);S.push(r)}}
   CA=CA.filter(k=>tiles[k]==CACHE);GE=GE.filter(k=>tiles[k]==GEODE);
@@ -18530,7 +18539,7 @@ const WORD9=(()=>{
   // biome worlds: letter i sits in a chamber deep in biome i (BIOME17 carves it)
   let bs=null;try{bs=BIOME17.letterSpots(cur,n)}catch(_){}
   if(bs){for(let i=0;i<n;i++){const k=bs[i];if(!(k>=0))continue;tiles[k]=LETTER;hp[k]=BLK[LETTER][2];wl[k]=0;trees.delete(k);L.push({k,ch:sc[i],i})}return}
-  const x0=6,x1=W-7,seg=(x1-x0)/n,segs=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]]}
+  const x0=XSPAN()[0]+6,x1=XSPAN()[1]-7,seg=(x1-x0)/n,segs=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]]}
   const used=new Set(),off=Math.floor(R0()*3),rx=(a,b)=>a+Math.floor(R0()*Math.max(1,b-a));
   const deco=x=>{try{return SUMMER9.LAND.some(d=>x>=d.c0-1&&x<=d.c1+1)}catch(_){return false}},okX=x=>Math.abs(x-DX)>5&&!deco(x);   // not at the spawn door, not on poolside decor (92-zz-summer.js)
   const KIND={surf(a,b){for(let t=0;t<40;t++){const x=rx(a,b);if(!okX(x))continue;const s=sh(x),k=(s-1)*W+x;if(s<3||tiles[k]||wl[k]||wl[k-W]||trees.has(k)||used.has(k))continue;const gb=tiles[s*W+x];if(gb&&SOLID6[gb])return k}return -1},
@@ -18595,7 +18604,7 @@ const WORD9=(()=>{
  // ---- Inferno: same seed as the base world, burnt; extra lava pockets in the caves
  function burn(){const M=new Uint8Array(256);for(let i=0;i<256;i++)M[i]=i;M[1]=SCORCH;M[2]=ASH;M[3]=BASALT;M[8]=OBSID;M[42]=ASH;M[43]=SCORCH;M[48]=104;M[105]=104;M[106]=104;M[113]=0;M[15]=0;
   const R0=rr((h32(cur)^0xf1e7)>>>0);for(let k=0;k<W*H;k++){const b=tiles[k];if(!b)continue;let m=M[b];if(m==BASALT&&k>W*12&&R0()<.022)m=MAGMA;if(m!==b){tiles[k]=m;hp[k]=m?BLK[m][2]:0}}trees.clear();
-  for(let i=0;i<34;i++){const x=3+(R0()*(W-6)|0),s=sh(x),y0=s+14+(R0()*Math.max(1,H-s-20)|0);if(y0>=H-4||tiles[y0*W+x])continue;let y=y0;while(y<H-3&&!tiles[(y+1)*W+x])y++;if(y>=H-3)continue;
+  for(let i=0;i<34;i++){const x=XSPAN()[0]+3+(R0()*(XSPAN()[1]-XSPAN()[0]-6)|0),s=sh(x),y0=s+14+(R0()*Math.max(1,H-s-20)|0);if(y0>=H-4||tiles[y0*W+x])continue;let y=y0;while(y<H-3&&!tiles[(y+1)*W+x])y++;if(y>=H-3)continue;
    let l=x,r=x;while(l>2&&!tiles[y*W+l-1]&&x-l<6)l--;while(r<W-3&&!tiles[y*W+r+1]&&r-x<6)r++;for(let xx=l;xx<=r;xx++){wl[y*W+xx]=8;const kb=(y+1)*W+xx;if(tiles[kb]&&tiles[kb]!=4&&tiles[kb]!=LETTER){tiles[kb]=OBSID;hp[kb]=BLK[OBSID][2]}}}}
  {const _g=gen;gen=function(){const sg=cur!='plaza'?stageOf(cur):0;if(sg){const b=baseOf(cur);try{ws=wsOf(b);SHN=VILL9.verOf(b)==2?VILL9.terrain(ws).h:null}catch(e){console.error('WORD9 seed',e)}}
   const r=_g.apply(this,arguments);try{try{if(typeof BIOME17!='undefined')BIOME17.shape()}catch(e){console.error('BIOME17 shape',e)}place();if(sg==1){burn();try{REALM10.deep(1)}catch(e){console.error('REALM10 deep',e)}}else if(sg>1)try{REALM10.shape(sg)}catch(e){console.error('REALM10 shape',e)}if(sg)try{BIOME17.after()}catch(e){console.error('BIOME17 after',e)}}catch(e){console.error('WORD9 gen',e)}return r}}
@@ -20792,11 +20801,11 @@ const BIOME17=(()=>{
   const rockish=t=>CV.has(t)||OR.has(t)||t==9||t==10||(t>=71&&t<=76);
   const floorAir=(x,y)=>!T0(x,y)&&!wl[y*W+x]&&T0(x,y+1)&&CV.has(T0(x,y+1));
   lay.bi.forEach((b,i)=>{const d0=TOP+i*BAND,d1=d0+BAND,yAt=x=>S0[x]+d0+ri(3,BAND-3);
-   if((b.fx||b.id)=='moss'){for(let n=0;n<6;n++){const cx=ri(8,W-8),cy=yAt(cx),rx=4+Rg()*4,ry=2.5+Rg()*1.6;for(let y=Math.floor(cy-ry);y<=cy+ry;y++)for(let x=Math.floor(cx-rx);x<=cx+rx;x++)if(inB(x,y,i)&&((x-cx)/rx)**2+((y-cy)/ry)**2<1&&CV.has(T0(x,y)))put(x,y,0)}}
-   if((b.fx||b.id)=='crystal'){for(let n=0;n<4;n++){const cx=ri(10,W-10),cy=yAt(cx),rad=4+Rg()*2.2;if(!area(Math.floor(cx-rad),Math.floor(cy-rad),Math.ceil(cx+rad),Math.ceil(cy+rad),rockish))continue;
+   if((b.fx||b.id)=='moss'){for(let n=0;n<6;n++){const cx=ri(XSPAN()[0]+8,XSPAN()[1]-8),cy=yAt(cx),rx=4+Rg()*4,ry=2.5+Rg()*1.6;for(let y=Math.floor(cy-ry);y<=cy+ry;y++)for(let x=Math.floor(cx-rx);x<=cx+rx;x++)if(inB(x,y,i)&&((x-cx)/rx)**2+((y-cy)/ry)**2<1&&CV.has(T0(x,y)))put(x,y,0)}}
+   if((b.fx||b.id)=='crystal'){for(let n=0;n<4;n++){const cx=ri(XSPAN()[0]+10,XSPAN()[1]-10),cy=yAt(cx),rad=4+Rg()*2.2;if(!area(Math.floor(cx-rad),Math.floor(cy-rad),Math.ceil(cx+rad),Math.ceil(cy+rad),rockish))continue;
      for(let y=Math.floor(cy-rad);y<=cy+rad;y++)for(let x=Math.floor(cx-rad);x<=cx+rad;x++){const dd=Math.hypot(x-cx,y-cy);if(dd<rad-1.5)put(x,y,0);else if(dd<rad&&CV.has(T0(x,y)))put(x,y,b.acc)}
      for(let x=Math.floor(cx-rad+2);x<=cx+rad-2;x++){let y=Math.floor(cy);while(y<H-3&&!T0(x,y+1))y++;if(!T0(x,y)&&Rg()<.35)put(x,y,52)}}}
-   if((b.fx||b.id)=='dune'){for(let n=0;n<2;n++){const x0=ri(10,W-22),y1=yAt(x0+5),y0=y1-5;if(!area(x0-1,y0-1,x0+11,y1+1,rockish))continue;
+   if((b.fx||b.id)=='dune'){for(let n=0;n<2;n++){const x0=ri(XSPAN()[0]+10,XSPAN()[1]-22),y1=yAt(x0+5),y0=y1-5;if(!area(x0-1,y0-1,x0+11,y1+1,rockish))continue;
      for(let y=y0;y<=y1;y++)for(let x=x0;x<=x0+10;x++){const edge=y==y0||y==y1||x==x0||x==x0+10;put(x,y,edge?45:0)}
      for(const x of[x0,x0+10]){put(x,y1-1,0);put(x,y1-2,0)}put(x0+3,y1-1,64);put(x0+7,y1-1,64);if(Rg()<.6)put(x0+5,y1-1,10)}}
    for(let y=d0;y<H-3;y++)for(let x=2;x<W-2;x++){if(!inB(x,y,i))continue;const k=y*W+x;
@@ -20806,19 +20815,19 @@ const BIOME17=(()=>{
     else if((b.fx||b.id)=='frost'){if(f<.25)put(x,y+1,b.acc)}
     else if((b.fx||b.id)=='reef'){if(f<.3)put(x,y+1,b.acc);else if(f<.36)put(x,y,59)}
     else if((b.fx||b.id)=='ember'){if(f<.3)put(x,y+1,b.acc);else if(f<.37){put(x,y,54);if(!T0(x,y-1)&&Rg()<.5)put(x,y-1,54)}}}
-   if((b.fx||b.id)=='reef'){for(let n=0;n<14;n++){for(let t=0;t<40;t++){const x=ri(4,W-4),y=yAt(x);if(!inB(x,y,i)||!floorAir(x,y))continue;let l=x,rr2=x;while(l>2&&x-l<8&&!T0(l-1,y)&&T0(l-1,y+1))l--;while(rr2<W-3&&rr2-x<8&&!T0(rr2+1,y)&&T0(rr2+1,y+1))rr2++;
+   if((b.fx||b.id)=='reef'){for(let n=0;n<14;n++){for(let t=0;t<40;t++){const x=ri(XSPAN()[0]+4,XSPAN()[1]-4),y=yAt(x);if(!inB(x,y,i)||!floorAir(x,y))continue;let l=x,rr2=x;while(l>2&&x-l<8&&!T0(l-1,y)&&T0(l-1,y+1))l--;while(rr2<W-3&&rr2-x<8&&!T0(rr2+1,y)&&T0(rr2+1,y+1))rr2++;
      if(rr2-l<2)continue;for(let xx=l;xx<=rr2;xx++)wl[y*W+xx]=8;break}}}
    if((b.fx||b.id)=='ember'){for(let y=d0;y<H-3;y++)for(let x=2;x<W-2;x++)if(inB(x,y,i)&&T0(x,y)==b.rock&&Rg()<.012)put(x,y,62)}
    // ore veins
-   for(let n=0,nv=Math.max(16,Math.round(26*BAND/30));n<nv;n++){for(let t=0;t<30;t++){let x=ri(3,W-3),y=yAt(x);if(!inB(x,y,i)||T0(x,y)!=b.rock)continue;const len=2+Math.floor(Rg()*3);for(let s=0;s<len;s++){if(inB(x,y,i)&&CV.has(T0(x,y)))put(x,y,b.ore);x+=Math.round(Rg()*2-1);y+=Math.round(Rg()*2-1)}break}}});
+   for(let n=0,nv=Math.max(16,Math.round(26*BAND/30));n<nv;n++){for(let t=0;t<30;t++){let x=ri(XSPAN()[0]+3,XSPAN()[1]-3),y=yAt(x);if(!inB(x,y,i)||T0(x,y)!=b.rock)continue;const len=2+Math.floor(Rg()*3);for(let s=0;s<len;s++){if(inB(x,y,i)&&CV.has(T0(x,y)))put(x,y,b.ore);x+=Math.round(Rg()*2-1);y+=Math.round(Rg()*2-1)}break}}});
   // 3. chambers: 3 beacon chambers per biome (one per third of the map), then a letter chamber deep in each biome (biome-word worlds)
   const used=[];const far=(x,y,d)=>used.every(u=>Math.abs(u.x-x)>d||Math.abs(u.y-y)>8);
   function chamber(i,x0,x1,dmin,dmax,hw,hh,minD){const b=lay.bi[i];let best=null;for(let t=0;t<70;t++){const x=ri(x0,x1);if(x<hw+3||x>W-hw-4)continue;const y=S0[x]+TOP+i*BAND+ri(dmin,dmax);if(y>H-5||!far(x,y,minD))continue;
     if(area(x-hw-1,y-hh-1,x+hw+1,y+1,rockish)){best={x,y};break}if(!best&&t>50)best={x,y}}
    if(!best)return null;const{x,y}=best;for(let yy=y-hh;yy<y;yy++)for(let xx=x-hw;xx<=x+hw;xx++){if((yy==y-hh)&&(xx==x-hw||xx==x+hw))continue;const t=T0(xx,yy);if(!t||rockish(t)){put(xx,yy,0);wl[yy*W+xx]=0}}
    for(let xx=x-hw;xx<=x+hw;xx++){const t=T0(xx,y);if(!t||rockish(t))put(xx,y,b.rock)}used.push(best);return best}
-  for(let i=0;i<N;i++)for(let j=0;j<NB;j++){const s=(W-16)/NB,c=chamber(i,Math.floor(8+j*s),Math.floor(8+(j+1)*s),Math.min(6,BAND-5),BAND-4,3,4,10);if(c){const id=i+'-'+j;BEA.push({id,i,j,x:c.x,y:c.y,st:r.lit[id]?'lit':'idle',t:0,ms:[],sp:0,want:0,nx:0})}}
-  if(r.bw){LSP=[];for(let i=0;i<N;i++){const c=chamber(i,8,W-8,Math.min(18,BAND-5),BAND-3,4,4,14);if(c){LCH.push(c);LSP.push((c.y-1)*W+c.x+3)}else LSP.push(-1)}}}
+  for(let i=0;i<N;i++)for(let j=0;j<NB;j++){const XS=XSPAN(),s=(XS[1]-XS[0]-16)/NB,c=chamber(i,Math.floor(XS[0]+8+j*s),Math.floor(XS[0]+8+(j+1)*s),Math.min(6,BAND-5),BAND-4,3,4,10);if(c){const id=i+'-'+j;BEA.push({id,i,j,x:c.x,y:c.y,st:r.lit[id]?'lit':'idle',t:0,ms:[],sp:0,want:0,nx:0})}}
+  if(r.bw){LSP=[];for(let i=0;i<N;i++){const c=chamber(i,XSPAN()[0]+8,XSPAN()[1]-8,Math.min(18,BAND-5),BAND-3,4,4,14);if(c){LCH.push(c);LSP.push((c.y-1)*W+c.x+3)}else LSP.push(-1)}}}
  const letterSpots=(n,cnt)=>ON&&norm(n)==cur&&LSP&&cnt==N?LSP.slice():null;
  // after a realm has been themed (burnt, regions, lava pockets): beacons and letters keep a clear, dry chamber
  function after(){if(!ON)return;const drain=(c,hw)=>{for(let yy=c.y-9;yy<=c.y;yy++)for(let xx=c.x-hw-7;xx<=c.x+hw+7;xx++)if(xx>=1&&xx<W-1&&yy>=1&&yy<H-2)wl[yy*W+xx]=0};
@@ -33306,6 +33315,16 @@ try{window.FACE1=(()=>{
  // their move plays with their own facing, not the last sampled walking direction
  try{const _o=FIGHT.onRemote;FIGHT.onRemote=function(key,id,q){try{const fa=q&&q.cx&&q.cx.fa;if(Array.isArray(fa)&&fa[2])q=Object.assign({},q,{f:fa[2]})}catch(_){}return _o?_o.call(this,key,id,q):undefined}}catch(_){}
  return{held,lock,side,aimA,freshAim,get pending(){return pend&&pend.sk&&pend.sk.id}}})()}catch(e){console.error('FACE1',e)}
+
+/* ========== LATE: 99-zzzzzzzzzz-zv-valley.js ========== */
+// ===== The compact valley of a g3 world (VILL9): cut last, after every other part of world generation (caves, lakes, chests, depths), so nothing
+// carves into the cliff faces; and the cliffs cannot be broken (the server refuses edits beyond them too, rules.js checkEdit). =====
+try{
+ {const _g=gen;gen=function(){const r=_g.apply(this,arguments);try{if(cur!='plaza'&&VILL9.gv==3&&!(window.DG&&(DG.run||DG.loading)))VILL9.valley()}catch(e){console.error('valley',e)}return r}}
+ {let warned=0;const _b=breakAt;breakAt=function(x,y){try{if(window.WBND&&cur!='plaza'&&(x<=VILL9.BX0||x>=VILL9.BX1)){if(performance.now()-warned>1500){warned=performance.now();say('The cliff is too hard to break')}return false}}catch(_){}return _b.apply(this,arguments)}}
+ // a hard edge at each cliff, so neither walking nor flying high above the sky line can get past one
+ {const _u=update;update=function(dt){const r=_u.apply(this,arguments);try{if(window.WBND&&cur!='plaza'){const a=(VILL9.BX0+1)*T+P.w/2+1,b=VILL9.BX1*T-P.w/2-1;if(P.x<a){P.x=a;if(P.vx<0)P.vx=0}else if(P.x>b){P.x=b;if(P.vx>0)P.vx=0}}}catch(_){}return r}}
+}catch(e){console.error('valley',e)}
 
 /* ========== LATE: 99-zzzzzzzzzz-zy-emotes.js ========== */
 // ===== EMO2: body emotes everyone can see, emotes in sync, and sitting that others see. The emote wheel and /e used to show only an emoji over your head;

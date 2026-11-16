@@ -63,7 +63,7 @@ const DEPTH8=(()=>{
   let ek=null,dirty=fresh||!Array.isArray(w.sn);
   const inb=(x,y)=>x>2&&x<W-3&&y>3&&y<H-4;
   // avoid: skip the spot if it would overlap a room already placed (used by the later mini game rooms)
-  function room(id,cx,dep,rw,rh,minD,avoid){const s=sh(cx);dep=Math.min(dep,H-6-s);if(dep<minD||cx-rw<3||cx+rw>W-4)return null;const fy=s+dep;if(fy-rh<s+5)return null;
+  function room(id,cx,dep,rw,rh,minD,avoid){const s=sh(cx);dep=Math.min(dep,H-6-s);if(dep<minD||cx-rw<XSPAN()[0]+3||cx+rw>XSPAN()[1]-4)return null;const fy=s+dep;if(fy-rh<s+5)return null;
    if(avoid&&S.some(r=>Math.abs(r.x-cx)<r.rw+rw+3&&fy-rh-3<r.fy+2&&r.fy-r.rh-3<fy+2))return null;
    if(!seen.includes(id)){ek=ek||editKeys();let bad=false;for(let y=fy-rh-2;y<=fy+2&&!bad;y++)for(let x=cx-rw-2;x<=cx+rw+2;x++)if(ek.has(y*W+x)){bad=true;break}if(!bad)ok.push(id);seen.push(id);dirty=true}
    if(!ok.includes(id))return null;
@@ -71,17 +71,17 @@ const DEPTH8=(()=>{
     const kf=fy*W+x;if(!tiles[kf]||!SOLID6[tiles[kf]]){tiles[kf]=dep>44?77:3;hp[kf]=BLK[tiles[kf]][2];wl[kf]=0}}
    return{id,x:cx,fy,rw,rh,dep,lit:[0,0,0,0],st:'idle',bad:0,got:new Set(),gs:[],killed:0}}
   function deco(r,id,n){for(let i=0,t=0;i<n&&t<n*12;t++){const x=r.x-r.rw-1+Math.floor(R()*(r.rw*2+3)),y=r.fy-r.rh-1+Math.floor(R()*(r.rh+3));if(!inb(x,y))continue;const k=y*W+x,b=tiles[k];if(b!=3&&b!=77&&b!=1)continue;if(tiles[k-1]&&tiles[k+1]&&tiles[k-W]&&tiles[k+W])continue;tiles[k]=id;hp[k]=BLK[id][2];i++}}
-  const seg=(i,n)=>Math.floor(12+(i+.5)*(W-24)/n+(R()-.5)*((W-24)/n-18));
+  const XS=XSPAN(),XW=XS[1]-XS[0],seg=(i,n)=>Math.floor(XS[0]+12+(i+.5)*(XW-24)/n+(R()-.5)*((XW-24)/n-18));
   for(let i=0;i<5;i++){const cx=seg(i,5),dep=12+Math.floor(R()*9),caps=[];for(let j=0;j<5;j++)caps.push({o:(j-2)*1.75+(R()-.5)*.5,sz:.8+R()*.45,hue:j%3,ph:R()*6});const r=room('g'+i,cx,dep,5,4,10);if(r){r.k='grove';r.caps=caps.map(c=>({x:(r.x+.5+c.o)*T,sz:c.sz,hue:c.hue,ph:c.ph}));S.push(r)}}
   for(let i=0;i<2;i++){const cx=seg(i*2+1,4),dep=29+Math.floor(R()*9),len=4+i,seq=[];for(let j=0;j<len;j++)seq.push(Math.floor(R()*4));const r=room('p'+i,cx,dep,7,4,28);if(r){r.k='reso';r.seq=seq;deco(r,9,6);S.push(r)}}
   for(let i=0;i<2;i++){const cx=seg(i*2,4),dep=50+Math.floor(R()*10),r=room('s'+i,cx,dep,4,3,48);if(r){r.k='forge';deco(r,62,5);S.push(r)}}   // the old shrine rooms (ids s0 / s1): same spots, now forges
   for(let i=0;i<2;i++){const cx=seg(i*2+1,4),dep=55+Math.floor(R()*12),r=room('v'+i,cx,dep,8,4,50);if(r){r.k='vault';deco(r,62,9);S.push(r)}}
-  const scatter=(arr,id,n,d0,d1)=>{for(let t=0;t<n*40&&arr.length<n;t++){const x=4+Math.floor(R()*(W-8)),y=sh(x)+d0+Math.floor(R()*(d1-d0));if(!inb(x,y))continue;const k=y*W+x,b=tiles[k];if(b!=3&&b!=1&&b!=77)continue;
+  const scatter=(arr,id,n,d0,d1)=>{for(let t=0;t<n*40&&arr.length<n;t++){const x=XSPAN()[0]+4+Math.floor(R()*(XSPAN()[1]-XSPAN()[0]-8)),y=sh(x)+d0+Math.floor(R()*(d1-d0));if(!inb(x,y))continue;const k=y*W+x,b=tiles[k];if(b!=3&&b!=1&&b!=77)continue;
    if(!(tiles[k-1]==0||tiles[k+1]==0||tiles[k-W]==0||tiles[k+W]==0))continue;if(arr.some(q=>Math.abs(q%W-x)<7&&Math.abs((q/W|0)-y)<6))continue;tiles[k]=id;hp[k]=BLK[id][2];arr.push(k)}};
   scatter(CA,CACHE,10,9,25);scatter(GE,GEODE,12,27,45);
   // mini game rooms come last, so everything placed before them (and the random numbers it used) stays exactly where it was
   // each one tries 6 spots (drawn up front, so the random sequence never depends on which spot fits) and takes the first that is clear
-  const place=(id,i,n,d0,dr,rw,rh,minD)=>{const c=[];for(let t=0;t<6;t++)c.push([seg(i,n)+Math.round((R()-.5)*((W-24)/n*.6)),d0+Math.floor(R()*dr)]);for(const[cx,dep]of c){const r=room(id,cx,dep,rw,rh,minD,true);if(r)return r;if(seen.includes(id)&&!ok.includes(id))return null}return null};
+  const place=(id,i,n,d0,dr,rw,rh,minD)=>{const c=[];for(let t=0;t<6;t++)c.push([seg(i,n)+Math.round((R()-.5)*((XW-24)/n*.6)),d0+Math.floor(R()*dr)]);for(const[cx,dep]of c){const r=room(id,cx,dep,rw,rh,minD,true);if(r)return r;if(seen.includes(id)&&!ok.includes(id))return null}return null};
   for(let i=0;i<3;i++){const r=place('m'+i,i,3,13,10,6,3,11);if(r){r.k='mole';r.mo=[0,1,2,3,4].map(()=>({u:0,l:0,gold:0,bonk:0}));S.push(r)}}
   for(let i=0;i<3;i++){const r=place('c'+i,i,3,31,11,7,5,29);if(r){r.k='gal';r.tg=[];deco(r,9,5);S.push(r)}}
   CA=CA.filter(k=>tiles[k]==CACHE);GE=GE.filter(k=>tiles[k]==GEODE);

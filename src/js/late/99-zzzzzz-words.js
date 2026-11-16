@@ -58,7 +58,7 @@ const WORD9=(()=>{
   // biome worlds: letter i sits in a chamber deep in biome i (BIOME17 carves it)
   let bs=null;try{bs=BIOME17.letterSpots(cur,n)}catch(_){}
   if(bs){for(let i=0;i<n;i++){const k=bs[i];if(!(k>=0))continue;tiles[k]=LETTER;hp[k]=BLK[LETTER][2];wl[k]=0;trees.delete(k);L.push({k,ch:sc[i],i})}return}
-  const x0=6,x1=W-7,seg=(x1-x0)/n,segs=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]]}
+  const x0=XSPAN()[0]+6,x1=XSPAN()[1]-7,seg=(x1-x0)/n,segs=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(R0()*(i+1));[segs[i],segs[j]]=[segs[j],segs[i]]}
   const used=new Set(),off=Math.floor(R0()*3),rx=(a,b)=>a+Math.floor(R0()*Math.max(1,b-a));
   const deco=x=>{try{return SUMMER9.LAND.some(d=>x>=d.c0-1&&x<=d.c1+1)}catch(_){return false}},okX=x=>Math.abs(x-DX)>5&&!deco(x);   // not at the spawn door, not on poolside decor (92-zz-summer.js)
   const KIND={surf(a,b){for(let t=0;t<40;t++){const x=rx(a,b);if(!okX(x))continue;const s=sh(x),k=(s-1)*W+x;if(s<3||tiles[k]||wl[k]||wl[k-W]||trees.has(k)||used.has(k))continue;const gb=tiles[s*W+x];if(gb&&SOLID6[gb])return k}return -1},
@@ -123,7 +123,7 @@ const WORD9=(()=>{
  // ---- Inferno: same seed as the base world, burnt; extra lava pockets in the caves
  function burn(){const M=new Uint8Array(256);for(let i=0;i<256;i++)M[i]=i;M[1]=SCORCH;M[2]=ASH;M[3]=BASALT;M[8]=OBSID;M[42]=ASH;M[43]=SCORCH;M[48]=104;M[105]=104;M[106]=104;M[113]=0;M[15]=0;
   const R0=rr((h32(cur)^0xf1e7)>>>0);for(let k=0;k<W*H;k++){const b=tiles[k];if(!b)continue;let m=M[b];if(m==BASALT&&k>W*12&&R0()<.022)m=MAGMA;if(m!==b){tiles[k]=m;hp[k]=m?BLK[m][2]:0}}trees.clear();
-  for(let i=0;i<34;i++){const x=3+(R0()*(W-6)|0),s=sh(x),y0=s+14+(R0()*Math.max(1,H-s-20)|0);if(y0>=H-4||tiles[y0*W+x])continue;let y=y0;while(y<H-3&&!tiles[(y+1)*W+x])y++;if(y>=H-3)continue;
+  for(let i=0;i<34;i++){const x=XSPAN()[0]+3+(R0()*(XSPAN()[1]-XSPAN()[0]-6)|0),s=sh(x),y0=s+14+(R0()*Math.max(1,H-s-20)|0);if(y0>=H-4||tiles[y0*W+x])continue;let y=y0;while(y<H-3&&!tiles[(y+1)*W+x])y++;if(y>=H-3)continue;
    let l=x,r=x;while(l>2&&!tiles[y*W+l-1]&&x-l<6)l--;while(r<W-3&&!tiles[y*W+r+1]&&r-x<6)r++;for(let xx=l;xx<=r;xx++){wl[y*W+xx]=8;const kb=(y+1)*W+xx;if(tiles[kb]&&tiles[kb]!=4&&tiles[kb]!=LETTER){tiles[kb]=OBSID;hp[kb]=BLK[OBSID][2]}}}}
  {const _g=gen;gen=function(){const sg=cur!='plaza'?stageOf(cur):0;if(sg){const b=baseOf(cur);try{ws=wsOf(b);SHN=VILL9.verOf(b)==2?VILL9.terrain(ws).h:null}catch(e){console.error('WORD9 seed',e)}}
   const r=_g.apply(this,arguments);try{try{if(typeof BIOME17!='undefined')BIOME17.shape()}catch(e){console.error('BIOME17 shape',e)}place();if(sg==1){burn();try{REALM10.deep(1)}catch(e){console.error('REALM10 deep',e)}}else if(sg>1)try{REALM10.shape(sg)}catch(e){console.error('REALM10 shape',e)}if(sg)try{BIOME17.after()}catch(e){console.error('BIOME17 after',e)}}catch(e){console.error('WORD9 gen',e)}return r}}

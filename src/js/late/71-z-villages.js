@@ -11,9 +11,12 @@ const VILL9=(()=>{
  const rr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296,wsOf=n=>[...n].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7)%1000/10;
  let GV=0,info=null;const CHIM=[];
  const norm=n=>String(n||'plaza').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,16)||'plaza';
- // ---- which generator does this world use? 0 plaza, 1 classic (any save made before the marker existed), 2 new
+ // ---- which generator does this world use? 0 plaza, 1 classic (any save made before the marker existed), 2 new, 3 new and compact (worlds made
+ //      from 6.13.21 on: the same land in a valley about 160 blocks wide between two cliff faces; older worlds keep their size and every build)
  function verOf(n,e){if(n=='plaza')return 0;let s=e;if(!s){try{s=JSON.parse(localStorage.getItem('rbw_'+n)||'null')}catch(_){s=null}}
-  if(s&&typeof s=='object'){if(s.g===2)return 2;if(s.g===1)return 1;for(const k in s)if(k!='W'&&k!='g')return 1}return 2}
+  if(s&&typeof s=='object'){if(s.g===3)return 3;if(s.g===2)return 2;if(s.g===1)return 1;for(const k in s)if(k!='W'&&k!='g')return 1}return special(n)?2:3}
+ // designed places keep the full width: dungeons, the World Gate's path lands, and realms (their quests and boss gates span the whole land)
+ function special(n){return /^dg_/.test(n)||n=='rootbound'||n=='biome-reach'||n=='biome-wastes'||/-(inf|gal|sea|cry)$/.test(n)}
  // ---- terrain: smooth value noise at three scales, damped on plains, plus mesas (cliffs) and a flat landing at the spawn door
  function terrain(w){const R=rr((90001+Math.floor(w*7907))>>>0),h=new Int16Array(W),a=new Float32Array(W);
   const nz=(L,amp)=>{const n=Math.ceil(W/L)+3,v=[];for(let i=0;i<n;i++)v.push(R()*2-1);return x=>{const f=x/L,i=Math.floor(f),t=f-i,u=t*t*(3-2*t);return(v[i]*(1-u)+v[i+1]*u)*amp}};
@@ -26,7 +29,7 @@ const VILL9=(()=>{
   for(let x=DX-10;x>=0;x--){const c=Math.max(h[x+1]-1,Math.min(h[x+1]+1,h[x]));if(c==h[x]&&x<DX-16)break;h[x]=c}
   return{h,cl}}
  // ---- decide + precompute before the world is generated; stamp the marker into the edits afterwards
- {const _lw=loadWorld;loadWorld=function(n,e){const nm=norm(n);try{GV=verOf(nm,e);SHN=GV==2?(info=terrain(wsOf(nm))).h:null;if(GV!=2)info=null}catch(err){console.error('VILL9',err);GV=1;SHN=null;info=null}
+ {const _lw=loadWorld;loadWorld=function(n,e){const nm=norm(n);try{GV=verOf(nm,e);SHN=GV>=2?(info=terrain(wsOf(nm))).h:null;if(GV<2)info=null;window.WBND=GV==3?[BX0*T,(BX1+1)*T]:null}catch(err){console.error('VILL9',err);GV=1;SHN=null;info=null;window.WBND=null}
    const r=_lw.apply(this,arguments);try{if(cur!='plaza'&&GV&&!edits.g)edits.g=GV}catch(_){}return r}}
  const setT=(x,y,b)=>{if(x>0&&x<W-1&&y>0&&y<H-2){const k=y*W+x;tiles[k]=b;hp[k]=b?BLK[b][2]:0;if(b)wl[k]=0}};
  // ---- rocky faces on cliffs: the exposed side of a 2+ tile step is stone, not dirt
@@ -76,13 +79,19 @@ const VILL9=(()=>{
  function wild(R,v){let last=-99,n=0;for(let x=4;x<W-4;x++){if(x-last<5||Math.abs(x-DX)<14||(v&&x>=v.x0-3&&x<=v.x1+3))continue;const s=SHN[x],k=(s-1)*W+x;if(tiles[s*W+x]!=2||tiles[k]||wl[k])continue;
    let ok=true;for(let y=s-7;y<s;y++)if(y>0&&tiles[y*W+x]){ok=false;break}if(!ok||R()>.32)continue;let wet=false;for(let dx=-6;dx<=6&&!wet;dx++){const xx=x+dx;if(xx>0&&xx<W)for(let y=SHN[xx]-1;y<=SHN[xx]+2;y++)if(wl[y*W+xx]){wet=true;break}}
    const r=R(),t=wet&&r<.55?8:r<.58?5:r<.76?50:r<.9?15:5;trees.set(k,{s:t,r:t,p:0,deco:1});last=x;n++}return n}
- {const _gb=genBase;genBase=function(){CHIM.length=0;const r=_gb.apply(this,arguments);if(cur=='plaza'||GV!=2||!SHN)return r;
+ {const _gb=genBase;genBase=function(){CHIM.length=0;const r=_gb.apply(this,arguments);if(cur=='plaza'||GV<2||!SHN)return r;
    try{const R=rr((61001+Math.floor(ws*48611))>>>0);R0=R;cliffs();const v=village(R);const nt=wild(R,v);info=Object.assign(info||{},{v,trees:nt})}catch(e){console.error('VILL9 gen',e)}return r}}
+ // ---- the compact valley: two cliff faces, solid to the top of the sky, close the land at BX0 and BX1 (camera and monsters stay inside: WBND)
+ const BX0=DX-80,BX1=DX+80;
+ function valley(){const face=(x,top)=>{for(let y=1;y<H-2;y++)setT(x,y,y<top?0:y==top?2:y<top+3?1:3)};
+  for(let x=1;x<W-1;x++){if(x>BX0+2&&x<BX1-2)continue;let top;if(x<=BX0||x>=BX1)top=1;else{const d=x<BX0+3?x-BX0:BX1-x;top=Math.max(2,(SHN[x]|0)-[0,9,5][d])}face(x,top);if(x<=BX0||x>=BX1)for(let y=1;y<H-2;y++)setT(x,y,3)}
+  // the faces themselves: stone with grassy ledges, so the valley reads as land ending in cliffs, not a wall
+  for(const x of[BX0,BX1])for(let y=2;y<H-2;y+=7)setT(x,y,2)}
  // ---- chimney smoke (soft grey puffs from a pre-rendered sprite; time based, only for chimneys on screen) + campfire crackle
  let puff=null;const mkPuff=()=>{const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d'),g2=x.createRadialGradient(16,16,0,16,16,16);g2.addColorStop(0,'rgba(236,236,240,.9)');g2.addColorStop(.6,'rgba(220,220,228,.45)');g2.addColorStop(1,'rgba(210,210,220,0)');x.fillStyle=g2;x.fillRect(0,0,32,32);return c};
- function drawFx(vw,vh,t){if(!CHIM.length||GV!=2)return;if(!puff)puff=mkPuff();const wind=(typeof WX6!='undefined'?WX6.wind:0)*30+8;for(const[cx,cy]of CHIM){const px=(cx+.5)*T-cam.x,py=cy*T-cam.y;if(px<-120||px>vw+120||py<-200||py>vh+60)continue;
+ function drawFx(vw,vh,t){if(!CHIM.length||GV<2)return;if(!puff)puff=mkPuff();const wind=(typeof WX6!='undefined'?WX6.wind:0)*30+8;for(const[cx,cy]of CHIM){const px=(cx+.5)*T-cam.x,py=cy*T-cam.y;if(px<-120||px>vw+120||py<-200||py>vh+60)continue;
    for(let i=0;i<5;i++){const a=(t*.22+i/5)%1,s=10+a*26;g.globalAlpha=.32*(1-a)*Math.min(1,a*6);g.drawImage(puff,px-s/2+a*wind+Math.sin(t*1.3+i*2)*4,py-a*110-s/2,s,s)}}g.globalAlpha=1}
  let crT=0;function crackle(dt){if(!entered||cur=='plaza')return;crT-=dt;if(crT>0)return;crT=.12+Math.random()*.35;const tx=Math.floor(P.x/T),ty=Math.floor((P.y+P.h/2)/T);let best=1e9;
   for(let y=ty-4;y<=ty+4;y++)for(let x=tx-8;x<=tx+8;x++){if(x<0||y<0||x>=W||y>=H||tiles[y*W+x]!=69)continue;const d=Math.hypot((x+.5)*T-P.x,(y+.5)*T-(P.y+P.h/2));if(d<best)best=d}
   if(best>T*7.5)return;const v=Math.min(1,1.25-best/(T*6));try{noise(.03+Math.random()*.04,1800+Math.random()*2600,.05*v);if(Math.random()<.25)snd(90+Math.random()*60,.06,'triangle',.012*v)}catch(_){}}
- return{get gv(){return GV},get info(){return info},verOf,terrain,drawFx,crackle,chimneys:CHIM}})();
+ return{get gv(){return GV},get info(){return info},verOf,terrain,drawFx,crackle,chimneys:CHIM,BX0,BX1,valley}})();

@@ -29,7 +29,7 @@ const pres=async(c,x,y)=>{c.send({t:'_p',d:{x,y,f:1}});await sleep(50)};
  a.clear();await adm(G,'give',{who:'Gus',item:0,n:999});await sleep(60);ok('a guest cannot /give themselves anything',!G.has(m=>m.t=='bag'));
  // ---- world ownership and the limit of 5
  const lock=async(c,uid,name,x=10,y=10)=>{c.send({t:'meta',d:{x,y,o:uid,on:name,f:[],pub:0}});c.send({t:'e',d:{k:y*256+x,a:[17,0,0,0]}});await sleep(60)};
- const he=await enter(a,'alice1',true);ok('creating a world does not make you its owner',he.d&&!he.d.own&&he.d.g==2);
+ const he=await enter(a,'alice1',true);ok('creating a world does not make you its owner',he.d&&!he.d.own&&he.d.g==3);
  await lock(a,A.r.uid,'Not My Name');const wa=S.worlds.get('alice1');ok('placing a World Lock does, under the real account name',wa.ownerUid==A.r.uid&&wa.ownerName=='alice'&&wa.meta.on=='alice',{u:wa.ownerName,on:wa.meta&&wa.meta.on});
  // (the create limit is 3 a minute per connection: use a fresh connection for each)
  const cA=async()=>(await login('alice')).c;
@@ -39,10 +39,10 @@ const pres=async(c,x,y)=>{c.send({t:'_p',d:{x,y,f:1}});await sleep(50)};
  await a2.rpc({t:'world_release',w:'alice5'},m=>m.t=='myworlds'&&m.list.length==4);await lock(a2,A.r.uid,'alice');await sleep(60);ok('releasing a world frees a slot',S.worlds.get('alice6').ownerName=='alice',S.worlds.get('alice6').ownerName);
  await enter(a2,'alice1');
  const be=await enter(b,'alice1');ok('others can visit and are told who owns it',be.d.own.on=='alice');
- await sleep(50);b.clear();b.send({t:'e',d:{k:2000,a:[3,0,0,0]}});await sleep(100);ok('a non-owner cannot build in a locked world',b.has(m=>m.t=='_rej')&&!S.worlds.get('alice1').edits[2000]);
+ await sleep(50);b.clear();b.send({t:'e',d:{k:1990,a:[3,0,0,0]}});await sleep(100);ok('a non-owner cannot build in a locked world',b.has(m=>m.t=='_rej')&&!S.worlds.get('alice1').edits[1990]);
  b.send({t:'meta',d:{x:5,y:5,o:B.r.uid,on:'bobby',f:[],pub:0,t:[],b:[],pr:0,d:'',sp:null}});await sleep(100);ok('a non-owner cannot lock someone else\'s world',S.worlds.get('alice1').meta.o==A.r.uid&&S.worlds.get('alice1').ownerName=='alice');
- a2.send({t:'e',d:{k:2000,a:[3,0,0,0]}});await sleep(100);ok('the owner builds; a late joiner gets the same generator version',S.worlds.get('alice1').edits[2000]&&S.worlds.get('alice1').g==2);
- ok('hello carries generator version 2 once the world has edits',(await enter(G,'alice1')).d.g==2);
+ a2.send({t:'e',d:{k:1990,a:[3,0,0,0]}});await sleep(100);ok('the owner builds; a late joiner gets the same generator version',S.worlds.get('alice1').edits[1990]&&S.worlds.get('alice1').g==3);
+ ok('hello carries the compact generator version 3 once the world has edits',(await enter(G,'alice1')).d.g==3);
  // new worlds are not limited by ownership any more, so one account has a daily limit (fresh connections: the 3-a-minute limit is per connection)
  {let made=0,last=null;for(let i=0;i<14;i++){const c=(await reg('maker'+(i?'':''),'maker-password')).c;last=await enter(c,'mkw'+i,true);c.close();await sleep(30);if(last.t=='_hello')made++;else break;if(i==0)break}
   const cm=async()=>(await login('maker','maker-password')).c;for(let i=1;i<14;i++){const c=await cm();last=await enter(c,'mkw'+i,true);c.close();await sleep(30);if(last.t=='_hello')made++;else break}ok('one account can make 10 new worlds a day',made==10&&last.t=='enter_err'&&/10 new worlds/.test(last.m),{made,m:last.m})}

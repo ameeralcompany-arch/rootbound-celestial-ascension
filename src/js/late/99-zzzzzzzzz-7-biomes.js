@@ -99,11 +99,11 @@ const BIOME17=(()=>{
   const rockish=t=>CV.has(t)||OR.has(t)||t==9||t==10||(t>=71&&t<=76);
   const floorAir=(x,y)=>!T0(x,y)&&!wl[y*W+x]&&T0(x,y+1)&&CV.has(T0(x,y+1));
   lay.bi.forEach((b,i)=>{const d0=TOP+i*BAND,d1=d0+BAND,yAt=x=>S0[x]+d0+ri(3,BAND-3);
-   if((b.fx||b.id)=='moss'){for(let n=0;n<6;n++){const cx=ri(8,W-8),cy=yAt(cx),rx=4+Rg()*4,ry=2.5+Rg()*1.6;for(let y=Math.floor(cy-ry);y<=cy+ry;y++)for(let x=Math.floor(cx-rx);x<=cx+rx;x++)if(inB(x,y,i)&&((x-cx)/rx)**2+((y-cy)/ry)**2<1&&CV.has(T0(x,y)))put(x,y,0)}}
-   if((b.fx||b.id)=='crystal'){for(let n=0;n<4;n++){const cx=ri(10,W-10),cy=yAt(cx),rad=4+Rg()*2.2;if(!area(Math.floor(cx-rad),Math.floor(cy-rad),Math.ceil(cx+rad),Math.ceil(cy+rad),rockish))continue;
+   if((b.fx||b.id)=='moss'){for(let n=0;n<6;n++){const cx=ri(XSPAN()[0]+8,XSPAN()[1]-8),cy=yAt(cx),rx=4+Rg()*4,ry=2.5+Rg()*1.6;for(let y=Math.floor(cy-ry);y<=cy+ry;y++)for(let x=Math.floor(cx-rx);x<=cx+rx;x++)if(inB(x,y,i)&&((x-cx)/rx)**2+((y-cy)/ry)**2<1&&CV.has(T0(x,y)))put(x,y,0)}}
+   if((b.fx||b.id)=='crystal'){for(let n=0;n<4;n++){const cx=ri(XSPAN()[0]+10,XSPAN()[1]-10),cy=yAt(cx),rad=4+Rg()*2.2;if(!area(Math.floor(cx-rad),Math.floor(cy-rad),Math.ceil(cx+rad),Math.ceil(cy+rad),rockish))continue;
      for(let y=Math.floor(cy-rad);y<=cy+rad;y++)for(let x=Math.floor(cx-rad);x<=cx+rad;x++){const dd=Math.hypot(x-cx,y-cy);if(dd<rad-1.5)put(x,y,0);else if(dd<rad&&CV.has(T0(x,y)))put(x,y,b.acc)}
      for(let x=Math.floor(cx-rad+2);x<=cx+rad-2;x++){let y=Math.floor(cy);while(y<H-3&&!T0(x,y+1))y++;if(!T0(x,y)&&Rg()<.35)put(x,y,52)}}}
-   if((b.fx||b.id)=='dune'){for(let n=0;n<2;n++){const x0=ri(10,W-22),y1=yAt(x0+5),y0=y1-5;if(!area(x0-1,y0-1,x0+11,y1+1,rockish))continue;
+   if((b.fx||b.id)=='dune'){for(let n=0;n<2;n++){const x0=ri(XSPAN()[0]+10,XSPAN()[1]-22),y1=yAt(x0+5),y0=y1-5;if(!area(x0-1,y0-1,x0+11,y1+1,rockish))continue;
      for(let y=y0;y<=y1;y++)for(let x=x0;x<=x0+10;x++){const edge=y==y0||y==y1||x==x0||x==x0+10;put(x,y,edge?45:0)}
      for(const x of[x0,x0+10]){put(x,y1-1,0);put(x,y1-2,0)}put(x0+3,y1-1,64);put(x0+7,y1-1,64);if(Rg()<.6)put(x0+5,y1-1,10)}}
    for(let y=d0;y<H-3;y++)for(let x=2;x<W-2;x++){if(!inB(x,y,i))continue;const k=y*W+x;
@@ -113,19 +113,19 @@ const BIOME17=(()=>{
     else if((b.fx||b.id)=='frost'){if(f<.25)put(x,y+1,b.acc)}
     else if((b.fx||b.id)=='reef'){if(f<.3)put(x,y+1,b.acc);else if(f<.36)put(x,y,59)}
     else if((b.fx||b.id)=='ember'){if(f<.3)put(x,y+1,b.acc);else if(f<.37){put(x,y,54);if(!T0(x,y-1)&&Rg()<.5)put(x,y-1,54)}}}
-   if((b.fx||b.id)=='reef'){for(let n=0;n<14;n++){for(let t=0;t<40;t++){const x=ri(4,W-4),y=yAt(x);if(!inB(x,y,i)||!floorAir(x,y))continue;let l=x,rr2=x;while(l>2&&x-l<8&&!T0(l-1,y)&&T0(l-1,y+1))l--;while(rr2<W-3&&rr2-x<8&&!T0(rr2+1,y)&&T0(rr2+1,y+1))rr2++;
+   if((b.fx||b.id)=='reef'){for(let n=0;n<14;n++){for(let t=0;t<40;t++){const x=ri(XSPAN()[0]+4,XSPAN()[1]-4),y=yAt(x);if(!inB(x,y,i)||!floorAir(x,y))continue;let l=x,rr2=x;while(l>2&&x-l<8&&!T0(l-1,y)&&T0(l-1,y+1))l--;while(rr2<W-3&&rr2-x<8&&!T0(rr2+1,y)&&T0(rr2+1,y+1))rr2++;
      if(rr2-l<2)continue;for(let xx=l;xx<=rr2;xx++)wl[y*W+xx]=8;break}}}
    if((b.fx||b.id)=='ember'){for(let y=d0;y<H-3;y++)for(let x=2;x<W-2;x++)if(inB(x,y,i)&&T0(x,y)==b.rock&&Rg()<.012)put(x,y,62)}
    // ore veins
-   for(let n=0,nv=Math.max(16,Math.round(26*BAND/30));n<nv;n++){for(let t=0;t<30;t++){let x=ri(3,W-3),y=yAt(x);if(!inB(x,y,i)||T0(x,y)!=b.rock)continue;const len=2+Math.floor(Rg()*3);for(let s=0;s<len;s++){if(inB(x,y,i)&&CV.has(T0(x,y)))put(x,y,b.ore);x+=Math.round(Rg()*2-1);y+=Math.round(Rg()*2-1)}break}}});
+   for(let n=0,nv=Math.max(16,Math.round(26*BAND/30));n<nv;n++){for(let t=0;t<30;t++){let x=ri(XSPAN()[0]+3,XSPAN()[1]-3),y=yAt(x);if(!inB(x,y,i)||T0(x,y)!=b.rock)continue;const len=2+Math.floor(Rg()*3);for(let s=0;s<len;s++){if(inB(x,y,i)&&CV.has(T0(x,y)))put(x,y,b.ore);x+=Math.round(Rg()*2-1);y+=Math.round(Rg()*2-1)}break}}});
   // 3. chambers: 3 beacon chambers per biome (one per third of the map), then a letter chamber deep in each biome (biome-word worlds)
   const used=[];const far=(x,y,d)=>used.every(u=>Math.abs(u.x-x)>d||Math.abs(u.y-y)>8);
   function chamber(i,x0,x1,dmin,dmax,hw,hh,minD){const b=lay.bi[i];let best=null;for(let t=0;t<70;t++){const x=ri(x0,x1);if(x<hw+3||x>W-hw-4)continue;const y=S0[x]+TOP+i*BAND+ri(dmin,dmax);if(y>H-5||!far(x,y,minD))continue;
     if(area(x-hw-1,y-hh-1,x+hw+1,y+1,rockish)){best={x,y};break}if(!best&&t>50)best={x,y}}
    if(!best)return null;const{x,y}=best;for(let yy=y-hh;yy<y;yy++)for(let xx=x-hw;xx<=x+hw;xx++){if((yy==y-hh)&&(xx==x-hw||xx==x+hw))continue;const t=T0(xx,yy);if(!t||rockish(t)){put(xx,yy,0);wl[yy*W+xx]=0}}
    for(let xx=x-hw;xx<=x+hw;xx++){const t=T0(xx,y);if(!t||rockish(t))put(xx,y,b.rock)}used.push(best);return best}
-  for(let i=0;i<N;i++)for(let j=0;j<NB;j++){const s=(W-16)/NB,c=chamber(i,Math.floor(8+j*s),Math.floor(8+(j+1)*s),Math.min(6,BAND-5),BAND-4,3,4,10);if(c){const id=i+'-'+j;BEA.push({id,i,j,x:c.x,y:c.y,st:r.lit[id]?'lit':'idle',t:0,ms:[],sp:0,want:0,nx:0})}}
-  if(r.bw){LSP=[];for(let i=0;i<N;i++){const c=chamber(i,8,W-8,Math.min(18,BAND-5),BAND-3,4,4,14);if(c){LCH.push(c);LSP.push((c.y-1)*W+c.x+3)}else LSP.push(-1)}}}
+  for(let i=0;i<N;i++)for(let j=0;j<NB;j++){const XS=XSPAN(),s=(XS[1]-XS[0]-16)/NB,c=chamber(i,Math.floor(XS[0]+8+j*s),Math.floor(XS[0]+8+(j+1)*s),Math.min(6,BAND-5),BAND-4,3,4,10);if(c){const id=i+'-'+j;BEA.push({id,i,j,x:c.x,y:c.y,st:r.lit[id]?'lit':'idle',t:0,ms:[],sp:0,want:0,nx:0})}}
+  if(r.bw){LSP=[];for(let i=0;i<N;i++){const c=chamber(i,XSPAN()[0]+8,XSPAN()[1]-8,Math.min(18,BAND-5),BAND-3,4,4,14);if(c){LCH.push(c);LSP.push((c.y-1)*W+c.x+3)}else LSP.push(-1)}}}
  const letterSpots=(n,cnt)=>ON&&norm(n)==cur&&LSP&&cnt==N?LSP.slice():null;
  // after a realm has been themed (burnt, regions, lava pockets): beacons and letters keep a clear, dry chamber
  function after(){if(!ON)return;const drain=(c,hw)=>{for(let yy=c.y-9;yy<=c.y;yy++)for(let xx=c.x-hw-7;xx<=c.x+hw+7;xx++)if(xx>=1&&xx<W-1&&yy>=1&&yy<H-2)wl[yy*W+xx]=0};

@@ -43,7 +43,7 @@ const MINE7=(()=>{
    let lastBox=-99;for(let x=3;x<W-3;x++){if(x-lastBox<14)continue;const s=sh(x);let wy=-1;for(let y=Math.max(1,s-2);y<s+8&&y<H-2;y++)if(wl[y*W+x]>0&&!tiles[y*W+x]){wy=y;break}
     if(wy<0)continue;for(const dx of[-2,-3,2,3,-4,4]){const bx=x+dx;let y=Math.max(1,wy-4);while(y<H-3&&!tiles[(y+1)*W+bx])y++;const k=y*W+bx;if(!tiles[k]&&!wl[k]&&tiles[(y+1)*W+bx]&&tiles[(y+1)*W+bx]!=70){set(bx,y,70);lastBox=x;break}}}
    // floating sky islands with a little loot on top
-   const nI=Math.max(2,Math.round(W/42));for(let i=0;i<nI;i++){const cx=6+Math.floor(R()*(W-12)),s=sh(cx),cy=Math.max(3,s-7-Math.floor(R()*5)),rw=3+Math.floor(R()*4),rh=2+Math.floor(R()*2);
+   const nI=Math.max(2,Math.round(W/42));for(let i=0;i<nI;i++){const XS=XSPAN(),cx=XS[0]+6+Math.floor(R()*(XS[1]-XS[0]-12)),s=sh(cx),cy=Math.max(3,s-7-Math.floor(R()*5)),rw=3+Math.floor(R()*4),rh=2+Math.floor(R()*2);
     if(Math.abs(cx-DX)<8)continue;
     for(let x=cx-rw;x<=cx+rw;x++){const u=(x-cx)/rw,depth=Math.max(1,Math.round(rh*(1-u*u)+R()*.8));for(let y=cy;y<cy+depth;y++)if(ok(x,y)&&!tiles[y*W+x])set(x,y,y==cy?2:1)}
     const r=R();if(r<.4)set(cx,cy-1,64);else if(r<.65)set(cx,cy-1,63);else if(r<.85)set(cx,cy-1,70)}}}
