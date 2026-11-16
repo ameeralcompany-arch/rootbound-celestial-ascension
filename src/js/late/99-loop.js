@@ -5,7 +5,7 @@ try{RBDIAG.stage('late-scripts-loaded')}catch(_){}
 (function(){let last=performance.now(),fpsC=0,fpsT=last,acc=0,lastDraw=0;
  const good={x:0,y:0,ok:false},nf=v=>!Number.isFinite(v);
  function sane(){let hit='';if(nf(P.x)||nf(P.y)||nf(P.vx)||nf(P.vy)){hit='player';if(good.ok&&(nf(P.x)||nf(P.y))){P.x=good.x;P.y=good.y}P.vx=0;P.vy=0}else{good.x=P.x;good.y=P.y;good.ok=true}
-  if(nf(ZM)||ZM<=0){hit='zoom';ZM=1}if(nf(cam.x)||nf(cam.y)){hit=hit||'camera';cam.x=P.x-cv.width/ZM/2;cam.y=P.y-cv.height/ZM/2}if(hit&&!sane.said){sane.said=1;console.warn('[rootbound] a broken '+hit+' number was repaired')}}
+  if(nf(ZM)||ZM<=0){hit='zoom';ZM=typeof ZBASE=='number'?ZBASE:1}if(nf(cam.x)||nf(cam.y)){hit=hit||'camera';cam.x=P.x-cv.width/ZM/2;cam.y=P.y-cv.height/ZM/2}if(hit&&!sane.said){sane.said=1;console.warn('[rootbound] a broken '+hit+' number was repaired')}}
  const menu=()=>{try{return !!(entered&&((typeof INV7!='undefined'&&INV7.isOpen)||(typeof STORE7!='undefined'&&STORE7.isOpen)||(typeof CLS9!='undefined'&&CLS9.isOpen())||(typeof UI6!='undefined'&&UI6.on)))}catch(_){return false}};
  function loop(n){const raw=n-last;last=n;
   if(window.RB_COVER&&(!window.RBDIAG||RBDIAG.ready)){requestAnimationFrame(loop);return}const hs=window.HS_T>0;if(hs)window.HS_T-=raw/1000;const dt=Math.min(.05,raw/1000)*(hs?.06:1);window.FDT=dt;

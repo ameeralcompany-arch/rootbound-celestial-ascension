@@ -1,0 +1,2 @@
+/* small windows (under ~980 px wide): the class-skill buttons sit above the hotbar instead of beside it, where the two collided */
+@media (max-width:980px){html body #skills{bottom:calc(104px + env(safe-area-inset-bottom,0px))!important}}

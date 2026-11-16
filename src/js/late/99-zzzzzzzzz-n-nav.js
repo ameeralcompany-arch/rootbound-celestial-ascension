@@ -61,7 +61,7 @@ const NAV16=(()=>{
   {id:'social',btn:'bsoc',ic:'social',g:'Social',n:'Social',d:'Emotes, players here and friends',row:1,solo:1,...HUB('social')}];
  const byId=id=>F.find(f=>f.id==id);
  // one main panel at a time, whichever route opened it. The Store may sit on top of the Hub: a Hub page sends you to it and you come back.
-  const PANELS=[['hub',()=>UI6.on,()=>UI6.close()],['eq',()=>EQM9.isOpen,()=>EQM9.close()],['inv',()=>INV7.isOpen,()=>INV7.close()],['cls',()=>live('cls9'),()=>CLS9.close()],['store',()=>live('store7'),()=>STORE7.close()],['book',()=>BOOK7.isOpen,()=>BOOK7.close()],['menu',menuOn,()=>closeMenu()]];
+  const PANELS=[['hub',()=>UI6.on,()=>UI6.close()],['eq',()=>EQM9.isOpen,()=>EQM9.close()],['inv',()=>INV7.isOpen,()=>INV7.close()],['cls',()=>live('cls9'),()=>CLS9.close()],['store',()=>live('store7'),()=>STORE7.close()],['book',()=>BOOK7.isOpen||!!(window.COL1&&COL1.isOpen),()=>{try{if(window.COL1&&COL1.isOpen)COL1.close()}catch(_){}try{BOOK7.close()}catch(_){}}],['menu',menuOn,()=>closeMenu()]];
  const safe=f=>{try{return f()}catch(_){return false}};
  function closeAll(but){for(const p of PANELS)if(p[0]!=but&&safe(p[1]))try{p[2]()}catch(_){}}
  const opened={};let seq=0;

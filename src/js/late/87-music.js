@@ -164,7 +164,7 @@ const MUS7=(()=>{
  function switchTo(m2){if(m2==mood&&song)return;if(!ctx)return;fading=1;const t=ctx.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setValueAtTime(mg.gain.value,t);mg.gain.linearRampToValueAtTime(.2,t+1.1);
   setTimeout(()=>{mood=m2;song=null;fading=0;gap=0;nextT=ctx.currentTime+.05;try{const c=MOODS[m2]&&MOODS[m2].cave,tt=ctx.currentTime;caveSend.gain.setTargetAtTime(c?.32:0,tt,.4);lp.frequency.setTargetAtTime(String(m2).startsWith('cls_')?5600:c?2100:2600,tt,.4)}catch(_){}swell()},1100)}
  // tiles below the surface under the player (the depth zones count the same way)
- const depthNow=()=>{try{const tx=Math.max(0,Math.min(W-1,Math.floor(P.x/T)));return Math.floor((P.y+P.h)/T)-sh(tx)}catch(_){return 0}};
+ const depthNow=()=>{try{const tx=Math.max(0,Math.min(W-1,Math.floor(P.x/T)));return Math.floor((P.y+P.h)/T)-psh(tx)}catch(_){return 0}};
  function classMood(){try{const k=CLASS7.cur();let near=null;if(typeof cur!='undefined'&&cur=='plaza'&&window.PLZ7)for(const h of PLZ7.HS){if(Math.abs((h.x0+h.w/2)*T-P.x)<T*6){near=h.c;break}}const fight=window.CLS9&&CLS9.isOpen()?1:0,cb=(mobs||[]).some(m=>m.hp>0&&Math.abs(m.x-P.x)<T*9&&(m.boss));const c=near||(fight||cb?k:null);return c&&MOODS['cls_'+c]?'cls_'+c:null}catch(_){return null}}
  function detect(){try{if(!entered)return;const cm0=classMood();if(cm0&&!window.MUS_HOLD){if(mood!=cm0)switchTo(cm0);return}let m='plaza';const e=ENV7.target,dep=depthNow();let rm=null;try{rm=typeof REALM10!='undefined'?REALM10.mood():null}catch(_){}if(rm&&!MOODS[rm])rm=null;
   if(rm)m=rm;
