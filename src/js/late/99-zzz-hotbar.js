@@ -67,7 +67,7 @@ const HOTBAR=(()=>{
    let fake=false;mdL=false;if(t=='place'&&st=='ok'){if(!mdR){mdR=true;fake=true}}else if(!showInv)warn(k,st);
    try{return _u.apply(this,arguments)}finally{if(fake)mdR=false;if(menuEl.style.display=='none')mdL=true}}}
  // ---- keys 1-7 (8-9 do nothing); with the inventory open and an item selected, 1-7 put that item in the slot
- selBar=function(i){if(i<0||i>=N)return;if(typeof INV7!='undefined'&&INV7.isOpen){const k=INV7.selK;if(k!=null&&assignable(k)){set(i,k);try{INV7.render()}catch(_){}return}}if(free())pick(i)};
+ selBar=function(i){if(i<0||i>=N)return;/* keys 1-7 put the selected item in a slot only while your pointer is over the backpack; otherwise they switch slots */if(typeof INV7!='undefined'&&INV7.isOpen&&INV7.hover){const k=INV7.selK;if(k!=null&&assignable(k)){set(i,k);try{INV7.render()}catch(_){}return}}if(free())pick(i)};
  let acc=0,lastW=0,lastStep=0;
  function wheel(e){if(!free())return;const now=performance.now(),dy=e.deltaY*(e.deltaMode==1?33:e.deltaMode==2?400:1);if(now-lastW>350)acc=0;lastW=now;acc+=dy;
   if(Math.abs(acc)>=45&&now-lastStep>90){lastStep=now;step(acc>0?1:-1);acc=0}}

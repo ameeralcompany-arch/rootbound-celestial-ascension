@@ -53,8 +53,8 @@ async function enter(p,world){await p.goto(URL);await p.waitForTimeout(700);awai
  const d0=await E(()=>({n:cnt(1),d:DROP2.local.length}));await p.click('#inv7 [data-k="1"]',{button:'right'});await W8();await p.click('#ictx8 [data-c=d1]');await W8();
  const d1=await E(()=>({n:cnt(1),d:DROP2.local.length,k:DROP2.local.length?DROP2.local[DROP2.local.length-1].i:null}));ok('right-click → Drop 1 throws one Dirt on the ground',d1.n==d0.n-1&&d1.d==d0.d+1&&d1.k===1,[d0,d1]);
  // ---- tabs, search, sorting
- const tabs=await E(()=>{const o={};for(const f of['tools','wear','weapons']){INV7.filter=f;INV7.render();o[f]=INV7.list}INV7.filter='all';INV7.render();return o});
- ok('Tools tab lists only tools, Gear only wearables, Weapons no tools',tabs.tools.length>=5&&await E(t=>t.tools.every(k=>WPN[k.slice(2)].k=='tool')&&t.wear.every(k=>k.startsWith('a:'))&&t.weapons.every(k=>k.startsWith('w:')&&WPN[k.slice(2)].k!='tool'),tabs),tabs.tools);
+ const tabs=await E(()=>{const o={};for(const f of['tools','equip','wearables','weapons']){INV7.filter=f;INV7.render();o[f]=INV7.list;o[f+'_now']=INV7.filterNow}INV7.filter='all';INV7.render();return o});
+ ok('Tools lists only tools; Equipment holds weapons and gear but no tools; the old Weapons tab opens Equipment',tabs.tools.length>=5&&await E(t=>t.tools.every(k=>WPN[k.slice(2)].k=='tool')&&t.equip.every(k=>k.startsWith('a:')||(k.startsWith('w:')&&WPN[k.slice(2)].k!='tool'))&&t.weapons_now=='equip',tabs),{tools:tabs.tools,now:tabs.weapons_now});
  await p.fill('#inq7','fang');await W8(150);const sq=await E(()=>INV7.list.map(k=>INV7.nameOf(k)));ok('search narrows the list (all match "fang")',sq.length>0&&sq.every(n=>/fang/i.test(n)),sq);
  await p.press('#inq7','Enter');await W8();ok('Enter in the search selects the first match',await E(()=>INV7.selK===INV7.list[0]));
  await p.fill('#inq7','');await W8(100);

@@ -6,12 +6,17 @@
 // provides it). The sheet is rebuilt only when something changes; selecting a tile patches the tile classes + details only. =====
 const INV7=(()=>{
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- const FILT=[['all','All'],['weapons','Weapons'],['collection','Collection'],['tools','Tools'],['wear','Equipment'],['wings','Wings'],['charms','Customize'],['blocks','Blocks'],['seeds','Seeds'],['mats','Materials'],['objects','Special'],['fav','★']];/* your stats live on the Character page, their one home */
- let el=null,filter='all',selK=null,assign=-1,q='',sortBy='default',favs={},seen=null,got={},menu=null,clk={k:null,t:0},last=[];
+ // tabs by what things are for (master update 2): Equipment (weapons + gear), Wearables (wings, charms, effects), Tools, Materials, Blocks, Seeds,
+ // Consumables (bait, pet food, treats), Special (objects, doors, keys, the World Lock, pet homes). The older tab ids still open the nearest one
+ const FILT=[['all','All'],['equip','Equipment'],['wearables','Wearables'],['tools','Tools'],['mats','Materials'],['blocks','Blocks'],['seeds','Seeds'],['cons','Consumables'],['objects','Special'],['collection','Collection'],['fav','★']];
+ const CONS=k=>typeof k=='number'&&((k>=250&&k<=252)||k==610||k==611),ALIAS={weapons:'equip',wear:'equip',wings:'wearables',charms:'wearables'};
+ const inF=(i,f)=>f=='all'?i.own:f=='fav'?(i.own&&favs[i.k]):f=='collection'?!!i.col:f=='equip'?(i.t=='weapons'||i.t=='wear'):f=='wearables'?(i.t=='wings'||i.t=='charms'):f=='cons'?CONS(i.k):f=='mats'?(i.t=='mats'&&!CONS(i.k)):f=='objects'?(i.t=='objects'||(typeof i.k=='number'&&((i.k>=731&&i.k<=749)||i.k==17||i.k==612))):i.t==f;/* your stats live on the Character page, their one home */
+ let el=null,filter='all',selK=null,assign=-1,q='',sortBy='mine',favs={},seen=null,got={},menu=null,clk={k:null,t:0},last=[],ord={},lastN={},dragK=null,pend=false,hover=false;
  const PK=()=>(typeof RB_PREFIX=='string'?RB_PREFIX:'')+'rbpinv';
- try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'default';if(o.n&&typeof o.n=='object')seen=o.n;if(o.g&&typeof o.g=='object')got=o.g}catch(_){}
- const saveP=()=>{try{localStorage.setItem(PK(),JSON.stringify({f:favs,s:sortBy,n:seen||{},g:got}))}catch(_){}};
- const SORTS=[['default','Smart order'],['rar','Rarity, then power'],['power','Power'],['name','Name A–Z'],['new','Newest first'],['count','Most owned'],['value','Highest value']];
+ try{const o=JSON.parse(localStorage.getItem(PK())||'{}');favs=o.f||{};sortBy=o.s||'mine';if(o.n&&typeof o.n=='object')seen=o.n;if(o.g&&typeof o.g=='object')got=o.g;if(o.o&&typeof o.o=='object')ord=o.o}catch(_){}
+ const saveP=()=>{try{localStorage.setItem(PK(),JSON.stringify({f:favs,s:sortBy,n:seen||{},g:got,o:ord}))}catch(_){}};
+ const SORTS=[['mine','My order'],['default','Smart order'],['type','Type'],['rar','Rarity, then power'],['power','Power'],['level','Upgrade level'],['name','Name A–Z'],['new','Newest first'],['count','Most owned'],['value','Highest value']];
+ const TORD=['weapons','tools','wear','wings','charms','mats','blocks','seeds','objects'],upLv=k=>{try{if(typeof k=='string'&&k.startsWith('w:')){const id=k.slice(2);return WPN[id]&&WPN[id].k=='tool'?TOOLLV.lvl(id):(wUp[id]|0)}}catch(_){}return 0};
  const snd=n=>{try{UIS.play(n)}catch(_){}};
  // ---- item vocabulary: numbers = blocks / seeds / materials / objects, 'w:' weapon or tool, 'a:' wearable, 'wing:' wings, 'id:' charm or effect
  const isNew=i=>i.own&&seen&&!seen[i.k];
@@ -82,6 +87,14 @@ const INV7=(()=>{
  // dropping and its rules live in DROP2 (99-zzzzzzzzzz-m-drops.js)
  function drop(k,n){const r=DROP2.drop(k,n);if(isOpen())render();return r}
  function dropAsk(k){return DROP2.ask(k).then(()=>{if(isOpen())render()})}
+ // ---- your own order (per tab): moving a tile writes the whole visible order of that tab, then changes it; it only changes what you see, never what you own
+ const sigOf=all=>filter+'|'+q+'|'+sortBy+'|'+String(selK)+'|'+assign+'|'+gems+'|'+all.map(i=>i.k+':'+(i.n|0)+(i.worn?'w':'')+(i.own?'o':'')).join(',')+'|'+JSON.stringify(ord[filter]||0);
+ function materialize(){const q0=q;q='';let l;try{l=sorted(items())}finally{q=q0}const keys=l.filter(i=>i.own).map(i=>String(i.k));ord[filter]=keys;return keys}/* the whole tab, whatever the search box holds */
+ function placeRel(k,target,mode){if(k==null||target==null||String(k)===String(target))return false;const o=materialize(),a=o.indexOf(String(k)),b=o.indexOf(String(target));if(a<0||b<0)return false;
+  if(mode=='swap'){o[a]=String(target);o[b]=String(k)}else{o.splice(a,1);const t=o.indexOf(String(target));o.splice(mode=='after'?t+1:t,0,String(k))}sortBy='mine';saveP();snd('select');render();pulse(k);return true}
+ function move(k,dir){if(k==null)return false;const o=materialize(),a=o.indexOf(String(k));if(a<0)return false;const b=Math.max(0,Math.min(o.length-1,a+dir));if(a===b){snd('error');return false}o.splice(a,1);o.splice(b,0,String(k));sortBy='mine';saveP();snd('select');render();pulse(k);return true}
+ // the game's per-tick refresh: once a frame at most, never in the middle of a drag, and only when something you can see changed
+ let softQ=0;function soft(){if(!isOpen())return;if(dragK!=null||(el&&el.classList.contains('eqdrag'))){pend=true;return}if(softQ)return;softQ=requestAnimationFrame(()=>{softQ=0;if(!isOpen())return;if(dragK!=null){pend=true;return}const all=items();if(el._sig===sigOf(all))return;render()})}
  // ---- rendering
  const mk=()=>{if(el)return;el=document.createElement('div');el.id='inv7';el.className='ed';el.innerHTML='<div class="sheet" role="dialog" aria-label="Inventory"></div>';document.body.appendChild(el);
   const ab=document.createElement('div');ab.className='assignbanner ed';ab.id='asb';document.body.appendChild(ab);
@@ -93,33 +106,39 @@ const INV7=(()=>{
   el.addEventListener('dragover',e=>{const s=e.target.closest('.eq8');if(!s||!el.classList.contains('eqdrag'))return;e.preventDefault();try{e.dataTransfer.dropEffect='copy'}catch(_){}s.classList.add('over')});
   el.addEventListener('dragleave',e=>{const s=e.target.closest('.eq8');if(s&&!s.contains(e.relatedTarget))s.classList.remove('over')});
   el.addEventListener('drop',e=>{const s=e.target.closest('.eq8');if(!s)return;e.preventDefault();s.classList.remove('over');let d='';try{d=e.dataTransfer.getData('text/plain')}catch(_){}if(!d.startsWith('rbitem:'))return;let k=d.slice(7);if(/^\d+$/.test(k))k=+k;selK=k;if(equip(k))pulse(k);render();try{HB()&&HB().dragEnd()}catch(_){}});
-  document.addEventListener('dragend',()=>{if(el){el.classList.remove('eqdrag');const s=el.querySelector('.eq8.over');if(s)s.classList.remove('over')}});
+  document.addEventListener('dragend',()=>{dragK=null;if(el){el.classList.remove('eqdrag');const s=el.querySelector('.eq8.over');if(s)s.classList.remove('over');clearMark();if(pend){pend=false;render()}}});
+  el.addEventListener('dragstart',e=>{const t=e.target.closest&&e.target.closest('.grid7 .it7[data-k]');if(t)dragK=keyOf(t.dataset.k)},true);
+  const zone=(t,e)=>{const r=t.getBoundingClientRect(),u=(e.clientX-r.left)/Math.max(1,r.width);return u<.3?'before':u>.7?'after':'swap'};let mk8=null;const clearMark=()=>{if(mk8){mk8.classList.remove('ins-before','ins-after','ins-swap');mk8=null}};
+  el.addEventListener('dragover',e=>{if(dragK==null)return;const t=e.target.closest('.grid7 .it7[data-k]');if(!t)return;e.preventDefault();try{e.dataTransfer.dropEffect='move'}catch(_){}const z=zone(t,e);if(mk8!==t)clearMark();mk8=t;t.classList.remove('ins-before','ins-after','ins-swap');t.classList.add('ins-'+z)});
+  el.addEventListener('drop',e=>{if(dragK==null)return;const t=e.target.closest('.grid7 .it7[data-k]');if(!t)return;e.preventDefault();const z=zone(t,e),k=dragK;dragK=null;clearMark();el.classList.remove('eqdrag');try{HB()&&HB().dragEnd()}catch(_){}placeRel(k,keyOf(t.dataset.k),z)});
+  el.addEventListener('pointerenter',()=>{hover=true},true);el.addEventListener('pointerleave',e=>{if(e.target===el)hover=false},true);el.addEventListener('pointerover',()=>{hover=true});el.addEventListener('pointerout',e=>{if(!el.contains(e.relatedTarget))hover=false});
   el.addEventListener('input',e=>{if(e.target.id=='inq7'){q=e.target.value;const p=e.target.selectionStart;render();const n=document.getElementById('inq7');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}}});
   el.addEventListener('change',e=>{if(e.target.id=='ins7'){sortBy=e.target.value;saveP();render()}});
   el.addEventListener('keydown',e=>{if(e.target.id=='inq7'){e.stopPropagation();if(e.key=='Escape'){if(q){q='';render()}else close()}else if(e.key=='Enter'&&last.length){e.preventDefault();const k=last[0].k;if(selK===k)doPrimary(k);else select(k)}}});
   // keyboard: Esc closes (the menu first), E / Enter equip or use the selected item
   addEventListener('keydown',e=>{if(!isOpen())return;if(e.key=='Escape'){if(menu){closeMenu();e.stopPropagation();return}close();e.stopPropagation();return}
    if(e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;try{if(isTextEl(e.target))return}catch(_){}if(DLG7.isOpen)return;
-   if((e.key=='e'||e.key=='E'||e.key=='Enter')&&selK!=null&&filter!='stats'){e.preventDefault();e.stopPropagation();closeMenu();doPrimary(selK)}},true)};
- function sorted(all){let list=all.filter(i=>filter=='all'?i.own:filter=='stats'?false:filter=='fav'?(i.own&&favs[i.k]):filter=='collection'?!!i.col:i.t==filter);
+   if((e.key=='e'||e.key=='E'||e.key=='Enter')&&selK!=null&&filter!='stats'){e.preventDefault();e.stopPropagation();closeMenu();doPrimary(selK)}},true);
+  addEventListener('keydown',e=>{if(!isOpen()||!e.altKey||selK==null)return;const d=e.key=='ArrowLeft'||e.key=='ArrowUp'?-1:e.key=='ArrowRight'||e.key=='ArrowDown'?1:0;if(!d)return;e.preventDefault();e.stopPropagation();move(selK,d)},true)};
+ function sorted(all){let list=all.filter(i=>filter=='stats'?false:inF(i,filter));
   const qq=q.trim().toLowerCase();if(qq)list=list.filter(i=>(nameOf(i.k)+' '+ITEM7.label(i.k)+' '+(i.sub||'')).toLowerCase().includes(qq)||ITEM7.RN[tierOf(i.k)].toLowerCase()==qq);
   const pw=i=>isWpn(i.k)?ITEM7.power(i.k):0,tv=i=>tierOf(i.k);
-  return list.map((i,x)=>[i,x]).sort((A,B)=>{const a=A[0],b=B[0];let d=(mineW(b.k)?1:0)-(mineW(a.k)?1:0);if(d)return d;   // the weapons of the class you use always come first
+  return list.map((i,x)=>[i,x]).sort((A,B)=>{const a=A[0],b=B[0];let d=0;/* My order: your arrangement for this tab first (things you never placed follow in the smart order) */if(sortBy=='mine'){d=(b.own|0)-(a.own|0);if(d)return d;const o=ord[filter]||[],ia=o.indexOf(String(a.k)),ib=o.indexOf(String(b.k));if(ia>=0||ib>=0)return(ia<0?1e9:ia)-(ib<0?1e9:ib)}d=(mineW(b.k)?1:0)-(mineW(a.k)?1:0);if(d)return d;   // the weapons of the class you use always come first
    d=(favs[b.k]?1:0)-(favs[a.k]?1:0);if(d)return d;d=(b.own|0)-(a.own|0);if(d)return d;
-   if(sortBy=='name')d=nameOf(a.k).localeCompare(nameOf(b.k));else if(sortBy=='count')d=(b.n|0)-(a.n|0);else if(sortBy=='rar')d=tv(b)-tv(a)||pw(b)-pw(a)||costOf(b.k)-costOf(a.k);
+   if(sortBy=='type')d=TORD.indexOf(a.t)-TORD.indexOf(b.t)||nameOf(a.k).localeCompare(nameOf(b.k));else if(sortBy=='level')d=upLv(b.k)-upLv(a.k)||tv(b)-tv(a);else if(sortBy=='name')d=nameOf(a.k).localeCompare(nameOf(b.k));else if(sortBy=='count')d=(b.n|0)-(a.n|0);else if(sortBy=='rar')d=tv(b)-tv(a)||pw(b)-pw(a)||costOf(b.k)-costOf(a.k);
    else if(sortBy=='power')d=pw(b)-pw(a)||tv(b)-tv(a);else if(sortBy=='value')d=costOf(b.k)-costOf(a.k);else if(sortBy=='new')d=(got[b.k]||0)-(got[a.k]||0)||(isNew(b)?1:0)-(isNew(a)?1:0);
    return d||A[1]-B[1]}).map(x=>x[0])}
  function render(){if(!el)return;const sh=el.querySelector('.sheet'),all=items();let ch=0;if(!seen){seen={};for(const i of all)if(i.own){seen[i.k]=1;got[i.k]=0}ch=1}
-  const now=Date.now();for(const i of all)if(i.own&&got[i.k]==null){got[i.k]=now;ch=1}if(ch)saveP();
-  const cntOf=f=>all.filter(i=>f=='all'?i.own:f=='fav'?(i.own&&favs[i.k]):f=='collection'?(i.col&&i.own):(i.t==f&&i.own)).length;
+  const now=Date.now();for(const i of all){if(i.own&&got[i.k]==null){got[i.k]=now;ch=1}const n=i.n|0;if(i.own&&lastN[i.k]!=null&&n>lastN[i.k]){got[i.k]=now;ch=1}lastN[i.k]=n}if(ch)saveP();
+  if(ALIAS[filter])filter=ALIAS[filter];const cntOf=f=>all.filter(i=>f=='collection'?(i.col&&i.own):(inF(i,f)&&i.own)).length;const g0=sh.querySelector('.grid7'),sTop=g0?g0.scrollTop:0;
   const list=last=sorted(all),sel=all.find(i=>i.k===selK)||null;
   let h='<header><div><div class="eyebrow">Backpack · '+esc(myName)+'</div><h2 class="ttl">Inventory</h2></div><div style="display:flex;gap:8px;align-items:center"><span class="eyebrow gem7">◆ <b>'+gems+'</b> gems</span><button class="x" data-a="close" title="Close (Esc)" aria-label="Close">✕</button></div></header>';
-  h+='<nav>'+FILT.map(([f,n])=>{const c=f!='stats'?cntOf(f):0;return(f=='wings'||f=='charms')&&!c&&f!=filter?'':'<button data-f="'+f+'" class="'+(f==filter?'on':'')+'">'+n+(f!='stats'?'<small>'+c+'</small>':'')+'</button>'}).join('')+'</nav>';
+  h+='<nav>'+FILT.map(([f,n])=>{const c=f!='stats'?cntOf(f):0;return(f=='cons'||f=='wearables')&&!c&&f!=filter?'':'<button data-f="'+f+'" class="'+(f==filter?'on':'')+'">'+n+(f!='stats'?'<small>'+c+'</small>':'')+'</button>'}).join('')+'</nav>';
   if(filter!='stats')h+='<div class="tb7"><input type="search" id="inq7" placeholder="Search your items… (Enter picks the first)" value="'+esc(q)+'" aria-label="Search items" autocomplete="off"><select id="ins7" aria-label="Sort items">'+SORTS.map(([v,n])=>'<option value="'+v+'"'+(v==sortBy?' selected':'')+'>'+n+'</option>').join('')+'</select><span class="eyebrow">'+list.length+' shown</span></div>';
   h+=strip();
   if(filter=='stats')h+='<div class="grid7">'+stats()+'</div>';
   else h+='<div class="grid7">'+(list.length?list.map(tile).join(''):'<div class="empty7">'+(q.trim()?'No items match “'+esc(q.trim())+'”.':filter=='fav'?'No favourites yet. Right-click an item and choose ☆ Favourite to pin it here and to the top of every list.':filter=='wings'?'No wings yet. Level up or visit the store.':filter=='charms'?'No charms or effects yet. Find them in the store.':'Nothing here yet. Break blocks, harvest crops and defeat monsters to fill your backpack.')+'</div>')+'</div>';
-  h+='<aside>'+detail(sel)+'</aside>';sh.innerHTML=h;/* the right-click menu lives outside the sheet and survives refreshes */
+  h+='<aside>'+detail(sel)+'</aside>';sh.innerHTML=h;{const g1=sh.querySelector('.grid7');if(g1&&sTop)g1.scrollTop=sTop}el._sig=sigOf(all);/* the right-click menu lives outside the sheet and survives refreshes */
   try{MOTION7.ind(sh.querySelector('nav'),'button.on','u',el);const gb=sh.querySelector('.gem7 b');MOTION7.tick(gb,gems,el._g!=null?el._g:gems);el._g=gems;const sk=filter+'|'+sortBy;if(sk!=el._sk){el._sk=sk;MOTION7.stagger(sh.querySelector('.grid7'),'.it7,.stat7 .s',18)}}catch(_){}
   const ab=document.getElementById('asb');ab.style.display=assign>=0?'block':'none';ab.textContent='Choose anything for hotbar slot '+(assign+1)+' · Esc to cancel'}
  // the Equipped strip: one cell per slot, ✕ unequips, click selects, drop a tile on it to equip
@@ -178,12 +197,12 @@ const INV7=(()=>{
   const i=items().find(x=>x.k===k);if(!i)return;const p=primary(i),h=HB();let b='<div class="mh8">'+esc(nameOf(k))+'</div>';
   if(p&&p.a&&!p.dis)b+='<button data-c="p">'+esc(p.l)+'<kbd>F</kbd></button>';if(i.worn&&p&&p.a!='unequip'&&kind(k)!='mats'&&!(p.a=='wear'))b+='<button data-c="u">Unequip</button>';
   if(h&&h.assignable(k)){const s=h.slotOf(k);b+='<div class="ms8">Put in hotbar slot</div><div class="mr8">';for(let x=0;x<h.N;x++)b+='<button data-c="hb'+x+'" class="'+(x===s?'on':'')+'" title="Slot '+(x+1)+'">'+(x+1)+'</button>';b+='</div>';if(s>=0)b+='<button data-c="hbx">Remove from hotbar</button>'}
-  b+='<button data-c="fav">'+(favs[k]?'★ Unfavourite':'☆ Favourite')+'</button>';
+  b+='<button data-c="fav">'+(favs[k]?'★ Unfavourite':'☆ Favourite')+'</button>';if(i.own)b+='<div class="mr8 mv8"><button data-c="mvu" title="Move up (Alt + ←)">Move up</button><button data-c="mvd" title="Move down (Alt + →)">Move down</button></div>';
   if(typeof k=='number'&&cnt(k)>0){if(DROP2.can(k).ok){b+='<button data-c="d1">Drop 1</button>';if(cnt(k)>1)b+='<button data-c="da">Drop all ('+cnt(k)+')</button>'}}else if(i.own&&DROP2.can(k).ok)b+='<button data-c="dg">Drop</button>';
   closeMenu();menu=document.createElement('div');menu.id='ictx8';menu.setAttribute('role','menu');menu.dataset.k=String(k);menu.innerHTML=b;el.appendChild(menu);
   const r=menu.getBoundingClientRect(),x=Math.min(e.clientX,innerWidth-r.width-8),y=Math.min(e.clientY,innerHeight-r.height-8);menu.style.transform='translate('+Math.max(8,x)+'px,'+Math.max(8,y)+'px)'}
  function menuAct(c){if(!menu)return;const k=keyOf(menu.dataset.k);closeMenu();const h=HB();
-  if(c=='p')doPrimary(k);else if(c=='u'){if(unequip(k))render()}else if(c=='fav'){if(favs[k])delete favs[k];else favs[k]=1;saveP();render()}
+  if(c=='mvu')move(k,-1);else if(c=='mvd')move(k,1);else if(c=='p')doPrimary(k);else if(c=='u'){if(unequip(k))render()}else if(c=='fav'){if(favs[k])delete favs[k];else favs[k]=1;saveP();render()}
   else if(/^hb\d$/.test(c)&&h){h.set(+c.slice(2),k);render()}else if(c=='hbx'&&h){const s=h.slotOf(k);if(s>=0)h.set(s,null);render()}
   else if(c=='d1')drop(k,1);else if(c=='da')drop(k,cnt(k));else if(c=='dg')dropAsk(k)}
  const isOpen=()=>showInv&&!!el&&el.classList.contains('open');
@@ -194,11 +213,11 @@ const INV7=(()=>{
  {let q=null;const step=d=>{/* never during a cinematic: one icon can take 15 ms and the story intro would stutter */if(typeof CINE7!='undefined'&&CINE7.playing){setTimeout(()=>requestIdleCallback(step,{timeout:3000}),1500);return}/* one icon per real idle moment (never on a forced timeout), a pause between, and stop for good if one is slow: background work must never freeze a frame */if(d.didTimeout||d.timeRemaining()<10){requestIdleCallback(step,{timeout:3000});return}const t0=performance.now();try{iconOf(q.shift())}catch(_){q.length=0}if(performance.now()-t0>45)q.length=0;if(q.length)setTimeout(()=>requestIdleCallback(step,{timeout:3000}),60)};
   const warm=()=>{if(q||typeof requestIdleCallback!='function')return;/* first what monsters drop (so a fight never builds icons mid-frame), then the bag */let dk=[];try{dk=[...new Set(Object.values(MOBMAT))].filter(k=>k&&!ICONC[k]).concat([1,3,5,8,9,10,71,72,77].filter(k=>!ICONC[k]))}catch(_){}try{q=[...new Set(dk.concat(items().map(i=>i.k)))]}catch(_){q=dk}requestIdleCallback(step,{timeout:3000})};
   const wt=setInterval(()=>{if(entered){clearInterval(wt);setTimeout(warm,2500)}},1000)}
- return{slots:SLOTS8,eqKey:eqK,iconOf,descOf,tierOf,open,close,render,select,equip,unequip,doPrimary,drop,items,sorted,primary,nameOf,kind,
+ return{move,placeRel,soft,get order(){return ord},get hover(){return hover},get filterNow(){return filter},slots:SLOTS8,eqKey:eqK,iconOf,descOf,tierOf,open,close,render,select,equip,unequip,doPrimary,drop,items,sorted,primary,nameOf,kind,
   get isOpen(){return isOpen()},get filter(){return filter},set filter(v){filter=v},get selK(){return selK},set selK(v){selK=v},get assign(){return assign},get sortBy(){return sortBy},set sortBy(v){sortBy=v;saveP()},get q(){return q},set q(v){q=String(v||'')},get list(){return last.map(i=>i.k)}}})();
 // ---- legacy hooks: inventory toggle (the bar is drawn by HOTBAR in 99-zzz-hotbar.js)
 setInv=function(v){if(v)INV7.open();else INV7.close()};
-renderInv=function(){if(INV7.isOpen)INV7.render()};
+renderInv=function(){if(INV7.isOpen)INV7.soft()};
 renderW=function(){renderBar()};
 function cycleWeapon(){const ids=Object.keys(WPN).filter(id=>own[id]&&!(WPN[id].hid&&!own[id]));if(!ids.length)return;wp=ids[(ids.indexOf(wp)+1)%ids.length];renderBar();say(WPN[wp].n);try{UIS.play('select')}catch(_){}}
 (()=>{ // migrate old saves: make sure the two block slots are filled, then draw

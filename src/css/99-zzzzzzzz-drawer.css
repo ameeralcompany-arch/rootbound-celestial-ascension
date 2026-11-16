@@ -25,3 +25,7 @@ html[data-skin=night] :is(#hubc,#store7 .shell,#inv7 .sheet,#menu #card,#eq9 .eq
 #inv7 .grid7,#store7 .grid{contain:layout style}
 #inv7 .it7{content-visibility:auto;contain-intrinsic-size:auto 108px}
 #store7 .card{content-visibility:auto;contain-intrinsic-size:auto 200px}
+/* master update 2: the Equipped strip stays visible at half height; reordering markers (left = before, right = after, middle = swap) */
+#inv7.drw7[data-lv=half] .eq8{display:flex}
+#inv7 .it7.ins-before{box-shadow:inset 3px 0 0 #f4d59a}#inv7 .it7.ins-after{box-shadow:inset -3px 0 0 #f4d59a}#inv7 .it7.ins-swap{outline:2px dashed rgba(244,213,154,.85);outline-offset:-3px}
+#ictx8 .mv8 button{flex:1;font-size:12px}
