@@ -5,7 +5,7 @@ const CATALOG7=/*@@CATALOG@@*/{items:[]};
 const SHOP7=(()=>{
  const items=CATALOG7.items,byId=new Map(items.map(i=>[i.id,i])),RAR=['common','uncommon','rare','epic','legendary','mythic','exclusive'];
  const RN={common:'Common',uncommon:'Uncommon',rare:'Rare',epic:'Epic',legendary:'Legendary',mythic:'Mythic',exclusive:'Exclusive'};
- const CATS=[['featured','Featured'],['cosmetics','Cosmetics'],['wings','Wings'],['effects','Effects'],['charms','Charms'],['weather','Weather'],['blocks','Blocks'],['seeds','Seeds'],['objects','Objects']];   // weapons and gear are earned by playing (EARN1), never sold
+ const CATS=[['featured','Featured'],['blocks','Blocks'],['seeds','Seeds'],['objects','Objects'],['weather','Weather']];/* looks are earned, not sold (master update 2): wings, effects, charms, cosmetics and pets' looks left the store */   // weapons and gear are earned by playing (EARN1), never sold
  const SLOTS=['aura','trail','spawn','victory','wtrail','wskin','break']; // effect sub-types, one equipped at a time each (+ 'charm')
  const st={own:{},eq:{},seen:{},pend:0,first:1};
  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
@@ -78,5 +78,5 @@ const SHOP7=(()=>{
   sfx('select');try{FX7.onEquip(s,id)}catch(_){}return true}
  function unequip(id){const it=byId.get(id);if(!it)return;const s=slotOf(it);if(s=='wing'){if(!equipped(id))return;wingUnequip()}else if(s=='weapon'){wp='fist';try{renderW();renderBar()}catch(_){}}else if(s=='gear'){wear[it.sub]=''}else{delete st.eq[s];save()}sfx('click');try{FX7.onEquip(s,null)}catch(_){}}
  const eqRef=slot=>{const id=st.eq[slot];const it=id&&byId.get(id);return it&&has(id)?it.ref:null};
- return{items,byId,RAR,RN,CATS,SLOTS,st,has,count,buy,net,equip,unequip,equipped,eqRef,slotOf,lvOk,needLv,get serverMode(){return srvMode()},get pend(){return st.pend},save,
+ return{items,byId,RAR,RN,CATS,SLOTS,st,has,count,buy,net,equip,unequip,grant(id){const it=byId.get(id);if(!it||has(id))return false;grantLocal(it,1);save();return true},equipped,eqRef,slotOf,lvOk,needLv,get serverMode(){return srvMode()},get pend(){return st.pend},save,
   markSeen(id){if(!st.seen[id]){st.seen[id]=1;save()}},isNew(id){const it=byId.get(id);return !!(it&&it.new&&!st.seen[id])},grantLocal}})();

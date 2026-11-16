@@ -27,9 +27,9 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  ok('store: 4 pets, 9 clothes, Pet Home + Food + Treat in a Pets tab',st.n==16&&st.pets.sort().join()=='cat,dog,fox,rabbit'&&st.clo==9&&st.care.sort().join()=='pet_food:610,pet_home:612,pet_treat:611'&&st.tab,st);
  ok('every pet store card draws (still thumbnail + live preview) and the care items have icons + names',st.bad.length==0&&st.icons.every(Boolean)&&st.names.join()=='Pet Food,Pet Treat,Pet Home',st.bad.concat(st.names));
  const so=await E(async()=>{STORE7.open({cat:'pets'});await new Promise(r=>setTimeout(r,300));const n=STORE7.list().length;const tab=!!document.querySelector('#store7 nav [data-c=pets]');STORE7.close();return{n,tab}});
- ok('the store opens on the Pets tab and lists them',so.n==16&&so.tab,so);
- // ---- adopt every species (real purchase flow)
- const ad=await E(async()=>{gems=100000;WX6.force='clear';mobs.length=0;const out={};for(const s of PET10.SPECIES){const r=await SHOP7.buy('pet_'+s);out[s]=r.ok}PET10.ensure();
+ ok('the store opens on the Pets tab and lists the pet care (the pets and their clothes are earned by playing)',so.n==3&&so.tab,so);
+ // ---- adopt every species (each pet is earned, then it comes to you)
+ const ad=await E(async()=>{WX6.force='clear';mobs.length=0;const out={};for(const s of PET10.SPECIES){out[s]=SHOP7.grant('pet_'+s)}PET10.ensure();
   return{out,n:PET10.S.pets.length,sp:PET10.S.pets.map(p=>p.sp).sort().join(),names:PET10.S.pets.map(p=>p.nm),homeless:PET10.S.pets.every(p=>!p.home),again:PET10.ensure()}});
  ok('adopting each species (cat, dog, rabbit, fox) creates one pet each, waiting for a home',ad.n==4&&ad.sp=='cat,dog,fox,rabbit'&&Object.values(ad.out).every(Boolean)&&ad.homeless&&ad.again==0,ad);
  // ---- a flat test yard: floor, a 1-block step right of the home, a 3-deep pit left of it, no water or trees
@@ -105,7 +105,7 @@ async function enter(p,world,reload){if(reload)await p.reload();else await p.got
  ok('rate limits: one reaction per pet every 1.5 s, never more than 2 pets talking (idle chatter waits too)',vx.gap=='gap'&&vx.second&&vx.busy=='busy'&&vx.busyChat=='busy'&&vx.talking==2,{gap:vx.gap,second:vx.second,busy:vx.busy,chat:vx.busyChat,talking:vx.talking});
  ok('mixing: panned by screen position (left of you = left), silent off-screen and with the SFX volume at 0',vx.happy.pan<0&&vx.sad.pan>0&&vx.off=='off'&&vx.muted=='muted',{pan:[vx.happy.pan,vx.sad.pan],off:vx.off,muted:vx.muted});
  // ---- Pet UI: E opens it, clothes + colours, locked items go to the store
- await E(async({hx,gy})=>{for(const c of Object.keys(PET10.CL))if(c!='wings')await SHOP7.buy('petc_'+c);const r=PET10.RT.get('pcat');PET10.force('pcat','sit');r.tm=30;r.x=(hx+1.5)*T;r.y=gy*T;r.vy=0;P.x=r.x+30;P.y=(gy)*T-P.h-1;P.vx=P.vy=0},yard);
+ await E(async({hx,gy})=>{for(const c of Object.keys(PET10.CL))if(c!='wings')SHOP7.grant('petc_'+c);const r=PET10.RT.get('pcat');PET10.force('pcat','sit');r.tm=30;r.x=(hx+1.5)*T;r.y=gy*T;r.vy=0;P.x=r.x+30;P.y=(gy)*T-P.h-1;P.vx=P.vy=0},yard);
  await E(async()=>{for(let i=0;i<30&&!PET10.nearest();i++){const r=PET10.RT.get('pcat');P.x=r.x+20;P.y=r.y-P.h-1;P.vx=P.vy=0;await new Promise(q=>setTimeout(q,50))}});await p.keyboard.press('f');await W8(300);
  const ui=await E(()=>({on:PET10.ui.on,vis:document.getElementById('petui').style.display,pid:PET10.ui.pid,tabs:document.querySelectorAll('#petui .tb10').length,chips:document.querySelectorAll('#petui .ch10').length}));
  ok('E next to a pet opens its Pet UI (4 pet tabs + store, every clothing chip)',ui.on&&ui.vis=='block'&&ui.tabs==5&&ui.chips==13,ui);

@@ -23,38 +23,40 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  r=await p.evaluate(()=>{const hs=new Set(),bad=[];if(SHOP7.items.some(it=>it.cat=='wings'&&(!wingById(it.ref)||wingById(it.ref).src!='shop')))bad.push('catalog sells a non-shop wing');if(WINGS.filter(w=>w.shop).some(w=>!SHOP7.byId.get('wing_'+w.id)))bad.push('shop wing missing from catalog');for(const w of WINGS.filter(w=>w.shop)){const i=WINGS.indexOf(w);const c=document.createElement('canvas');c.width=320;c.height=260;const x=c.getContext('2d');try{WingArt.draw(x,i,160,130,1,1,0,0,0,1)}catch(e){bad.push(w.id)}const d=x.getImageData(0,0,320,260).data;let h=0,px=0;for(let k=0;k<d.length;k+=4)if(d[k+3]>20){px++;h=(h*31+d[k]*3+d[k+1]*5+d[k+2]*7+k)>>>0}if(px<800)bad.push('blank '+w.id);hs.add(h)}return{n:hs.size,bad}});
  ok('27 shop wings render, each visually distinct',r.n==27&&r.bad.length==0,JSON.stringify(r));
  // --- purchase rules (offline/local)
- r=await p.evaluate(async()=>{gems=100;lvl=1;const o={};const g0=gems;o.noMoney=await SHOP7.buy('cos_horn_crown');o.gemsAfterFail=gems==g0;o.has0=SHOP7.has('cos_horn_crown');
-  o.price=SHOP7.byId.get('cos_horn_crown').price;gems=o.price+3500;const a=await SHOP7.buy('cos_horn_crown');o.buy=a.ok;o.gems=gems;const dup=await SHOP7.buy('cos_horn_crown');o.dup=dup.ok;o.gems2=gems;const w=await SHOP7.buy('wpn_astralkat');o.weapon=w&&w.ok;o.gems3=gems;
-  o.lvLock=(await SHOP7.buy('wing_moth')).ok;o.nope=(await SHOP7.buy('does_not_exist')).ok;
-  const n0=cnt(101);const s=await SHOP7.buy('seed_101',5);o.seed=s.ok&&cnt(101)==n0+5;COS1.equip('cos_horn_crown');o.eq=COS1.eq.hat=='cos_horn_crown';COS1.unequip('hat');o.un=!COS1.eq.hat;return o});
- ok('insufficient gems: refused and not charged',r.noMoney==false||r.noMoney.ok==0,JSON.stringify(r));ok('affordable buy charges exactly the price',r.buy==1&&r.gems==3500);ok('buying twice is refused and not charged',r.dup==0&&r.gems2==3500);
- ok('level-locked and unknown items are refused',r.lvLock==0&&r.nope==0);ok('a weapon cannot be bought: weapons are earned',!r.weapon&&r.gems3==3500,JSON.stringify(r));ok('stackable items add the quantity',r.seed);ok('equip/unequip works',r.eq&&r.un);
+ r=await p.evaluate(async()=>{gems=100;lvl=1;const o={};const g0=gems;o.noMoney=await SHOP7.buy('obj_25');o.gemsAfterFail=gems==g0;const c25=cnt(25);
+  o.price=SHOP7.byId.get('obj_25').price;lvl=30;gems=o.price+3500;const a=await SHOP7.buy('obj_25');o.buy=a.ok;o.gems=gems;o.got=cnt(25)-c25;
+  // looks are earned, not sold: a cosmetic, a wing and an effect are refused and nothing is charged
+  const lk=[];for(const id of['cos_horn_crown','wing_dragon','fx_aura_void','charm_star'])lk.push((await SHOP7.buy(id)).ok);o.looks=lk;o.gems2=gems;const w=await SHOP7.buy('wpn_astralkat');o.weapon=w&&w.ok;o.gems3=gems;
+  lvl=1;o.lvLock=(await SHOP7.buy('obj_20')).ok;o.nope=(await SHOP7.buy('does_not_exist')).ok;lvl=30;
+  const n0=cnt(101);const s=await SHOP7.buy('seed_101',5);o.seed=s.ok&&cnt(101)==n0+5;SHOP7.grant('cos_horn_crown');COS1.equip('cos_horn_crown');o.eq=COS1.eq.hat=='cos_horn_crown';COS1.unequip('hat');o.un=!COS1.eq.hat;return o});
+ ok('insufficient gems: refused and not charged',r.noMoney==false||r.noMoney.ok==0,JSON.stringify(r));ok('affordable buy charges exactly the price',r.buy==1&&r.gems==3500&&r.got==1,JSON.stringify(r));ok('looks (a cosmetic, a wing, an effect, a charm) cannot be bought, and nothing is charged',r.looks.every(v=>!v)&&r.gems2==3500,JSON.stringify(r));
+ ok('level-locked and unknown items are refused',r.lvLock==0&&r.nope==0);ok('a weapon cannot be bought: weapons are earned',!r.weapon&&r.gems3==3500,JSON.stringify(r));ok('stackable items add the quantity',r.seed);ok('an earned cosmetic can be worn and taken off',r.eq&&r.un);
  // --- persistence across reload
- await p.evaluate(()=>{gems=9000;lvl=120;return SHOP7.buy('wing_dragon').then(()=>SHOP7.buy('fx_aura_void')).then(()=>{SHOP7.equip('wing_dragon');SHOP7.equip('fx_aura_void');saveP();celSave();try{x6Save()}catch(_){}})});
+ await p.evaluate(()=>{lvl=120;SHOP7.grant('wing_dragon');SHOP7.grant('fx_aura_void');SHOP7.equip('wing_dragon');SHOP7.equip('fx_aura_void');saveP();celSave();try{x6Save()}catch(_){}});
  const q=await ctx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.goto(FILE);await q.waitForTimeout(2000);
  r=await q.evaluate(()=>({dragon:SHOP7.has('wing_dragon'),aura:SHOP7.has('fx_aura_void'),eqA:SHOP7.equipped('fx_aura_void'),wing:cel.wing,kat:SHOP7.has('cos_horn_crown')}));
- ok('ownership + equipped cosmetics survive a reload',r.dragon&&r.aura&&r.eqA&&r.wing=='dragon'&&r.kat,JSON.stringify(r));await q.close();
+ ok('earned looks and what you wear survive a reload',r.dragon&&r.aura&&r.eqA&&r.wing=='dragon'&&r.kat,JSON.stringify(r));await q.close();
  // --- wing equip state: one source of truth; unequipping never brings wings back; buying equips; previews never save
  r=await p.evaluate(async()=>{gems=9000;lvl=60;const o={},id=()=>{const w=curWing(lvl);return w?w.id:null};wingUnequip();cel.wing='auto';o.auto=id();
-  const g0=gems;o.wprice=SHOP7.byId.get('wing_eagle').price;o.buy=(await SHOP7.buy('wing_eagle')).ok;o.charged=g0-gems;o.afterBuy=id();o.dup=(await SHOP7.buy('wing_eagle')).ok;o.charged2=g0-gems;
+  const g0=gems;o.buy=(await SHOP7.buy('wing_eagle')).ok;o.charged=g0-gems;SHOP7.grant('wing_eagle');SHOP7.equip('wing_eagle');o.afterBuy=id();o.dup=SHOP7.grant('wing_eagle');o.charged2=g0-gems;
   SHOP7.unequip('wing_dragon');o.otherUn=id();SHOP7.unequip('wing_eagle');o.afterUn=id();o.on=cel.wingsOn;lvl=61;await new Promise(r=>setTimeout(r,300));o.afterLvl=id();
   o.storeShows=SHOP7.equipped('wing_eagle');cel.wing='dove';o.notOwned=id();cel.wingsOn=0;o.legacyOff=id()+'|'+cel.wing;cel.wingsOn=1;o.legacyOn=id();
   o.eqLevel=wingEquip('frost');o.cur=id();o.lockedEq=wingEquip('cosmic');o.cur2=id();o.exclBuy=(await SHOP7.buy('wing_sovereign')).ok;o.exclEq=wingEquip('sovereign');
   WPREV.id='cosmic';WPREV.until=performance.now()+5000;o.prev=wingShown(lvl).id;o.prevSaved=id();WPREV.id=null;o.dj=maxAir();wingUnequip();o.dj0=maxAir();return o});
- ok('wing equip/unequip: one state, unequip sticks through level-ups, buy equips once, locked/exclusive cannot be forced, preview is not saved',
-  r.auto=='aegis'&&r.buy==1&&r.charged==r.wprice&&r.afterBuy=='eagle'&&r.dup==0&&r.charged2==r.wprice&&r.otherUn=='eagle'&&r.afterUn===null&&r.on==0&&r.afterLvl===null&&!r.storeShows&&r.notOwned===null&&r.legacyOff=='null|none'&&r.legacyOn=='aegis'&&r.eqLevel&&r.cur=='frost'&&!r.lockedEq&&r.cur2=='frost'&&r.exclBuy==0&&!r.exclEq&&r.prev=='cosmic'&&r.prevSaved=='frost'&&r.dj==1&&r.dj0==0,JSON.stringify(r));
+ ok('wing equip/unequip: one state, unequip sticks through level-ups, wings cannot be bought (earned ones equip), locked/exclusive cannot be forced, preview is not saved',
+  r.auto=='aegis'&&r.buy==0&&r.charged==0&&r.afterBuy=='eagle'&&r.dup===false&&r.charged2==0&&r.otherUn=='eagle'&&r.afterUn===null&&r.on==0&&r.afterLvl===null&&!r.storeShows&&r.notOwned===null&&r.legacyOff=='null|none'&&r.legacyOn=='aegis'&&r.eqLevel&&r.cur=='frost'&&!r.lockedEq&&r.cur2=='frost'&&r.exclBuy==0&&!r.exclEq&&r.prev=='cosmic'&&r.prevSaved=='frost'&&r.dj==1&&r.dj0==0,JSON.stringify(r));
  {const q2=await ctx.newPage();q2.on('pageerror',e=>errs.push(e.message));await q2.goto(FILE);await q2.waitForTimeout(1500);r=await q2.evaluate(()=>({w:cel.wing,on:cel.wingsOn,cur:curWing(lvl)}));
   ok('unequipped wings stay unequipped after a reload',r.w=='none'&&r.on==0&&r.cur===null,JSON.stringify(r));await q2.close()}
  // --- store UI
  await p.evaluate(()=>STORE7.open());await p.waitForTimeout(400);
  r=await p.evaluate(()=>{const o={};const cnt=()=>document.querySelectorAll('#store7 .card').length;o.open=STORE7.isOpen;
   for(const c of ['weapons','wings','effects','charms','weather','gear','blocks','seeds','objects','cosmetics']){STORE7.setFilter({cat:c,q:'',rar:'all',owned:false});o[c]=cnt()}
-  STORE7.setFilter({cat:'all',q:'moon'});o.search=cnt();STORE7.setFilter({q:'zzzzzz'});o.none=cnt()+(document.querySelector('#store7 .empty')?100:0);
-  STORE7.setFilter({q:'',cat:'wings',sort:'pa'});const pr=STORE7.list().map(i=>i.price);o.asc=pr.every((v,i)=>!i||pr[i-1]<=v);
+  STORE7.setFilter({cat:'all',q:'stone'});o.search=cnt();STORE7.setFilter({q:'zzzzzz'});o.none=cnt()+(document.querySelector('#store7 .empty')?100:0);
+  STORE7.setFilter({q:'',cat:'objects',sort:'pa'});const pr=STORE7.list().map(i=>i.price);o.asc=pr.every((v,i)=>!i||pr[i-1]<=v);
   STORE7.setFilter({sort:'pd'});const pd=STORE7.list().map(i=>i.price);o.desc=pd.every((v,i)=>!i||pd[i-1]>=v);
   STORE7.setFilter({sort:'feat',rar:'legendary'});o.rar=STORE7.list().every(i=>i.rar=='legendary');STORE7.setFilter({rar:'all',owned:true});o.owned=STORE7.list().every(i=>SHOP7.has(i.id));STORE7.setFilter({owned:false,cat:'featured'});
   o.hud=!!document.getElementById('bstore');return o});
- ok('store opens, every category lists items; no weapons or stat gear are sold, the 16 store cosmetics are',r.open&&r.weapons==0&&r.gear==0&&r.cosmetics==16&&r.wings==35&&r.effects>=15&&r.charms==15&&r.weather==8&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
+ ok('store opens and lists what is still sold (blocks, seeds, objects, Neon Rain); no weapons, gear or looks (cosmetics, wings, effects, charms) are sold',r.open&&r.weapons==0&&r.gear==0&&r.cosmetics==0&&r.wings==0&&r.effects==0&&r.charms==0&&r.weather==1&&r.blocks>=10&&r.seeds>=10&&r.objects>=10,JSON.stringify(r));
  ok('search / empty state / sort asc+desc / rarity / owned filters',r.search>=3&&r.none>=100&&r.asc&&r.desc&&r.rar&&r.owned);ok('HUD STORE button exists',r.hud);
  // the Sparkmouse costume: real catalog gear, buyable + equippable, icons and cached worn art render
  r=await p.evaluate(async()=>{const o={};const h=SHOP7.byId.get('wear_sparkhood'),s=SHOP7.byId.get('wear_sparksuit');
@@ -65,9 +67,9 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
   wear.hat='';wear.body='';gems=g0;return o});
  ok('Sparkmouse Hood + Suit: epic/legendary gear, earned not sold, equip, icons + cached worn art',r.items&&r.refused&&r.charged==r.sum&&r.eq&&r.art===true,JSON.stringify(r));
  // buy through the UI with confirm dialog
- await p.evaluate(()=>{window._sfp=SHOP7.byId.get('cos_moon_tiara').price;gems=window._sfp+3800;lvl=120;STORE7.setFilter({cat:'all',q:'Crescent Tiara'});STORE7.select('cos_moon_tiara')});await p.waitForTimeout(300);
+ await p.evaluate(()=>{window._sfp=SHOP7.byId.get('obj_25').price;window._c25=cnt(25);gems=window._sfp+3800;lvl=120;STORE7.setFilter({cat:'all',q:''});STORE7.select('obj_25')});await p.waitForTimeout(300);
  await p.click('#store7 aside [data-a=buy]');await p.waitForTimeout(400);const dlg=await p.evaluate(()=>!!document.querySelector('#dlg7.on'));await p.click('#dlg7 [data-ok]');await p.waitForTimeout(600);
- r=await p.evaluate(()=>({has:SHOP7.has('cos_moon_tiara'),gems}));ok('UI purchase asks to confirm, then buys',dlg&&r.has&&r.gems==3800,JSON.stringify(r));
+ r=await p.evaluate(()=>({has:cnt(25)==window._c25+1,gems}));ok('UI purchase asks to confirm, then buys',dlg&&r.has&&r.gems==3800,JSON.stringify(r));
  await p.evaluate(()=>STORE7.close());
  // --- effects: run every cosmetic for 400 frames, no errors, bounded
  r=await p.evaluate(async()=>{gems=1e6;lvl=150;for(const it of SHOP7.items)if(!it.stack)await SHOP7.buy(it.id);for(const it of SHOP7.items)if(SHOP7.slotOf(it))SHOP7.equip(it.id);const e=[];const t0=performance.now();let frames=0;
@@ -98,9 +100,9 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  {const q=await b.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));await q.addInitScript(()=>{if(!localStorage.getItem('s9')){localStorage.setItem('s9','1');localStorage.setItem('rb_session',JSON.stringify({id:'guest',name:'Guest'}));localStorage.setItem('rbp',JSON.stringify({v:1,gems:10,lvl:20,own:{fist:1,solarfang:1},wp:'solarfang',ownW:{angel:1},wear:{wing:'angel'}}))}});
   await q.goto(FILE);await q.waitForTimeout(1500);const o=await q.evaluate(()=>({ready:RBDIAG.ready,wp,own:!!own.solarfang,wing:wear.wing,errs:RBDIAG.errors.length}));await q.close();
   ok('old saves (new weapons, removed wings) start cleanly and keep their weapons',o.ready&&o.wp=='solarfang'&&o.own&&!o.wing&&!o.errs&&!qe.length,JSON.stringify(o)+qe.join('|'))}
- r=await p.evaluate(()=>{const o={};o.items=COMP7.IDS.every(i=>SHOP7.byId.has('charm_'+i));gems=99999;o.eq=COMP7.IDS.map(i=>{SHOP7.buy('charm_'+i);SHOP7.equip('charm_'+i);return SHOP7.eqRef('charm')==i});o.voice=!document.getElementById('ovo')&&typeof SFX7.voice=='undefined';SHOP7.unequip('charm');return o});
- ok('4 companions are in the Store and can be bought and equipped; the character has no voice (no voice slider)',r.items&&r.eq.every(Boolean)&&r.voice,JSON.stringify(r));
- r=await p.evaluate(()=>{const o={};BOOK7.open();o.open=BOOK7.isOpen&&document.querySelectorAll('#book7 .sec').length==9;const st=BOOK7.stats().find(x=>x.c=='charms');gems=99999;for(const i of st.l)SHOP7.buy(i.id);const g0=gems;BOOK7.claim('charms:0.25');o.gain=gems-g0==100;const g1=gems;BOOK7.claim('charms:0.25');o.once=gems==g1;BOOK7.close();return o});
+ r=await p.evaluate(()=>{const o={};o.items=COMP7.IDS.every(i=>SHOP7.byId.has('charm_'+i));o.sold=COMP7.IDS.some(i=>SHOP7.byId.get('charm_'+i).sale!==0);o.eq=COMP7.IDS.map(i=>{SHOP7.grant('charm_'+i);SHOP7.equip('charm_'+i);return SHOP7.eqRef('charm')==i});o.voice=!document.getElementById('ovo')&&typeof SFX7.voice=='undefined';SHOP7.unequip('charm');return o});
+ ok('the 4 companions are earned (not sold) and can be equipped once earned; the character has no voice (no voice slider)',r.items&&!r.sold&&r.eq.every(Boolean)&&r.voice,JSON.stringify(r));
+ r=await p.evaluate(()=>{const o={};BOOK7.open();o.open=BOOK7.isOpen&&document.querySelectorAll('#book7 .sec').length==9;const st=BOOK7.stats().find(x=>x.c=='charms');for(const i of st.l)SHOP7.grant(i.id);const g0=gems;BOOK7.claim('charms:0.25');o.gain=gems-g0==100;const g1=gems;BOOK7.claim('charms:0.25');o.once=gems==g1;BOOK7.close();return o});
  ok('Collection Book opens, shows every category, pays each milestone once',r.open&&r.gain&&r.once,JSON.stringify(r));
  r=await p.evaluate(()=>{const o={};HUNT7.reset();enterWorld('plaza');o.empty=HUNT7.SPOTS.map((_,i)=>{const q=HUNT7.pos(i);return !tiles[Math.floor(q.y/T)*W+Math.floor(q.x/T)]});gems=0;try{SHOP7.serverMode}catch(_){}const g0=gems;for(let i=0;i<7;i++)HUNT7.take(i);HUNT7.take(0);o.count=HUNT7.count();o.gems=gems-g0;o.title=HUNT7.title;HUNT7.reset();return o});
  ok('Spirit Stone hunt: 7 stones in free spots, each pays once, all-found bonus + title',r.empty.every(Boolean)&&r.count==7&&r.gems==850&&r.title,JSON.stringify(r));
@@ -126,12 +128,12 @@ const FILE='file://'+path.join(__dirname,'..','index.html');
  ok('no world events in the Plaza',r.ev===null,JSON.stringify(r));
  // --- v9 weather machines: in the store, bought, placed, switched on (scene + music mood), saved with the world, survive a reload
  r=await p.evaluate(async()=>{const o={};const ids=[85,86,87,88,89],wx=['sunflower','sakura','ocean','neon','aurora'];enterWorld('wxtest');await new Promise(r=>setTimeout(r,1500));gems=99999;lvl=40;
-  o.store=ids.every(id=>{const it=SHOP7.byId.get('obj_'+id);return it&&it.cat=='weather'&&it.price>0&&it.lv>0});o.bought=[];for(const id of ids){const c0=cnt(id);const res=await SHOP7.buy('obj_'+id,1);o.bought.push(!!res.ok&&cnt(id)==c0+1)}
+  o.store=ids.every(id=>{const it=SHOP7.byId.get('obj_'+id);return it&&it.cat=='weather'&&it.price>0&&it.lv>0});o.bought=[];for(const id of ids){const c0=cnt(id),it=SHOP7.byId.get('obj_'+id);let ok2;if(it.sale===0)ok2=SHOP7.grant('obj_'+id);else ok2=(await SHOP7.buy('obj_'+id,1)).ok;o.bought.push(!!ok2&&cnt(id)==c0+1)}o.earned=ids.filter(id=>SHOP7.byId.get('obj_'+id).sale===0).length;
   const px=Math.floor(P.x/T),py=Math.floor((P.y+P.h-1)/T);o.used=[];o.mood=[];o.built=[];startBGM();mobs.length=0;for(let i=0;i<40;i++){mobs.length=0;MUS7.detect();if(MUS7.want!='combat')break;await new Promise(r=>setTimeout(r,250))}
   for(let i=0;i<ids.length;i++){const k=py*W+px+1+i;tiles[k]=ids[i];pushEdit(k);await new Promise(r=>setTimeout(r,1300));WXM7.use(k);o.used.push(ENV7.target==wx[i]&&X6.wx[cur]==wx[i]&&!!OBJ[k]&&ODEF[OBJ[k].t].cat=='wx');mobs.length=0;MUS7.detect();o.mood.push(MUS7.want==wx[i]&&MUS7.MOODS[wx[i]].songs.length>=2);await new Promise(r=>setTimeout(r,200));o.built.push(ENV7.cached.includes(wx[i]));if(wx[i]=='neon')o.rain=WX6.force=='rain'}
   o.names=ids.every((id,i)=>ENV7.names[wx[i]]&&iname(id)==ODEF[id].n);o.cat=ITEM7.cat(88)=='obj';
   const sav=JSON.parse(localStorage.getItem('rbc2')||'{}');o.saved=sav.wx&&sav.wx.wxtest=='aurora';return o});
- ok('5 new weather machines are in the Store and can be bought',r.store&&r.bought.every(Boolean),JSON.stringify(r));
+ ok('5 new weather machines: Neon Rain (it waters crops) is still sold, the sky-only ones are earned; each can be had',r.store&&r.bought.every(Boolean)&&r.earned==4,JSON.stringify(r));
  ok('placing + using each machine switches the world to its animated scene (built into cached layers) with its own music mood',r.used.every(Boolean)&&r.built.every(Boolean)&&r.mood.every(Boolean)&&r.names&&r.cat,JSON.stringify(r));
  ok('the Neon Rain machine brings real rain; the weather is saved with the world',r.saved&&r.rain,JSON.stringify(r));
  {const q=await ctx.newPage();const qe=[];q.on('pageerror',x=>qe.push(x.message));await q.goto(FILE);await q.waitForTimeout(1200);await q.getByText('START ADVENTURE',{exact:false}).first().click().catch(()=>{});await q.waitForTimeout(1200);

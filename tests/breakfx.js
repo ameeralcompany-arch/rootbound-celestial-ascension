@@ -18,8 +18,8 @@ const guest=()=>{if(!localStorage.getItem('rb_session'))localStorage.setItem('rb
  ok('break effects span common to mythic',cat.rar.includes('common')&&cat.rar.includes('mythic'),cat.rar);
  ok('default break effect is the free soul wisps',await E(()=>BRK7.skin)=='souls');
  // buy + equip Heart Pop
- const buy=await E(async()=>{gems=100000;const r=await SHOP7.buy('fx_brk_heart');const e=SHOP7.equip('fx_brk_heart');return{r:r.ok,e,skin:BRK7.skin,opts:BRK7.options().map(o=>o[0])}});
- ok('buying + equipping Heart Pop switches the break effect',buy.r&&buy.e&&buy.skin=='heart',buy);
+ const buy=await E(async()=>{const sold=SHOP7.byId.get('fx_brk_heart').sale!==0;const r=SHOP7.grant('fx_brk_heart');const e=SHOP7.equip('fx_brk_heart');return{sold,r,e,skin:BRK7.skin,opts:BRK7.options().map(o=>o[0])}});
+ ok('Heart Pop is earned, not sold; once earned, equipping it switches the break effect',!buy.sold&&buy.r&&buy.e&&buy.skin=='heart',buy);
  ok('settings list shows free + owned effects',buy.opts.includes('heart')&&buy.opts.includes('souls')&&!buy.opts.includes('phantom'),buy.opts);
  // every effect in the world: spawn by breaking a block, it moves, then it is gone
  const kinds=['souls','sparkle','petals',...cat.ids.map(i=>i.slice(7))];const res={};

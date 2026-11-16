@@ -32,12 +32,12 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
   return{ratio:out,bad}},NEW);
  ok('8 new three-tier wings: span >= 2.5x torso width, F2 high above F4, emissive tip sprites, trails, nothing cut off',r.bad.length==0,r);
  // ---- buy + equip a new wing (store), it shows in the store category and the collection, with its own sounds
- r=await E(async()=>{gems=99999;lvl=80;const o={};o.cat=SHOP7.items.filter(i=>i.cat=='wings').length;lvl=40;o.lock=(await SHOP7.buy('wing_voidshroud')).ok;lvl=80;
-  o.buy=(await SHOP7.buy('wing_haloseraph')).ok;o.eq=curWing(lvl)&&curWing(lvl).id;o.own=wingOwned(wingById('haloseraph'));o.sfx=['voidshroud','nightforge','haloseraph','inkwraith','eyemoth','stormlance','bonelight','amethclaw'].filter(id=>{const P=WINGSFX.P7[id];if(!P)return true;try{P.j();P.f(true);P.g();P.e();return false}catch(e){return true}});
+ r=await E(async()=>{gems=99999;lvl=80;const o={};o.cat=SHOP7.items.filter(i=>i.cat=='wings').length;lvl=40;o.lock=(await SHOP7.buy('wing_voidshroud')).ok;lvl=80;o.sold=(await SHOP7.buy('wing_haloseraph')).ok;
+  o.buy=SHOP7.grant('wing_haloseraph');SHOP7.equip('wing_haloseraph');o.eq=curWing(lvl)&&curWing(lvl).id;o.goal=SHOP7.byId.get('wing_haloseraph').earn.t;o.own=wingOwned(wingById('haloseraph'));o.sfx=['voidshroud','nightforge','haloseraph','inkwraith','eyemoth','stormlance','bonelight','amethclaw'].filter(id=>{const P=WINGSFX.P7[id];if(!P)return true;try{P.j();P.f(true);P.g();P.e();return false}catch(e){return true}});
   const c=document.createElement('canvas');c.width=168;c.height=112;const x=c.getContext('2d');let blank=[];for(const id of['voidshroud','eyemoth','bonelight']){x.clearRect(0,0,168,112);const i=WINGS.findIndex(w=>w.id==id),k=Math.min(1.45,60/(WINGS[i].a.L*1.15));x.save();x.translate(84,76);x.scale(k,k);WingArt.draw(x,i,0,6,1,1,0,0,i,1,null,null,{ds:1});x.restore();const d=x.getImageData(0,0,168,112).data;let n=0;for(let q=3;q<d.length;q+=4)if(d[q]>20)n++;if(n<500)blank.push(id)}o.blank=blank;return o});
- ok('new wings are in the store (35 wings), level-gated, buyable, equip on purchase, each has a working sound profile and a collection preview',r.cat==35&&r.lock===0&&r.buy&&r.eq=='haloseraph'&&r.own&&!r.sfx.length&&!r.blank.length,r);
+ ok('the 35 catalog wings are exclusive (earned, not sold), equip once earned, each has a working sound profile and a collection preview',r.cat==35&&r.lock===0&&r.sold===0&&r.buy&&r.eq=='haloseraph'&&r.own&&!!r.goal&&!r.sfx.length&&!r.blank.length,r);
  // ---- pet + hitbox baseline on the ground
- await E(async()=>{gems=99999;await SHOP7.buy('charm_mochi');SHOP7.equip('charm_mochi')});
+ await E(async()=>{SHOP7.grant('charm_mochi');SHOP7.equip('charm_mochi')});
  const pos=await E(()=>{const px=Math.floor(P.x/T);let y=0;while(y<H-1&&!tiles[(y+1)*W+px])y++;return{w:P.w,h:P.h}});
  await W(900);
  // ---- ground idle: levitation + aura on, hitbox and P.y untouched, pet follows
@@ -85,7 +85,7 @@ const pngSize=f=>{const b=fs.readFileSync(f);return b.slice(1,4).toString()=='PN
   fl.on&&fl.c.trail>=3&&fl.c.feathers>0&&fl.dB==1&&fl.dR==1&&fl.c.motes==0&&
   fm.on&&fm.c.trail>=3&&fm.dB==1&&fm.dR==1&&fm.c.motes>.5,{epic:fe.c,leg:[fl.c,fl.dR],myth:[fm.c,fm.dR]});
  // ---- themed trails: the trail follows the wing's own theme (dark wings: smoky wisps drawn source-over), never a generic rainbow
- await E(async()=>{gems=1e9;lvl=150;await SHOP7.buy('wing_voidshroud')});
+ await E(async()=>{lvl=150;SHOP7.grant('wing_voidshroud')});
  r=await E(()=>{const t=id=>WTRAIL.theme(id),o={};for(const id of['voidshroud','nightforge','inkwraith','bonelight','eyemoth','haloseraph','eternity','ascendant','phoenix','drakelord','stormlance','frost','amethclaw','cosmic','storm'])o[id]=t(id);
   const sd=WTRAIL.set(wingById('voidshroud'),2),sl=WTRAIL.set(wingById('haloseraph'),2);return{o,obj:t(wingById('voidshroud')),dark:sd.T.main,light:sl.T.main,lacc:sl.T.acc,list:WTRAIL.themes}});
  ok('theme classifier: dark / corrupted wings get the dark theme (smoke wisps), light wings the light theme (gold / starlight motes), fire, storm, ice and crystal wings their own',

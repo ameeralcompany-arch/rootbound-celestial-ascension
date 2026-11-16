@@ -28,14 +28,14 @@ const W=256,TILE=48;
  const {c:B}=await account('Watcher_2');
  for(const c of[A,B]){c.send({t:'enter',w:'cosmine',create:true});await c.wait('joined')}
  const at=(c,tx,ty)=>c.send({t:'_p',d:{x:tx*TILE,y:ty*TILE,f:1}});
- at(A,40,20);await sleep(80);
- let tile=0;const brk=async(c,o={})=>{const k=o.k!=null?o.k:(24+(tile/10|0))*W+(41+tile%10);if(o.k==null)tile++;const from=c.msgs.length;c.send({t:'e',d:Object.assign({k,a:[0,0,0,0]},o.br===null?{}:{br:o.br===undefined?1:o.br})});await sleep(o.wait||60);return{k,got:c.msgs.slice(from).filter(m=>m.t=='cosm')}};
+ at(A,100,20);await sleep(80);
+ let tile=0;const brk=async(c,o={})=>{const k=o.k!=null?o.k:(24+(tile/10|0))*W+(101+tile%10);if(o.k==null)tile++;const from=c.msgs.length;c.send({t:'e',d:Object.assign({k,a:[0,0,0,0]},o.br===null?{}:{br:o.br===undefined?1:o.br})});await sleep(o.wait||60);return{k,got:c.msgs.slice(from).filter(m=>m.t=='cosm')}};
  // ---- 2. what never counts
  force='ultra';rolls=0;
  {const r=await brk(A,{br:null});ok('an edit that is not a break (no break mark) never rolls',rolls==0&&!r.got.length,{rolls})}
- {const k=21*W+44;A.send({t:'e',d:{k,a:[3,0,0,0]}});await sleep(60);const r=await brk(A,{k});ok('breaking a tile someone placed (not natural) never rolls',rolls==0&&!r.got.length,{rolls})}
- {const r=await brk(A,{k:20*W+120});ok('breaking far from where you stand never rolls',rolls==0&&!r.got.length,{rolls})}
- {const k=22*W+42;A.send({t:'e',d:{k,a:[5,0,0,0],br:1}});await sleep(60);ok('turning a tile into a block (not air) never rolls',rolls==0,{rolls})}
+ {const k=21*W+104;A.send({t:'e',d:{k,a:[3,0,0,0]}});await sleep(60);const r=await brk(A,{k});ok('breaking a tile someone placed (not natural) never rolls',rolls==0&&!r.got.length,{rolls})}
+ {const r=await brk(A,{k:20*W+180});ok('breaking far from where you stand never rolls',rolls==0&&!r.got.length,{rolls})}
+ {const k=22*W+102;A.send({t:'e',d:{k,a:[5,0,0,0],br:1}});await sleep(60);ok('turning a tile into a block (not air) never rolls',rolls==0,{rolls})}
  // ---- 3. a find: saved, numbered, sent, announced
  rolls=0;const f1=await brk(A,{wait:250});const m1=f1.got[0];
  ok('a counted break rolls exactly once',rolls==1,{rolls});
@@ -52,26 +52,28 @@ const W=256,TILE=48;
  ok('once every findable cosmetic is owned, a find pays gems instead',gems&&gems.gems==3000&&gems.tier=='ultra',gems);
  const tiersInOrder=got.filter(Boolean).map(id=>CAT.get(id).tier);const ordr=COSM.ORDER;ok('and they came rarest tier first',tiersInOrder.every((t,i)=>i==0||ordr.indexOf(t)>=ordr.indexOf(tiersInOrder[i-1])),tiersInOrder.join(' '));
  // ---- 5. the per-minute cap (60 counted breaks a minute for one account)
- {const {c:C}=await account('Capper_3');C.send({t:'enter',w:'cosmine',create:true});await C.wait('joined');at(C,40,60);await sleep(80);force=null;rolls=0;
-  for(let i=0;i<75;i++){C.send({t:'e',d:{k:(56+(i/20|0))*W+(30+i%20),a:[0,0,0,0],br:1}});if(i%8==7)await sleep(1100)}await sleep(400);
+ {const {c:C}=await account('Capper_3');C.send({t:'enter',w:'cosmine',create:true});await C.wait('joined');at(C,100,60);await sleep(80);force=null;rolls=0;
+  for(let i=0;i<75;i++){C.send({t:'e',d:{k:(56+(i/20|0))*W+(90+i%20),a:[0,0,0,0],br:1}});if(i%8==7)await sleep(1100)}await sleep(400);
   ok('an account counts at most 60 breaks a minute',rolls==60,{rolls});C.close()}
  // ---- 6. others see only what you own
  {const ord=id=>CAT.get(id).ord;const {c:D}=await account('Poser_4');D.send({t:'enter',w:'cosmine',create:true});await D.wait('joined');D.send({t:'_p',d:{x:100,y:100,f:1,cx:{cz:[ord('cos_galaxy_cloak'),ord('cos_ribbon_bow')]}}});await sleep(150);
   const seen=B.all('_p').filter(m=>m.d&&m.d.n=='Poser_4').slice(-1)[0];ok('a cosmetic you do not own is removed before others see it',seen&&seen.d.cx&&Array.isArray(seen.d.cx.cz)&&seen.d.cx.cz.length==0,seen&&seen.d.cx);
-  A.send({t:'_p',d:{x:40*TILE,y:20*TILE,f:1,cx:{cz:[ord('cos_galaxy_cloak')]}}});await sleep(150);const sa=B.all('_p').filter(m=>m.d&&m.d.n=='Finder_1').slice(-1)[0];
+  A.send({t:'_p',d:{x:100*TILE,y:20*TILE,f:1,cx:{cz:[ord('cos_galaxy_cloak')]}}});await sleep(150);const sa=B.all('_p').filter(m=>m.d&&m.d.n=='Finder_1').slice(-1)[0];
   ok('a cosmetic you found is shown to others',sa&&sa.d.cx&&sa.d.cx.cz&&sa.d.cx.cz[0]==ord('cos_galaxy_cloak'),sa&&sa.d.cx);
   // ---- 7. the store: cosmetics yes; weapons, gear and finds no
   D.send({t:'sync',gems:1500});await D.wait('wallet');let rn=0;const buy=async(id)=>{const from=D.msgs.length;D.send({t:'buy',id,rid:'r'+id+(rn++)});const t0=Date.now();while(Date.now()-t0<3000){const m=D.msgs.slice(from).find(x=>x.t=='buy_res');if(m)return m;await sleep(20)}return null};
-  const b1=await buy('cos_ribbon_bow');ok('a store cosmetic can be bought with gems',b1&&b1.ok,b1);
+  const b1=await buy('cos_ribbon_bow');ok('a cosmetic cannot be bought any more: it is earned by playing',b1&&!b1.ok&&/earned/.test(b1.m),b1);
+  {const from=D.msgs.length;D.send({t:'earn',ids:['cos_ribbon_bow'],mx:{place:150},lv:5});await sleep(250);const no=D.msgs.slice(from).find(x=>x.t=='earned');D.send({t:'earn',ids:['cos_ribbon_bow'],mx:{place:240},lv:5});await sleep(300);const yes=D.msgs.slice(from).filter(x=>x.t=='earned').pop(),w=D.msgs.slice(from).filter(x=>x.t=='wallet').pop();
+   ok('short of its goal (Place 200 blocks) it is not earned; reaching it earns it and it joins what you own',no&&!no.ids.includes('cos_ribbon_bow')&&yes&&yes.ids.includes('cos_ribbon_bow')&&w&&w.owned&&w.owned.cos_ribbon_bow,{no:no&&no.ids,yes:yes&&yes.ids,owned:w&&w.owned})}
   const b2=await buy('wpn_frost');ok('a weapon cannot be bought: it is earned',b2&&!b2.ok&&/earned/.test(b2.m),b2&&b2.m);
   const b3=await buy('wear_helmet');ok('stat gear cannot be bought: it is earned',b3&&!b3.ok,b3&&b3.m);
   const b4=await buy('cos_galaxy_cloak');ok('a rare find cannot be bought',b4&&!b4.ok,b4&&b4.m);
-  D.send({t:'_p',d:{x:100,y:100,f:1,cx:{cz:[ord('cos_ribbon_bow')]}}});await sleep(150);const s2=B.all('_p').filter(m=>m.d&&m.d.n=='Poser_4').slice(-1)[0];ok('once bought, it is shown to others',s2&&s2.d.cx&&s2.d.cx.cz&&s2.d.cx.cz[0]==ord('cos_ribbon_bow'),s2&&s2.d.cx);
+  D.send({t:'_p',d:{x:100,y:100,f:1,cx:{cz:[ord('cos_ribbon_bow')]}}});await sleep(150);const s2=B.all('_p').filter(m=>m.d&&m.d.n=='Poser_4').slice(-1)[0];ok('once earned, it is shown to others',s2&&s2.d.cx&&s2.d.cx.cz&&s2.d.cx.cz[0]==ord('cos_ribbon_bow'),s2&&s2.d.cx);
   // ---- 8. earned weapons: the right class and level only
   const earn=async(o)=>{const from=D.msgs.length;D.send(Object.assign({t:'earn'},o));const t0=Date.now();while(Date.now()-t0<3000){const m=D.msgs.slice(from).find(x=>x.t=='earned');if(m)return m.ids;await sleep(20)}return null};
   const e1=await earn({ids:['wpn_frost'],cls:'knight',clv:5,lv:30});ok('a weapon is not recorded below its class level',e1&&!e1.includes('wpn_frost'),e1);
   const e2=await earn({ids:['wpn_frost'],cls:'samurai',clv:40,lv:60});ok('another class cannot claim a Knight weapon',e2&&!e2.includes('wpn_frost'),e2);
-  const e3=await earn({ids:['wpn_frost','wear_helmet','cos_ribbon_bow'],cls:'knight',clv:11,lv:3});ok('the right class at the right level records it (and gear by player level); a cosmetic is never "earned"',e3&&e3.includes('wpn_frost')&&e3.includes('wear_helmet')&&!e3.includes('cos_ribbon_bow'),e3);
+  const e3=await earn({ids:['wpn_frost','wear_helmet','cos_galaxy_cloak'],cls:'knight',clv:11,lv:3,mx:{place:1e6,kill:1e6,brk:1e6}});ok('the right class at the right level records it (and gear by player level); a rare find is never "earned", whatever progress is claimed',e3&&e3.includes('wpn_frost')&&e3.includes('wear_helmet')&&!e3.includes('cos_galaxy_cloak'),e3);
   D.close()}
  // ---- 9. a find the game never confirmed comes again; a confirmed one does not; everything survives a server restart
  {const tok=aa.token;A.close();B.close();await sleep(200);await S.close();S=mk();port=await S.listen();
