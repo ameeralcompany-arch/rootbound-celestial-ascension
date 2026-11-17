@@ -15,7 +15,7 @@ const STORE7=(()=>{
  let thumbF=0;function thumbsLater(){if(thumbF)return;thumbF=requestAnimationFrame(()=>{thumbF=0;if(isOpen())paintThumbs(el.querySelector('.grid'))})}
  function silhouette(x,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='rgba(70,60,110,.55)';x.beginPath();x.arc(0,-34,11,0,6.3);x.fill();x.beginPath();x.moveTo(-13,-20);x.lineTo(13,-20);x.lineTo(10,22);x.lineTo(-10,22);x.closePath();x.fill();x.fillRect(-9,22,7,26);x.fillRect(2,22,7,26);x.restore()}
  function sparkle(x,px,py,c,r,a){x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;x.fillStyle=c;x.beginPath();x.arc(px,py,r,0,6.3);x.fill();x.restore()}
- function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);if(it.cat=='cosmetics'&&window.COS1&&COS1.preview(x,it,W,H,t,{scale:Math.min(W,H)/62}))return;/* cosmetics: your own character wearing it */const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
+ function drawPrev(x,it,W,H,t,sc,still){x.clearRect(0,0,W,H);if(it.dec!=null&&typeof DECOR10!='undefined'){try{if(DECOR10.storePrev(x,it,W,H,t))return}catch(_){}}/* decorations (world building): the decoration itself, alive */if(it.cat=='cosmetics'&&window.COS1&&COS1.preview(x,it,W,H,t,{scale:Math.min(W,H)/62}))return;/* cosmetics: your own character wearing it */const k=W/300,cx=W/2,cy=H*.58;const ref=it.ref;
   const z=still?1.35:1; // card thumbnails show weapons and wings larger so their silhouettes read at a glance
   try{
   if(it.cat=='weapons'){x.save();x.translate(cx,cy+8*k);x.scale(k*1.25*z,k*1.25*z);const a=still?-.9:-1.1+Math.sin(t*2.4)*.7;x.rotate(a);x.translate(-30,0);const w=WPN[ref];

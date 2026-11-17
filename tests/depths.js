@@ -117,12 +117,12 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  ok('an old 100-wide world save still migrates and loads its edits',old.a==7&&old.b==7&&old.w==old.W,old);
  const sb=await E(()=>{enterWorld('savedbuild');const g0=DEPTH8.find('grove');const k=(g0.fy-1)*W+g0.x;delete DEPTH8.db.w.savedbuild;DEPTH8.save();
   // simulate a save made before DEPTH8 existed: a brick inside the first grove room plus one far away
-  localStorage.setItem('rbw_savedbuild',JSON.stringify({W,[k]:[7,0,0,0],[5*W+3]:[11,0,0,0]}));enterWorld('savedbuild');const ids=DEPTH8.sites().map(r=>r.id);
+  localStorage.setItem('rbw_savedbuild',JSON.stringify({W,g:VILL9.gv,[k]:[7,0,0,0],[5*W+3]:[11,0,0,0]}));enterWorld('savedbuild');const ids=DEPTH8.sites().map(r=>r.id);
   const r={brick:tiles[k]==7,far:tiles[5*W+3]==11,skipped:!ids.includes(g0.id),others:ids.length>=8,ok:DEPTH8.wr().ok.slice()};enterWorld('depthtest');enterWorld('savedbuild');r.stable=JSON.stringify(DEPTH8.sites().map(x=>x.id))==JSON.stringify(ids);return r});
  ok('a save with a build where a room would go: the build is kept, that room is skipped, the rest appear, layout stays stable',sb.brick&&sb.far&&sb.skipped&&sb.others&&sb.stable&&!sb.ok.includes('g0'),sb);
  // a world first saved before the mini games: its old rooms, caches and geodes stay exactly where they were and the new rooms are added
  const mg=await E(()=>{const OLD=/^[gpsv]d$/,pos=()=>DEPTH8.sites().filter(r=>OLD.test(r.id)).map(r=>r.id+'@'+r.x+','+r.fy).join(' '),re=()=>{enterWorld('depthtest');enterWorld('migrate')};
-  enterWorld('migrate');const p0=pos(),w=DEPTH8.wr(),all=w.sn.slice();
+  localStorage.setItem('rbw_migrate',JSON.stringify({W,g:2}));/* a world from before the mini games is a full-width one */enterWorld('migrate');const p0=pos(),w=DEPTH8.wr(),all=w.sn.slice();
   // as the old version had it: only the old rooms (the new ids marked decided-but-skipped, so they stay out): the full cache / geode lists
   w.ok=w.ok.filter(id=>OLD.test(id));w.sn=all;DEPTH8.save();re();const ca=DEPTH8.caches().map(String),ge=DEPTH8.geodes().map(String),p1=pos(),none=!DEPTH8.sites().some(r=>r.k=='mole'||r.k=='gal');
   // the old save format (no w.sn): the new rooms are decided now and added

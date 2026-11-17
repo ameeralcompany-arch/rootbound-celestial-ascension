@@ -26,7 +26,7 @@ const SAVE=JSON.stringify({v:1,inv:{1:20},gems:1000,own:{fist:1,astralkat:1,saku
  await p.goto(FILE,{waitUntil:'commit'});await boot();
  // design tokens on the default look
  const ds=await p.evaluate(async()=>{NAV16.act('character');await new Promise(r=>setTimeout(r,600));const t=document.querySelector('#hubhead b'),h=document.getElementById('hubc');const o={skin:document.documentElement.dataset.skin,ff:getComputedStyle(t).fontFamily,bg:getComputedStyle(h).backgroundImage,ink:getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()};NAV16.closeAll();return o});
- ok('the default look uses the brand: serif titles, cream ink, deep-violet glass',ds.skin=='night'&&/Cormorant/.test(ds.ff)&&ds.ink.toUpperCase()=='#F6F1E7'&&/36, 26, 66/.test(ds.bg),ds);
+ ok('the default look uses the brand: serif titles, cream ink, deep-violet night surface',ds.skin=='night'&&/Cormorant/.test(ds.ff)&&ds.ink.toUpperCase()=='#F6F1E7'&&/29, 24, 56/.test(ds.bg),ds);
  const cl=await p.evaluate(async()=>{const d=document.documentElement,s0=d.getAttribute('data-skin');d.setAttribute('data-skin','clean');NAV16.act('character');await new Promise(r=>setTimeout(r,500));const ff=getComputedStyle(document.querySelector('#hubhead b')).fontFamily;NAV16.closeAll();d.setAttribute('data-skin',s0);return ff});
  ok('the other looks keep their own styles',!/Cormorant/.test(cl),cl);
  // the character card: nothing overlaps, a long name is cut off cleanly, and health eases by transform only

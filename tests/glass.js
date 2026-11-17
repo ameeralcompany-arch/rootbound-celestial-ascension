@@ -8,21 +8,21 @@ const URL='file://'+path.resolve(__dirname,'../index.html');setTimeout(()=>{cons
  const p=await open(1600,900);
  // ---- the design system
  const tk=await p.evaluate(()=>{const c=getComputedStyle(document.documentElement),g=k=>c.getPropertyValue(k).trim();return{ink:g('--ink'),surface:g('--surface'),acc:g('--accent'),line:g('--line'),rad:g('--rad-glass'),btn:g('--btn-primary'),skin:document.documentElement.dataset.skin,blur:document.documentElement.dataset.blur}});
- ok('the default look is the brand: deep-violet glass, gold accent, cream ink',tk.skin=='night'&&/rgba\(36, ?26, ?66/.test(tk.surface)&&tk.acc.toUpperCase()=='#F4D59A'&&tk.ink.toUpperCase()=='#F6F1E7',tk);ok('balanced by default: medium blur',tk.blur=='med',tk.blur);
+ ok('the default look is the brand: deep-violet night surface, gold accent, cream ink',tk.skin=='night'&&/rgba\(21, ?17, ?42/.test(tk.surface)&&tk.acc.toUpperCase()=='#F4D59A'&&tk.ink.toUpperCase()=='#F6F1E7',tk);ok('balanced by default: medium blur',tk.blur=='med',tk.blur);
  // one panel style across different screens
  const panels=[['Hub',()=>UI6.open('profile'),'#hubc'],['Inventory',()=>INV7.open(),'#inv7 .sheet'],['Store',()=>STORE7.open(),'#store7 .shell'],['Worlds',()=>openMenu('mworlds'),'#menu #card'],['Crafting',()=>CRAFT6.open(),'#craftui'],['Dungeons',()=>DG.page.open('ancient'),'#dg16']];
  const styles={};for(const[n,f,sel]of panels){await p.evaluate(`(${f})()`).catch(e=>console.log(n,String(e).slice(0,100)));await p.waitForTimeout(320);styles[n]=await p.evaluate(sel=>{const e=document.querySelector(sel);if(!e)return null;const c=getComputedStyle(e),r=e.getBoundingClientRect();return{bg:c.backgroundImage.slice(0,60),rad:c.borderRadius,bf:c.backdropFilter,w:r.width|0,h:r.height|0}},sel);await closeAll(p);await p.waitForTimeout(200)}
- for(const n of['Hub','Inventory','Store','Worlds','Crafting'])ok(n+' uses the shared glass panel',styles[n]&&/rgba\(36, ?26, ?66/.test(styles[n].bg)&&styles[n].rad=='16px',styles[n]);
+ for(const n of['Hub','Inventory','Store','Worlds','Crafting'])ok(n+' uses the shared panel: a near-solid night surface (master update 2: text never sits on the world), 20 px corners',styles[n]&&/rgba\(29, ?24, ?56/.test(styles[n].bg)&&styles[n].rad=='20px',styles[n]);
  ok('the Dungeon Hub is its own full page in the same palette',styles.Dungeons&&styles.Dungeons.w>1500,styles.Dungeons);
  ok('the HUD never has live blur',await p.evaluate(()=>{const q=document.querySelector('#hudL');return getComputedStyle(q).backdropFilter=='none'&&getComputedStyle(document.querySelector('#bar')).backdropFilter=='none'}));
- ok('an open panel has medium blur',/blur\(9px\)/.test(styles.Hub.bf),styles.Hub.bf);
+ ok('an open panel needs no live blur: its surface is near-solid, so nothing behind it is blurred every frame',styles.Hub.bf=='none',styles.Hub.bf);
  // ---- buttons
  const btn=await p.evaluate(()=>{UI6.open('settings');const b=document.querySelector('.hbtn'),c=getComputedStyle(b);return{rad:c.borderRadius,tr:c.transitionProperty}});ok('buttons share a radius and ease',btn.rad=='10px'&&/background/.test(btn.tr),btn);
  // ---- the settings
  const ids=await p.evaluate(()=>['sperf','sblr','spq','sshq','scq','suan','ssh','su','sr'].filter(i=>!document.getElementById(i)));ok('every graphics and interface setting is in Settings',ids.length==0,ids);
  const set=(id,v)=>p.evaluate(([id,v])=>{const e=document.getElementById(id);if(e.type=='checkbox')e.checked=!!v;else e.value=v;e.dispatchEvent(new Event('change',{bubbles:true}))},[id,v]);
  const attr=k=>p.evaluate(k=>document.documentElement.getAttribute(k),k);
- await set('sblr','high');ok('blur: High',await attr('data-blur')=='high');await set('sblr','off');const off=await p.evaluate(()=>{const c=getComputedStyle(document.querySelector('#hubc'));return{bf:c.backdropFilter,bg:c.backgroundImage.slice(0,50)}});ok('blur: Off is truly off, and the panel turns solid so text stays readable',await attr('data-blur')=='off'&&off.bf=='none'&&!/rgba/.test(off.bg),off);await set('sblr','med');
+ await set('sblr','high');ok('blur: High',await attr('data-blur')=='high');await set('sblr','off');const off=await p.evaluate(()=>{const c=getComputedStyle(document.querySelector('#hubc'));return{bf:c.backdropFilter,bg:c.backgroundImage.slice(0,50)}});ok('blur: Off is truly off, and the panel turns solid so text stays readable',await attr('data-blur')=='off'&&off.bf=='none'&&/rgba\(29, ?24, ?56, ?0\.98/.test(off.bg),off);await set('sblr','med');
  const q0=await p.evaluate(()=>OPT.q);await set('spq','low');const q1=await p.evaluate(()=>OPT.q);ok('particles: Low draws fewer',q1<q0*.5,{q0,q1});await set('spq','high');
  await set('sshq','low');ok('shadows: Low removes them',await p.evaluate(()=>getComputedStyle(document.querySelector('#hubc')).boxShadow.indexOf('rgb')<0||/inset/.test(getComputedStyle(document.querySelector('#hubc')).boxShadow)));await set('sshq','high');
  await set('suan',false);ok('interface animations can be turned off',await attr('data-uianim')=='off'&&await p.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.hbtn')).transitionDuration)<.01));await set('suan',true);

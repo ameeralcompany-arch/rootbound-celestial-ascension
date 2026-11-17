@@ -13,7 +13,7 @@ const mkS=port=>createServer({allowGuests:true,csp:false,port,host:'127.0.0.1',d
 async function client(b,url,tag){const p=await b.newPage({viewport:{width:1280,height:720}});await p.addInitScript(()=>{window.RB_CONFIG_OVERRIDE={solo:false}});p.errs=[];p.on('pageerror',e=>p.errs.push(tag+': '+e.message.slice(0,140)));
  await p.goto(url);await p.waitForTimeout(900);
  await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(500);await p.evaluate(()=>{try{SHOW7.close()}catch(_){}});
- await p.waitForFunction(()=>NET7.online,null,{timeout:12000});return p}
+ await p.waitForFunction(()=>typeof NET7!="undefined"&&NET7.online,null,{timeout:12000});return p}
 const ev=(p,f,a)=>p.evaluate(f,a);
 (async()=>{
  let S=mkS(0);let port=await S.listen();const url='http://127.0.0.1:'+port+'/';
@@ -65,7 +65,7 @@ const ev=(p,f,a)=>p.evaluate(f,a);
   const r3=await ev(B,()=>new Promise(res=>{const g0=gems;SHOP7.buy('obj_25').then(r=>res({r,same:gems==g0}))}));ok('guests cannot use the server shop and are not charged',r3.same,JSON.stringify(r3));
   // server restart: world, block and weather persist
   await S.close?.();await sleep(300);S=mkS(port);await S.listen();
-  await B.waitForFunction(()=>NET7.online&&NET7.world=='e2eworld',null,{timeout:30000}).catch(()=>{});
+  await B.waitForFunction(()=>typeof NET7!="undefined"&&NET7.online&&NET7.world=='e2eworld',null,{timeout:30000}).catch(()=>{});
   ok('B auto-reconnects after a server restart',await ev(B,()=>NET7.online&&NET7.world=='e2eworld'));
   ok('block still present after restart',await ev(B,k=>tiles[k]==3,K));
   ok('weather still galaxy after restart',await ev(B,()=>ENV7.target)=='galaxy');

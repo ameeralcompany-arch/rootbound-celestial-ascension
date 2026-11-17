@@ -14,7 +14,9 @@ html:root:root{
  --ds-gold:var(--rb-gold);
 }
 /* the big panels: one radius, one hairline, one deep shadow */
-html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7){border-radius:var(--rb-r-l)!important;border:1px solid var(--rb-line)!important;box-shadow:var(--rb-sh-3)!important}
+html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7,#menu #card){border-radius:var(--rb-r-l)!important;border:1px solid var(--rb-line)!important}
+/* the deep shadow, except when the player chose low shadows (Settings, for speed) */
+html:root:root:not([data-shadows=low]) body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7,#menu #card){box-shadow:var(--rb-sh-3)!important}
 /* tooltips: four older styles become one */
 html:root:root body :is(#eq9tip,#nav16tip,#sk9tip,.tip7,.tooltip){background:var(--rb-s2)!important;color:var(--rb-ink)!important;border:1px solid var(--rb-line-2)!important;border-radius:10px!important;box-shadow:var(--rb-sh-2)!important;font-family:var(--rb-font)!important;font-size:var(--rb-fs-s)!important;line-height:1.45!important;backdrop-filter:none!important}
 /* primary actions: one warm gold with dark ink, the same pressed and disabled states everywhere */
@@ -28,4 +30,4 @@ html:root:root body #lavib .ac button:not(.pri){background:rgba(255,255,255,.05)
 /* focus is always visible, the same gold ring */
 html:root:root body :is(button,[role=tab],input,select):focus-visible{outline:2px solid var(--rb-gold)!important;outline-offset:2px}
 /* the big panels sit on a near-solid surface, so the world behind never shows through their text */
-html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7){background:linear-gradient(180deg,rgba(29,24,56,.985),rgba(21,17,42,.99))!important;backdrop-filter:none!important}
+html:root:root body :is(#store7 .shell,#inv7 .sheet,#eq9 .eq9box,#rpgforge .box,.rpgov .box,#hubc,#col1 .c1p,#dlg7 .box,#chestui,#craftui,#tools7,#menu #card){background:linear-gradient(180deg,rgba(29,24,56,.985),rgba(21,17,42,.99))!important;backdrop-filter:none!important}

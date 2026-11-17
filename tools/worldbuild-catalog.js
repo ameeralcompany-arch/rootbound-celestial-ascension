@@ -26,7 +26,7 @@ const segs=dec.split(/\n D\('/).slice(1);let n=0;
 for(const s of segs){const h=/^([a-z_]+)','([^']+)','(\w+)','(\w+)'/.exec(s);if(!h)continue;const[,id,name,fam,rar]=h;
  const strs=[...("'"+s).split(/\n (?:\/\/|const |D\()/)[0].matchAll(/'((?:[^'\\]|\\.)*)'/g)].map(x=>x[1]).filter(x=>/[.!]$/.test(x)&&x.length>12);
  const d=(strs[strs.length-1]||name).replace(/\\u2019/g,'’').replace(/\\u2026/g,'…');
- if(EARN[id])items.push({id:'dec_'+id,cat:'objects',n:name,price:0,rar,stack:0,lv:LV[rar],d:d+' A pattern: place it as often as you like.',how:'earn',sale:0,earn:EARN[id],fam,dec:n});
+ if(EARN[id])items.push({id:'dec_'+id,cat:'objects',n:name,price:{legendary:600,mythic:1500,exclusive:2400}[rar]||600,rar,stack:0,lv:LV[rar],d:d+' A pattern: place it as often as you like.',how:'earn',sale:0,earn:EARN[id],fam,dec:n});
  else{if(!PRICE[rar])throw Error('no price for '+id+' ('+rar+')');items.push({id:'obj_'+(620+n),cat:'objects',n:name,price:PRICE[rar],rar,stack:1,ref:620+n,lv:LV[rar],d,how:'store',new:1,feat:0,fam,dec:n})}
  n++}
 if(n<40)throw Error('too few decorations parsed: '+n);

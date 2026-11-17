@@ -46,11 +46,11 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
  void('retired: armour has no skill buttons now; every new wearable skill fires (cooldown set); Legion of Shadows damages monsters; Vanish makes you untouchable',r.bad.length==0&&r.nova>=40&&r.vanish,r);
  // ---- charms: 3 companions + 3 effect charms
  r=await E(async()=>{const ids=['pip','gloop','cinder','runehalo','sakura','comet'],o={bad:[]};for(const c of ids){const it=SHOP7.byId.get('charm_'+c);if(!it){o.bad.push('missing '+c);continue}
-   const res=await SHOP7.buy(it.id);if(!res.ok)o.bad.push('buy '+c);if(!SHOP7.equip(it.id)||SHOP7.eqRef('charm')!=c)o.bad.push('equip '+c);
+   /* master update 2: charms are earned (sale 0), so the test earns them the way the game does */const res=it.sale===0?{ok:SHOP7.grant(it.id)||SHOP7.has(it.id)}:await SHOP7.buy(it.id);if(!res.ok)o.bad.push('get '+c);if(!SHOP7.equip(it.id)||SHOP7.eqRef('charm')!=c)o.bad.push('equip '+c);
    const cv=document.createElement('canvas');cv.width=cv.height=120;const x=cv.getContext('2d');x.translate(60,40);try{FX7.charmDraw(x,c,0,0,1.2,1)}catch(e){o.bad.push('draw '+c+' '+e.message)}if(__px(cv).n<60)o.bad.push('blank '+c);
    try{for(let i=0;i<5;i++)FX7.tick(.05);__char({},{me:1})}catch(e){o.bad.push('tick '+c+' '+e.message)}}
   o.comp=['pip','gloop','cinder'].every(c=>COMP7.IDS.includes(c));o.book=BOOK7.stats().find(s=>s.c=='charms').l.length;o.store=SHOP7.items.filter(i=>i.cat=='charms').length;o.cx=cleanCx({fx:{ch:'cinder'}}).fx.ch;return o});
- ok('6 new charms (3 companions + 3 effects): buy, equip, draw, emit, in the store + collection book',r.bad.length==0&&r.comp&&r.store>=15&&r.book==r.store&&r.cx=='cinder',r);
+ ok('6 new charms (3 companions + 3 effects): earn, equip, draw, emit, in the store + collection book',r.bad.length==0&&r.comp&&r.store>=15&&r.book==r.store&&r.cx=='cinder',r);
  // ---- the store sells no stat gear any more (it is earned): the gear shelf is empty
  await E(()=>{STORE7.open();STORE7.setFilter({cat:'gear',sort:'pd',q:'',rar:'all',owned:false})});await p.waitForTimeout(400);
  r=await E(()=>({cards:document.querySelectorAll('#store7 .card').length,sold:SHOP7.items.filter(i=>i.cat=='gear'&&i.sale!==0).length}));ok('the store sells no stat gear: it is earned by playing',r.cards==0&&r.sold==0,r);await E(()=>STORE7.close());

@@ -49,12 +49,12 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
  const pz=await mk(port);await pz.rpc({t:'guest',name:'P'},m=>m.t=='auth');await pz.rpc({t:'enter',w:'plaza'},m=>m.t=='joined');pz.send({t:'e',d:{k:50,a:[3,0,0,0]}});await sleep(100);ok('plaza edits are not accepted',!fs.existsSync(path.join(dir,'worlds','plaza.json')));
  // --- sync + permissions (no meta yet = open sandbox like the old plaza rules)
  A.c.clear();B.c.clear();A.c.send({t:'meta',d:{x:10,y:20,o:A.r.uid,on:'alice',f:[],pub:0,t:[],b:[],pr:0,d:'',sp:null}});await B.c.wait(m=>m.t=='meta');ok('world lock (meta) is relayed to others',true);
- A.c.send({t:'e',d:{k:2000,a:[3,0,0,0]}});const eb=await B.c.wait(m=>m.t=='e'&&m.d.k==2000);ok('owner edit reaches Client B',eb.d.a[0]==3);
- B.c.clear();B.c.send({t:'e',d:{k:2001,a:[3,0,0,0]}});await sleep(150);ok('non-builder edit is rejected after lock',!A.c.has(m=>m.t=='e'&&m.d.k==2001)&&B.c.has(m=>m.t=='_rej'));
+ A.c.send({t:'e',d:{k:1912,a:[3,0,0,0]}});const eb=await B.c.wait(m=>m.t=='e'&&m.d.k==1912);ok('owner edit reaches Client B',eb.d.a[0]==3);
+ B.c.clear();B.c.send({t:'e',d:{k:1913,a:[3,0,0,0]}});await sleep(150);ok('non-builder edit is rejected after lock',!A.c.has(m=>m.t=='e'&&m.d.k==1913)&&B.c.has(m=>m.t=='_rej'));
  B.c.send({t:'e',d:{k:99999,a:[3,0,0,0]}});B.c.send({t:'e',d:{k:5,a:[999,0,0,0]}});B.c.send({t:'e',d:{k:'x',a:'y'}});B.c.send('{bad json');await sleep(100);ok('malformed/forged edits do not crash the server',(await get(port,'/health')).s==200);
  B.c.send({t:'meta',d:{x:5,y:5,o:B.r.uid,on:'bob',f:[],pub:0,t:[],b:[],pr:0,d:'',sp:null}});await sleep(100);ok('non-owner cannot take over an owned world lock',S.worlds.get('aliceland').meta.o==A.r.uid);
  const meta=S.worlds.get('aliceland').meta;ok('lock owner unchanged',meta.o==A.r.uid);
- A.c.send({t:'meta',d:Object.assign({},meta,{f:[B.r.uid]})});await sleep(100);B.c.clear();B.c.send({t:'e',d:{k:2002,a:[3,0,0,0]}});await sleep(120);ok('owner can grant builder role; then B edits sync',A.c.has(m=>m.t=='e'&&m.d.k==2002));
+ A.c.send({t:'meta',d:Object.assign({},meta,{f:[B.r.uid]})});await sleep(100);B.c.clear();B.c.send({t:'e',d:{k:1914,a:[3,0,0,0]}});await sleep(120);ok('owner can grant builder role; then B edits sync',A.c.has(m=>m.t=='e'&&m.d.k==1914));
  // objects: weather machine requires the object tile first
  A.c.send({t:'e',d:{k:2100,a:[40,0,0,0]}});await sleep(80);
  A.c.clear();B.c.clear();A.c.send({t:'o',d:{op:'wx',k:2100}});const wx1=await B.c.wait(m=>m.t=='wx');ok('Space machine sets world weather and B receives it',wx1.d.w=='space');
@@ -76,16 +76,16 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
  await sleep(2000);await S.close();
  S=createServer({allowGuests:true,port:0,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200});port=await S.listen();
  const A2=await login(port,'alice','alice-password');ok('account survives server restart',A2.r.ok);
- const j=await A2.c.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello');ok('world edits persisted across restart',j.d.edits[2000]&&j.d.edits[2000][0]==3&&j.d.edits.m&&j.d.edits.m.o==A2.r.uid);
+ const j=await A2.c.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello');ok('world edits persisted across restart',j.d.edits[1912]&&j.d.edits[1912][0]==3&&j.d.edits.m&&j.d.edits.m.o==A2.r.uid);
  ok('weather persisted across restart',j.d.wx=='blossom',j.d.wx);ok('objects (chest contents) persisted',j.d.edits.o&&j.d.edits.o[2200]&&j.d.edits.o[2200].c.it[0][1]==7);
  const tok=A2.r.token;A2.c.close();await sleep(100);const rs=await mk(port);const rr=await rs.rpc({t:'resume',token:tok},m=>m.t=='auth');ok('session token resume works (reconnect)',rr.ok&&rr.name=='alice');
- const j2=await rs.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello');ok('reconnected client receives current world state',j2.d.edits[2000]!=null);
+ const j2=await rs.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello');ok('reconnected client receives current world state',j2.d.edits[1912]!=null);
  const badTok=await mk(port);const bt=await badTok.rpc({t:'resume',token:'nope'},m=>m.t=='auth');ok('invalid token rejected',!bt.ok);
  // owner token after restart is still owner only for the owner uid
  const O2=await login(port,'Creator','a-long-owner-pass');ok('owner still owner after restart',O2.r.owner===true);
  // --- corrupted world recovery
  await sleep(1700);
- const A3=await login(port,'alice','alice-password');await A3.c.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello');A3.c.send({t:'e',d:{k:3999,a:[3,0,0,0]}});await sleep(1800);A3.c.send({t:'leave'});await sleep(100);const wf=path.join(dir,'worlds','aliceland.json');fs.writeFileSync(wf,'{corrupt');S.worlds.delete('aliceland');const rec=await A3.c.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello'||m.t=='enter_err');ok('corrupted world file is quarantined and the previous backup is loaded',rec.t=='_hello'&&rec.d.edits[2000]!=null&&fs.readdirSync(path.join(dir,'worlds')).some(f=>f.includes('.corrupt-'))&&S.store.readAudit(50).some(e=>e.ev=='recovered-from-backup'||e.ev=='corrupt-file-quarantined'),rec.t+' '+(rec.d&&Object.keys(rec.d.edits).slice(0,5))+' '+fs.readdirSync(path.join(dir,'worlds')).join(','));
+ const A3=await login(port,'alice','alice-password');await A3.c.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello');A3.c.send({t:'e',d:{k:3999,a:[3,0,0,0]}});await sleep(1800);A3.c.send({t:'leave'});await sleep(100);const wf=path.join(dir,'worlds','aliceland.json');fs.writeFileSync(wf,'{corrupt');S.worlds.delete('aliceland');const rec=await A3.c.rpc({t:'enter',w:'aliceland'},m=>m.t=='_hello'||m.t=='enter_err');ok('corrupted world file is quarantined and the previous backup is loaded',rec.t=='_hello'&&rec.d.edits[1912]!=null&&fs.readdirSync(path.join(dir,'worlds')).some(f=>f.includes('.corrupt-'))&&S.store.readAudit(50).some(e=>e.ev=='recovered-from-backup'||e.ev=='corrupt-file-quarantined'),rec.t+' '+(rec.d&&Object.keys(rec.d.edits).slice(0,5))+' '+fs.readdirSync(path.join(dir,'worlds')).join(','));
  // --- rate limit
  A3.c.clear();for(let i=0;i<200;i++)A3.c.send({t:'e',d:{k:3000+i,a:[3,0,0,0]}});await sleep(300);const w3=S.worlds.get('aliceland');const applied=Object.keys(w3.edits).filter(k=>+k>=3000).length;ok('edit flood is rate-limited',applied<=75,applied+' of 200 applied');
  // --- capacity
@@ -97,14 +97,15 @@ async function reg(port,name,pass){const c=await mk(port);const r=await c.rpc({t
   let r=await buy({id:'wing_dove',rid:'r0'});ok('purchase with an empty wallet fails and charges nothing',!r.ok&&r.gems===0,r.m);
   const w1=await sc.rpc({t:'sync',gems:100000},m=>m.t=='wallet');ok('gem growth is rate-limited (cannot sync an arbitrary balance)',w1.gems<=1500&&w1.gems>0,w1.gems);
   r=await buy({id:'nope_item',rid:'r1'});ok('unknown item rejected',!r.ok);
-  r=await buy({id:'wing_dove',rid:'r2',price:1,gems:99999});const after=r.gems;ok('client-sent price/balance is ignored: charged the catalog price',r.ok&&r.spent===P('wing_dove')&&after===w1.gems-P('wing_dove'),JSON.stringify(r));
-  const r2=await buy({id:'wing_dove',rid:'r2'});ok('repeating the same request id does not charge twice',r2.ok&&r2.dup&&r2.gems===after,JSON.stringify(r2));
-  const r3=await buy({id:'wing_dove',rid:'r3'});ok('owning a non-stackable item blocks a second purchase',!r3.ok&&r3.gems===after,r3.m);
+  /* master update 2: looks are earned, not sold, so the store's purchases are stackable items (blocks, seeds, objects) */
+  r=await buy({id:'blk_3',rid:'r2',price:1,gems:99999});const after=r.gems;ok('client-sent price/balance is ignored: charged the catalog price',r.ok&&r.spent===P('blk_3')&&after===w1.gems-P('blk_3'),JSON.stringify(r));
+  const r2=await buy({id:'blk_3',rid:'r2'});ok('repeating the same request id does not charge twice',r2.ok&&r2.dup&&r2.gems===after,JSON.stringify(r2));
+  const r3=await buy({id:'wing_dove',rid:'r3'});ok('an earned-only look cannot be bought at all',!r3.ok&&r3.gems===after&&/earned/i.test(r3.m||''),r3.m);
   const r4=await buy({id:'blk_1',qty:5,rid:'r4'});ok('stackable items buy by quantity at catalog price',r4.ok&&r4.spent===P('blk_1')*5&&r4.owned===5);
   const r5=await buy({id:'blk_1',qty:-3,rid:'r5'});const r6=await buy({id:'blk_1',qty:1000,rid:'r6'});ok('negative / huge quantities rejected',!r5.ok&&!r6.ok);
   const r7=await buy({id:'wing_dragon',rid:'r7'});ok('too-expensive purchase rejected without charge',!r7.ok&&r7.gems===r4.gems,r7.m);
-  const wl=await sc.rpc({t:'wallet'},m=>m.t=='wallet');ok('wallet view shows ownership',wl.owned.wing_dove===1&&wl.owned.blk_1===5&&wl.gems===r4.gems);
+  const wl=await sc.rpc({t:'wallet'},m=>m.t=='wallet');ok('wallet view shows ownership',wl.owned.blk_3===1&&wl.owned.blk_1===5&&wl.gems===r4.gems,JSON.stringify(wl));
   await sleep(1700);await S.close();S=createServer({allowGuests:true,port,host:'127.0.0.1',dataDir:dir,scryptN:+SN,wxCooldownMs:300,maxConnsPerIp:200,client:path.join(__dirname,'..','index.html')});await S.listen();
-  const SH2=await login(port,'shopper','shopper-pass-1');const wl2=await SH2.c.wait(m=>m.t=='wallet');ok('wallet and ownership survive a server restart',wl2.owned.wing_dove===1&&wl2.gems===r4.gems,JSON.stringify(wl2));
-  ok('every catalog item has a valid price, rarity and unique id',[...cat.values()].every(i=>i.price>0&&['common','uncommon','rare','epic','legendary','mythic','exclusive'].includes(i.rar)&&i.n&&i.d&&i.cat));}
+  const SH2=await login(port,'shopper','shopper-pass-1');const wl2=await SH2.c.wait(m=>m.t=='wallet');ok('wallet and ownership survive a server restart',wl2.owned.blk_3===1&&wl2.owned.blk_1===5&&wl2.gems===r4.gems,JSON.stringify(wl2));
+  ok('every catalog item has a valid price (an item that is never sold may have none), rarity and unique id',[...cat.values()].every(i=>(i.price>0||i.sale===0||i.how!='store')&&['common','uncommon','rare','epic','legendary','mythic','exclusive'].includes(i.rar)&&i.n&&i.d&&i.cat));}
  await S.close();console.log(fails?'FAILURES '+fails:'all server tests passed');process.exit(fails?1:0)})().catch(e=>{console.log('FAIL exception',e&&e.stack||e);process.exit(1)});

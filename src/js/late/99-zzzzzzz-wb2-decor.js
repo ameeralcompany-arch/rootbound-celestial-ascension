@@ -293,4 +293,8 @@ const DECOR10=(()=>{
  {const _dt=drawTarget;drawTarget=function(now){_dt.apply(this,arguments);try{const it=held(),i=idxOfKey(it);if(i<0||cnt(it)<1||showInv||menuEl.style.display!='none')return;preview(i,now)}catch(_){}}}
  function preview(i,now){const{tx,ty}=cursor(),why=canPlace(i,tx,ty);if(why=='edge'||why=='taken')return;const d=L[i],fl=(P.f<0?1:0)^(typeof BUILDER10!='undefined'&&BUILDER10.flip?1:0),s=sprite(i,fl,1),bx=tx*T+T/2-cam.x,by=ty*T+T-cam.y,pl=.5+.5*Math.sin(now/260);
   g.save();g.globalAlpha=why?.3:.55+.1*pl;g.drawImage(s.c,bx-s.w/2,by-s.ay,s.w,s.h);g.globalAlpha=1;g.strokeStyle=why?'rgba(240,138,138,.85)':'rgba(170,240,190,'+(.55+.3*pl)+')';g.lineWidth=2;g.setLineDash([5,4]);g.strokeRect(tx*T-cam.x+1,ty*T-cam.y+1,T-2,T-2);g.setLineDash([]);g.restore()}
- return{TID,L,N,BYID,keyOf,idxOfKey,isKey,isPat,owns,PRICE10,sprite,iconCanvas,place,canPlace,act,react,near,preview,SYN,LIVE,log,st,draw,get count(){return cnt0},flipOf,onOf}})();
+ // the store's preview: the decoration on a soft floor shadow, its live parts moving
+ function storePrev(x,it,Wd,Hd,t){const i=it.dec|0,d=L[i];if(!d)return false;const s=sprite(i,0,1),sc=Math.min(Wd*.62/s.w,Hd*.7/s.h,3.2),by=d.on=='c'?Hd*.12+s.ay*sc:Hd*.86;
+  x.save();x.fillStyle='rgba(10,6,24,.28)';x.beginPath();x.ellipse(Wd/2,Hd*.86,Math.min(Wd*.3,s.w*sc*.42),Hd*.035,0,0,TAU);x.fill();x.translate(Wd/2,by);x.scale(sc,sc);x.drawImage(s.c,-s.w/2,-s.ay,s.w,s.h);
+  if(d.live)try{d.live(x,+t||0,d.ex.on||d.act=='toggle'?1:0,{ph:0,a:0,ap:0,day:1,cnt:0})}catch(_){}x.restore();return true}
+ return{TID,L,N,BYID,storePrev,keyOf,idxOfKey,isKey,isPat,owns,PRICE10,sprite,iconCanvas,place,canPlace,act,react,near,preview,SYN,LIVE,log,st,draw,get count(){return cnt0},flipOf,onOf}})();

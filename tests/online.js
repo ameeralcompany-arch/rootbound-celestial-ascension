@@ -9,7 +9,7 @@ const S=createServer({allowGuests:true,csp:false,port:0,host:'127.0.0.1',dataDir
 const errs=[];
 async function client(b,url,tag){const ctx=await b.newContext({viewport:{width:1280,height:720}});const p=await ctx.newPage();p.on('pageerror',e=>errs.push(tag+': '+e.message.slice(0,200)));
  await p.goto(url);await p.waitForTimeout(800);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}});await p.waitForTimeout(400);await p.evaluate(()=>{try{SHOW7.close()}catch(_){}});
- await p.waitForFunction(()=>NET7.online,null,{timeout:15000});return p}
+ await p.waitForFunction(()=>typeof NET7!="undefined"&&NET7.online,null,{timeout:15000});return p}
 const ev=(p,f,a)=>p.evaluate(f,a);
 const signup=async(p,name,pass)=>{await ev(p,([n,w])=>NET7.send({t:'register',name:n,pass:w}),[name,pass||name+'-password']);await p.waitForFunction(n=>typeof NET7!='undefined'&&NET7.auth&&NET7.auth.name==n,name,{timeout:15000});await p.waitForFunction(()=>typeof RB_ACCT!='undefined'&&!!RB_ACCT.id&&NET7.online&&NET7.auth&&NET7.auth.uid==RB_ACCT.id,null,{timeout:15000});await p.waitForTimeout(400);await p.evaluate(()=>{try{$('cgo').click()}catch(_){}try{SHOW7.close()}catch(_){}});await p.waitForTimeout(300)};
 const go=async(p,w,c)=>{await ev(p,([w,c])=>NET7.go(w,c),[w,c]);await p.waitForFunction(w=>NET7.world==w&&cur==w,w,{timeout:8000}).catch(()=>{});await p.waitForTimeout(300)};
