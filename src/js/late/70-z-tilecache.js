@@ -5,7 +5,7 @@ const TDRAW7=new Uint8Array(256);// non-solid tiles that are still painted into 
 const TILE7=(()=>{
  const CH=8,CW=CH*T,cache=new Map(),MAXC=72;let cKey='';
  // tiles in the chunk plus the row above and below (the lit lip / dark edge depend on them)
- function sig(cx,cy){let h=7;const x0=cx*CH,y0=cy*CH;for(let y=y0-1;y<=y0+CH;y++){if(y<0||y>=H)continue;for(let x=x0;x<x0+CH&&x<W;x++)h=(Math.imul(h,31)+tiles[y*W+x])|0}return h}
+ function sig(cx,cy){let h=7;const x0=cx*CH,y0=cy*CH;for(let y=y0-1;y<=y0+CH;y++){if(y<0||y>=H)continue;for(let x=x0;x<x0+CH&&x<W;x++){const k=y*W+x;h=(Math.imul(h,31)+tiles[k]+TVAR[k]*263+TST[k]*65537)|0}}return h}
  // the same look the per-block loop had: sprite, lit lip under air, dark edge above air
  function paint(c,cx,cy,lips){for(let y=cy*CH;y<cy*CH+CH&&y<H;y++)for(let x=cx*CH;x<cx*CH+CH&&x<W;x++){const k=y*W+x,b=tiles[k];if(!b||!(SOLID6[b]||TDRAW7[b]))continue;const px=(x-cx*CH)*T,py=(y-cy*CH)*T;
    c.drawImage(spr(b,x,y),px,py,T,T);if(lips&&SOLID6[b]){if(!tiles[k-W]&&y>0){c.fillStyle='rgba(255,255,255,.2)';c.fillRect(px,py,T,3)}if(!tiles[k+W]){c.fillStyle='rgba(0,0,0,.28)';c.fillRect(px,py+T-4,T,4)}}}}

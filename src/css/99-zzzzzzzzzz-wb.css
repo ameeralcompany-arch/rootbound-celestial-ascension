@@ -1,0 +1,14 @@
+/* ===== World building (colour strip, builder, decorations). Uses the shared tokens (01-tokens.css). ===== */
+/* the colour strip above the hotbar while a colour material is held */
+#mats10{position:fixed;left:50%;bottom:132px;transform:translate(-50%,8px);z-index:38;opacity:0;pointer-events:none;transition:opacity var(--rb-t-2) var(--rb-ease),transform var(--rb-t-2) var(--rb-ease);
+ background:var(--rb-s2);border:1px solid var(--rb-line);border-radius:var(--rb-r-m);box-shadow:var(--rb-sh-2);padding:8px 10px 10px;font-family:var(--rb-font);color:var(--rb-ink)}
+#mats10.on{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+#mats10 .m10h{display:flex;gap:8px;align-items:baseline;font-size:var(--rb-fs-s);margin:0 2px 6px}
+#mats10 .m10h b{font-weight:700;color:var(--rb-gold)}
+#mats10 .m10h span{color:var(--rb-ink-2)}
+#mats10 .m10h::after{content:', and . change colour';margin-left:auto;color:var(--rb-ink-3);font-size:var(--rb-fs-xs)}
+#mats10 .m10g{display:grid;grid-template-columns:repeat(17,18px);grid-auto-flow:column;grid-template-rows:repeat(3,18px);gap:3px}
+#mats10 .m10s{width:18px;height:18px;border-radius:5px;border:1px solid rgba(0,0,0,.35);background:var(--c);padding:0;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.25);transition:transform var(--rb-t-1) var(--rb-ease)}
+#mats10 .m10s:hover{transform:scale(1.15)}
+#mats10 .m10s.on{outline:2px solid var(--rb-gold);outline-offset:1px;transform:scale(1.12)}
+@media (max-width:640px){#mats10 .m10g{grid-template-columns:repeat(17,14px);grid-template-rows:repeat(3,14px);gap:2px}#mats10 .m10s{width:14px;height:14px}}
