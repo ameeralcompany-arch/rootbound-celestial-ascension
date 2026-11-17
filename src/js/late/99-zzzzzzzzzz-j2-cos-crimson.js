@@ -1,4 +1,4 @@
-// ===== Cosmetic art: Crimson Covenant (demonic, dark and beautiful: black and crimson with silver). Drawn on the in-game body in its own cel style (COS1.H).
+// ===== Cosmetic art: Crimson Nocturne (demonic, dark and beautiful: black and crimson with silver). Drawn on the in-game body in its own cel style (COS1.H).
 // Body space: feet at 0, facing right (+x is the front), shoulders c.sh (about -37), hips c.hip (about -21), torso about 19 wide; the head layer is in
 // head space (head centre c.hy, about -50; face spans x -10..10, y hy-10..hy+12). Glows are small, in front of the body, and never behind the head. =====
 try{(()=>{const C=COS1,H=C.H,TAU=6.2832,sin=Math.sin,cl=(v,a,b)=>v<a?a:v>b?b:v;
@@ -33,7 +33,7 @@ try{(()=>{const C=COS1,H=C.H,TAU=6.2832,sin=Math.sin,cl=(v,a,b)=>v<a?a:v>b?b:v;
   head(g,c){const hy=c.hy,v=.6+.4*sin(c.t*2.1);
    for(const s of[-1,1]){const o=s<0?-.8:0,P=[s*6.2+o,hy-13.4,s*11.4+o,hy-15.6,s*16+o,hy-22,s*12.6+o,hy-30.6];horn(g,P,3.3,BK,v,4,1,.16,.8,((c.t*.32+(s>0?.45:0))%1)*1.6)}}});
 
- // ---- Crimson Covenant Coat: a long black coat lined in crimson, crimson lapels, three silver clasps, a flared collar and long tails that stream behind you
+ // ---- Crimson Nocturne Coat: a long black coat lined in crimson, crimson lapels, three silver clasps, a flared collar and long tails that stream behind you
  C.art('cos_shadow_coat',{hb:1,oc:'#2a2232',
   back(g,c){const sh=c.sh,hip=c.hip,sw=cl(-c.vx*.034,-9,9)+sin(c.t*2.3)*1.1,fl=c.run?sin(c.t*13)*1.2:0,up=c.air?-5:0,lf=Math.abs(sw)*.5,hb=-2.5+up+lf;if(c.L)c.L.cape=0;/* the coat's own tails replace the look's short cape (the look object is fresh each draw) */
    // the high collar: two flared points standing up behind the neck, crimson inside

@@ -54,7 +54,7 @@ async function enter(p,url){await p.addInitScript(()=>{if(!localStorage.getItem(
  const acct=()=>{for(const u of (S.store.accounts&&S.store.accounts.values?S.store.accounts.values():[]))if(u.name=='econshop')return u;return null};
  await q2.evaluate(()=>new Promise(r=>{gems=1400;const n=SHOP7.net;SHOP7.net=m=>{n(m);if(m.t=='wallet'){SHOP7.net=n;r()}};NET7.send({t:'sync',gems:1400})}));
  const g0=await q2.evaluate(()=>gems);ok('the test account has gems on the server',g0==1400,g0);
- const cheap=cat.filter(i=>!i.stack&&i.price<=400&&!i.legacy&&!i.lv&&i.cat=='wings').sort((x,y)=>x.price-y.price);const it=cheap[0]||cat.find(i=>i.id=='wing_dove'),it2=cheap[1]||it;
+ /* master update 2: looks are earned, not sold; the store sells stackable things (a sandcastle, a crate) */const it=cat.find(i=>i.id=='obj_97'),it2=cat.find(i=>i.id=='obj_34');
  // an answer that gets lost: the buyer is told the truth, buying again charges nothing more and hands the item over
  const r1=await q2.evaluate(id=>{const n=SHOP7.net;window.__n=n;SHOP7.net=m=>{if(m.t!='buy_res')n(m)};return SHOP7.buy(id)},it.id);await q2.evaluate(()=>{SHOP7.net=window.__n});
  ok('a lost answer does not claim "you were not charged"',r1.waiting&&!/not charged/.test(r1.m||''),JSON.stringify(r1));
@@ -71,7 +71,7 @@ async function enter(p,url){await p.addInitScript(()=>{if(!localStorage.getItem(
  // rewards pay online too
  const rw=await q2.evaluate(()=>{const id='econgoalworld',g0=gems,gs=GOAL7.goalsOf(id),o=gs[0];GOAL7.add(id,o.key,o.n);return{d:gems-g0,want:o.gems}});ok('world goals pay gems when signed in',rw.d==rw.want,JSON.stringify(rw));
  // two purchases on a bad connection: nothing may read the unpaid balance as earnings (which would refund it), and nothing is handed over twice
- const it3=cat.find(i=>i.id=='charm_leaf'),it4=cat.find(i=>i.id=='fx_brk_bubble');await q2.waitForTimeout(10500);
+ const it3=cat.find(i=>i.id=='seed_107'),it4=cat.find(i=>i.id=='obj_98');await q2.waitForTimeout(10500);
  const two=await q2.evaluate(async([a,b])=>{const n=SHOP7.net,sn=NET7.send;window.__held=[];let lost=true,syncs=0;SHOP7.net=m=>{if(m.t=='buy_res'&&lost){window.__held.push(m);return}n(m)};NET7.send=o=>{if(o&&o.t=='sync')syncs++;return sn(o)};const g0=gems,r1=await SHOP7.buy(a),s0=syncs;lost=false;const r2=await SHOP7.buy(b);const s1=syncs-s0;SHOP7.net=n;NET7.send=sn;for(const m of window.__held)SHOP7.net(m);return{r1w:r1.waiting,r2:r2.ok,s1,hasA:SHOP7.has(a),hasB:SHOP7.has(b),spent:g0-gems}},[it3.id,it4.id]);
  ok('a second purchase does not tell the server the unpaid balance is earnings',two.r1w&&two.r2&&two.s1==0,JSON.stringify(two));ok('both items arrive and both are charged once',two.hasA&&two.hasB&&two.spent==it3.price+it4.price,JSON.stringify(two)+' prices '+it3.price+'+'+it4.price);
  await q2.waitForTimeout(10500);const three=await q2.evaluate(async id=>{const n=SHOP7.net;window.__held=[];const c0=cnt(1);SHOP7.net=m=>{if(m.t=='buy_res')window.__held.push(m);else n(m)};const r=await SHOP7.buy(id,3);SHOP7.net=n;await new Promise(ok=>{SHOP7.net=m=>{n(m);if(m.t=='wallet'){SHOP7.net=n;ok()}};NET7.send({t:'sync',gems:gems+0})});const c1=cnt(1);for(const m of window.__held)SHOP7.net(m);await new Promise(ok=>setTimeout(ok,200));return{w:r.waiting,c0,c1,c2:cnt(1),held:window.__held.length}},blk.id);
@@ -79,7 +79,7 @@ async function enter(p,url){await p.addInitScript(()=>{if(!localStorage.getItem(
  // buying with earnings the server has not heard of yet
  const r5=await q2.evaluate(async id=>{gems+=20;const g=gems;const r=await SHOP7.buy(id);return{r,g,after:gems}},blk.id);ok('gems earned since the last sync are kept after buying',r5.r.ok&&r5.after==r5.g-blk.price,JSON.stringify(r5));
  const pendShown=await q2.evaluate(async()=>{const v=document.getElementById('gv');if(!v)return{skip:1};gems+=100000;NET7.send({t:'sync',gems});await new Promise(r=>setTimeout(r,2200));const e=document.getElementById('gvp');return{t:e?e.textContent:null,g:gems}});ok('gems still on their way are shown next to the balance',pendShown.skip||/arriving/.test(pendShown.t||''),JSON.stringify(pendShown));
- const off=await q2.evaluate(async id=>{const d=Object.getOwnPropertyDescriptor(NET7,'online');Object.defineProperty(NET7,'online',{configurable:true,get:()=>false});const g=gems,r=await SHOP7.buy(id);const o={ok:r.ok,m:r.m,same:gems==g,has:SHOP7.has(id)};Object.defineProperty(NET7,'online',d);return o},'fx_brk_confetti');ok('buying while disconnected charges and grants nothing',!off.ok&&off.same&&!off.has&&/not charged/.test(off.m),JSON.stringify(off));
+ const off=await q2.evaluate(async id=>{const d=Object.getOwnPropertyDescriptor(NET7,'online');Object.defineProperty(NET7,'online',{configurable:true,get:()=>false});const g=gems,r=await SHOP7.buy(id);const o={ok:r.ok,m:r.m,same:gems==g,has:SHOP7.has(id)};Object.defineProperty(NET7,'online',d);return o},'seed_106');ok('buying while disconnected charges and grants nothing',!off.ok&&off.same&&!off.has&&/not charged/.test(off.m),JSON.stringify(off));
  ok('no errors online',er2.length==0,er2.slice(0,3).join(' | '));
  await q2.close();
  await b.close();await S.close();

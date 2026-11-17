@@ -46,7 +46,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
   const l0=DECOR10.log.length;interact();o.a=DECOR10.log.slice(l0);const st=DECOR10.st(k);o.anim=st.ak;o.r=st.r;interact();o.cool=DECOR10.log.length-l0;await new Promise(r=>setTimeout(r,800));interact();o.after=DECOR10.log.length-l0;
   o.pres=(()=>{const c=celPres();return c.dz})();o.clean=(cleanCx({dz:o.pres})||{}).dz;return o},G);
  ok('a placed duck is a saved decoration (tile 140, its kind in the edit) and uses one duck',DK.placed&&DK.tile==140&&DK.edit&&DK.edit[0]==140&&DK.edit[2]==DK.v&&DK.used==1,DK);
- ok('near the duck the prompt invites you; Use makes it quack with a reaction, then a short cooldown',DK.near&&/say hello to the Puddle Duck/.test(DK.prompt)&&DK.a.length==1&&DK.a[0].kind=='quack'&&DK.anim=='quack'&&DK.r>=0&&DK.r<4&&DK.cool==1&&DK.after==2,DK);
+ ok('near the duck the prompt invites you; Use makes it quack with a reaction, then a short cooldown',DK.near&&/greet the Puddle Duck/.test(DK.prompt)&&DK.a.length==1&&DK.a[0].kind=='quack'&&DK.anim=='quack'&&DK.r>=0&&DK.r<4&&DK.cool==1&&DK.after==2,DK);
  ok('the reaction rides in presence (cx.dz) and survives the presence filter, so other players see it',Array.isArray(DK.pres)&&DK.pres[0]==DK.a[0].k&&JSON.stringify(DK.clean)==JSON.stringify(DK.pres),DK);
  // another player's reaction replays here with the same pick
  const RM=await E(async G=>{const k=(G.gy-1)*W+G.tx+1,l0=DECOR10.log.length;const fake={peers:()=>[{id:'other1',name:'Other',kind:'viewer',presence:{x:P.x,y:P.y,cx:{dz:[k,2,5]}}}],emit(){}};const r0=window.rm;try{rm=fake}catch(_){}

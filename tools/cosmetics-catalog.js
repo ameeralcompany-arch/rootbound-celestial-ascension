@@ -9,7 +9,7 @@ const FILE = path.join(__dirname, '..', 'server', 'catalog.json');
 // drop tiers: chance per counted break, rolled by the server (server/cosmetics.js). These are the numbers shown to players.
 const TIERS = { ultra: { n: 'Ultra-exclusive', p: 0.0001, rar: 'exclusive' }, mythical: { n: 'Mythical', p: 0.0002, rar: 'mythic' }, extreme: { n: 'Extremely rare', p: 0.0005, rar: 'legendary' }, veryrare: { n: 'Very rare', p: 0.001, rar: 'epic' }, rare: { n: 'Rare', p: 0.005, rar: 'rare' } };
 const SETS = {
-  mochi: 'Mochi Dreams', crimson: 'Crimson Covenant', silvermoon: 'Silver Moon Court', sakura: 'Sakura Festival', nebula: 'Nebula Drift', sunken: 'Sunken Empire', mist: 'Wanderer of Mist'
+  mochi: 'Mochi Dreams', crimson: 'Crimson Nocturne', silvermoon: 'Silver Moon Court', sakura: 'Sakura Festival', nebula: 'Nebula Drift', sunken: 'Sunken Empire', mist: 'Wanderer of Mist'
 };
 // [ord, id, name, slot, set, how, rarity or tier, price, description]
 const C = [
@@ -19,7 +19,7 @@ const C = [
   [4, 'cos_ribbon_bow', 'Big Ribbon', 'hairacc', 'mochi', 'store', 'common', 300, 'A big satin ribbon that bounces when you run.'],
   [5, 'cos_bear_pack', 'Bear Backpack', 'back', 'mochi', 'store', 'uncommon', 700, 'A plush bear who rides on your back and looks around.'],
   [6, 'cos_horn_crown', 'Obsidian Horns', 'hat', 'crimson', 'store', 'rare', 1400, 'Curved black horns with crimson veins of light.'],
-  [7, 'cos_shadow_coat', 'Crimson Covenant Coat', 'outfit', 'crimson', 'store', 'epic', 2600, 'A long black coat lined in crimson, with silver clasps.'],
+  [7, 'cos_shadow_coat', 'Crimson Nocturne Coat', 'outfit', 'crimson', 'store', 'epic', 2600, 'A long black coat lined in crimson, with silver clasps.'],
   [8, 'cos_oni_mask', 'Oni Half-Mask', 'mask', 'crimson', 'store', 'rare', 1300, 'A lacquered red oni mask worn over the lower face.'],
   [9, 'cos_bat_mantle', 'Nightwing Mantle', 'back', 'crimson', 'store', 'epic', 2400, 'A mantle that ends in two small bat wings, which fold and open as you move.'],
   [10, 'cos_royal_coat', 'Silver Moon Regalia', 'outfit', 'silvermoon', 'store', 'epic', 2800, 'A white and gold court coat with a high collar and long tails.'],
@@ -40,7 +40,7 @@ const C = [
   [24, 'cos_mist_cloak', 'Mistwalker Cloak', 'outfit', 'mist', 'drop', 'veryrare', 0, 'A grey cloak that fades into mist at the hem.'],
   [25, 'cos_star_crown', 'Fallen Star Crown', 'hat', 'nebula', 'drop', 'extreme', 0, 'A small crown of real starlight that never stops glittering.'],
   [26, 'cos_spirit_lantern', 'Spirit Lantern', 'back', 'mist', 'drop', 'extreme', 0, 'A paper lantern that floats behind you on its own.'],
-  [27, 'cos_abyss_armor', 'Abyssal Regent Armor', 'suit', 'crimson', 'drop', 'extreme', 0, 'Dark demonic armor with a crimson core that pulses like a heart.'],
+  [27, 'cos_abyss_armor', 'Abyssal Regent Armor', 'suit', 'crimson', 'drop', 'extreme', 0, 'Dark armor with a crimson core that pulses like a heart.'],
   [28, 'cos_galaxy_cloak', 'Galaxy Cloak', 'back', 'nebula', 'drop', 'mythical', 0, 'A cloak with a whole galaxy turning slowly inside it.'],
   [29, 'cos_porcelain_mask', 'Porcelain Mask', 'mask', 'mist', 'drop', 'mythical', 0, 'A flawless white mask with one painted tear of gold.'],
   [30, 'cos_nebula_suit', 'Nebula Sovereign', 'suit', 'nebula', 'drop', 'ultra', 0, 'A gown or suit of living nebula, stars drifting through the cloth. The rarest thing in Rootbound.'],
