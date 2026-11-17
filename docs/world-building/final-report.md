@@ -90,7 +90,7 @@ Every interactive decoration in the catalog answers with its own animation and s
   - plants sway with the world's wind.
 
 ## 6. Multiplayer and persistence results
-**`tests/worldbuild-online.js`**, with a real server and two headless players: all 10 checks pass.
+**`tests/worldbuild-online.js`**, with a real server and two headless players: all 11 checks pass.
 
 - **Server rules:**
   - clean variants are accepted;
@@ -104,7 +104,7 @@ Every interactive decoration in the catalog answers with its own animation and s
   - a forged edit with a bad colour changes nothing;
   - after leaving and coming back, Bea still sees everything as it was.
 
-**`tests/worldbuild.js`**: all 22 checks pass.
+**`tests/worldbuild.js`**: all 20 checks pass.
 
 - every combination draws its own picture;
 - the colour is saved with each block;
@@ -127,6 +127,9 @@ Every interactive decoration in the catalog answers with its own animation and s
   - lights reuse the existing lamp glow;
   - sounds have voice budgets and cooldowns;
   - the ground details are baked into cached block pictures, so they cost nothing per frame.
+- **Normal play:** walking through the Plaza and a normal world costs the same as 6.13.20, about 330 ms/s and 263 ms/s of script time at 143 fps, against 325 and 297 ms/s for 6.13.20.
+- **The packaged game:** run on a copy of your saves, it holds 144 fps on the login screen and in the online Plaza, with no errors.
+- **Existing tests:** the building, objects, store, break effect, tools, inventory, plaza, world lock, security, server, online, creative, drops, farming, pet, looks and cosmetics tests pass with this update.
 
 ## 8. Remaining limitations
 - **Nobody has played it yet:** all checks were done by automated players. The sounds are synthesised, and nobody has heard them yet.
@@ -136,6 +139,6 @@ Every interactive decoration in the catalog answers with its own animation and s
 - **Not done:**
   - no hand-made textures from Blender: every picture is painted in code;
   - no world-owner setting to stop visitors from greeting decorations (only switches are protected);
-  - no multi-tile structures (small houses, shrines);
+  - no multi-tile structures (small houses, pavilions);
   - no new sign text field (the existing Signpost has one).
 - **Undo and redo** cover your own placements in the current world for 10 minutes, not breaking.
