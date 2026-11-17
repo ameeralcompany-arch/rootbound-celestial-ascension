@@ -4077,7 +4077,7 @@ const QUEST_OLD=[['Get moving','Run with A / D, jump with W','move'],['Break a b
 /* ZBASE: the default camera zoom. 1.14 makes blocks about 14% bigger on screen; the grid, T, collision and every saved world are unchanged */const ZBASE=1.14;const OPT={q:1,sh:1,mv:.5,sv:1,name:''};let ZM=ZBASE,entered=0;const setZoom=z=>{const oz=ZM;ZM=Math.max(.5,Math.min(2.2,Math.round(z*100)/100));window.zlow6=ZM<.7;if((oz<.7)!=(ZM<.7)&&entered)setTimeout(rs,0);OPT.zm=ZM;say('Zoom '+Math.round(ZM*100)+'%')};
 // ---------- state
 const P={x:0,y:0,vx:0,vy:0,w:26,h:54,g:false,f:1,hp:100,jumps:0};
-let tiles=new Uint8Array(W*H),hp=new Uint8Array(W*H),wl=new Uint8Array(W*H);/* world building: a placed colour block / decoration keeps its variant (colour or kind) in TVAR and a small state (lamp on, door open, facing) in TST; both ride in the edit array (a[2], a[3]) for tiles marked in VARID */const TVAR=new Uint16Array(W*H),TST=new Uint8Array(W*H),VARID=new Uint8Array(256);const trees=new Map(),pop=new Map(),hitAt=new Map(),parts=[],floats=[],slashes=[],projs=[],splashes=[],mobs=[],rings=[],bub={},rp={},K={},done={},ICON={},SPR={},CR=[];
+let tiles=new Uint8Array(W*H),hp=new Uint8Array(W*H),wl=new Uint8Array(W*H);/* world building: a placed colour block / decoration keeps its variant (colour or kind) in TVAR and a small state (lamp on, door open, facing) in TST; both ride in the edit array (a[2], a[3]) for tiles marked in VARID */const TVAR=new Uint16Array(W*H),TST=new Uint8Array(W*H),VARID=new Uint8Array(256),NBID=new Uint8Array(256)/* natural ground drawn aware of its neighbours (GROUND10) */;const trees=new Map(),pop=new Map(),hitAt=new Map(),parts=[],floats=[],slashes=[],projs=[],splashes=[],mobs=[],rings=[],bub={},rp={},K={},done={},ICON={},SPR={},CR=[];
 let edits={},ws=0,cur='plaza',dirty=0,rm=null,lob=null,lobInit=0,dbRef=null,dbUn=null,myName='Sprout'+(100+Math.random()*900|0);const myHue=Math.random()*360|0;
 let inv={1:30,3:10,8:10,101:5,103:3,108:3,105:3},bar=[1,3,8,101,103,108,105,0,0],sel=0,gems=0,own={fist:1},ownW={},wear={hat:'',body:'',wing:'',boot:'',glove:''},wp='fist',invTab='items',showInv=false;
 let mx=0,my=0,mdL=false,mdR=false,wcd=0,rcd=0,swing=0,iT=0,shake=0,flare=0,lucky=0,midas=0,over=0,dash=0,dashDir=1,slam=0,hurtF=0,spawnT=8,AC=null,bgm=null,mute=false,tm=0,night=0,wxN='clear',ptype='rain',wxI=0,wxC=0,flash=0,thunderT=8,msg='',mt=0,lastWorlds=0;
@@ -4122,7 +4122,7 @@ function blockSpriteOld(b,v){const c=document.createElement('canvas');c.width=c.
  if(b==8){x.strokeStyle='rgba(150,120,60,.35)';x.lineWidth=2;for(let i=0;i<3;i++){x.beginPath();x.moveTo(0,10+i*14);x.quadraticCurveTo(24,4+i*14,T,14+i*14);x.stroke()}}
  if(b>8){x.fillStyle='rgba(255,255,255,.28)';x.beginPath();x.moveTo(T/2,5);x.lineTo(T-9,T/2);x.lineTo(T/2,T-5);x.lineTo(9,T/2);x.closePath();x.fill();x.strokeStyle='rgba(255,255,255,.65)';x.lineWidth=2;x.stroke();x.fillStyle='#fff';x.fillRect(T/2-2,14,4,4)}
  x.strokeStyle='rgba(0,0,0,.5)';x.lineWidth=3;x.strokeRect(1.5,1.5,T-3,T-3);x.strokeStyle='rgba(255,255,255,.22)';x.lineWidth=2;x.beginPath();x.moveTo(4,T-5);x.lineTo(4,4);x.lineTo(T-5,4);x.stroke();x.strokeStyle='rgba(0,0,0,.18)';x.beginPath();x.moveTo(T-4,5);x.lineTo(T-4,T-4);x.lineTo(5,T-4);x.stroke();return c}
-const spr=(b,x,y)=>{if(VARID[b]&&window.VSPR)return VSPR(b,x,y);const v=(x*7+y*13)%3,k=b*4+v;return SPR[k]||(SPR[k]=blockSprite(b,v))};
+const spr=(b,x,y)=>{if(VARID[b]&&window.VSPR)return VSPR(b,x,y);const v=(x*7+y*13)%3,k=b*4+v;if(NBID[b]&&window.NSPR&&(x|y))return NSPR(b,x,y,()=>SPR[k]||(SPR[k]=blockSprite(b,v)));return SPR[k]||(SPR[k]=blockSprite(b,v))};
 function crackSprite(st){const c=document.createElement('canvas');c.width=c.height=T;const x=c.getContext('2d');let s=st*7919+3;const R=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;x.strokeStyle='rgba(0,0,0,.72)';x.lineCap='round';for(let i=0;i<st*2+1;i++){let px=T/2,py=T/2;x.lineWidth=2.4-i*.1;x.beginPath();x.moveTo(px,py);for(let j=0;j<4;j++){px+=(R()-.5)*18+(i%2?8:-8);py+=(R()-.5)*18+(i<3?-6:8);x.lineTo(px,py)}x.stroke()}return c}
 for(let i=1;i<=3;i++)CR[i]=crackSprite(i);
 // ---------- weapon + character drawing
@@ -7699,10 +7699,10 @@ const TDRAW7=new Uint8Array(256);// non-solid tiles that are still painted into 
 const TILE7=(()=>{
  const CH=8,CW=CH*T,cache=new Map(),MAXC=72;let cKey='';
  // tiles in the chunk plus the row above and below (the lit lip / dark edge depend on them)
- function sig(cx,cy){let h=7;const x0=cx*CH,y0=cy*CH;for(let y=y0-1;y<=y0+CH;y++){if(y<0||y>=H)continue;for(let x=x0;x<x0+CH&&x<W;x++){const k=y*W+x;h=(Math.imul(h,31)+tiles[k]+TVAR[k]*263+TST[k]*65537)|0}}return h}
+ function sig(cx,cy){let h=7;const x0=cx*CH,y0=cy*CH;for(let y=y0-1;y<=y0+CH;y++){if(y<0||y>=H)continue;for(let x=Math.max(0,x0-1);x<x0+CH+1&&x<W;x++){const k=y*W+x;h=(Math.imul(h,31)+tiles[k]+TVAR[k]*263+TST[k]*65537)|0}}return h}
  // the same look the per-block loop had: sprite, lit lip under air, dark edge above air
  function paint(c,cx,cy,lips){for(let y=cy*CH;y<cy*CH+CH&&y<H;y++)for(let x=cx*CH;x<cx*CH+CH&&x<W;x++){const k=y*W+x,b=tiles[k];if(!b||!(SOLID6[b]||TDRAW7[b]))continue;const px=(x-cx*CH)*T,py=(y-cy*CH)*T;
-   c.drawImage(spr(b,x,y),px,py,T,T);if(lips&&SOLID6[b]){if(!tiles[k-W]&&y>0){c.fillStyle='rgba(255,255,255,.2)';c.fillRect(px,py,T,3)}if(!tiles[k+W]){c.fillStyle='rgba(0,0,0,.28)';c.fillRect(px,py+T-4,T,4)}}}}
+   c.drawImage(spr(b,x,y),px,py,T,T);if(lips&&SOLID6[b]&&!(NBID[b]&&!(edits[k]&&edits[k][0]))){if(!tiles[k-W]&&y>0){c.fillStyle='rgba(255,255,255,.2)';c.fillRect(px,py,T,3)}if(!tiles[k+W]){c.fillStyle='rgba(0,0,0,.28)';c.fillRect(px,py+T-4,T,4)}}}}
  // At most BUDGET chunks are (re)painted per frame. Painting every visible chunk at once (about 40 new images at full HD on arrival, and the whole
  // screen on every frame of a camera zoom, because the scale was part of the cache key) stalled the graphics card for a third of a second at a time.
  // A chunk not ready yet is drawn straight from its tiles this frame; a chunk painted at another zoom is shown scaled until its turn comes.
@@ -19844,7 +19844,7 @@ const DECOR10=(()=>{
    hide(){nz(.08,'lowpass',500,250,.8,.05)},phase(){bell(1047,1,.025);bell(1568,1,.018,.1)},glint(){bell(2637,.7,.02);bell(3520,.6,.012,.06)},
    flutter(){for(let i=0;i<6;i++)nz(.03,'bandpass',3000+R()*1200,2600,3,.02,i*.04)},sit(){nz(.12,'lowpass',500,250,.7,.05)},rest(){nz(.4,'lowpass',400,200,.7,.04,0,.1)}};
   let win=0,used=0;const gap={};
-  function play(kind,o,vol0,pan){if(!P[kind]||!ok())return false;const now=performance.now();if(now-(gap[kind]||0)<120)return false;if(now-win>250){win=now;used=0}if(++used>6)return false;gap[kind]=now;V=vol0==null?1:vol0;PAN=pan||0;try{P[kind](o||{})}catch(_){}V=1;PAN=0;return true}
+  function play(kind,o,vol0,pan){if(!P[kind]||!ok())return false;try{if(BUILDER10.S.quiet)return false}catch(_){}const now=performance.now();if(now-(gap[kind]||0)<120)return false;if(now-win>250){win=now;used=0}if(++used>6)return false;gap[kind]=now;V=vol0==null?1:vol0;PAN=pan||0;try{P[kind](o||{})}catch(_){}V=1;PAN=0;return true}
   return{play,P}})();
  // ---- live state per placed decoration (animation, cooldown); created when first seen
  const LIVE=new Map(),log=[];
@@ -19870,7 +19870,7 @@ const DECOR10=(()=>{
  {const _cp=celPres;celPres=function(){const o=_cp.apply(this,arguments);try{if(mine&&performance.now()-mine.t<3000)o.dz=[mine.k,mine.r,mine.s]}catch(_){}return o}}
  {const _cc=cleanCx;cleanCx=function(c){const r=_cc.apply(this,arguments);try{if(r&&c&&Array.isArray(c.dz)){const k=c.dz[0]|0,rr0=c.dz[1]|0,s=c.dz[2]|0;if(k>=0&&k<W*H&&rr0>=0&&rr0<16&&s>=0&&s<100)r.dz=[k,rr0,s]}}catch(_){}return r}}
  const SEEN=new Map();
- function remotes(){try{if(!rm)return;for(const p of rm.peers()){if(p.isMe||p.kind!='viewer')continue;const q=p.presence,dz=q&&q.cx&&q.cx.dz;if(!Array.isArray(dz))continue;const id=String(p.id||p.name||''),key=dz.join(':'),prev=SEEN.get(id);if(prev===key)continue;SEEN.set(id,key);if(prev===undefined&&!(q.cx&&q.cx.dzNew))continue;
+ function remotes(){try{if(!rm)return;for(const p of rm.peers()){if(p.isMe||p.kind!='viewer')continue;const q=p.presence,dz=q&&q.cx&&q.cx.dz;if(!Array.isArray(dz))continue;const id=String(p.id||p.name||''),key=dz.join(':'),prev=SEEN.get(id);if(prev===key)continue;SEEN.set(id,key);/* a reaction is only sent for 3 s, so even a first sighting is fresh */
    const k=dz[0];if(tiles[k]!==TID)continue;const d=L[TVAR[k]];if(d&&d.act&&!STATEFUL.has(d.act)&&d.act!='sit'&&d.act!='rest')react(k,d.act,dz[1],true)}}catch(_){}}
  // ---- finding the decoration you mean: the one under the cursor (in reach), else the nearest one around you
  const box=k=>{const i=TVAR[k],d=L[i];if(!d)return null;const cx=(k%W)*T+T/2,by=(k/W|0)*T+T;return d.on=='c'?{x0:cx-d.w/2,x1:cx+d.w/2,y0:by-T,y1:by-T+d.h}:{x0:cx-d.w/2,x1:cx+d.w/2,y0:by-d.h,y1:by}};
@@ -19910,7 +19910,7 @@ const DECOR10=(()=>{
    else if(ak=='meow'){sx=1+.07*e;sy=1-.05*e;rot=-.04*e}else if(ak=='hop'){dy=-Math.abs(Math.sin(ap*Math.PI*2))*12;dx=(ap<.5?ap:1-ap)*8}else if(ak=='croak'){sy=1+.1*Math.sin(ap*Math.PI*8)*(1-ap)}
    else if(ak=='wobble'){rot=Math.sin(ap*Math.PI*6)*.14*(1-ap)}else if(ak=='rustle'||ak=='flutter'||ak=='bloom'){rot=Math.sin(ap*Math.PI*5)*.04*(1-ap)}else if(ak=='book'||ak=='mail'||ak=='shop'||ak=='tea'||ak=='beep'){sy=1-.03*e}
    else if(ak=='idle'){const r=o.r|0;if(r==0)rot=Math.sin(ap*Math.PI*2)*.05;else if(r==1)sy=1+.03*e;else if(r==2)dx=Math.sin(ap*Math.PI)*2;else dy=-Math.abs(Math.sin(ap*Math.PI))*3}}
-  const sway=(d.act=='rustle'||d.id=='hanging_vines'||d.id=='cattails')&&near0?Math.sin(t*.9+o.ph)*.012*(1+Math.sin(t*.23)*.6):0;
+  const sway=(d.act=='rustle'||d.id=='hanging_vines'||d.id=='cattails'||d.id=='wildflowers'||d.id=='fern')&&near0?Math.sin(t*(.9+WIND*.8)+o.ph)*(.012+WIND*.03)*(1+Math.sin(t*.23)*.6):0;
   g.save();g.translate(bx+dx,by+dy);if(fl)g.scale(-1,1);if(d.on=='c'){g.translate(0,-T);g.rotate(rot+sway);g.translate(0,T)}else{g.rotate(rot+sway)}g.scale(sx,sy);
   g.drawImage(s.c,-s.w/2,-s.ay,s.w,s.h);
   // living details: eyes blink, duck wings flap; then the decoration's own overlay
@@ -19920,7 +19920,7 @@ const DECOR10=(()=>{
   g.restore();
   if(d.light&&on)lampL.push(bx,by-(d.on=='c'?T-d.h*.6:d.h*.7))}
  let cnt0=0;
- function draw(x0,x1,y0,y1,now){if(!entered)return;const t=now/1000,ptx=P.x/T,pty=P.y/T;cnt0=0;const dayv=(()=>{try{return typeof night!='undefined'?1-Math.min(1,Math.max(0,+night||0)):1}catch(_){return 1}})();
+ let WIND=0;function draw(x0,x1,y0,y1,now){if(!entered)return;try{WIND=Math.max(0,Math.min(1,+WX6.wind||0))}catch(_){WIND=0}const t=now/1000,ptx=P.x/T,pty=P.y/T;cnt0=0;const dayv=(()=>{try{return typeof night!='undefined'?1-Math.min(1,Math.max(0,+night||0)):1}catch(_){return 1}})();
   for(let y=Math.max(0,y0-1);y<=Math.min(H-1,y1+4);y++)for(let x=Math.max(0,x0-2);x<=Math.min(W-1,x1+2);x++){const k=y*W+x;if(tiles[k]!==TID)continue;cnt0++;const dd=Math.abs(x-ptx)+Math.abs(y-pty),o=st(k);o.day=dayv;drawOne(k,x,y,now,t,dd<26?1:2)}
   remotes();ambience(x0,x1,y0,y1,now)}
  // ambience: fountains trickle, wind chimes ring now and then, the blossom tree rustles in gusts (only near you, at most one at a time)
@@ -19973,14 +19973,14 @@ const BUILDER10=(()=>{
  const icon=e=>{try{if(e.pat!=null)return DECOR10.iconCanvas(e.pat,56).toDataURL();return iconURL(e.key)}catch(_){return''}};
  function mk(){if(el)return;el=document.createElement('div');el.id='bld10';el.setAttribute('role','dialog');el.setAttribute('aria-label','Builder');
   el.innerHTML='<header><div><h2>Builder</h2><p>Blocks, colours and decorations</p></div><button type="button" class="x" aria-label="Close the Builder">×</button></header>'+
-   '<div class="b10r"><input type="search" placeholder="Search: duck, marble, pink, lamp…" aria-label="Search blocks and decorations"><button type="button" class="flip" aria-pressed="false" title="Decorations face the other way (/)">⇆ Flip</button></div>'+
+   '<div class="b10r"><input type="search" placeholder="Search: duck, marble, pink, lamp…" aria-label="Search blocks and decorations"><button type="button" class="flip" aria-pressed="false" title="Decorations face the other way (/)">⇆ Flip</button><button type="button" class="flip snd" aria-pressed="true" title="Decoration and creature sounds">♪ Sounds</button></div>'+
    '<nav class="tabs" role="tablist">'+TABS.map(t=>'<button type="button" role="tab" data-t="'+t[0]+'">'+t[1]+'</button>').join('')+'</nav><div class="grid" role="listbox" aria-label="Items"></div>'+
    '<footer class="card" aria-live="polite"></footer><div class="hint">Right-click to place · <b>/</b> flips · <b>Shift</b>+right-click fills a line · <b>Ctrl+Z</b> undo</div>';
   document.body.appendChild(el);
   for(const ev of['pointerdown','mousedown','wheel','contextmenu'])el.addEventListener(ev,e=>e.stopPropagation());
   el.querySelector('.x').onclick=()=>close();
   const inp=el.querySelector('input');inp.addEventListener('input',()=>{q=inp.value.trim().toLowerCase();render()});inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key=='Escape'){if(inp.value){inp.value='';q='';render()}else close()}});inp.addEventListener('keyup',e=>e.stopPropagation());
-  el.querySelector('.flip').onclick=()=>setFlip(!flip);
+  el.querySelector('.flip').onclick=()=>setFlip(!flip);const sb=el.querySelector('.snd'),sq=()=>{sb.classList.toggle('on',!S.quiet);sb.setAttribute('aria-pressed',S.quiet?'false':'true');sb.textContent=S.quiet?'♪ Muted':'♪ Sounds'};sq();sb.onclick=()=>{S.quiet=S.quiet?0:1;save();sq()};
   el.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;tab=b.dataset.t;q='';inp.value='';render()});
   const gr=el.querySelector('.grid');
   gr.addEventListener('click',e=>{const st=e.target.closest('.star');const t=e.target.closest('.b10i');if(!t)return;const en=byId(t.dataset.id);if(!en)return;if(st){S.fav[en.id]=S.fav[en.id]?0:1;if(!S.fav[en.id])delete S.fav[en.id];save();render();return}choose(en)});
@@ -20041,6 +20041,70 @@ const BUILDER10=(()=>{
   return ok}
  setFlip(0);
  return{open,close,isOpen,render,used,undo,redo,list,get brush(){return brush},set brush(v){brush=v;chip()},get flip(){return flip},setFlip,H,S,line}})();
+
+/* ========== LATE: 99-zzzzzzz-wb4-ground.js ========== */
+// ===== GROUND10: natural ground (world building). Natural terrain (dirt, grass, stone, sand, deepslate that no player placed) is drawn aware of
+// its neighbours, so the world stops looking like a grid of squares:
+//  - soft rounded outer corners where the ground meets open air (a gentle radius, never on blocks a player placed);
+//  - grass wraps over an exposed edge (a fringe of blades down the open side) instead of stopping in a hard line;
+//  - seams between materials crumble into each other: stone pebbles rise into dirt above stone, dirt crumbs fall onto stone, sand spills over
+//    grass edges, grass blades creep onto neighbouring sand;
+//  - every tile gets a small, fixed variation in tone and a few embedded pebbles / roots on exposed faces, so no two neighbours repeat;
+//  - each world has a ground identity from its name: green meadow, blossom (fallen petals in the grass), crystal (tiny shards on stone faces),
+//    starlit (faint sparkles in the grass), snowy (soft snow caps), desert (warm sand ripples), enchanted forest (glowing moss), dusk (deep violet
+//    grass). It changes details and tint only, never the blocks, and curated places (the Plaza, dungeons, biomes, realms) keep their own look.
+// Everything is baked into the cached block sprites (one per tile kind + neighbour shape + theme), so it costs nothing per frame; the chunk cache
+// (TILE7) repaints a chunk when a neighbour changes, as before. =====
+const GROUND10=(()=>{
+ const IDS=[1,2,3,8,77],TAU=Math.PI*2;for(const b of IDS)NBID[b]=1;
+ const THEMES=['meadow','blossom','crystal','starlit','snowy','desert','enchanted','dusk'];
+ const h32=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
+ const curated=w=>typeof w!='string'||w=='plaza'||/^(dg_|biome-|wb_|rootbound)/.test(w)||/-(inf|gal|sea|cry)$/.test(w)||(typeof SIM!='undefined'&&SIM)||false;
+ let theme='meadow',tw='';
+ function themeOf(w){if(curated(w))return'';const h=h32(String(w));return h%3==0?'meadow':THEMES[(h>>>3)%THEMES.length]}
+ const open=k=>{const b=tiles[k];return!b||!SOLID6[b]};
+ const placed=k=>{const e=edits[k];return!!(e&&e[0])};
+ const C=new Map();
+ const rr=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+ const TINT={blossom:['rgba(255,170,200,',.10],crystal:['rgba(150,200,255,',.07],starlit:['rgba(120,130,255,',.08],snowy:['rgba(235,245,255,',.12],desert:['rgba(255,210,140,',.10],enchanted:['rgba(90,230,180,',.08],dusk:['rgba(120,60,170,',.16]};
+ // which neighbour shape this tile has: corners (4 bits), open sides (4 bits), neighbour materials (below / left / right), theme
+ function shape(b,x,y){const k=y*W+x;let m=0;const L=x>0?open(k-1):0,Rr=x<W-1?open(k+1):0,U=y>0?open(k-W):0,D=y<H-1?open(k+W):0;
+  if(U&&L&&open(k-W-1))m|=1;if(U&&Rr&&open(k-W+1))m|=2;if(D&&L&&open(k+W-1))m|=4;if(D&&Rr&&open(k+W+1))m|=8;if(L)m|=16;if(Rr)m|=32;if(U)m|=64;
+  const nb=j=>{const t=tiles[j];return t==3||t==77?1:t==1?2:t==8?3:t==2?4:0};const below=y<H-1?nb(k+W):0,above=y>0?nb(k-W):0,lf=x>0?nb(k-1):0,rt=x<W-1?nb(k+1):0;return{m,below,above,lf,rt}}
+ function sprite(b,x,y,base){const k=y*W+x;if(placed(k))return base();if(cur!==tw){tw=cur;theme=themeOf(cur)}const s=shape(b,x,y),v=(x*7+y*13)%3,tone=(Math.imul(x+1,73856093)^Math.imul(y+1,19349663))>>>0;
+  const tv=tone%5,key=b+'|'+v+'|'+s.m+'|'+s.below+'|'+s.above+'|'+s.lf+'|'+s.rt+'|'+(theme||'-')+'|'+tv;let c=C.get(key);if(c)return c;if(C.size>3000)C.clear();
+  const src=base();c=document.createElement('canvas');c.width=c.height=T;const g2=c.getContext('2d');g2.drawImage(src,0,0,T,T);const R=rr(tone|1);
+  try{paint(g2,b,s,R,tv)}catch(e){if(!GROUND10.e){GROUND10.e=1;console.error('GROUND10',e)}}C.set(key,c);return c}
+ const grassC=()=>theme=='dusk'?['#5a3a8a','#7a52b0']:theme=='snowy'?['#5a9a68','#7ab884']:theme=='desert'?['#8aa048','#a8b860']:theme=='blossom'?['#5aa860','#78c070']:['#4c9a3f','#6cbf55'];
+ function paint(x,b,s,R,tv){const m=s.m;
+  // tone variation (fixed per tile)
+  const tvA=[0,.035,-.03,.05,-.045][tv];if(tvA>0){x.fillStyle='rgba(255,250,235,'+tvA+')';x.fillRect(0,0,T,T)}else if(tvA<0){x.fillStyle='rgba(20,10,30,'+(-tvA)+')';x.fillRect(0,0,T,T)}
+  // material seams
+  if((b==1||b==2)&&s.below==1){for(let i=0;i<7;i++){const px=R()*T,r=2+R()*3.4,py=T-R()*7;x.fillStyle='rgba(30,20,10,.35)';x.beginPath();x.ellipse(px+.6,py+.8,r,r*.8,0,0,TAU);x.fill();x.fillStyle=['#8a8f98','#7b8089','#9aa0a8'][i%3];x.beginPath();x.ellipse(px,py,r,r*.78,R(),0,TAU);x.fill()}}
+  if((b==3||b==77)&&s.above==2){for(let i=0;i<9;i++){const px=R()*T,py=R()*6,r=1.4+R()*2.4;x.fillStyle=['#7a5230','#6a4628','#8a6038'][i%3];x.beginPath();x.ellipse(px,py,r,r*.7,R(),0,TAU);x.fill()}}
+  if(b==2&&(s.lf==3||s.rt==3)){const sd=s.rt==3?1:-1;for(let i=0;i<10;i++){x.fillStyle=['#e4cf8a','#d8c078','#f0dca0'][i%3];const px=sd>0?T-R()*7:R()*7,py=8+R()*(T-10);x.beginPath();x.arc(px,py,1+R()*1.4,0,TAU);x.fill()}}
+  if(b==8&&(s.lf==4||s.rt==4)&&(m&64)){const sd=s.rt==4?1:-1,gc=grassC();for(let i=0;i<6;i++){const px=sd>0?T-1-R()*8:1+R()*8;x.strokeStyle=gc[i%2];x.lineWidth=1.2;x.beginPath();x.moveTo(px,6);x.lineTo(px+(R()-.5)*3,1+R()*2);x.stroke()}}
+  // exposed faces: a few embedded pebbles and roots in dirt, chips in stone
+  if(b==1&&(m&48)){const sd=(m&16)?0:T;for(let i=0;i<3;i++){const px=Math.abs(sd-(2+R()*8)),py=8+R()*(T-14),r=1.6+R()*2;x.fillStyle='#9a8a74';x.beginPath();x.ellipse(px,py,r,r*.8,R(),0,TAU);x.fill();x.fillStyle='rgba(255,255,255,.3)';x.beginPath();x.arc(px-r*.3,py-r*.3,r*.35,0,TAU);x.fill()}}
+  // grass wraps over open sides
+  if(b==2&&(m&64)){const gc=grassC();for(const side of[16,32]){if(!(m&side))continue;const ex=side==16?0:T;const sg=side==16?1:-1;x.fillStyle=gc[0];x.beginPath();x.moveTo(ex,0);x.lineTo(ex+sg*5,0);for(let yy=0;yy<=16;yy+=2)x.lineTo(ex+sg*(3+Math.sin(yy*1.7)*1.6+R()*1.2),yy);x.lineTo(ex,18);x.closePath();x.fill();
+    for(let i=0;i<5;i++){x.strokeStyle=gc[1];x.lineWidth=1;const yy=4+R()*12;x.beginPath();x.moveTo(ex,yy);x.lineTo(ex+sg*(2+R()*3),yy+3+R()*3);x.stroke()}}}
+  // theme details
+  if(theme&&TINT[theme]&&(b==2||b==1||b==8)&&(m&64)){const t=TINT[theme];x.fillStyle=lgr(x,t[0]+t[1]+')',t[0]+'0)');x.fillRect(0,0,T,T*.5)}
+  if(b==2&&(m&64)){if(theme=='blossom')for(let i=0;i<4;i++){x.fillStyle=['#ffc6d6','#f5aec4','#ffe0ea'][i%3];x.beginPath();x.ellipse(4+R()*(T-8),2+R()*5,2,1.2,R()*3,0,TAU);x.fill()}
+   else if(theme=='starlit')for(let i=0;i<3;i++){const px=4+R()*(T-8),py=2+R()*7;x.fillStyle='rgba(230,235,255,.9)';x.fillRect(px-.4,py-2,.8,4);x.fillRect(px-2,py-.4,4,.8)}
+   else if(theme=='snowy'){x.fillStyle='#f4f8fc';x.beginPath();x.moveTo(0,0);for(let px=0;px<=T;px+=6)x.lineTo(px,3+Math.sin(px*.5+R()*2)*1.6+R()*1.4);x.lineTo(T,0);x.closePath();x.fill();x.fillStyle='rgba(200,220,240,.6)';x.fillRect(0,0,T,1)}
+   else if(theme=='enchanted')for(let i=0;i<3;i++){const px=4+R()*(T-8),py=4+R()*8;x.fillStyle='rgba(120,255,200,.75)';x.beginPath();x.arc(px,py,1.2,0,TAU);x.fill()}
+   else if(theme=='meadow'&&R()<.5){x.fillStyle='#8a7a64';x.beginPath();x.ellipse(6+R()*(T-12),3+R()*3,1.8,1.2,0,0,TAU);x.fill()}}
+  if((b==3||b==77)&&theme=='crystal'&&(m&112)){for(let i=0;i<2;i++){const px=6+R()*(T-12),py=(m&64)?2:T/2,h=4+R()*5;x.fillStyle=['#9ad8ff','#c0a8ff'][i%2];x.beginPath();x.moveTo(px-2,py+h);x.lineTo(px,py);x.lineTo(px+2,py+h);x.closePath();x.fill()}}
+  if(b==8&&theme=='desert'&&(m&64)){x.strokeStyle='rgba(180,140,80,.35)';x.lineWidth=1;for(let i=0;i<3;i++){x.beginPath();const yy=8+i*9;x.moveTo(0,yy);for(let px=0;px<=T;px+=6)x.lineTo(px,yy+Math.sin(px*.25+i)*1.5);x.stroke()}}
+  // soft rounded outer corners (cut away, with a soft rim)
+  const RAD=9;x.save();x.globalCompositeOperation='destination-out';for(const[bit,cx,cy,sx,sy]of[[1,0,0,1,1],[2,T,0,-1,1],[4,0,T,1,-1],[8,T,T,-1,-1]]){if(!(m&bit))continue;x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+sx*RAD,cy);x.arc(cx+sx*RAD,cy+sy*RAD,RAD,Math.atan2(-sy,0),Math.atan2(0,-sx),sx*sy>0);x.closePath();x.fill()}x.restore();
+  for(const[bit,cx,cy,sx,sy]of[[1,0,0,1,1],[2,T,0,-1,1],[4,0,T,1,-1],[8,T,T,-1,-1]]){if(!(m&bit))continue;x.strokeStyle=sy>0?'rgba(255,255,255,.18)':'rgba(0,0,0,.25)';x.lineWidth=1.4;x.beginPath();x.arc(cx+sx*RAD,cy+sy*RAD,RAD-.7,Math.atan2(-sy,-sx)-.78,Math.atan2(-sy,-sx)+.78);x.stroke()}}
+ const lgr=(x,a,b)=>{const g=x.createLinearGradient(0,0,0,T*.5);g.addColorStop(0,a);g.addColorStop(1,b);return g};
+ window.NSPR=(b,x,y,base)=>sprite(b,x,y,base);
+ // the chunk cache must repaint a chunk when its left / right neighbours change too (corners and seams read them)
+ return{sprite,shape,themeOf,get theme(){return theme},THEMES,C,curated}})();
 
 /* ========== LATE: 99-zzzzzzzz-entgov.js ========== */
 // ===== ENT13: entity governor. Fixes the slow, compounding FPS slide in long busy fights.

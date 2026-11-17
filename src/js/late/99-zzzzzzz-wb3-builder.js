@@ -28,14 +28,14 @@ const BUILDER10=(()=>{
  const icon=e=>{try{if(e.pat!=null)return DECOR10.iconCanvas(e.pat,56).toDataURL();return iconURL(e.key)}catch(_){return''}};
  function mk(){if(el)return;el=document.createElement('div');el.id='bld10';el.setAttribute('role','dialog');el.setAttribute('aria-label','Builder');
   el.innerHTML='<header><div><h2>Builder</h2><p>Blocks, colours and decorations</p></div><button type="button" class="x" aria-label="Close the Builder">×</button></header>'+
-   '<div class="b10r"><input type="search" placeholder="Search: duck, marble, pink, lamp…" aria-label="Search blocks and decorations"><button type="button" class="flip" aria-pressed="false" title="Decorations face the other way (/)">⇆ Flip</button></div>'+
+   '<div class="b10r"><input type="search" placeholder="Search: duck, marble, pink, lamp…" aria-label="Search blocks and decorations"><button type="button" class="flip" aria-pressed="false" title="Decorations face the other way (/)">⇆ Flip</button><button type="button" class="flip snd" aria-pressed="true" title="Decoration and creature sounds">♪ Sounds</button></div>'+
    '<nav class="tabs" role="tablist">'+TABS.map(t=>'<button type="button" role="tab" data-t="'+t[0]+'">'+t[1]+'</button>').join('')+'</nav><div class="grid" role="listbox" aria-label="Items"></div>'+
    '<footer class="card" aria-live="polite"></footer><div class="hint">Right-click to place · <b>/</b> flips · <b>Shift</b>+right-click fills a line · <b>Ctrl+Z</b> undo</div>';
   document.body.appendChild(el);
   for(const ev of['pointerdown','mousedown','wheel','contextmenu'])el.addEventListener(ev,e=>e.stopPropagation());
   el.querySelector('.x').onclick=()=>close();
   const inp=el.querySelector('input');inp.addEventListener('input',()=>{q=inp.value.trim().toLowerCase();render()});inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key=='Escape'){if(inp.value){inp.value='';q='';render()}else close()}});inp.addEventListener('keyup',e=>e.stopPropagation());
-  el.querySelector('.flip').onclick=()=>setFlip(!flip);
+  el.querySelector('.flip').onclick=()=>setFlip(!flip);const sb=el.querySelector('.snd'),sq=()=>{sb.classList.toggle('on',!S.quiet);sb.setAttribute('aria-pressed',S.quiet?'false':'true');sb.textContent=S.quiet?'♪ Muted':'♪ Sounds'};sq();sb.onclick=()=>{S.quiet=S.quiet?0:1;save();sq()};
   el.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;tab=b.dataset.t;q='';inp.value='';render()});
   const gr=el.querySelector('.grid');
   gr.addEventListener('click',e=>{const st=e.target.closest('.star');const t=e.target.closest('.b10i');if(!t)return;const en=byId(t.dataset.id);if(!en)return;if(st){S.fav[en.id]=S.fav[en.id]?0:1;if(!S.fav[en.id])delete S.fav[en.id];save();render();return}choose(en)});

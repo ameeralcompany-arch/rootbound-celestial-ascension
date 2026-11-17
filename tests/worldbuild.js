@@ -52,7 +52,7 @@ setTimeout(()=>{console.log('FAIL global timeout');process.exit(2)},240000).unre
  const RM=await E(async G=>{const k=(G.gy-1)*W+G.tx+1,l0=DECOR10.log.length;const fake={peers:()=>[{id:'other1',name:'Other',kind:'viewer',presence:{x:P.x,y:P.y,cx:{dz:[k,2,5]}}}],emit(){}};const r0=window.rm;try{rm=fake}catch(_){}
   DECOR10.draw(0,W-1,0,H-1,performance.now());fake.peers()[0].presence.cx.dz=[k,3,6];const pr=fake.peers;fake.peers=()=>[{id:'other1',name:'Other',kind:'viewer',presence:{x:P.x,y:P.y,cx:{dz:[k,3,6]}}}];DECOR10.draw(0,W-1,0,H-1,performance.now());try{rm=r0}catch(_){}
   const a=DECOR10.log.slice(l0);return{a}},G);
- ok('another player’s duck greeting replays here with their reaction (hop), not a new random one',RM.a.length==1&&RM.a[0].remote&&RM.a[0].r==3&&RM.a[0].kind=='quack',RM);
+ ok('each greeting by another player replays here once, with their reaction (shake, then hop), not a new random one',RM.a.length==2&&RM.a.every(x=>x.remote&&x.kind=='quack')&&RM.a[0].r==2&&RM.a[1].r==3,RM);
  // a lamp switches, and the state is saved in the edit (a[3]) so everyone and every reload agree
  const LP=await E(async G=>{const i=DECOR10.BYID.lantern_post.i;P.x=(G.tx+6)*T+T/2;const k=(G.gy-1)*W+G.tx+7;DECOR10.place(i,G.tx+7,G.gy-1,{flip:0});const s0=TST[k]&1,e0=edits[k][3];P.x=(G.tx+7)*T+T/2;await new Promise(r=>setTimeout(r,100));DECOR10.act(k);return{s0,s1:TST[k]&1,e0,e1:edits[k][3],lit:lampL.length>=0}},G);
  ok('a lantern post switches off and on; its state is saved with the world edit',LP.s0==1&&LP.s1==0&&(LP.e0&1)==1&&(LP.e1&1)==0,LP);

@@ -197,7 +197,7 @@ const DECOR10=(()=>{
    hide(){nz(.08,'lowpass',500,250,.8,.05)},phase(){bell(1047,1,.025);bell(1568,1,.018,.1)},glint(){bell(2637,.7,.02);bell(3520,.6,.012,.06)},
    flutter(){for(let i=0;i<6;i++)nz(.03,'bandpass',3000+R()*1200,2600,3,.02,i*.04)},sit(){nz(.12,'lowpass',500,250,.7,.05)},rest(){nz(.4,'lowpass',400,200,.7,.04,0,.1)}};
   let win=0,used=0;const gap={};
-  function play(kind,o,vol0,pan){if(!P[kind]||!ok())return false;const now=performance.now();if(now-(gap[kind]||0)<120)return false;if(now-win>250){win=now;used=0}if(++used>6)return false;gap[kind]=now;V=vol0==null?1:vol0;PAN=pan||0;try{P[kind](o||{})}catch(_){}V=1;PAN=0;return true}
+  function play(kind,o,vol0,pan){if(!P[kind]||!ok())return false;try{if(BUILDER10.S.quiet)return false}catch(_){}const now=performance.now();if(now-(gap[kind]||0)<120)return false;if(now-win>250){win=now;used=0}if(++used>6)return false;gap[kind]=now;V=vol0==null?1:vol0;PAN=pan||0;try{P[kind](o||{})}catch(_){}V=1;PAN=0;return true}
   return{play,P}})();
  // ---- live state per placed decoration (animation, cooldown); created when first seen
  const LIVE=new Map(),log=[];
@@ -223,7 +223,7 @@ const DECOR10=(()=>{
  {const _cp=celPres;celPres=function(){const o=_cp.apply(this,arguments);try{if(mine&&performance.now()-mine.t<3000)o.dz=[mine.k,mine.r,mine.s]}catch(_){}return o}}
  {const _cc=cleanCx;cleanCx=function(c){const r=_cc.apply(this,arguments);try{if(r&&c&&Array.isArray(c.dz)){const k=c.dz[0]|0,rr0=c.dz[1]|0,s=c.dz[2]|0;if(k>=0&&k<W*H&&rr0>=0&&rr0<16&&s>=0&&s<100)r.dz=[k,rr0,s]}}catch(_){}return r}}
  const SEEN=new Map();
- function remotes(){try{if(!rm)return;for(const p of rm.peers()){if(p.isMe||p.kind!='viewer')continue;const q=p.presence,dz=q&&q.cx&&q.cx.dz;if(!Array.isArray(dz))continue;const id=String(p.id||p.name||''),key=dz.join(':'),prev=SEEN.get(id);if(prev===key)continue;SEEN.set(id,key);if(prev===undefined&&!(q.cx&&q.cx.dzNew))continue;
+ function remotes(){try{if(!rm)return;for(const p of rm.peers()){if(p.isMe||p.kind!='viewer')continue;const q=p.presence,dz=q&&q.cx&&q.cx.dz;if(!Array.isArray(dz))continue;const id=String(p.id||p.name||''),key=dz.join(':'),prev=SEEN.get(id);if(prev===key)continue;SEEN.set(id,key);/* a reaction is only sent for 3 s, so even a first sighting is fresh */
    const k=dz[0];if(tiles[k]!==TID)continue;const d=L[TVAR[k]];if(d&&d.act&&!STATEFUL.has(d.act)&&d.act!='sit'&&d.act!='rest')react(k,d.act,dz[1],true)}}catch(_){}}
  // ---- finding the decoration you mean: the one under the cursor (in reach), else the nearest one around you
  const box=k=>{const i=TVAR[k],d=L[i];if(!d)return null;const cx=(k%W)*T+T/2,by=(k/W|0)*T+T;return d.on=='c'?{x0:cx-d.w/2,x1:cx+d.w/2,y0:by-T,y1:by-T+d.h}:{x0:cx-d.w/2,x1:cx+d.w/2,y0:by-d.h,y1:by}};
@@ -263,7 +263,7 @@ const DECOR10=(()=>{
    else if(ak=='meow'){sx=1+.07*e;sy=1-.05*e;rot=-.04*e}else if(ak=='hop'){dy=-Math.abs(Math.sin(ap*Math.PI*2))*12;dx=(ap<.5?ap:1-ap)*8}else if(ak=='croak'){sy=1+.1*Math.sin(ap*Math.PI*8)*(1-ap)}
    else if(ak=='wobble'){rot=Math.sin(ap*Math.PI*6)*.14*(1-ap)}else if(ak=='rustle'||ak=='flutter'||ak=='bloom'){rot=Math.sin(ap*Math.PI*5)*.04*(1-ap)}else if(ak=='book'||ak=='mail'||ak=='shop'||ak=='tea'||ak=='beep'){sy=1-.03*e}
    else if(ak=='idle'){const r=o.r|0;if(r==0)rot=Math.sin(ap*Math.PI*2)*.05;else if(r==1)sy=1+.03*e;else if(r==2)dx=Math.sin(ap*Math.PI)*2;else dy=-Math.abs(Math.sin(ap*Math.PI))*3}}
-  const sway=(d.act=='rustle'||d.id=='hanging_vines'||d.id=='cattails')&&near0?Math.sin(t*.9+o.ph)*.012*(1+Math.sin(t*.23)*.6):0;
+  const sway=(d.act=='rustle'||d.id=='hanging_vines'||d.id=='cattails'||d.id=='wildflowers'||d.id=='fern')&&near0?Math.sin(t*(.9+WIND*.8)+o.ph)*(.012+WIND*.03)*(1+Math.sin(t*.23)*.6):0;
   g.save();g.translate(bx+dx,by+dy);if(fl)g.scale(-1,1);if(d.on=='c'){g.translate(0,-T);g.rotate(rot+sway);g.translate(0,T)}else{g.rotate(rot+sway)}g.scale(sx,sy);
   g.drawImage(s.c,-s.w/2,-s.ay,s.w,s.h);
   // living details: eyes blink, duck wings flap; then the decoration's own overlay
@@ -273,7 +273,7 @@ const DECOR10=(()=>{
   g.restore();
   if(d.light&&on)lampL.push(bx,by-(d.on=='c'?T-d.h*.6:d.h*.7))}
  let cnt0=0;
- function draw(x0,x1,y0,y1,now){if(!entered)return;const t=now/1000,ptx=P.x/T,pty=P.y/T;cnt0=0;const dayv=(()=>{try{return typeof night!='undefined'?1-Math.min(1,Math.max(0,+night||0)):1}catch(_){return 1}})();
+ let WIND=0;function draw(x0,x1,y0,y1,now){if(!entered)return;try{WIND=Math.max(0,Math.min(1,+WX6.wind||0))}catch(_){WIND=0}const t=now/1000,ptx=P.x/T,pty=P.y/T;cnt0=0;const dayv=(()=>{try{return typeof night!='undefined'?1-Math.min(1,Math.max(0,+night||0)):1}catch(_){return 1}})();
   for(let y=Math.max(0,y0-1);y<=Math.min(H-1,y1+4);y++)for(let x=Math.max(0,x0-2);x<=Math.min(W-1,x1+2);x++){const k=y*W+x;if(tiles[k]!==TID)continue;cnt0++;const dd=Math.abs(x-ptx)+Math.abs(y-pty),o=st(k);o.day=dayv;drawOne(k,x,y,now,t,dd<26?1:2)}
   remotes();ambience(x0,x1,y0,y1,now)}
  // ambience: fountains trickle, wind chimes ring now and then, the blossom tree rustles in gusts (only near you, at most one at a time)
