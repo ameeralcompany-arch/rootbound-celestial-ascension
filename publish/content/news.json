@@ -1,6 +1,15 @@
 {
   "items": [
     {
+      "id": "update-6.13.21",
+      "type": "update",
+      "title": "Build your world",
+      "summary": "Build anything: 51 colours in six materials plus tinted glass and glow blocks, 19 new materials, and 62 decorations that come alive (greet the duck, pet the cat, switch the lamps, sit on benches). A new Builder (the ` key or the Build butto",
+      "body": "Build anything: 51 colours in six materials plus tinted glass and glow blocks, 19 new materials, and 62 decorations that come alive (greet the duck, pet the cat, switch the lamps, sit on benches). A new Builder (the ` key or the Build button) with search, favourites, flip, line fill, undo and redo. Placing and breaking now feel and sound like the material. Softer, more natural ground. Also: Lavi speaks each line once and can be moved, attacks keep your facing, the Lantern Gardens under the Plaza, compact new worlds, slightly bigger blocks, tool forging, looks earned by playing instead of sold, ten new wings, faster drops, your own backpack order, and one calm visual style everywhere.",
+      "date": "2026-11-18",
+      "version": "6.13.21"
+    },
+    {
       "id": "update-6.13.20",
       "type": "update",
       "title": "Earned weapons, a cosmetic store and a living Plaza",
